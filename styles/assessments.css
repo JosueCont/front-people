@@ -624,4 +624,8 @@ div.estatus-connection p{
     background: #f0f0f0;
 }
 
+button.custom-btn {
+    background-color: #1f2733!important;
+}
+
 /* Termina diseño bolsa de trabajo */

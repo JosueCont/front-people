@@ -19,7 +19,7 @@ import { useState, useEffect } from "react";
 import WebApiPeople from "../../api/WebApiPeople";
 import webApiFiscal from "../../api/WebApiFiscal";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
-import { onlyNumeric, twoDigit } from "../../utils/rules";
+import { onlyNumeric, twoDigit, expMonths, expYear } from "../../utils/rules";
 import SelectBank from "../selects/SelectBank";
 import { ruleRequired } from "../../utils/rules";
 
@@ -319,7 +319,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
-              rules={[twoDigit]}
+              rules={[twoDigit, expMonths]}
               validateTrigger="onBlur"
             >
               <Input maxLength={2} />
@@ -329,7 +329,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"
-              rules={[twoDigit]}
+              rules={[twoDigit, expYear]}
             >
               <Input maxLength={2} />
             </Form.Item>
@@ -352,6 +352,7 @@ const FormBanckAccount = ({ person_id = null }) => {
         <Table
           columns={colBank}
           dataSource={bankAccounts}
+          scroll={{ x: true }}
           locale={{
             emptyText: loadingTable
               ? "Cargando..."

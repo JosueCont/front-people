@@ -20,6 +20,7 @@ import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
 const TabSchool = ({ sizeCol = 8, action }) => {
 
@@ -187,9 +188,12 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             key: 'institution_name'
         },
         {
-            title: 'Finalización',
-            dataIndex: 'end_date',
-            key: 'end_date'
+            title: 'Fecha finalización',
+            render: (item) =>{
+                return(
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
         },
         {
             title: ()=>{
@@ -232,26 +236,22 @@ const TabSchool = ({ sizeCol = 8, action }) => {
                     showSizeChanger: false
                 }}
             />
-           {openModal && (
-                <ModalEducation
-                    title={validateAction() ? 'Editar educación' : 'Agregar educación'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta educación?'
-                    visible={openModalDelete}
-                    keyTitle='institution_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalEducation
+                title={validateAction() && openModal ? 'Editar educación' : 'Agregar educación'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar esta educación?'
+                visible={openModalDelete}
+                keyTitle='institution_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }

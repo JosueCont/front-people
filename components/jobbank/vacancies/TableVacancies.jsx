@@ -5,8 +5,6 @@ import {
   Menu,
   Dropdown,
   message,
-  Switch,
-  Tooltip,
   Select
 } from 'antd';
 import {
@@ -17,20 +15,19 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
+import { getVacancies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import { optionsStatusVacant } from '../../../utils/constant';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TableVacancies = ({
     load_vacancies,
     jobbank_page,
     list_vacancies,
     getVacancies,
-    setJobbankPage,
-    currentNode,
-    jobbank_filters
+    currentNode
 }) => {
 
     const router = useRouter();
@@ -42,7 +39,7 @@ const TableVacancies = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacancies(currentNode.id)
+            getVacanciesWithFilters();
             if(ids.length > 1) message.success('Vacantes eliminadas');
             else message.success('Vacante eliminada');
         } catch (e) {
@@ -55,7 +52,7 @@ const TableVacancies = ({
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacancies(currentNode.id);
+            getVacanciesWithFilters();
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -70,7 +67,7 @@ const TableVacancies = ({
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
-                getVacancies(currentNode.id);
+                getVacanciesWithFilters();
             },1000)
         } catch (e) {
             console.log(e)
@@ -78,6 +75,12 @@ const TableVacancies = ({
                 message.error({content: 'Vacante no duplicada', key});
             },1000)
         }
+    }
+
+    const getVacanciesWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let filters = getFiltersJB(router.query);
+        getVacancies(currentNode.id, filters, page);
     }
 
     const openModalManyDelete = () =>{
@@ -90,6 +93,12 @@ const TableVacancies = ({
     }
 
     const openModalRemove = (item) =>{
+        if(item.has_estrategy){
+            let msg = `Esta vacante no se puede eliminar,
+            ya que se encuentra asociada a una estrategia.`;
+            message.error({content: msg, duration: 4});
+            return;
+        }
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -100,28 +109,18 @@ const TableVacancies = ({
         setItemsToDelete([])
     }
 
-    // const getStatus = (item) =>{
-    //     if(!item.status) return null;
-    //     const status = (record) => record.value === item.status;
-    //     let status_ = optionsStatusVacant.find(status);
-    //     return status_.label;
-    // }
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/vacancies',
+        query
+    })
 
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        validateGetVacancies(current)
-    }
-
-    const validateGetVacancies = (current) =>{
-        let page = current ?? jobbank_page;
-        if(page > 1) getVacanciesWithFilters(page);
-        else getVacancies(currentNode?.id, jobbank_filters);
-    }
-
-    const getVacanciesWithFilters = (page) =>{
-        let offset = (page - 1) * 10;
-        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
-        getVacancies(currentNode?.id, query, page);
+        if(current > 1) savePage({...router.query, page: current});
+        else{
+            let newQuery = {...router.query};
+            if(newQuery.page) delete newQuery.page;
+            savePage(newQuery)
+        };
     }
 
     const rowSelection = {
@@ -154,7 +153,7 @@ const TableVacancies = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/vacancies/edit`,
-                        query:{ id: item.id }
+                        query: {...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -178,7 +177,7 @@ const TableVacancies = ({
                     icon={<SettingOutlined />}
                     onClick={()=> router.push({
                         pathname: '/jobbank/publications/add',
-                        query: { vacant: item.id }
+                        query: {...router.query, vacancy: item.id }
                     })}
                 >
                     Configurar publicación
@@ -191,7 +190,8 @@ const TableVacancies = ({
     {
         title: 'Vacante',
         dataIndex: 'job_position',
-        key: 'job_position'
+        key: 'job_position',
+        ellipsis: true
     },
     {
         title: 'Cliente',
@@ -285,15 +285,11 @@ const mapState = (state) =>{
     return{
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, {
-        getVacancies,
-        setJobbankPage
-    }
+    mapState, { getVacancies }
 )(TableVacancies);

@@ -21,10 +21,14 @@ const index = ({
     const router = useRouter();
 
     useEffect(()=>{
+        if(currentNode) getSectors(currentNode.id);
+    },[currentNode])
+
+    useEffect(()=>{
         if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
-            getClients(currentNode.id, filters);
-            getSectors(currentNode.id);
+            getClients(currentNode.id, filters, page)
         }
     },[currentNode, router])
 

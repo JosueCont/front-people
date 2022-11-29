@@ -7,27 +7,38 @@ import { useRouter } from 'next/router';
 import {
     getPublications,
     getProfilesOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getConnections
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
     getPublications,
     getProfilesOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getConnections
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
-            getPublications(currentNode.id);
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
+            getConnections(currentNode.id, true);
         }
     },[currentNode])
+
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getPublications(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
@@ -59,6 +70,7 @@ export default connect(
     mapState,{
         getPublications,
         getProfilesOptions,
-        getVacanciesOptions
+        getVacanciesOptions,
+        getConnections
     }
 )(withAuthSync(index));

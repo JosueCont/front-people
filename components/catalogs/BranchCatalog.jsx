@@ -72,7 +72,7 @@ const BranchCatalog = ({getBranches, cat_branches, currentNode, errorData, ...pr
     ];
 
     useEffect(() => {
-        getBranches();
+        getBranches(currentNode.id);
         //console.log("cat",cat_branches);
     }, []);
 
@@ -100,7 +100,7 @@ const BranchCatalog = ({getBranches, cat_branches, currentNode, errorData, ...pr
         setLoading(true);
         try {
             await WebApiPeople.saveBranch(data);
-            getBranches();
+            getBranches(currentNode.id);
             resetForm();
             message.success(messageSaveSuccess);
             setLoading(false);
@@ -128,7 +128,7 @@ const BranchCatalog = ({getBranches, cat_branches, currentNode, errorData, ...pr
         setLoading(true);
         try {
             await WebApiPeople.updateBranch(id,data);
-            getBranches();
+            getBranches(currentNode.id);
             resetForm();
             setIsEdit(false)
             message.success(messageUpdateSuccess);
@@ -166,7 +166,7 @@ const BranchCatalog = ({getBranches, cat_branches, currentNode, errorData, ...pr
         setLoading(true);
         try {
             await WebApiPeople.deleteBranch(deleted.id);
-            getBranches();
+            getBranches(currentNode.id);
             resetForm();
             message.success(messageDeleteSuccess);
             setLoading(false);

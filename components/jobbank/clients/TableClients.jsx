@@ -11,7 +11,6 @@ import {
     Tooltip
 } from 'antd';
 import { useRouter } from 'next/router';
-import ModalClients from './ModalClients';
 import {
     EllipsisOutlined,
     DeleteOutlined,
@@ -24,58 +23,36 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
-import {
-    getClients,
-    setJobbankPage
-} from '../../../redux/jobBankDuck';
+import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import Clipboard from '../../../components/Clipboard';
 import ViewContacts from './ViewContacts';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TableClients = ({
     list_clients,
     load_clients,
-    setJobbankPage,
     jobbank_page,
     currentNode,
-    getClients,
-    jobbank_filters
+    getClients
 }) => {
 
     const router = useRouter();
-    const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [openModalList, setOpenModalList] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
-    const actionUpdate = async (values) =>{
-        try {
-            await WebApiJobBank.updateClient(itemToEdit.id, values);
-            validateGetClients();
-            message.success('Información actualizada');
-            return true;
-        } catch (e) {
-            console.log(e)
-            if(e.response?.data['rfc']){
-                message.error('RFC ya registrado');
-                return 'RFC_EXIST';
-            } else message.error('Información no actualizada');
-            return false;
-        }
-    }
-
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            validateGetClients();
+            getClientsWithFilters();
             if(checked) message.success('Cliente activado');
             if(!checked) message.success ('Cliente desactivado');
         } catch (e) {
             console.log(e)
-            // validateGetClients();
             if(checked) message.error('Cliente no activado');
             if(!checked) message.error('Cliente no desactivado');
         }
@@ -85,19 +62,22 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            validateGetClients();
+            getClientsWithFilters();
             if(ids.length > 1) message.success('Clientes eliminados');
             else message.success('Cliente eliminado');
         } catch (e) {
             console.log(e)
+            let msgTxt = e.response?.data?.message;
+            if(msgTxt) return message.error(msgTxt);
             if(ids.length > 1) message.error('Clientes no eliminados');
             else message.error('Cliente no eliminado');
         }
     }
 
-    const closeModalEdit = () =>{
-        setOpenModal(false)
-        setItemToEdit({})
+    const getClientsWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let filters = getFiltersJB(router.query);
+        getClients(currentNode.id, filters, page);
     }
 
     const closeModalList = () =>{
@@ -121,13 +101,14 @@ const TableClients = ({
     }
 
     const openModalRemove = (item) =>{
+        if(item.has_estrategy){
+            let msg = `Este cliente no se puede eliminar,
+            ya que se encuentra asociado a una estrategia.`;
+            message.error({content: msg, duration: 4});
+            return;
+        }
         setItemsToDelete([item])
         setOpenModalDelete(true)
-    }
-
-    const openModalEdit = (item)=>{
-        setItemToEdit(item)
-        setOpenModal(true)
     }
 
     const showModalList = (item) =>{
@@ -135,21 +116,18 @@ const TableClients = ({
         setItemToEdit(item)
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/clients',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        validateGetClients(current)
-    }
-
-    const validateGetClients = (current) =>{
-        let page = current ?? jobbank_page;
-        if (page > 1) getClientsWithFilters(page);
-        else getClients(currentNode?.id, jobbank_filters);
-    }
-
-    const getClientsWithFilters = (page) =>{
-        let offset = (page - 1) * 10;
-        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
-        getClients(currentNode?.id, query, page)
+        if(current > 1) savePage({...router.query, page: current});
+        else{
+            let newQuery = {...router.query};
+            if(newQuery.page) delete newQuery.page;
+            savePage(newQuery)
+        }
     }
 
     const rowSelection = {
@@ -209,7 +187,6 @@ const TableClients = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    // onClick={()=> openModalEdit(item)}
                     onClick={()=> router.push({
                         pathname: '/jobbank/clients/edit',
                         query: {...router.query, id: item.id }
@@ -224,37 +201,41 @@ const TableClients = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Divider/>
-                <Menu.Item
-                    key='3'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/vacancies/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar vacante
-                </Menu.Item>
-                <Menu.Item
-                    key='4'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/profiles/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar perfil
-                </Menu.Item>
-                <Menu.Item
-                    key='5'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/strategies/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar estrategia
-                </Menu.Item>
+                {item.is_active && (
+                    <>
+                        <Menu.Divider/>
+                        <Menu.Item
+                            key='3'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/vacancies/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar vacante
+                        </Menu.Item>
+                        <Menu.Item
+                            key='4'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/profiles/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar template
+                        </Menu.Item>
+                        <Menu.Item
+                            key='5'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/strategies/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar estrategia
+                        </Menu.Item>
+                    </>
+                )}
             </Menu>
         );
     };
@@ -333,35 +314,23 @@ const TableClients = ({
                     showSizeChanger: false
                 }}
             />
-            <ModalClients
-                title={'Editar cliente'}
-                visible={openModal}
-                actionForm={actionUpdate}
-                close={closeModalEdit}
-                itemToEdit={itemToEdit}
-                textSave='Actualizar'
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estos clientes?'
+                    : '¿Estás seguro de eliminar este cliente?'
+                }
+                visible={openModalDelete}
+                keyTitle='name'
+                keyDescription='business_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
             />
-            {openModalDelete && (
-                <DeleteItems
-                    title={itemsToDelete.length > 1
-                        ? '¿Estás seguro de eliminar estos clientes?'
-                        : '¿Estás seguro de eliminar este cliente?'
-                    }
-                    visible={openModalDelete}
-                    keyTitle='name'
-                    keyDescription='business_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-            )}
-           {openModalList && (
-                <ViewContacts
-                    visible={openModalList}
-                    itemContact={itemToEdit}
-                    close={closeModalList}
-                />
-           )}
+           <ViewContacts
+                visible={openModalList}
+                itemContact={itemToEdit}
+                close={closeModalList}
+            />
         </>
     )
 }
@@ -370,15 +339,11 @@ const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, {
-        getClients,
-        setJobbankPage
-    }
+    mapState, { getClients }
 )(TableClients);

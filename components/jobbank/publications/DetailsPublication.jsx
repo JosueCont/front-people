@@ -20,24 +20,11 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormPublications from './FormPublications';
 import { useProcessInfo } from '../profiles/hook/useProcessInfo';
-import {
-    setLoadStrategies,
-    getInfoStrategy,
-    setInfoStrategy,
-    setLoadPublications,
-    getInfoPublication,
-    setInfoPublication
-} from '../../../redux/jobBankDuck';
 
 const DetailsPublication = ({
     action,
     currentNode,
     currentUser,
-    load_publications,
-    info_publication,
-    setLoadPublications,
-    getInfoPublication,
-    setInfoPublication,
     list_vacancies_options
 }) => {
 
@@ -52,32 +39,49 @@ const DetailsPublication = ({
     const [formPublications] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [disableField, setDisabledField] = useState(true);
+    const [disableField, setDisabledField] = useState(false);
     const [disabledVacant, setDisabledVacant] = useState(false);
+    const [infoPublication, setInfoPublication] = useState({});
+    const [valuesDefault, setValuesDefault] = useState({});
+    const [fetching, setFetching] = useState(false);
     const { createData, formatData } = useProcessInfo();
 
-    useLayoutEffect(()=>{
-        setInfoPublication()
-    },[])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoPublication(router.query.id);
+        }
+    },[router])
 
     useEffect(()=>{
-        if(router.query.vacant && action == 'add'){
+        if(router.query.vacancy && action == 'add'){
             formPublications.resetFields()
-            keepVacant();
+            keepVacancy();
         }else setDisabledVacant(false);
     },[router])
 
     useEffect(()=>{
-        if(Object.keys(info_publication).length > 0 && action == 'edit'){
+        if(Object.keys(infoPublication).length > 0 && action == 'edit'){
             formPublications.resetFields();
             setValuesForm();
         }
-    },[info_publication])
+    },[infoPublication])
 
-    const keepVacant = () =>{
+    const getInfoPublication = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoPublication(id);
+            setInfoPublication(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
+
+    const keepVacancy = () =>{
         setDisabledVacant(true);
         formPublications.setFieldsValue({
-            vacant: router.query.vacant
+            vacant: router.query.vacancy
         })
     }
 
@@ -92,29 +96,32 @@ const DetailsPublication = ({
 
     const setValuesForm = () =>{
         let results = {};
-        let customer = clientByVacant(info_publication.vacant);
-        let haveFields = Object.keys(info_publication.fields).length > 0;
-        if(haveFields) results = formatData(info_publication.fields);
+        let customer = clientByVacant(infoPublication.vacant);
+        let existFields = Object.keys(infoPublication.fields).length > 0;
+        let existFieldsName = infoPublication.profile && Object.keys(infoPublication.profile?.fields_name).length > 0;
+        if(existFields && !existFieldsName) results = formatData(infoPublication.fields);
+        if(existFieldsName && !existFields) results = formatData(infoPublication.profile.fields_name);
         let all_info = {
             ...results, customer,
-            vacant: info_publication.vacant,
-            profile: info_publication.profile ?? 'open_fields',
-            code_post: info_publication.code_post
+            vacant: infoPublication.vacant,
+            profile: infoPublication.profile?.id ?? 'open_fields',
+            code_post: infoPublication.code_post
         }
+        setValuesDefault(all_info)
         formPublications.setFieldsValue(all_info);
-        if(info_publication.profile) setDisabledField(true);
+        if(infoPublication.profile) setDisabledField(true);
         else setDisabledField(false);
     }
 
     const onFinishUpdate = async (values) =>{
         try {
             let body = {...values, node: currentNode.id, created_by: currentUser.id};
-            await WebApiJobBank.updatePublication(info_publication.id, body);
-            message.success('Publicación registrada');
-            getInfoPublication(info_publication.id);
+            await WebApiJobBank.updatePublication(infoPublication.id, body);
+            message.success('Publicación actualizada');
+            getInfoPublication(infoPublication.id);
         } catch (e) {
             console.log(e)
-            setLoadPublications(false);
+            setFetching(false);
             message.error('Publicación no actualizada');
         }
     }
@@ -127,14 +134,14 @@ const DetailsPublication = ({
             actionSaveAnd(response.data.id);
         } catch (e) {
             console.log(e)
-            setLoadPublications(false);
+            setFetching(false);
             setLoading({});
             message.error('Publicación no registrada');
         }
     }
 
     const onFinish = (values) =>{
-        setLoadPublications(true)
+        setFetching(true)
         let bodyData = createData(values, 'fields');
         if(bodyData.profile) bodyData.fields = {};
         const actionFunction = {
@@ -144,29 +151,48 @@ const DetailsPublication = ({
         actionFunction[action](bodyData);
     }
 
+    const getNewFilters = () =>{
+        let newFilters = {...router.query};
+        if(newFilters.id) delete newFilters.id;
+        if(newFilters.vacancy) delete newFilters.vacancy;
+        return newFilters;
+    }
+
     const actionBack = () =>{
-        if(router.query?.vacant) router.push('/jobbank/vacancies');
-        else router.push('/jobbank/publications');
+        let filters = getNewFilters();
+        if(router.query?.vacancy) router.push({
+            pathname: '/jobbank/vacancies',
+            query: filters
+        });
+        else router.push({
+            pathname: '/jobbank/publications',
+            query: filters
+        });
     }
 
     const actionCreate = () =>{
         formPublications.resetFields();
-        if (router.query?.vacant) keepVacant();
+        if (router.query?.vacancy) keepVacancy();
         setDisabledField(false);
         setLoadStrategies(false)
         setLoading({})
+    }
+
+    const actionEdit = (id) =>{
+        let filters = getNewFilters();
+        router.replace({
+            pathname: '/jobbank/publications/edit',
+            query: {...filters, id }
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/publications/edit',
-                query: { id }
-            })
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -194,7 +220,7 @@ const DetailsPublication = ({
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_publications}>
+                    <Spin spinning={fetching}>
                         <Form
                             id='form-publications'
                             form={formPublications}
@@ -207,6 +233,7 @@ const DetailsPublication = ({
                                 formPublications={formPublications}
                                 disableField={disableField}
                                 setDisabledField={setDisabledField}
+                                valuesDefault={valuesDefault}
                             />
                         </Form>
                     </Spin>
@@ -246,7 +273,7 @@ const DetailsPublication = ({
                         <Button
                             form='form-publications'
                             htmlType='submit'
-                            loading={load_publications}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -259,18 +286,10 @@ const DetailsPublication = ({
 
 const mapState = (state) =>{
   return{
-        load_publications: state.jobBankStore.load_publications,
-        info_publication: state.jobBankStore.info_publication,
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadPublications,
-        getInfoPublication,
-        setInfoPublication
-    }
-)(DetailsPublication);
+export default connect(mapState)(DetailsPublication);

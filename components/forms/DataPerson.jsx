@@ -27,6 +27,7 @@ import {
   messageError,
   messageUpdateSuccess,
   periodicity,
+  SukhaAccess
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
@@ -34,6 +35,7 @@ import {
   minLengthNumber, nameLastname,
   onlyNumeric,
   rfcFormat,
+  ruleRequired
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
@@ -64,6 +66,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
     setFormPerson(person);
   }, []);
 
+
+
   const setFormPerson = (person) => {
     setPersonWT(false);
 
@@ -83,6 +87,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
+      sukhatv_access: person.sukhatv_access,
+
     });
     if (person.work_title) {
       formPerson.setFieldsValue({
@@ -144,6 +150,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       ? (value.groups = [value.groups])
       : delete value["groups"];
     updatePerson(value);
+
   };
 
   const updatePerson = async (data) => {
@@ -461,6 +468,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                   onChange={(item) => {
                     setJobSelected(item), setPersonWT(true);
                   }}
+                  rules = { [ruleRequired] }
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -471,6 +479,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                     job={jobSelected}
                     person={personWT}
                     name={"work_title_id"}
+                    rules = { [ruleRequired] }
                   />
                 ) : (
                   <Form.Item name="work_title" label="Plaza laboral">
@@ -516,6 +525,17 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
               <Col lg={8} xs={24} md={12}>
                 <SelectGroup viewLabel={true} required={false} />
               </Col>
+              {config.applications.find(
+                  (item) => item.app === "SUKHATV" && item.is_active) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="sukhatv_access"
+                    label="Acceso a Sukha Tv"
+                  >
+                    <Select options={SukhaAccess} />
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
             <Row gutter={20}>
               <hr />
@@ -561,12 +581,12 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
+                <Form.Item name="curp" label="CURP" rules={[ruleRequired, curpFormat]}>
                   <Input maxLength={18} />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
+                <Form.Item name="rfc" label="RFC" rules={[ruleRequired, rfcFormat]}>
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
@@ -574,7 +594,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="imss"
                   label="IMSS"
-                  rules={[onlyNumeric, minLengthNumber]}
+                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
                 >
                   <Input maxLength={11} />
                 </Form.Item>

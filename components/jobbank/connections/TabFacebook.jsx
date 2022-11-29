@@ -28,6 +28,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { FacebookFilled } from '@ant-design/icons';
 import { useProcessInfo } from './hook/useProcessInfo';
 import { FacebookLoginClient } from '@greatsumini/react-facebook-login';
+import { useRouter } from 'next/router';
 
 const TabFacebook = ({
     infoConnection = {},
@@ -35,20 +36,22 @@ const TabFacebook = ({
     getConnections
 }) => {
 
+    const router = useRouter();
     const btnSubmit = useRef(null);
     const [formFacebook] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const { createData, formatData } = useProcessInfo();
-    const appId = Form.useWatch('data_config|app_id', formFacebook);
 
     useLayoutEffect(()=>{
         (async ()=>{
-            await FacebookLoginClient.loadSdk('en_US');
+            await FacebookLoginClient.loadSdk('en_US', false);
         })();
     },[])
 
     useEffect(()=>{
-        setValuesForm()
+        if(Object.keys(infoConnection).length <= 0) return;
+        setValuesForm();
+        initFacebook();
     },[infoConnection])
 
     const setMessage = (type, msg) => message[type]({
@@ -60,10 +63,19 @@ const TabFacebook = ({
     const setMessageLoading = (msg = '') => setMessage('loading', msg); 
 
     const setValuesForm = () =>{
-        if(Object.keys(infoConnection).length <= 0) return;
         formFacebook.resetFields();
         let values = formatData(infoConnection);
         formFacebook.setFieldsValue(values);
+    }
+
+    const initFacebook = async () =>{
+        let app_id = infoConnection.data_config?.app_id;
+        if(!app_id) return;
+        FacebookLoginClient.init({
+            appId: infoConnection.data_config.app_id,
+            version: 'v15.0',
+            localStorage: false
+        });
     }
 
     const onSuccess = async (response) =>{
@@ -80,37 +92,41 @@ const TabFacebook = ({
             },1000)
         } catch (e) {
             console.log(e)
+            console.log('error get token', e.response)
             setMessageError(msgError);
         }
     }
     
     const onFail = (response) =>{
-        console.log('error', response)
+        let msgError = {
+            'facebookNotLoaded': 'No fue posible cargar la configuración de facebook, actualizar la página',
+            'loginCancelled': 'Inicio de sesión cancelado/fallido'
+        }
+        let txtMsg = msgError[response.status];
+        if(txtMsg) message.error(txtMsg);
     }
 
     const onProfileSuccess = (response) =>{
+        console.log('profile', response)
+    }
+
+    const onLogout = (response) =>{
+        console.log('logout', response)
     }
 
     const validateResp = (resp) =>{
-        let validation = resp.status == 'connected';
-        if(validation) onSuccess(resp.authResponse);
-        else onFail(resp);
+        console.log('response', resp)
+        if(!resp.authResponse) return onFail(resp);
+        onSuccess(resp.authResponse);
+        // const fields = 'name,email,picture';
+        // FacebookLoginClient.getProfile(onProfileSuccess, { fields });
     }
 
     const validateLogin = () =>{
-        if(!appId){
-            message.error('Ingrese el ID de la aplicaión');
-            return;
-        }
-        const scopes = {scope: 'public_profile, email'};
-        FacebookLoginClient.init({
-            appId: appId,
-            version: 'v14.0',
-            cookie: false,
-            xfbml: false,
-            localStorage: false
-        })
-        FacebookLoginClient.login(validateResp, scopes);
+        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
+        FacebookLoginClient.login(validateResp, {
+            scope: 'public_profile, email'
+        });
     }
 
     const onFinish = async (values) =>{
@@ -212,12 +228,24 @@ const TabFacebook = ({
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
                                 name='data_config|app_id'
-                                label='Identificador (ID)'
+                                label='Identificador (App ID)'
                                 rules={[ruleRequired, ruleWhiteSpace]}
                             >
                                 <Input
                                     maxLength={50}
                                     placeholder='ID de la aplicación'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12} lg={8}>
+                            <Form.Item
+                                name='data_config|page_id'
+                                label='Identificador (Page ID)'
+                                rules={[ruleRequired, ruleWhiteSpace]}
+                            >
+                                <Input
+                                    maxLength={50}
+                                    placeholder='ID de la página'
                                 />
                             </Form.Item>
                         </Col>

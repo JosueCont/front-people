@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
 import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
 import { getCandidates } from '../../../redux/jobBankDuck';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -16,8 +17,12 @@ const index = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode) getCandidates(currentNode.id);
-    },[currentNode])
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getCandidates(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
 
     return (
         <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={['job_bank']}>

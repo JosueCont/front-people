@@ -5,6 +5,8 @@ import ViewAcademics from './ViewsCatalogs/ViewAcademics';
 import ViewCompetences from './ViewsCatalogs/ViewCompetences';
 import ViewSectors from './ViewsCatalogs/ViewSectors';
 import ViewJobBoards from './ViewsCatalogs/ViewJobBoards';
+import ViewSpecializations from './ViewsCatalogs/ViewSpecializations';
+import ViewTemplates from './ViewsCatalogs/ViewTemplates';
 
 const GetViewCatalog = () =>{
 
@@ -17,6 +19,8 @@ const GetViewCatalog = () =>{
     if(catalog == 'competences') return <ViewCompetences/>;
     if(catalog == 'sectors') return <ViewSectors/>;
     if(catalog == 'jobboars') return <ViewJobBoards/>;
+    if(catalog == 'specialization') return <ViewSpecializations/>;
+    if(catalog == 'profiles') return <ViewTemplates/>;
 
     return <></>;
 }

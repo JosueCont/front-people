@@ -20,20 +20,10 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useProcessInfo } from './hook/useProcessInfo';
-import {
-    setLoadStrategies,
-    getInfoStrategy,
-    setInfoStrategy
-} from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
-    currentNode,
-    load_strategies,
-    info_strategy,
-    setLoadStrategies,
-    getInfoStrategy,
-    setInfoStrategy
+    currentNode
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -48,45 +38,62 @@ const DetailsStrategies = ({
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [disabledClient, setDisabledClient] = useState(false);
+    const [infoStrategy, setInfoStrategy] = useState({});
+    const [fetching, setFetching] = useState(false);
     const { createData, setValuesForm } = useProcessInfo({
-        info_strategy,
+        infoStrategy,
         formStrategies
     });
 
-    useLayoutEffect(()=>{
-        setInfoStrategy()
-    },[])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoStrategy(router.query.id);
+        }
+    },[router])
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
+        if(router.query.client && action == 'add'){
             formStrategies.resetFields()
-            keepCustomer()
+            keepClient()
         }else setDisabledClient(false);
     },[router])
 
     useEffect(()=>{
-        if(Object.keys(info_strategy).length > 0 && action == 'edit'){
+        if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
             formStrategies.resetFields();
             setValuesForm()
         }
-    },[info_strategy])
+    },[infoStrategy])
 
-    const keepCustomer = () =>{
+
+    const getInfoStrategy = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoStrategy(id);
+            setInfoStrategy(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
+
+    const keepClient = () =>{
         setDisabledClient(true)
         formStrategies.setFieldsValue({
-            customer: router.query.customer
+            customer: router.query.client
         })
     }
 
     const onFinishUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateStrategy(info_strategy.id, values);
+            await WebApiJobBank.updateStrategy(infoStrategy.id, values);
             message.success('Estrategia actualizada');
-            getInfoStrategy(info_strategy.id);
+            getInfoStrategy(infoStrategy.id);
         } catch (e) {
             console.log(e)
             message.error('Estrategia no actualizada');
-            setLoadStrategies(false);
+            setFetching(false);
         }
     }
 
@@ -97,14 +104,14 @@ const DetailsStrategies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
-            setLoadStrategies(false)
+            setFetching(false)
             setLoading({})
             message.error('Estrategia no registrada');
         }
     }
 
     const onFinish = (values) =>{
-        setLoadStrategies(true)
+        setFetching(true)
         const bodyData = createData(values);
         const actionFunction = {
             edit: onFinishUpdate,
@@ -113,28 +120,47 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
+    const getNewFilters = () =>{
+        let newFilters = {...router.query};
+        if(newFilters.id) delete newFilters.id;
+        if(newFilters.client) delete newFilters.client;
+        return newFilters;
+    }
+
     const actionBack = () =>{
-        if(router.query?.customer) router.push('/jobbank/clients');
-        else router.push('/jobbank/strategies');
+        let filters = getNewFilters();
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: filters
+        });
+        else router.push({
+            pathname: '/jobbank/strategies',
+            query: filters
+        });
     }
 
     const actionCreate = () =>{
         formStrategies.resetFields();
-        if (router.query?.customer) keepCustomer();
-        setLoadStrategies(false)
+        if (router.query?.client) keepClient();
+        setFetching(false)
         setLoading({})
+    }
+
+    const actionEdit = (id) =>{
+        let filters = getNewFilters();
+        router.replace({
+            pathname: '/jobbank/strategies/edit',
+            query: {...filters, id }
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/strategies/edit',
-                query: { id }
-            })
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -162,7 +188,7 @@ const DetailsStrategies = ({
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_strategies}>
+                    <Spin spinning={fetching}>
                         <Form
                             id='form-strategies'
                             form={formStrategies}
@@ -213,7 +239,7 @@ const DetailsStrategies = ({
                         <Button
                             form='form-strategies'
                             htmlType='submit'
-                            loading={load_strategies}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -226,16 +252,8 @@ const DetailsStrategies = ({
 
 const mapState = (state) =>{
     return{
-        load_strategies: state.jobBankStore.load_strategies,
-        info_strategy: state.jobBankStore.info_strategy,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadStrategies,
-        getInfoStrategy,
-        setInfoStrategy
-    }
-)(DetailsStrategies);
+export default connect(mapState)(DetailsStrategies);

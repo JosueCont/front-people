@@ -5,6 +5,7 @@ import MyModal from '../../../common/MyModal';
 import { optionsLevelAcademic, optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import moment from 'moment';
+import { optionsLangVacant } from '../../../utils/constant';
 
 const ModalEducation = ({
     title = '',
@@ -21,6 +22,7 @@ const ModalEducation = ({
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const status = Form.useWatch('status', formEducation);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -41,6 +43,10 @@ const ModalEducation = ({
             onCloseModal()
             actionForm(values)
         },2000)
+    }
+
+    const onChangeStatus = (value) =>{
+        if(value == 1) formEducation.setFieldsValue({end_date: null});
     }
 
     return (
@@ -64,6 +70,7 @@ const ModalEducation = ({
                             rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
                                 placeholder='Seleccionar una opción'
                                 options={optionsLevelAcademic}
                             />
@@ -76,8 +83,10 @@ const ModalEducation = ({
                             rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
                                 placeholder='Seleccionar una opción'
                                 options={optionsStatusAcademic}
+                                onChange={onChangeStatus}
                             />
                         </Form.Item>
                     </Col>
@@ -85,9 +94,12 @@ const ModalEducation = ({
                         <Form.Item
                             name='end_date'
                             label='Fecha de finalización'
+                            dependencies={['status']}
+                            rules={[status == 3 ? ruleRequired : {validator: (_, value) => Promise.resolve()}]}
                         >
                             <DatePicker
                                 style={{width: '100%'}}
+                                disabled={![2,3].includes(status)}
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 inputReadOnly
@@ -107,12 +119,16 @@ const ModalEducation = ({
                         <Form.Item
                             name='specialitation_area'
                             label='Área de especialización'
+                            rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
+                                showSearch
                                 placeholder='Área de especialización'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={load_specialization_area}
                                 loading={load_specialization_area}
+                                optionFilterProp='children'
                             >
                                 {list_specialization_area?.length > 0 && list_specialization_area.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -135,9 +151,17 @@ const ModalEducation = ({
                         <Form.Item
                             name='languajes'
                             label='Idiomas'
-                            rules={[ruleWhiteSpace]}
+                            rules={[ruleRequired, ruleWhiteSpace]}
                         >
                             <Input maxLength={150} placeholder='Idiomas'/>
+                            {/* <Select
+                                mode='multiple'
+                                maxTagCount={1}
+                                placeholder='Seleccionar los idiomas'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='label'
+                                options={optionsLangVacant}
+                            /> */}
                         </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>

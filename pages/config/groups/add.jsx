@@ -47,6 +47,7 @@ const GroupAdd = ({ ...props }) => {
   const [permsFunction, setPermsFunction] = useState([]);
   const [allCatalogs, setAllCatalogs] = useState([])
   const [arrayFunctions, setarrayFunctios] = useState([]);
+  const [newFunctions, setNewFunctions ] = useState([])
   const [instruction, setInstruction] = useState(true);
   const [intranet_access, setintanetAccess] = useState(null);
 
@@ -247,15 +248,26 @@ const GroupAdd = ({ ...props }) => {
 
   const onFinish = (values) => {
     data = values;
-    data.perms = allPerms.length > 0 ? allPerms : perms;
-    let lst = [];
-    if (getperms === true) {
-      lst = allPerms.length > 0 ? allPerms.concat(allCatalogs? allCatalogs : arrayFunctions) : perms.concat(allCatalogs? allCatalogs : arrayFunctions);
-    } else {
-      lst = allPerms.length > 0 ? allPerms.concat(permsFunction) : perms.concat(permsFunction);
-    }
+    let permsList = []
+    let onlyPerms = allPerms.length > 0 ? allPerms : perms
+    let onlycatalogs = allCatalogs.length > 0? allCatalogs : arrayFunctions
+    let functions = newFunctions.length > 0? newFunctions : permsFunction
+    // if(getperms){
+    //   permsList = onlyPerms.concat(onlycatalogs).concat(functions)
+    // } else {
+    //   permsList = onlyPerms.concat(functions)
+    // }
+    permsList = onlyPerms.concat(onlycatalogs).concat(functions)
+    // console.log('Values', permsFunction)
+    // data.perms = allPerms.length > 0 ? allPerms : perms;
+    // let lst = [];
+    // if (getperms === true) {
+    //   lst = allPerms.length > 0 ? allPerms.concat(allCatalogs? allCatalogs : arrayFunctions) : perms.concat(allCatalogs? allCatalogs : arrayFunctions);
+    // } else {
+    //   lst = allPerms.length > 0 ? allPerms.concat(newFunctions.length> 0 ? newFunctions :  permsFunction) : perms.concat(newFunctions.length> 0 ? newFunctions :permsFunction);
+    // }
 
-    data.perms = lst;
+    data.perms = permsList;
 
     if (!edit) {
       saveGroup();
@@ -272,9 +284,10 @@ const GroupAdd = ({ ...props }) => {
     if (response) {
       props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageSaveSuccess);
-      setTimeout(() => {
-        router.push({ pathname: "/config/groups" });
-      }, 600);
+      // setTimeout(() => {
+      //   router.push({ pathname: "/config/groups" });
+      // }, 600);
+      setLoading(false);
     } else {
       setLoading(false);
       message.error(messageError);
@@ -288,9 +301,10 @@ const GroupAdd = ({ ...props }) => {
     if (response) {
       props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageUpdateSuccess);
-      setTimeout(() => {
-        router.push({ pathname: "/config/groups" });
-      }, 1000);
+      // setTimeout(() => {
+      //   router.push({ pathname: "/config/groups" });
+      // }, 1000);
+      setLoading(false);
     } else {
       setLoading(false);
       message.error(messageError);
@@ -463,8 +477,6 @@ const GroupAdd = ({ ...props }) => {
       (perm) => perm.module === "Catalogos"
     )
 
-    
-
     AllPerms.forEach((perm, i) => {
       permsValue.push(perm.value + ".can.view")
       permsValue.push(perm.value + ".can.create")
@@ -519,9 +531,6 @@ const GroupAdd = ({ ...props }) => {
           }
         });
       }
-
-      
-
       
     }
 
@@ -541,6 +550,54 @@ const GroupAdd = ({ ...props }) => {
     }
   };
 
+  const checkAllfunctions = async (check) => {
+
+    let functionsValue = []
+
+    let allFunctions = view_functions.filter(
+      (perm) =>
+        perm.module === "Personas" ||
+        perm.module === "Empresas" ||
+        perm.module === "Prestamos" ||
+        perm.module === "Vacaciones" ||
+        perm.module === "Nómina" ||
+        perm.module === "SolicitudCuentas" ||
+        perm.module === "Reportes" ||
+        perm.module === "Incapacidad" ||
+        perm.module === "Permisos" ||
+        perm.module === "Dashboard"
+    )
+
+    allFunctions.forEach((element) => {
+      functionsValue.push(element.value)
+    })
+
+    if(check == false){
+      setarrayFunctios([])
+      setPermsFunction([])
+      setNewFunctions([])
+    } else {
+      setNewFunctions(functionsValue)
+    }
+
+    if (functionsValue.length > 0) {
+      functionsValue.forEach((element) => {
+        var chkBox = document.getElementById(element);
+        if (chkBox != "undefined" && chkBox !== null) {
+          if (chkBox.checked == false) {
+            chkBox.click();
+          }
+          if(!check){
+            chkBox.click();
+          }
+        }
+      });
+    }
+
+  }
+
+  // console.log('Allfunctions', newFunctions)
+
   const handleChangeTab = (activeKey) => {
     if (activeKey === "2") {
       setInstruction(false);
@@ -559,6 +616,20 @@ const GroupAdd = ({ ...props }) => {
       setInstruction(true);
     }
   };
+
+  const getNewFilters = () =>{
+    let newFilters = {...router.query};
+    delete newFilters.id && delete newFilters.type;
+    return newFilters;
+  }
+
+  const actionBack = () =>{
+    let filters = getNewFilters();
+    router.push({
+        pathname: '/config/groups',
+        query: filters
+    })
+  }
 
   const columns_mod = [
     {
@@ -728,7 +799,7 @@ const GroupAdd = ({ ...props }) => {
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/config/groups" })}
+          onClick={()=> actionBack()}
         >
           Perfiles de seguridad
         </Breadcrumb.Item>
@@ -797,16 +868,14 @@ const GroupAdd = ({ ...props }) => {
                           <Form.Item>
                             <Button
                               style={{ marginRight: "5px" }}
-                              onClick={() =>
-                                router.push({
-                                  pathname: "/config/groups",
-                                })
-                              }
+                              onClick={()=> actionBack()}
                             >
                               Regresar
                             </Button>
                             <Button type="primary" htmlType="submit">
-                              Guardar
+                              {
+                                !edit ? "Guardar" : "Actualizar"
+                              }
                             </Button>
                           </Form.Item>
                         </div>
@@ -840,14 +909,6 @@ const GroupAdd = ({ ...props }) => {
                               Seleccionar todos los permisos
                             </Checkbox>
                           </Col>
-                          {/* <Col span={6}>
-                            <Checkbox
-                              name="allFunctions"
-                              onClick={ () => checkAllfunctions()}
-                            >
-                              Seleccionar todas las funciones
-                            </Checkbox>
-                          </Col> */}
                         </Row>
                         <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
@@ -892,6 +953,16 @@ const GroupAdd = ({ ...props }) => {
                       key="2"
                     >
                       <Col span={24}>
+                      <Row gutter={10} style={{ marginTop: 10 }}> 
+                          <Col span={6}>
+                            <Checkbox
+                              name="allfunctions"
+                              onClick={ (e) => checkAllfunctions(e.target.checked)}
+                            >
+                              Seleccionar todas las funciones
+                            </Checkbox>
+                          </Col>
+                        </Row>
                         <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table

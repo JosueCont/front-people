@@ -59,6 +59,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           if (response.data.mlast_name)
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
+          console.log('person', response.data)
           setPerson(response.data);
         })
         .catch((error) => {
@@ -76,7 +77,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Avatar
                 key="avatar_key"
                 icon={<UserOutlined />}
-                src={person.photo}
+                src={person.photo_thumbnail}
                 style={{ margin: "auto" }}
               />
             </Col>
@@ -237,7 +238,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                         <Avatar
                           key="avatar_key"
                           icon={<UserOutlined />}
-                          src={person.photo}
+                          src={person.photo_thumbnail}
                         />
                       </div>
                     </Dropdown>

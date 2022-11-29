@@ -164,17 +164,30 @@ const SelectCompany = ({ ...props }) => {
       .then((response) => {
         props.doCompanySelectedCatalog();
         if (router.query.company) {
-          // setIsLoadCompany(false);
-          switch (router.query.app) {
-            case "ynl":
-              useRouter.push("ynl/general-dashboard");
-              break;
-            case "khorconnect":
-              useRouter.push("intranet/publications_statistics");
-              break;
-            default:
-              useRouter.push("home/persons");
-              break;
+          if (router.query.type) {
+            setIsLoadCompany(false);
+
+            switch (router.query.type) {
+              case "admin":
+                useRouter.push("home/persons");
+                break;
+              case "user":
+                useRouter.push("/business");
+                break;
+            }
+          } else {
+            setIsLoadCompany(false);
+            switch (router.query.app) {
+              case "ynl":
+                useRouter.push("ynl/general-dashboard");
+                break;
+              case "khorconnect":
+                useRouter.push("intranet/publications_statistics");
+                break;
+              default:
+                useRouter.push("home/persons");
+                break;
+            }
           }
         } else {
           useRouter.push("home/persons");

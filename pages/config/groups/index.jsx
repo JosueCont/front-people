@@ -28,6 +28,7 @@ import { deleteGroups } from "../../../api/apiKhonnect";
 import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 import { getProfileGroups } from "../../../redux/catalogCompany";
 import {FormattedMessage} from "react-intl";
+import { getFiltersJB } from "../../../utils/functions";
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
@@ -37,6 +38,18 @@ const Groups = ({ ...props }) => {
   useEffect(() => {
     if (props.cat_groups && props.config) setGroups(props.cat_groups);
   }, [props.cat_groups, props.config]);
+
+  useEffect(()=>{
+    form.setFieldsValue(router.query);
+},[router])
+
+useEffect(()=>{
+  if(props.currentNode){
+      let page = router.query.page ? parseInt(router.query.page) : 1;
+      let filters = getFiltersJB(router.query);
+      props.getProfileGroups(props.currentNode.id, props.config, filters);
+  }
+},[props.currentNode, router])
 
   const deleteGroup = async (id) => {
     let data = { id: id };
@@ -51,7 +64,8 @@ const Groups = ({ ...props }) => {
       });
     else if (response) message.success(messageDeleteSuccess);
     else if (!response) message.error(messageError);
-    props.getProfileGroups(props.currentNode.id);
+    let filters = getFiltersJB(router.query);
+    props.getProfileGroups(props.currentNode.id, props.config, filters);
   };
 
   const confirmDelete = (id) => {
@@ -76,6 +90,10 @@ const Groups = ({ ...props }) => {
     if (value.name != "" && value.name != undefined) {
       filt = "&name=" + value.name;
     }
+    router.replace({
+      pathname: '/config/groups/',
+      query: value
+    }, undefined, {shallow: true});
     props.getProfileGroups(props.currentNode.id, props.config, filt);
   };
 
@@ -104,7 +122,7 @@ const Groups = ({ ...props }) => {
                     onClick={() =>
                       router.push({
                         pathname: "/config/groups/add",
-                        query: { type: "edit", id: record.id },
+                        query: {...router.query, type: "edit", id: record.id },
                       })
                     }
                   >
@@ -126,6 +144,7 @@ const Groups = ({ ...props }) => {
 
   const resetFilter = () => {
     form.resetFields();
+    router.replace('/config/groups', undefined, {shallow: true});
     props.getProfileGroups(props.currentNode.id, props.config);
   };
   return (

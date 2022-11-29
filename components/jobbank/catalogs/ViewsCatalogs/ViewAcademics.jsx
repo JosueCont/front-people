@@ -72,9 +72,9 @@ const ViewAcademics = () => {
             <Col span={24}>
                 <SearchCatalogs
                     setLoading={setLoading}
-                    setOpenModal={setOpenModal}
                     listComplete={list_academics}
                     setItemsFilter={setMainData}
+                    setOpenModal={setOpenModal}
                 />
             </Col>
             <Col span={24}>
