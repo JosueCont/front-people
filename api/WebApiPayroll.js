@@ -198,8 +198,8 @@ class WebApiPayroll {
     return WebApi.ApisType('/payroll/payroll-person/salary_modification/', "post", data)
   }
 
-  static getMovementsIMSSLog(node){
-    return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}`,'get')
+  static getMovementsIMSSLog(node, reg_patronal=''){
+    return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}`,'get')
   }
 
   static getPersonalCredits(imssId){

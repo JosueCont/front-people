@@ -113,7 +113,7 @@ const ImssMovements = ({ ...props }) => {
               <Panel header="SUA Movimientos" key="1">
                 <MovementsSection/>
 
-                <Collapse
+                {/*<Collapse
                   expandIcon={({ isActive }) => (
                     <CaretRightOutlined rotate={isActive ? 90 : 0} />
                   )}
@@ -139,7 +139,7 @@ const ImssMovements = ({ ...props }) => {
                       minima molestias!
                     </p>
                   </Panel>
-                </Collapse>
+                </Collapse>*/}
               </Panel>
               <Panel header="EMA y EBA" key="2">
                 <Row justify={'space-between'} style={{ marginTop: '20px' }}>

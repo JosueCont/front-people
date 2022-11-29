@@ -19,20 +19,17 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
     const node = useSelector(state => state.userStore.current_node);
     const [altaRowSelected, setAltaRowSelected] = useState([]) // registros seleccionados de movimientos de Alta
     const [updateRowSelected, setUpdateRowSelected] = useState([]) // registros seleccionados de movimientos de Altaç
-    const patronal_registration = Form.useWatch('patronal_registration', form);
 
     useEffect(()=>{
+        // if(node?.id){
+        //     getMovementsIMSS(node)
+        // }
         if(node?.id){
-            getMovementsIMSS(node)
+            getMovementsIMSS(node, regPatronal)
         }
 
-    },[node?.id])
+    },[node?.id, regPatronal])
 
-
-    useEffect(()=>{
-        if(regPatronal)
-        console.log(regPatronal)
-    },[regPatronal])
 
     const tabs = [
         {
