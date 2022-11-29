@@ -50,7 +50,7 @@ import {
 } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useLayoutEffect } from "react";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
@@ -110,19 +110,19 @@ const homeScreen = ({ ...props }) => {
     }, 5000);
   }, [props.permissions]);
 
-  useEffect(() => {
-    if (props.currentNode) {
-      filterPersonName();
-    } else {
-      return <></>;
-    }
-  }, [props.currentNode]);
+  // useEffect(() => {
+  //   if (props.currentNode) {
+  //     filterPersonName();
+  //   } else {
+  //     return <></>;
+  //   }
+  // }, [props.currentNode]);
 
-  useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    setUserSession(jwt);
-    if (props.currentNode) filterPersonName();
-  }, [props.currentNode]);
+  // useEffect(() => {
+  //   const jwt = JSON.parse(jsCookie.get("token"));
+  //   setUserSession(jwt);
+  //   if (props.currentNode) filterPersonName();
+  // }, [props.currentNode]);
 
   const filterPersonName = async () => {
     filters.node = props.currentNode.id;
@@ -361,11 +361,12 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             {permissions.edit || props.delete ? (
-              <Link href={`/home/persons/${item.id}`}>
-                <a>
-                  <div>{personName}</div>
-                </a>
-              </Link>
+              <div
+                onClick={()=> route.push({
+                  pathname: `/home/persons/${item.id}`,
+                  query: route.query
+                })}
+              > <a>{personName}</a></div>
             ) : (
               <div>{personName}</div>
             )}
@@ -535,8 +536,14 @@ const homeScreen = ({ ...props }) => {
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
             )} */}
-            <Menu.Item key="5" icon={<EyeOutlined />}>
-              <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
+            <Menu.Item 
+              key="5" 
+              icon={<EyeOutlined />} 
+              onClick={()=> route.push({
+                pathname: `/assessment/persons/${item.id}`,
+                query: route.query
+              })}>
+              Ver asignaciones
             </Menu.Item>
             {permissions.create && (
               <Menu.Item
@@ -550,8 +557,15 @@ const homeScreen = ({ ...props }) => {
           </>
         )}
         {permissions.edit && (
-          <Menu.Item key="2" icon={<EditOutlined />}>
-            <Link href={`/home/persons/${item.id}`}>Editar</Link>
+          <Menu.Item
+            key="2"
+            icon={<EditOutlined />}
+            onClick={()=> route.push({
+              pathname: `/home/persons/${item.id}`,
+              query: route.query
+            })}
+          >
+            Editar
           </Menu.Item>
         )}
         {permissions.delete && (
@@ -703,10 +717,15 @@ const homeScreen = ({ ...props }) => {
       filters.periodicity = value.periodicity;
     }
     filterPersonName(urlFilter);
+    route.replace({
+      pathname: '/home/persons/',
+      query: value
+    }, undefined, {shallow: true});
   };
 
   const resetFilter = () => {
     formFilter.resetFields();
+    route.replace('/home/persons', undefined, {shallow: true});
     // filter();
     filterPersonName();
   };
@@ -892,6 +911,59 @@ const homeScreen = ({ ...props }) => {
       setModalDelete(false);
     }
   }, [modalDelete]);
+
+  useEffect(() => {
+    if(Object.keys(route.query).length === 0){
+      if(props.currentNode){
+        const jwt = JSON.parse(jsCookie.get("token"));
+        setUserSession(jwt);
+        filterPersonName()
+      }
+    }else{
+      if(props.currentNode){
+        let page = route.query.page ? parseInt(route.query.page) : 1;
+        if (route && route.query.name != "") {
+          urlFilter = urlFilter + "first_name__icontains=" + route.query.name + "&";
+          filters.first_name = route.query.name;
+        }
+        if (route && route.query.flast_name != "") {
+          urlFilter = urlFilter + "flast_name=" + route.query.flast_name + "&";
+          filters.flast_name = route.query.flast_name;
+        }
+        if (route && route.query.code != "") {
+          urlFilter = urlFilter + "code=" + route.query.code + "&";
+          filters.code = route.query.code;
+        }
+        if (route && route.query.gender != "" && route.query.gender != 0) {
+          urlFilter = urlFilter + "gender=" + route.query.gender + "&";
+          filters.gender = route.query.gender;
+        }
+    
+        if (route && route.query.is_active != "" && route.query.is_active != -1) {
+          urlFilter = urlFilter + "is_active=" + route.query.is_active + "&";
+          filters.is_active = route.query.is_active;
+        }
+        if (route && route.query.department !="") {
+          urlFilter = urlFilter + "person_department__id=" + route.query.department + "&";
+          filters.department = route.query.department;
+        }
+        if (route && route.query.job && route.query.job != "") {
+          urlFilter = urlFilter + "job__id=" + route.query.job + "&";
+          filters.job = route.query.job;
+        }
+        if (route && route.query.periodicity !== undefined) {
+          urlFilter = urlFilter + "periodicity=" + route.query.periodicity + "&";
+          filters.periodicity = route.query.periodicity;
+        }
+        filterPersonName(urlFilter)
+        formFilter.setFieldsValue({
+          ...route.query,
+          gender: route.query.gender == 1 ? "Masculino" : route.query.gender == 2 ? "Femenino" : route.query.gender ==3 ? "Otro" : "",
+          is_active: route.query.is_active == "true" ? "Activos" : route.query.is_active == "false" ? "Inactivos" : route.query.is_active === "-1" ? "Todos" : ""
+        });
+      }
+    }
+  }, [route, props.currentNode]);
 
   const deletePerson = () => {
     let ids = null;
