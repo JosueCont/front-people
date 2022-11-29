@@ -21,6 +21,7 @@ const ModalEducation = ({
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const status = Form.useWatch('status', formEducation);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -41,6 +42,10 @@ const ModalEducation = ({
             onCloseModal()
             actionForm(values)
         },2000)
+    }
+
+    const onChangeStatus = (value) =>{
+        if(value == 1) formEducation.setFieldsValue({end_date: null});
     }
 
     return (
@@ -64,6 +69,7 @@ const ModalEducation = ({
                             rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
                                 placeholder='Seleccionar una opción'
                                 options={optionsLevelAcademic}
                             />
@@ -76,8 +82,10 @@ const ModalEducation = ({
                             rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
                                 placeholder='Seleccionar una opción'
                                 options={optionsStatusAcademic}
+                                onChange={onChangeStatus}
                             />
                         </Form.Item>
                     </Col>
@@ -85,9 +93,12 @@ const ModalEducation = ({
                         <Form.Item
                             name='end_date'
                             label='Fecha de finalización'
+                            dependencies={['status']}
+                            rules={[status == 3 ? ruleRequired : {validator: (_, value) => Promise.resolve()}]}
                         >
                             <DatePicker
                                 style={{width: '100%'}}
+                                disabled={![2,3].includes(status)}
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 inputReadOnly
@@ -110,10 +121,13 @@ const ModalEducation = ({
                             rules={[ruleRequired]}
                         >
                             <Select
+                                allowClear
+                                showSearch
                                 placeholder='Área de especialización'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={load_specialization_area}
                                 loading={load_specialization_area}
+                                optionFilterProp='children'
                             >
                                 {list_specialization_area?.length > 0 && list_specialization_area.map(item => (
                                     <Select.Option value={item.id} key={item.id}>

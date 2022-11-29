@@ -161,6 +161,16 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             key: 'company'
         },
         {
+            title: 'Fecha inicio',
+            dataIndex: 'start_date',
+            key: 'start_date'
+        },
+        {
+            title: 'Fecha finalización',
+            dataIndex: 'end_date',
+            key: 'end_date'
+        },
+        {
             title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
