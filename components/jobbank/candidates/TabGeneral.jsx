@@ -99,6 +99,7 @@ const TabGeneral = ({
         } catch (e) {
             console.log(e);
             setFetching(false);
+            setLoading({})
             message.error('Candidato no registrado')
         }
     }
@@ -139,7 +140,8 @@ const TabGeneral = ({
         formCandidate.resetFields();
         setFetching(false);
         setLoading({});
-        setFileImg([]);
+        setFileCV([]);
+        setNameCV('')
     }
 
     const actionEdit = (id) =>{

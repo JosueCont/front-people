@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import MyModal from '../../../common/MyModal';
 import { ruleRequired, onlyNumeric } from '../../../utils/rules';
+import { validateNum } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
 
 const ModalExperience = ({
@@ -123,7 +124,12 @@ const ModalExperience = ({
                             label='Años de experiencia'
                             rules={[onlyNumeric]}
                         >
-                            <Input placeholder='Años de experiencia'/>
+                            <Input
+                                placeholder='Años de experiencia'
+                                maxLength={10}
+                                onKeyPress={e => e.which == 32 && e.preventDefault()}
+                                onKeyDown={validateNum}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>

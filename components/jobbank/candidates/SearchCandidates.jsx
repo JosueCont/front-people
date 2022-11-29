@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { ruleWhiteSpace } from '../../../utils/rules';
+import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
 import { createFiltersJB } from '../../../utils/functions';
 
 const SearchCandidates = ({
@@ -34,39 +34,76 @@ const SearchCandidates = ({
     }
 
     return (
-        <Row gutter={[24,24]}>
-            <Col xs={18} xxl={14}>
-                <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
-                    <Row style={{width: '100%'}}>
-                        <Col span={20}>
-                            <Form.Item
-                                name='name__unaccent__icontains'
-                                rules={[ruleWhiteSpace]}
-                                style={{marginBottom: 0}}
-                            >
-                                <Input placeholder='Buscar por nombre'/>
-                            </Form.Item>
-                        </Col>
-                        <Col span={4} style={{display: 'flex', gap: '8px'}}>
-                            <Button htmlType='submit'>
-                                <SearchOutlined />
-                            </Button>
-                            <Button onClick={()=> deleteFilter()}>
-                                <SyncOutlined />
-                            </Button>
-                        </Col>
-                    </Row>
-                </Form>
-            </Col>
-            <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push({
-                    pathname: '/jobbank/candidates/add',
-                    query: router.query
-                })}>
-                    Agregar
-                </Button>
-            </Col>
-        </Row>
+        <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
+            <Row gutter={[0,8]} style={{width: '100%'}}>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='fisrt_name__icontains'
+                        rules={[ruleWhiteSpace]}
+                        style={{marginBottom: 0}}
+                    >
+                        <Input placeholder='Buscar por nombre'/>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='last_name__icontains'
+                        rules={[ruleWhiteSpace]}
+                        style={{marginBottom: 0}}
+                    >
+                        <Input placeholder='Buscar por apellidos'/>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='email__icontains'
+                        rules={[ruleWhiteSpace]}
+                        style={{marginBottom: 0}}
+                    >
+                        <Input placeholder='Buscar por correo'/>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='cell_phone'
+                        rules={[onlyNumeric]}
+                        style={{marginBottom: 0}}
+                    >
+                        <Input placeholder='Buscar por teléfono'/>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='is_active'
+                        style={{marginBottom: 0}}
+                    >
+                       <Select
+                            allowClear
+                            placeholder='Estatus'
+                        >
+                            <Select.Option value='true' key='true'>Activo</Select.Option>
+                            <Select.Option value='false' key='false'>Inactivo</Select.Option>
+                        </Select>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} sm={23} md={23} xl={4} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
+                    <div style={{display: 'flex', gap: 8}}>
+                        <Button htmlType='submit'>
+                            <SearchOutlined />
+                        </Button>
+                        <Button onClick={()=> deleteFilter()}>
+                            <SyncOutlined />
+                        </Button>
+                    </div>
+                    <Button onClick={()=> router.push({
+                        pathname: '/jobbank/candidates/add',
+                        query: router.query
+                    })}>
+                        Agregar
+                    </Button>
+                </Col>
+            </Row>
+        </Form>
     )
 }
 
