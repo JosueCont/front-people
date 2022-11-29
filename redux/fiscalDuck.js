@@ -147,11 +147,15 @@ export const doFiscalCatalogs =
 export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getBanks()
     .then((response) => {
+      // dispatch({
+      //   type: BANKS,
+      //   payload: response.data.results.filter(
+      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //   ),
+      // });
       dispatch({
         type: BANKS,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
     .catch((error) => {
@@ -181,9 +185,10 @@ export const getFiscalTaxRegime = (use_cfdi) => async (dispatch, getState) => {
 export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getPerseptions()
     .then((response) => {
-      let underorderPerseptions = response.data.results.filter(
-        (item) => Number(item.version_cfdi.version) <= use_cfdi
-      );
+      // let underorderPerseptions = response.data.results.filter(
+      //   (item) => Number(item.version_cfdi.version) <= use_cfdi
+      // );
+      let underorderPerseptions = response.data.results;
 
       let orderedPerseptions = underorderPerseptions.sort((a, b) => {
         if (a.description < b.description) return -1;
@@ -204,9 +209,11 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
 export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getDeductions()
     .then((response) => {
-      let unorderDeductions = response.data.results.filter(
-        (item) => Number(item.version_cfdi.version) <= use_cfdi
-      );
+      // let unorderDeductions = response.data.results.filter(
+      //   (item) => Number(item.version_cfdi.version) <= use_cfdi
+      // );
+
+      let unorderDeductions = response.data.results;
 
       let orderDeductions = unorderDeductions.sort((a, b) => {
         if (a.description < b.description) return -1;
@@ -226,9 +233,10 @@ export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
 export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getOtherPayments()
     .then((response) => {
-      let unorderOtherPayments = response.data.results.filter(
-        (item) => Number(item.version_cfdi.version) <= use_cfdi
-      );
+      // let unorderOtherPayments = response.data.results.filter(
+      //   (item) => Number(item.version_cfdi.version) <= use_cfdi
+      // );
+      let unorderOtherPayments = response.data.results;
 
       let orderOtherPayments = unorderOtherPayments.sort((a, b) => {
         if (a.description < b.description) return -1;
@@ -327,11 +335,15 @@ export const getPaymentPeriodicity =
 export const getContractType = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getContractTypes()
     .then((response) => {
+      // dispatch({
+      //   type: CONTRACT_TYPE,
+      //   payload: response.data.results.filter(
+      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //   ),
+      // });
       dispatch({
         type: CONTRACT_TYPE,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
     .catch((error) => {
@@ -342,11 +354,15 @@ export const getContractType = (use_cfdi) => async (dispatch, getState) => {
 export const getJourneyType = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getTypeworkingday()
     .then((response) => {
+      // dispatch({
+      //   type: JOURNEY_TYPE,
+      //   payload: response.data.results.filter(
+      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //   ),
+      // });
       dispatch({
         type: JOURNEY_TYPE,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
     .catch((error) => {

@@ -189,8 +189,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const renderConceptsTable = (data) => {
     console.log(data);
-    let dataPerceptions = [data.perception];
-    let dataDeductions = [data.deduction];
+    let dataPerceptions = data.perception;
+    let dataDeductions = data.deduction;
 
     const columnsPerceptions = [
       {
