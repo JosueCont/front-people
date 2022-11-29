@@ -337,15 +337,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       form_data.append("save", "True");
       form_data.append("payroll", JSON.stringify(xmlImport));
       console.log("IMPORT SEND-->>", xmlImport);
-      // WebApiPayroll.importPayrollMasiveXml(form_data)
-      //   .then((response) => {
-      //     processResponseSave(response);
-      //   })
-      //   .catch((error) => {
-      //     message.error(messageError);
-      //     console.log(error);
-      //     setLoading(false);
-      //   });
+      WebApiPayroll.importPayrollMasiveXml(form_data)
+        .then((response) => {
+          processResponseSave(response);
+        })
+        .catch((error) => {
+          message.error(messageError);
+          console.log(error);
+          setLoading(false);
+        });
     }
   };
 
@@ -586,7 +586,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 setPerson={setPerson}
               />
 
-              {/* <Col span={24}>
+              <Col span={24}>
                 <Card className="card_table">
                   <Table
                     size="small"
@@ -602,7 +602,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                     className={"mainTable headers_transparent"}
                   />
                 </Card>
-              </Col> */}
+              </Col>
             </>
           ) : (
             <>

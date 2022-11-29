@@ -28,43 +28,43 @@ const CalendarImport = ({
     ) {
       setValidDatas(true);
       setCalendarSelect(0);
-      // if (company && company.patronal_registrations) {
-      //   company.patronal_registrations[patronalSelect].periodicities.map(
-      //     (p) => {
-      //       if (!p.calendar)
-      //         p.calendar = {
-      //           periodicity: p.periodicity,
-      //           name: "",
-      //           type_tax: "",
-      //           perception_type: "",
-      //           start_date: "",
-      //           period: 2022,
-      //           active: false,
-      //           annual_adjustment: false,
-      //           monthly_adjustment: false,
-      //         };
-      //     }
-      //   );
-      //   setPeriodicities(
-      //     company.patronal_registrations[patronalSelect].periodicities
-      //   );
-      // } else if (company && company.periodicities) {
-      //   company.periodicities.map((p, i) => {
-      //     if (!p.calendar)
-      //       p.calendar = {
-      //         periodicity: p.periodicity,
-      //         name: "",
-      //         type_tax: "",
-      //         perception_type: "",
-      //         start_date: "",
-      //         period: 2022,
-      //         active: true,
-      //         annual_adjustment: false,
-      //         monthly_adjustment: false,
-      //       };
-      //   });
-      // setPeriodicities(company.periodicities);
-      // }
+      if (company && company.patronal_registrations) {
+        company.patronal_registrations[patronalSelect].periodicities.map(
+          (p) => {
+            if (!p.calendar)
+              p.calendar = {
+                periodicity: p.periodicity,
+                name: "",
+                type_tax: "",
+                perception_type: "",
+                start_date: "",
+                period: 2022,
+                active: false,
+                annual_adjustment: false,
+                monthly_adjustment: false,
+              };
+          }
+        );
+        setPeriodicities(
+          company.patronal_registrations[patronalSelect].periodicities
+        );
+      } else if (company && company.periodicities) {
+        company.periodicities.map((p, i) => {
+          if (!p.calendar)
+            p.calendar = {
+              periodicity: p.periodicity,
+              name: "",
+              type_tax: "",
+              perception_type: "",
+              start_date: "",
+              period: 2022,
+              active: true,
+              annual_adjustment: false,
+              monthly_adjustment: false,
+            };
+        });
+        setPeriodicities(company.periodicities);
+      }
     }
   }, [company, patronalSelect, paymentPeriodicity]);
 
@@ -134,10 +134,10 @@ const CalendarImport = ({
               </Row>
               <Row justify="space-between">
                 <Row style={{ width: "100%" }}>
-                  {/* <FormCaledanrXml
+                  <FormCaledanrXml
                     calendar={periodicities[calendarSelect]}
                     paymentPeriodicity={paymentPeriodicity}
-                  /> */}
+                  />
                 </Row>
               </Row>
             </>
