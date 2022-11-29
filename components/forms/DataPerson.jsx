@@ -61,7 +61,6 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
 
-console.log(person)
   useEffect(() => {
     setPersonWT(person.id);
     setFormPerson(person);

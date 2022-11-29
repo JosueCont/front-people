@@ -45,22 +45,21 @@ const FormPerson = ({
   const [payrrollActive, setPayrrollActive] = useState(true);
   
   const onFinish = (value) => {
-    // if (date !== "") {
-    //   value.birth_date = date;
-    // }
-    // if (value.node) delete value["node"];
-    // if (value.department) delete value["department"];
-    // if (value.password != value.passwordTwo)
-    //   message.error("Las contraseñas no coinciden.");
-    // else {
-    //   delete value["passwordTwo"];
-    //   if (value.groups) value.groups = [value.groups];
-    //   else delete value["groups"];
-    //   if (currentNode) value.node = currentNode.id;
-    //   else value.node = node;
-    //   createPerson(value);
-    console.log(value)
-    // }
+    if (date !== "") {
+      value.birth_date = date;
+    }
+    if (value.node) delete value["node"];
+    if (value.department) delete value["department"];
+    if (value.password != value.passwordTwo)
+      message.error("Las contraseñas no coinciden.");
+    else {
+      delete value["passwordTwo"];
+      if (value.groups) value.groups = [value.groups];
+      else delete value["groups"];
+      if (currentNode) value.node = currentNode.id;
+      else value.node = node;
+      createPerson(value);
+    }
   };
 
   const createPerson = async (value) => {
@@ -91,9 +90,6 @@ const FormPerson = ({
     setDate(dateString);
   }
 
-  const sukhaData = () => {
-    console.log(config)
-}
   const closeDialog = () => {
     close(false);
     form.resetFields();

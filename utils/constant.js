@@ -314,7 +314,7 @@ export const intranetAccess = [
 
 export const SukhaAccess = [
   {
-    label: "Si",
+    label: "Sí",
     value: true,
   },
   {
