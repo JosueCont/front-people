@@ -86,7 +86,9 @@ const TabGeneral = ({
             setFetching(false)
         } catch (e) {
             console.log(e)
-            message.error('Candidato no actualizado');
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no actualizado');
             setFetching(false)
         }
     }
@@ -99,7 +101,10 @@ const TabGeneral = ({
         } catch (e) {
             console.log(e);
             setFetching(false);
-            message.error('Candidato no registrado')
+            setLoading({})
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no registrado');
         }
     }
 
@@ -139,7 +144,8 @@ const TabGeneral = ({
         formCandidate.resetFields();
         setFetching(false);
         setLoading({});
-        setFileImg([]);
+        setFileCV([]);
+        setNameCV('')
     }
 
     const actionEdit = (id) =>{

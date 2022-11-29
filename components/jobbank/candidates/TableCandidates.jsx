@@ -47,6 +47,19 @@ const TableCandidates = ({
         }
     }
 
+    const actionStatus = async (checked, item) =>{
+        try {
+            await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
+            getCandidatesWithFilters();
+            if(checked) message.success('Candidato activado');
+            if(!checked) message.success ('Candidato desactivado');
+        } catch (e) {
+            console.log(e)
+            if(checked) message.error('Candidato no activado');
+            if(!checked) message.error('Candidato no desactivado');
+        }
+    }
+
     const getCandidatesWithFilters = () =>{
         let page = router.query.page ? parseInt(router.query.page) : 1;
         let filters = getFiltersJB(router.query);
@@ -152,11 +165,13 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            render: (item) =>{
-                return(
-                    <span>{item?.fisrt_name} {item?.last_name}</span>
-                )
-            }
+            dataIndex: 'fisrt_name',
+            key: 'fisrt_name'
+        },
+        {
+            title: 'Apellidos',
+            dataIndex: 'last_name',
+            key: 'last_name'
         },
         {
             title:'Correo',
@@ -168,6 +183,21 @@ const TableCandidates = ({
             dataIndex: 'cell_phone',
             key: 'cell_phone'
         },
+        // {
+        //     title: 'Estatus',
+        //     render: (item) =>{
+        //         return(
+        //             <Switch
+        //                 size='small'
+        //                 defaultChecked={item.is_active}
+        //                 checked={item.is_active}
+        //                 checkedChildren="Activo"
+        //                 unCheckedChildren="Inactivo"
+        //                 onChange={(e)=> actionStatus(e, item)}
+        //             />
+        //         )
+        //     }
+        // },
         {
             title: ()=>{
                 return(

@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
 const TabPositions = ({ sizeCol = 8, action }) => {
 
@@ -159,6 +160,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             title: 'Empresa',
             dataIndex: 'company',
             key: 'company'
+        },
+        {
+            title: 'Fecha inicio',
+            render: (item) =>{
+                return(
+                    <span>{item.start_date ? moment(item.start_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
+        },
+        {
+            title: 'Fecha finalización',
+            render: (item) =>{
+                return(
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
         },
         {
             title: ()=>{
