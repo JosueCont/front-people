@@ -212,12 +212,24 @@ const TabFacebook = ({
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
                                 name='data_config|app_id'
-                                label='Identificador (ID)'
+                                label='Identificador (App ID)'
                                 rules={[ruleRequired, ruleWhiteSpace]}
                             >
                                 <Input
                                     maxLength={50}
                                     placeholder='ID de la aplicación'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12} lg={8}>
+                            <Form.Item
+                                name='data_config|page_id'
+                                label='Identificador (Page ID)'
+                                rules={[ruleRequired, ruleWhiteSpace]}
+                            >
+                                <Input
+                                    maxLength={50}
+                                    placeholder='ID de la página'
                                 />
                             </Form.Item>
                         </Col>

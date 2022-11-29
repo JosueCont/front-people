@@ -1,50 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
 import {
   SearchOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import {
-    getPublications,
-    setJobbankFilters
-} from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchPublications = ({
     load_vacancies_options,
     list_vacancies_options,
     load_profiles_options,
     list_profiles_options,
-    currentNode,
-    getPublications,
-    setJobbankFilters,
+    currentNode
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
 
-    const createFilters = (obj) =>{
-        let query = '';
-        // if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
-        // if(obj.status) query+= `&status=${obj.status}`;
-        // if(obj.customer) query += `&customer=${obj.customer}`;
-        // if(obj.recruiter) query += `&strategy__recruiter_id=${obj.recruiter}`;
-        return query;
-    }
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
 
     const onFinishSearch = (values) =>{
-        // let filters = createFilters(values);
-        // if(filters){
-        //     setJobbankFilters(filters)
-        //     getPublications(currentNode.id, filters);
-        // }else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/publications/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
-        setJobbankFilters("")
         formSearch.resetFields();
-        getPublications(currentNode.id);
+        router.replace('/jobbank/publications', undefined, {shallow: true});
     }
 
     return (
@@ -68,7 +57,7 @@ const SearchPublications = ({
                         />
                     </Form.Item>
                 </Col>
-                <Col xs={11} sm={12} md={8} xl={4}>
+                <Col xs={11} sm={12} md={8} xl={6}>
                     <Form.Item
                         name='vacant'
                         style={{marginBottom: 0}}
@@ -90,9 +79,9 @@ const SearchPublications = ({
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={4}>
+                <Col xs={12} md={8} xl={6}>
                     <Form.Item
-                        name='profile'
+                        name='template'
                         style={{marginBottom: 0}}
                     >
                         <Select
@@ -112,7 +101,7 @@ const SearchPublications = ({
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={12} sm={23} md={15} xl={12} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
+                <Col xs={12} sm={23} md={23} xl={8} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
                         <Button htmlType='submit'>
                             <SearchOutlined />
@@ -121,7 +110,12 @@ const SearchPublications = ({
                             <SyncOutlined />
                         </Button>
                     </div>
-                    <Button onClick={()=> router.push('/jobbank/publications/add')}>Agregar</Button>
+                    <Button onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: router.query
+                    })}>
+                        Agregar
+                    </Button>
                 </Col>
             </Row>
         </Form>
@@ -138,9 +132,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(
-    mapState,{
-        getPublications,
-        setJobbankFilters
-    }
-)(SearchPublications)
+export default connect(mapState)(SearchPublications)

@@ -284,9 +284,10 @@ const GroupAdd = ({ ...props }) => {
     if (response) {
       props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageSaveSuccess);
-      setTimeout(() => {
-        router.push({ pathname: "/config/groups" });
-      }, 600);
+      // setTimeout(() => {
+      //   router.push({ pathname: "/config/groups" });
+      // }, 600);
+      setLoading(false);
     } else {
       setLoading(false);
       message.error(messageError);
@@ -300,9 +301,10 @@ const GroupAdd = ({ ...props }) => {
     if (response) {
       props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageUpdateSuccess);
-      setTimeout(() => {
-        router.push({ pathname: "/config/groups" });
-      }, 1000);
+      // setTimeout(() => {
+      //   router.push({ pathname: "/config/groups" });
+      // }, 1000);
+      setLoading(false);
     } else {
       setLoading(false);
       message.error(messageError);
@@ -615,6 +617,20 @@ const GroupAdd = ({ ...props }) => {
     }
   };
 
+  const getNewFilters = () =>{
+    let newFilters = {...router.query};
+    delete newFilters.id && delete newFilters.type;
+    return newFilters;
+  }
+
+  const actionBack = () =>{
+    let filters = getNewFilters();
+    router.push({
+        pathname: '/config/groups',
+        query: filters
+    })
+  }
+
   const columns_mod = [
     {
       title: "Módulos",
@@ -783,7 +799,7 @@ const GroupAdd = ({ ...props }) => {
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/config/groups" })}
+          onClick={()=> actionBack()}
         >
           Perfiles de seguridad
         </Breadcrumb.Item>
@@ -852,16 +868,14 @@ const GroupAdd = ({ ...props }) => {
                           <Form.Item>
                             <Button
                               style={{ marginRight: "5px" }}
-                              onClick={() =>
-                                router.push({
-                                  pathname: "/config/groups",
-                                })
-                              }
+                              onClick={()=> actionBack()}
                             >
                               Regresar
                             </Button>
                             <Button type="primary" htmlType="submit">
-                              Guardar
+                              {
+                                !edit ? "Guardar" : "Actualizar"
+                              }
                             </Button>
                           </Form.Item>
                         </div>

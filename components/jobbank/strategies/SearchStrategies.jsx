@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SearchOutlined,
   SyncOutlined,
@@ -7,45 +7,35 @@ import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import {
-    getStrategies,
-    setJobbankFilters
-} from '../../../redux/jobBankDuck';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchStrategies = ({
   currentNode,
-  getStrategies,
   load_clients_options,
   list_clients_options,
   load_vacancies_options,
-  list_vacancies_options,
-  setJobbankFilters
+  list_vacancies_options
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const clientSelected = Form.useWatch('customer', formSearch);
 
-    const createFilters = (obj) =>{
-        let query = '';
-        if(obj.product) query += `&product__unaccent__icontains=${obj.product}`;
-        if(obj.customer) query += `&customer=${obj.customer}`;
-        if(obj.vacant) query += `&vacant=${obj.vacant}`;
-        return query;
-    }
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
 
     const onFinishSearch = (values) =>{
-        let filters = createFilters(values);
-        if(filters){
-            setJobbankFilters(filters)
-            getStrategies(currentNode.id, filters);
-        } else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/strategies/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        setJobbankFilters("");
-        getStrategies(currentNode.id);
+        router.replace('/jobbank/strategies', undefined, {shallow: true});
     }
 
     const onChangeClient = (value) =>{
@@ -65,7 +55,7 @@ const SearchStrategies = ({
                     <Row style={{width: '100%'}}>
                         <Col span={8}>
                             <Form.Item
-                                name='product'
+                                name='product__unaccent__icontains'
                                 rules={[ruleWhiteSpace]}
                                 style={{marginBottom: 0}}
                             >
@@ -123,7 +113,12 @@ const SearchStrategies = ({
                 </Form>
             </Col>
             <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push('/jobbank/strategies/add')}>Agregar</Button>
+                <Button onClick={()=> router.push({
+                    pathname: '/jobbank/strategies/add',
+                    query: router.query
+                })}>
+                    Agregar
+                </Button>
             </Col>
         </Row>
     )
@@ -139,9 +134,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(
-    mapState,{
-        getStrategies,
-        setJobbankFilters
-    }
-)(SearchStrategies)
+export default connect(mapState)(SearchStrategies)

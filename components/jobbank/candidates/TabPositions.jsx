@@ -201,26 +201,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
                     showSizeChanger: false
                 }}
             />
-            {openModal && (
-                <ModalPositions
-                    title={validateAction() ? 'Editar posición' : 'Agregar posición'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta posición?'
-                    visible={openModalDelete}
-                    keyTitle='position_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalPositions
+                title={validateAction() && openModal ? 'Editar posición' : 'Agregar posición'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar esta posición?'
+                visible={openModalDelete}
+                keyTitle='position_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }

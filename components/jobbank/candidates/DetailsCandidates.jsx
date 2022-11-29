@@ -23,6 +23,20 @@ const DetailsCandidates = ({
 
     const [disableTab, setDisabledTab] = useState(true);
 
+    const getNewFilters = () =>{
+        let newFilters = {...router.query};
+        if(newFilters.id) delete newFilters.id;
+        return newFilters;
+    }
+
+    const actionBack = () =>{
+        let filters = getNewFilters();
+        router.push({
+            pathname: '/jobbank/candidates',
+            query: filters
+        })
+    }
+
     return (
         <Card>
             <Row gutter={[16,16]}>
@@ -34,7 +48,7 @@ const DetailsCandidates = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/candidates')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar

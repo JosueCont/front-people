@@ -4,7 +4,6 @@ import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
-    getInfoPublication,
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
@@ -16,7 +15,6 @@ import DetailsPublication from './DetailsPublication';
 const AddOrEditPublication = ({
     action = 'add',
     currentNode,
-    getInfoPublication,
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
@@ -37,12 +35,6 @@ const AddOrEditPublication = ({
             getConnections(currentNode.id, true);
         }
     },[currentNode])
-
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoPublication(router.query.id);
-        }
-    },[router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
@@ -77,7 +69,6 @@ const mapState = (state) =>{
 
 export default connect(
     mapState,{
-        getInfoPublication,
         getProfilesOptions,
         getVacanciesOptions,
         getVacantFields,

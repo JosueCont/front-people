@@ -46,7 +46,7 @@ const ViewSubcategories = () => {
         try {
             await WebApiJobBank.createSubCategory({...values, node: currentNode.id});
             dispatch(getSubCategories(currentNode.id));
-            message.success('Subcategorái registrada');
+            message.success('Subcategoría registrada');
         } catch (e) {
             console.log(e)
             message.error('Subcategoría no registrada');
@@ -57,7 +57,7 @@ const ViewSubcategories = () => {
         try {
             await WebApiJobBank.updateSubCategory(itemToEdit.id, values);
             dispatch(getSubCategories(currentNode.id));
-            message.success('Subcategorái actualizada');
+            message.success('Subcategoría actualizada');
         } catch (e) {
             console.log(e)
             message.error('Subcategoría no actualizada');
@@ -85,6 +85,7 @@ const ViewSubcategories = () => {
             <Select
                 allowClear
                 showSearch
+                disabled={router.query?.category}
                 placeholder='Seleccionar una categoría'
                 notFoundContent='No se encontraron resultados'
                 optionFilterProp='children'

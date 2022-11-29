@@ -555,13 +555,12 @@ export const getHost = () => {
   }
 };
 
-export const deleteKeyByValue = (obj) =>{
-  let new_obj = {...obj};
-  Object.entries(obj).map(([key, val]) =>{
-      if(!val) delete new_obj[key];
-      if(Array.isArray(val) && val.length <= 0) delete new_obj[key];
-  });
-  return new_obj;
+export const deleteKeyByValue = (values) =>{
+  return Object.entries(values).reduce((obj, [key, val]) =>{
+    if(!val) return obj;
+    if(Array.isArray(val) && val.length <= 0) return obj;
+    return {...obj, [key]: val }
+  }, {});
 }
 
 export const redirectTo = (url, newWindow = false) =>{
@@ -576,7 +575,8 @@ export const catalogsJobbank = [
   {catalog: 'subcategories', name: 'Subcategorías' },
   {catalog: 'academic', name: 'Carreras'},
   {catalog: 'competences', name: 'Competencias'},
-  // {catalog: 'profiles', name: 'Template de vacante'},
+  {catalog: 'profiles', name: 'Tipos de template'},
   {catalog: 'sectors', name: 'Sectores'},
-  {catalog: 'jobboars', name: 'Bolsas de empleo'}
+  {catalog: 'jobboars', name: 'Bolsas de empleo'},
+  {catalog: 'specialization', name: 'Áreas de especialización'}
 ];
