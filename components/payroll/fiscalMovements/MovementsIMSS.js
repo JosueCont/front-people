@@ -12,17 +12,20 @@ import { connect } from "react-redux";
 const MovementsIMSS=({ currentNode })=>{
 
     const [file, setFile]=useState(null)
+    const [showList, setShowList]=useState(false)
     const [ loading, setLoading ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ documents, setDocuments ] = useState(null)
     const [ modalVisible, setModalVisible ] = useState(false)
 
 
-    // useEffect(()=>{
-    //     if(file){
-    //         alert('enviado archivo')
-    //     }
-    // },[file])
+    useEffect(()=>{
+        if(file){
+            setShowList(true)
+        } else {
+            setShowList(false)
+        }
+    },[file])
 
     useEffect(() => {
         currentNode && patronalSelected && getMovements()
@@ -183,14 +186,14 @@ const MovementsIMSS=({ currentNode })=>{
                             size = {'middle'}
                         />
                     </Col> */}
-                    <Col span={5}>
+                    {/* <Col span={5} style={{ marginRight: 20 }}>
                         <Button
                             disabled = { patronalSelected? false : true }
                             onClick={ () => setModalVisible(true)}
                         >
                           importar
                         </Button>
-                    </Col>
+                    </Col> */}
                      <Col span={7}>
                         <Button 
                           onClick={ () => getMovements() }
@@ -219,7 +222,7 @@ const MovementsIMSS=({ currentNode })=>{
                 centered
                 visible = { modalVisible }
                 onCancel = { () => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                     setFile(null)
                 } 
                 }
@@ -227,7 +230,7 @@ const MovementsIMSS=({ currentNode })=>{
                 <Button
                     key="back"
                     onClick={ () => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                     setFile(null)
                     } 
                 }
@@ -254,7 +257,7 @@ const MovementsIMSS=({ currentNode })=>{
                             setFile={setFile}
                             validateExtension={".txt"}
                             size = {'middle'}
-                            showList = {true}
+                            showList = {showList}
                         />
                     </Col>
                 </Row>
