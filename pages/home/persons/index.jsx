@@ -190,6 +190,10 @@ const homeScreen = ({ ...props }) => {
     }
   };
 
+  const downloadResignationLetter = async (item) => {
+    console.log('Item', item)
+  }
+
   const getAssigns = async (id, queryParam, type = "") => {
     setLoadAssign(true);
     setShowModalAssigns(true);
@@ -568,6 +572,16 @@ const homeScreen = ({ ...props }) => {
             Eliminar
           </Menu.Item>
         )}
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="4"
+          onClick={ () => {
+              downloadResignationLetter(item)
+            }
+          }
+        >
+          Descargar carta de renuncia
+        </Menu.Item>
       </Menu>
     );
   };

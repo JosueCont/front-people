@@ -193,7 +193,7 @@ const MovementsIMSS=({ currentNode })=>{
                     </Col>
                      <Col span={7}>
                         <Button 
-                        //   onClick={ () => syncEmaandEva() }
+                          onClick={ () => getMovements() }
                           disabled = { patronalSelected?  false : true }
                         >
                             Sincronizar

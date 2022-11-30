@@ -190,8 +190,8 @@ class WebApiPayroll {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
 
-  static editIMSSInfonavit(data){
-    return WebApi.ApisType("payroll/imss-person/", "patch", data);
+  static editIMSSInfonavit(imssId, data){
+    return WebApi.ApisType(`payroll/imss-person/${imssId}/`, "patch", data);
   }
 
   static extraordinaryPayroll(data) {
@@ -206,8 +206,8 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}`,'get')
   }
 
-  static getPersonalCredits(imssId){
-    return WebApi.ApisType(`/payroll/imss-person/${imssId}/`, 'get')
+  static getPersonalCredits(id){
+    return WebApi.ApisType(`/payroll/imss-person/get_imss_person?person=${id}`, 'get')
   }
 
   static importSalaryModification(data){

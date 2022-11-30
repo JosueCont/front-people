@@ -35,8 +35,33 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
-    person.branch_node && localUserCredit();
-  }, [person]);
+    person_id && localUserCredit();
+  }, [person_id]);
+
+  useEffect(() =>{
+    if (updateCredit) {
+      setIsEdit(true)
+      formImssInfonavit.setFieldsValue({
+        employee_type: updateCredit.employee_type,
+        salary_type: updateCredit.salary_type,
+        reduce_days: updateCredit.reduce_days,
+        movement_date: moment(updateCredit.movement_date),
+        family_medical_unit: updateCredit.family_medical_unit.id,
+        nss: updateCredit.nss,
+        sbc: updateCredit.sbc
+
+      })
+    } else {
+        formImssInfonavit.setFieldsValue({
+          nss: person.imss
+        })
+    }
+    // if(person.imss){
+    //   formImssInfonavit.setFieldsValue({
+    //     nss: person.imss
+    //   })
+    // }
+  },[updateCredit])
 
   console.log('Person', person)
 
@@ -54,12 +79,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   },[daily_salary])
 
   const formImmssInfonavitAct = (values) => {
-    setLodingIMSS(true)
+    setLoadingTable(true)
 
     values.person = person_id
     values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
-    values.is_active = true
-    values.is_registered = true
+    // values.is_active = true
+    // values.is_registered = true
     values.modify_by = "System"
     values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    : ""
     console.log("Data", values);
@@ -67,31 +92,35 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     if(isEdit){
 
-      WebApiPayroll.editIMSSInfonavit(values)
+      console.log('Entro al Editar')
+
+      WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
       .then((response) => {
         console.log('Response', response)
         message.success('Editado exitosamente')
-        setLodingIMSS(false)
+        setLoadingTable(false)
         setIsEdit(false)  
       })
       .catch((error) => {
         console.log('Error -->', error)
         message.error('Error al editar')
-        setLodingIMSS(false)
+        setLoadingTable(false)
       })
 
     } else {
+
+      console.log('Entro al registrar')
 
       WebApiPayroll.saveIMSSInfonavit(values)
       .then((response) => {
         console.log('Response', response)
         message.success('Guardado exitosamente')
-        setLodingIMSS(false)  
+        setLoadingTable(false)
       })
       .catch((error) => {
         console.log('Error -->', error.message)
         message.error('Error al guardar')
-        setLodingIMSS(false)
+        setLoadingTable(false)
       })
     }
 
@@ -122,8 +151,8 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const localUserCredit = async () => {
     setLoadingTable(true)
     try {
-      let response = await WebApiPayroll.getPersonalCredits(person.imss)
-      console.log('Response credits', response)
+      let response = await WebApiPayroll.getPersonalCredits(person_id)
+      setUpdateCredit(response.data)
     } catch (error) {
       console.log('Error', error)
     } finally {
@@ -136,90 +165,92 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     setUpdateCredit(item)
   }
 
-  const colCredit = [
-    {
-      title: "Número",
-      dataIndex: "number",
-      key: "number",
-      width: 100,
-    },
-    {
-      title: "Tipo de crédito",
-      dataIndex: "type",
-      key: "type",
-      width: 100,
-    },
-    {
-      title: "Fecha de inicio",
-      dataIndex: "start_date",
-      key: "start_date",
-      width: 100,
-    },
-    {
-      title: "Estatus",
-      dataIndex: "status",
-      key: "status",
-      width: 100,
-    },
-    {
-      title: "Monto",
-      dataIndex: "amount_payment",
-      key: "amount_payment",
-      width: 100,
-    },
-    {
-      title: "Monto actual",
-      dataIndex: "current_payment",
-      key: "current_payment",
-      width: 100,
-    },
-    {
-      title: "Numero de pago",
-      dataIndex: "number_payment",
-      key: "number_payment",
-      width: 100,
-    },
-    {
-      title: "Ultima fecha de pago",
-      dataIndex: "date_last_payment",
-      key: "date_last_payment",
-      width: 100,
-    },
-    {
-      title: "Monto total",
-      dataIndex: "total_amount",
-      key: "total_amount",
-      width: 100,
-    },
-    {
-      title: "Opciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              <Col className="gutter-row" offset={1}>
-                <EditOutlined
-                  style={{ fontSize: "20px" }}
-                  onClick={() => updateImssInfonavit(item)}
-                />
-              </Col>
-              {/* <Col className="gutter-row" offset={1}>
-                <DeleteOutlined
-                  style={{ fontSize: "20px" }}
-                  onClick={() => {
-                    showModalDelete(item.id);
-                  }}
-                />
-              </Col> */}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
+  updateCredit && console.log('Credit', updateCredit)
+
+  // const colCredit = [
+  //   {
+  //     title: "Número",
+  //     dataIndex: "number",
+  //     key: "number",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Tipo de crédito",
+  //     dataIndex: "type",
+  //     key: "type",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Fecha de inicio",
+  //     dataIndex: "start_date",
+  //     key: "start_date",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Estatus",
+  //     dataIndex: "status",
+  //     key: "status",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Monto",
+  //     dataIndex: "amount_payment",
+  //     key: "amount_payment",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Monto actual",
+  //     dataIndex: "current_payment",
+  //     key: "current_payment",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Numero de pago",
+  //     dataIndex: "number_payment",
+  //     key: "number_payment",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Ultima fecha de pago",
+  //     dataIndex: "date_last_payment",
+  //     key: "date_last_payment",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Monto total",
+  //     dataIndex: "total_amount",
+  //     key: "total_amount",
+  //     width: 100,
+  //   },
+  //   {
+  //     title: "Opciones",
+  //     render: (item) => {
+  //       return (
+  //         <div>
+  //           <Row gutter={16}>
+  //             <Col className="gutter-row" offset={1}>
+  //               <EditOutlined
+  //                 style={{ fontSize: "20px" }}
+  //                 onClick={() => updateImssInfonavit(item)}
+  //               />
+  //             </Col>
+  //             {/* <Col className="gutter-row" offset={1}>
+  //               <DeleteOutlined
+  //                 style={{ fontSize: "20px" }}
+  //                 onClick={() => {
+  //                   showModalDelete(item.id);
+  //                 }}
+  //               />
+  //             </Col> */}
+  //           </Row>
+  //         </div>
+  //       );
+  //     },
+  //   },
+  // ];
 
   return (
-    <>
+    <Spin tip="Cargando..."  spinning={loadingTable}>
       <Row>
         <Title style={{ fontSize: "20px" }}>IMSS / INFONAVIT</Title>
       </Row>
@@ -314,14 +345,19 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         </Row>
         <Row justify={"end"}>
           <Form.Item>
-            <Button loading={loadingIMSS} type="primary" htmlType="submit">
+            <Button 
+              loading={loadingIMSS} 
+              type="primary" 
+              htmlType="submit"
+              disabled = { updateCredit && updateCredit.is_registered? true : false }
+            >
               Guardar
             </Button>
           </Form.Item>
         </Row>
       </Form>
 
-      <Spin tip="Cargando..." spinning={loadingTable}>
+      {/* <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
           columns={colCredit}
           scroll={{
@@ -335,8 +371,8 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
               : "No se encontraron resultados.",
           }}
         />
-      </Spin>
-    </>
+      </Spin> */}
+    </Spin>
   );
 };
 
