@@ -11,10 +11,12 @@ import {
   Input,
   Select,
   DatePicker,
+  message,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import {typeEmployee, typeSalary, reduceDays, FACTOR_SDI} from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
+import { EditOutlined,} from "@ant-design/icons";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
@@ -27,12 +29,16 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [loadingTable, setLoadingTable] = useState(false);
   const [ loadingIMSS, setLodingIMSS ] = useState(false)
   const [infonavitCredit, setInfonavitCredit] = useState([]);
+  const [ updateCredit, setUpdateCredit ] = useState(null)
+  const [ isEdit, setIsEdit ] = useState(false)
   const daily_salary = Form.useWatch('sbc', formImssInfonavit);
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
     person.branch_node && localUserCredit();
   }, [person]);
+
+  console.log('Person', person)
 
   useEffect(()=>{
     console.log(daily_salary)
@@ -58,15 +64,37 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    : ""
     console.log("Data", values);
     // funcion WEB API
-    WebApiPayroll.saveIMSSInfonavit(values)
-    .then((response) => {
-      console.log('Response', response)
-      setLodingIMSS(false)  
-    })
-    .catch((error) => {
-      console.log('Error -->', error)
-      setLodingIMSS(false)
-    })
+
+    if(isEdit){
+
+      WebApiPayroll.editIMSSInfonavit(values)
+      .then((response) => {
+        console.log('Response', response)
+        message.success('Editado exitosamente')
+        setLodingIMSS(false)
+        setIsEdit(false)  
+      })
+      .catch((error) => {
+        console.log('Error -->', error)
+        message.error('Error al editar')
+        setLodingIMSS(false)
+      })
+
+    } else {
+
+      WebApiPayroll.saveIMSSInfonavit(values)
+      .then((response) => {
+        console.log('Response', response)
+        message.success('Guardado exitosamente')
+        setLodingIMSS(false)  
+      })
+      .catch((error) => {
+        console.log('Error -->', error.message)
+        message.error('Error al guardar')
+        setLodingIMSS(false)
+      })
+    }
+
     // setLodingIMSS(false)
   };
 
@@ -102,6 +130,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     } finally {
       setLoadingTable(false)
     }
+  }
+
+  const updateImssInfonavit = (item) => {
+    setIsEdit(true)
+    setUpdateCredit(item)
   }
 
   const colCredit = [
@@ -159,31 +192,31 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       key: "total_amount",
       width: 100,
     },
-    // {
-    //   title: "Opciones",
-    //   render: (item) => {
-    //     return (
-    //       <div>
-    //         <Row gutter={16}>
-    //           <Col className="gutter-row" offset={1}>
-    //             <EditOutlined
-    //               style={{ fontSize: "20px" }}
-    //               onClick={() => updateFormbankAcc(item)}
-    //             />
-    //           </Col>
-    //           <Col className="gutter-row" offset={1}>
-    //             <DeleteOutlined
-    //               style={{ fontSize: "20px" }}
-    //               onClick={() => {
-    //                 showModalDelete(item.id);
-    //               }}
-    //             />
-    //           </Col>
-    //         </Row>
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "20px" }}
+                  onClick={() => updateImssInfonavit(item)}
+                />
+              </Col>
+              {/* <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "20px" }}
+                  onClick={() => {
+                    showModalDelete(item.id);
+                  }}
+                />
+              </Col> */}
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
 
   return (

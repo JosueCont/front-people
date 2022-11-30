@@ -190,6 +190,10 @@ class WebApiPayroll {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
 
+  static editIMSSInfonavit(data){
+    return WebApi.ApisType("payroll/imss-person/", "patch", data);
+  }
+
   static extraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
