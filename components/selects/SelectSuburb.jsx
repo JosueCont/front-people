@@ -19,14 +19,11 @@ const SelectSuburb = ({
   }, [postal_code]);
 
   useEffect(() => {
-    console.log("EFECT SUBURB");
     if (suburb) getSuburb(suburb);
   }, [suburb]);
 
   const getSuburb = (description) => {
-    console.log("SUBurb-->", description);
     if (description && description != "") {
-      console.log("entra suburb");
       setOptions([]);
       WebApiFiscal.getSuburb(description)
         .then((response) => {
