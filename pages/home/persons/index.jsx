@@ -60,7 +60,9 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
-import { parseInt } from "lodash";
+import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
+import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
+import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -187,6 +189,10 @@ const homeScreen = ({ ...props }) => {
       getAssigns(itemPerson.id, "", "&groups");
     }
   };
+
+  const downloadResignationLetter = async (item) => {
+    console.log('Item', item)
+  }
 
   const getAssigns = async (id, queryParam, type = "") => {
     setLoadAssign(true);
@@ -580,6 +586,16 @@ const homeScreen = ({ ...props }) => {
             Eliminar
           </Menu.Item>
         )}
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="4"
+          onClick={ () => {
+              downloadResignationLetter(item)
+            }
+          }
+        >
+          Descargar carta de renuncia
+        </Menu.Item>
       </Menu>
     );
   };
@@ -1029,6 +1045,9 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDeactivate]);
 
+
+
+
   const menuExportTemplate = (
     <Menu>
       <Menu.Item
@@ -1256,11 +1275,19 @@ const homeScreen = ({ ...props }) => {
                       {props.config && props.config.nomina_enabled &&
                           <ButtonDownloadConfronta/>
                       }
+
+                      {/*{props.config && props.config.nomina_enabled &&*/}
+                      {/*    <ButtonMovements node={props.currentNode}/>*/}
+                      {/*}*/}
                     </Space>
                   </Col>
-                  <Col>
 
-                  </Col>
+                  {props.config && props.config.nomina_enabled &&
+                      <Col>
+                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode}/>
+                      </Col>
+                  }
+
                 </Row>
               </div>
               <Table

@@ -437,6 +437,12 @@ class WebApiPeople {
     )
   }
 
+  static importAfiliateMovement(data) {
+    return WebApi.ApisType(
+      'payroll/affiliate-movements', "post", data
+    )
+  }
+
   static getJobRiskClass(node) {
     return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`, "get");
   }
