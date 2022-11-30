@@ -60,6 +60,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
+import { parseInt } from "lodash";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -668,6 +669,7 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+    let valueQuery = {}
     if (!(value?.name && value.name.trim())) {
       formFilter.setFieldsValue({ name: undefined });
       value.name = undefined;
@@ -686,40 +688,48 @@ const homeScreen = ({ ...props }) => {
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
+      valueQuery.name = value.name;
     }
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
       filters.flast_name = value.flast_name;
+      valueQuery.flast_name = value.flast_name;
     }
     if (value && value.code !== undefined) {
       urlFilter = urlFilter + "code=" + value.code + "&";
       filters.code = value.code;
+      valueQuery.code = value.code;
     }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
       filters.gender = value.gender;
+      valueQuery.gender = value.gender;
     }
 
     if (value && value.is_active !== undefined && value.is_active != -1) {
       urlFilter = urlFilter + "is_active=" + value.is_active + "&";
       filters.is_active = value.is_active;
+      valueQuery.is_active = value.is_active;
     }
     if (value && value.department !== undefined) {
       urlFilter = urlFilter + "person_department__id=" + value.department + "&";
       filters.department = value.department;
+      valueQuery.department = value.department;
     }
     if (value && value.job && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
+      valueQuery.job = value.job;
     }
     if (value && value.periodicity !== undefined) {
       urlFilter = urlFilter + "periodicity=" + value.periodicity + "&";
       filters.periodicity = value.periodicity;
+      valueQuery.periodicity = value.periodicity;
     }
     filterPersonName(urlFilter);
     route.replace({
       pathname: '/home/persons/',
-      query: value
+      query: valueQuery
     }, undefined, {shallow: true});
   };
 
@@ -958,8 +968,7 @@ const homeScreen = ({ ...props }) => {
         filterPersonName(urlFilter)
         formFilter.setFieldsValue({
           ...route.query,
-          gender: route.query.gender == 1 ? "Masculino" : route.query.gender == 2 ? "Femenino" : route.query.gender ==3 ? "Otro" : "",
-          is_active: route.query.is_active == "true" ? "Activos" : route.query.is_active == "false" ? "Inactivos" : route.query.is_active === "-1" ? "Todos" : ""
+          gender: router.query.gender ? parseInt(route.query.gender) : "",
         });
       }
     }

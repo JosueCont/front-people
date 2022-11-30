@@ -169,15 +169,15 @@ export const periodicity = [
 export const statusSelect = [
   {
     label: "Todos",
-    value: -1,
+    value: "-1",
   },
   {
     label: "Activos",
-    value: true,
+    value: "true",
   },
   {
     label: "Inactivos",
-    value: false,
+    value: "false",
   },
 ];
 
