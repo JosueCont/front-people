@@ -219,7 +219,7 @@ const MovementsIMSS=({ currentNode })=>{
                 centered
                 visible = { modalVisible }
                 onCancel = { () => {
-                    setModalvisible(false)
+                    setModalVisible(false)
                     setFile(null)
                 } 
                 }
