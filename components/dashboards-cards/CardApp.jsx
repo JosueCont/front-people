@@ -133,7 +133,7 @@ const CardApps = ({ user, config, ...props }) => {
                 onClick={() => linkToProfile()}
               >
                 <img src={defaultPhoto} />
-                <p style={{ marginBottom: "0px" }}>Mi perfil</p>
+                <p style={{ marginBottom: "0px" }}>Mis evaluaciones</p>
               </Space>
             </Col>
           ) : null}
@@ -188,7 +188,7 @@ const CardApps = ({ user, config, ...props }) => {
               </Col>
               : null
           }
-          {props?.applications &&
+          {/* {props?.applications &&
           (_.has(props.applications, "ynl") && props.applications["ynl"].active) ?
               <Col span={8}>
                 <Space
@@ -201,7 +201,7 @@ const CardApps = ({ user, config, ...props }) => {
                 </Space>
               </Col>
               : null
-          }
+          } */}
         </Row>
         {/* <Divider style={{background: '#5f6368'}}/>
             <Row justify='center'>
