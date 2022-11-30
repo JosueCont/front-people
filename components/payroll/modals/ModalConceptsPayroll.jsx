@@ -31,6 +31,7 @@ const ModalConceptsPayroll = ({
   calendar,
   sendCalculatePayroll,
   payrollType,
+  extraOrdinary = false,
   ...props
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -42,6 +43,9 @@ const ModalConceptsPayroll = ({
   const [deductions, setDeductions] = useState([]);
   const [otherPayments, setOtherPayments] = useState([]);
   const [ceros, setCeros] = useState(false);
+  const [twentyDays, setTwentyDays] = useState(false);
+  const [threeMonths, setThreeMonths] = useState(false);
+  const [antiquity, setAntiquity] = useState(false);
 
   useEffect(() => {
     if (
@@ -191,11 +195,6 @@ const ModalConceptsPayroll = ({
         if (item.id === name)
           item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
-    if (type === 3)
-      otherPayments.map((item) => {
-        if (item.id === name)
-          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
-      });
   };
 
   const listConcepts = (value = null) => {
@@ -236,32 +235,48 @@ const ModalConceptsPayroll = ({
   const createObjectSend = () => {
     let data = [];
     payroll.map((item) => {
+      console.log("Persona-->> ", item);
+
       if (item.person.id === person_id) {
-        item.perceptions.map((p) => {
-          if (p.type == "046") {
-            perceptions.push(p);
-            return;
-          }
-        });
-        data.push({
+        if (item.perceptions)
+          item.perceptions.map((p) => {
+            if (p.type == "046") {
+              perceptions.push(p);
+              return;
+            }
+          });
+        const obj = {
           person_id: person_id,
           perceptions: perceptions,
           deductions: deductions,
           other_payments: otherPayments,
-        });
+        };
+        if (extraOrdinary) {
+          obj.twenty_day_compensantion = twentyDays;
+          obj.three_months_compensation = threeMonths;
+          obj.antiquity_compensation = antiquity;
+        }
+        data.push(obj);
       } else {
-        data.push({
+        const obj = {
           person_id: item.person.id,
           perceptions: item.perceptions,
           deductions: item.deductions.filter(
             (item) => item.type != "001" && item.type != "002"
           ),
           other_payments: item.otherPayments,
-        });
+        };
+        if (extraOrdinary) {
+          obj.twenty_day_compensantion = twentyDays;
+          obj.three_months_compensation = threeMonths;
+          obj.antiquity_compensation = antiquity;
+        }
+        data.push(obj);
       }
     });
     clearConcept();
     calendar.payroll = data;
+    console.log("Calendar calculate-->> ", calendar);
     sendCalculatePayroll(calendar);
   };
 
@@ -291,6 +306,9 @@ const ModalConceptsPayroll = ({
     setOtherPayments([]);
     payroll = null;
     person_id = null;
+    setAntiquity(false);
+    setThreeMonths(false);
+    setTwentyDays(false);
     setVisible(false);
   };
 
@@ -313,7 +331,10 @@ const ModalConceptsPayroll = ({
             </Button>
             {perceptions.length > 0 ||
             deductions.length > 0 ||
-            otherPayments.length > 0 ? (
+            otherPayments.length > 0 ||
+            threeMonths ||
+            antiquity ||
+            twentyDays ? (
               <Button
                 size="large"
                 htmlType="button"
@@ -350,7 +371,10 @@ const ModalConceptsPayroll = ({
             disabled={
               perceptions.length > 0 ||
               deductions.length > 0 ||
-              otherPayments.length > 0
+              otherPayments.length > 0 ||
+              threeMonths ||
+              antiquity ||
+              twentyDays
                 ? false
                 : true
             }
@@ -370,6 +394,46 @@ const ModalConceptsPayroll = ({
           />
         </Steps>
         <Card hoverable style={{ width: "100%" }}>
+          {extraOrdinary && (
+            <Row>
+              <Col span={12}>
+                <Checkbox
+                  key={"twenty_day_compensantion"}
+                  className="CheckGroup"
+                  checked={twentyDays}
+                  onChange={(value) => setTwentyDays(value.target.checked)}
+                >
+                  <span style={{ textTransform: "uppercase" }}>
+                    20 dias por año trabajado
+                  </span>
+                </Checkbox>
+              </Col>
+              <Col span={12}>
+                <Checkbox
+                  key={"three_months_compensantion"}
+                  className="CheckGroup"
+                  checked={threeMonths}
+                  onChange={(value) => setThreeMonths(value.target.checked)}
+                >
+                  <span style={{ textTransform: "uppercase" }}>
+                    90 dias de indemnizacion
+                  </span>
+                </Checkbox>
+              </Col>{" "}
+              <Col span={12}>
+                <Checkbox
+                  key={"antiquity_premium"}
+                  className="CheckGroup"
+                  checked={antiquity}
+                  onChange={(value) => setAntiquity(value.target.checked)}
+                >
+                  <span style={{ textTransform: "uppercase" }}>
+                    Prima de antigüedad
+                  </span>
+                </Checkbox>
+              </Col>
+            </Row>
+          )}
           {currentStep == 0 ? (
             <>
               {perceptionsCat.length > 0 && (
