@@ -73,8 +73,9 @@ const TabFacebook = ({
         if(!app_id) return;
         FacebookLoginClient.init({
             appId: infoConnection.data_config.app_id,
-            version: 'v15.0',
-            localStorage: false
+            version: 'v14.0',
+            localStorage: false,
+            xfbml: true
         });
     }
 
@@ -118,6 +119,7 @@ const TabFacebook = ({
         console.log('response', resp)
         if(!resp.authResponse) return onFail(resp);
         onSuccess(resp.authResponse);
+        FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
         // FacebookLoginClient.getProfile(onProfileSuccess, { fields });
     }
@@ -144,6 +146,12 @@ const TabFacebook = ({
         }
     }
 
+    const revoqueSession = () =>{
+        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
+        window.FB.api('/me/permissions', 'delete', (res)=>{
+            console.log('delete', res)
+        })
+    }
 
     const btnLogin = ({onClick}) => (
         <Button
