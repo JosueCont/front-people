@@ -153,6 +153,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     try {
       let response = await WebApiPayroll.getPersonalCredits(person_id)
       setUpdateCredit(response.data)
+      setInfonavitCredit([response.data])
     } catch (error) {
       console.log('Error', error)
     } finally {
@@ -167,92 +168,92 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   updateCredit && console.log('Credit', updateCredit)
 
-  // const colCredit = [
-  //   {
-  //     title: "Número",
-  //     dataIndex: "number",
-  //     key: "number",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Tipo de crédito",
-  //     dataIndex: "type",
-  //     key: "type",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Fecha de inicio",
-  //     dataIndex: "start_date",
-  //     key: "start_date",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Estatus",
-  //     dataIndex: "status",
-  //     key: "status",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Monto",
-  //     dataIndex: "amount_payment",
-  //     key: "amount_payment",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Monto actual",
-  //     dataIndex: "current_payment",
-  //     key: "current_payment",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Numero de pago",
-  //     dataIndex: "number_payment",
-  //     key: "number_payment",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Ultima fecha de pago",
-  //     dataIndex: "date_last_payment",
-  //     key: "date_last_payment",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Monto total",
-  //     dataIndex: "total_amount",
-  //     key: "total_amount",
-  //     width: 100,
-  //   },
-  //   {
-  //     title: "Opciones",
-  //     render: (item) => {
-  //       return (
-  //         <div>
-  //           <Row gutter={16}>
-  //             <Col className="gutter-row" offset={1}>
-  //               <EditOutlined
-  //                 style={{ fontSize: "20px" }}
-  //                 onClick={() => updateImssInfonavit(item)}
-  //               />
-  //             </Col>
-  //             {/* <Col className="gutter-row" offset={1}>
-  //               <DeleteOutlined
-  //                 style={{ fontSize: "20px" }}
-  //                 onClick={() => {
-  //                   showModalDelete(item.id);
-  //                 }}
-  //               />
-  //             </Col> */}
-  //           </Row>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  // ];
+  const colCredit = [
+    {
+      title: "Número",
+      dataIndex: "number",
+      key: "number",
+      width: 100,
+    },
+    {
+      title: "Tipo de crédito",
+      dataIndex: "type",
+      key: "type",
+      width: 100,
+    },
+    {
+      title: "Fecha de inicio",
+      dataIndex: "start_date",
+      key: "start_date",
+      width: 100,
+    },
+    {
+      title: "Estatus",
+      dataIndex: "status",
+      key: "status",
+      width: 100,
+    },
+    {
+      title: "Monto",
+      dataIndex: "amount_payment",
+      key: "amount_payment",
+      width: 100,
+    },
+    {
+      title: "Monto actual",
+      dataIndex: "current_payment",
+      key: "current_payment",
+      width: 100,
+    },
+    {
+      title: "Numero de pago",
+      dataIndex: "number_payment",
+      key: "number_payment",
+      width: 100,
+    },
+    {
+      title: "Ultima fecha de pago",
+      dataIndex: "date_last_payment",
+      key: "date_last_payment",
+      width: 100,
+    },
+    {
+      title: "Monto total",
+      dataIndex: "total_amount",
+      key: "total_amount",
+      width: 100,
+    },
+    // {
+    //   title: "Opciones",
+    //   render: (item) => {
+    //     return (
+    //       <div>
+    //         <Row gutter={16}>
+    //           <Col className="gutter-row" offset={1}>
+    //             <EditOutlined
+    //               style={{ fontSize: "20px" }}
+    //               onClick={() => updateImssInfonavit(item)}
+    //             />
+    //           </Col>
+    //           {/* <Col className="gutter-row" offset={1}>
+    //             <DeleteOutlined
+    //               style={{ fontSize: "20px" }}
+    //               onClick={() => {
+    //                 showModalDelete(item.id);
+    //               }}
+    //             />
+    //           </Col> */}
+    //         </Row>
+    //       </div>
+    //     );
+    //   },
+    // },
+  ];
 
   return (
     <Spin tip="Cargando..."  spinning={loadingTable}>
       <Row>
-        <Title style={{ fontSize: "20px" }}>IMSS / INFONAVIT</Title>
+        <Title style={{ fontSize: "20px" }}>IMSS</Title>
       </Row>
       <Form
         layout="vertical"
@@ -344,16 +345,33 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           </Col>
         </Row>
         <Row justify={"end"}>
-          <Form.Item>
+          {
+            updateCredit && updateCredit.id? null : (
+              <Form.Item>
+              <Button 
+                loading={loadingIMSS} 
+                style = {{ marginRight: 20 }}
+                type="primary" 
+                htmlType="submit"
+                disabled = { updateCredit && updateCredit.id? true : false }
+              >
+                Guardar
+              </Button>
+              </Form.Item>
+            )
+          }
+
+
+          {/* <Form.Item>
             <Button 
               loading={loadingIMSS} 
               type="primary" 
-              htmlType="submit"
-              disabled = { updateCredit && updateCredit.is_registered? true : false }
+              onClick={ () => userCredit() }
+              // disabled = { updateCredit && updateCredit.is_registered? true : false }
             >
-              Guardar
+              sincronizar
             </Button>
-          </Form.Item>
+          </Form.Item> */}
         </Row>
       </Form>
 

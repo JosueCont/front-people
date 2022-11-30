@@ -189,7 +189,7 @@ const ImssMovements = ({ ...props }) => {
                 </Col>
                 </Row>
                 <EmaYEvaFiles
-                  files={files.length > 0 ? files : []}
+                  files={files?.length > 0 ? files : []}
                   loading={loading}
                 />
               </Panel>
