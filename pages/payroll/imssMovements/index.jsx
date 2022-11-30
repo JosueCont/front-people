@@ -17,17 +17,25 @@ const { Text  } = Typography
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
   const [loading, setLoading] = useState(false);
+  const [showList, setShowList]=useState(false)
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
   const [file, setFile]=useState(null)
-  const [ modalVisible, setModalvisible ] = useState(false)
+  const [ modalVisible, setModalVisible ] = useState(false)
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
 
-  file && console.log('File', file)
+  useEffect(()=>{
+    if(file){
+        setShowList(true)
+    } else {
+        setShowList(false)
+    }
+},[file])
+
 
   useEffect(() => {
     patronalSelected && getFiles();
@@ -57,7 +65,7 @@ const ImssMovements = ({ ...props }) => {
     try {
       let response = await WebApiPeople.forceListEbaAndEmaFiles(data)
       console.log("Response", response)
-      message.success('Las emisiones fueron pedidas con éxito, verifique este apartado en un par de horas')
+      message.success('Solicitud de Emisiones realizada con éxito, verifique mas tarde sus documentos')
     } catch (error) {
       console.error('Error', error)
       message.error('Error al pedir las emsiones. Intente más tarde')
@@ -86,7 +94,7 @@ const ImssMovements = ({ ...props }) => {
       
     } finally {
       setLoading(false)
-      setModalvisible(false)
+      setModalVisible(false)
       setFile(null)
     }
   }
@@ -149,31 +157,12 @@ const ImssMovements = ({ ...props }) => {
                       onChange={(value) => setPatronalSelected(value)}
                     />
                   </Col>
-                  <Col
-                    span={10}
-                    style={{ display: "flex", justifyContent: "end" }}
-                  >
-                    <Col span={12}>
-                      <UploadFile
-                        textButton={"Importar EMA y EBA"}
-                        setFile={setFile}
-                        validateExtension={".zip"}
-                        size={"middle"}
-                      />
-                    </Col>
-                    <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
-                    {/* <Col span={12}>
-                        <UploadFile
-                            textButton={"Importar EMA y EBA"}
-                            setFile={setFile}
-                            validateExtension={".zip"}
-                            size = {'middle'}
-                        />
-                    </Col> */}
-                    <Col span={5}>
-                        <Button 
-                          disabled = { patronalSelected? false : true }
-                          onClick={ () => setModalvisible(true)}>
+                  <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
+                    <Col span={5} style={{ marginRight: 20 }}>
+                        <Button
+                            disabled = { patronalSelected? false : true }
+                            onClick={ () => setModalVisible(true)}
+                        >
                           importar
                         </Button>
                     </Col>
@@ -185,8 +174,7 @@ const ImssMovements = ({ ...props }) => {
                             Sincronizar
                         </Button>
                     </Col>
-                </Col>
-                </Col>
+                  </Col>
                 </Row>
                 <EmaYEvaFiles
                   files={files?.length > 0 ? files : []}
@@ -207,7 +195,7 @@ const ImssMovements = ({ ...props }) => {
         centered
         visible = { modalVisible }
         onCancel = { () => {
-            setModalvisible(false)
+            setModalVisible(false)
             setFile(null)
           } 
         }
@@ -215,7 +203,7 @@ const ImssMovements = ({ ...props }) => {
           <Button
             key="back"
             onClick={ () => {
-              setModalvisible(false)
+              setModalVisible(false)
               setFile(null)
             } 
           }
@@ -249,7 +237,7 @@ const ImssMovements = ({ ...props }) => {
                 setFile={setFile}
                 validateExtension={".zip"}
                 size = {'middle'}
-                showList = {true}
+                showList = {showList}
               />
             </Col>
           </Row>
