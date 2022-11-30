@@ -16,11 +16,6 @@ const ReactionsCount = styled.p`
   width: fit-content;
 `;
 const CustomTable = styled(Table)`
-  & .ant-table-cell {
-    padding-left: 5px;
-    padding-right: 5px;
-    text-align: center;
-  }
   & .publication-column {
     width: 20%;
   }

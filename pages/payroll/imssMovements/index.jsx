@@ -16,8 +16,8 @@ const { Text  } = Typography
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
-  const [ loading, setLoading ] = useState(false)
-  const [currentNodeId, setCurrentNodeId] = useState(null) 
+  const [loading, setLoading] = useState(false);
+  const [currentNodeId, setCurrentNodeId] = useState(null);
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
   const [file, setFile]=useState(null)
@@ -30,22 +30,22 @@ const ImssMovements = ({ ...props }) => {
   file && console.log('File', file)
 
   useEffect(() => {
-    patronalSelected && getFiles()
-  },[patronalSelected])
+    patronalSelected && getFiles();
+  }, [patronalSelected]);
 
   const getFiles = () => {
-    setLoading(true)
+    setLoading(true);
     WebApiPeople.listEbaAndEmaFiles(props.currentNode.id, patronalSelected)
-    .then((response) => {
-      setFiles(response.data.documents)
-      setLoading(false)
-      console.log('Response', response)
-    })
-    .catch((error) => {
-      setLoading(false)
-      console.log('error', error)
-    })
-  }
+      .then((response) => {
+        setFiles(response.data.documents);
+        setLoading(false);
+        console.log("Response", response);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log("error", error);
+      });
+  };
 
   const syncEmaandEva = async () => {
     setLoading(true)
@@ -62,9 +62,9 @@ const ImssMovements = ({ ...props }) => {
       console.error('Error', error)
       message.error('Error al pedir las emsiones. Intente más tarde')
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const importEBAEMAFiles = async () => {
 
@@ -142,11 +142,23 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>*/}
               </Panel>
               <Panel header="EMA y EBA" key="2">
-                <Row justify={'space-between'} style={{ marginTop: '20px' }}>
-                    <Col span={10}>
-                      <SelectPatronalRegistration
-                        currentNode={currentNodeId}
-                        onChange={(value) => setPatronalSelected(value)}
+                <Row justify={"space-between"} style={{ marginTop: "20px" }}>
+                  <Col span={10}>
+                    <SelectPatronalRegistration
+                      currentNode={currentNodeId}
+                      onChange={(value) => setPatronalSelected(value)}
+                    />
+                  </Col>
+                  <Col
+                    span={10}
+                    style={{ display: "flex", justifyContent: "end" }}
+                  >
+                    <Col span={12}>
+                      <UploadFile
+                        textButton={"Importar EMA y EBA"}
+                        setFile={setFile}
+                        validateExtension={".zip"}
+                        size={"middle"}
                       />
                     </Col>
                     <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
@@ -175,16 +187,14 @@ const ImssMovements = ({ ...props }) => {
                     </Col>
                 </Col>
                 </Row>
-                <EmaYEvaFiles 
-                  files = {files.length > 0? files : []}
-                  loading = { loading }
+                <EmaYEvaFiles
+                  files={files.length > 0 ? files : []}
+                  loading={loading}
                 />
               </Panel>
               <Panel header="Consulta de movimientos al IMSS" key="3">
                 <Col span={24}>
-                  <MovementsIMSS
-                    currentNodeId = { currentNodeId }
-                  />
+                  <MovementsIMSS currentNodeId={currentNodeId} />
                 </Col>
               </Panel>
             </Collapse>

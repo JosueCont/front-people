@@ -312,6 +312,16 @@ export const intranetAccess = [
   },
 ];
 
+export const SukhaAccess = [
+  {
+    label: "Sí",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  }
+];
 export const statusActivePost = [
   {
     label: "Inactivo",
@@ -441,7 +451,7 @@ export const optionsLevelAcademic = [
 ];
 
 export const optionsStatusAcademic = [
-  {value: 1, key: 1, label: 'En concurso'},
+  {value: 1, key: 1, label: 'En curso'},
   {value: 2, key: 2, label: 'Trunca'},
   {value: 3, key: 3, label: 'Concluida'}
 ]

@@ -317,8 +317,6 @@ const ImssInformationNode = ({
     });
   };
 
-  console.log("Patronal Data", patronalData);
-
   return (
     <>
       <Row style={{ marginBottom: "15px" }} justify="end">

@@ -20,6 +20,7 @@ import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
 const TabSchool = ({ sizeCol = 8, action }) => {
 
@@ -187,9 +188,12 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             key: 'institution_name'
         },
         {
-            title: 'Finalización',
-            dataIndex: 'end_date',
-            key: 'end_date'
+            title: 'Fecha finalización',
+            render: (item) =>{
+                return(
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
         },
         {
             title: ()=>{

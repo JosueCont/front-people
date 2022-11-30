@@ -27,7 +27,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
-  const [ loadingIMSS, setLodingIMSS ] = useState(false)
+  const [loadingIMSS, setLodingIMSS] = useState(false);
   const [infonavitCredit, setInfonavitCredit] = useState([]);
   const [ updateCredit, setUpdateCredit ] = useState(null)
   const [ isEdit, setIsEdit ] = useState(false)
@@ -112,7 +112,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       .then((response) => {
         setLoadingTable(false);
         response.data && setInfonavitCredit([response.data.infonavit_credit]);
-        console.log("Response", response);
       })
       .catch((error) => {
         setLoadingTable(false);
@@ -231,8 +230,8 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item 
-              name="employee_type" 
+            <Form.Item
+              name="employee_type"
               label="Tipo de empleado"
               rules={[ruleRequired]}
             >
@@ -243,7 +242,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="salary_type" label="Tipo de salario" rules={[ruleRequired]}>
+            <Form.Item
+              name="salary_type"
+              label="Tipo de salario"
+              rules={[ruleRequired]}
+            >
               <Select
                 options={typeSalary}
                 notFoundContent={"No se encontraron resultado."}
@@ -251,7 +254,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="reduce_days" label="Semana o jornada reducida" rules={[ruleRequired]}>
+            <Form.Item
+              name="reduce_days"
+              label="Semana o jornada reducida"
+              rules={[ruleRequired]}
+            >
               <Select
                 options={reduceDays}
                 notFoundContent={"No se encontraron resultado."}
@@ -259,7 +266,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="movement_date" label="Fecha de movimiento" rules={[ruleRequired]}>
+            <Form.Item
+              name="movement_date"
+              label="Fecha de movimiento"
+              rules={[ruleRequired]}
+            >
               <DatePicker
                 locale={locale}
                 format="DD-MM-YYYY"
@@ -268,7 +279,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectFamilyMedicalUnit/>
+            <SelectFamilyMedicalUnit />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
@@ -303,7 +314,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         </Row>
         <Row justify={"end"}>
           <Form.Item>
-            <Button loading = { loadingIMSS } type="primary" htmlType="submit">
+            <Button loading={loadingIMSS} type="primary" htmlType="submit">
               Guardar
             </Button>
           </Form.Item>

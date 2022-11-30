@@ -42,6 +42,7 @@ const DetailsPublication = ({
     const [disableField, setDisabledField] = useState(false);
     const [disabledVacant, setDisabledVacant] = useState(false);
     const [infoPublication, setInfoPublication] = useState({});
+    const [valuesDefault, setValuesDefault] = useState({});
     const [fetching, setFetching] = useState(false);
     const { createData, formatData } = useProcessInfo();
 
@@ -106,6 +107,7 @@ const DetailsPublication = ({
             profile: infoPublication.profile?.id ?? 'open_fields',
             code_post: infoPublication.code_post
         }
+        setValuesDefault(all_info)
         formPublications.setFieldsValue(all_info);
         if(infoPublication.profile) setDisabledField(true);
         else setDisabledField(false);
@@ -115,7 +117,7 @@ const DetailsPublication = ({
         try {
             let body = {...values, node: currentNode.id, created_by: currentUser.id};
             await WebApiJobBank.updatePublication(infoPublication.id, body);
-            message.success('Publicación registrada');
+            message.success('Publicación actualizada');
             getInfoPublication(infoPublication.id);
         } catch (e) {
             console.log(e)
@@ -231,6 +233,7 @@ const DetailsPublication = ({
                                 formPublications={formPublications}
                                 disableField={disableField}
                                 setDisabledField={setDisabledField}
+                                valuesDefault={valuesDefault}
                             />
                         </Form>
                     </Spin>
