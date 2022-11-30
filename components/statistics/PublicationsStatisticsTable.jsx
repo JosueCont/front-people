@@ -16,11 +16,6 @@ const ReactionsCount = styled.p`
   width: fit-content;
 `;
 const CustomTable = styled(Table)`
-  & .ant-table-cell {
-    padding-left: 5px;
-    padding-right: 5px;
-    text-align: center;
-  }
   & .publication-column {
     width: 20%;
   }
@@ -138,7 +133,7 @@ const PublicationsStatisticsTable = ({
       render: (publication) => (
         <>
           {publication && publication != "" ? (
-            publication
+          <div dangerouslySetInnerHTML={{__html: publication}}></div>
           ) : (
             <i>*Esta publicación es de contenido multimedia</i>
           )}

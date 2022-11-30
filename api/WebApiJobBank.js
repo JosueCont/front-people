@@ -104,7 +104,7 @@ class WebApiJobBank {
     }
 
     static getCandidates(node, query){
-        return WebApi.ApisType(`/job-bank/candidate/?=${node}${query}`, 'get');
+        return WebApi.ApisType(`/job-bank/candidate/?node=${node}${query}`, 'get');
     }
 
     static getInfoCandidate(id){
@@ -117,6 +117,10 @@ class WebApiJobBank {
 
     static updateCandidate(id, data){
         return WebApi.ApisType(`/job-bank/candidate/${id}/`, 'put', data);
+    }
+
+    static updateCandidateStatus(id, data){
+        return WebApi.ApisType(`/job-bank/candidate/${id}/`, 'patch', data);
     }
 
     static deleteCandidate(data){
@@ -183,8 +187,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'put', data);
     }
 
-    static getPublications(node){
-        return WebApi.ApisType(`/job-bank/post-vacant/?node=${node}`, 'get');
+    static getPublications(node, query){
+        return WebApi.ApisType(`/job-bank/post-vacant/?node=${node}${query}`, 'get');
     }
 
     static getInfoPublication(id){
@@ -199,8 +203,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'put', data);
     }
 
-    static deletePublication(id, data){
-        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'patch', data);
+    static deletePublication(data){
+        return WebApi.ApisType('/job-bank/post-vacant/massive_delete/', 'post', data);
     }
      
     static sharePublication(id, data){

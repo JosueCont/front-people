@@ -7,7 +7,8 @@ import { useRouter } from 'next/router';
 import {
     getPublications,
     getProfilesOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getConnections
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
@@ -17,7 +18,8 @@ const index = ({
     currentNode,
     getPublications,
     getProfilesOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getConnections
 }) => {
 
     const router = useRouter();
@@ -26,6 +28,7 @@ const index = ({
         if(currentNode){
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
+            getConnections(currentNode.id, true);
         }
     },[currentNode])
 
@@ -67,6 +70,7 @@ export default connect(
     mapState,{
         getPublications,
         getProfilesOptions,
-        getVacanciesOptions
+        getVacanciesOptions,
+        getConnections
     }
 )(withAuthSync(index));

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import MyModal from '../../../common/MyModal';
 import { ruleRequired, onlyNumeric } from '../../../utils/rules';
+import { validateNum } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
 
 const ModalExperience = ({
@@ -23,11 +24,24 @@ const ModalExperience = ({
     } = useSelector(state => state.jobBankStore);
     const [formExperience] = Form.useForm();
     const [loading, setLoading] = useState();
+    const categorySelected = Form.useWatch('category', formExperience);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         formExperience.setFieldsValue(itemToEdit);
     },[itemToEdit])
+
+    const onChangeCategory = (value) =>{
+        formExperience.setFieldsValue({
+          sub_category: null
+        })
+      }
+
+    const optionsByCategory = () =>{
+        if(!categorySelected) return [];
+        const options = item => item.category === categorySelected;
+        return list_sub_categories.filter(options);
+      }
 
     const onCloseModal = () =>{
         close();
@@ -64,10 +78,14 @@ const ModalExperience = ({
                             rules={[ruleRequired]}
                         >
                             <Select
-                                placeholder='Categoría'
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una categoría'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={load_main_categories}
                                 loading={load_main_categories}
+                                onChange={onChangeCategory}
+                                optionFilterProp='children'
                             >
                                 {list_main_categories?.length > 0 && list_main_categories.map(item => (
                                     <Select.Option value={item.id} key={item.name}>
@@ -84,12 +102,15 @@ const ModalExperience = ({
                             rules={[ruleRequired]}
                         >
                             <Select
-                                placeholder='Subcategoría'
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una subcategoría'
                                 notFoundContent='No se encontraron resultados'
-                                disabled={load_sub_categories}
+                                disabled={optionsByCategory().length <= 0}
                                 loading={load_sub_categories}
+                                optionFilterProp='children'
                             >
-                                {list_sub_categories.length > 0 && list_sub_categories.map(item=> (
+                                {optionsByCategory().map(item=> (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -103,7 +124,12 @@ const ModalExperience = ({
                             label='Años de experiencia'
                             rules={[onlyNumeric]}
                         >
-                            <Input placeholder='Años de experiencia'/>
+                            <Input
+                                placeholder='Años de experiencia'
+                                maxLength={10}
+                                onKeyPress={e => e.which == 32 && e.preventDefault()}
+                                onKeyDown={validateNum}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -116,7 +142,7 @@ const ModalExperience = ({
                                 maxTagCount={2}
                                 disabled={load_competences}
                                 loading={load_competences}
-                                placeholder='Competencias'
+                                placeholder='Seleccionar las competencias'
                                 notFoundContent='No se encontraron resultados'
                             >
                                 {list_competences.length > 0 && list_competences.map(item => (

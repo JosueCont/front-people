@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
 const TabPositions = ({ sizeCol = 8, action }) => {
 
@@ -161,6 +162,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             key: 'company'
         },
         {
+            title: 'Fecha inicio',
+            render: (item) =>{
+                return(
+                    <span>{item.start_date ? moment(item.start_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
+        },
+        {
+            title: 'Fecha finalización',
+            render: (item) =>{
+                return(
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
+        },
+        {
             title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
@@ -201,26 +218,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
                     showSizeChanger: false
                 }}
             />
-            {openModal && (
-                <ModalPositions
-                    title={validateAction() ? 'Editar posición' : 'Agregar posición'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta posición?'
-                    visible={openModalDelete}
-                    keyTitle='position_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalPositions
+                title={validateAction() && openModal ? 'Editar posición' : 'Agregar posición'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar esta posición?'
+                visible={openModalDelete}
+                keyTitle='position_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }
