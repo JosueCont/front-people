@@ -65,7 +65,7 @@ const ImssMovements = ({ ...props }) => {
     try {
       let response = await WebApiPeople.forceListEbaAndEmaFiles(data)
       console.log("Response", response)
-      message.success('Las emisiones fueron pedidas con éxito, verifique este apartado en un par de horas')
+      message.success('Solicitud de Emisiones realizada con éxito, verifique mas tarde sus documentos')
     } catch (error) {
       console.error('Error', error)
       message.error('Error al pedir las emsiones. Intente más tarde')
