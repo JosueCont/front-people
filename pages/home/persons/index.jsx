@@ -64,6 +64,7 @@ import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadC
 import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
 import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -205,7 +206,34 @@ const homeScreen = ({ ...props }) => {
   };
 
   const downloadResignationLetter = async (item) => {
-    console.log('Item', item)
+
+    try {
+
+      let response = await WebApiPayroll.downloadRenegationCart(item.id)
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Carta de renuncia.pdf"
+      link.click()
+      
+    } catch (error) {
+        error && 
+        error.response && 
+        error.response.data && 
+        error.response.data.message &&
+        message.error(error.response.data.message)
+    }
+
+      // downLoadFileBlob(
+      //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
+      //   "carta_de_renuncia.pdf",
+      //   "GET",
+      // );
+
   }
 
   const getAssigns = async (id, queryParam, type = "") => {

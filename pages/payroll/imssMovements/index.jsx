@@ -169,6 +169,7 @@ const ImssMovements = ({ ...props }) => {
                      <Col span={7}>
                         <Button 
                           onClick={ () => syncEmaandEva() }
+                          loading={loading}
                           disabled = { patronalSelected?  false : true }
                         >
                             Sincronizar

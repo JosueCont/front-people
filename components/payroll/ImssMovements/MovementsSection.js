@@ -8,6 +8,7 @@ import {getMovementsIMSS} from "../../../redux/payrollDuck";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
 import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
+import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
 
 const { Title } = Typography;
 
@@ -47,6 +48,7 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
     ]
 
     const selectRow=(type,data)=>{
+        console.log(type, data)
         switch (type){
             case 1:
                 return setAltaRowSelected(data)
@@ -73,6 +75,43 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
         }
     }
 
+
+    /**
+     * Methodo para generar dispmag o enviar a scrapper
+     * @param type
+     * @param method 1 es para descargar y 2 es para enviar a movimiento de scrapper
+     * @returns {Promise<void>}
+     */
+    const generateFileSend=async (type, method=1)=>{
+        switch (method){
+            case 1:
+                console.log('generateFile',type, altaRowSelected)
+                try{
+                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, altaRowSelected, method)
+                    console.log('generate-file',res)
+                    const blob = new Blob([res.data]);
+                    const link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = name;
+                    link.click();
+                }catch (e){
+                  console.log(e)
+                }
+                break;
+            case 2:
+                try{
+                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, altaRowSelected, method)
+                    console.log('send-file',res)
+                }catch (e){
+                   console.log(e)
+                }
+                //return updateRowSelected.length<=0
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <Row>
             <Col span={24}>
@@ -93,10 +132,10 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
                                 <Row>
                                     <Col span={24} style={{padding:20}}>
                                         <Space>
-                                            <Button type="primary" icon={<FileZipOutlined />} disabled={thereIsDataSelected(t.key)} >
+                                            <Button type="primary" icon={<FileZipOutlined />} onClick={()=>generateFileSend(t.key, 1)} disabled={thereIsDataSelected(t.key)} >
                                                 Generar archivo
                                             </Button>
-                                            <Button type="primary" disabled={thereIsDataSelected(t.key)} icon={<SendOutlined />} >
+                                            <Button type="primary" disabled={thereIsDataSelected(t.key)} onClick={()=>generateFileSend(t.key, 2)} icon={<SendOutlined />} >
                                                 Enviar movimientos seleccionados
                                             </Button>
                                             {

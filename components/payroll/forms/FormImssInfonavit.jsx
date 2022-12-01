@@ -12,11 +12,13 @@ import {
   Select,
   DatePicker,
   message,
+  Divider,
+  Tooltip
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import {typeEmployee, typeSalary, reduceDays, FACTOR_SDI} from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { EditOutlined,} from "@ant-design/icons";
+import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
@@ -35,7 +37,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
-    person_id && localUserCredit();
+    person_id && localUserCredit() && getInfo();
   }, [person_id]);
 
   useEffect(() =>{
@@ -56,14 +58,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           nss: person.imss
         })
     }
-    // if(person.imss){
-    //   formImssInfonavit.setFieldsValue({
-    //     nss: person.imss
-    //   })
-    // }
+
   },[updateCredit])
 
-  console.log('Person', person)
 
   useEffect(()=>{
     console.log(daily_salary)
@@ -83,8 +80,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     values.person = person_id
     values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
-    // values.is_active = true
-    // values.is_registered = true
     values.modify_by = "System"
     values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    : ""
     console.log("Data", values);
@@ -92,7 +87,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     if(isEdit){
 
-      console.log('Entro al Editar')
 
       WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
       .then((response) => {
@@ -109,8 +103,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     } else {
 
-      console.log('Entro al registrar')
-
       WebApiPayroll.saveIMSSInfonavit(values)
       .then((response) => {
         console.log('Response', response)
@@ -123,8 +115,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         setLoadingTable(false)
       })
     }
-
-    // setLodingIMSS(false)
   };
 
   const userCredit = async () => {
@@ -140,100 +130,107 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
         setLoadingTable(false);
-        response.data && setInfonavitCredit([response.data.infonavit_credit]);
+        getInfo()
       })
       .catch((error) => {
         setLoadingTable(false);
-        console.log("Error", error);
+        error?.response?.data? message.error(error.response.data.message) : ""
       });
   };
 
-  const localUserCredit = async () => {
+  const getInfo = async () => {
     setLoadingTable(true)
     try {
-      let response = await WebApiPayroll.getPersonalCredits(person_id)
-      setUpdateCredit(response.data)
-      setInfonavitCredit([response.data])
+      let response = await WebApiPayroll.getUserCredits(person_id)
+      console.log('Response', response.data)
+      setInfonavitCredit(response.data)
     } catch (error) {
-      console.log('Error', error)
+      console.log('Error ===>', error)
     } finally {
       setLoadingTable(false)
     }
   }
 
-  const updateImssInfonavit = (item) => {
-    setIsEdit(true)
-    setUpdateCredit(item)
+  const localUserCredit = async () => {
+    setLodingIMSS(true)
+    try {
+      let response = await WebApiPayroll.getPersonalCredits(person_id)
+      setUpdateCredit(response.data)
+    } catch (error) {
+      console.log('Error', error)
+    } finally {
+      setLodingIMSS(false)
+    }
   }
 
-  updateCredit && console.log('Credit', updateCredit)
-
   const colCredit = [
+    {
+      title: "Fecha de inicio",
+      dataIndex: "start_date",
+      key: "start_date",
+      // width: 100,
+    },
     {
       title: "Número",
       dataIndex: "number",
       key: "number",
-      width: 100,
+      // width: 100,
     },
     {
       title: "Tipo de crédito",
       dataIndex: "type",
       key: "type",
-      width: 100,
-    },
-    {
-      title: "Fecha de inicio",
-      dataIndex: "start_date",
-      key: "start_date",
-      width: 100,
+      // width: 100,
     },
     {
       title: "Estatus",
       dataIndex: "status",
       key: "status",
-      width: 100,
+      // width: 100,
     },
-    {
-      title: "Monto",
-      dataIndex: "amount_payment",
-      key: "amount_payment",
-      width: 100,
-    },
-    {
-      title: "Monto actual",
-      dataIndex: "current_payment",
-      key: "current_payment",
-      width: 100,
-    },
-    {
-      title: "Numero de pago",
-      dataIndex: "number_payment",
-      key: "number_payment",
-      width: 100,
-    },
-    {
-      title: "Ultima fecha de pago",
-      dataIndex: "date_last_payment",
-      key: "date_last_payment",
-      width: 100,
-    },
-    {
-      title: "Monto total",
-      dataIndex: "total_amount",
-      key: "total_amount",
-      width: 100,
-    },
+    // {
+    //   title: "Monto",
+    //   dataIndex: "amount_payment",
+    //   key: "amount_payment",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Monto actual",
+    //   dataIndex: "current_payment",
+    //   key: "current_payment",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Numero de pago",
+    //   dataIndex: "number_payment",
+    //   key: "number_payment",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Ultima fecha de pago",
+    //   dataIndex: "date_last_payment",
+    //   key: "date_last_payment",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Monto total",
+    //   dataIndex: "total_amount",
+    //   key: "total_amount",
+    //   width: 100,
+    // },
     // {
     //   title: "Opciones",
     //   render: (item) => {
     //     return (
     //       <div>
     //         <Row gutter={16}>
-    //           <Col className="gutter-row" offset={1}>
-    //             <EditOutlined
-    //               style={{ fontSize: "20px" }}
-    //               onClick={() => updateImssInfonavit(item)}
-    //             />
+    //           <Col className="gutter-row" offset={1} style={{ padding: '0px 20px' }}>
+    //             <Tooltip title="sincronizar" >
+    //               <SyncOutlined
+    //                 style={{ fontSize: "20px" }}
+    //                 onClick={() => userCredit()}
+    //               />
+    //             </Tooltip>
     //           </Col>
     //           {/* <Col className="gutter-row" offset={1}>
     //             <DeleteOutlined
@@ -251,7 +248,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   ];
 
   return (
-    <Spin tip="Cargando..."  spinning={loadingTable}>
+    <Spin tip="Cargando..."  spinning={loadingIMSS}>
       <Row>
         <Title style={{ fontSize: "20px" }}>IMSS</Title>
       </Row>
@@ -375,7 +372,19 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         </Row>
       </Form>
 
-      {/* <Spin tip="Cargando..." spinning={loadingTable}>
+      <Divider />
+
+      <Row justify='space-between'>
+        <Title style={{ fontSize: "20px", marginBottom: 20 }}>INFONAVIT</Title>
+        <Tooltip title="sincronizar" >
+          <SyncOutlined
+            style={{ fontSize: "20px" }}
+            onClick={() => userCredit()}
+          />
+        </Tooltip>
+      </Row>
+
+      <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
           columns={colCredit}
           scroll={{
@@ -389,7 +398,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
               : "No se encontraron resultados.",
           }}
         />
-      </Spin> */}
+      </Spin>
     </Spin>
   );
 };
