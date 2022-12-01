@@ -45,7 +45,7 @@ const ImssMovements = ({ ...props }) => {
     setLoading(true);
     WebApiPeople.listEbaAndEmaFiles(props.currentNode.id, patronalSelected)
       .then((response) => {
-        setFiles(response.data.documents);
+        setFiles(response.data.results);
         setLoading(false);
         console.log("Response", response);
       })
@@ -178,7 +178,7 @@ const ImssMovements = ({ ...props }) => {
                   </Col>
                 </Row>
                 <EmaYEvaFiles
-                  files={files?.length > 0 ? files : []}
+                  files={  files?.length > 0 ? files : []}
                   loading={loading}
                 />
               </Panel>

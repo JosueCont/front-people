@@ -85,9 +85,14 @@ const MovementsIMSS=({ currentNode })=>{
             dataIndex: 'receipt',
             render:(receipt) => (
                 <div style={{ textAlign: 'center' }}>
-                    <a href={receipt}>
-                        <DownloadOutlined />
-                    </a>
+                    {
+                        receipt? (
+                            <a href={receipt}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
+
                 </div>
             )
         },
@@ -97,9 +102,13 @@ const MovementsIMSS=({ currentNode })=>{
             render:(result) => (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <a href={result}>
-                        <DownloadOutlined />
-                    </a>
+                  {
+                        result? (
+                            <a href={result}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
                 </div>
                 </div>
             )
