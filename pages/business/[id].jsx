@@ -32,7 +32,7 @@ const ConfigCompany = ({ ...props }) => {
   }, [router.query]);
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
+    <MainLayout currentKey={["business"]} defaultOpenKeys={["strategyPlaning","company"]}>
       {props.currentNode == null && (
         <Row align="end">
           <Button onClick={() => router.push("/select-company")}>

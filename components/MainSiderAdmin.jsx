@@ -28,7 +28,7 @@ const { Sider, Header, Content, Footer } = Layout;
 const MainSider = ({
   hideMenu,
   currentKey,
-  defaultOpenKeys = null,
+  defaultOpenKeys = 'null',
   hideProfile = true,
   onClickImage = true,
   ...props
@@ -82,6 +82,9 @@ const MainSider = ({
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
       intranet_groups: "/intranet/groups",
+      intranet_configuration: "/intranet/config",
+      publications_statistics: "/intranet/publications_statistics",
+      surveys: "/assessment/surveys",
       assessment_groups: "/assessment/groups",
       assessment_profiles: "/assessment/profiles",
       assessment_reports: "/assessment/reports",
@@ -95,7 +98,7 @@ const MainSider = ({
       jb_settings: "/jobbank/settings",
       jb_publications: "/jobbank/publications"
     };
-    router.push("#");
+    router.push(pathRoutes[key]);
   };
 
   let items = [];
@@ -106,96 +109,131 @@ const MainSider = ({
     if (typeof window !== "undefined") {
       // Estrategia y planeación
       let children0 = [
-        getItem("Empresa", "company"),
-        getItem("Colaboradores", "colab")
+        getItem("Empresas", "business"),
+        getItem("Prestaciones", "integrationFactors"),
+        getItem("Registros patronales", "patronal"),
+
       ]
-      items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />, children0))
+      let children0101 = [
+        getItem("Personas", "persons"),
+        getItem("Grupos", "groups_people"),
+      ];
+      let children90 = [
+        getItem("Empresa", "company", <></>, children0),
+        getItem("Colaboradores", "people", <></>, children0101)
+      ]
+
+     
+      items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />, children90));
+
+
 
       // Administración de RH
+ 
       let children001 = [
-        getItem("Cálculo de nómina", "nomina_calc"),
-        getItem("Nóminas extraordinarias", "nomina_extra"),
-        getItem("Calendario de pagos", "nomina_calendario"),
-        getItem("Comprobantes fiscales", "nomina_comprob"),
-        getItem("Calculadora", "nomina_calculadora"),
-        getItem("Importar nómina con XML", "nomina_importador"),
-        getItem("Movimientos IMSS", "nomina_imss"),
-      ]
+        getItem("Cálculo de nómina", "calculatePayroll"),
+        getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
+        getItem("Calendario de pagos", "paymentCalendar"),
+        getItem("Comprobantes fiscales", "payrollVoucher"),
+        getItem("Calculadora", "calculatorSalary"),
+        getItem("Importar nómina con XML", "importMassivePayroll"),
+        getItem("Movimientos IMSS", "imssMovements"),
+      ];
       let children0001 =[
-        getItem("Préstamos", "prestamos"),
-        getItem("Vacaciones", "vacaciones"),
-        getItem("Permisos", "permisos"),
-        getItem("Incapacidad", "incapacidad"),
-        getItem("Cuentas bancarias", "cuentas_bancarias"),
+        getItem("Préstamos", "lending"),
+        getItem("Vacaciones", "holidays"),
+        getItem("Permisos", "permission"),
+        getItem("Incapacidad", "incapacity"),
+        getItem("Cuentas bancarias", "bank_accounts"),
       ]
+
       let children002 = [
-        getItem("Solicitudes", "solicitudes", <></>, children0001),
-        getItem("Comunicados", "comunicados"),
-        getItem("Eventos", "eventos")
+        getItem("Solicitudes", "requests", <></>, children0001),
+        getItem("Comunicados", "releases"),
+        getItem("Eventos", "events")
       ]
       let children01 = [
-        getItem("Nómina", "nomina",<></>, children001),
+        getItem("Nómina", "payroll",<></>, children001),
         getItem("Concierge", "concierge",<></>, children002)
       ]
       items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
 
       // Reclutamiento y selección
       let children021 = [
-        getItem("Clientes", "btClientes"),
-        getItem("Vacantes", "btVacantes"),
-        getItem("Estrategias", "btEstrategias"),
-        getItem("Template de vacante", "btTemplateVacante"),
-        getItem("Publicaciones", "btPublicaciones"),
-        getItem("Candidatos", "btClientes"),
-        getItem("Configuraciones", "btConfig"),
+           getItem("Clientes", "jb_clients"),
+            getItem("Vacantes", "jb_vacancies"),
+            getItem("Estrategias", "jb_strategies"),
+            getItem("Template de vacante", "jb_profiles"),
+            getItem("Candidatos", "jb_candidates"),
+            getItem("Publicaciones", "jb_publications"),
+            getItem("Configuraciones", "jb_settings")
       ]
       let children02 = [
-        getItem("Bolsa de trabajo", "bolsa", <></>, children021)
+        getItem("Bolsa de trabajo", "job_bank", <></>, children021)
       ]
       items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />, children02))
 
       // Evaluación y diagnóstico
       let children11 = [
-        getItem("Evaluaciones", "eval"),
-        getItem("Grupo de evaluaciones", "groupEval"),
-        getItem("Perfiles de competencias", "perfCompetencias"),
-        getItem("Reporte de competencias", "repCompetencias")
+        getItem("Evaluaciones", "surveys"),
+        getItem("Grupos de evaluaciones", "assessment_groups"),
+        getItem("Perfiles de competencias", "assessment_profiles"),
+        getItem("Reportes de competencias", "assessment_reports"),
       ]
-      let children1 = [getItem("PsiKHORmetría", "psikhormetria", <></>, children11)]
+      let children1 = [getItem("PsiKHORmetría", "kuiz", <></>, children11)]
       items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
 
       // Educación y desarrollo
-      let children2 = [
-        getItem("Khorflix", "khorflix"),
-        getItem("Sukha", "sukha"),
-        getItem("Careerlab", "careerlab"),
-        getItem("Concieo", "concieo")
-      ]
-      items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      // let children2 = [
+      //   getItem("Khorflix", "khorflix"),
+      //   getItem("Sukha", "sukha"),
+      //   getItem("Careerlab", "careerlab"),
+      //   getItem("Concieo", "concieo")
+      // ]
+      // items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
 
       // desempeño
-      items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
+      // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
       let children31 = [
-        getItem("Dashboard general", "ynlgral"),
-        getItem("Dashboard personal", "ynlpers")
+        getItem("Dashboard general", "ynl_general_dashboard"),
+        getItem("Dashboard personal", "ynl_personal_dashboard"),
       ]
+
+      let children32 = [
+        getItem("Configuración", "intranet_configuration"),
+        getItem("Grupos", "intranet_groups"),
+        getItem("Moderación", "publications_statistics"),
+      ];
       let children3 = [
-        getItem("KHOR Connect", "connect"),
+        getItem("KHOR Connect", "intranet",  <></>, children32 ),
         getItem("YNL", "ynl", <></>, children31),
-        getItem("Notificaciones", "notificaciones"),
+        // getItem("Notificaciones", "notificaciones"),
       ]
       items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
 
       // Analytics
-      items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
+      // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
 
       // Analytics
+
+      let children7 = [
+        getItem("Catálogos", "catalogs"),
+        getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Asignar empresa", "asign"),
+      ];
+      let children8 = [
+        getItem("Carga masiva de personas", "bulk_upload"),
+        getItem("Carga de documentos", "documentsLog"),
+      ];
       let children4 = [
-        getItem("Registro de errores", "logsErrors"),
-        getItem("Configuración", "config")
+        getItem("Registro de errores", "uploads",  <></>, children8 ),
+        getItem("Configuración", "config",  <></>, children7),
+        getItem("Reportes", "reports")
       ]
+
+
       items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />, children4))
     }
 

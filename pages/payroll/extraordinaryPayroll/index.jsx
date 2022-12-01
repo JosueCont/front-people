@@ -547,8 +547,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       />
       <MainLayout
         currentKey={["extraordinaryPayroll"]}
-        defaultOpenKeys={["payroll"]}
-      >
+        defaultOpenKeys={["managementRH","payroll"]}
+        >
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}

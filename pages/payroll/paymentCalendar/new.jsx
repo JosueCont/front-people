@@ -9,7 +9,7 @@ const NewPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
   return (
     <>
-      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["managementRH","payroll"]}>
         <div
           className="container-border-radius"
           style={{ width: "100%", backgroundColor: "white", padding: "2%" }}

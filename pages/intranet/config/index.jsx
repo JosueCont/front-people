@@ -109,7 +109,7 @@ const configIntranet = ({user, ...props}) => {
   };
 
   return (
-    <MainLayout currentKey={["intranet_configuration"]} defaultOpenKeys={["intranet"]}>
+    <MainLayout currentKey={["intranet_configuration"]} defaultOpenKeys={["commitment","intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
           <Breadcrumb.Item
               className={"pointer"}

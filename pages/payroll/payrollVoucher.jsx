@@ -7,7 +7,7 @@ import React from "react";
 
 const PayrollVoucher = () => {
   return (
-    <MainLayout currentKey={["payrollVoucher"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["payrollVoucher"]}  defaultOpenKeys={["managementRH","payroll"]}>
       <Breadcrumb>
           <Breadcrumb.Item
               className={"pointer"}

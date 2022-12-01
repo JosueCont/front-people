@@ -41,7 +41,7 @@ const EmployeeDetailPage = (...props) => {
           }
         `}
       />
-      <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item >Inicio</Breadcrumb.Item>

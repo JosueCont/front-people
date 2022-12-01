@@ -91,7 +91,7 @@ const calculatorSalary = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["calculatorSalary"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["calculatorSalary"]}  defaultOpenKeys={["managementRH","payroll"]}>
       <Global
         styles={`
           .card-calculator .ant-card-body{

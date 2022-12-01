@@ -35,7 +35,7 @@ const AddOrEditVacancies = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey='jb_vacancies' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_vacancies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}

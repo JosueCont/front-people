@@ -70,7 +70,7 @@ const ListBulkUpload = ({ ...props }) => {
       });
   }, []);
   return (
-    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
+    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["utilities","uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

@@ -123,7 +123,7 @@ const index = ({user, ...props}) => {
 
   return (
     <>
-      <MainLayout currentKey={["publications_statistics"]} defaultOpenKeys={["intranet"]}>
+      <MainLayout currentKey={["publications_statistics"]} defaultOpenKeys={["commitment","intranet"]}>
         <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
           <Breadcrumb.Item
               className={"pointer"}

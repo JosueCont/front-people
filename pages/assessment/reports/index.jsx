@@ -30,7 +30,7 @@ const Index = ({
   },[currentNode])
   
   return (
-    <MainLayout currentKey={["assessment_reports"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["assessment_reports"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

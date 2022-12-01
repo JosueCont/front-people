@@ -122,7 +122,7 @@ const IncapacityDetails = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey={["incapacity"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["incapacity"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

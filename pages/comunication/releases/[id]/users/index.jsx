@@ -34,7 +34,7 @@ const UserNotification = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["releases"]} defaultOpenKeys={["managementRH","concierge","releases"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}

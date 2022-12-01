@@ -41,7 +41,7 @@ const index = () => {
   
   return (
       <Spin spinning={reportPerson?.loadReportPerson}>
-          <MainLayout currentKey={["ynl_personal_dashboard"]} defaultOpenKeys={["ynl"]}>
+          <MainLayout currentKey={["ynl_personal_dashboard"]} defaultOpenKeys={["commitment","ynl"]}>
               <Global
                   styles={css`
             :root {

@@ -788,7 +788,7 @@ const GroupAdd = ({ ...props }) => {
   ];
 
   return (
-    <MainLayout currentKey={['securityGroups']} defaultOpenKeys={['config']}>
+    <MainLayout currentKey={['securityGroups']} defaultOpenKeys={["utilities","config"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}

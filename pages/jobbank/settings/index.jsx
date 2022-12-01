@@ -29,7 +29,7 @@ const index = ({
     ]
 
     return (
-        <MainLayout currentKey={'jb_settings'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey={'jb_settings'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}

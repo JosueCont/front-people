@@ -177,7 +177,7 @@ const LendingDetails = (props) => {
   }, [route]);
 
   return (
-    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

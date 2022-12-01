@@ -41,7 +41,7 @@ const index = ({}) => {
   }, [validateUser]);
   
   return (
-    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
+    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["commitment","ynl"]}>
       <Global
         styles={css`
             :root {

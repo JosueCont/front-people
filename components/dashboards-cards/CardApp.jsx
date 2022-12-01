@@ -117,7 +117,7 @@ const CardApps = ({ user, config, ...props }) => {
   const linkToExternalApp = (app_name) => {
     // const url = props.applications[app_name].front;
     const token = user.jwt_data.metadata.at(-1).token;
-    const url = `https://demo.${urlSukha}/validation?token=${token}`;
+    const url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
     redirectTo(url, true);
   };
 

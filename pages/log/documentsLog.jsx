@@ -92,7 +92,7 @@ const DocumentLog = ({ ...props }) => {
   ];
 
   return (
-    <MainLayout currentKey={["documentsLog"]} defaultOpenKeys={["uploads"]}>
+    <MainLayout currentKey={["documentsLog"]} defaultOpenKeys={["utilities","uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

@@ -155,7 +155,7 @@ const Events = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["events"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["events"]} defaultOpenKeys={["managementRH","concierge","events"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

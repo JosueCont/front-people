@@ -419,7 +419,7 @@ const AssessmentScreen = ({
   ];
 
   return (
-    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

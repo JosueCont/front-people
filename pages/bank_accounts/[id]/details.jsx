@@ -199,7 +199,7 @@ const BankAccountsDetails = () => {
   };
 
   return (
-    <MainLayout currentKey={["bank_accounts"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["bank_accounts"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

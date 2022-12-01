@@ -74,7 +74,7 @@ const Calendars = () => {
   };
 
   return (
-    <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["managementRH","payroll"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

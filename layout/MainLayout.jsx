@@ -8,6 +8,12 @@ import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
+import MainSiderAdmin from "../components/MainSiderAdmin";
+import WebApiPeople from "../api/WebApiPeople";
+import Cookie from "js-cookie";
+
+
+
 import Head from "next/head";
 
 const { Content } = Layout;
@@ -30,12 +36,15 @@ const MainLayout = ({
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
+  const [person, setPerson] = useState();
+
 
   useEffect(() => {
     try {
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();
       setFlavor(vflavor);
+      console.log(flavor)
 
       var head = document.head;
       var link = document.createElement("link");
@@ -71,6 +80,27 @@ const MainLayout = ({
 
   const closeEvents = () => {
     setShowEvents(false);
+  };
+
+  useEffect(() => {
+    getPerson();
+  }, []);
+
+  const getPerson = async () => {
+    let user = Cookie.get();
+    if (user && user != undefined && user.token) {
+      user = JSON.parse(user.token);
+      await WebApiPeople.personForKhonnectId({
+        id: user.user_id,
+      })
+        .then((response) => {
+          console.log('person', response.data)
+          setPerson(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (<>
@@ -236,19 +266,37 @@ const MainLayout = ({
           setShowEvents={setShowEvents}
           config={props.config}
         />
+
+        {person.is_admin ?
+            <Layout>
+            {!hideMenu && props.currentNode && (
+              <MainSiderAdmin
+                currentKey={currentKey}
+                defaultOpenKeys={
+                  props.defaultOpenKeys ? props.defaultOpenKeys : null
+                }
+              />
+            )}
+            <Content>
+              <div className="div-main-layout">{props.children}</div>
+            </Content>
+          </Layout>
+        : 
         <Layout>
-          {!hideMenu && props.currentNode && (
-            <MainSider
-              currentKey={currentKey}
-              defaultOpenKeys={
-                props.defaultOpenKeys ? props.defaultOpenKeys : null
-              }
-            />
-          )}
-          <Content>
-            <div className="div-main-layout">{props.children}</div>
-          </Content>
-        </Layout>
+        {!hideMenu && props.currentNode && (
+          <MainSider
+            currentKey={currentKey}
+            defaultOpenKeys={
+              props.defaultOpenKeys ? props.defaultOpenKeys : null
+            }
+          />
+        )}
+        <Content>
+          <div className="div-main-layout">{props.children}</div>
+        </Content>
+      </Layout>
+        }
+        
       </Layout>
       {props.currentNode && (
         <Drawer placement="right" onClose={closeEvents} visible={showEvents}>

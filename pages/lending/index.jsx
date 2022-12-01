@@ -87,7 +87,7 @@ const Lending = ({ ...props }) => {
       {props.permissions && props.configPermissions && (
         <MainLayout
           currentKey={["lending"]}
-          defaultOpenKeys={["requests"]}
+          defaultOpenKeys={["managementRH","concierge","requests"]}
         >
           <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
             <Breadcrumb.Item

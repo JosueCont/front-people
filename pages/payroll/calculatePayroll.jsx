@@ -1032,7 +1032,7 @@ const CalculatePayroll = ({ ...props }) => {
         />
         <MainLayout
           currentKey={["calculatePayroll"]}
-          defaultOpenKeys={["payroll"]}
+          defaultOpenKeys={["managementRH","payroll"]}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item

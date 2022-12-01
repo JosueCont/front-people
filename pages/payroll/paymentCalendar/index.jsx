@@ -108,7 +108,7 @@ const PaymentCalendars = ({ ...props }) => {
       />
       <MainLayout
         currentKey={["paymentCalendar"]}
-        defaultOpenKeys={["payroll"]}
+        defaultOpenKeys={["managementRH","payroll"]}
       >
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item

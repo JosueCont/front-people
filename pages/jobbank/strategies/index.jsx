@@ -38,7 +38,7 @@ const index = ({
     },[currentNode, router])
 
     return (
-        <MainLayout currentKey='jb_strategies' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_strategies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className='pointer'

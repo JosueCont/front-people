@@ -147,7 +147,7 @@ const SelectCompany = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["asign"]} defaultOpenKeys={["company"]}>
+    <MainLayout currentKey={["asign"]} defaultOpenKeys={["utilities","config"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

@@ -8,7 +8,7 @@ import React from "react";
 const PatronalRegistartionNode = () => {
   const router = useRouter();
   return (
-    <MainLayout currentKey={["patronal"]} defaultOpenKeys={["company"]}>
+    <MainLayout currentKey={["patronal"]} defaultOpenKeys={["strategyPlaning","company"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
