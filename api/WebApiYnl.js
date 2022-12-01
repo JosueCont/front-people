@@ -47,6 +47,10 @@ class WebApiYnl {
   static getSelectsData(){
     return WebApi.ApisType(`/ynl/get-selects-data/`, "get");
   }
+
+  static synchronizePersonYNL(data){
+    return WebApi.ApisType(`/ynl/register/multiple-people/`, "post", data)
+  }
 }
 
 export default WebApiYnl;
