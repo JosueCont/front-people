@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import WebApi from "./webApi";
 
 class WebApiPayroll {
@@ -152,6 +153,10 @@ class WebApiPayroll {
 
   static getReportPayroll(url) {
     return WebApi.ApisType(`/payroll/payroll-report?${url}`, "get");
+  }
+
+  static downloadRenegationCart(id) {
+    return WebApi.ApisType(`/payroll/resignation-letter?person_id=${id}`, 'get')
   }
 
   static getPayrollList(data) {
