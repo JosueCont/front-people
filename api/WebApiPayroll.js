@@ -186,6 +186,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/infonavit-credit`, "post", data);
   }
 
+  static getUserCredits(id){
+    return WebApi.ApisType(`payroll/infonavit-credit?person=${id}`, 'get')
+  }
+
   static saveIMSSInfonavit(data) {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
