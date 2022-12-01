@@ -8,6 +8,7 @@ import {getMovementsIMSS} from "../../../redux/payrollDuck";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
 import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
+import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
 
 const { Title } = Typography;
 
@@ -47,6 +48,7 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
     ]
 
     const selectRow=(type,data)=>{
+        console.log(type, data)
         switch (type){
             case 1:
                 return setAltaRowSelected(data)
@@ -73,6 +75,32 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
         }
     }
 
+
+    const generateFile=async (type)=>{
+        switch (type){
+            case 1:
+                console.log('generateFile',type, altaRowSelected)
+                try{
+                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, altaRowSelected, 2)
+                    console.log(res)
+                }catch (e){
+
+                }
+                break;
+            case 2:
+                try{
+                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, altaRowSelected, 1)
+                    console.log(res)
+                }catch (e){
+
+                }
+                //return updateRowSelected.length<=0
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <Row>
             <Col span={24}>
@@ -93,7 +121,7 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
                                 <Row>
                                     <Col span={24} style={{padding:20}}>
                                         <Space>
-                                            <Button type="primary" icon={<FileZipOutlined />} disabled={thereIsDataSelected(t.key)} >
+                                            <Button type="primary" icon={<FileZipOutlined />} onClick={()=>generateFile(t.key)} disabled={thereIsDataSelected(t.key)} >
                                                 Generar archivo
                                             </Button>
                                             <Button type="primary" disabled={thereIsDataSelected(t.key)} icon={<SendOutlined />} >

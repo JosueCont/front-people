@@ -225,6 +225,14 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/affiliate-movements?node=${node}&patronal_registration=${patronal_registration}`, "get"
     )
   }
+
+  static generateDispmagORSendMovement(type,regPatronal,listPeople=[], method=2){
+    let data = {
+      type, patronal_id: regPatronal, list: listPeople, method
+    }
+    return WebApi.ApisType(`payroll/sua-movements`, "post", data)
+  }
+
 }
 
 export default WebApiPayroll;
