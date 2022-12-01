@@ -261,7 +261,7 @@ const ModalConceptsPayroll = ({
         const obj = {
           person_id: item.person.id,
           perceptions: item.perceptions,
-          deductions: item.deductions.filter(
+          deductions: item.deductions?.filter(
             (item) => item.type != "001" && item.type != "002"
           ),
           other_payments: item.otherPayments,
