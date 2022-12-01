@@ -130,7 +130,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
         setLoadingTable(false);
-        response.data && setInfonavitCredit(response.data.infonavit_credit);
+        getInfo()
       })
       .catch((error) => {
         setLoadingTable(false);
