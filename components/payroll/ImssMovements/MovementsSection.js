@@ -157,7 +157,7 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
                                                 Enviar movimientos seleccionados
                                             </Button>
                                             {
-                                                t.key===1 && <ButtonAltaImssImport node={node} regPatronal={patronal_registration}/>
+                                                t.key===1 && <ButtonAltaImssImport onFinish={()=> getMovementsIMSS(node, regPatronal) }  node={node} regPatronal={regPatronal}/>
                                             }
                                         </Space>
                                     </Col>

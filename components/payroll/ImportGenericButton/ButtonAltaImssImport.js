@@ -75,6 +75,7 @@ const ButtonAltaImssImport=({person, regPatronal=null,node, payrollPerson, perso
             const resp = await  WebApiPayroll.importIMSSPerson(formdata)
             console.log(resp)
             message.info(resp.data.message)
+            props.onFinish()
             if(resp.data?.data){
                 let arrPersonas =  resp.data.data.filter((person)=> !person?.status )
                 if(arrPersonas.length>0){
