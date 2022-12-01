@@ -50,16 +50,21 @@ import {
 } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useLayoutEffect } from "react";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
+import WebApiYnl from "../../../api/WebApiYnl";
 import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
+import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
+import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
+import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -91,8 +96,11 @@ const homeScreen = ({ ...props }) => {
 
   // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalSynchronizeYNL, setModalSynchronizeYNL] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
+  const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
+  const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
   let urlFilter = "/person/person/?";
 
   const [userSession, setUserSession] = useState({});
@@ -110,19 +118,29 @@ const homeScreen = ({ ...props }) => {
     }, 5000);
   }, [props.permissions]);
 
-  useEffect(() => {
-    if (props.currentNode) {
-      filterPersonName();
-    } else {
-      return <></>;
-    }
-  }, [props.currentNode]);
+  // useEffect(() => {
+  //   if (props.currentNode) {
+  //     filterPersonName();
+  //   } else {
+  //     return <></>;
+  //   }
+  // }, [props.currentNode]);
+
+  // useEffect(() => {
+  //   const jwt = JSON.parse(jsCookie.get("token"));
+  //   setUserSession(jwt);
+  //   if (props.currentNode) filterPersonName();
+  // }, [props.currentNode]);
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    setUserSession(jwt);
-    if (props.currentNode) filterPersonName();
-  }, [props.currentNode]);
+    for (let item in props.applications) {
+      if (item === "ynl") {
+        if (props.applications[item].active) {
+          setShowSynchronizeYNL(true);
+        }
+      }
+    } 
+  }, [props.applications]);
 
   const filterPersonName = async () => {
     filters.node = props.currentNode.id;
@@ -186,6 +204,37 @@ const homeScreen = ({ ...props }) => {
       getAssigns(itemPerson.id, "", "&groups");
     }
   };
+
+  const downloadResignationLetter = async (item) => {
+
+    try {
+
+      let response = await WebApiPayroll.downloadRenegationCart(item.id)
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Carta de renuncia.pdf"
+      link.click()
+      
+    } catch (error) {
+        error && 
+        error.response && 
+        error.response.data && 
+        error.response.data.message &&
+        message.error(error.response.data.message)
+    }
+
+      // downLoadFileBlob(
+      //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
+      //   "carta_de_renuncia.pdf",
+      //   "GET",
+      // );
+
+  }
 
   const getAssigns = async (id, queryParam, type = "") => {
     setLoadAssign(true);
@@ -361,11 +410,12 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             {permissions.edit || props.delete ? (
-              <Link href={`/home/persons/${item.id}`}>
-                <a>
-                  <div>{personName}</div>
-                </a>
-              </Link>
+              <div
+                onClick={()=> route.push({
+                  pathname: `/home/persons/${item.id}`,
+                  query: route.query
+                })}
+              > <a>{personName}</a></div>
             ) : (
               <div>{personName}</div>
             )}
@@ -517,6 +567,11 @@ const homeScreen = ({ ...props }) => {
         <Menu.Item key="3" onClick={() => handleDeactivate()}>
           Desactivar
         </Menu.Item>
+        { showSynchronizeYNL && (
+          <Menu.Item key="6"  onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
+            Sincronizar YNL
+          </Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -535,8 +590,14 @@ const homeScreen = ({ ...props }) => {
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
             )} */}
-            <Menu.Item key="5" icon={<EyeOutlined />}>
-              <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
+            <Menu.Item 
+              key="5" 
+              icon={<EyeOutlined />} 
+              onClick={()=> route.push({
+                pathname: `/assessment/persons/${item.id}`,
+                query: route.query
+              })}>
+              Ver asignaciones
             </Menu.Item>
             {permissions.create && (
               <Menu.Item
@@ -550,8 +611,15 @@ const homeScreen = ({ ...props }) => {
           </>
         )}
         {permissions.edit && (
-          <Menu.Item key="2" icon={<EditOutlined />}>
-            <Link href={`/home/persons/${item.id}`}>Editar</Link>
+          <Menu.Item
+            key="2"
+            icon={<EditOutlined />}
+            onClick={()=> route.push({
+              pathname: `/home/persons/${item.id}`,
+              query: route.query
+            })}
+          >
+            Editar
           </Menu.Item>
         )}
         {permissions.delete && (
@@ -563,6 +631,27 @@ const homeScreen = ({ ...props }) => {
             }}
           >
             Eliminar
+          </Menu.Item>
+        )}
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="4"
+          onClick={ () => {
+              downloadResignationLetter(item)
+            }
+          }
+        >
+          Descargar carta de renuncia
+        </Menu.Item>
+        { showSynchronizeYNL && (
+          <Menu.Item
+            key="6"
+            icon={<SyncOutlined />}
+            onClick={ () => {
+              setPersonsToSynchronizeYNL([item]), showModalSynchronizeYNL();
+            }}
+          >
+            Sincronizar con YNL
           </Menu.Item>
         )}
       </Menu>
@@ -654,6 +743,7 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+    let valueQuery = {}
     if (!(value?.name && value.name.trim())) {
       formFilter.setFieldsValue({ name: undefined });
       value.name = undefined;
@@ -672,41 +762,54 @@ const homeScreen = ({ ...props }) => {
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
+      valueQuery.name = value.name;
     }
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
       filters.flast_name = value.flast_name;
+      valueQuery.flast_name = value.flast_name;
     }
     if (value && value.code !== undefined) {
       urlFilter = urlFilter + "code=" + value.code + "&";
       filters.code = value.code;
+      valueQuery.code = value.code;
     }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
       filters.gender = value.gender;
+      valueQuery.gender = value.gender;
     }
 
     if (value && value.is_active !== undefined && value.is_active != -1) {
       urlFilter = urlFilter + "is_active=" + value.is_active + "&";
       filters.is_active = value.is_active;
+      valueQuery.is_active = value.is_active;
     }
     if (value && value.department !== undefined) {
       urlFilter = urlFilter + "person_department__id=" + value.department + "&";
       filters.department = value.department;
+      valueQuery.department = value.department;
     }
     if (value && value.job && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
+      valueQuery.job = value.job;
     }
     if (value && value.periodicity !== undefined) {
       urlFilter = urlFilter + "periodicity=" + value.periodicity + "&";
       filters.periodicity = value.periodicity;
+      valueQuery.periodicity = value.periodicity;
     }
     filterPersonName(urlFilter);
+    route.replace({
+      pathname: '/home/persons/',
+      query: valueQuery
+    }, undefined, {shallow: true});
   };
 
   const resetFilter = () => {
     formFilter.resetFields();
+    route.replace('/home/persons', undefined, {shallow: true});
     // filter();
     filterPersonName();
   };
@@ -731,11 +834,21 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
+  const AlertSynchronizeToYNL = () => (
+    <div>
+      Las siguientes personas serán sincronizadas con YNL, ¿Desea continuar?
+      <br />
+      <br />
+      <ListElementsToSynchronize personsToSynchronizeYNL={personsToSynchronizeYNL} />
+    </div>
+  );
+
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
+      setPersonsToSynchronizeYNL(selectedRows);
     },
   };
 
@@ -756,12 +869,30 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
+  const ListElementsToSynchronize = ({ personsToSynchronizeYNL }) => {
+    return (
+      <div>
+        {personsToSynchronizeYNL.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
   const HandleCloseGroup = () => {
     setShowModalGroup(false);
     setModalCreateGroup(false);
     setOpenAssignTest(false);
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
+    setPersonsToSynchronizeYNL([]);
     setPersonsKeys([]);
     setItemPerson({});
   };
@@ -893,6 +1024,85 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDelete]);
 
+  const showModalSynchronizeYNL = () => {
+    modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
+  };
+
+  useEffect(() => {
+    if (modalSynchronizeYNL && personsToSynchronizeYNL.length > 0) {
+      Modal.confirm({
+        title: "Sincronización con YNL",
+        content: <AlertSynchronizeToYNL />,
+        icon: <SyncOutlined />,
+        okText: "Sí, sincronizar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalSynchronizeYNL(false);
+        },
+        cancelText: "Cancelar ",
+        onOk() {
+          SynchronizeYNLPerson();
+        },
+      });
+    } else if (modalSynchronizeYNL) {
+      setModalSynchronizeYNL(false);
+    }
+  }, [modalSynchronizeYNL]);
+
+  useEffect(() => {
+    if(Object.keys(route.query).length === 0){
+      if(props.currentNode){
+        const jwt = JSON.parse(jsCookie.get("token"));
+        setUserSession(jwt);
+        filterPersonName()
+      }
+    }else{
+      if(props.currentNode){
+        let page = route.query.page ? parseInt(route.query.page) : 1;
+        if (route && route.query.name != "") {
+          urlFilter = urlFilter + "first_name__icontains=" + route.query.name + "&";
+          filters.first_name = route.query.name;
+        }
+        if (route && route.query.flast_name != "") {
+          urlFilter = urlFilter + "flast_name=" + route.query.flast_name + "&";
+          filters.flast_name = route.query.flast_name;
+        }
+        if (route && route.query.code != "") {
+          urlFilter = urlFilter + "code=" + route.query.code + "&";
+          filters.code = route.query.code;
+        }
+        if (route && route.query.gender != "" && route.query.gender != 0) {
+          urlFilter = urlFilter + "gender=" + route.query.gender + "&";
+          filters.gender = route.query.gender;
+        }
+    
+        if (route && route.query.is_active != "" && route.query.is_active != -1) {
+          urlFilter = urlFilter + "is_active=" + route.query.is_active + "&";
+          filters.is_active = route.query.is_active;
+        }
+        if (route && route.query.department !="") {
+          urlFilter = urlFilter + "person_department__id=" + route.query.department + "&";
+          filters.department = route.query.department;
+        }
+        if (route && route.query.job && route.query.job != "") {
+          urlFilter = urlFilter + "job__id=" + route.query.job + "&";
+          filters.job = route.query.job;
+        }
+        if (route && route.query.periodicity !== undefined) {
+          urlFilter = urlFilter + "periodicity=" + route.query.periodicity + "&";
+          filters.periodicity = route.query.periodicity;
+        }
+        filterPersonName(urlFilter)
+        formFilter.setFieldsValue({
+          ...route.query,
+          gender: router.query.gender ? parseInt(route.query.gender) : "",
+        });
+      }
+    }
+  }, [route, props.currentNode]);
+
   const deletePerson = () => {
     let ids = null;
     if (personsToDelete.length == 1) {
@@ -927,6 +1137,33 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
+  const SynchronizeYNLPerson = () => {
+    let ids = null;
+    if (personsToSynchronizeYNL.length == 1) {
+      ids = personsToSynchronizeYNL[0].id;
+    } else if (personsToSynchronizeYNL.length > 0) {
+      personsToSynchronizeYNL.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
+    setLoading(true);
+    let data = { node_id: props.currentNode.id, persons_id: ids }
+    WebApiYnl.synchronizePersonYNL(data)
+      .then((response) => {
+        setModalSynchronizeYNL(false);
+        setPersonsToSynchronizeYNL([]);
+        filterPersonName();
+        setLoading(false);
+        message.success("Sincronizado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        message.error("Error al sincronizar");
+      });
+  };
+
   useEffect(() => {
     if (modalDeactivate) {
       Modal.confirm({
@@ -947,6 +1184,9 @@ const homeScreen = ({ ...props }) => {
       });
     }
   }, [modalDeactivate]);
+
+
+
 
   const menuExportTemplate = (
     <Menu>
@@ -1175,11 +1415,19 @@ const homeScreen = ({ ...props }) => {
                       {props.config && props.config.nomina_enabled &&
                           <ButtonDownloadConfronta/>
                       }
+
+                      {/*{props.config && props.config.nomina_enabled &&*/}
+                      {/*    <ButtonMovements node={props.currentNode}/>*/}
+                      {/*}*/}
                     </Space>
                   </Col>
-                  <Col>
 
-                  </Col>
+                  {props.config && props.config.nomina_enabled &&
+                      <Col>
+                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode}/>
+                      </Col>
+                  }
+
                 </Row>
               </div>
               <Table
@@ -1252,6 +1500,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
+    applications: state.userStore.applications,
   };
 };
 

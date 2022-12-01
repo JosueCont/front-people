@@ -169,15 +169,15 @@ export const periodicity = [
 export const statusSelect = [
   {
     label: "Todos",
-    value: -1,
+    value: "-1",
   },
   {
     label: "Activos",
-    value: true,
+    value: "true",
   },
   {
     label: "Inactivos",
-    value: false,
+    value: "false",
   },
 ];
 
@@ -507,6 +507,17 @@ export const optionMovement = [
 export const optionsBusinessName = [
   {value: "1", key: "1", label: 'Física'},
   {value: "2", key: "2", label: 'Moral'}
+]
+
+// es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
+export const FACTOR_SDI = 1.0452;
+
+// para los tipos de movimientos imss
+export const movementsTypes = [
+  'No identificado',
+  'Alta/Reingreso',
+  'Modificación de salario',
+  'Baja'
 ]
 
 export const messageSaveSuccess = "Agregado correctamente.";
