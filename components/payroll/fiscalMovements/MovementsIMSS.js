@@ -55,7 +55,8 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Tipo',
-            dataIndex: 'address',
+            dataIndex: 'type',
+            render: (type) => type || "----"
         },
         {
             title: 'Status',
@@ -115,7 +116,8 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Mensaje',
-            dataIndex: 'msj',
+            dataIndex: 'message',
+            render: (message) => message || "----"
         },
     ];
 
