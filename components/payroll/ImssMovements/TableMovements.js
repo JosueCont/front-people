@@ -73,7 +73,7 @@ const TableMovements=({movementType,title=null,...props})=>{
                 {
                     title && <Title level={2}>{movementsTypes[movementType]}</Title>
                 }
-                <Table loading={loading} rowKey={(record)=> record?.person?.id} key={movementType} rowSelection={rowSelection} columns={columns} dataSource={data} />
+                <Table loading={loading} rowKey={'id'} key={movementType} rowSelection={rowSelection} columns={columns} dataSource={data} />
             </Col>
 
         </Row>
