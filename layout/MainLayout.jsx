@@ -44,7 +44,6 @@ const MainLayout = ({
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();
       setFlavor(vflavor);
-      console.log(flavor)
 
       var head = document.head;
       var link = document.createElement("link");
@@ -94,7 +93,6 @@ const MainLayout = ({
         id: user.user_id,
       })
         .then((response) => {
-          console.log('person', response.data)
           setPerson(response.data);
         })
         .catch((error) => {
