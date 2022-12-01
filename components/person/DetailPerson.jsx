@@ -167,10 +167,10 @@ const DetailPerson = ({
           )}
           <TabPane
             tab={
-              <Tooltip title="IMSS / INFONAVIT">
+              <Tooltip title="IMSS">
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS / INFONAVIT</div>
+                  <div className="text-title-tab">IMSS</div>
                 </div>
               </Tooltip>
             }
