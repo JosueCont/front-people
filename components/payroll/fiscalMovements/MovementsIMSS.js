@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { API_URL_TENANT, API_URL } from "../../../config/config";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
-import { Table, Button, Upload, Row, Col } from 'antd';
+import { Table, Button, Upload, Row, Col, message, Modal } from 'antd';
 import WebApiPayroll from "../../../api/WebApiPayroll";
+import WebApiPeople from "../../../api/WebApiPeople";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import UploadFile from "../../UploadFile";
 import { connect } from "react-redux";
@@ -11,14 +12,18 @@ import { connect } from "react-redux";
 const MovementsIMSS=({ currentNode })=>{
 
     const [file, setFile]=useState(null)
+    const [showList, setShowList]=useState(false)
     const [ loading, setLoading ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ documents, setDocuments ] = useState(null)
+    const [ modalVisible, setModalVisible ] = useState(false)
 
 
     useEffect(()=>{
         if(file){
-            alert('enviado archivo')
+            setShowList(true)
+        } else {
+            setShowList(false)
         }
     },[file])
 
@@ -50,7 +55,8 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Tipo',
-            dataIndex: 'address',
+            dataIndex: 'type',
+            render: (type) => type || "----"
         },
         {
             title: 'Status',
@@ -80,9 +86,14 @@ const MovementsIMSS=({ currentNode })=>{
             dataIndex: 'receipt',
             render:(receipt) => (
                 <div style={{ textAlign: 'center' }}>
-                    <a href={receipt}>
-                        <DownloadOutlined />
-                    </a>
+                    {
+                        receipt? (
+                            <a href={receipt}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
+
                 </div>
             )
         },
@@ -92,16 +103,21 @@ const MovementsIMSS=({ currentNode })=>{
             render:(result) => (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <a href={result}>
-                        <DownloadOutlined />
-                    </a>
+                  {
+                        result? (
+                            <a href={result}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
                 </div>
                 </div>
             )
         },
         {
             title: 'Mensaje',
-            dataIndex: 'msj',
+            dataIndex: 'message',
+            render: (message) => message || "----"
         },
     ];
 
@@ -134,6 +150,31 @@ const MovementsIMSS=({ currentNode })=>{
             }
         },
     };
+    
+    const importAfiliateMovements = async () => {
+
+        setLoading(true)
+        let data = new FormData()
+
+        data.append('File', file)
+        data.append('node', currentNode.id)
+        data.append('patronal_registration', patronalSelected)
+
+        try {
+            let response = await WebApiPeople.importAfiliateMovement(data)
+            if(response){           
+                message.success('Movimientos importados correctamente')
+                getMovements()
+            }
+        } catch (error) {
+            console.log('Error', error)
+            message.error('Error al importar movimientos')
+        } finally {
+            setFile(null)
+            setModalVisible(false)
+            setLoading(false)
+        }
+    }
 
 
     return (
@@ -148,15 +189,27 @@ const MovementsIMSS=({ currentNode })=>{
                     />
                 </Col>
                 <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
-                    {/* <Col span={12}>
+                    {/* <Col span={13}>
                         <UploadFile
-                            textButton={"Importar EMa y EBA"}
+                            textButton={"Importar movimientos"}
                             setFile={setFile}
-                            validateExtension={".zip"}
+                            validateExtension={".txt"}
+                            size = {'middle'}
                         />
                     </Col> */}
-                     <Col span={12}>
-                        <Button>
+                    {/* <Col span={5} style={{ marginRight: 20 }}>
+                        <Button
+                            disabled = { patronalSelected? false : true }
+                            onClick={ () => setModalVisible(true)}
+                        >
+                          importar
+                        </Button>
+                    </Col> */}
+                     <Col span={7}>
+                        <Button 
+                          onClick={ () => getMovements() }
+                          disabled = { patronalSelected?  false : true }
+                        >
                             Sincronizar
                         </Button>
                     </Col>
@@ -175,6 +228,51 @@ const MovementsIMSS=({ currentNode })=>{
               }}
               
             />
+            <Modal
+                title="Importar movimientos"
+                centered
+                visible = { modalVisible }
+                onCancel = { () => {
+                    setModalVisible(false)
+                    setFile(null)
+                } 
+                }
+                footer={[
+                <Button
+                    key="back"
+                    onClick={ () => {
+                    setModalVisible(false)
+                    setFile(null)
+                    } 
+                }
+                    style={{ padding: "0 10px", marginLeft: 15 }}
+                >
+                    Cancelar
+                </Button>,
+                <Button
+                    key="submit_modal"
+                    type="primary"
+                    onClick={() => importAfiliateMovements()}
+                    style={{ padding: "0 10px", marginLeft: 15 }}
+                    loading = { loading }
+                    disabled = { file? false : true }
+                >
+                    Subir archivos
+                </Button>,
+                ]}
+            >
+                <Row>
+                    <Col span={24}>
+                    <UploadFile
+                            textButton={"Importar movimientos"}
+                            setFile={setFile}
+                            validateExtension={".txt"}
+                            size = {'middle'}
+                            showList = {showList}
+                        />
+                    </Col>
+                </Row>
+            </Modal>
         </>
     )
 }
