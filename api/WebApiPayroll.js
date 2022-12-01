@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import WebApi from "./webApi";
 
 class WebApiPayroll {
@@ -154,6 +155,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/payroll-report?${url}`, "get");
   }
 
+  static downloadRenegationCart(id) {
+    return WebApi.ApisType(`/payroll/resignation-letter?person_id=${id}`, 'get')
+  }
+
   static getPayrollList(data) {
     return WebApi.ApisType(
       `/payroll/payroll-person/get_payroll_person/`,
@@ -184,6 +189,10 @@ class WebApiPayroll {
 
   static getInfonavitCredit(data) {
     return WebApi.ApisType(`payroll/infonavit-credit`, "post", data);
+  }
+
+  static getUserCredits(id){
+    return WebApi.ApisType(`payroll/infonavit-credit?person=${id}`, 'get')
   }
 
   static saveIMSSInfonavit(data) {

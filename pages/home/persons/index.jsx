@@ -54,6 +54,7 @@ import router, { useRouter } from "next/router";
 import { useLayoutEffect } from "react";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
+import WebApiYnl from "../../../api/WebApiYnl";
 import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
@@ -63,6 +64,7 @@ import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadC
 import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
 import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -94,8 +96,11 @@ const homeScreen = ({ ...props }) => {
 
   // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalSynchronizeYNL, setModalSynchronizeYNL] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
+  const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
+  const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
   let urlFilter = "/person/person/?";
 
   const [userSession, setUserSession] = useState({});
@@ -126,6 +131,16 @@ const homeScreen = ({ ...props }) => {
   //   setUserSession(jwt);
   //   if (props.currentNode) filterPersonName();
   // }, [props.currentNode]);
+
+  useEffect(() => {
+    for (let item in props.applications) {
+      if (item === "ynl") {
+        if (props.applications[item].active) {
+          setShowSynchronizeYNL(true);
+        }
+      }
+    } 
+  }, [props.applications]);
 
   const filterPersonName = async () => {
     filters.node = props.currentNode.id;
@@ -191,7 +206,34 @@ const homeScreen = ({ ...props }) => {
   };
 
   const downloadResignationLetter = async (item) => {
-    console.log('Item', item)
+
+    try {
+
+      let response = await WebApiPayroll.downloadRenegationCart(item.id)
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Carta de renuncia.pdf"
+      link.click()
+      
+    } catch (error) {
+        error && 
+        error.response && 
+        error.response.data && 
+        error.response.data.message &&
+        message.error(error.response.data.message)
+    }
+
+      // downLoadFileBlob(
+      //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
+      //   "carta_de_renuncia.pdf",
+      //   "GET",
+      // );
+
   }
 
   const getAssigns = async (id, queryParam, type = "") => {
@@ -525,6 +567,11 @@ const homeScreen = ({ ...props }) => {
         <Menu.Item key="3" onClick={() => handleDeactivate()}>
           Desactivar
         </Menu.Item>
+        { showSynchronizeYNL && (
+          <Menu.Item key="6"  onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
+            Sincronizar YNL
+          </Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -596,6 +643,17 @@ const homeScreen = ({ ...props }) => {
         >
           Descargar carta de renuncia
         </Menu.Item>
+        { showSynchronizeYNL && (
+          <Menu.Item
+            key="6"
+            icon={<SyncOutlined />}
+            onClick={ () => {
+              setPersonsToSynchronizeYNL([item]), showModalSynchronizeYNL();
+            }}
+          >
+            Sincronizar con YNL
+          </Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -776,11 +834,21 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
+  const AlertSynchronizeToYNL = () => (
+    <div>
+      Las siguientes personas serán sincronizadas con YNL, ¿Desea continuar?
+      <br />
+      <br />
+      <ListElementsToSynchronize personsToSynchronizeYNL={personsToSynchronizeYNL} />
+    </div>
+  );
+
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
+      setPersonsToSynchronizeYNL(selectedRows);
     },
   };
 
@@ -801,12 +869,30 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
+  const ListElementsToSynchronize = ({ personsToSynchronizeYNL }) => {
+    return (
+      <div>
+        {personsToSynchronizeYNL.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
   const HandleCloseGroup = () => {
     setShowModalGroup(false);
     setModalCreateGroup(false);
     setOpenAssignTest(false);
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
+    setPersonsToSynchronizeYNL([]);
     setPersonsKeys([]);
     setItemPerson({});
   };
@@ -938,6 +1024,33 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDelete]);
 
+  const showModalSynchronizeYNL = () => {
+    modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
+  };
+
+  useEffect(() => {
+    if (modalSynchronizeYNL && personsToSynchronizeYNL.length > 0) {
+      Modal.confirm({
+        title: "Sincronización con YNL",
+        content: <AlertSynchronizeToYNL />,
+        icon: <SyncOutlined />,
+        okText: "Sí, sincronizar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalSynchronizeYNL(false);
+        },
+        cancelText: "Cancelar ",
+        onOk() {
+          SynchronizeYNLPerson();
+        },
+      });
+    } else if (modalSynchronizeYNL) {
+      setModalSynchronizeYNL(false);
+    }
+  }, [modalSynchronizeYNL]);
+
   useEffect(() => {
     if(Object.keys(route.query).length === 0){
       if(props.currentNode){
@@ -1021,6 +1134,33 @@ const homeScreen = ({ ...props }) => {
         setLoading(false);
         console.log(error);
         message.error("Error al eliminar");
+      });
+  };
+
+  const SynchronizeYNLPerson = () => {
+    let ids = null;
+    if (personsToSynchronizeYNL.length == 1) {
+      ids = personsToSynchronizeYNL[0].id;
+    } else if (personsToSynchronizeYNL.length > 0) {
+      personsToSynchronizeYNL.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
+    setLoading(true);
+    let data = { node_id: props.currentNode.id, persons_id: ids }
+    WebApiYnl.synchronizePersonYNL(data)
+      .then((response) => {
+        setModalSynchronizeYNL(false);
+        setPersonsToSynchronizeYNL([]);
+        filterPersonName();
+        setLoading(false);
+        message.success("Sincronizado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        message.error("Error al sincronizar");
       });
   };
 
@@ -1360,6 +1500,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
+    applications: state.userStore.applications,
   };
 };
 
