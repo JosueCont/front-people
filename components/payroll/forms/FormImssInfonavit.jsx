@@ -13,7 +13,8 @@ import {
   DatePicker,
   message,
   Divider,
-  Tooltip
+  Tooltip,
+  Space
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import {typeEmployee, typeSalary, reduceDays, FACTOR_SDI} from "../../../utils/constant";
@@ -28,11 +29,13 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
+  const [formInfonavitManual] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
   const [loadingIMSS, setLodingIMSS] = useState(false);
   const [infonavitCredit, setInfonavitCredit] = useState([]);
   const [ updateCredit, setUpdateCredit ] = useState(null)
   const [ isEdit, setIsEdit ] = useState(false)
+  const [ modalVisible, setModalVisible ] = useState(false)
   const daily_salary = Form.useWatch('sbc', formImssInfonavit);
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
@@ -248,158 +251,203 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   ];
 
   return (
-    <Spin tip="Cargando..."  spinning={loadingIMSS}>
-      <Row>
-        <Title style={{ fontSize: "20px" }}>IMSS</Title>
-      </Row>
-      <Form
-        layout="vertical"
-        form={formImssInfonavit}
-        onFinish={formImmssInfonavitAct}
-      >
+    <>
+      <Spin tip="Cargando..."  spinning={loadingIMSS}>
         <Row>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="employee_type"
-              label="Tipo de empleado"
-              rules={[ruleRequired]}
-            >
-              <Select
-                options={typeEmployee}
-                notFoundContent={"No se encontraron resultado."}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="salary_type"
-              label="Tipo de salario"
-              rules={[ruleRequired]}
-            >
-              <Select
-                options={typeSalary}
-                notFoundContent={"No se encontraron resultado."}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="reduce_days"
-              label="Semana o jornada reducida"
-              rules={[ruleRequired]}
-            >
-              <Select
-                options={reduceDays}
-                notFoundContent={"No se encontraron resultado."}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="movement_date"
-              label="Fecha de movimiento"
-              rules={[ruleRequired]}
-            >
-              <DatePicker
-                locale={locale}
-                format="DD-MM-YYYY"
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <SelectFamilyMedicalUnit />
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-                name="nss"
-                label="IMSS"
-                rules={[ruleRequired, onlyNumeric, minLengthNumber]}
-            >
-              <Input maxLength={11} />
-            </Form.Item>
-          </Col>
-
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-                name="sbc"
-                label="Salario diario"
-                maxLength={13}
-                rules={[fourDecimal, ruleRequired]}
-            >
-              <Input maxLength={10} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-                name="integrated_daily_salary"
-                label="Salario diario integrado"
-                maxLength={13}
-                rules={[fourDecimal]}
-            >
-              <Input disabled />
-            </Form.Item>
-          </Col>
+          <Title style={{ fontSize: "20px" }}>IMSS</Title>
         </Row>
-        <Row justify={"end"}>
-          {
-            updateCredit && updateCredit.id? null : (
-              <Form.Item>
+        <Form
+          layout="vertical"
+          form={formImssInfonavit}
+          onFinish={formImmssInfonavitAct}
+        >
+          <Row>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="employee_type"
+                label="Tipo de empleado"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  options={typeEmployee}
+                  notFoundContent={"No se encontraron resultado."}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="salary_type"
+                label="Tipo de salario"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  options={typeSalary}
+                  notFoundContent={"No se encontraron resultado."}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="reduce_days"
+                label="Semana o jornada reducida"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  options={reduceDays}
+                  notFoundContent={"No se encontraron resultado."}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="movement_date"
+                label="Fecha de movimiento"
+                rules={[ruleRequired]}
+              >
+                <DatePicker
+                  locale={locale}
+                  format="DD-MM-YYYY"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <SelectFamilyMedicalUnit />
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                  name="nss"
+                  label="IMSS"
+                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+              >
+                <Input maxLength={11} />
+              </Form.Item>
+            </Col>
+
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                  name="sbc"
+                  label="Salario diario"
+                  maxLength={13}
+                  rules={[fourDecimal, ruleRequired]}
+              >
+                <Input maxLength={10} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                  name="integrated_daily_salary"
+                  label="Salario diario integrado"
+                  maxLength={13}
+                  rules={[fourDecimal]}
+              >
+                <Input disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify={"end"}>
+            {
+              updateCredit && updateCredit.id? null : (
+                <Form.Item>
+                <Button 
+                  loading={loadingIMSS} 
+                  style = {{ marginRight: 20 }}
+                  type="primary" 
+                  htmlType="submit"
+                  disabled = { updateCredit && updateCredit.id? true : false }
+                >
+                  Guardar
+                </Button>
+                </Form.Item>
+              )
+            }
+
+
+            {/* <Form.Item>
               <Button 
                 loading={loadingIMSS} 
-                style = {{ marginRight: 20 }}
                 type="primary" 
-                htmlType="submit"
-                disabled = { updateCredit && updateCredit.id? true : false }
+                onClick={ () => userCredit() }
+                // disabled = { updateCredit && updateCredit.is_registered? true : false }
               >
-                Guardar
+                sincronizar
               </Button>
-              </Form.Item>
-            )
-          }
+            </Form.Item> */}
+          </Row>
+        </Form>
 
+        <Divider />
 
-          {/* <Form.Item>
-            <Button 
-              loading={loadingIMSS} 
-              type="primary" 
-              onClick={ () => userCredit() }
-              // disabled = { updateCredit && updateCredit.is_registered? true : false }
-            >
-              sincronizar
-            </Button>
-          </Form.Item> */}
+        <Row justify='space-between'>
+          <Title style={{ fontSize: "20px", marginBottom: 20 }}>INFONAVIT</Title>
+          <div>
+            <Space>
+              {/* <Button
+                type='primary'
+                onClick={ () => setModalVisible(true)}
+              >
+                Nuevo
+              </Button> */}
+              <Tooltip title="sincronizar" >
+                <SyncOutlined
+                  style={{ fontSize: "20px" }}
+                  onClick={() => userCredit()}
+                />
+              </Tooltip>
+            </Space>
+          </div>
         </Row>
-      </Form>
 
-      <Divider />
-
-      <Row justify='space-between'>
-        <Title style={{ fontSize: "20px", marginBottom: 20 }}>INFONAVIT</Title>
-        <Tooltip title="sincronizar" >
-          <SyncOutlined
-            style={{ fontSize: "20px" }}
-            onClick={() => userCredit()}
+        <Spin tip="Cargando..." spinning={loadingTable}>
+          <Table
+            columns={colCredit}
+            scroll={{
+              x: true,
+            }}
+            rowKey="id"
+            dataSource={infonavitCredit}
+            locale={{
+              emptyText: loadingTable
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           />
-        </Tooltip>
-      </Row>
-
-      <Spin tip="Cargando..." spinning={loadingTable}>
-        <Table
-          columns={colCredit}
-          scroll={{
-            x: true,
-          }}
-          rowKey="id"
-          dataSource={infonavitCredit}
-          locale={{
-            emptyText: loadingTable
-              ? "Cargando..."
-              : "No se encontraron resultados.",
-          }}
-        />
+        </Spin>
       </Spin>
-    </Spin>
+      <Modal
+        title = "INFONAVIT manual"
+        visible = { modalVisible }
+        onCancel={() => setModalVisible(false)}
+      >
+        <Form
+          layout="vertical"
+          form={ formInfonavitManual }
+        >
+          <Row>
+            <Col span={11}>
+              <Form.Item
+                label = "Fecha de inicio"
+                name = "start_date"
+              >
+                <DatePicker 
+                  locale={locale}
+                  format="DD-MM-YYYY"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={11} offset={1}>
+              <Form.Item
+                label = "Número"
+                name = "number"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </>
   );
 };
 

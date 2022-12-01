@@ -420,7 +420,7 @@ class WebApiPeople {
 
   static listEbaAndEmaFiles(node, patronalRegistration) {
     return WebApi.ApisType(
-      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}`, 
+      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}&origin__type=1`, 
       "get"
     );
   }
