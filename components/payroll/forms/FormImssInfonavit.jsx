@@ -216,6 +216,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       
     } catch (error) {
       console.log('Error', error)
+      message.error('Error al editar')
 
     } finally {
       setLoadingModal(false)
@@ -449,6 +450,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             <Space>
               <Button
                 type='primary'
+                loading = { loadingTable }
                 onClick={ () => setModalVisible(true)}
               >
                 Nuevo
@@ -456,7 +458,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
               {
                 nss &&
                 
-                <Tooltip title="sincronizar" >
+                <Tooltip title="Obtener datos infonavit" >
                   <Button
                     onClick={() => userCredit()}
                     loading = { loadingTable }
