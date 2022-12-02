@@ -36,6 +36,7 @@ import {
   UsergroupDeleteOutlined,
   WarningOutlined,
   MedicineBoxOutlined,
+  ArrowLeftOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -88,19 +89,45 @@ const DetailPerson = ({
     if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
 
+  const getNewFilters = () =>{
+    let newFilters = {...router.query};
+    if(newFilters.id) delete newFilters.id;
+    return newFilters;
+  }
+  
+  const actionBack = () =>{
+    let filters = getNewFilters();
+    router.push({
+        pathname: '/home/persons',
+        query: filters
+    })
+  }
+
   return (
     <>
       <Title level={3}>Información Personal</Title>
       <Card bordered={true}>
-        <Title level={4} style={{ marginTop: 0 }}>
-          {!person.mlast_name
-            ? person.first_name + " " + person.flast_name
-            : person.first_name +
-              " " +
-              person.flast_name +
-              " " +
-              person.mlast_name}
-        </Title>
+        <Row>
+          <Col span={12}>
+            <Title level={4} style={{ marginTop: 0 }}>
+              {!person.mlast_name
+                ? person.first_name + " " + person.flast_name
+                : person.first_name +
+                  " " +
+                  person.flast_name +
+                  " " +
+                  person.mlast_name}
+            </Title>
+          </Col>
+          <Col span={12} style={{display:"flex", justifyContent:"flex-end"}}>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              onClick={()=> actionBack()}
+            >
+              Regresar
+            </Button>
+          </Col>
+        </Row>
         <DataPerson
           setPerson={setPerson}
           config={config}
@@ -140,10 +167,10 @@ const DetailPerson = ({
           )}
           <TabPane
             tab={
-              <Tooltip title="IMSS / INFONAVIT">
+              <Tooltip title="IMSS">
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS / INFONAVIT</div>
+                  <div className="text-title-tab">IMSS</div>
                 </div>
               </Tooltip>
             }

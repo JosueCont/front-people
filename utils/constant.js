@@ -169,15 +169,15 @@ export const periodicity = [
 export const statusSelect = [
   {
     label: "Todos",
-    value: -1,
+    value: "-1",
   },
   {
     label: "Activos",
-    value: true,
+    value: "true",
   },
   {
     label: "Inactivos",
-    value: false,
+    value: "false",
   },
 ];
 
@@ -312,6 +312,16 @@ export const intranetAccess = [
   },
 ];
 
+export const SukhaAccess = [
+  {
+    label: "Sí",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  }
+];
 export const statusActivePost = [
   {
     label: "Inactivo",
@@ -441,7 +451,7 @@ export const optionsLevelAcademic = [
 ];
 
 export const optionsStatusAcademic = [
-  {value: 1, key: 1, label: 'En concurso'},
+  {value: 1, key: 1, label: 'En curso'},
   {value: 2, key: 2, label: 'Trunca'},
   {value: 3, key: 3, label: 'Concluida'}
 ]
@@ -499,6 +509,17 @@ export const optionsBusinessName = [
   {value: "2", key: "2", label: 'Moral'}
 ]
 
+// es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
+export const FACTOR_SDI = 1.0452;
+
+// para los tipos de movimientos imss
+export const movementsTypes = [
+  'No identificado',
+  'Alta/Reingreso',
+  'Modificación de salario',
+  'Baja'
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -545,13 +566,12 @@ export const getHost = () => {
   }
 };
 
-export const deleteKeyByValue = (obj) =>{
-  let new_obj = {...obj};
-  Object.entries(obj).map(([key, val]) =>{
-      if(!val) delete new_obj[key];
-      if(Array.isArray(val) && val.length <= 0) delete new_obj[key];
-  });
-  return new_obj;
+export const deleteKeyByValue = (values) =>{
+  return Object.entries(values).reduce((obj, [key, val]) =>{
+    if(!val) return obj;
+    if(Array.isArray(val) && val.length <= 0) return obj;
+    return {...obj, [key]: val }
+  }, {});
 }
 
 export const redirectTo = (url, newWindow = false) =>{

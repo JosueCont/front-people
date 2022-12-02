@@ -73,7 +73,7 @@ const ModalPositions = ({
                             label='Empresa'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Empresa'/>
+                            <Input maxLength={200} placeholder='Nombre la empresa'/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -111,7 +111,7 @@ const ModalPositions = ({
                             <Select
                                 disabled={load_sectors}
                                 loading={load_sectors}
-                                placeholder='Sector'
+                                placeholder='Seleccionar un sector'
                                 notFoundContent='No se encontraron resultados'
                             >
                                 {list_sectors.length > 0 && list_sectors.map(item => (

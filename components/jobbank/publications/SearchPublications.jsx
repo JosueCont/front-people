@@ -13,6 +13,8 @@ const SearchPublications = ({
     list_vacancies_options,
     load_profiles_options,
     list_profiles_options,
+    list_connections,
+    load_connections,
     currentNode
 }) => {
 
@@ -46,15 +48,24 @@ const SearchPublications = ({
             <Row gutter={[0,8]} style={{width: '100%'}}>
                 <Col xs={12} md={8} xl={4}>
                     <Form.Item
-                        name='code'
+                        name='code_post'
                         style={{marginBottom: 0}}
                     >
                         <Select
                             allowClear
-                            placeholder='Código'
+                            showSearch
+                            disabled={load_connections}
+                            loading={load_connections}
+                            placeholder='Cuenta'
                             notFoundContent='No se encontraron resultados'
-                            options={[]}
-                        />
+                            optionFilterProp='children'
+                        >
+                            {list_connections.length > 0 && list_connections.map(item=> (
+                                <Select.Option value={item.code} key={item.code}>
+                                    {item.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                 </Col>
                 <Col xs={11} sm={12} md={8} xl={6}>
@@ -81,7 +92,7 @@ const SearchPublications = ({
                 </Col>
                 <Col xs={12} md={8} xl={6}>
                     <Form.Item
-                        name='template'
+                        name='profile'
                         style={{marginBottom: 0}}
                     >
                         <Select
@@ -129,6 +140,8 @@ const mapState = (state) =>{
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
         load_profiles_options: state.jobBankStore.load_profiles_options,
         list_profiles_options: state.jobBankStore.list_profiles_options,
+        list_connections: state.jobBankStore.list_connections,
+        load_connections: state.jobBankStore.load_connections
     }
 }
 

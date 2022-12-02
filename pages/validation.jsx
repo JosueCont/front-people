@@ -66,9 +66,15 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         setSuccess(true)
         delStorage("jwt")
         if(router.query.company){
-            setTimeout(()=>{
-                router.push({pathname: "/select-company", query:{company:router.query.company, app:router.query.app}})
-            },2000)
+            if(router.query.type){
+                setTimeout(()=>{
+                    router.push({pathname: "/select-company", query:{company:router.query.company, type:router.query.type}})
+                },2000) 
+            }else{
+                setTimeout(()=>{
+                    router.push({pathname: "/select-company", query:{company:router.query.company, app:router.query.app}})
+                },2000)
+            }          
         }else{
             setTimeout(()=>{
                 router.push({pathname: "/select-company"})

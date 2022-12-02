@@ -420,7 +420,7 @@ class WebApiPeople {
 
   static listEbaAndEmaFiles(node, patronalRegistration) {
     return WebApi.ApisType(
-      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}`, 
+      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}&origin__type=1`, 
       "get"
     );
   }
@@ -434,6 +434,12 @@ class WebApiPeople {
   static importEMAandEvaFiles(data) {
     return WebApi.ApisType(
       'payroll/import-emissions', "post", data
+    )
+  }
+
+  static importAfiliateMovement(data) {
+    return WebApi.ApisType(
+      'payroll/affiliate-movements', "post", data
     )
   }
 

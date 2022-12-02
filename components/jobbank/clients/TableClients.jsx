@@ -67,6 +67,8 @@ const TableClients = ({
             else message.success('Cliente eliminado');
         } catch (e) {
             console.log(e)
+            let msgTxt = e.response?.data?.message;
+            if(msgTxt) return message.error(msgTxt);
             if(ids.length > 1) message.error('Clientes no eliminados');
             else message.error('Cliente no eliminado');
         }

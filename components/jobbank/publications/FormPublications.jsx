@@ -77,7 +77,10 @@ const FormPublications = ({
         if(!value) setDisabledField(false);
         resetVacantFields();
         if(value == 'open_fields'){
-            formPublications.setFieldsValue(valuesDefault);
+            formPublications.setFieldsValue({
+                ...valuesDefault,
+                profile: value
+            });
             setDisabledField(false);
             return;
         }

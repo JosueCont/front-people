@@ -86,7 +86,9 @@ const TabGeneral = ({
             setFetching(false)
         } catch (e) {
             console.log(e)
-            message.error('Candidato no actualizado');
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no actualizado');
             setFetching(false)
         }
     }
@@ -99,7 +101,10 @@ const TabGeneral = ({
         } catch (e) {
             console.log(e);
             setFetching(false);
-            message.error('Candidato no registrado')
+            setLoading({})
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no registrado');
         }
     }
 
@@ -139,7 +144,8 @@ const TabGeneral = ({
         formCandidate.resetFields();
         setFetching(false);
         setLoading({});
-        setFileImg([]);
+        setFileCV([]);
+        setNameCV('')
     }
 
     const actionEdit = (id) =>{
@@ -180,6 +186,11 @@ const TabGeneral = ({
     const openFile = () =>{
         inputFile.current.value = null;
         inputFile.current.click();
+    }
+
+    const resetCV = () =>{
+        setFileCV([]);
+        setNameCV('')
     }
 
     return (
@@ -273,18 +284,24 @@ const TabGeneral = ({
                                     <Input.Group compact>
                                         <Input
                                             style={{
-                                                width: `calc(100% - ${infoCandidate.cv ? 64 : 32}px)`,
+                                                width: `calc(100% - 64px)`,
                                                 borderTopLeftRadius: 10,
                                                 borderBottomLeftRadius: 10
                                             }}
                                             value={nameCV}
                                             placeholder='Archivo seleccionado'
                                         />
-                                        {infoCandidate.cv && (
+                                        {infoCandidate.cv ? (
                                             <Button
                                                 className='custom-btn'
                                                 onClick={()=> redirectTo(infoCandidate.cv, true)}
                                                 icon={<EyeOutlined />}
+                                            />
+                                        ): (
+                                            <Button
+                                                className='custom-btn'
+                                                onClick={()=> resetCV()}
+                                                icon={<DeleteOutlined />}
                                             />
                                         )}
                                         <Button

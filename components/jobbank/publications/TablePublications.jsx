@@ -33,6 +33,8 @@ const TablePublications = ({
     load_publications,
     list_vacancies_options,
     list_profiles_options,
+    list_connections,
+    load_connections,
     getPublications
 }) => {
 
@@ -44,24 +46,33 @@ const TablePublications = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
     const actionShare = async (values) =>{
+        const key = 'updatable';
         try {
+            message.loading({content: 'Publicando vacante...', key});
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
-            message.success('Vacante publicada');
+            setTimeout(()=>{
+                getPublicationsWithFilters();
+                message.success({content: 'Vacante publicada', key});
+            },1000);
         } catch (e) {
             console.log(e)
-            message.error('Vacante no publicada');
+            setTimeout(()=>{
+                message.error({content: 'Vacante no publicada', key});
+            },1000);
         }
     }
 
     const actionDelete = async () =>{
+        let ids = itemsToDelete.map(item => item.id);
         try {
-            let id = itemsToDelete.at(-1).id;
-            await WebApiJobBank.deletePublication(id, {is_deleted: true});
-            getPublicationsWithFilters(currentNode.id);
-            message.success('Publicación eliminada');
+            await WebApiJobBank.deletePublication({ids});
+            getPublicationsWithFilters();
+            if(ids.length > 1) message.success('Publicaciones eliminadas');
+            else message.success('Publicación eliminada');
         } catch (e) {
             console.log(e)
-            message.error('Publicación no eliminada');
+            if(ids.length > 1) message.error('Publicaciones no eliminadas');
+            else message.error('Publicación no eliminada');
         }
     }
 
@@ -69,6 +80,15 @@ const TablePublications = ({
         let page = router.query.page ? parseInt(router.query.page) : 1;
         let filters = getFiltersJB(router.query);
         getPublications(currentNode.id, filters, page);
+    }
+
+    const openModalManyDelete = () =>{
+        if(itemsToDelete.length > 1){
+            setOpenModalDelete(true)
+        }else{
+            setOpenModalDelete(false)
+            message.error('Selecciona al menos dos publicaciones')
+        }
     }
 
     const openModalRemove = (item) =>{
@@ -96,6 +116,14 @@ const TablePublications = ({
         let template_ = list_profiles_options.find(template);
         if(!template_) return null;
         return template_.name;
+    }
+
+    const getRed = (item) =>{
+        if(!item.code_post) return null;
+        const red = record => record.code == item.code_post;
+        let red_ = list_connections.find(red);
+        if(!red_) return null;
+        return red_.name;
     }
 
     const closeModalShare = () =>{
@@ -136,7 +164,7 @@ const TablePublications = ({
                 <Menu.Item
                     key='1'
                     icon={<DeleteOutlined/>}
-                    // onClick={()=>openModalManyDelete()}
+                    onClick={()=>openModalManyDelete()}
                 >
                     Eliminar
                 </Menu.Item>
@@ -177,9 +205,12 @@ const TablePublications = ({
 
     const columns = [
         {
-            title: 'Código',
-            dataIndex: 'code_post',
-            key: 'code_post'
+            title: 'Cuenta',
+            render: (item) =>{
+                return(
+                    <span>{getRed(item)}</span>
+                )
+            }
         },
         {
             title: 'Vacante',
@@ -214,16 +245,15 @@ const TablePublications = ({
             }
         },
         {
-            // title: ()=> {
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size={'small'}>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
-            title: 'Acciones',
+            title: ()=> {
+                return(
+                    <Dropdown overlay={menuTable}>
+                        <Button size={'small'}>
+                            <EllipsisOutlined />
+                        </Button>
+                    </Dropdown>
+                )
+            },
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -286,6 +316,8 @@ const mapState = (state) =>{
         load_publications: state.jobBankStore.load_publications,
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
         list_profiles_options: state.jobBankStore.list_profiles_options,
+        list_connections: state.jobBankStore.list_connections,
+        load_connections: state.jobBankStore.load_connections,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }
