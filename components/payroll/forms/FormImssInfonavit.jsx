@@ -132,20 +132,30 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
+        console.log('Response manual', response)
         setLoadingTable(false);
         getInfo()
       })
       .catch((error) => {
         setLoadingTable(false);
-        error?.response?.data? message.error(error.response.data.message) : ""
-      });
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message !== "" &&
+        message.error(error.response.data.message) || 
+        message.error('No se encontro informacion del usuario')
+
+      })
+      .finally(() => {
+        getInfo()
+      })
   };
 
   const getInfo = async () => {
     setLoadingTable(true)
     try {
       let response = await WebApiPayroll.getUserCredits(person_id)
-      console.log('Response', response.data)
+      console.log('Se esta haciendo el get')
       setInfonavitCredit(response.data)
     } catch (error) {
       console.log('Error ===>', error)
@@ -164,6 +174,20 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     } finally {
       setLodingIMSS(false)
     }
+  }
+
+  const newInfonavit = () => {
+    formInfonavitManual
+    .validateFields()
+    .then((values) => {
+      console.log('Values', values)
+    })
+    .catch((error) => {
+      console.log('Error', error)
+    })
+    .finally(() => {
+      console.log('Registrado')
+    })
   }
 
   const colCredit = [
@@ -418,6 +442,28 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         title = "INFONAVIT manual"
         visible = { modalVisible }
         onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button
+              key="back"
+              onClick={ () => {
+              setModalVisible(false)
+              } 
+          }
+              style={{ padding: "0 10px", marginLeft: 15 }}
+          >
+              Cancelar
+          </Button>,
+          <Button
+              key="submit_modal"
+              type="primary"
+              onClick={() => newInfonavit()}
+              style={{ padding: "0 10px", marginLeft: 15 }}
+              // loading = { loading }
+              // disabled = { file? false : true }
+          >
+              Registrar
+          </Button>,
+          ]}
       >
         <Form
           layout="vertical"
@@ -436,10 +482,28 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={11} offset={1}>
+            <Col span={11} offset={2}>
               <Form.Item
                 label = "Número"
                 name = "number"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11}>
+              <Form.Item
+                label = "Tipo de crédito"
+                name = "type"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={11} offset={2}>
+            <Form.Item
+                label = "Estatus"
+                name = "status"
               >
                 <Input />
               </Form.Item>

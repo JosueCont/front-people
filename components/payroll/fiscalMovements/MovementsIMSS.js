@@ -31,11 +31,12 @@ const MovementsIMSS=({ currentNode })=>{
         currentNode && patronalSelected && getMovements()
     },[patronalSelected])
 
-    const getMovements = async () => {
+    const getMovements = async (sync = false) => {
         setLoading(true)
         try {
             let response = await WebApiPayroll.getIMSSMovements(currentNode.id, patronalSelected)
             setDocuments(response.data.documents)
+            sync && message.success('Solicitud de movimientos realizada')
         } catch (error) {
             console.log('Error -->', error)
         } finally {
@@ -207,7 +208,10 @@ const MovementsIMSS=({ currentNode })=>{
                     </Col> */}
                      <Col span={7}>
                         <Button 
-                          onClick={ () => getMovements() }
+                          onClick={ () => {
+                            getMovements(true)
+                          } 
+                        }
                           disabled = { patronalSelected?  false : true }
                         >
                             Sincronizar
