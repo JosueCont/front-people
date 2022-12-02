@@ -31,11 +31,12 @@ const MovementsIMSS=({ currentNode })=>{
         currentNode && patronalSelected && getMovements()
     },[patronalSelected])
 
-    const getMovements = async () => {
+    const getMovements = async (sync = false) => {
         setLoading(true)
         try {
             let response = await WebApiPayroll.getIMSSMovements(currentNode.id, patronalSelected)
             setDocuments(response.data.documents)
+            sync && message.success('Solicitud de movimientos realizada')
         } catch (error) {
             console.log('Error -->', error)
         } finally {
@@ -55,7 +56,8 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Tipo',
-            dataIndex: 'address',
+            dataIndex: 'type',
+            render: (type) => type || "----"
         },
         {
             title: 'Status',
@@ -85,9 +87,14 @@ const MovementsIMSS=({ currentNode })=>{
             dataIndex: 'receipt',
             render:(receipt) => (
                 <div style={{ textAlign: 'center' }}>
-                    <a href={receipt}>
-                        <DownloadOutlined />
-                    </a>
+                    {
+                        receipt? (
+                            <a href={receipt}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
+
                 </div>
             )
         },
@@ -97,16 +104,21 @@ const MovementsIMSS=({ currentNode })=>{
             render:(result) => (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <a href={result}>
-                        <DownloadOutlined />
-                    </a>
+                  {
+                        result? (
+                            <a href={result}>
+                                <DownloadOutlined />
+                            </a>
+                        ) : "----"
+                    }
                 </div>
                 </div>
             )
         },
         {
             title: 'Mensaje',
-            dataIndex: 'msj',
+            dataIndex: 'message',
+            render: (message) => message || "----"
         },
     ];
 
@@ -196,7 +208,10 @@ const MovementsIMSS=({ currentNode })=>{
                     </Col> */}
                      <Col span={7}>
                         <Button 
-                          onClick={ () => getMovements() }
+                          onClick={ () => {
+                            getMovements(true)
+                          } 
+                        }
                           disabled = { patronalSelected?  false : true }
                         >
                             Sincronizar
