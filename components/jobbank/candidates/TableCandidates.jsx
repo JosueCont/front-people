@@ -183,21 +183,21 @@ const TableCandidates = ({
             dataIndex: 'cell_phone',
             key: 'cell_phone'
         },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <Switch
-        //                 size='small'
-        //                 defaultChecked={item.is_active}
-        //                 checked={item.is_active}
-        //                 checkedChildren="Activo"
-        //                 unCheckedChildren="Inactivo"
-        //                 onChange={(e)=> actionStatus(e, item)}
-        //             />
-        //         )
-        //     }
-        // },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={item.is_active}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }
+        },
         {
             title: ()=>{
                 return(

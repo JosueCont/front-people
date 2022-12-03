@@ -458,3 +458,15 @@ export const getFiltersJB = (obj = {}) =>{
     return query += `&${key}=${val}`;
   }, '');
 }
+
+export const deleteFiltersJb = (
+  filters = {},
+  listDelete = ['id','client','vacancy']
+) =>{
+  let newFilters = {...filters};
+  const remove = item => {
+    if(newFilters[item]) delete newFilters[item]
+  };
+  listDelete.forEach(remove);
+  return newFilters;
+}

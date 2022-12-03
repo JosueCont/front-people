@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Form,
     Row,
@@ -63,7 +63,7 @@ const FormStrategies = ({
         if(!selected) return setSalary();
         let salaryNum = selected[key]?.gross_salary;
         if(!salaryNum) return setSalary();
-        return setSalary(salaryNum);
+        setSalary(salaryNum);
     }
 
     const getAmount = () =>{
@@ -72,14 +72,14 @@ const FormStrategies = ({
         let salary_ = parseFloat(salary.replaceAll(',',''));
         let amount = (salary_/100) * percent;
         let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
-        return setAmount(formatAmount);
+        setAmount(formatAmount);
     }
     
-    const optionsByClient = () =>{
+    const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
         const options = item => item.customer?.id === clientSelected;
         return list_vacancies_options.filter(options);
-    }
+    }, [clientSelected])
 
     const disabledDate = (current) => {
         return current && current < moment().startOf("day");
@@ -237,13 +237,13 @@ const FormStrategies = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={optionsByClient().length <= 0}
+                        disabled={optionsByClient.length <= 0}
                         loading={load_vacancies_options}
                         placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {optionsByClient().map(item => (
+                        {optionsByClient.map(item => (
                             <Select.Option value={item.id} key={item.id}>
                                 {item.job_position}
                             </Select.Option>
@@ -290,7 +290,10 @@ const FormStrategies = ({
                 <Form.Item
                     name='salary'
                     label='Sueldo (MXN)'
-                    tooltip='El valor se obtiene por medio de la vacante seleccionada, si esta la tiene.'
+                    tooltip={`El valor se obtiene de acuerdo al registro de la vacante
+                        seleccionada, si no se visualiza este dato debe dirigirse al módulo de
+                        Vacantes -> Sueldo y Prestaciones -> Sueldo mensual bruto (MXN).
+                    `}
                     rules={[
                         ruleRequired,
                         // numCommaAndDot()

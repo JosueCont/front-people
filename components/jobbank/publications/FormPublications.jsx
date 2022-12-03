@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Row, Col, Input, Select, Form } from 'antd';
 import { ruleRequired } from '../../../utils/rules';
@@ -36,7 +36,7 @@ const FormPublications = ({
     useEffect(()=>{
         if(list_vacancies_options.length <= 0) return;
         clientByVacant();
-    },[vacant, list_vacancies_options])
+    },[vacant, list_vacancies_options, valuesDefault])
 
     // useEffect(()=>{
     //     if(list_profiles_options.length <= 0) return;
@@ -56,11 +56,11 @@ const FormPublications = ({
         setCustomer(result.customer.id);
     }
 
-    const templatesByClient = () =>{
+    const templatesByClient = useMemo(()=>{
         if(!customer) return [];
         const _filter = item => item.customer == customer;
         return list_profiles_options.filter(_filter);
-    }
+    },[customer])
 
     const onChangeCustomer = () =>{
         setProfile(null);
@@ -166,7 +166,7 @@ const FormPublications = ({
                         <Select.Option value='open_fields' key='open_fields'>
                             Personalizado
                         </Select.Option>
-                        {templatesByClient().map(item=> (
+                        {templatesByClient.map(item=> (
                             <Select.Option value={item.id} key={item.id}>
                                 {item.name}
                             </Select.Option>

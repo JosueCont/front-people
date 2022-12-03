@@ -93,8 +93,10 @@ const TabFacebook = ({
             },1000)
         } catch (e) {
             console.log(e)
-            console.log('error get token', e.response)
-            setMessageError(msgError);
+            let msgError = e.response?.data?.message;
+            if(msgError) setMessageError(msgError); 
+            else setMessageError(msgError);
+            deletePermissions();
         }
     }
     
@@ -127,7 +129,7 @@ const TabFacebook = ({
     const validateLogin = () =>{
         if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         FacebookLoginClient.login(validateResp, {
-            scope: 'public_profile, email'
+            scope: 'public_profile,email,pages_show_list,pages_manage_posts'
         });
     }
 
@@ -146,7 +148,7 @@ const TabFacebook = ({
         }
     }
 
-    const revoqueSession = () =>{
+    const deletePermissions = () =>{
         if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         window.FB.api('/me/permissions', 'delete', (res)=>{
             console.log('delete', res)

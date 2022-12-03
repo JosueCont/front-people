@@ -207,11 +207,9 @@ export const getClientsOptions = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_CLIENTS_OPTIONS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getClients(node,'&paginate=0');
-        //Se filtra por estatus activo/true
-        const _filter = item => item.is_active;
-        let results = response.data?.filter(_filter);
-        dispatch({...typeFunction, payload: results})
+        let param = '&paginate=0&is_active=true';
+        let response = await WebApiJobBank.getClients(node, param);
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -230,15 +228,13 @@ export const getVacancies = (node, query = '', page = 1) => async (dispatch) =>{
     }
 }
 
-export const getVacanciesOptions = (node) => async (dispatch) =>{
+export const getVacanciesOptions = (node, query = '') => async (dispatch) =>{
     const typeFunction = { type: GET_VACANCIES_OPTIONS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getVacancies(node, '&paginate=0');
-        //Se filtra por estatus activo/1
-        const _filter = item => item.status == 1;
-        let results = response.data?.filter(_filter);
-        dispatch({...typeFunction, payload: results})
+        let param = `&paginate=0&status=1${query}`;
+        let response = await WebApiJobBank.getVacancies(node, param);
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -285,7 +281,7 @@ export const getProfilesTypes = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_PROFILES_TYPES, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getProfilesTypes(node);
+        let response = await WebApiJobBank.getProfilesTypes(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -333,7 +329,7 @@ export const getSectors = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_SECTORS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getSectors(node);
+        let response = await WebApiJobBank.getSectors(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         dispatch(typeFunction)
@@ -345,7 +341,7 @@ export const getCompetences = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_COMPETENCES, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getCompetences(node);
+        let response = await WebApiJobBank.getCompetences(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         dispatch(typeFunction)
@@ -357,7 +353,7 @@ export const getAcademics = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_ACADEMICS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getAcademics(node);
+        let response = await WebApiJobBank.getAcademics(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         dispatch(typeFunction)
@@ -369,7 +365,7 @@ export const getMainCategories = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_MAIN_CATEGORIES, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getMainCategories(node);
+        let response = await WebApiJobBank.getMainCategories(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -381,7 +377,7 @@ export const getSubCategories = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_SUB_CATEGORIES, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getSubCategories(node);
+        let response = await WebApiJobBank.getSubCategories(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -411,8 +407,8 @@ export const getJobBoards = (node) => async(dispatch) => {
     const typeFunction = { type: GET_JOBBOARDS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getJobBoards(node);
-        dispatch({...typeFunction, payload: response.data.results});
+        let response = await WebApiJobBank.getJobBoards(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -423,8 +419,8 @@ export const getSpecializationArea = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_SPECIALIZATION_AREA, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true});
     try {
-        let response = await WebApiJobBank.getSpecializationArea(node);
-        dispatch({...typeFunction, payload: response.data.results})
+        let response = await WebApiJobBank.getSpecializationArea(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
