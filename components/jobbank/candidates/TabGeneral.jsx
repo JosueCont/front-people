@@ -24,15 +24,18 @@ import { validateNum } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { ToTopOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { redirectTo } from '../../../utils/constant';
+import ListLangs from './ListLangs';
 
 const TabGeneral = ({
     sizeCol = 8,
     action,
     currentNode,
     setDisabledTab,
-    isAutoRegister = false
+    isAutoRegister = false,
+    newFilters = {}
 }) => {
 
+    const rule_languages = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -49,6 +52,10 @@ const TabGeneral = ({
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
     const [nameCV, setNameCV] = useState('');
+    //Idiomas
+    const [currentValue, setCurrentValue] = useState([]);
+    const [listLangDomain, setListLangDomain] = useState([]);
+    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -59,12 +66,20 @@ const TabGeneral = ({
     useEffect(()=>{
         setDisabledTab(true)
         if(Object.keys(infoCandidate).length <= 0) return;
-        setDisabledTab(false)
-        formCandidate.resetFields();
-        let name = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
-        setNameCV(name);
-        formCandidate.setFieldsValue(infoCandidate);
+        setValueForm();
     },[infoCandidate])
+
+    const setValueForm = () =>{
+        setDisabledTab(false)
+        setCurrentValue([])
+        setRuleLanguages(rule_languages)
+        formCandidate.resetFields();
+        formCandidate.setFieldsValue(infoCandidate);
+        let name = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        let listLang = infoCandidate.languages?.length > 0 ? infoCandidate.languages: [];
+        setListLangDomain(listLang)
+        setNameCV(name)
+    }
 
     const getInfoCandidate = async (id) =>{
         try {
@@ -113,6 +128,7 @@ const TabGeneral = ({
         dataCandidate.append('node', currentNode.id);
         Object.entries(obj).map(([key, val])=>{ if(val) dataCandidate.append(key, val) });
         if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
+        if(listLangDomain.length > 0) dataCandidate.append('languages', JSON.stringify(listLangDomain));
         return dataCandidate;
     }
 
@@ -126,48 +142,35 @@ const TabGeneral = ({
         actionFunction[action](body);
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        return newFilters;
-    }
-
-    const actionBack = () =>{
-        let filters = getNewFilters();
-        router.push({
-            pathname: '/jobbank/candidates',
-            query: filters
-        })
-    }
-
     const actionCreate = () =>{
         formCandidate.resetFields();
         setFetching(false);
         setLoading({});
         setFileCV([]);
         setNameCV('')
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/candidates/edit',
-            query: {...filters, id }
-        })
+        setCurrentValue([])
+        setListLangDomain([])
+        setRuleLanguages(rule_languages)
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: actionBack,
+            back: ()=> router.push({
+                pathname: '/jobbank/candidates',
+                query: newFilters
+            }),
             create: actionCreate,
-            edit: actionEdit,
+            edit: () => router.replace({
+                pathname: '/jobbank/candidates/edit',
+                query: {...newFilters, id }
+            }),
             default: () => router.replace({
                 pathname: `/jobbank/${router.query.uid}/candidate/`,
                 query: { id }
             }, undefined, { shallow: true })
         }
         let selected = isAutoRegister ? 'default' : actionType;
-        actionFunction[selected](id);
+        actionFunction[selected]();
     }
 
     const getSaveAnd = (type) =>{
@@ -320,6 +323,18 @@ const TabGeneral = ({
                                         />
                                     </Input.Group>
                                 </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <ListLangs
+                                    listLangDomain={listLangDomain}
+                                    setListLangDomain={setListLangDomain}
+                                    setCurrentValue={setCurrentValue}
+                                    currentValue={currentValue}
+                                    setRuleLanguages={setRuleLanguages}
+                                    ruleLanguages={ruleLanguages}
+                                    rule_languages={rule_languages}
+                                    changeColor={true}
+                                />
                             </Col>
                             <Col span={24}>
                                 <Form.Item

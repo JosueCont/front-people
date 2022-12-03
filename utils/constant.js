@@ -509,6 +509,13 @@ export const optionsBusinessName = [
   {value: "2", key: "2", label: 'Moral'}
 ]
 
+export const optionsDomainLang = [
+  {value: 1, key: 1, label: 'Básico'},
+  {value: 2, key: 2, label: 'Intermedio'},
+  {value: 3, key: 3, label: 'Avanzado'},
+  {value: 4, key: 4, label: 'Experto'}
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";

@@ -24,6 +24,7 @@ import { useProcessInfo } from './hook/useProcessInfo';
 const DetailsProfiles = ({
     action,
     currentNode,
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -151,40 +152,27 @@ const DetailsProfiles = ({
         setLoading({})
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.client) delete newFilters.client;
-        return newFilters;
-    }
-
     const actionBack = () =>{
-        let filters = getNewFilters();
         if(router.query?.client) router.push({
             pathname: '/jobbank/clients',
-            query: filters
+            query: newFilters
         });
         else router.push({
             pathname: '/jobbank/profiles',
-            query: filters
+            query: newFilters
         });
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/profiles/edit',
-            query: {...filters, id }
-        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/profiles/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{

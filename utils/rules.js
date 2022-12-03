@@ -121,7 +121,7 @@ export const fourDecimal = {
 export const numCommaAndDot = () => ({
   validator(_, value){
     if (!value) return Promise.resolve();
-    let num = parseFloat(value.replace(',',''));
+    let num = parseFloat(value.replaceAll(',',''));
     let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/;
     if(isNaN(num)) return Promise.reject('Ingrese un valor numérico');
     if(!pattern.test(value)) return Promise.reject('Ingrese un formato válido');

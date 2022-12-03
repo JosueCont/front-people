@@ -23,7 +23,8 @@ import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsStrategies = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -120,22 +121,14 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.client) delete newFilters.client;
-        return newFilters;
-    }
-
     const actionBack = () =>{
-        let filters = getNewFilters();
         if(router.query?.client) router.push({
             pathname: '/jobbank/clients',
-            query: filters
+            query: newFilters
         });
         else router.push({
             pathname: '/jobbank/strategies',
-            query: filters
+            query: newFilters
         });
     }
 
@@ -146,21 +139,16 @@ const DetailsStrategies = ({
         setLoading({})
     }
 
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/strategies/edit',
-            query: {...filters, id }
-        })
-    }
-
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/strategies/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{

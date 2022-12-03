@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
+import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
+import { Row, Col, Form, Select, Input, Button, DatePicker} from 'antd';
 import { optionsLevelAcademic, optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
-import moment from 'moment';
-import { optionsLangVacant } from '../../../utils/constant';
+import ListLangs from './ListLangs';
 
 const ModalEducation = ({
     title = '',
@@ -30,8 +30,12 @@ const ModalEducation = ({
         formEducation.setFieldsValue(itemToEdit);
     },[itemToEdit])
 
+
     const onCloseModal = () =>{
         close()
+        setRuleLanguages(rule_languages)
+        setListLangDomain([])
+        setCurrentValue([])
         formEducation.resetFields();
     }
 
@@ -112,7 +116,7 @@ const ModalEducation = ({
                             label='Nombre de la institución'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Nombre de la institución'/>
+                            <Input maxLength={200} placeholder='Escriba el nombre de la institución'/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -124,7 +128,7 @@ const ModalEducation = ({
                             <Select
                                 allowClear
                                 showSearch
-                                placeholder='Área de especialización'
+                                placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={load_specialization_area}
                                 loading={load_specialization_area}
@@ -144,24 +148,7 @@ const ModalEducation = ({
                             label='Otra área de especialización'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Otra área de especialización'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='languajes'
-                            label='Idiomas'
-                            rules={[ruleRequired, ruleWhiteSpace]}
-                        >
-                            <Input maxLength={150} placeholder='Idiomas'/>
-                            {/* <Select
-                                mode='multiple'
-                                maxTagCount={1}
-                                placeholder='Seleccionar los idiomas'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='label'
-                                options={optionsLangVacant}
-                            /> */}
+                            <Input maxLength={200} placeholder='Especifica la especialización'/>
                         </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
