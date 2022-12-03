@@ -43,7 +43,7 @@ const index = ({user, ...props}) => {
   useEffect(() => {
     moment.locale("es-mx");
     if (props.currentNode) {
-      props.publicationsListAction(props.currentNode.id, 1);
+      props.publicationsListAction(props.currentNode.id, 1, '&limit=10');
     }
   }, [props.currentNode]);
 
@@ -131,7 +131,7 @@ const index = ({user, ...props}) => {
           >
             <FormattedMessage defaultMessage="Inicio" id="web.init" />
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          <Breadcrumb.Item>Khor Connect</Breadcrumb.Item>
           <Breadcrumb.Item>Moderación</Breadcrumb.Item>
         </Breadcrumb>
         { validatePermition ? (
