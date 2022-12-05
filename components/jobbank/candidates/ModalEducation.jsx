@@ -33,9 +33,6 @@ const ModalEducation = ({
 
     const onCloseModal = () =>{
         close()
-        setRuleLanguages(rule_languages)
-        setListLangDomain([])
-        setCurrentValue([])
         formEducation.resetFields();
     }
 
