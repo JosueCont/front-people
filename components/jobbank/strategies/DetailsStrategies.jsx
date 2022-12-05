@@ -93,7 +93,9 @@ const DetailsStrategies = ({
             getInfoStrategy(infoStrategy.id);
         } catch (e) {
             console.log(e)
-            message.error('Estrategia no actualizada');
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no actualizada';
+            message.error(msgError);
             setFetching(false);
         }
     }
@@ -105,9 +107,11 @@ const DetailsStrategies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no registrada';
+            message.error(msgError);
             setFetching(false)
             setLoading({})
-            message.error('Estrategia no registrada');
         }
     }
 

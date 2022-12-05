@@ -15,7 +15,8 @@ import {
     Tag,
     message,
     Checkbox,
-    Select
+    Select,
+    Alert
 } from 'antd';
 import {
     ruleRequired,
@@ -36,6 +37,18 @@ const TabFacebook = ({
     getConnections
 }) => {
 
+    const config_success = {
+        msg: `La configuración actual se encuentra en funcionamiento,
+        se recomienda no actualizar ningún parámetro, excepto "¿Activar aplicación?"
+        en caso de ser necesario.`,
+        type: 'success'
+    };
+    const config_error = {
+        msg: `La configuración actual ha fallado, se recomienda iniciar sesión de nuevo
+            y conceder todos los permisos requeridos.`,
+        type: 'error'
+    };
+    const validate_config = {'true': config_success, 'false': config_error};
     const router = useRouter();
     const btnSubmit = useRef(null);
     const [formFacebook] = Form.useForm();
@@ -93,10 +106,11 @@ const TabFacebook = ({
             },1000)
         } catch (e) {
             console.log(e)
-            let msgError = e.response?.data?.message;
-            if(msgError) setMessageError(msgError); 
-            else setMessageError(msgError);
+            let txtError = e.response?.data?.message;
+            let msgSelected = txtError ?? msgError;
+            setMessageError(msgSelected);
             deletePermissions();
+            getConnections(currentNode.id);
         }
     }
     
@@ -118,8 +132,7 @@ const TabFacebook = ({
     }
 
     const validateResp = (resp) =>{
-        console.log('response', resp)
-        if(!resp.authResponse) return onFail(resp);
+        if(!resp.authResponse) return onFail({status: 'loginCancelled'});
         onSuccess(resp.authResponse);
         FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
@@ -177,6 +190,15 @@ const TabFacebook = ({
             }}
         >
             <Row gutter={[24,0]}>
+                {infoConnection.data_config?.page_access_token && (
+                    <Col span={24}>
+                        <Form.Item>
+                            <Alert
+                                message={validate_config[infoConnection.is_valid].msg}
+                                type={validate_config[infoConnection.is_valid].type} showIcon />
+                        </Form.Item>
+                    </Col>
+                )}
                 <Col xs={24} xxl={16}>
                     <Row gutter={[24,0]}>
                         <Col xs={24} md={12} lg={8}>
@@ -287,7 +309,7 @@ const TabFacebook = ({
                         />
                     </Form.Item>
                 </Col>
-                <Col span={24} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                     {/* <FacebookLogin
                         appId='637006797889798'
                         autoLoad={true}
@@ -296,18 +318,21 @@ const TabFacebook = ({
                         onProfileSuccess={onProfileSuccess}
                         render={btnLogin}
                     /> */}
-                    <Button
-                        className='btn-login-facebook'
-                        onClick={()=> validateLogin()}
-                        disabled={loading}
-                        icon={<FacebookFilled />}
-                    >
-                        Iniciar sesión
-                    </Button>
+                   {!infoConnection.is_valid && (
+                        <Button
+                            className='btn-login-facebook'
+                            onClick={()=> validateLogin()}
+                            disabled={loading}
+                            icon={<FacebookFilled />}
+                        >
+                            Iniciar sesión
+                        </Button>
+                   )}
                     <Button
                         loading={loading}
                         ref={btnSubmit}
                         htmlType='submit'
+                        style={{marginLeft: 'auto'}}
                     >
                         Guardar
                     </Button>
