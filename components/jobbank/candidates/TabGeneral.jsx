@@ -75,10 +75,12 @@ const TabGeneral = ({
         setRuleLanguages(rule_languages)
         formCandidate.resetFields();
         formCandidate.setFieldsValue(infoCandidate);
-        let name = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
-        let listLang = infoCandidate.languages?.length > 0 ? infoCandidate.languages: [];
+        const getLang = item => ({lang: item.lang, domain: item.domain});
+        let listLanguages = infoCandidate.languages.map(getLang);
+        let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
+        let nameFileCV = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
         setListLangDomain(listLang)
-        setNameCV(name)
+        setNameCV(nameFileCV)
     }
 
     const getInfoCandidate = async (id) =>{

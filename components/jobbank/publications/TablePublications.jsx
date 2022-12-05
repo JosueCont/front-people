@@ -56,8 +56,10 @@ const TablePublications = ({
             },1000);
         } catch (e) {
             console.log(e)
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Vacante no publicada';
             setTimeout(()=>{
-                message.error({content: 'Vacante no publicada', key});
+                message.error({content: msgError, key});
             },1000);
         }
     }
