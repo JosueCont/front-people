@@ -114,7 +114,7 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
             case 2:
                 setLoading(true)
                 try{
-                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, altaRowSelected, method)
+                    const res = await webApiPayroll.generateDispmagORSendMovement(type, regPatronal, type===1?altaRowSelected:type===2?updateRowSelected:deleteRowSelected, method)
                     console.log('send-file',res)
                     message.success('Movimiento generado correctamente, puedes validar el estatus desde la sección de -Consulta de movimientos al IMSS- de esta misma pantalla')
                 }catch (e){

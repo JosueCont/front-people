@@ -4,16 +4,16 @@ import { Row, Col, Button, Tabs, Card, Spin} from 'antd';
 import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { valueToFilter } from '../../../utils/functions';
-import useDimensions from '../../../utils/useDimensions';
 import TabFacebook from './TabFacebook';
 import TabLinkedin from './TabLinkedin';
+import { useRouter } from 'next/router';
 
 const TabsConnections = ({
     list_connections,
     load_connections
 }) => {
 
-    // const sizeWindow = useDimensions();
+    const router = useRouter();
 
     const connections = {
         FB: {
@@ -49,7 +49,7 @@ const TabsConnections = ({
                         Configurar conexiones
                     </p>
                     <Button
-                        // onClick={()=> actionBack()}
+                        onClick={()=> router.push('/jobbank/settings')}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar

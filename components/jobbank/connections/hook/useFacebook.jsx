@@ -1,16 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
 
 export const useFacebook = () =>{
 
-    useEffect(()=>{
-        (async()=>{
-            await loadSDK();
-        })()
+    const [isReadyFB, setIsReadyFB] = useState(false);
+
+    useLayoutEffect(()=>{
+        initialize();
     },[])
+
+    const initialize = async () =>{
+        try {
+            await loadSDK();
+            setIsReadyFB(true)
+        } catch (e) {
+            console.log(e)
+            setIsReadyFB(false)
+        }
+    }
 
     const loadSDK = (
         id = 'facebook-jssdk',
-        src = '//connect.facebook.net/en_US/sdk.js'
+        src = 'https://connect.facebook.net/en_US/sdk.js'
     ) =>{
         return new Promise((resolve) => {
             const fjs = document.getElementsByTagName('script')[0];
@@ -23,66 +33,62 @@ export const useFacebook = () =>{
         });
     }
 
-    const getFB = () =>{
-        if (!window.FB) {
-            console.warn('FB not found');
-            return null;
-        }
-        return window.FB;
-    }
 
-    const init = (idApp) =>{
-        getFB()?.init({
+    const initFB = (idApp) =>{
+        window.FB.init({
             appId: idApp,
             localStorage: false,
             version: 'v15.0',
-            xfbml: true
+            xfbml: true,
+            status: false
         })
     }
 
-    const getStatus = (
-        callback = ()=>{},
-        isForcingRoudtrip = false
-    ) =>{
-        const FB = getFB();
-        if(!FB){
-            callback({status: 'unknown'})
-            return;
-        }
-        FB.getLoginStatus(callback, isForcingRoudtrip);
-    }
-
-    const login = (
-        callback = ()=>{},
-        params = {
-            scope: 'public_profile, email',
-            return_scopes: true
-        }
-    ) =>{
-        getFB()?.login(callback, params)
-    }
-
-    const logout = (
-        callback = () =>{}
-    ) => {
-        getStatus(resp => {
-            if(resp.status == 'connected') getFB()?.logout(callback);
-            else callback();
+    const onChangeStatusFB = () =>{
+        return new Promise((resolve, reject) =>{
+            window.FB.Event.subscribe('auth.statusChange', (response) =>{
+                response.status === 'connected' ? resolve(response) : reject(response);
+            })
         })
     }
 
-    const getProfile = (
-        callback = () =>{},
-        fields = 'name,email,picture'
-    ) =>{
-        getFB()?.api('me', {fields}, callback)
+    const getStatus = () =>{
+        return new Promise((resolve, reject) => {
+            window.FB.getLoginStatus((response) => {
+                response.status === 'connected' ? resolve(response) : reject(response);
+            });
+        });
+    }
+
+    const loginFB = () =>{
+        return new Promise((resolve, reject) => {
+            window.FB.login((response) => {
+                response.status === 'connected' ? resolve(response) : reject(response);
+            }, {scope: 'public_profile, email', return_scopes: true});
+        });
+    }
+
+    const logoutFB = () => {
+        return new Promise((resolve, reject) => {
+            window.FB.logout(resolve);
+        });
+    }
+
+    const getProfileFB = () =>{
+        let fields = 'first_name, last_name, email, picture, gender';
+        return new Promise((resolve, reject) => {
+            window.FB.api('/me', {fields}, response => response.error ? reject(response) : resolve(response));
+        });
     }
 
     return{
-        init,
-        login,
-        logout,
-        getProfile
+        initFB,
+        loginFB,
+        logoutFB,
+        getProfileFB,
+        isReadyFB,
+        onChangeStatusFB,
+        getStatus
     }
 
 }

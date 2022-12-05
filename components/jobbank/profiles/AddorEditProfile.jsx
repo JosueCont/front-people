@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import DetailsProfiles from './DetailsProfiles';
@@ -9,6 +9,7 @@ import {
     getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
+import { deleteFiltersJb } from '../../../utils/functions';
 
 const AddorEditProfile = ({
     action = 'add',
@@ -19,6 +20,12 @@ const AddorEditProfile = ({
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        setNewFilters(deleteFiltersJb(router.query));
+    },[router])
 
     useEffect(()=>{
         if(currentNode){
@@ -40,14 +47,17 @@ const AddorEditProfile = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/profiles'})}
+                    onClick={() => router.push({
+                        pathname: '/jobbank/profiles',
+                        query: newFilters
+                    })}
                 >
                     Template de vacante
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className={'container'}>
-                <DetailsProfiles action={action}/>
+                <DetailsProfiles action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )

@@ -203,6 +203,14 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/imss-person/${imssId}/`, "patch", data);
   }
 
+  static addInfonavit(data){
+    return WebApi.ApisType('payroll/person-infonavit-credit/', 'post', data)
+  }
+
+  static editInfonavit(creditId, data){
+    return WebApi.ApisType(`payroll/person-infonavit-credit/${creditId}/`, 'put', data)
+  }
+
   static extraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
