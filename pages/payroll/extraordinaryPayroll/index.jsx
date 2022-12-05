@@ -78,6 +78,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [genericModal, setGenericModal] = useState(false);
   const [objectSend, setObjectSend] = useState(null);
+  const [consolidatedObj, setConsolidatedObj] = useState(null);
+
+  const date = new Date();
+
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  let currentDate = `${day}-${month}-${year}`;
 
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -443,15 +451,41 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setTotalIsr(null);
     setNetPay(null);
     setMovementType(null);
+    setConsolidatedObj(null);
   };
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
+    if (!movementType) return;
     setLoading(true);
-    setExtraOrdinaryPayroll([]);
+    // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        console.log(response.data);
-        setExtraOrdinaryPayroll(response.data);
+        if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
+          setConsolidatedObj(response.data);
+          let calculateExist = extraOrdinaryPayroll;
+          response.data.map((item) => {
+            calculateExist = calculateExist.filter(
+              (a) => item.person.id != a.person.id
+            );
+          });
+          console.log("Existe-->> ", calculateExist);
+          response.data.map((item) => {
+            console.log(item.person.full_name);
+            calculateExist[calculateExist.length] = item;
+          });
+
+          setExtraOrdinaryPayroll(
+            calculateExist.sort((a, b) =>
+              a.person.first_name.localeCompare(b.person.first_name)
+            )
+          );
+        } else {
+          setExtraOrdinaryPayroll(
+            response.data.sort((a, b) =>
+              a.person.first_name.localeCompare(b.person.first_name)
+            )
+          );
+        }
         setLoading(false);
         setObjectSend(null);
       })
@@ -506,6 +540,30 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     } else {
       message.error("Se requeiere una fecha de pago");
     }
+  };
+
+  const sendClosePayroll = () => {
+    setGenericModal(false);
+    setLoading(true);
+    WebApiPayroll.closePayroll({
+      payment_period: periodSelected.id,
+      payroll: payroll,
+    })
+      .then((response) => {
+        sendCalculatePayroll({ payment_period: periodSelected.id });
+        setTimeout(() => {
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        sendCalculatePayroll({ payment_period: periodSelected.id });
+        setTimeout(() => {
+          message.error(messageError);
+          console.log(error);
+        }, 1000);
+      });
   };
 
   return (
@@ -574,7 +632,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             style={{ width: "100%" }}
                             options={optionMovement}
                             onChange={(e) => setMovementType(e)}
-                            placeholder="Salario"
+                            placeholder="Movimiento"
                             notFoundContent={"No se encontraron resultados."}
                             allowClear
                           />
@@ -705,12 +763,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         padding: "20px",
                       }}
                     >
-                      <Col md={4}>
+                      {/* <Col md={4}>
                         <Button
                           size="large"
                           block
                           htmlType="button"
-                          icon={<FileExcelOutlined />}
+                          icon={<FileExcelOutlined />} 
                           // onClick={() => {
                           //   isOpen
                           //     ? downLoadFileBlob(
@@ -740,10 +798,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           //         "GET"
                           //       );
                           // }}
-                        >
-                          Descargar nómina
+                        > Descargar nómina
                         </Button>
-                      </Col>
+                      </Col> */}
 
                       {personKeys && personKeys.length > 0 && (
                         <Col md={5} offset={1}>
@@ -780,9 +837,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                         style={{ width: "40%" }}
                                       >
                                         <DatePicker
-                                          defaultValue={moment(
-                                            periodSelected?.payment_date
-                                          )}
+                                          defaultValue={moment()}
                                           moment={"YYYY"}
                                           id="departure_date"
                                           placeholder="Fecha de pago."
@@ -978,10 +1033,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   <>
                     <Table
                       className="headers_transparent"
-                      dataSource={extraOrdinaryPayroll.map((item) => {
-                        item.key = item?.person.id;
-                        return item;
-                      })}
+                      dataSource={extraOrdinaryPayroll}
                       columns={persons}
                       expandable={{
                         expandedRowRender: (item) => renderConceptsTable(item),
