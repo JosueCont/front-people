@@ -427,6 +427,7 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>

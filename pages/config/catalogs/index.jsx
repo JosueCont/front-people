@@ -46,6 +46,7 @@ const configBusiness = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
         </Breadcrumb>

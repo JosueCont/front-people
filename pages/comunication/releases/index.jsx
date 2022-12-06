@@ -152,7 +152,8 @@ const Releases = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

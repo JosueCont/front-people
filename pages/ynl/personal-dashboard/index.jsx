@@ -227,6 +227,7 @@ const index = () => {
                   >
                       <FormattedMessage defaultMessage="Inicio" id="web.init" />
                   </Breadcrumb.Item>
+                  <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
                   <Breadcrumb.Item>YNL</Breadcrumb.Item>
                   <Breadcrumb.Item>Dashboard personal</Breadcrumb.Item>
               </Breadcrumb>

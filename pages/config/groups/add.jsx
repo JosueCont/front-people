@@ -796,6 +796,7 @@ const GroupAdd = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

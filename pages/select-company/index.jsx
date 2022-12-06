@@ -134,7 +134,7 @@ const SelectCompany = ({ ...props }) => {
           //console.log("query",router.query.company);
           //console.log("datalist",dataList);
           let filterQuery = data.filter(
-            (item) => item.id === router.query.company
+            (item) => item.id === parseInt(router.query.company)
           );
           //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
@@ -169,10 +169,12 @@ const SelectCompany = ({ ...props }) => {
 
             switch (router.query.type) {
               case "admin":
+                localStorage.setItem('is_admin', true);
                 useRouter.push("home/persons");
                 break;
               case "user":
-                useRouter.push("/business");
+                localStorage.setItem('is_admin', false);
+                useRouter.push("/user");
                 break;
             }
           } else {

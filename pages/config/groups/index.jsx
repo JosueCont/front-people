@@ -156,6 +156,7 @@ useEffect(()=>{
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>

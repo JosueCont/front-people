@@ -42,7 +42,7 @@ const UserNotification = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/comunication/releases" })}>
           Comunicados

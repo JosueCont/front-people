@@ -24,10 +24,10 @@ import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import Cookie from "js-cookie";
 import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
-import CardApps from "./dashboards-cards/CardApp";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
+
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -38,6 +38,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const [person, setPerson] = useState();
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
+  const [isAdmin, setIsAdmin] = useState();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -45,7 +46,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     getPerson();
   }, []);
 
+
   const getPerson = async () => {
+
     let user = Cookie.get();
     if (user && user != undefined && user.token) {
       user = JSON.parse(user.token);
@@ -61,6 +64,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           response.data.fullName = personName;
           console.log('person', response.data)
           setPerson(response.data);
+          setIsAdmin(localStorage.getItem('is_admin'));
         })
         .catch((error) => {
           console.log(error);
@@ -95,55 +99,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-            <p
-              className="text-menu"
-              onClick={() => {
-                !person.nodes && props.currentNode
-                  ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-                  : router.push(`/home/persons/${person.id}`);
-              }}
-            >
-              <Text>Editar perfil</Text>
-            </p>
 
-            <p
-              className="text-menu"
-              onClick={() => router.push("/user")}
-
-            >
-              <Text>Cambiar a la vista de Usuario</Text>
-            </p>
-
-            {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
+          {localStorage.getItem('is_admin') == 'true' && (
               <p
                 className="text-menu"
-                onClick={() => router.push("/select-company")}
+                onClick={() => router.push("/home/persons")}
               >
-                <Text>Cambiar de empresa</Text>
-              </p>
-            )} */}
-
-            {pathname !== "/select-company" && (
-              <p
-                className="text-menu"
-                onClick={() => router.push("/select-company")}
-              >
-                <Text>Cambiar de empresa</Text>
+                <Text>Cambiar a la vista de Administrador</Text>
               </p>
             )}
 
-            {props.config &&
-              props.config.applications &&
-              props.config.applications.find(
-                (item) => item.app === "PAYROLL" && item.is_active
-              ) && (
-                <p
-                  className="text-menu"
-                  onClick={() => setModalCfdiVersion(true)}
-                >
-                  <Text>Cambiar version de CDFI</Text>
-                </p>
-              )}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
@@ -207,7 +172,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <Col>
               <Image
                 preview={false}
-                onClick={() => router.push("/home/persons")}
+                // onClick={() => router.push("/home/persons")}
                 style={{
                   maxWidth: 100,
                   margin: "auto",
@@ -229,18 +194,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    <Dropdown overlay={<CardApps />} key="dropdown_apps">
-                      <div key="menu_apps_content">
-                        <BsFillGrid3X3GapFill
-                          style={{
-                            color: "white",
-                            fontSize: 30,
-                            display: "flex",
-                            margin: "auto",
-                          }}
-                        />
-                      </div>
-                    </Dropdown>
                     <Dropdown overlay={userCardDisplay} key="dropdown_user">
                       <div key="menu_user_content">
                         <Avatar

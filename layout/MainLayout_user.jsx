@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
-import NewHeader from "../components/NewHeader";
+import NewHeader from "../components/newHeaderUser";
 import Head from "next/head";
 import MainSiderUser from "../components/MainSiderUser";
 
@@ -237,14 +237,7 @@ const MainLayoutUser = ({
           config={props.config}
         />
         <Layout>
-          {!hideMenu && props.currentNode && (
-            <MainSiderUser
-              currentKey={currentKey}
-              defaultOpenKeys={
-                props.defaultOpenKeys ? props.defaultOpenKeys : null
-              }
-            />
-          )}
+        
           <Content>
             <div className="div-main-layout">{props.children}</div>
           </Content>

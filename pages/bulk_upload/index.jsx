@@ -78,6 +78,7 @@ const ListBulkUpload = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
         <Breadcrumb.Item>Carga masiva de personas</Breadcrumb.Item>
       </Breadcrumb>

@@ -1041,6 +1041,7 @@ const CalculatePayroll = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
             <Breadcrumb.Item>Nómina</Breadcrumb.Item>
             <Breadcrumb.Item>Cálculo de nómina</Breadcrumb.Item>
           </Breadcrumb>

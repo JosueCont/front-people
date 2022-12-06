@@ -180,7 +180,7 @@ const MainSider = ({
         getItem("Perfiles de competencias", "assessment_profiles"),
         getItem("Reportes de competencias", "assessment_reports"),
       ]
-      let children1 = [getItem("PsiKHORmetría", "kuiz", <></>, children11)]
+      let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
       items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
 
       // Educación y desarrollo

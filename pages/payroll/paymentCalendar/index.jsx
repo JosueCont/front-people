@@ -117,6 +117,7 @@ const PaymentCalendars = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calendario de pagos</Breadcrumb.Item>
         </Breadcrumb>

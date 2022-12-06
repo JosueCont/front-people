@@ -438,6 +438,7 @@ const businessForm = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

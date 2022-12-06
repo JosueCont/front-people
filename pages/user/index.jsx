@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
-import { Breadcrumb, Card, Button } from 'antd';
+import MainLayout from '../../layout/MainLayout_user'
+import { Breadcrumb, Card, Button, Row, Col } from 'antd';
 import { connect } from 'react-redux';
-import { withAuthSync } from '../../../libs/auth';
+import { withAuthSync } from '../../libs/auth';
 import { useRouter } from 'next/router';
+import CardApps from "../../components/dashboards-cards/CardApp";
+
 import {
     LinkOutlined,
     FileTextOutlined
@@ -30,24 +32,19 @@ const index = ({
 
     return (
         <MainLayout currentKey={'jb_settings'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Configuraciones</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='list-access'>
+            {/* <div className='list-access'>
                 {listAccess.map((item, idx) => (
                     <div key={idx} className='card-access' onClick={()=> item.redirect()}>
                         {item.icon}<p>{item.name}</p>
                     </div>
                 ))}
-            </div>
+            </div> */}
+              <Row gutter={16}>
+      <Col className="gutter-row" span={4}>
+      <CardApps />
+      </Col>
+     
+    </Row>
         </MainLayout>
     )
 }

@@ -36,8 +36,7 @@ const MainLayout = ({
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
-  const [person, setPerson] = useState();
-
+  const[isAdmin, setIsAdmin] = useState();
 
   useEffect(() => {
     try {
@@ -73,7 +72,7 @@ const MainLayout = ({
     if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      if (props.config) props.companySelected(null, props.config);
+      if (props.config) props.companySelected(null, props.config);    
     }
   }, [props.currentNode, props.config]);
 
@@ -93,13 +92,13 @@ const MainLayout = ({
         id: user.user_id,
       })
         .then((response) => {
-          setPerson(response.data);
+          setIsAdmin(response.data.is_admin);
         })
         .catch((error) => {
           console.log(error);
         });
     }
-  };
+  }; 
 
   return (<>
         <Head>
@@ -265,7 +264,7 @@ const MainLayout = ({
           config={props.config}
         />
 
-        {person.is_admin ?
+        {isAdmin?
             <Layout>
             {!hideMenu && props.currentNode && (
               <MainSiderAdmin
@@ -279,8 +278,8 @@ const MainLayout = ({
               <div className="div-main-layout">{props.children}</div>
             </Content>
           </Layout>
-        : 
-        <Layout>
+        :  
+         <Layout>
         {!hideMenu && props.currentNode && (
           <MainSider
             currentKey={currentKey}
@@ -292,8 +291,8 @@ const MainLayout = ({
         <Content>
           <div className="div-main-layout">{props.children}</div>
         </Content>
-      </Layout>
-        }
+      </Layout> 
+       }
         
       </Layout>
       {props.currentNode && (

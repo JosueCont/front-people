@@ -244,6 +244,7 @@ const Detail = ({ assessmentStore, ...props }) => {
         <Breadcrumb.Item className={"pointer"} href="/home/persons/">
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => router.push({ pathname: "/assessment/surveys" })}>

@@ -34,6 +34,7 @@ const Reports = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
       </Breadcrumb>
       <div

@@ -131,7 +131,8 @@ const index = ({user, ...props}) => {
           >
             <FormattedMessage defaultMessage="Inicio" id="web.init" />
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+          <Breadcrumb.Item>KHOR Connect</Breadcrumb.Item>
           <Breadcrumb.Item>Moderación</Breadcrumb.Item>
         </Breadcrumb>
         { validatePermition ? (

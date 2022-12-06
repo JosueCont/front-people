@@ -185,12 +185,14 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
     const validatePermissions = async () =>{
         let jwt = JSON.parse(getStorage("jwt"))
-        let resp = await setUserPermissions(jwt.perms);
-        if(resp){
-            accessSuccess(jwt)
-        }else{
-            accessDenied()
-        }
+           accessSuccess(jwt)
+
+        // let resp = await setUserPermissions(jwt.perms);
+        // if(resp){
+        //     accessSuccess(jwt)
+        // }else{
+        //     accessDenied()
+        // }
     }
 
     return (

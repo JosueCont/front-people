@@ -112,6 +112,8 @@ const Holidays = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
