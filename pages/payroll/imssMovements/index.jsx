@@ -117,8 +117,8 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Collapse defaultActiveKey={['3']}>
-              <Panel header="SUA Movimientos" key="1">
+            <Collapse defaultActiveKey={['1']}>
+              <Panel header="Movimientos IMSS" key="1">
                 <MovementsSection/>
 
                 {/*<Collapse
