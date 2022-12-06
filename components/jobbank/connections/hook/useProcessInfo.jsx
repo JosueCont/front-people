@@ -9,7 +9,7 @@ export const useProcessInfo = () =>{
     }
 
     const checkValue = (obj, [key, val]) => {
-        if(!val) return obj;
+        if(!val && !!val) return obj;
         if(typeof val !== 'object') return {...obj, [key]: val};
         return {...obj, ...getField(key, val)};
     }
