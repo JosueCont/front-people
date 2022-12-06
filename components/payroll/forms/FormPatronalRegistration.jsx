@@ -88,7 +88,7 @@ const FormPatronalRegistration = ({
           <Form.Item
             name="subsidy_reimbursement_agreement"
             label="Convenio de reembolso de subsidio"
-            rules={[ruleRequired, ruleWhiteSpace]}
+            rules={[ruleWhiteSpace]}
           >
             <Input />
           </Form.Item>

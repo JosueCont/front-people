@@ -561,6 +561,7 @@
 }
 
 button.btn-login-facebook{
+    margin-right: auto;
     border-color: transparent!important;
     background: linear-gradient(
         to bottom right,
@@ -626,6 +627,72 @@ div.estatus-connection p{
 
 button.custom-btn {
     background-color: #1f2733!important;
+}
+
+.custom-cascader{
+    width: calc(100% - 32px);
+}
+
+.custom-cascader div.ant-select-selector{
+    border-top-left-radius: 10px!important;
+    border-bottom-left-radius: 10px!important;
+}
+
+.content-list-items{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.head-list-items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.placeholder-list-items{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transition: all 1s;
+}
+
+.placeholder-list-items p{
+    margin-bottom: 0px;
+    color: #d9d9d9;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.body-list-items{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-flow: row wrap;
+    transition: all 1s;
+    /* max-height: 100px; */
+    overflow: auto;
+}
+
+.item-list-row{
+    display: flex;
+    gap: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #cccc;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 12px;
+    transition: all 0.5s;
+}
+
+.item-list-row p{
+    margin-bottom: 0px;
 }
 
 /* Termina diseño bolsa de trabajo */

@@ -191,13 +191,17 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     setId(item.id);
 
     if (key == 1) {
+      console.log(item)
       form.setFieldsValue({
         code: item.code,
         description: item.description,
         data_type: item.data_type,
         perception_type: item.perception_type.id,
-
         show: item.show,
+        is_salary: item.is_salary,
+        is_holiday: item.is_holiday,
+        is_rest_day: item.is_rest_day,
+        is_seventh_day: item.is_seventh_day
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -373,7 +377,55 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               <Switch defaultChecked />
             </Form.Item>
           </Col>
+          {
+            key === 1 &&
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                      name="is_salary"
+                      label="¿Es sueldo?"
+                      valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+          }
+
         </Row>
+        {
+          key === 1 && <Row>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_holiday"
+                    label="¿Es festivo?"
+                    valuePropName="checked"
+                >
+                  <Switch  />
+                </Form.Item>
+              </Col>
+
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_rest_day"
+                    label="¿Es descanso?"
+                    valuePropName="checked"
+                >
+                  <Switch  />
+                </Form.Item>
+              </Col>
+
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_seventh_day"
+                    label="¿Es séptimo día?"
+                    valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+
+            </Row>
+        }
+
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
             <Button onClick={resetForm}>Cancelar</Button>

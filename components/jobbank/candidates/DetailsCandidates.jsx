@@ -16,24 +16,17 @@ import TabPositions from './TabPositions';
 
 const DetailsCandidates = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
 
     const router = useRouter();
-
     const [disableTab, setDisabledTab] = useState(true);
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        return newFilters;
-    }
-
     const actionBack = () =>{
-        let filters = getNewFilters();
         router.push({
             pathname: '/jobbank/candidates',
-            query: filters
+            query: newFilters
         })
     }
 
@@ -63,12 +56,12 @@ const DetailsCandidates = ({
                             <TabGeneral
                                 action={action}
                                 setDisabledTab={setDisabledTab}
+                                newFilters={newFilters}
                             />
                         </Tabs.TabPane>
                         <Tabs.TabPane
                             tab='Educación'
                             disabled={disableTab}
-                            forceRender
                             key='2'
                         >
                             <TabSchool action={action}/>
@@ -76,7 +69,6 @@ const DetailsCandidates = ({
                         <Tabs.TabPane
                             tab='Experiencia y especialización'
                             disabled={disableTab}
-                            forceRender
                             key='3'
                         >
                             <TabExperience action={action}/>
@@ -84,7 +76,6 @@ const DetailsCandidates = ({
                         <Tabs.TabPane
                             tab='Últimas posiciones'
                             disabled={disableTab}
-                            forceRender
                             key='4'
                         >
                             <TabPositions action={action}/>

@@ -1,7 +1,7 @@
 import { Button, Col, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
-const UploadFile = ({
+const UploadCerOrPfxFile = ({
   textButton = "Subir documento",
   validateExtension = ".xlsx",
   set_disabled = false,
@@ -12,14 +12,22 @@ const UploadFile = ({
 }) => {
   return (
     <>
-      <Col span={24} offset={1} style={{ marginBottom: "10px" }}>
+      <Col span={24} style={{ marginBottom: "10px" }}>
         <Upload
           {...{
             showUploadList: showList,
             listType: "picture",
             maxCount: 1,
+            disabled: set_disabled,
             beforeUpload: (file) => {
-              const isValid = file.name.includes(validateExtension);
+              let extensions = validateExtension.split(',')
+              let isValid = ""
+              if(extensions.length > 1){
+                isValid = file.name.includes(extensions[0]) || file.name.includes(extensions[1])
+              } else {
+                isValid = file.name.includes(validateExtension);
+              }
+              // const isValid = file.name.includes(validateExtension);
               const isBig = file.size > 30720
 
               if (!isValid) {
@@ -52,4 +60,4 @@ const UploadFile = ({
   );
 };
 
-export default UploadFile;
+export default UploadCerOrPfxFile;

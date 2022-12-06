@@ -36,12 +36,12 @@ const publicationsListReducer = (state = initialData, action) => {
 };
 
 export const publicationsListAction =
-  (node, page = "", parameters = "") =>
+  (node, page = "", parameters = "", queryParam = "") =>
   async (dispatch, getState) => {
     dispatch({ type: LOADING_PUBLICATIONS_LIST });
     let data = `?node=${node}${
       page && page != "" ? `&page=${page}` : ""
-    }${parameters && parameters !== "" ? parameters : ''}&is_moderator_view=true`;
+    }${parameters && parameters !== "" ? parameters : ''}&is_moderator_view=true&${queryParam ?? ""}`;
     await WebApiIntranet.publigationList(data)
       .then(({ status, data }) => {
         let dataAndResults = {

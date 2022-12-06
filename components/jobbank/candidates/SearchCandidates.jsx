@@ -36,7 +36,7 @@ const SearchCandidates = ({
     return (
         <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
             <Row gutter={[0,8]} style={{width: '100%'}}>
-                <Col xs={12} md={8} xl={5}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='fisrt_name__icontains'
                         rules={[ruleWhiteSpace]}
@@ -45,7 +45,7 @@ const SearchCandidates = ({
                         <Input placeholder='Buscar por nombre'/>
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={5}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='last_name__icontains'
                         rules={[ruleWhiteSpace]}
@@ -54,7 +54,7 @@ const SearchCandidates = ({
                         <Input placeholder='Buscar por apellidos'/>
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={5}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='email__icontains'
                         rules={[ruleWhiteSpace]}
@@ -63,7 +63,7 @@ const SearchCandidates = ({
                         <Input placeholder='Buscar por correo'/>
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={5}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='cell_phone'
                         rules={[onlyNumeric]}
@@ -72,7 +72,7 @@ const SearchCandidates = ({
                         <Input placeholder='Buscar por teléfono'/>
                     </Form.Item>
                 </Col>
-                {/* <Col xs={12} md={8} xl={4}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='is_active'
                         style={{marginBottom: 0}}
@@ -85,7 +85,7 @@ const SearchCandidates = ({
                             <Select.Option value='false' key='false'>Inactivo</Select.Option>
                         </Select>
                     </Form.Item>
-                </Col> */}
+                </Col>
                 <Col xs={12} sm={23} md={23} xl={4} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
                         <Button htmlType='submit'>

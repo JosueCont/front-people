@@ -191,15 +191,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   ];
 
   const renderConceptsTable = (data) => {
-    let dataPerceptions = [];
-    let dataDeductions = [];
-    if (movementType > 1) {
-      dataPerceptions = data?.perception?.items;
-      dataDeductions = data?.deduction?.items;
-    } else {
-      dataPerceptions = data?.perception;
-      dataDeductions = data?.deduction;
-    }
+    console.log("render-->> ", data);
+    let dataPerceptions = data?.perception;
+    let dataDeductions = data?.deduction;
 
     const columnsPerceptions = [
       {
@@ -222,6 +216,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         dataIndex: "datum",
         className: "cell-concept",
         width: "5%",
+        render: (datum) => (
+          <Space size="middle">
+            <NumberFormat number={datum} />
+          </Space>
+        ),
       },
       {
         title: "Grabado",
@@ -359,7 +358,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   Total percepciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  <NumberFormat prefix={"$"} number={data.bonus_amount} />
+                  <NumberFormat prefix={"$"} number={data.total_perception} />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>

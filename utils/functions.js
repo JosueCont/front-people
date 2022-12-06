@@ -44,8 +44,11 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
-      Textmessage && message.error(Textmessage) 
-      console.log(e);
+      if(Textmessage){
+        message.error(Textmessage)
+      }else if(e?.response?.status===404){
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      }
     });
 };
 
@@ -452,6 +455,19 @@ export const getFiltersJB = (obj = {}) =>{
       let offset = (parseInt(val) - 1) * 10;
       return query +=`&limit=10&offset=${offset}`;
     }
-    return query += `&${key}=${val}`;
+    let value = val == 'open_fields' ? "" : val;
+    return query += `&${key}=${value}`;
   }, '');
+}
+
+export const deleteFiltersJb = (
+  filters = {},
+  listDelete = ['id','client','vacancy']
+) =>{
+  let newFilters = {...filters};
+  const remove = item => {
+    if(newFilters[item]) delete newFilters[item]
+  };
+  listDelete.forEach(remove);
+  return newFilters;
 }

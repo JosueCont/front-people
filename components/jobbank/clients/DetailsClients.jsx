@@ -26,6 +26,7 @@ const DetailsClients = ({
     action,
     user,
     currentNode,
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -135,12 +136,6 @@ const DetailsClients = ({
         setLoading({})
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        return newFilters;
-    }
-
     const actionCreate = () =>{
         formClients.resetFields();
         setFetching(false)
@@ -148,18 +143,9 @@ const DetailsClients = ({
     }
 
     const actionBack = () =>{
-        let filters = getNewFilters();
         router.push({
             pathname: '/jobbank/clients',
-            query: filters
-        })
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/clients/edit',
-            query: {...filters, id }
+            query: newFilters
         })
     }
 
@@ -167,9 +153,12 @@ const DetailsClients = ({
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/clients/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{

@@ -43,7 +43,7 @@ const index = ({user, ...props}) => {
   useEffect(() => {
     moment.locale("es-mx");
     if (props.currentNode) {
-      props.publicationsListAction(props.currentNode.id, 1);
+      props.publicationsListAction(props.currentNode.id, 1, '&limit=10');
     }
   }, [props.currentNode]);
 
