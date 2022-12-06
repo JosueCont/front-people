@@ -395,16 +395,9 @@ const ImssInformationNode = ({
                 }
                 form={formLegalRep}
               />
-              <Row>
-                <Title style={{ fontSize: "15px" }}>Configuracíon de movimientos automática</Title>
-              </Row>
-              <Divider style={{ marginTop:'2px' }} />
-              <AutomaticMovements 
-                patronalData = { patronalData }
-              />
             </Col>
           </Row>
-          <Row justify="end">
+          <Row justify="end" style={{marginTop:20, marginBottom:20}}>
             <Button onClick={resetForms} style={{ marginRight: "5px" }}>
               Cancelar
             </Button>
@@ -412,7 +405,15 @@ const ImssInformationNode = ({
               Guardar
             </Button>
           </Row>
+
           <Row>
+            <Title style={{ fontSize: "15px" }}>Configuracíon de movimientos automáticos</Title>
+          </Row>
+          <Divider style={{ marginTop:'2px' }} />
+          <AutomaticMovements
+              patronalData = { patronalData }
+          />
+          <Row style={{marginTop:20}}>
             <Title style={{ fontSize: "15px" }}>Certificados digitales</Title>
           </Row>
           <Row>

@@ -467,7 +467,7 @@ class WebApiPeople {
 
   static getCredentials(site, patronal_registrartion) {
     return WebApi.ApisType(
-      `/business/scraper-config/${site}/${patronal_registrartion}`,
+      `/business/scraper-config/${site}/${patronal_registrartion}/`,
       'get'
     )
   }

@@ -14,6 +14,10 @@ import {
   Upload
   
 } from "antd";
+import {
+CheckCircleOutlined,
+CloseCircleOutlined
+} from "@material-ui/icons";
 import UploadCerOrPfxFile from "../UploadCerOrPfxFile";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
@@ -30,6 +34,9 @@ const AutomaticMovements = ({patronalData}) => {
   const [ cerOrPfxFile, setCerOrPfxFile ] = useState(null)
   const [ keyFile, setKeyFile ] = useState(null)
   const [ required, setRiquired ] = useState(false)
+
+  const [hasCredentialInfonavit, setHasCredentialInfonavit] = useState(false)
+  const [hasCredentialIMSS, setHasCredentialIMSS] = useState(false)
 
   useEffect(() => {
 
@@ -60,11 +67,37 @@ const AutomaticMovements = ({patronalData}) => {
       dataIndex: 'service'
     },
     {
+      title: "Configurado",
+      key: 'status',
+      render: (record) => {
+        console.log('record', record?.service)
+        if(record?.service){
+           if(record?.service==='INFONAVIT' && hasCredentialInfonavit){
+             return <CheckCircleOutlined style={{color:'green'}} />
+             // {
+             //   (record?.service==='INFONAVIT' && hasCredentialInfonavit) ? <CheckCircleOutlined /> :<CloseCircleOutlined />
+             // }
+           }
+
+          if(record?.service==='IMSS' && hasCredentialIMSS){
+            return <CheckCircleOutlined style={{color:'green'}} />
+            // {
+            //   (record?.service==='INFONAVIT' && hasCredentialInfonavit) ? <CheckCircleOutlined /> :<CloseCircleOutlined />
+            // }
+          }
+
+        }
+        return <p>
+
+        </p>
+      }
+    },
+    {
       title: "Configuración",
       key: 'configuration',
       render: (record) => (
         <Button onClick={ () => setService(record.service) }>
-          Config.
+          Configurar
         </Button>
       )
     }
@@ -81,13 +114,34 @@ const AutomaticMovements = ({patronalData}) => {
 
   const getPatronalCredentials = async () => {
 
+
     try {
-
-      let response = await WebApiPeople.getCredentials('infonavit', patronalData.id)
-      console.log('Response Infonavit', response)
-
+      let response = await WebApiPeople.getCredentials('imss', patronalData.id)
+      if(response?.data?.results?.credentials===true){
+        setHasCredentialIMSS(true)
+      }else{
+        setHasCredentialIMSS(false)
+      }
+      console.log('Response imss', response?.data.results?.credentials)
     } catch (error) {
-      
+      setHasCredentialIMSS(false)
+      console.log('Error', error)
+
+    } finally {
+
+    }
+
+
+    try {
+      let response = await WebApiPeople.getCredentials('infonavit', patronalData.id)
+      if(response?.data?.results?.credentials===true){
+          setHasCredentialInfonavit(true)
+      }else{
+        setHasCredentialInfonavit(false)
+      }
+      console.log('Response Infonavit', response?.data.results?.credentials)
+    } catch (error) {
+      setHasCredentialInfonavit(false)
       console.log('Error', error)
 
     } finally {
@@ -97,15 +151,24 @@ const AutomaticMovements = ({patronalData}) => {
 
   const onFinishImss = async (values) => {
 
+    console.log('vals', values)
+    const formData = new FormData();
+    formData.append('endpoint', 'imss')
+    formData.append('patronal_registration', patronalData.id)
+    formData.append('cer', cerOrPfxFile)
+    formData.append('key', keyFile)
+    formData.append('password', values.password)
+    formData.append('user', values.user)
+
     setLoading(true)
-    values.endpoint = 'imss'
-    values.patronal_registration = patronalData.id
-    values.cer = cerOrPfxFile
-    values.key = keyFile
+    // values.endpoint = 'imss'
+    // values.patronal_registration = patronalData.id
+    // values.cer = cerOrPfxFile
+    // values.key = keyFile
 
     try {
       console.log('Values -->', values)
-      let response = await WebApiPeople.addNewCredentials(values)
+      let response = await WebApiPeople.addNewCredentials(formData)
       console.log('Response', response)
       message.success('Guardado correctamente.') 
 
