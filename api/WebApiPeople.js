@@ -472,6 +472,14 @@ class WebApiPeople {
     )
   }
 
+  static addNewCredentials(data){
+    return WebApi.ApisType(
+      '/business/scraper-config/',
+      'post',
+      data
+    )
+  }
+
   static patronalRegistration(data) {
     return WebApi.ApisType(
       `/business/patronal-registration-data/`,

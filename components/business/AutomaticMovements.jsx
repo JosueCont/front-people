@@ -83,7 +83,7 @@ const AutomaticMovements = ({patronalData}) => {
 
     try {
 
-      let response = await WebApiPeople.getCredentials('infonavit', 'D4248034200')
+      let response = await WebApiPeople.getCredentials('infonavit', patronalData.id)
       console.log('Response Infonavit', response)
 
     } catch (error) {
@@ -95,14 +95,18 @@ const AutomaticMovements = ({patronalData}) => {
     }
   }
 
-  const onFinishImss = (values) => {
+  const onFinishImss = async (values) => {
 
     setLoading(true)
+    values.endpoint = 'imss'
+    values.patronal_registration = patronalData.id
     values.cer = cerOrPfxFile
     values.key = keyFile
 
     try {
       console.log('Values -->', values)
+      let response = await WebApiPeople.addNewCredentials(values)
+      console.log('Response', response)
       message.success('Guardado correctamente.') 
 
     } catch (error) {
@@ -118,12 +122,16 @@ const AutomaticMovements = ({patronalData}) => {
     }
   }
 
-  const onFinishInfonavit = (values) => {
+  const onFinishInfonavit = async (values) => {
 
     setLoading(true)
+    values.endpoint = 'infonavit'
+    values.patronal_registration = patronalData.id
 
     try {
       console.log('Values -->', values)
+      let response = await WebApiPeople.addNewCredentials(values)
+      console.log('Response', response)
       message.success('Guardado correctamente.') 
 
     } catch (error) {
