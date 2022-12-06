@@ -40,6 +40,8 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [ nss, setNSS ] = useState(null)
   const [ loadingModal, setLoadingModal ] = useState(false)
   const daily_salary = Form.useWatch('sbc', formImssInfonavit);
+  let errorExceptionOne = "La persona cuenta con crédito infonavit"
+  let errorExceptionTwo = "La persona no cuenta con crédito"
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
@@ -94,6 +96,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       setModalVisible(true)
     }
   },[updateInfonavit])
+
+  const compareError = (msg) => {
+    if(msg === errorExceptionOne || msg === errorExceptionTwo) return true
+    return false
+  }
+
 
   const formImmssInfonavitAct = (values) => {
     setLoadingTable(true)
@@ -160,15 +168,13 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       })
       .catch((error) => {
         setLoadingTable(false);
-        error &&
-        error.response &&
-        error.response.data &&
-        error.response.data.message !== "" &&
-        error.response.data.message === "La persona cuenta con crédito infonavit" &&
-        message.error(error.response.data.message) || 
-        message.error(`La consulta de información no pudo ser exitosa, intente nuevamente, 
-        recuerde que este proceso está  vinculado a la disponibilidad del servicio de infonavit.`)
-
+        let errorMsg = error.response.data.message || ""
+        if(errorMsg === errorExceptionOne || errorMsg === errorExceptionTwo){
+          message.error(errorMsg)
+        } else {
+          message.error(`La consulta de información no pudo ser exitosa, intente nuevamente, 
+          recuerde que este proceso está  vinculado a la disponibilidad del servicio de infonavit.`)
+        }
       })
       .finally(() => {
         getInfo()
