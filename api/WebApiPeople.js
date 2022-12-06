@@ -420,7 +420,7 @@ class WebApiPeople {
 
   static listEbaAndEmaFiles(node, patronalRegistration) {
     return WebApi.ApisType(
-      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}&origin__type=1`, 
+      `/business/document/?node_id=${node}&patronal_registration_id=${patronalRegistration}&origin__type=1`,
       "get"
     );
   }
@@ -463,6 +463,21 @@ class WebApiPeople {
       `/business/patronal-registration-data/?node=${node}`,
       "get"
     );
+  }
+
+  static getCredentials(site, patronal_registrartion) {
+    return WebApi.ApisType(
+      `/business/scraper-config/${site}/${patronal_registrartion}/`,
+      'get'
+    )
+  }
+
+  static addNewCredentials(data){
+    return WebApi.ApisType(
+      '/business/scraper-config/',
+      'post',
+      data
+    )
   }
 
   static patronalRegistration(data) {
