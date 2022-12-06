@@ -99,8 +99,10 @@ const TabFacebook = ({
             let body = { token: response.accessToken };
             let resp = await WebApiJobBank.getTokenFB(body);
             if(!resp.data?.token) return setMessageError(msgError);
-            let obj = {'data_config|page_access_token': resp.data.token};
-            formFacebook.setFieldsValue(obj);
+            formFacebook.setFieldsValue({
+                is_valid: true,
+                'data_config|page_access_token': resp.data.token
+            });
             setTimeout(()=>{
                 btnSubmit.current.click();
             },1000)
@@ -184,10 +186,7 @@ const TabFacebook = ({
             onFinish={onFinish}
             id='form-facebook'
             layout='vertical'
-            initialValues={{
-                code: 'FB',
-                is_active: false
-            }}
+            initialValues={{code: 'FB'}}
         >
             <Row gutter={[24,0]}>
                 {infoConnection.data_config?.page_access_token && (
@@ -201,6 +200,11 @@ const TabFacebook = ({
                 )}
                 <Col xs={24} xxl={16}>
                     <Row gutter={[24,0]}>
+                        <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
+                            <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
+                                <Checkbox/>
+                            </Form.Item>
+                        </Col>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
                                 name='is_active'
