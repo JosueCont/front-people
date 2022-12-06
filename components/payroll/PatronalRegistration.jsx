@@ -166,8 +166,8 @@ const ImssInformationNode = ({
   const saveRegister = async (data) => {
     if (!(await validateForms())) return;
     data.node = currentNode.id;
-    if (isEdit) {
-      data.patronal.id = patronalData.id;
+    if (isEdit && patronalData?.id) {
+      data.patronal.id = patronalData?.id;
       if (patronalData.job_risk_premium && patronalData.job_risk_premium.id)
         data.jobRisk.id = patronalData.job_risk_premium.id;
       if (
