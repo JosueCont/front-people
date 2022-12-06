@@ -9,6 +9,7 @@ import {
   DatePicker,
   Form,
   Input,
+  message,
   Row,
   Select,
   Space,
@@ -103,22 +104,19 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             <Avatar
               icon={<UserOutlined />}
               src={
-                item.payroll_person.person && item.payroll_person.person.photo
-                  ? item.payroll_person.person.photo
+                item.person && item.person.photo
+                  ? item.person.photo
                   : defaulPhoto
               }
             />
             {`${
-              item.payroll_person.person &&
-              item.payroll_person.person.mlast_name
-                ? item.payroll_person.person.first_name +
+              item.person && item.person.mlast_name
+                ? item.person.first_name +
                   " " +
-                  item.payroll_person.person.flast_name +
+                  item.person.flast_name +
                   " " +
-                  item.payroll_person.person.mlast_name
-                : item.payroll_person.personfirst_name +
-                  " " +
-                  item.payroll_person.person.flast_name
+                  item.person.mlast_name
+                : item.personfirst_name + " " + item.person.flast_name
             }`}
           </Space>
         </div>
@@ -181,9 +179,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Button
                 size="small"
                 onClick={() => {
-                  setPersonId(
-                    item.payroll_person && item.payroll_person.person.id
-                  ),
+                  setPersonId(item?.person?.id),
+                    console.log(
+                      "🚀 ~ file: index.jsx:175 ~ ExtraordinaryPayroll ~ listPersons",
+                      item.person.id
+                    ),
                     setModalVisible(true);
                 }}
               >
@@ -503,7 +503,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [movementType]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
-    if (movementType > 1 && record.worked_days)
+    if (movementType > 1 && record.working_days)
       return expanded ? (
         <DownOutlined onClick={(e) => onExpand(record, e)} />
       ) : (
@@ -519,16 +519,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const calculateExtra = () => {
-    // setGenericModal(false);
-    // const departureDate = document.getElementById("departure_date");
-    // if (departureDate.value != null && departureDate.value != "") {
-    console.log(objectSend);
+    console.log(
+      "🚀 ~ file: index.jsx:527 ~ calculateExtra ~ objectSend",
+      objectSend
+    );
+    const objSend = objectSend.payroll.filter((item) => item.departure_date);
+    if (objSend.length == 0) {
+      message.error(
+        "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
+      );
+      return;
+    }
+    console.log("🚀 ~ file: index.jsx:529 ~ calculateExtra ~ objSend", objSend);
     sendCalculateExtraordinaryPayrroll({
-      list: objectSend
-        ? objectSend.payroll
-        : listPersons.map((item) => {
-            return { person_id: item.key };
-          }),
+      list: objSend,
+      // ? objectSend.payroll
+      // : listPersons.map((item) => {
+      //     return { person_id: item.key };
+      //   }),
       // departure_date: departureDate.value,
       movementType: movementType,
       calendar: calendarSelect.id,
@@ -545,25 +553,31 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     );
     // setGenericModal(false);
     // setLoading(true);
-    // WebApiPayroll.closePayroll({
-    //   payment_period: periodSelected.id,
-    //   payroll: payroll,
-    // })
-    //   .then((response) => {
-    //     sendCalculatePayroll({ payment_period: periodSelected.id });
-    //     setTimeout(() => {
-    //       message.success(messageSaveSuccess);
-    //       setLoading(false);
-    //     }, 1000);
-    //   })
-    //   .catch((error) => {
-    //     setLoading(false);
-    //     sendCalculatePayroll({ payment_period: periodSelected.id });
-    //     setTimeout(() => {
-    //       message.error(messageError);
-    //       console.log(error);
-    //     }, 1000);
-    //   });
+    WebApiPayroll.consolidatedExtraordinaryPayroll({
+      payment_period: periodSelected.id,
+      payroll: consolidatedObj,
+    })
+      .then((response) => {
+        // sendCalculatePayroll({ payment_period: periodSelected.id });
+        // setTimeout(() => {
+        //   message.success(messageSaveSuccess);
+        setLoading(false);
+        // }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        // sendCalculatePayroll({ payment_period: periodSelected.id });
+        // setTimeout(() => {
+        //   message.error(messageError);
+        //   console.log(error);
+        // }, 1000);
+      });
+  };
+
+  const setPayrollCalculate = (data) => {
+    console.log("🚀 ~ file: index.jsx:572 ~ setPayrollCalculate ~ data", data);
+    setExtraOrdinaryPayroll(data.payroll);
+    setObjectSend(data);
   };
 
   const changeStep = (next_prev) => {
@@ -845,62 +859,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         </Button>
                       </Col> */}
 
-                      {personKeys && personKeys.length > 0 && (
+                      {personKeys && personKeys.length > 0 && objectSend && (
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
                             block
                             htmlType="button"
-                            onClick={
-                              () => calculateExtra()
-                              // setInfoGenericModal({
-                              //   title: `Calcular ${
-                              //     movementType === 2
-                              //       ? "finiquito"
-                              //       : "liquidacion"
-                              //   }`,
-                              //   title_message: "Selecciona una fecha de salida",
-                              //   description:
-                              //     "Fecha de salida requerida para el calculo que quiere realizar.",
-                              //   type_alert: "warning",
-                              //   title_message: "Fecha de salida",
-
-                              //   closeButton: "Cerrar",
-                              //   action: () => calculateExtra(),
-                              //   components: (
-                              //     <>
-                              //       <Row
-                              //         style={{
-                              //           width: "100%",
-                              //           marginTop: "10px",
-                              //         }}
-                              //         justify="center"
-                              //       >
-                              //         <Form.Item
-                              //           label="Fecha de pago"
-                              //           style={{ width: "40%" }}
-                              //         >
-                              //           <DatePicker
-                              //             defaultValue={moment()}
-                              //             moment={"YYYY"}
-                              //             id="departure_date"
-                              //             placeholder="Fecha de pago."
-                              //             locale={locale}
-                              //           />
-                              //         </Form.Item>
-                              //       </Row>
-                              //     </>
-                              //   ),
-                              // }),
-                              // setGenericModal(true)
-                            }
+                            onClick={() => calculateExtra()}
                           >
                             Calcular
                           </Button>
                         </Col>
                       )}
 
-                      {step >= 1 && (
+                      {step >= 1 && consolidatedObj && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
@@ -1137,7 +1109,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           person_id={personId}
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
-          sendCalculatePayroll={setObjectSend}
+          sendCalculatePayroll={setPayrollCalculate}
         />
       )}
       {genericModal && (

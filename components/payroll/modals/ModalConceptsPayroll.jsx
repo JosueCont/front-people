@@ -170,6 +170,7 @@ const ModalConceptsPayroll = ({
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <InputNumber
+                    key={item.id}
                     type="number"
                     name={item.id}
                     defaultValue={item.value}
@@ -241,6 +242,10 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:302 ~ payroll.map ~ payroll",
+      payroll
+    );
     if (
       departureDate == undefined ||
       departureDate == null ||
@@ -279,6 +284,8 @@ const ModalConceptsPayroll = ({
           obj.antiquity_compensation = antiquity;
           obj.departure_date = departureDate;
           obj.motive_departure = motiveDeparture;
+          obj.person = item.person;
+          obj.key = item.key;
         }
         data.push(obj);
       } else {
@@ -291,9 +298,17 @@ const ModalConceptsPayroll = ({
           other_payments: item.otherPayments,
         };
         if (extraOrdinary) {
-          obj.twenty_day_compensantion = twentyDays;
-          obj.three_months_compensation = threeMonths;
-          obj.antiquity_compensation = antiquity;
+          if (item.three_months_compensantion)
+            obj.twenty_day_compensantion = item.three_months_compensantion;
+          if (item.antiquity_compensation)
+            obj.antiquity_compensation = item.antiquity_compensation;
+          if (item.twenty_day_compensantion)
+            obj.twenty_day_compensantion = item.twenty_day_compensantion;
+          obj.person = item.person;
+          obj.key = item.key;
+          if (item.departure_date) obj.departure_date = item.departure_date;
+          if (item.motive_departure)
+            obj.motive_departure = item.motive_departure;
         }
         data.push(obj);
       }
