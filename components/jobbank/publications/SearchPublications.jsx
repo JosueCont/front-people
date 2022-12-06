@@ -104,6 +104,9 @@ const SearchPublications = ({
                             notFoundContent='No se encontraron resultados'
                             optionFilterProp='children'
                         >
+                            <Select.Option value='open_fields' key='open_fields'>
+                                Personalizado
+                            </Select.Option>
                             {list_profiles_options.length > 0 && list_profiles_options.map(item=> (
                                 <Select.Option value={item.id} key={item.id}>
                                     {item.name}

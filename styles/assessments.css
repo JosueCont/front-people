@@ -561,6 +561,7 @@
 }
 
 button.btn-login-facebook{
+    margin-right: auto;
     border-color: transparent!important;
     background: linear-gradient(
         to bottom right,

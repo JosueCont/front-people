@@ -455,7 +455,8 @@ export const getFiltersJB = (obj = {}) =>{
       let offset = (parseInt(val) - 1) * 10;
       return query +=`&limit=10&offset=${offset}`;
     }
-    return query += `&${key}=${val}`;
+    let value = val == 'open_fields' ? "" : val;
+    return query += `&${key}=${value}`;
   }, '');
 }
 
