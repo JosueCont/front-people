@@ -41,9 +41,11 @@ const DetailsStrategies = ({
     const [disabledClient, setDisabledClient] = useState(false);
     const [infoStrategy, setInfoStrategy] = useState({});
     const [fetching, setFetching] = useState(false);
+    const [optionVacant, setOptionVacant] = useState([]);
     const { createData, setValuesForm } = useProcessInfo({
         infoStrategy,
-        formStrategies
+        formStrategies,
+        setOptionVacant
     });
 
     useEffect(()=>{
@@ -93,7 +95,9 @@ const DetailsStrategies = ({
             getInfoStrategy(infoStrategy.id);
         } catch (e) {
             console.log(e)
-            message.error('Estrategia no actualizada');
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no actualizada';
+            message.error(msgError);
             setFetching(false);
         }
     }
@@ -105,9 +109,11 @@ const DetailsStrategies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no registrada';
+            message.error(msgError);
             setFetching(false)
             setLoading({})
-            message.error('Estrategia no registrada');
         }
     }
 
@@ -186,6 +192,7 @@ const DetailsStrategies = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormStrategies
+                                optionVacant={optionVacant}
                                 formStrategies={formStrategies}
                                 disabledClient={disabledClient}
                             />

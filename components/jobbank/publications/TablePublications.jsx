@@ -31,8 +31,6 @@ const TablePublications = ({
     jobbank_page,
     list_publications,
     load_publications,
-    list_vacancies_options,
-    list_profiles_options,
     list_connections,
     load_connections,
     getPublications
@@ -56,8 +54,10 @@ const TablePublications = ({
             },1000);
         } catch (e) {
             console.log(e)
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Vacante no publicada';
             setTimeout(()=>{
-                message.error({content: 'Vacante no publicada', key});
+                message.error({content: msgError, key});
             },1000);
         }
     }
@@ -100,22 +100,6 @@ const TablePublications = ({
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
-    }
-
-    const getVacant = (item) =>{
-        if(!item.vacant) return null;
-        const vacant = record => record.id == item.vacant;
-        let vacant_ = list_vacancies_options.find(vacant);
-        if(!vacant_) return null;
-        return vacant_.job_position;
-    }
-
-    const getTemplate = (item) =>{
-        if(!item.profile) return 'Personalizado';
-        const template = record => record.id == item.profile.id;
-        let template_ = list_profiles_options.find(template);
-        if(!template_) return null;
-        return template_.name;
     }
 
     const getRed = (item) =>{
@@ -214,17 +198,14 @@ const TablePublications = ({
         },
         {
             title: 'Vacante',
-            render: (item) =>{
-                return(
-                    <span>{getVacant(item)}</span>
-                )
-            }
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant','job_position']
         },
         {
             title: 'Template',
             render: (item) =>{
                 return(
-                    <span>{getTemplate(item)}</span>
+                    <span>{item.profile?.name ?? 'Personalizado'}</span>
                 )
             }
         },
@@ -314,8 +295,6 @@ const mapState = (state) =>{
         jobbank_page: state.jobBankStore.jobbank_page,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
-        list_profiles_options: state.jobBankStore.list_profiles_options,
         list_connections: state.jobBankStore.list_connections,
         load_connections: state.jobBankStore.load_connections,
         currentUser: state.userStore.user,

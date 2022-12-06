@@ -34,6 +34,7 @@ const TableVacancies = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [viewAsList, setViewAsList] = useState(false);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
@@ -84,12 +85,21 @@ const TableVacancies = ({
     }
 
     const openModalManyDelete = () =>{
+        const filter_ = item => item.has_estrategy;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setViewAsList(true)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setViewAsList(false);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos vacantes')
+            return;
         }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos vacantes')
     }
 
     const openModalRemove = (item) =>{
@@ -105,6 +115,7 @@ const TableVacancies = ({
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        if(viewAsList) return;
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -172,7 +183,7 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                <Menu.Item
+                {/* <Menu.Item
                     key='3'
                     icon={<SettingOutlined />}
                     onClick={()=> router.push({
@@ -181,7 +192,7 @@ const TableVacancies = ({
                     })}
                 >
                     Configurar publicación
-                </Menu.Item>
+                </Menu.Item> */}
             </Menu>
         );
     };
@@ -266,7 +277,10 @@ const TableVacancies = ({
             }}
         />
         <DeleteItems
-            title={itemsToDelete.length > 1
+            title={viewAsList
+                ? `Estas vacantes no se pueden eliminar,
+                    ya que se encuentran asociadas a una estrategia.`
+                : itemsToDelete.length > 1
                 ? '¿Estás seguro de eliminar estas vacantes?'
                 : '¿Estás seguro de eliminar esta vacante?'
             }
@@ -276,6 +290,8 @@ const TableVacancies = ({
             close={closeModalDelete}
             itemsToDelete={itemsToDelete}
             actionDelete={actionDelete}
+            textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
+            viewAsList={viewAsList}
         />
     </>
   )

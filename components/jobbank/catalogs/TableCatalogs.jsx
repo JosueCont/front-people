@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Dropdown,
@@ -10,6 +10,7 @@ import {
     DeleteOutlined,
     EditOutlined,
 } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import ModalCatalogs from './ModalCatalogs';
 import DeleteItems from '../../../common/DeleteItems';
 
@@ -23,20 +24,22 @@ const TableCatalogs = ({
     actionBtnEdit,
     catalogResults = [],
     catalogLoading = false,
-    setItemToEdit,
-    itemToEdit,
-    setItemsToDelete,
-    itemsToDelete,
     openModal,
     setOpenModal,
+    numPage = 1,
     //No requeridos
-    useModal = true,
     extraFields = <></>,
     extraOptions = ()=> <></>
 }) => {
-    const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const router = useRouter();
+    const [itemToEdit, setItemToEdit] = useState({});
+    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
+    
+    const validateAction = useMemo(()=>{
+        return Object.keys(itemToEdit).length > 0
+    },[itemToEdit])
 
     const closeModal = () =>{
         setOpenModal(false)
@@ -56,6 +59,30 @@ const TableCatalogs = ({
     const openModalEdit = (item)=>{
         setItemToEdit(item)
         setOpenModal(true)
+    }
+
+    const getActionForm = (values) =>{
+        if(validateAction) actionUpdate(itemToEdit.id, values);
+        else actionCreate(values);
+    }
+
+    const actionRemove = () =>{
+        let id = itemsToDelete.at(-1).id;
+        actionDelete(id);
+    }
+
+    const savePage = (query) => router.replace({
+        pathname: router.asPath.split('?')[0],
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        if(current > 1) savePage({...router.query, page: current});
+        else{
+            let newQuery = {...router.query};
+            if(newQuery.page) delete newQuery.page;
+            savePage(newQuery)
+        }
     }
 
     const menuItem = (item) => {
@@ -109,24 +136,27 @@ const TableCatalogs = ({
                 size='small'
                 rowKey='id'
                 columns={columns}
-                dataSource={catalogResults}
+                onChange={onChangePage}
+                dataSource={catalogResults.results}
                 loading={catalogLoading}
                 locale={{ emptyText: catalogLoading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
+                    current: numPage,
+                    total: catalogResults.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
             />
             <ModalCatalogs
-                title={validateAction() && openModal ? titleEdit : titleCreate}
+                title={validateAction ? titleEdit : titleCreate}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                actionForm={getActionForm}
+                textSave={validateAction ? 'Actualizar' : 'Guardar'}
             >{extraFields}</ModalCatalogs>
             <DeleteItems
                 title={titleDelete}
@@ -134,7 +164,7 @@ const TableCatalogs = ({
                 keyTitle='name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                actionDelete={actionRemove}
             />
         </>
     )

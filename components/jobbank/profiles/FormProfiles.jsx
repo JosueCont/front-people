@@ -28,7 +28,7 @@ const FormProfiles = ({
     const { formatData } = useProcessInfo();
 
     const onChangeType = (value) =>{
-        if(!value) setDisabledField(false);
+        setDisabledField(false);
         let resetValues = formatData(list_vacancies_fields, false, 'field');
         formProfile.setFieldsValue(resetValues);
         if(value == 'open_fields'){
@@ -36,7 +36,6 @@ const FormProfiles = ({
                 ...valuesDefault,
                 profile_type: value
             });
-            setDisabledField(false);
             return;
         }
         const type = item => item.id == value;

@@ -12,6 +12,7 @@ const DeleteItems = ({
     actionDelete = ()=> {},//function
     textCancel = 'Cancelar', //string
     textDelete = 'Eliminar', //string
+    viewAsList = false, //boolean
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -59,12 +60,14 @@ const DeleteItems = ({
                     <Button onClick={()=> close()}>
                         {textCancel}
                     </Button>
-                    <Button
-                        loading={loading}
-                        onClick={()=> onFinish()}
-                    >
-                        {textDelete}
-                    </Button>
+                    {!viewAsList && (
+                        <Button
+                            loading={loading}
+                            onClick={()=> onFinish()}
+                        >
+                            {textDelete}
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </MyModal>
