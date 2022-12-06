@@ -32,6 +32,7 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import LegalRepresentative from "./forms/LegalRepresentative";
 import FormFiscalAddress from "./forms/FormFiscalAddress";
 import FormPatronalRegistration from "./forms/FormPatronalRegistration";
+import AutomaticMovements from "../business/AutomaticMovements";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
@@ -393,6 +394,13 @@ const ImssInformationNode = ({
                   patronalData && patronalData.legal_representative
                 }
                 form={formLegalRep}
+              />
+              <Row>
+                <Title style={{ fontSize: "15px" }}>Configuracíon de movimientos automática</Title>
+              </Row>
+              <Divider style={{ marginTop:'2px' }} />
+              <AutomaticMovements 
+                patronalData = { patronalData }
               />
             </Col>
           </Row>
