@@ -16,8 +16,19 @@ import {
   optionsStatusAcademic,
   optionsLangVacant
 } from '../../../utils/constant';
+import ListLangs from '../candidates/ListLangs';
 
-const TabEducation = ({ formVacancies }) => {
+const TabEducation = ({
+  formVacancies,
+  //Parámetros para idiomas
+  listLangDomain,
+  setListLangDomain,
+  setCurrentValue,
+  currentValue,
+  rule_languages,
+  ruleLanguages,
+  setRuleLanguages,
+}) => {
 
   const {
     load_competences,
@@ -161,7 +172,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col xs={24} md={12} xl={8} xxl={6}>
+      {/* <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='languajes'
           label='Idiomas'
@@ -175,6 +186,18 @@ const TabEducation = ({ formVacancies }) => {
             options={optionsLangVacant}
           />
         </Form.Item>
+      </Col> */}
+      <Col span={24}>
+        <ListLangs
+          changeColor={true}
+          listLangDomain={listLangDomain}
+          setListLangDomain={setListLangDomain}
+          setCurrentValue={setCurrentValue}
+          currentValue={currentValue}
+          setRuleLanguages={setRuleLanguages}
+          ruleLanguages={ruleLanguages}
+          rule_languages={rule_languages}
+        />
       </Col>
       <Col span={24}>
         <Row gutter={[24,0]}>
@@ -187,8 +210,8 @@ const TabEducation = ({ formVacancies }) => {
               <Input.TextArea
                 placeholder='Especificar según los idiomas seleccionados'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -202,8 +225,8 @@ const TabEducation = ({ formVacancies }) => {
               <Input.TextArea
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -217,8 +240,8 @@ const TabEducation = ({ formVacancies }) => {
               <Input.TextArea
                 placeholder='Separar cada experiencia con una coma'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -232,8 +255,8 @@ const TabEducation = ({ formVacancies }) => {
               <Input.TextArea
                 placeholder='Separar cada habilidad técnica con una coma'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>

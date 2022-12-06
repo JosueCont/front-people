@@ -25,7 +25,7 @@ const DetailsPublication = ({
     action,
     currentNode,
     currentUser,
-    list_vacancies_options
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -85,24 +85,14 @@ const DetailsPublication = ({
         })
     }
 
-    const clientByVacant = (vacant) =>{
-        if(!vacant) return null;
-        const _find = item => item.id == vacant;
-        let result = list_vacancies_options.find(_find);
-        if(!result) return null;
-        if(!result.customer) return null;
-        return result.customer.id;
-    }
-
     const setValuesForm = () =>{
         let results = {};
-        let customer = clientByVacant(infoPublication.vacant);
         let existFields = Object.keys(infoPublication.fields).length > 0;
         let existFieldsName = infoPublication.profile && Object.keys(infoPublication.profile?.fields_name).length > 0;
         if(existFields && !existFieldsName) results = formatData(infoPublication.fields);
         if(existFieldsName && !existFields) results = formatData(infoPublication.profile.fields_name);
         let all_info = {
-            ...results, customer,
+            ...results,
             vacant: infoPublication.vacant,
             profile: infoPublication.profile?.id ?? 'open_fields',
             code_post: infoPublication.code_post
@@ -151,22 +141,14 @@ const DetailsPublication = ({
         actionFunction[action](bodyData);
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.vacancy) delete newFilters.vacancy;
-        return newFilters;
-    }
-
     const actionBack = () =>{
-        let filters = getNewFilters();
         if(router.query?.vacancy) router.push({
             pathname: '/jobbank/vacancies',
-            query: filters
+            query: newFilters
         });
         else router.push({
             pathname: '/jobbank/publications',
-            query: filters
+            query: newFilters
         });
     }
 
@@ -174,25 +156,20 @@ const DetailsPublication = ({
         formPublications.resetFields();
         if (router.query?.vacancy) keepVacancy();
         setDisabledField(false);
-        setLoadStrategies(false)
+        setFetching(false)
         setLoading({})
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/publications/edit',
-            query: {...filters, id }
-        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/publications/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -286,7 +263,6 @@ const DetailsPublication = ({
 
 const mapState = (state) =>{
   return{
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }

@@ -5,7 +5,9 @@ export const useProcessInfo = ({
     formVacancies,
     infoVacant,
     setListInterviewers,
-    listInterviewers
+    listInterviewers,
+    listLangDomain,
+    setListLangDomain
 }) =>{
 
     const { setFieldsValue } = formVacancies;
@@ -43,12 +45,8 @@ export const useProcessInfo = ({
             details['age_min'] = details.age_range[0];
             details['age_max'] = details.age_range[1];
         }
-        if(details.assignment_date){
-            details['assignment_date'] = moment(details.assignment_date);
-        }
-        if(details.customer){
-            details['customer_id'] = details.customer.id;
-        }
+        if(details.assignment_date) details['assignment_date'] = moment(details.assignment_date);
+        if(details.customer) details['customer_id'] = details.customer.id;
         return details;
     }
 
@@ -61,7 +59,7 @@ export const useProcessInfo = ({
             sub_category,
             academics_degree,
             competences,
-            languajes,
+            languages,
             experiences,
             technical_skills
         } = details;
@@ -70,7 +68,7 @@ export const useProcessInfo = ({
         if(sub_category && Object.keys(sub_category).length > 0) details['sub_category'] = sub_category.id;
         if(academics_degree?.length > 0) details['academics_degree'] = academics_degree.at(-1).id;
         if(competences?.length > 0) details['competences'] = competences.map(item=> item.id);
-        if(languajes?.length > 0) details['languajes'] = languajes.map(item => item.lang);
+        if(languages?.length > 0) setListLangDomain(languages.map(item => ({lang: item.lang, domain: item.domain})));
         if(experiences?.length > 0) details['experiences'] = experiences.join(',\n');
         if(technical_skills?.length > 0) details['technical_skills'] = technical_skills.join(',\n');
         
@@ -111,22 +109,20 @@ export const useProcessInfo = ({
 
     const createData = (obj) =>{
         let info = deleteKeyByValue(obj);
-
         if(info.assignment_date){
             let formatDate = info.assignment_date.format('YYYY-MM-DD');
             info.assignment_date = formatDate;
-        }
-        if(info.languajes?.length > 0){
-            info.languajes = info.languajes.map(item => {
-                return { lang: item, domain: 1 };
-            })
         }
         if(info.age_min && info.age_max) info.age_range = [info.age_min, info.age_max];
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
         if(info.experiences) info.experiences = info.experiences.split(',');
         if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
         if(listInterviewers.length > 0) info.interviewers = listInterviewers;
-
+        if(listLangDomain.length > 0) info.languages = listLangDomain;
+        if(info.gross_salary){
+            let salary_ = parseFloat(info.gross_salary.replaceAll(',',''));
+            info.gross_salary = salary_.toLocaleString("es-MX", {maximumFractionDigits: 4});
+        }
         return info;
     }
 

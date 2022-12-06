@@ -15,7 +15,8 @@ import {
     Tag,
     message,
     Checkbox,
-    Select
+    Select,
+    Alert
 } from 'antd';
 import {
     ruleRequired,
@@ -36,6 +37,18 @@ const TabFacebook = ({
     getConnections
 }) => {
 
+    const config_success = {
+        msg: `La configuración actual se encuentra en funcionamiento,
+        se recomienda no actualizar ningún parámetro, excepto "¿Activar aplicación?"
+        en caso de ser necesario.`,
+        type: 'success'
+    };
+    const config_error = {
+        msg: `La configuración actual ha fallado, se recomienda iniciar sesión de nuevo
+            y conceder todos los permisos requeridos.`,
+        type: 'error'
+    };
+    const validate_config = {'true': config_success, 'false': config_error};
     const router = useRouter();
     const btnSubmit = useRef(null);
     const [formFacebook] = Form.useForm();
@@ -86,15 +99,20 @@ const TabFacebook = ({
             let body = { token: response.accessToken };
             let resp = await WebApiJobBank.getTokenFB(body);
             if(!resp.data?.token) return setMessageError(msgError);
-            let obj = {'data_config|page_access_token': resp.data.token};
-            formFacebook.setFieldsValue(obj);
+            formFacebook.setFieldsValue({
+                is_valid: true,
+                'data_config|page_access_token': resp.data.token
+            });
             setTimeout(()=>{
                 btnSubmit.current.click();
             },1000)
         } catch (e) {
             console.log(e)
-            console.log('error get token', e.response)
-            setMessageError(msgError);
+            let txtError = e.response?.data?.message;
+            let msgSelected = txtError ?? msgError;
+            setMessageError(msgSelected);
+            deletePermissions();
+            getConnections(currentNode.id);
         }
     }
     
@@ -116,8 +134,7 @@ const TabFacebook = ({
     }
 
     const validateResp = (resp) =>{
-        console.log('response', resp)
-        if(!resp.authResponse) return onFail(resp);
+        if(!resp.authResponse) return onFail({status: 'loginCancelled'});
         onSuccess(resp.authResponse);
         FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
@@ -127,7 +144,7 @@ const TabFacebook = ({
     const validateLogin = () =>{
         if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         FacebookLoginClient.login(validateResp, {
-            scope: 'public_profile, email'
+            scope: 'public_profile,email,pages_show_list,pages_manage_posts'
         });
     }
 
@@ -146,7 +163,7 @@ const TabFacebook = ({
         }
     }
 
-    const revoqueSession = () =>{
+    const deletePermissions = () =>{
         if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         window.FB.api('/me/permissions', 'delete', (res)=>{
             console.log('delete', res)
@@ -169,14 +186,25 @@ const TabFacebook = ({
             onFinish={onFinish}
             id='form-facebook'
             layout='vertical'
-            initialValues={{
-                code: 'FB',
-                is_active: false
-            }}
+            initialValues={{code: 'FB'}}
         >
             <Row gutter={[24,0]}>
+                {infoConnection.data_config?.page_access_token && (
+                    <Col span={24}>
+                        <Form.Item>
+                            <Alert
+                                message={validate_config[infoConnection.is_valid].msg}
+                                type={validate_config[infoConnection.is_valid].type} showIcon />
+                        </Form.Item>
+                    </Col>
+                )}
                 <Col xs={24} xxl={16}>
                     <Row gutter={[24,0]}>
+                        <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
+                            <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
+                                <Checkbox/>
+                            </Form.Item>
+                        </Col>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
                                 name='is_active'
@@ -285,7 +313,7 @@ const TabFacebook = ({
                         />
                     </Form.Item>
                 </Col>
-                <Col span={24} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                     {/* <FacebookLogin
                         appId='637006797889798'
                         autoLoad={true}
@@ -294,18 +322,21 @@ const TabFacebook = ({
                         onProfileSuccess={onProfileSuccess}
                         render={btnLogin}
                     /> */}
-                    <Button
-                        className='btn-login-facebook'
-                        onClick={()=> validateLogin()}
-                        disabled={loading}
-                        icon={<FacebookFilled />}
-                    >
-                        Iniciar sesión
-                    </Button>
+                   {!infoConnection.is_valid && (
+                        <Button
+                            className='btn-login-facebook'
+                            onClick={()=> validateLogin()}
+                            disabled={loading}
+                            icon={<FacebookFilled />}
+                        >
+                            Iniciar sesión
+                        </Button>
+                   )}
                     <Button
                         loading={loading}
                         ref={btnSubmit}
                         htmlType='submit'
+                        style={{marginLeft: 'auto'}}
                     >
                         Guardar
                     </Button>

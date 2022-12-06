@@ -133,14 +133,14 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item key='1'>
+                {/* <Menu.Item key='1'>
                     <Clipboard
                         text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`}
                         title='Actualización'
                         border={false}
                         tooltipTitle='Copiar link de actualización'
                     />
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
@@ -183,21 +183,21 @@ const TableCandidates = ({
             dataIndex: 'cell_phone',
             key: 'cell_phone'
         },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <Switch
-        //                 size='small'
-        //                 defaultChecked={item.is_active}
-        //                 checked={item.is_active}
-        //                 checkedChildren="Activo"
-        //                 unCheckedChildren="Inactivo"
-        //                 onChange={(e)=> actionStatus(e, item)}
-        //             />
-        //         )
-        //     }
-        // },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={item.is_active}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }
+        },
         {
             title: ()=>{
                 return(

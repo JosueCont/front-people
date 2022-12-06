@@ -465,6 +465,21 @@ class WebApiPeople {
     );
   }
 
+  static getCredentials(site, patronal_registrartion) {
+    return WebApi.ApisType(
+      `/business/scraper-config/${site}/${patronal_registrartion}/`,
+      'get'
+    )
+  }
+
+  static addNewCredentials(data){
+    return WebApi.ApisType(
+      '/business/scraper-config/',
+      'post',
+      data
+    )
+  }
+
   static patronalRegistration(data) {
     return WebApi.ApisType(
       `/business/patronal-registration-data/`,
