@@ -116,7 +116,7 @@ const AutomaticMovements = ({patronalData}) => {
 
 
     try {
-      let response = await WebApiPeople.getCredentials('imss', patronalData.id)
+      let response = await WebApiPeople.getCredentials('imss', patronalData.code)
       if(response?.data?.results?.credentials===true){
         setHasCredentialIMSS(true)
       }else{
@@ -133,7 +133,7 @@ const AutomaticMovements = ({patronalData}) => {
 
 
     try {
-      let response = await WebApiPeople.getCredentials('infonavit', patronalData.id)
+      let response = await WebApiPeople.getCredentials('infonavit', patronalData.code)
       if(response?.data?.results?.credentials===true){
           setHasCredentialInfonavit(true)
       }else{
