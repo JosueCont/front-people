@@ -1,45 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
+import { Row, Col, message } from 'antd';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getProfilesTypes } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { useRouter } from 'next/router';
+import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
 const ViewTemplates = () => {
 
-    const {
-        list_profiles_types,
-        load_profiles_types
-    } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
-    const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [numPage, setNumPage] = useState(1);
+    const [newFilters, setNewFilters] = useState({});
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        setNewFilters(deleteFiltersJb(router.query));
+    },[router])
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getProfilesTypes(currentNode.id));
-    },[currentNode])
+        getWithFilters();
+    },[currentNode, router])
 
-    useEffect(()=>{
-        setLoading(load_profiles_types);
-    },[load_profiles_types])
-    
-    useEffect(()=>{
-        setMainData(list_profiles_types);
-    },[list_profiles_types])
-
-    const actionDelete = async () =>{
+    const getProfilesTypes = async (node, query = '') =>{
         try {
-            let id = itemsToDelete.at(-1).id;
+            setLoading(true)
+            let response = await WebApiJobBank.getProfilesTypes(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+    }
+
+    const getWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let filters = getFiltersJB(newFilters);
+        setNumPage(page);
+        getProfilesTypes(currentNode.id, filters);
+    }
+
+    const actionDelete = async (id) =>{
+        try {
             await WebApiJobBank.deleteProfileType(id);
-            dispatch(getProfilesTypes(currentNode.id));
+            getWithFilters();
             message.success('Template eliminado');
         } catch (e) {
             console.log(e)
@@ -50,7 +60,7 @@ const ViewTemplates = () => {
     const openModalEdit = (item) =>{
         router.push({
             pathname: '/jobbank/settings/catalogs/profiles/edit',
-            query: { id: item.id}
+            query: {...newFilters, id: item.id}
         })
     }
 
@@ -58,10 +68,10 @@ const ViewTemplates = () => {
         <Row gutter={[0,24]}>
             <Col span={24}>
                 <SearchCatalogs
-                    setLoading={setLoading}
-                    actionBtn={()=> router.push('/jobbank/settings/catalogs/profiles/add')}
-                    listComplete={list_profiles_types}
-                    setItemsFilter={setMainData}
+                    actionBtn={()=> router.push({
+                        pathname: '/jobbank/settings/catalogs/profiles/add',
+                        query: newFilters
+                    })}
                 />
             </Col>
             <Col span={24}>
@@ -72,13 +82,10 @@ const ViewTemplates = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     actionBtnEdit={openModalEdit}
+                    numPage={numPage}
                 />
             </Col>
         </Row> 
