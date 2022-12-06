@@ -136,10 +136,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat
-            prefix={"$"}
-            number={item.payroll_person.daily_salary}
-          />
+          <NumberFormat prefix={"$"} number={item.daily_salary} />
         </div>
       ),
     },
@@ -149,7 +146,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.bonus_amount} />
+          <NumberFormat prefix={"$"} number={item.total_perception} />
         </div>
       ),
     },
@@ -460,17 +457,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
+        setConsolidatedObj(response.data);
         if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
-          setConsolidatedObj(response.data);
           let calculateExist = extraOrdinaryPayroll;
           response.data.map((item) => {
             calculateExist = calculateExist.filter(
               (a) => item.person.id != a.person.id
             );
           });
-          console.log("Existe-->> ", calculateExist);
           response.data.map((item) => {
-            console.log(item.person.full_name);
             calculateExist[calculateExist.length] = item;
           });
 
@@ -487,7 +482,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           );
         }
         setLoading(false);
-        setObjectSend(null);
+        // setObjectSend(null);
       })
       .catch((error) => {
         console.log(error);
@@ -524,46 +519,94 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const calculateExtra = () => {
-    setGenericModal(false);
-    const departureDate = document.getElementById("departure_date");
-    if (departureDate.value != null && departureDate.value != "") {
-      sendCalculateExtraordinaryPayrroll({
-        list: objectSend
-          ? objectSend.payroll
-          : listPersons.map((item) => {
-              return { person_id: item.key };
-            }),
-        departure_date: departureDate.value,
-        movementType: movementType,
-        calendar: calendarSelect.id,
-      });
-    } else {
-      message.error("Se requeiere una fecha de pago");
-    }
+    // setGenericModal(false);
+    // const departureDate = document.getElementById("departure_date");
+    // if (departureDate.value != null && departureDate.value != "") {
+    console.log(objectSend);
+    sendCalculateExtraordinaryPayrroll({
+      list: objectSend
+        ? objectSend.payroll
+        : listPersons.map((item) => {
+            return { person_id: item.key };
+          }),
+      // departure_date: departureDate.value,
+      movementType: movementType,
+      calendar: calendarSelect.id,
+    });
+    // } else {
+    //   message.error("Se requeiere una fecha de pago");
+    // }
   };
 
   const sendClosePayroll = () => {
-    setGenericModal(false);
-    setLoading(true);
-    WebApiPayroll.closePayroll({
-      payment_period: periodSelected.id,
-      payroll: payroll,
-    })
-      .then((response) => {
-        sendCalculatePayroll({ payment_period: periodSelected.id });
-        setTimeout(() => {
-          message.success(messageSaveSuccess);
-          setLoading(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        setLoading(false);
-        sendCalculatePayroll({ payment_period: periodSelected.id });
-        setTimeout(() => {
-          message.error(messageError);
-          console.log(error);
-        }, 1000);
-      });
+    console.log(
+      "🚀 ~ file: index.jsx:548 ~ sendClosePayroll ~ consolidatedObj",
+      consolidatedObj
+    );
+    // setGenericModal(false);
+    // setLoading(true);
+    // WebApiPayroll.closePayroll({
+    //   payment_period: periodSelected.id,
+    //   payroll: payroll,
+    // })
+    //   .then((response) => {
+    //     sendCalculatePayroll({ payment_period: periodSelected.id });
+    //     setTimeout(() => {
+    //       message.success(messageSaveSuccess);
+    //       setLoading(false);
+    //     }, 1000);
+    //   })
+    //   .catch((error) => {
+    //     setLoading(false);
+    //     sendCalculatePayroll({ payment_period: periodSelected.id });
+    //     setTimeout(() => {
+    //       message.error(messageError);
+    //       console.log(error);
+    //     }, 1000);
+    //   });
+  };
+
+  const changeStep = (next_prev) => {
+    if (next_prev) {
+      //next
+      if (step == 0) {
+        setStep(step + 1);
+        setPreviuosStep(true);
+        if (isOpen) setNextStep(false);
+        return;
+      }
+      if (step == 1) {
+        setStep(step + 1);
+        if (!isOpen) setPreviuosStep(false);
+        return;
+      }
+      if (step == 2) {
+        setStep(step + 1);
+        setPreviuosStep(true);
+        setNextStep(false);
+        return;
+      }
+    } else {
+      //previous
+      if (step == 1) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
+      if (step == 2) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
+      if (step == 3) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
+    }
   };
 
   return (
@@ -808,81 +851,71 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             size="large"
                             block
                             htmlType="button"
-                            onClick={() => (
-                              setInfoGenericModal({
-                                title: `Calcular ${
-                                  movementType === 2
-                                    ? "finiquito"
-                                    : "liquidacion"
-                                }`,
-                                title_message: "Selecciona una fecha de salida",
-                                description:
-                                  "Fecha de salida requerida para el calculo que quiere realizar.",
-                                type_alert: "warning",
-                                title_message: "Fecha de salida",
+                            onClick={
+                              () => calculateExtra()
+                              // setInfoGenericModal({
+                              //   title: `Calcular ${
+                              //     movementType === 2
+                              //       ? "finiquito"
+                              //       : "liquidacion"
+                              //   }`,
+                              //   title_message: "Selecciona una fecha de salida",
+                              //   description:
+                              //     "Fecha de salida requerida para el calculo que quiere realizar.",
+                              //   type_alert: "warning",
+                              //   title_message: "Fecha de salida",
 
-                                closeButton: "Cerrar",
-                                action: () => calculateExtra(),
-                                components: (
-                                  <>
-                                    <Row
-                                      style={{
-                                        width: "100%",
-                                        marginTop: "10px",
-                                      }}
-                                      justify="center"
-                                    >
-                                      <Form.Item
-                                        label="Fecha de pago"
-                                        style={{ width: "40%" }}
-                                      >
-                                        <DatePicker
-                                          defaultValue={moment()}
-                                          moment={"YYYY"}
-                                          id="departure_date"
-                                          placeholder="Fecha de pago."
-                                          locale={locale}
-                                        />
-                                      </Form.Item>
-                                    </Row>
-                                  </>
-                                ),
-                              }),
-                              setGenericModal(true)
-                            )}
+                              //   closeButton: "Cerrar",
+                              //   action: () => calculateExtra(),
+                              //   components: (
+                              //     <>
+                              //       <Row
+                              //         style={{
+                              //           width: "100%",
+                              //           marginTop: "10px",
+                              //         }}
+                              //         justify="center"
+                              //       >
+                              //         <Form.Item
+                              //           label="Fecha de pago"
+                              //           style={{ width: "40%" }}
+                              //         >
+                              //           <DatePicker
+                              //             defaultValue={moment()}
+                              //             moment={"YYYY"}
+                              //             id="departure_date"
+                              //             placeholder="Fecha de pago."
+                              //             locale={locale}
+                              //           />
+                              //         </Form.Item>
+                              //       </Row>
+                              //     </>
+                              //   ),
+                              // }),
+                              // setGenericModal(true)
+                            }
                           >
                             Calcular
                           </Button>
                         </Col>
                       )}
 
-                      {/* {payroll.length > 0 && !genericModal && (
+                      {step >= 1 && (
                         <>
-                          {consolidated && (
-                            <>
-                              <Col md={5} offset={1}>
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<FileExcelOutlined />}
-                                  htmlType="button"
-                                  // onClick={() =>
-                                  //   downLoadFileBlob(
-                                  //     `${getDomain(
-                                  //       API_URL_TENANT
-                                  //     )}/payroll/consolidated-payroll-report?period=${
-                                  //       periodSelected.id
-                                  //     }`,
-                                  //     "hoja_rayas.xlsx",
-                                  //     "GET"
-                                  //   )
-                                  // }
-                                >
-                                  Descargar hoja de raya
-                                </Button>
-                              </Col>
-                            </>
-                          )}
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              icon={<LockOutlined />}
+                              htmlType="button"
+                              onClick={() => sendClosePayroll()}
+                            >
+                              Cerrar nómina
+                            </Button>
+                          </Col>
+                        </>
+                      )}
+                      {/* 
 
                           
                           {step == 2 &&
