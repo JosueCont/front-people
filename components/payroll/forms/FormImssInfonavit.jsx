@@ -353,6 +353,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="employee_type"
                 label="Tipo de empleado"
                 rules={[ruleRequired]}
+                initialValue={1}
               >
                 <Select
                   options={typeEmployee}
@@ -365,6 +366,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="salary_type"
                 label="Tipo de salario"
                 rules={[ruleRequired]}
+                initialValue={2}
               >
                 <Select
                   options={typeSalary}
@@ -377,6 +379,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="reduce_days"
                 label="Semana o jornada reducida"
                 rules={[ruleRequired]}
+                initialValue={0}
               >
                 <Select
                   options={reduceDays}

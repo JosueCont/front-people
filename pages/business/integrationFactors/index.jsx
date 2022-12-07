@@ -198,6 +198,29 @@ const integrationFactorsIndex = ({ ...props }) =>{
         </Breadcrumb>
         <Row justify="end">
           <Col>
+          <Button
+              style={{
+                fontWeight: "bold",
+                color: "white",
+                marginTop: "auto",
+                border: "none",
+                padding: "0 30px",
+                background: "#7B25F1 !important",
+                marginRight: 10
+              }}
+              onClick={() =>
+                route.push({
+                  pathname: "/business/integrationFactors/defaultFactors",
+                })
+              }
+              key="btn_new"
+              size="large"
+            >
+              <EyeOutlined />
+              <small style={{ marginLeft: 10 }}>Ver prestaciones de ley</small>
+            </Button>
+          </Col>
+          <Col>
             <Button
               style={{
                 fontWeight: "bold",
