@@ -98,7 +98,28 @@ const MainSider = ({
       jb_settings: "/jobbank/settings",
       jb_publications: "/jobbank/publications"
     };
-    router.push(pathRoutes[key]);
+    switch (key){
+      case "sukha":
+        const link1 = document.createElement('a');
+        link1.href = "https://admin.demo.sukhatv.com/";
+        link1.target = '_blank';
+        link1.click();
+        break;
+      case "khorflix":
+        const link2 = document.createElement('a');
+        link2.href = "https://admin.iu.khorflix.com/";
+        link2.target = '_blank';
+        link2.click();
+        break;
+      case "careerlab":
+        const link3 = document.createElement('a');
+        link3.href = "https://admin.platform.careerlab.hiumanlab.com/";
+        link3.target = '_blank';
+        link3.click();
+        break;
+      default:
+        router.push(pathRoutes[key]);
+    }
   };
 
   let items = [];
@@ -184,13 +205,13 @@ const MainSider = ({
       items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
 
       // Educación y desarrollo
-      // let children2 = [
-      //   getItem("Khorflix", "khorflix"),
-      //   getItem("Sukha", "sukha"),
-      //   getItem("Careerlab", "careerlab"),
-      //   getItem("Concieo", "concieo")
-      // ]
-      // items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      let children2 = [
+        getItem("Khorflix", "khorflix"),
+        getItem("Sukha", "sukha"),
+        getItem("Careerlab", "careerlab"),
+        // getItem("Concieo", "concieo")
+      ]
+      items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
 
       // desempeño
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))

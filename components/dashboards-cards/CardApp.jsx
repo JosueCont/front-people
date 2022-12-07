@@ -137,7 +137,22 @@ const CardApps = ({ user, config, ...props }) => {
               </Space>
             </Col>
           ) : null}
-          {user &&
+          <Col span={8}>
+              <Space
+                direction="vertical"
+                align="center"
+                onClick={() => {
+                  const link2 = document.createElement('a');
+                  link2.href = "http://iu.khor.mx";
+                  link2.target = '_blank';
+                  link2.click();
+                }}
+              >
+                <img src={imgSocial} />
+                <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
+              </Space>
+            </Col>
+          {/* {user &&
           (user.intranet_access === 2 || user.intranet_access === 3) ? (
             <Col span={8}>
               <Space
@@ -149,7 +164,7 @@ const CardApps = ({ user, config, ...props }) => {
                 <p style={{ marginBottom: "0px" }}>Connect</p>
               </Space>
             </Col>
-          ) : null}
+          ) : null} */}
           {/* <Col span={8}>
             <Space
               direction="vertical"
@@ -160,7 +175,7 @@ const CardApps = ({ user, config, ...props }) => {
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
           </Col> */}
-          {props?.applications &&
+          {/* {props?.applications &&
           (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
               <Col span={8}>
                 <Space
@@ -173,7 +188,7 @@ const CardApps = ({ user, config, ...props }) => {
                 </Space>
               </Col>
               : null
-          }
+          } */}
           {props?.applications &&
           (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) ?
               <Col span={8}>

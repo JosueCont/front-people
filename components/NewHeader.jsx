@@ -106,13 +106,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text>Editar perfil</Text>
             </p>
 
-            <p
+            {/* <p
               className="text-menu"
               onClick={() => router.push("/user")}
 
             >
               <Text>Cambiar a la vista de Usuario</Text>
-            </p>
+            </p> */}
 
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p
