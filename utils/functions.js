@@ -44,14 +44,15 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
+      console.log('Error xd', e.response)
       let errorMessage = e.response?.data?.message || ""
-      if(Textmessage){
+       if (errorMessage !== ""){
+        message.error(errorMessage)
+      } else if(Textmessage){
         message.error(Textmessage)
       }else if(e?.response?.status===404){
         message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
-      } else if (errorMessage !== ""){
-        message.error(errorMessage)
-      }
+      } 
     });
 };
 
