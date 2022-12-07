@@ -21,6 +21,7 @@ CloseCircleOutlined
 import UploadCerOrPfxFile from "../UploadCerOrPfxFile";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
+import { toLower } from "lodash";
 
 const AutomaticMovements = ({patronalData}) => {
 
@@ -96,9 +97,31 @@ const AutomaticMovements = ({patronalData}) => {
       title: "Configuración",
       key: 'configuration',
       render: (record) => (
-        <Button onClick={ () => setService(record.service) }>
-          Configurar
-        </Button>
+        <>
+          <Button onClick={ () => setService(record.service) }>
+            Configurar
+          </Button>
+          
+          {
+            record.service && record.service === 'IMSS' && hasCredentialIMSS && 
+
+            <Button onClick={ () => onDeleteCredentials(record.service) }>
+              Eliminar
+            </Button>
+
+          }
+
+{
+            record.service && record.service === 'INFONAVIT' && hasCredentialInfonavit &&
+
+            <Button onClick={ () => onDeleteCredentials(record.service)}>
+              Eliminar
+            </Button>
+
+          }
+
+
+        </>
       )
     }
   ]
@@ -207,6 +230,25 @@ const AutomaticMovements = ({patronalData}) => {
       setLoading(false)
       onCancelInfonavit()
 
+    }
+  }
+
+  const onDeleteCredentials = async (endpoint) => {
+    setLoading(true)
+
+    endpoint = endpoint.toLower()
+
+    try {
+      let response = await WebApiPeople.deleteCredentials(endpoint, patronalData.id)
+      if(response){
+        message.success('Credenciales eliminadas con éxito')
+        getPatronalCredentials()
+      }
+    } catch (error) {
+        console.log('error', error)
+        message.error('Error al eliminar credenciales')
+    } finally {
+      setLoading(false)
     }
   }
 
