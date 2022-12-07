@@ -462,7 +462,7 @@ export const getFiltersJB = (obj = {}) =>{
 
 export const deleteFiltersJb = (
   filters = {},
-  listDelete = ['id','client','vacancy']
+  listDelete = ['id','client','vacancy','catalog']
 ) =>{
   let newFilters = {...filters};
   const remove = item => {
