@@ -13,10 +13,10 @@
 
 .ant-menu-submenu-selected .ant-menu-item-icon,
 .ant-menu-sub > .ant-menu-item-selected:hover,
-.ant-menu-submenu-open.ant-menu-submenu-selected:hover .ant-menu-submenu-title,
+/*.ant-menu-submenu-open.ant-menu-submenu-selected:hover .ant-menu-submenu-title,*/
 .ant-menu-item-selected:hover,
-.ant-menu-submenu-selected .ant-menu-submenu-title:hover,
-.ant-menu-submenu-selected:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+/* .ant-menu-submenu-selected .ant-menu-submenu-title:hover, */
+.ant-menu-submenu-selected > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
     color: white !important;
 }
 

@@ -152,7 +152,7 @@ const TabPositions = ({ sizeCol = 8, action }) => {
 
     const columns = [
         {
-            title: 'Posición',
+            title: 'Puesto',
             dataIndex: 'position_name',
             key: 'position_name'
         },

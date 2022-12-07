@@ -239,11 +239,12 @@ const Detail = ({ assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item className={"pointer"} href="/home/persons/">
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => router.push({ pathname: "/assessment/surveys" })}>

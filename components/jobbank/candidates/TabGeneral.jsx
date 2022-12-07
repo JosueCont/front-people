@@ -9,7 +9,8 @@ import {
     InputNumber,
     Spin,
     message,
-    Button
+    Button,
+    Checkbox
 } from 'antd';
 import {
     ruleWhiteSpace,
@@ -46,12 +47,12 @@ const TabGeneral = ({
     const btnSave = useRef(null);
     const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
+    const nameCV = Form.useWatch('cv_name_read', formCandidate);
     const [infoCandidate, setInfoCandidate] = useState({});
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
-    const [nameCV, setNameCV] = useState('');
     //Idiomas
     const [currentValue, setCurrentValue] = useState([]);
     const [listLangDomain, setListLangDomain] = useState([]);
@@ -74,13 +75,12 @@ const TabGeneral = ({
         setCurrentValue([])
         setRuleLanguages(rule_languages)
         formCandidate.resetFields();
-        formCandidate.setFieldsValue(infoCandidate);
         const getLang = item => ({lang: item.lang, domain: item.domain});
         let listLanguages = infoCandidate.languages.map(getLang);
         let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
-        let nameFileCV = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
         setListLangDomain(listLang)
-        setNameCV(nameFileCV)
+        formCandidate.setFieldsValue({...infoCandidate, cv_name_read});
     }
 
     const getInfoCandidate = async (id) =>{
@@ -128,7 +128,8 @@ const TabGeneral = ({
     const createData = (obj) =>{
         let dataCandidate = new FormData();
         dataCandidate.append('node', currentNode.id);
-        Object.entries(obj).map(([key, val])=>{ if(val) dataCandidate.append(key, val) });
+        let noValid = [undefined, null, '', ' '];
+        Object.entries(obj).map(([key, val])=>{if(!noValid.includes(val)) dataCandidate.append(key, val)});
         if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
         if(listLangDomain.length > 0) dataCandidate.append('languages', JSON.stringify(listLangDomain));
         return dataCandidate;
@@ -149,7 +150,6 @@ const TabGeneral = ({
         setFetching(false);
         setLoading({});
         setFileCV([]);
-        setNameCV('')
         setCurrentValue([])
         setListLangDomain([])
         setRuleLanguages(rule_languages)
@@ -184,7 +184,7 @@ const TabGeneral = ({
 
     const setFileSelected = ({target : { files }}) =>{
         if(Object.keys(files).length <= 0) return false;
-        setNameCV(files[0].name);
+        formCandidate.setFieldsValue({cv_name_read: files[0].name});
         setFileCV([files[0]]);
     }
 
@@ -195,7 +195,7 @@ const TabGeneral = ({
 
     const resetCV = () =>{
         setFileCV([]);
-        setNameCV('')
+        formCandidate.setFieldsValue({cv_name_read: null});
     }
 
     return (
@@ -208,8 +208,14 @@ const TabGeneral = ({
                         form={formCandidate}
                         onFinish={onFinish}
                         onFinishFailed={()=> setLoading({})}
+                        initialValues={{is_active: true}}
                     >
                         <Row gutter={[24,0]}>
+                            <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'none'}}>
+                                <Form.Item name='is_active' valuePropName='checked'>
+                                    <Checkbox>¿Está activo?</Checkbox>
+                                </Form.Item>
+                            </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='fisrt_name'
@@ -223,7 +229,7 @@ const TabGeneral = ({
                                 <Form.Item
                                     name='last_name'
                                     label='Apellidos'
-                                    rules={[ruleWhiteSpace]}
+                                    rules={[ruleRequired, ruleWhiteSpace]}
                                 >
                                     <Input maxLength={150} placeholder='Apellidos del candidato'/>
                                 </Form.Item>
@@ -285,9 +291,12 @@ const TabGeneral = ({
                             <Col span={24}>
                                 <Form.Item
                                     label='CV'
+                                    name='cv_name_read'
+                                    rules={[ruleRequired]}
                                 >
                                     <Input.Group compact>
                                         <Input
+                                            readOnly
                                             style={{
                                                 width: `calc(100% - 64px)`,
                                                 borderTopLeftRadius: 10,
