@@ -115,7 +115,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["assessment_groups"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["assessment_groups"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -123,6 +123,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos de evaluaciones</Breadcrumb.Item>
       </Breadcrumb>

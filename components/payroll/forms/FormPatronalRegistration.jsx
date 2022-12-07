@@ -5,7 +5,7 @@ import {
   rulePhone,
   ruleRequired,
   ruleWhiteSpace,
-  ruleMaxPhoneNumber
+  ruleMaxPhoneNumber,
 } from "../../../utils/rules";
 import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
@@ -20,11 +20,9 @@ const FormPatronalRegistration = ({
   currentNodeId,
   ...props
 }) => {
-
-  const [ information, setInformation ] = useState(null)
-  const socialReason = Form.useWatch('social_reason', form)
-  
-  
+  const [information, setInformation] = useState(null);
+  const socialReason = Form.useWatch("social_reason", form);
+  const [imssDelegationId, setImssDelegationId] = useState(null);
 
   useEffect(() => {
     currentNodeId && getInformationfiscal();
@@ -41,18 +39,20 @@ const FormPatronalRegistration = ({
   };
 
   useEffect(() => {
-
-    if(socialReason){
+    if (socialReason) {
       form.setFieldsValue({
-        social_reason: socialReason
-      })
+        social_reason: socialReason,
+      });
     } else {
-            
       form.setFieldsValue({
-        social_reason: information?.business_name
-      })
+        social_reason: information?.business_name,
+      });
     }
   }, [information]);
+
+  const changeImssDelegation = (value) => {
+    setImssDelegationId(value);
+  };
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -99,7 +99,7 @@ const FormPatronalRegistration = ({
             label="Teléfono"
             rules={[rulePhone, onlyNumeric, ruleWhiteSpace]}
           >
-            <Input maxLength={10}/>
+            <Input maxLength={10} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
@@ -111,10 +111,10 @@ const FormPatronalRegistration = ({
           <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation rules={[ruleRequired]} />
+          <SelectImssDelegation changeImssDelegation={changeImssDelegation} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation rules={[ruleRequired]} />
+          <SelectImssSubdelegation imssDelegationId={imssDelegationId} />
         </Col>
       </Row>
     </Form>

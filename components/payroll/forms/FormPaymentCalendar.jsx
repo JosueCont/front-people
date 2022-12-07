@@ -218,6 +218,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       })
       .catch((err) => {
         console.log(err);
+        let errorMessage = err?.response?.data?.message || ""
+        errorMessage !== '' && message.error(errorMessage)
         setLoading(false);
       });
   };
@@ -233,6 +235,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
+        let errorMessage = error?.response?.data?.message || ""
+        errorMessage !== '' && message.error(errorMessage)
         console.log(error);
       });
   };
@@ -678,7 +682,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                  <SelectIntegrationFactors rules={[ruleRequired]} />
+                  <SelectIntegrationFactors />
                 </Col>
                 {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />
