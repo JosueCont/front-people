@@ -82,6 +82,8 @@ const CardApps = ({ user, config, ...props }) => {
 
   const imgNomina = "https://www.masadmin.net/imgs/icon12.png";
 
+  const imgKhor = "http://iu.khor.mx/khorImg/iu_favicon.svg"
+
   const imgSocial = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khonect.png";
 
   const imgPeople = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/people.png";
@@ -148,7 +150,7 @@ const CardApps = ({ user, config, ...props }) => {
                   link2.click();
                 }}
               >
-                <img src={imgSocial} />
+                <img src={imgKhor} />
                 <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
               </Space>
             </Col>
