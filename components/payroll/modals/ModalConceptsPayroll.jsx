@@ -491,6 +491,7 @@ const ModalConceptsPayroll = ({
                 </Col>
                 <Col span={12}>
                   <Select
+                    placeholder="Motivo de baja"
                     style={{ width: "50%" }}
                     options={departureMotive}
                     onChange={(value) => setMotiveDeparture(value)}

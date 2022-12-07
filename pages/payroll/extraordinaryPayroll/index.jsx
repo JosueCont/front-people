@@ -859,18 +859,21 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         </Button>
                       </Col> */}
 
-                      {personKeys && personKeys.length > 0 && objectSend && (
-                        <Col md={5} offset={1}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() => calculateExtra()}
-                          >
-                            Calcular
-                          </Button>
-                        </Col>
-                      )}
+                      {personKeys &&
+                        personKeys.length > 0 &&
+                        objectSend &&
+                        step == 0 && (
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              onClick={() => calculateExtra()}
+                            >
+                              Calcular
+                            </Button>
+                          </Col>
+                        )}
 
                       {step >= 1 && consolidatedObj && (
                         <>
@@ -1044,16 +1047,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         expandedRowRender: (item) => renderConceptsTable(item),
                         expandIcon: ({ expanded, onExpand, record }) =>
                           ExpandedFunc(expanded, onExpand, record),
-
-                        // expanded ? (
-                        //   <DownOutlined
-                        //     onClick={(e) => onExpand(record, e)}
-                        //   />
-                        // ) : (
-                        //   <RightOutlined
-                        //     onClick={(e) => onExpand(record, e)}
-                        //   />
-                        // ),
                       }}
                       hideExpandIcon
                       loading={loading}
