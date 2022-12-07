@@ -19,6 +19,11 @@ const EmaYEvaFiles = ({ files, loading }) => {
       render: (timestamp) => moment(timestamp).format('YYYY-MM-DD')
     },
     {
+      title: 'Periodo',
+      dataIndex: 'period',
+      key: 'period',
+    },
+    {
       title: 'Descargar',
       key: 'actions',
       render: (record) => (

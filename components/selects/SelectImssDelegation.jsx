@@ -7,6 +7,7 @@ const SelectImssDelegation = ({
   viewLabel = true,
   rules = [],
   size = "middle",
+  changeImssDelegation,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -25,6 +26,10 @@ const SelectImssDelegation = ({
     }
   }, [props.cat_imss_delegation]);
 
+  const onChange = (value) => {
+    changeImssDelegation(value);
+  };
+
   return (
     <>
       <Form.Item
@@ -42,6 +47,7 @@ const SelectImssDelegation = ({
           notFoundContent={"No se encontraron resultados."}
           showSearch
           optionFilterProp="children"
+          onChange={onChange}
           {...props}
         >
           {options.map((item) => {

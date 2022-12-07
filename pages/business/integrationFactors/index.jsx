@@ -183,7 +183,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
       />
       <MainLayout
         currentKey={["integrationFactors"]}
-        defaultOpenKeys={["company"]}
+        defaultOpenKeys={["strategyPlaning","company"]}
       >
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
@@ -192,10 +192,34 @@ const integrationFactorsIndex = ({ ...props }) =>{
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         </Breadcrumb>
         <Row justify="end">
+          <Col>
+          <Button
+              style={{
+                fontWeight: "bold",
+                color: "white",
+                marginTop: "auto",
+                border: "none",
+                padding: "0 30px",
+                background: "#7B25F1 !important",
+                marginRight: 10
+              }}
+              onClick={() =>
+                route.push({
+                  pathname: "/business/integrationFactors/defaultFactors",
+                })
+              }
+              key="btn_new"
+              size="large"
+            >
+              <EyeOutlined />
+              <small style={{ marginLeft: 10 }}>Ver prestaciones de ley</small>
+            </Button>
+          </Col>
           <Col>
             <Button
               style={{

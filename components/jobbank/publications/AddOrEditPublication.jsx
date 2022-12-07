@@ -8,7 +8,8 @@ import {
     getVacanciesOptions,
     getVacantFields,
     getConnections,
-    getClientsOptions
+    getClientsOptions,
+    getStrategiesOptions
 } from '../../../redux/jobBankDuck';
 import DetailsPublication from './DetailsPublication';
 import { deleteFiltersJb } from '../../../utils/functions';
@@ -20,7 +21,8 @@ const AddOrEditPublication = ({
     getVacanciesOptions,
     getVacantFields,
     getConnections,
-    getClientsOptions
+    getClientsOptions,
+    getStrategiesOptions
 }) => {
 
     const router = useRouter();
@@ -38,13 +40,14 @@ const AddOrEditPublication = ({
             getVacanciesOptions(currentNode.id);
             getVacantFields(currentNode.id);
             getClientsOptions(currentNode.id);
+            // getStrategiesOptions(currentNode.id);
             //isOptions/true
             getConnections(currentNode.id, true);
         }
     },[currentNode])
 
     return (
-        <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -52,6 +55,7 @@ const AddOrEditPublication = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -83,6 +87,7 @@ export default connect(
         getVacanciesOptions,
         getVacantFields,
         getConnections,
-        getClientsOptions
+        getClientsOptions,
+        getStrategiesOptions
     }
 )(AddOrEditPublication);

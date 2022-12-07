@@ -41,9 +41,11 @@ const DetailsStrategies = ({
     const [disabledClient, setDisabledClient] = useState(false);
     const [infoStrategy, setInfoStrategy] = useState({});
     const [fetching, setFetching] = useState(false);
+    const [optionVacant, setOptionVacant] = useState([]);
     const { createData, setValuesForm } = useProcessInfo({
         infoStrategy,
-        formStrategies
+        formStrategies,
+        setOptionVacant
     });
 
     useEffect(()=>{
@@ -190,6 +192,7 @@ const DetailsStrategies = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormStrategies
+                                optionVacant={optionVacant}
                                 formStrategies={formStrategies}
                                 disabledClient={disabledClient}
                             />

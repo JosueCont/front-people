@@ -10,7 +10,7 @@ const FormPublications = ({
     valuesDefault = {},
     disableField,
     setDisabledField,
-    disabledVacant
+    disabledClient
 }) => {
 
     const {
@@ -22,48 +22,59 @@ const FormPublications = ({
         list_profiles_options,
         list_clients_options,
         load_clients_options,
-        list_vacancies_fields
+        list_vacancies_fields,
+        // list_strategies_options,
+        // load_strategies_options
     } = useSelector(state => state.jobBankStore);
     const vacant = Form.useWatch('vacant', formPublications);
+    // const strategy = Form.useWatch('strategy', formPublications);
     const customer = Form.useWatch('customer', formPublications);
-    const profile = Form.useWatch('profile', formPublications);
     const { formatData } = useProcessInfo();
 
     // useEffect(()=>{
     //     onChangeCustomer();
     // },[customer])
 
-    useEffect(()=>{
-        if(list_vacancies_options.length <= 0) return;
-        clientByVacant();
-    },[vacant, list_vacancies_options, valuesDefault])
-
     // useEffect(()=>{
-    //     if(list_profiles_options.length <= 0) return;
-    //     onChangeType(profile);
-    // },[profile, list_profiles_options])
-
+    //     if(list_strategies_options.length <= 0) return;
+    //     valuesByStrategy();
+    // },[strategy, list_strategies_options])
+    
     const setValue = (key, val) => formPublications.setFieldsValue({[key]: val});
-    const setCustomer = (val) => setValue('customer', val);
-    const setProfile = (val) => setValue('profile', val); 
+    // const setCustomer = (val = null) => setValue('customer', val);
+    const setVacant = (val = null) => setValue('vacant', val);
+    const setProfile = (val = null) => setValue('profile', val);
+    
+    // const resetValues = () =>{
+    //     setCustomer()
+    //     setVacant()
+    // }
 
-    const clientByVacant = () =>{
-        if(!vacant) return setCustomer(null);
-        const _find = item => item.id == vacant;
-        let result = list_vacancies_options.find(_find);
-        if(!result) return setCustomer(null);
-        if(!result.customer) return setCustomer(null);
-        setCustomer(result.customer.id);
-    }
+    // const valuesByStrategy = () =>{
+    //     if(!strategy) return resetValues();
+    //     const _find = item => item.id == strategy;
+    //     let result = list_strategies_options.find(_find);
+    //     if(!result) return resetValues();
+    //     if(result.customer) setCustomer(result.customer);
+    //     let idVacant = result?.vacant?.id;
+    //     if(idVacant) setVacant(idVacant);
+    // }
 
     const templatesByClient = useMemo(()=>{
         if(!customer) return [];
         const _filter = item => item.customer == customer;
         return list_profiles_options.filter(_filter);
-    },[customer])
+    },[customer, list_profiles_options])
+
+    const vacantsByClient = useMemo(()=>{
+        if(!customer) return [];
+        const options = item => item.customer?.id === customer;
+        return list_vacancies_options.filter(options);
+    },[customer, list_vacancies_options])
 
     const onChangeCustomer = () =>{
-        setProfile(null);
+        setProfile();
+        setVacant();
         resetVacantFields();
         setDisabledField(false);
     }
@@ -74,14 +85,13 @@ const FormPublications = ({
     }
 
     const onChangeType = (value) =>{
-        if(!value) setDisabledField(false);
+        setDisabledField(false);
         resetVacantFields();
         if(value == 'open_fields'){
             formPublications.setFieldsValue({
                 ...valuesDefault,
                 profile: value
             });
-            setDisabledField(false);
             return;
         }
         const type = item => item.id == value;
@@ -97,25 +107,49 @@ const FormPublications = ({
 
     return (
         <Row gutter={[24,0]}>
-            <Col span={6}>
+            {/* <Col span={5}>
                 <Form.Item
-                    name='vacant'
-                    label='Vacante'
+                    name='strategy'
+                    label='Estrategia'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select
                         allowClear
                         showSearch
-                        disabled={disabledVacant}
-                        loading={load_vacancies_options}
-                        placeholder='Seleccionar una vacante'
+                        loading={load_strategies_options}
+                        placeholder='Seleccionar una estrategia'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
+                        {list_strategies_options.length > 0 && list_strategies_options.map(item => (
                             <Select.Option value={item.id} key={item.id}>
-                                {item.job_position}
+                                {item.product}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Col> */}
+            <Col span={6}>
+                <Form.Item
+                    name='customer'
+                    label='Cliente'
+                    rules={[ruleRequired]}
+                    style={{marginBottom: 0}}
+                >
+                    <Select
+                        allowClear
+                        showSearch
+                        disabled={disabledClient}
+                        loading={load_clients_options}
+                        placeholder='Seleccionar un cliente'
+                        notFoundContent='No se encontraron resultados'
+                        optionFilterProp='children'
+                        onChange={onChangeCustomer}
+                    >
+                        {list_clients_options.length > 0 && list_clients_options.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.name}
                             </Select.Option>
                         ))}
                     </Select>
@@ -123,24 +157,24 @@ const FormPublications = ({
             </Col>
             <Col span={6}>
                 <Form.Item
-                    name='customer'
-                    label='Cliente de la vacante'
-                    tooltip='El cliente se obtiene por medio de la vacante, si esta está asociada a uno.'
+                    name='vacant'
+                    label='Vacante'
+                    tooltip='El listado se habilita si el cliente seleccionado tiene vacantes registradas.'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select
                         allowClear
                         showSearch
-                        disabled
-                        loading={load_clients_options}
-                        placeholder='Seleccionar un cliente'
+                        disabled={vacantsByClient.length <=0}
+                        loading={load_vacancies_options}
+                        placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {list_clients_options.length > 0 && list_clients_options.map(item => (
+                        {vacantsByClient.map(item => (
                             <Select.Option value={item.id} key={item.id}>
-                                {item.name}
+                                {item.job_position}
                             </Select.Option>
                         ))}
                     </Select>

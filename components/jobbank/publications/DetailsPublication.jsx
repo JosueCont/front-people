@@ -40,7 +40,7 @@ const DetailsPublication = ({
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [disableField, setDisabledField] = useState(false);
-    const [disabledVacant, setDisabledVacant] = useState(false);
+    const [disabledClient, setDisabledClient] = useState(false);
     const [infoPublication, setInfoPublication] = useState({});
     const [valuesDefault, setValuesDefault] = useState({});
     const [fetching, setFetching] = useState(false);
@@ -53,10 +53,10 @@ const DetailsPublication = ({
     },[router])
 
     useEffect(()=>{
-        if(router.query.vacancy && action == 'add'){
+        if(router.query.client && action == 'add'){
             formPublications.resetFields()
-            keepVacancy();
-        }else setDisabledVacant(false);
+            keepClient();
+        }else setDisabledClient(false);
     },[router])
 
     useEffect(()=>{
@@ -78,10 +78,10 @@ const DetailsPublication = ({
         }
     }
 
-    const keepVacancy = () =>{
-        setDisabledVacant(true);
+    const keepClient = () =>{
+        setDisabledClient(true);
         formPublications.setFieldsValue({
-            vacant: router.query.vacancy
+            customer: router.query.client
         })
     }
 
@@ -93,7 +93,8 @@ const DetailsPublication = ({
         if(existFieldsName && !existFields) results = formatData(infoPublication.profile.fields_name);
         let all_info = {
             ...results,
-            vacant: infoPublication.vacant,
+            customer: infoPublication?.vacant?.customer?.id,
+            vacant: infoPublication?.vacant?.id,
             profile: infoPublication.profile?.id ?? 'open_fields',
             code_post: infoPublication.code_post
         }
@@ -142,8 +143,8 @@ const DetailsPublication = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.vacancy) router.push({
-            pathname: '/jobbank/vacancies',
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
             query: newFilters
         });
         else router.push({
@@ -154,7 +155,7 @@ const DetailsPublication = ({
 
     const actionCreate = () =>{
         formPublications.resetFields();
-        if (router.query?.vacancy) keepVacancy();
+        if (router.query?.client) keepClient();
         setDisabledField(false);
         setFetching(false)
         setLoading({})
@@ -206,7 +207,7 @@ const DetailsPublication = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormPublications
-                                disabledVacant={disabledVacant}
+                                disabledClient={disabledClient}
                                 formPublications={formPublications}
                                 disableField={disableField}
                                 setDisabledField={setDisabledField}

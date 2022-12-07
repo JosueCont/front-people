@@ -1,45 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
-import { ruleRequired } from '../../../../utils/rules';
+import { Row, Col, message } from 'antd';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import { getSpecializationArea } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
+import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
 const ViewSpecializations = () => {
 
-    const {
-        list_specialization_area,
-        load_specialization_area
-    } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
-    const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getSpecializationArea(currentNode.id));
-    },[currentNode])
+        getWithFilters();
+    },[currentNode, router])
 
-    useEffect(()=>{
-        setLoading(load_specialization_area);
-    },[load_specialization_area])
-    
-    useEffect(()=>{
-        setMainData(list_specialization_area);
-    },[list_specialization_area])
+    const getSpecializationArea = async (node, query) =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getSpecializationArea(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+    }
+
+    const getWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let params = deleteFiltersJb(router.query);
+        let filters = getFiltersJB(params);
+        setNumPage(page);
+        getSpecializationArea(currentNode.id, filters);
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSpecializationArea({...values, node: currentNode.id});
-            dispatch(getSpecializationArea(currentNode.id));
+            getWithFilters();
             message.success('Especialización registrada');
         } catch (e) {
             console.log(e)
@@ -47,10 +52,10 @@ const ViewSpecializations = () => {
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateSpecializationArea(itemToEdit.id, values);
-            dispatch(getSpecializationArea(currentNode.id));
+            await WebApiJobBank.updateSpecializationArea(id, values);
+            getWithFilters();
             message.success('Especialización actualizada');
         } catch (e) {
             console.log(e)
@@ -58,11 +63,10 @@ const ViewSpecializations = () => {
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteSpecializationArea(id);
-            dispatch(getSpecializationArea(currentNode.id));
+            getWithFilters();
             message.success('Especialización eliminada');
         } catch (e) {
             console.log(e)
@@ -73,12 +77,7 @@ const ViewSpecializations = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_specialization_area}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -90,12 +89,9 @@ const ViewSpecializations = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
+                    numPage={numPage}
                 />
             </Col>
         </Row> 

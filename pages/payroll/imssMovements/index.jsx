@@ -101,7 +101,7 @@ const ImssMovements = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["imssMovements"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["imssMovements"]}  defaultOpenKeys={["managementRH","payroll"]}>
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}
@@ -109,6 +109,7 @@ const ImssMovements = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
         </Breadcrumb>
@@ -117,8 +118,8 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Collapse defaultActiveKey={['3']}>
-              <Panel header="SUA Movimientos" key="1">
+            <Collapse defaultActiveKey={['1']}>
+              <Panel header="Movimientos IMSS" key="1">
                 <MovementsSection/>
 
                 {/*<Collapse

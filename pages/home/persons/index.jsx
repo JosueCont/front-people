@@ -1225,9 +1225,10 @@ const homeScreen = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
         <Breadcrumb>
           <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
           <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
           <Breadcrumb.Item>Personas</Breadcrumb.Item>
         </Breadcrumb>
