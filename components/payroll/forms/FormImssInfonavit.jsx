@@ -14,43 +14,52 @@ import {
   message,
   Divider,
   Tooltip,
-  Space
+  Space,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import {typeEmployee, typeSalary, reduceDays, FACTOR_SDI} from "../../../utils/constant";
+import {
+  typeEmployee,
+  typeSalary,
+  reduceDays,
+  FACTOR_SDI,
+} from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
-import {fourDecimal, minLengthNumber, onlyNumeric, ruleRequired} from "../../../utils/rules";
+import {
+  fourDecimal,
+  minLengthNumber,
+  onlyNumeric,
+  ruleRequired,
+} from "../../../utils/rules";
 
 const FormImssInfonavit = ({ person, person_id, node }) => {
-  
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [formInfonavitManual] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
   const [loadingIMSS, setLodingIMSS] = useState(false);
   const [infonavitCredit, setInfonavitCredit] = useState([]);
-  const [ updateCredit, setUpdateCredit ] = useState(null)
-  const [ updateInfonavit, setUpdateInfonavit ] = useState(null)
-  const [ isEdit, setIsEdit ] = useState(false)
-  const [ modalVisible, setModalVisible ] = useState(false)
-  const [ nss, setNSS ] = useState(null)
-  const [ loadingModal, setLoadingModal ] = useState(false)
-  const daily_salary = Form.useWatch('sbc', formImssInfonavit);
-  let errorExceptionOne = "La persona cuenta con crédito infonavit"
-  let errorExceptionTwo = "La persona no cuenta con crédito"
+  const [updateCredit, setUpdateCredit] = useState(null);
+  const [updateInfonavit, setUpdateInfonavit] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nss, setNSS] = useState(null);
+  const [loadingModal, setLoadingModal] = useState(false);
+  const daily_salary = Form.useWatch("sbc", formImssInfonavit);
+  let errorExceptionOne = "La persona cuenta con crédito infonavit";
+  let errorExceptionTwo = "La persona no cuenta con crédito";
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
     person_id && localUserCredit() && getInfo();
   }, [person_id]);
 
-  useEffect(() =>{
+  useEffect(() => {
     if (updateCredit) {
-      setIsEdit(true)
+      setIsEdit(true);
       formImssInfonavit.setFieldsValue({
         employee_type: updateCredit.employee_type,
         salary_type: updateCredit.salary_type,
@@ -58,179 +67,180 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         movement_date: moment(updateCredit.movement_date),
         family_medical_unit: updateCredit.family_medical_unit.id,
         nss: updateCredit.nss,
-        sbc: updateCredit.sbc
-
-      })
-      setNSS(updateCredit.nss)
+        sbc: updateCredit.sbc,
+      });
+      setNSS(updateCredit.nss);
     } else {
-        formImssInfonavit.setFieldsValue({
-          nss: person.imss
-        })
-        setNSS(person.imss)
-    }
-
-  },[updateCredit])
-
-
-  useEffect(()=>{
-    console.log(daily_salary)
-    if(daily_salary){
       formImssInfonavit.setFieldsValue({
-          integrated_daily_salary:(daily_salary*FACTOR_SDI).toFixed(2)
-        })
-    }else{
-      formImssInfonavit.setFieldsValue({
-        integrated_daily_salary:0
-      })
+        nss: person.imss,
+      });
+      setNSS(person.imss);
     }
-  },[daily_salary])
+  }, [updateCredit]);
 
   useEffect(() => {
-    if(updateInfonavit){
+    console.log(daily_salary);
+    if (daily_salary) {
+      formImssInfonavit.setFieldsValue({
+        integrated_daily_salary: (daily_salary * FACTOR_SDI).toFixed(2),
+      });
+    } else {
+      formImssInfonavit.setFieldsValue({
+        integrated_daily_salary: 0,
+      });
+    }
+  }, [daily_salary]);
+
+  useEffect(() => {
+    if (updateInfonavit) {
       formInfonavitManual.setFieldsValue({
         start_date: moment(updateInfonavit.start_date),
         number: updateInfonavit.number,
         type: updateInfonavit.type,
-        status: updateInfonavit.status
-      })
-      setModalVisible(true)
+        status: updateInfonavit.status,
+      });
+      setModalVisible(true);
     }
-  },[updateInfonavit])
+  }, [updateInfonavit]);
 
   const compareError = (msg) => {
-    if(msg === errorExceptionOne || msg === errorExceptionTwo) return true
-    return false
-  }
-
+    if (msg === errorExceptionOne || msg === errorExceptionTwo) return true;
+    return false;
+  };
 
   const formImmssInfonavitAct = (values) => {
-    setLoadingTable(true)
+    setLoadingTable(true);
 
-    values.person = person_id
-    values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
-    values.modify_by = "System"
-    values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    : ""
+    values.person = person_id;
+    values.movement_date = values.movement_date
+      ? moment(values.movement_date).format("YYYY-MM-DD")
+      : "";
+    values.modify_by = "System";
+    // values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    :  ""
     console.log("Data", values);
     // funcion WEB API
 
-    if(isEdit){
-
-
+    if (isEdit) {
       WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
-      .then((response) => {
-        console.log('Response', response)
-        message.success('Editado exitosamente')
-        setLoadingTable(false)
-        setIsEdit(false)  
-      })
-      .catch((error) => {
-        console.log('Error -->', error)
-        message.error('Error al editar')
-        setLoadingTable(false)
-      })
-
+        .then((response) => {
+          console.log("Response", response);
+          message.success("Editado exitosamente");
+          setLoadingTable(false);
+          // setIsEdit(false);
+        })
+        .catch((error) => {
+          console.log("Error -->", error);
+          message.error("Error al editar");
+          setLoadingTable(false);
+        });
     } else {
-
       WebApiPayroll.saveIMSSInfonavit(values)
-      .then((response) => {
-        console.log('Response', response)
-        message.success('Guardado exitosamente')
-        setLoadingTable(false)
-      })
-      .catch((error) => {
-        console.log('Error -->', error.message)
-        message.error('Error al guardar')
-        setLoadingTable(false)
-      })
+        .then((response) => {
+          console.log("Response", response);
+          message.success("Guardado exitosamente");
+          setLoadingTable(false);
+          localUserCredit();
+        })
+        .catch(async (error) => {
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            console.log("Error -->", error.response.data.message);
+            // setMessageModal(1, error.response.data.message);
+            // setGenericModal(true);
+            message.error(error.response.data.message);
+            setLoadingTable(false);
+          } else message.error(messageError);
+          setLoadingTable(false);
+        });
     }
   };
 
   const userCredit = async () => {
-    
     setLoadingTable(true);
-    let data = new FormData()
-    let patronal_registration = person?.branch_node?.patronal_registration?.id
-    
-    data.append("node", node)
-    data.append("person", person_id)
-    data.append("patronal_registration", patronal_registration)
+    let data = new FormData();
+    let patronal_registration = person?.branch_node?.patronal_registration?.id;
+
+    data.append("node", node);
+    data.append("person", person_id);
+    data.append("patronal_registration", patronal_registration);
 
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
-        console.log('Response manual', response)
+        console.log("Response manual", response);
         setLoadingTable(false);
         response &&
-        response.data &&
-        response.data.message &&
-        response.data.message !== '' &&
-        message.success(response.data.message)
-        getInfo()
+          response.data &&
+          response.data.message &&
+          response.data.message !== "" &&
+          message.success(response.data.message);
+        getInfo();
       })
       .catch((error) => {
         setLoadingTable(false);
-        let errorMsg = error.response.data.message || ""
-        if(errorMsg === errorExceptionOne || errorMsg === errorExceptionTwo){
-          message.error(errorMsg)
+        let errorMsg = error.response.data.message || "";
+        if (errorMsg === errorExceptionOne || errorMsg === errorExceptionTwo) {
+          message.error(errorMsg);
         } else {
           message.error(`La consulta de información no pudo ser exitosa, intente nuevamente, 
-          recuerde que este proceso está  vinculado a la disponibilidad del servicio de infonavit.`)
+          recuerde que este proceso está  vinculado a la disponibilidad del servicio de infonavit.`);
         }
       })
       .finally(() => {
-        getInfo()
-      })
+        getInfo();
+      });
   };
 
   const getInfo = async () => {
-    setLoadingTable(true)
+    setLoadingTable(true);
     try {
-      let response = await WebApiPayroll.getUserCredits(person_id)
-      console.log('Se esta haciendo el get')
-      setInfonavitCredit(response.data)
+      let response = await WebApiPayroll.getUserCredits(person_id);
+      console.log("Se esta haciendo el get");
+      setInfonavitCredit(response.data);
     } catch (error) {
-      console.log('Error ===>', error)
+      console.log("Error ===>", error);
     } finally {
-      setLoadingTable(false)
+      setLoadingTable(false);
     }
-  }
+  };
 
   const localUserCredit = async () => {
-    setLodingIMSS(true)
+    setLodingIMSS(true);
     try {
-      let response = await WebApiPayroll.getPersonalCredits(person_id)
-      setUpdateCredit(response.data)
+      let response = await WebApiPayroll.getPersonalCredits(person_id);
+      setUpdateCredit(response.data);
     } catch (error) {
-      console.log('Error', error)
+      console.log("Error", error);
     } finally {
-      setLodingIMSS(false)
+      setLodingIMSS(false);
     }
-  }
+  };
 
   const newInfonavit = async (values) => {
+    values.person_id = person_id;
+    values.start_date = moment(values.start_date).format("YYYY-MM-DD");
 
-          
-    values.person_id = person_id
-    values.start_date = moment(values.start_date).format('YYYY-MM-DD')
-
-    setLoadingModal(true)
+    setLoadingModal(true);
 
     try {
-
-        let response = updateInfonavit? await WebApiPayroll.editInfonavit(updateInfonavit.id, values) : await WebApiPayroll.addInfonavit(values)
-        response && updateInfonavit && message.success('Editado Exitosamente') || message.success('Agregado Exitosamente')
-
-      
+      let response = updateInfonavit
+        ? await WebApiPayroll.editInfonavit(updateInfonavit.id, values)
+        : await WebApiPayroll.addInfonavit(values);
+      (response &&
+        updateInfonavit &&
+        message.success("Editado Exitosamente")) ||
+        message.success("Agregado Exitosamente");
     } catch (error) {
-      console.log('Error', error)
-      message.error('Error al editar')
-
+      console.log("Error", error);
+      message.error("Error al editar");
     } finally {
-      setLoadingModal(false)
-      onModalCancel()
-      getInfo()
+      setLoadingModal(false);
+      onModalCancel();
+      getInfo();
     }
-
-  }
+  };
 
   const colCredit = [
     {
@@ -293,8 +303,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" offset={1} style={{ padding: '0px 20px' }}>
-                <Tooltip title="Editar" >
+              <Col
+                className="gutter-row"
+                offset={1}
+                style={{ padding: "0px 20px" }}
+              >
+                <Tooltip title="Editar">
                   <EditOutlined
                     style={{ fontSize: "20px" }}
                     onClick={() => setUpdateInfonavit(item)}
@@ -317,14 +331,14 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   ];
 
   const onModalCancel = () => {
-    setUpdateInfonavit(null)
-    setModalVisible(false)
-    formInfonavitManual.resetFields()
-  }
+    setUpdateInfonavit(null);
+    setModalVisible(false);
+    formInfonavitManual.resetFields();
+  };
 
   return (
     <>
-      <Spin tip="Cargando..."  spinning={loadingIMSS}>
+      <Spin tip="Cargando..." spinning={loadingIMSS}>
         <Row>
           <Title style={{ fontSize: "20px" }}>IMSS</Title>
         </Row>
@@ -388,52 +402,51 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
-                  name="nss"
-                  label="IMSS"
-                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+                name="nss"
+                label="IMSS"
+                rules={[onlyNumeric, minLengthNumber]}
               >
-                <Input maxLength={11} />
+                <Input maxLength={11} disabled={true} />
               </Form.Item>
             </Col>
 
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
-                  name="sbc"
-                  label="Salario diario"
-                  maxLength={13}
-                  rules={[fourDecimal, ruleRequired]}
+                name="sbc"
+                label="Salario diario"
+                maxLength={13}
+                rules={[fourDecimal, ruleRequired]}
               >
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
-                  name="integrated_daily_salary"
-                  label="Salario diario integrado"
-                  maxLength={13}
-                  rules={[fourDecimal]}
+                name="integrated_daily_salary"
+                label="Salario diario integrado"
+                maxLength={13}
+                rules={[fourDecimal]}
               >
                 <Input disabled />
               </Form.Item>
             </Col>
           </Row>
           <Row justify={"end"}>
-            {
-              updateCredit && updateCredit.id? null : (
-                <Form.Item>
-                <Button 
-                  loading={loadingIMSS} 
-                  style = {{ marginRight: 20 }}
-                  type="primary" 
-                  htmlType="submit"
-                  disabled = { updateCredit && updateCredit.id? true : false }
-                >
-                  Guardar
-                </Button>
-                </Form.Item>
-              )
-            }
-
+            {/* {updateCredit && updateCredit.id ? null : ( */}
+            <Form.Item>
+              <Button
+                loading={loadingIMSS}
+                style={{ marginRight: 20 }}
+                type="primary"
+                htmlType="submit"
+                disabled={
+                  updateCredit && updateCredit.is_registered ? true : false
+                }
+              >
+                Guardar
+              </Button>
+            </Form.Item>
+            {/* )} */}
 
             {/* <Form.Item>
               <Button 
@@ -450,31 +463,26 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
         <Divider />
 
-        <Row justify='space-between'>
-          <Title style={{ fontSize: "20px", marginBottom: 20 }}>INFONAVIT</Title>
+        <Row justify="space-between">
+          <Title style={{ fontSize: "20px", marginBottom: 20 }}>
+            INFONAVIT
+          </Title>
           <div>
             <Space>
               <Button
-                type='primary'
-                loading = { loadingTable }
-                onClick={ () => setModalVisible(true)}
+                type="primary"
+                loading={loadingTable}
+                onClick={() => setModalVisible(true)}
               >
                 Nuevo
               </Button>
-              {
-                nss &&
-                
-                <Tooltip title="Obtener datos infonavit" >
-                  <Button
-                    onClick={() => userCredit()}
-                    loading = { loadingTable }
-                  >
-                    <SyncOutlined
-                      style={{ fontSize: "20px" }}
-                    />
+              {nss && (
+                <Tooltip title="Obtener datos infonavit">
+                  <Button onClick={() => userCredit()} loading={loadingTable}>
+                    <SyncOutlined style={{ fontSize: "20px" }} />
                   </Button>
                 </Tooltip>
-              }
+              )}
             </Space>
           </div>
         </Row>
@@ -496,24 +504,24 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         </Spin>
       </Spin>
       <Modal
-        title = "INFONAVIT manual"
-        visible = { modalVisible }
+        title="INFONAVIT manual"
+        visible={modalVisible}
         onCancel={() => onModalCancel()}
         footer={[]}
       >
         <Form
           layout="vertical"
-          form={ formInfonavitManual }
-          onFinish = { newInfonavit }
+          form={formInfonavitManual}
+          onFinish={newInfonavit}
         >
           <Row>
             <Col span={11}>
               <Form.Item
-                label = "Fecha de inicio"
-                name = "start_date"
+                label="Fecha de inicio"
+                name="start_date"
                 rules={[ruleRequired]}
               >
-                <DatePicker 
+                <DatePicker
                   locale={locale}
                   format="DD-MM-YYYY"
                   style={{ width: "100%" }}
@@ -522,8 +530,8 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Col>
             <Col span={11} offset={2}>
               <Form.Item
-                label = "Número"
-                name = "number"
+                label="Número"
+                name="number"
                 rules={[ruleRequired, onlyNumeric]}
               >
                 <Input maxLength={10} />
@@ -533,70 +541,55 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           <Row>
             <Col span={11}>
               <Form.Item
-                label = "Tipo de crédito"
-                name = "type"
+                label="Tipo de crédito"
+                name="type"
                 rules={[ruleRequired]}
               >
-                <Select
-                 allowClear
-                >
+                <Select allowClear>
                   <Select.Option
-                    value = "Crédito Tradicional"
-                    key = "Crédito Tradicional"
+                    value="Crédito Tradicional"
+                    key="Crédito Tradicional"
                   >
-                      Crédito Tradicional
+                    Crédito Tradicional
                   </Select.Option>
                   <Select.Option
-                    value = "Crédito Apoyo INFONAVIT"
-                    key = "Crédito Apoyo INFONAVIT"
+                    value="Crédito Apoyo INFONAVIT"
+                    key="Crédito Apoyo INFONAVIT"
                   >
-                      Crédito Apoyo INFONAVIT
+                    Crédito Apoyo INFONAVIT
                   </Select.Option>
                   <Select.Option
-                    value = "Credito Cofinanciado 08"
-                    key = "Credito Cofinanciado 08"
+                    value="Credito Cofinanciado 08"
+                    key="Credito Cofinanciado 08"
                   >
-                      Credito Cofinanciado 08
+                    Credito Cofinanciado 08
                   </Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={11} offset={2}>
-            <Form.Item
-                label = "Estatus"
-                name = "status"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  allowClear
-                >
-                  <Select.Option
-                    value = {'Vigente'}
-                    key = {'Vigente'}
-                  >
+              <Form.Item label="Estatus" name="status" rules={[ruleRequired]}>
+                <Select allowClear>
+                  <Select.Option value={"Vigente"} key={"Vigente"}>
                     Vigente
                   </Select.Option>
-                  <Select.Option
-                    value = {'Sin crédito'}
-                    key = {'Sin crédito'}
-                  >
+                  <Select.Option value={"Sin crédito"} key={"Sin crédito"}>
                     Sin crédito
                   </Select.Option>
                 </Select>
               </Form.Item>
             </Col>
           </Row>
-          <Row justify='end' style={{ marginTop: 30 }}>
+          <Row justify="end" style={{ marginTop: 30 }}>
             <Col>
               <Button
                 key="back"
-                onClick={ () => {
-                  onModalCancel()
-                  } 
-                }
+                onClick={() => {
+                  onModalCancel();
+                }}
                 style={{ padding: "0 10px", marginLeft: 15 }}
               >
-              Cancelar
+                Cancelar
               </Button>
             </Col>
             <Col>
@@ -606,11 +599,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                   type="primary"
                   htmlType="submit"
                   style={{ padding: "0 10px", marginLeft: 15 }}
-                  loading = { loadingModal }
+                  loading={loadingModal}
                 >
-                  {
-                    updateInfonavit && "Editar" || "Registrar"
-                  }
+                  {(updateInfonavit && "Editar") || "Registrar"}
                 </Button>
               </Form.Item>
             </Col>
