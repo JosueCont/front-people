@@ -20,6 +20,7 @@ const initialState = {
     list_jobboards_options: [],
     list_publications: {},
     list_specialization_area: [],
+    list_strategies_options: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -39,6 +40,7 @@ const initialState = {
     load_publications: false,
     load_profiles_options: false,
     load_specialization_area: false,
+    load_strategies_options: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
@@ -55,6 +57,7 @@ const GET_PROFILES_TYPES = "GET_PROFILES_TYPES";
 const GET_PROFILES_OPTIONS = "GET_PROFILES_OPTIONS";
 
 const GET_STRATEGIES = "GET_STRATEGIES";
+const GET_STRATEGIES_OPTIONS = "GET_STRATEGIES_OPTIONS";
 const GET_CANDIDATES = "GET_CANDIDATES";
 const GET_PUBLICATIONS = "GET_PUBLICATIONS";
 const GET_CONNECTIONS = "GET_CONNECTIONS";
@@ -174,6 +177,11 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_specialization_area: action.payload,
                 load_specialization_area: action.fetching
             }
+        case GET_STRATEGIES_OPTIONS:
+            return {...state,
+                list_strategies_options: action.payload,
+                load_strategies_options: action.fetching
+            }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
         case SET_FILTERS:
@@ -258,6 +266,18 @@ export const getStrategies = (node, query = '', page = 1) => async (dispatch) =>
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getStrategies(node, query);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getStrategiesOptions = (node, query = '') => async (dispatch) =>{
+    const typeFunction = { type: GET_STRATEGIES_OPTIONS, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getStrategies(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)

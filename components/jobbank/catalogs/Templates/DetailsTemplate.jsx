@@ -23,9 +23,9 @@ import WebApiJobBank from '../../../../api/WebApiJobBank';
 
 const DetailsTemplate = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
-
     
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
@@ -37,8 +37,6 @@ const DetailsTemplate = ({
     const btnSave = useRef(null);
     const [formTemplate] = Form.useForm();
     const [loading, setLoading] = useState({});
-    const [prevDocs, setPrevDocs] = useState([]);
-    const [newDocs, setNewDocs] = useState([]);
     const [actionType, setActionType] = useState('');
     const [infoTemplate, setInfoTemplate] = useState({});
     const [fetching, setFetching] = useState(false);
@@ -120,6 +118,7 @@ const DetailsTemplate = ({
     const actionBack = () =>{
         router.push({
             pathname: '/jobbank/settings/catalogs/profiles',
+            query: newFilters
         })
     }
 
@@ -129,7 +128,7 @@ const DetailsTemplate = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/settings/catalogs/profiles/edit',
-                query: { id }
+                query: {...newFilters, id }
             })
         }
         actionFunction[actionType]();

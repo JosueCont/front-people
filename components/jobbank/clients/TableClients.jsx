@@ -8,7 +8,8 @@ import {
     Switch,
     Space,
     Tag,
-    Tooltip
+    Tooltip,
+    Modal
 } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -20,7 +21,8 @@ import {
     FileTextOutlined,
     PlusOutlined,
     LinkOutlined,
-    UserOutlined
+    UserOutlined,
+    SettingOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import { getClients } from '../../../redux/jobBankDuck';
@@ -44,6 +46,7 @@ const TableClients = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [viewAsList, setViewAsList] = useState(false);
 
     const actionStatus = async (checked, item) =>{
         try {
@@ -87,17 +90,27 @@ const TableClients = ({
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        if(viewAsList) return;
         setItemsKeys([])
         setItemsToDelete([])
     }
 
     const openModalManyDelete = () =>{
+        const filter_ = item => item.has_estrategy;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setViewAsList(true)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setViewAsList(false);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos clientes')
+            return;
         }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos clientes')
     }
 
     const openModalRemove = (item) =>{
@@ -234,6 +247,16 @@ const TableClients = ({
                         >
                             Registrar estrategia
                         </Menu.Item>
+                        <Menu.Item
+                            key='3'
+                            icon={<SettingOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/publications/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Configurar publicación
+                        </Menu.Item>
                     </>
                 )}
             </Menu>
@@ -315,7 +338,10 @@ const TableClients = ({
                 }}
             />
             <DeleteItems
-                title={itemsToDelete.length > 1
+                title={viewAsList
+                    ? `Estos clientes no se pueden eliminar,
+                        ya que se encuentran asociados a una estrategia.`
+                    : itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos clientes?'
                     : '¿Estás seguro de eliminar este cliente?'
                 }
@@ -325,6 +351,8 @@ const TableClients = ({
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
+                textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
+                viewAsList={viewAsList}
             />
            <ViewContacts
                 visible={openModalList}

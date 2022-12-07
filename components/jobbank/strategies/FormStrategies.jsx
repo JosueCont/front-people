@@ -21,7 +21,8 @@ import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rul
 
 const FormStrategies = ({
     formStrategies,
-    disabledClient
+    disabledClient,
+    optionVacant = []
 }) => {
 
     const {
@@ -54,16 +55,22 @@ const FormStrategies = ({
     const setSalary = (val = null) => setValue('salary', val);
     const setAmount = (val = null) => setValue('amount_to_collect', val);
     const setVacant = (val = null) => setValue('vacant', val);
+    const setStatus = (val = null) => setValue('status_read_only', val);
+
+    const resetValues = () =>{
+        setSalary();
+        setStatus();
+    }
 
     const getSalary = () =>{
         let key = 'salary_and_benefits';
-        if(!vacant) return setSalary();
+        if(!vacant) return resetValues();
         const _find = item => item.id == vacant;
         let selected = list_vacancies_options.find(_find);
-        if(!selected) return setSalary();
+        if(!selected) return resetValues();
         let salaryNum = selected[key]?.gross_salary;
-        if(!salaryNum) return setSalary();
-        setSalary(salaryNum);
+        if(salaryNum) setSalary(salaryNum);
+        setStatus(selected.status);
     }
 
     const getAmount = () =>{
@@ -77,8 +84,9 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
+        let newList = [...list_vacancies_options, ...optionVacant];
         const options = item => item.customer?.id === clientSelected;
-        return list_vacancies_options.filter(options);
+        return newList.filter(options);
     }, [clientSelected])
 
     const disabledDate = (current) => {
@@ -273,12 +281,15 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='vacant_status'
+                    name='status_read_only'
+                    // name='vacant_status'
                     label='Estatus de la vacante'
+                    tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                 >
                     <Select
                         allowClear
                         showSearch
+                        disabled
                         placeholder='Seleccionar un estatus'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='label'
