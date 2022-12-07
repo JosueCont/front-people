@@ -84,7 +84,7 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
-        let newList = [...list_clients_options, ...optionVacant];
+        let newList = [...list_vacancies_options, ...optionVacant];
         const options = item => item.customer?.id === clientSelected;
         return newList.filter(options);
     }, [clientSelected])
