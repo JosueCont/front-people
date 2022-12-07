@@ -26,7 +26,7 @@ const Reports = () => {
   const { TabPane } = Tabs;
 
   return (
-    <MainLayout currentKey={["reports"]} defaultOpenKeys={["reports"]}>
+    <MainLayout currentKey={["reports"]} defaultOpenKeys={["utilities","reports"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -34,6 +34,7 @@ const Reports = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
       </Breadcrumb>
       <div

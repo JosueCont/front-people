@@ -36,7 +36,7 @@ const AddorEditProfile = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey={'jb_profiles'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -44,6 +44,7 @@ const AddorEditProfile = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}

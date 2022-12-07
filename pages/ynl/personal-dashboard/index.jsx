@@ -41,7 +41,7 @@ const index = () => {
   
   return (
       <Spin spinning={reportPerson?.loadReportPerson}>
-          <MainLayout currentKey={["ynl_personal_dashboard"]} defaultOpenKeys={["ynl"]}>
+          <MainLayout currentKey={["ynl_personal_dashboard"]} defaultOpenKeys={["commitment","ynl"]}>
               <Global
                   styles={css`
             :root {
@@ -227,6 +227,7 @@ const index = () => {
                   >
                       <FormattedMessage defaultMessage="Inicio" id="web.init" />
                   </Breadcrumb.Item>
+                  <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
                   <Breadcrumb.Item>YNL</Breadcrumb.Item>
                   <Breadcrumb.Item>Dashboard personal</Breadcrumb.Item>
               </Breadcrumb>

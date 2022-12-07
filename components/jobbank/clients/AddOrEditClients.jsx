@@ -26,7 +26,7 @@ const AddOrEditClients = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey='jb_clients' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_clients' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -34,6 +34,7 @@ const AddOrEditClients = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'

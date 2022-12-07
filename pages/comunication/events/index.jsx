@@ -155,7 +155,7 @@ const Events = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["events"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["events"]} defaultOpenKeys={["managementRH","concierge","events"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -163,7 +163,8 @@ const Events = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

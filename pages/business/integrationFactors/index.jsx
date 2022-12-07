@@ -183,7 +183,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
       />
       <MainLayout
         currentKey={["integrationFactors"]}
-        defaultOpenKeys={["company"]}
+        defaultOpenKeys={["strategyPlaning","company"]}
       >
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
@@ -192,6 +192,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         </Breadcrumb>

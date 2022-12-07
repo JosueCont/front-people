@@ -68,7 +68,7 @@ const HolidaysDetails = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey={["holiday"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["holiday"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -76,6 +76,8 @@ const HolidaysDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
