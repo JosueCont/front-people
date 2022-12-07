@@ -16,6 +16,7 @@ import {
   DatePicker,
   Form,
   message,
+  Select,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
@@ -23,6 +24,7 @@ import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
+import { departureMotive } from "../../../utils/constant";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -283,7 +285,7 @@ const ModalConceptsPayroll = ({
           obj.three_months_compensation = threeMonths;
           obj.antiquity_compensation = antiquity;
           obj.departure_date = departureDate;
-          obj.motive_departure = motiveDeparture;
+          obj.departure_motive = motiveDeparture;
           obj.person = item.person;
           obj.key = item.key;
         }
@@ -307,8 +309,8 @@ const ModalConceptsPayroll = ({
           obj.person = item.person;
           obj.key = item.key;
           if (item.departure_date) obj.departure_date = item.departure_date;
-          if (item.motive_departure)
-            obj.motive_departure = item.motive_departure;
+          if (item.departure_motive)
+            obj.departure_motive = item.departure_motive;
         }
         data.push(obj);
       }
@@ -488,9 +490,10 @@ const ModalConceptsPayroll = ({
                   />
                 </Col>
                 <Col span={12}>
-                  <TextArea
-                    placeholder="motivo de salida"
-                    onChange={(value) => setMotiveDeparture(value.target.value)}
+                  <Select
+                    style={{ width: "50%" }}
+                    options={departureMotive}
+                    onChange={(value) => setMotiveDeparture(value)}
                   />
                 </Col>
               </Row>
