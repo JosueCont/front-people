@@ -38,7 +38,7 @@ const SelectFamilyMedicalUnit = ({
         key={"umf"}
         name={"family_medical_unit"}
         label={"Unidad medica familiar"}
-        rules={rules && rules.length > 0 ? rules : [ruleRequired]}
+        rules={rules && rules.length > 0 ? rules : []}
       >
         <Select
           disabled={disabled}

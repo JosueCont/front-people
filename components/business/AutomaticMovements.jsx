@@ -11,11 +11,13 @@ import {
   Table,
   Modal,
   Spin,
-  Upload
+  Upload,
+  Popconfirm
   
 } from "antd";
 import {
 CheckCircleOutlined,
+QuestionCircleOutlined,
 CloseCircleOutlined
 } from "@material-ui/icons";
 import UploadCerOrPfxFile from "../UploadCerOrPfxFile";
@@ -31,6 +33,7 @@ const AutomaticMovements = ({patronalData}) => {
   const [ imssModalVisible, setImssModalVisible ] = useState(false)
   const [ infonavitModalVisible, setInfonavitModalVisible ] = useState(false)
   const [ loading, setLoading ] = useState(false)
+  const [ loadingTable, setLoadingTable ] = useState(false)
   const [ cerOrPfxFile, setCerOrPfxFile ] = useState(null)
   const [ keyFile, setKeyFile ] = useState(null)
   const [ required, setRiquired ] = useState(false)
@@ -96,9 +99,49 @@ const AutomaticMovements = ({patronalData}) => {
       title: "Configuración",
       key: 'configuration',
       render: (record) => (
-        <Button onClick={ () => setService(record.service) }>
-          Configurar
-        </Button>
+        <>
+          <Button loading= { loading }  onClick={ () => setService(record.service) }>
+            Configurar
+          </Button>
+          
+          {
+            record.service && record.service === 'IMSS' && hasCredentialIMSS && 
+
+            <Popconfirm 
+              title = "¿Desea eliminar las credenciales IMSS?"
+              // icon = {<QuestionCircleOutlined />}
+              style={{ color: 'red' }}
+              onConfirm = { () => onDeleteCredentials(record.service) }
+              okText = "Sí"
+              cancelText = "No"
+            >
+              <Button style={{ marginLeft: 10 }} loading = { loading } >
+                Eliminar
+              </Button>
+            </Popconfirm>
+
+          }
+
+{
+            record.service && record.service === 'INFONAVIT' && hasCredentialInfonavit &&
+
+            <Popconfirm 
+            title = "¿Desea eliminar las credenciales INFONAVIT?"
+            // icon = {<QuestionCircleOutlined />}
+            style={{ color: 'red' }}
+            onConfirm = { () => onDeleteCredentials(record.service) }
+            okText = "Sí"
+            cancelText = "No"
+          >
+            <Button style={{ marginLeft: 10 }} loading= { loading } >
+              Eliminar
+            </Button>
+          </Popconfirm>
+
+          }
+
+
+        </>
       )
     }
   ]
@@ -114,6 +157,7 @@ const AutomaticMovements = ({patronalData}) => {
 
   const getPatronalCredentials = async () => {
 
+    setLoadingTable(true)
 
     try {
       let response = await WebApiPeople.getCredentials('imss', patronalData.id)
@@ -144,9 +188,10 @@ const AutomaticMovements = ({patronalData}) => {
       setHasCredentialInfonavit(false)
       console.log('Error', error)
 
-    } finally {
+    } 
 
-    }
+    setLoadingTable(false)
+
   }
 
   const onFinishImss = async (values) => {
@@ -156,7 +201,10 @@ const AutomaticMovements = ({patronalData}) => {
     formData.append('endpoint', 'imss')
     formData.append('patronal_registration', patronalData.id)
     formData.append('cer', cerOrPfxFile)
-    formData.append('key', keyFile)
+    formData.append('key', keyFile || {})
+    // formData.append('FILES', [cerOrPfxFile, keyFile])
+    // formData.append('cer', cerOrPfxFile)
+    // formData.append('key', keyFile)
     formData.append('password', values.password)
     formData.append('user', values.user)
 
@@ -180,6 +228,7 @@ const AutomaticMovements = ({patronalData}) => {
     } finally {
 
       setLoading(false)
+      getPatronalCredentials()
       onCancelIMSS()
 
     }
@@ -205,8 +254,34 @@ const AutomaticMovements = ({patronalData}) => {
     } finally {
 
       setLoading(false)
+      getPatronalCredentials()
       onCancelInfonavit()
 
+    }
+  }
+
+  const onDeleteCredentials = async (endpoint) => {
+    setLoading(true)
+
+    let newSite = ""
+
+    if(endpoint === 'IMSS'){
+      newSite = 'imss'
+    } else {
+      newSite = 'infonavit'
+    }
+
+    try {
+      let response = await WebApiPeople.deleteCredentials(newSite, patronalData.id)
+      if(response){
+        message.success('Credenciales eliminadas con éxito')
+        getPatronalCredentials()
+      }
+    } catch (error) {
+        console.log('error', error)
+        message.error('Error al eliminar credenciales')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -229,6 +304,7 @@ const AutomaticMovements = ({patronalData}) => {
     <>
       <Table 
         columns={ colums }
+        loading = { loadingTable }
         dataSource={ configurations }
         pagination = { false }
         style = {{ marginBottom: 10 }}
@@ -326,7 +402,7 @@ const AutomaticMovements = ({patronalData}) => {
             <Col span={24} style = {{ marginTop: 10 }}>
                 <UploadCerOrPfxFile 
                   textButton="Subir certificado .cer o .pfx"
-                  validateExtension=".cer, .pfx"
+                  validateExtension=".cer,.pfx"
                   showList = { cerOrPfxFile? true : false }
                   setFile = { setCerOrPfxFile }
                   size = 'middle'

@@ -7,24 +7,45 @@ const SelectImssSubdelegation = ({
   viewLabel = true,
   rules = [],
   size = "middle",
+  imssDelegationId = null,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
 
+  // useEffect(() => {
+  //   setOptions([]);
+  //   if (props.cat_imss_subdelegation) {
+  //     let data = props.cat_imss_subdelegation.map((item, index) => {
+  //       return {
+  //         label: item.description,
+  //         value: item.id,
+  //         key: item.id + index,
+  //         code: item.code,
+  //       };
+  //     });
+  //     setOptions(data);
+  //   }
+  // }, [props.cat_imss_subdelegation]);
+
   useEffect(() => {
     setOptions([]);
-    if (props.cat_imss_subdelegation) {
-      let data = props.cat_imss_subdelegation.map((item, index) => {
-        return {
-          label: item.description,
-          value: item.id,
-          key: item.id + index,
-          code: item.code
-        };
+    if (imssDelegationId) {
+      let listOptions = [];
+
+      props.cat_imss_subdelegation.map((item, index) => {
+        if (item.imss_delegation.id == imssDelegationId) {
+          listOptions.push({
+            label: item.description,
+            value: item.id,
+            key: item.id + index,
+            code: item.code,
+          });
+        }
       });
-      setOptions(data);
+
+      setOptions(listOptions);
     }
-  }, [props.cat_imss_subdelegation]);
+  }, [imssDelegationId]);
 
   return (
     <>
@@ -49,7 +70,7 @@ const SelectImssSubdelegation = ({
             return (
               <>
                 <Option key={item.value} value={item.value}>
-                  {item.label} { `(${item.code})` }
+                  {item.label} {`(${item.code})`}
                 </Option>
                 ;
               </>
@@ -62,6 +83,10 @@ const SelectImssSubdelegation = ({
 };
 
 const mapState = (state) => {
+  // console.log(
+  //   "🚀 ~ file: SelectImssSubdelegation.jsx:82 ~ mapState ~ state.fiscalStore.cat_imss_subdelegation",
+  //   state.fiscalStore.cat_imss_subdelegation
+  // );
   return {
     cat_imss_subdelegation: state.fiscalStore.cat_imss_subdelegation,
   };

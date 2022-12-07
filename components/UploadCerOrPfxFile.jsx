@@ -22,6 +22,7 @@ const UploadCerOrPfxFile = ({
             beforeUpload: (file) => {
               let extensions = validateExtension.split(',')
               let isValid = ""
+              console.log('Extensions', extensions)
               if(extensions.length > 1){
                 isValid = file.name.includes(extensions[0]) || file.name.includes(extensions[1])
               } else {
