@@ -93,7 +93,7 @@ const LendingConfig = (props) => {
   }, [props.currentNode]);
 
   return (
-    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -101,6 +101,8 @@ const LendingConfig = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/lending" })}>Préstamos</Breadcrumb.Item>

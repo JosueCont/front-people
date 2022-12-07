@@ -1,11 +1,12 @@
 import {connect} from "react-redux";
 import {withAuthSync} from "../../libs/auth";
 import {DownloadOutlined} from "@ant-design/icons";
-import {Button} from "antd";
+import {Button, message} from "antd";
 import {downLoadFileBlob, getDomain} from "../../utils/functions";
-import {API_URL_TENANT} from "../../config/config";
+import {API_URL_TENANT, API_URL} from "../../config/config";
 import {useState} from "react";
 import { useSelector } from 'react-redux';
+import Axios from "axios";
 
 
 const ButtonDownloadConfronta=()=>{
@@ -13,7 +14,8 @@ const ButtonDownloadConfronta=()=>{
     const [showModal, setShowModal] = useState(false)
     const regPatronal = useSelector(state => state.catalogStore.cat_patronal_registration);
 
-    const downloadConfronta =async  () => {
+    const downloadConfronta = async  () => {
+        let url = '/payroll/confront'
         let node = localStorage.getItem('data');
         //validamos si hay mas de un reg patronal
         if(regPatronal && regPatronal.length>1){
@@ -27,13 +29,27 @@ const ButtonDownloadConfronta=()=>{
             node : node,
             patronal_registration : regPatronal &&  regPatronal[0].id
         }
-        await downLoadFileBlob(
-            `${getDomain(API_URL_TENANT)}/payroll/confront`,
-            "confronta.xlsx",
-            "POST",
-            params
-        );
-        setLoading(false);
+
+        try {
+
+            let response = await Axios.post(API_URL + url, params)
+            const type = response.headers["content-type"];
+            const blob = new Blob([response.data], {
+                type: type,
+                encoding: "UTF-8",
+              });
+              const link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = item && "confronta.xlsx";
+              link.click();
+            
+        } catch (error) {
+            let errorMessage = error?.response?.data?.message || ""
+            errorMessage !== "" && message.error(errorMessage)
+        } finally {
+            setLoading(false);
+        }
+        
     };
 
 

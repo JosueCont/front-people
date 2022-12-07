@@ -472,6 +472,13 @@ class WebApiPeople {
     )
   }
 
+  static deleteCredentials(site, patronal_registrartion) {
+    return WebApi.ApisType(
+      `/business/scraper-config/${site}/${patronal_registrartion}/`,
+      'delete'
+    )
+  }
+
   static addNewCredentials(data){
     return WebApi.ApisType(
       '/business/scraper-config/',

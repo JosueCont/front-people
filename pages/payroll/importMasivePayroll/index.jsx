@@ -404,7 +404,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   return (
     <MainLayout
       currentKey={["importMassivePayroll"]}
-      defaultOpenKeys={["payroll"]}
+       defaultOpenKeys={["managementRH","payroll"]}
     >
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>
@@ -414,6 +414,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Importar nómina con XML</Breadcrumb.Item>
         </Breadcrumb>

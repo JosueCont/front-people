@@ -41,10 +41,11 @@ const EmployeeDetailPage = (...props) => {
           }
         `}
       />
-      <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item >Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
             <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
             <Breadcrumb.Item className={"pointer"}
                              onClick={() => router.push({ pathname: "/home/persons/" })}>Personas</Breadcrumb.Item>

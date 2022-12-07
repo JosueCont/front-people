@@ -13,7 +13,7 @@ const EditPaymentCalendar = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["managementRH","payroll"]}>
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
             className={"pointer"}
@@ -21,6 +21,7 @@ const EditPaymentCalendar = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item
             className={"pointer"}

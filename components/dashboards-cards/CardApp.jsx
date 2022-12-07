@@ -82,6 +82,8 @@ const CardApps = ({ user, config, ...props }) => {
 
   const imgNomina = "https://www.masadmin.net/imgs/icon12.png";
 
+  const imgKhor = "http://iu.khor.mx/khorImg/iu_favicon.svg"
+
   const imgSocial = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khonect.png";
 
   const imgPeople = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/people.png";
@@ -117,7 +119,7 @@ const CardApps = ({ user, config, ...props }) => {
   const linkToExternalApp = (app_name) => {
     // const url = props.applications[app_name].front;
     const token = user.jwt_data.metadata.at(-1).token;
-    const url = `https://demo.${urlSukha}/validation?token=${token}`;
+    const url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
     redirectTo(url, true);
   };
 
@@ -133,11 +135,26 @@ const CardApps = ({ user, config, ...props }) => {
                 onClick={() => linkToProfile()}
               >
                 <img src={defaultPhoto} />
-                <p style={{ marginBottom: "0px" }}>Mi perfil</p>
+                <p style={{ marginBottom: "0px" }}>Mis evaluaciones</p>
               </Space>
             </Col>
           ) : null}
-          {user &&
+          <Col span={8}>
+              <Space
+                direction="vertical"
+                align="center"
+                onClick={() => {
+                  const link2 = document.createElement('a');
+                  link2.href = "http://iu.khor.mx";
+                  link2.target = '_blank';
+                  link2.click();
+                }}
+              >
+                <img src={imgKhor} />
+                <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
+              </Space>
+            </Col>
+          {/* {user &&
           (user.intranet_access === 2 || user.intranet_access === 3) ? (
             <Col span={8}>
               <Space
@@ -149,7 +166,7 @@ const CardApps = ({ user, config, ...props }) => {
                 <p style={{ marginBottom: "0px" }}>Connect</p>
               </Space>
             </Col>
-          ) : null}
+          ) : null} */}
           {/* <Col span={8}>
             <Space
               direction="vertical"
@@ -160,7 +177,7 @@ const CardApps = ({ user, config, ...props }) => {
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
           </Col> */}
-          {props?.applications &&
+          {/* {props?.applications &&
           (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
               <Col span={8}>
                 <Space
@@ -173,7 +190,7 @@ const CardApps = ({ user, config, ...props }) => {
                 </Space>
               </Col>
               : null
-          }
+          } */}
           {props?.applications &&
           (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) ?
               <Col span={8}>
@@ -188,7 +205,7 @@ const CardApps = ({ user, config, ...props }) => {
               </Col>
               : null
           }
-          {props?.applications &&
+          {/* {props?.applications &&
           (_.has(props.applications, "ynl") && props.applications["ynl"].active) ?
               <Col span={8}>
                 <Space
@@ -201,7 +218,7 @@ const CardApps = ({ user, config, ...props }) => {
                 </Space>
               </Col>
               : null
-          }
+          } */}
         </Row>
         {/* <Divider style={{background: '#5f6368'}}/>
             <Row justify='center'>
