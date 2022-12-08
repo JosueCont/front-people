@@ -152,7 +152,7 @@ const CardApps = ({ user, config, ...props }) => {
                 <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
               </Space>
             </Col>
-          {/* {user &&
+          {user &&
           (user.intranet_access === 2 || user.intranet_access === 3) ? (
             <Col span={8}>
               <Space
@@ -164,8 +164,8 @@ const CardApps = ({ user, config, ...props }) => {
                 <p style={{ marginBottom: "0px" }}>Connect</p>
               </Space>
             </Col>
-          ) : null} */}
-          {/* <Col span={8}>
+          ) : null}
+          <Col span={8}>
             <Space
               direction="vertical"
               align="center"
@@ -174,7 +174,7 @@ const CardApps = ({ user, config, ...props }) => {
               <img src={imgPeople} />
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
-          </Col> */}
+          </Col>
           {/* {props?.applications &&
           (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
               <Col span={8}>
