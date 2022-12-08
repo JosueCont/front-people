@@ -23,21 +23,12 @@ import {
   RightOutlined,
   DownOutlined,
   UserOutlined,
-  UploadOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  FileExcelOutlined,
-  FileDoneOutlined,
-  UnlockOutlined,
   LockOutlined,
-  DownloadOutlined,
-  StopOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
-import NumericInput from "../../../components/inputNumeric";
 import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -47,8 +38,6 @@ import { messageError, optionMovement } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
-import locale from "antd/lib/date-picker/locale/es_ES";
-import moment from "moment";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -196,7 +185,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   ];
 
   const renderConceptsTable = (data) => {
-    console.log("render-->> ", data);
     let dataPerceptions = data?.perception;
     let dataDeductions = data?.deduction;
 
@@ -457,29 +445,35 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        setConsolidatedObj(response.data);
-        if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
-          let calculateExist = extraOrdinaryPayroll;
-          response.data.map((item) => {
-            calculateExist = calculateExist.filter(
-              (a) => item.person.id != a.person.id
-            );
-          });
-          response.data.map((item) => {
-            calculateExist[calculateExist.length] = item;
-          });
-
-          setExtraOrdinaryPayroll(
-            calculateExist.sort((a, b) =>
-              a.person.first_name.localeCompare(b.person.first_name)
-            )
-          );
+        if (response.data.consolidated) {
+          setConsolidated(response.data.consolidated);
+          setIsOpen(response.data.consolidated.is_open);
+          setExtraOrdinaryPayroll(response.data.payroll);
         } else {
-          setExtraOrdinaryPayroll(
-            response.data.sort((a, b) =>
-              a.person.first_name.localeCompare(b.person.first_name)
-            )
-          );
+          setConsolidatedObj(response.data);
+          if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
+            let calculateExist = extraOrdinaryPayroll;
+            response.data.map((item) => {
+              calculateExist = calculateExist.filter(
+                (a) => item.person.id != a.person.id
+              );
+            });
+            response.data.map((item) => {
+              calculateExist[calculateExist.length] = item;
+            });
+
+            setExtraOrdinaryPayroll(
+              calculateExist.sort((a, b) =>
+                a.person.first_name.localeCompare(b.person.first_name)
+              )
+            );
+          } else {
+            setExtraOrdinaryPayroll(
+              response.data.sort((a, b) =>
+                a.person.first_name.localeCompare(b.person.first_name)
+              )
+            );
+          }
         }
         setLoading(false);
         // setObjectSend(null);
@@ -540,6 +534,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       // departure_date: departureDate.value,
       movementType: movementType,
       calendar: calendarSelect.id,
+      payment_period: periodSelected.id,
     });
     // } else {
     //   message.error("Se requeiere una fecha de pago");
@@ -556,6 +551,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
       payroll: consolidatedObj,
+      movement_type: movementType,
     })
       .then((response) => {
         // sendCalculatePayroll({ payment_period: periodSelected.id });
