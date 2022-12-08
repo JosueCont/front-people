@@ -112,13 +112,13 @@ const MainSider = ({
   function getMenuItems() {
     if (typeof window !== "undefined") {
       // Estrategia y planeación
-      items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />))
+      // items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />))
 
       // Administración de RH
-      items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />))
+      // items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />))
 
       // Reclutamiento y selección
-      items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
+      // items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
 
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
@@ -134,17 +134,17 @@ const MainSider = ({
       items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
 
       // desempeño
-      items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
+      // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
       let children3 = [getItem("KHOR Connect", "connect")]
       items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
 
       // Analytics
-      items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
+      // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
 
       // Analytics
-      items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />))
+      // items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />))
     }
 
     return items;

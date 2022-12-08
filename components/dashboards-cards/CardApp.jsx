@@ -90,6 +90,8 @@ const CardApps = ({ user, config, ...props }) => {
 
   const imgSukhaTv = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/sukha.png";
 
+  const imgCareerlab = "https://khorplus.s3.us-west-1.amazonaws.com/careerlab/careerlab.png";
+
   const [showYnlDownloadApp, setShowYnlDownloadApp] = useState(false);
 
   const linkToProfile = () => {
@@ -116,16 +118,38 @@ const CardApps = ({ user, config, ...props }) => {
 
   const linkToExternalApp = (app_name) => {
     // const url = props.applications[app_name].front;
-    const token = user.jwt_data.metadata.at(-1).token;
-    const url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
-    redirectTo(url, true);
+    switch (app_name){
+      case "sukhatv":
+        const token1 = user.jwt_data.metadata.at(-1).token;
+        // const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
+        redirectTo(url1, true);
+        break;
+      case "careerlab":
+        const token2 = user.jwt_data.metadata.at(-1).token;
+        // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
+        const url2 = "https://platform.careerlab.hiumanlab.com/"
+        redirectTo(url2, true);
+        break;
+      case "khorflix":
+        const token3 = user.jwt_data.metadata.at(-1).token;
+        // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
+        const url3 = "https://iu.khorflix.com/"
+        redirectTo(url3, true);
+        break;
+      default:
+        const token = user.jwt_data.metadata.at(-1).token;
+        const url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
+        redirectTo(url, true);
+        break;
+    }
   };
 
   return (
     <ContentApps>
       <Card bordered={false}>
         <Row gutter={[8, 16]}>
-          {config && config.kuiz_enabled ? (
+          {config && config.kuiz_enabled && !props.is_admin? (
             <Col span={8}>
               <Space
                 direction="vertical"
@@ -153,7 +177,7 @@ const CardApps = ({ user, config, ...props }) => {
               </Space>
             </Col>
           {user &&
-          (user.intranet_access === 2 || user.intranet_access === 3) ? (
+          (user.intranet_access === 2 || user.intranet_access === 3) && !props.is_admin? (
             <Col span={8}>
               <Space
                 direction="vertical"
@@ -165,7 +189,7 @@ const CardApps = ({ user, config, ...props }) => {
               </Space>
             </Col>
           ) : null}
-          <Col span={8}>
+          {/* <Col span={8}>
             <Space
               direction="vertical"
               align="center"
@@ -174,9 +198,9 @@ const CardApps = ({ user, config, ...props }) => {
               <img src={imgPeople} />
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
-          </Col>
-          {/* {props?.applications &&
-          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
+          </Col> */}
+          {props?.applications &&
+          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && !props.is_admin?
               <Col span={8}>
                 <Space
                     direction="vertical"
@@ -188,9 +212,9 @@ const CardApps = ({ user, config, ...props }) => {
                 </Space>
               </Col>
               : null
-          } */}
+          }
           {props?.applications &&
-          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) ?
+          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && !props.is_admin?
               <Col span={8}>
                 <Space
                     direction="vertical"
@@ -199,6 +223,20 @@ const CardApps = ({ user, config, ...props }) => {
                 >
                   <img src={imgSukhaTv} />
                   <p style={{ marginBottom: "0px" }}>Sukha TV</p>
+                </Space>
+              </Col>
+              : null
+          }
+          {props?.applications &&
+          (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && !props.is_admin?
+              <Col span={8}>
+                <Space
+                    direction="vertical"
+                    align="center"
+                    onClick={() => linkToExternalApp("careerlab")}
+                >
+                  <img src={imgCareerlab} />
+                  <p style={{ marginBottom: "0px" }}>Careerlab</p>
                 </Space>
               </Col>
               : null

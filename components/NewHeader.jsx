@@ -228,7 +228,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    <Dropdown overlay={<CardApps />} key="dropdown_apps">
+                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
                           style={{
