@@ -180,29 +180,53 @@ const MainSider = ({
       items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
 
       // Reclutamiento y selección
-      let children021 = [
-           getItem("Clientes", "jb_clients"),
+      if (props?.applications) {
+        let show_jobbank_module = false;
+        for (let item in props.applications) {
+          if (item === "jobbank") {
+            if (props.applications[item].active) {
+              show_jobbank_module = true;
+            }
+          }
+        }
+        if (show_jobbank_module) {
+          let children021 = [
+            getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
             getItem("Template de vacante", "jb_profiles"),
             getItem("Candidatos", "jb_candidates"),
             getItem("Publicaciones", "jb_publications"),
             getItem("Configuraciones", "jb_settings")
-      ]
-      let children02 = [
-        getItem("Bolsa de trabajo", "job_bank", <></>, children021)
-      ]
-      items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />, children02))
+          ]
+          let children02 = [
+            getItem("Bolsa de trabajo", "job_bank", <></>, children021)
+          ]
+          items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />, children02))
+        }
+      }
 
       // Evaluación y diagnóstico
-      let children11 = [
-        getItem("Evaluaciones", "surveys"),
-        getItem("Grupos de evaluaciones", "assessment_groups"),
-        getItem("Perfiles de competencias", "assessment_profiles"),
-        getItem("Reportes de competencias", "assessment_reports"),
-      ]
-      let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
-      items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
+      if (props?.applications) {
+        let show_kuiz_module = false;
+        for (let item in props.applications) {
+          if (item === "kuiz") {
+            if (props.applications[item].active) {
+              show_kuiz_module = true;
+            }
+          }
+        }
+        if (show_kuiz_module) {
+          let children11 = [
+            getItem("Evaluaciones", "surveys"),
+            getItem("Grupos de evaluaciones", "assessment_groups"),
+            getItem("Perfiles de competencias", "assessment_profiles"),
+            getItem("Reportes de competencias", "assessment_reports"),
+          ]
+          let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
+          items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
+        }
+      }
 
       // Educación y desarrollo
       let children2 = [
@@ -217,22 +241,41 @@ const MainSider = ({
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      let children31 = [
-        getItem("Dashboard general", "ynl_general_dashboard"),
-        getItem("Dashboard personal", "ynl_personal_dashboard"),
-      ]
-
-      let children32 = [
-        getItem("Configuración", "intranet_configuration"),
-        getItem("Grupos", "intranet_groups"),
-        getItem("Moderación", "publications_statistics"),
-      ];
-      let children3 = [
-        getItem("KHOR Connect", "intranet",  <></>, children32 ),
-        getItem("YNL", "ynl", <></>, children31),
-        // getItem("Notificaciones", "notificaciones"),
-      ]
-      items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      let show_ynl_module = false;
+      if (props?.applications) {
+        for (let item in props.applications) {
+          if (item === "ynl") {
+            if (props.applications[item].active) {
+              show_ynl_module = true;
+            }
+          }
+        }
+      }
+      let children3 = []
+      if (intranetAccess || show_ynl_module) {
+        if (intranetAccess) {
+          let children32 = [
+            getItem("Configuración", "intranet_configuration"),
+            getItem("Grupos", "intranet_groups"),
+            getItem("Moderación", "publications_statistics"),
+          ];
+          children3.push(
+            getItem("KHOR Connect", "intranet",  <></>, children32 ),
+          )
+        }
+        if (show_ynl_module) {
+          let children31 = [
+            getItem("Dashboard general", "ynl_general_dashboard"),
+            getItem("Dashboard personal", "ynl_personal_dashboard"),
+          ]
+          children3.push(
+            getItem("YNL", "ynl", <></>, children31),
+          )
+        }
+        if (children3.length > 0) {
+          items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+        }
+      }
 
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
