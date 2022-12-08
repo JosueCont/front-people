@@ -37,39 +37,45 @@ const FormStrategies = ({
         load_persons,
         persons_company
     } = useSelector(state => state.userStore);
+    const newListVacant = [...list_vacancies_options, ...optionVacant];
     const clientSelected = Form.useWatch('customer', formStrategies);
-    const salary = Form.useWatch('salary', formStrategies);
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
     const vacant = Form.useWatch('vacant', formStrategies);
+    //Campos de lectura, se toma de la vacante.
+    const salary = Form.useWatch('salary_read', formStrategies);
 
     useEffect(()=>{
-        if(list_vacancies_options.length <= 0) return;
         getSalary()
-    },[vacant, list_vacancies_options])
+    },[vacant, newListVacant])
 
     useEffect(()=>{
         getAmount()
     },[salary, percent])
 
     const setValue = (key, val) => formStrategies.setFieldsValue({[key]: val});
-    const setSalary = (val = null) => setValue('salary', val);
     const setAmount = (val = null) => setValue('amount_to_collect', val);
     const setVacant = (val = null) => setValue('vacant', val);
-    const setStatus = (val = null) => setValue('status_read_only', val);
+    //Campos de lectura, se toma de la vacante.
+    const setSalary = (val = null) => setValue('salary_read', val);
+    const setStatus = (val = null) => setValue('vacant_status_read', val);
+    const setProyect = (val = null) => setValue('num_project_read', val);
 
     const resetValues = () =>{
         setSalary();
         setStatus();
+        setProyect();
     }
 
     const getSalary = () =>{
         let key = 'salary_and_benefits';
         if(!vacant) return resetValues();
         const _find = item => item.id == vacant;
-        let selected = list_vacancies_options.find(_find);
+        let selected = newListVacant.find(_find);
         if(!selected) return resetValues();
         let salaryNum = selected[key]?.gross_salary;
         if(salaryNum) setSalary(salaryNum);
+        let numProyect = selected?.num_project;
+        if(numProyect) setProyect(numProyect);
         setStatus(selected.status);
     }
 
@@ -84,9 +90,8 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
-        let newList = [...list_vacancies_options, ...optionVacant];
         const options = item => item.customer?.id === clientSelected;
-        return newList.filter(options);
+        return newListVacant.filter(options);
     }, [clientSelected])
 
     const disabledDate = (current) => {
@@ -194,11 +199,14 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='num_project'
+                    // name='num_project'
+                    name='num_project_read'
                     label='Número de proyecto'
+                    tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                 >
                     <InputNumber
                         type='number'
+                        readOnly
                         maxLength={10}
                         controls={false}
                         placeholder='Número de proyecto'
@@ -281,8 +289,8 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='status_read_only'
                     // name='vacant_status'
+                    name='vacant_status_read'
                     label='Estatus de la vacante'
                     tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                 >
@@ -299,7 +307,8 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='salary'
+                    // name='salary'
+                    name='salary_read'
                     label='Sueldo (MXN)'
                     tooltip={`El valor se obtiene de acuerdo al registro de la vacante
                         seleccionada, si no se visualiza este dato debe dirigirse al módulo de
@@ -311,7 +320,7 @@ const FormStrategies = ({
                     ]}
                 >
                     <Input
-                        disabled
+                        readOnly
                         // maxLength={20}
                         placeholder='Ej. 70,500.5999'
                         // onKeyPress={e => e.which == 32 && e.preventDefault()}
@@ -349,7 +358,7 @@ const FormStrategies = ({
                     tooltip='El valor será calculado de manera automática según el sueldo y porcentaje a cobrar.'
                 >
                     <Input
-                        disabled
+                        readOnly
                         controls={false}
                         placeholder='Monto a cobrar'
                     />

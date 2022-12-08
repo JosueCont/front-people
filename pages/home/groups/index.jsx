@@ -119,7 +119,7 @@ const GroupsPeople = () => {
   };
 
   return (
-    <MainLayout currentKey={['groups_people']} defaultOpenKeys={["people"]}>
+    <MainLayout currentKey={['groups_people']} defaultOpenKeys={["strategyPlaning","people"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -127,6 +127,7 @@ const GroupsPeople = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
         <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>

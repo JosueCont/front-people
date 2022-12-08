@@ -19,7 +19,8 @@ const SelectJobRisk = ({
                     label: item.code,
                     value: item.id,
                     key: item.id + index,
-                    percent: item?.percent
+                    percent: item?.percent,
+                    description: item.description
                 };
             });
             setOptions(data);
@@ -50,7 +51,7 @@ const SelectJobRisk = ({
                         return (
                             <>
                                 <Option key={item.value} value={item.value}>
-                                    {item.label} {`(${item.percent}%)`}
+                                    {item.description} {`(${item.percent}%)`}
                                 </Option>
                                 ;
                             </>

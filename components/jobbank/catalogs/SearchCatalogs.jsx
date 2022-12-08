@@ -7,6 +7,7 @@ import {
     SearchOutlined,
     SyncOutlined
 } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 const SearchCatalogs = ({
     setOpenModal,
@@ -18,6 +19,10 @@ const SearchCatalogs = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const url = router.asPath?.split('?')[0];
+
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
 
     const onFinish = (values) =>{
         let filters = createFiltersJB(values);

@@ -30,7 +30,7 @@ const Index = ({
   },[currentNode])
   
   return (
-    <MainLayout currentKey={["assessment_reports"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["assessment_reports"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -38,6 +38,7 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
           <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
       </Breadcrumb>

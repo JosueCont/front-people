@@ -41,7 +41,7 @@ const index = ({}) => {
   }, [validateUser]);
   
   return (
-    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
+    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["commitment","ynl"]}>
       <Global
         styles={css`
             :root {
@@ -192,6 +192,7 @@ const index = ({}) => {
           >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
           <Breadcrumb.Item>YNL</Breadcrumb.Item>
           <Breadcrumb.Item>Dashboard general</Breadcrumb.Item>
       </Breadcrumb>

@@ -69,7 +69,7 @@ const detailIntegrator = () => {
     <Spin spinning = { loading }>
       <MainLayout
         currentKey={["integrationFactors"]}
-        defaultOpenKeys={["company"]}
+        defaultOpenKeys={["strategyPlaning","company"]}
       >
               <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
@@ -78,6 +78,7 @@ const detailIntegrator = () => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
           <Breadcrumb.Item>Detalle</Breadcrumb.Item>

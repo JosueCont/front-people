@@ -101,7 +101,7 @@ const ImssMovements = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["imssMovements"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["imssMovements"]}  defaultOpenKeys={["managementRH","payroll"]}>
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}
@@ -109,6 +109,7 @@ const ImssMovements = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
         </Breadcrumb>
