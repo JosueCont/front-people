@@ -83,10 +83,6 @@ const SelectImssSubdelegation = ({
 };
 
 const mapState = (state) => {
-  // console.log(
-  //   "🚀 ~ file: SelectImssSubdelegation.jsx:82 ~ mapState ~ state.fiscalStore.cat_imss_subdelegation",
-  //   state.fiscalStore.cat_imss_subdelegation
-  // );
   return {
     cat_imss_subdelegation: state.fiscalStore.cat_imss_subdelegation,
   };
