@@ -9,6 +9,7 @@ import {
   DatePicker,
   Form,
   Input,
+  message,
   Row,
   Select,
   Space,
@@ -22,21 +23,12 @@ import {
   RightOutlined,
   DownOutlined,
   UserOutlined,
-  UploadOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  FileExcelOutlined,
-  FileDoneOutlined,
-  UnlockOutlined,
   LockOutlined,
-  DownloadOutlined,
-  StopOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
-import NumericInput from "../../../components/inputNumeric";
 import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -46,8 +38,6 @@ import { messageError, optionMovement } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
-import locale from "antd/lib/date-picker/locale/es_ES";
-import moment from "moment";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -78,6 +68,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [genericModal, setGenericModal] = useState(false);
   const [objectSend, setObjectSend] = useState(null);
+  const [consolidatedObj, setConsolidatedObj] = useState(null);
+
+  const date = new Date();
+
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  let currentDate = `${day}-${month}-${year}`;
 
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -95,22 +93,19 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             <Avatar
               icon={<UserOutlined />}
               src={
-                item.payroll_person.person && item.payroll_person.person.photo
-                  ? item.payroll_person.person.photo
+                item.person && item.person.photo
+                  ? item.person.photo
                   : defaulPhoto
               }
             />
             {`${
-              item.payroll_person.person &&
-              item.payroll_person.person.mlast_name
-                ? item.payroll_person.person.first_name +
+              item.person && item.person.mlast_name
+                ? item.person.first_name +
                   " " +
-                  item.payroll_person.person.flast_name +
+                  item.person.flast_name +
                   " " +
-                  item.payroll_person.person.mlast_name
-                : item.payroll_person.personfirst_name +
-                  " " +
-                  item.payroll_person.person.flast_name
+                  item.person.mlast_name
+                : item.personfirst_name + " " + item.person.flast_name
             }`}
           </Space>
         </div>
@@ -128,10 +123,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat
-            prefix={"$"}
-            number={item.payroll_person.daily_salary}
-          />
+          <NumberFormat prefix={"$"} number={item.daily_salary} />
         </div>
       ),
     },
@@ -141,7 +133,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.bonus_amount} />
+          <NumberFormat prefix={"$"} number={item.total_perception} />
         </div>
       ),
     },
@@ -176,9 +168,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Button
                 size="small"
                 onClick={() => {
-                  setPersonId(
-                    item.payroll_person && item.payroll_person.person.id
-                  ),
+                  setPersonId(item?.person?.id),
+                    console.log(
+                      "🚀 ~ file: index.jsx:175 ~ ExtraordinaryPayroll ~ listPersons",
+                      item.person.id
+                    ),
                     setModalVisible(true);
                 }}
               >
@@ -191,7 +185,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   ];
 
   const renderConceptsTable = (data) => {
-    console.log("render-->> ", data);
     let dataPerceptions = data?.perception;
     let dataDeductions = data?.deduction;
 
@@ -443,17 +436,47 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setTotalIsr(null);
     setNetPay(null);
     setMovementType(null);
+    setConsolidatedObj(null);
   };
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
+    if (!movementType) return;
     setLoading(true);
-    setExtraOrdinaryPayroll([]);
+    // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        console.log(response.data);
-        setExtraOrdinaryPayroll(response.data);
+        if (response.data.consolidated) {
+          setConsolidated(response.data.consolidated);
+          setIsOpen(response.data.consolidated.is_open);
+          setExtraOrdinaryPayroll(response.data.payroll);
+        } else {
+          setConsolidatedObj(response.data);
+          if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
+            let calculateExist = extraOrdinaryPayroll;
+            response.data.map((item) => {
+              calculateExist = calculateExist.filter(
+                (a) => item.person.id != a.person.id
+              );
+            });
+            response.data.map((item) => {
+              calculateExist[calculateExist.length] = item;
+            });
+
+            setExtraOrdinaryPayroll(
+              calculateExist.sort((a, b) =>
+                a.person.first_name.localeCompare(b.person.first_name)
+              )
+            );
+          } else {
+            setExtraOrdinaryPayroll(
+              response.data.sort((a, b) =>
+                a.person.first_name.localeCompare(b.person.first_name)
+              )
+            );
+          }
+        }
         setLoading(false);
-        setObjectSend(null);
+        // setObjectSend(null);
       })
       .catch((error) => {
         console.log(error);
@@ -474,7 +497,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [movementType]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
-    if (movementType > 1 && record.worked_days)
+    if (movementType > 1 && record.working_days)
       return expanded ? (
         <DownOutlined onClick={(e) => onExpand(record, e)} />
       ) : (
@@ -490,21 +513,109 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const calculateExtra = () => {
-    setGenericModal(false);
-    const departureDate = document.getElementById("departure_date");
-    if (departureDate.value != null && departureDate.value != "") {
-      sendCalculateExtraordinaryPayrroll({
-        list: objectSend
-          ? objectSend.payroll
-          : listPersons.map((item) => {
-              return { person_id: item.key };
-            }),
-        departure_date: departureDate.value,
-        movementType: movementType,
-        calendar: calendarSelect.id,
+    console.log(
+      "🚀 ~ file: index.jsx:527 ~ calculateExtra ~ objectSend",
+      objectSend
+    );
+    const objSend = objectSend.payroll.filter((item) => item.departure_date);
+    if (objSend.length == 0) {
+      message.error(
+        "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
+      );
+      return;
+    }
+    console.log("🚀 ~ file: index.jsx:529 ~ calculateExtra ~ objSend", objSend);
+    sendCalculateExtraordinaryPayrroll({
+      list: objSend,
+      // ? objectSend.payroll
+      // : listPersons.map((item) => {
+      //     return { person_id: item.key };
+      //   }),
+      // departure_date: departureDate.value,
+      movementType: movementType,
+      calendar: calendarSelect.id,
+      payment_period: periodSelected.id,
+    });
+    // } else {
+    //   message.error("Se requeiere una fecha de pago");
+    // }
+  };
+
+  const sendClosePayroll = () => {
+    console.log(
+      "🚀 ~ file: index.jsx:548 ~ sendClosePayroll ~ consolidatedObj",
+      consolidatedObj
+    );
+    // setGenericModal(false);
+    // setLoading(true);
+    WebApiPayroll.consolidatedExtraordinaryPayroll({
+      payment_period: periodSelected.id,
+      payroll: consolidatedObj,
+      movement_type: movementType,
+    })
+      .then((response) => {
+        // sendCalculatePayroll({ payment_period: periodSelected.id });
+        // setTimeout(() => {
+        //   message.success(messageSaveSuccess);
+        setLoading(false);
+        // }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        // sendCalculatePayroll({ payment_period: periodSelected.id });
+        // setTimeout(() => {
+        //   message.error(messageError);
+        //   console.log(error);
+        // }, 1000);
       });
+  };
+
+  const setPayrollCalculate = (data) => {
+    console.log("🚀 ~ file: index.jsx:572 ~ setPayrollCalculate ~ data", data);
+    setExtraOrdinaryPayroll(data.payroll);
+    setObjectSend(data);
+  };
+
+  const changeStep = (next_prev) => {
+    if (next_prev) {
+      //next
+      if (step == 0) {
+        setStep(step + 1);
+        setPreviuosStep(true);
+        if (isOpen) setNextStep(false);
+        return;
+      }
+      if (step == 1) {
+        setStep(step + 1);
+        if (!isOpen) setPreviuosStep(false);
+        return;
+      }
+      if (step == 2) {
+        setStep(step + 1);
+        setPreviuosStep(true);
+        setNextStep(false);
+        return;
+      }
     } else {
-      message.error("Se requeiere una fecha de pago");
+      //previous
+      if (step == 1) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
+      if (step == 2) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
+      if (step == 3) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+        return;
+      }
     }
   };
 
@@ -576,7 +687,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             style={{ width: "100%" }}
                             options={optionMovement}
                             onChange={(e) => setMovementType(e)}
-                            placeholder="Salario"
+                            placeholder="Movimiento"
                             notFoundContent={"No se encontraron resultados."}
                             allowClear
                           />
@@ -707,12 +818,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         padding: "20px",
                       }}
                     >
-                      <Col md={4}>
+                      {/* <Col md={4}>
                         <Button
                           size="large"
                           block
                           htmlType="button"
-                          icon={<FileExcelOutlined />}
+                          icon={<FileExcelOutlined />} 
                           // onClick={() => {
                           //   isOpen
                           //     ? downLoadFileBlob(
@@ -742,94 +853,42 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           //         "GET"
                           //       );
                           // }}
-                        >
-                          Descargar nómina
+                        > Descargar nómina
                         </Button>
-                      </Col>
+                      </Col> */}
 
-                      {personKeys && personKeys.length > 0 && (
-                        <Col md={5} offset={1}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() => (
-                              setInfoGenericModal({
-                                title: `Calcular ${
-                                  movementType === 2
-                                    ? "finiquito"
-                                    : "liquidacion"
-                                }`,
-                                title_message: "Selecciona una fecha de salida",
-                                description:
-                                  "Fecha de salida requerida para el calculo que quiere realizar.",
-                                type_alert: "warning",
-                                title_message: "Fecha de salida",
+                      {personKeys &&
+                        personKeys.length > 0 &&
+                        objectSend &&
+                        step == 0 && (
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              onClick={() => calculateExtra()}
+                            >
+                              Calcular
+                            </Button>
+                          </Col>
+                        )}
 
-                                closeButton: "Cerrar",
-                                action: () => calculateExtra(),
-                                components: (
-                                  <>
-                                    <Row
-                                      style={{
-                                        width: "100%",
-                                        marginTop: "10px",
-                                      }}
-                                      justify="center"
-                                    >
-                                      <Form.Item
-                                        label="Fecha de pago"
-                                        style={{ width: "40%" }}
-                                      >
-                                        <DatePicker
-                                          defaultValue={moment(
-                                            periodSelected?.payment_date
-                                          )}
-                                          moment={"YYYY"}
-                                          id="departure_date"
-                                          placeholder="Fecha de pago."
-                                          locale={locale}
-                                        />
-                                      </Form.Item>
-                                    </Row>
-                                  </>
-                                ),
-                              }),
-                              setGenericModal(true)
-                            )}
-                          >
-                            Calcular
-                          </Button>
-                        </Col>
-                      )}
-
-                      {/* {payroll.length > 0 && !genericModal && (
+                      {step >= 1 && consolidatedObj && (
                         <>
-                          {consolidated && (
-                            <>
-                              <Col md={5} offset={1}>
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<FileExcelOutlined />}
-                                  htmlType="button"
-                                  // onClick={() =>
-                                  //   downLoadFileBlob(
-                                  //     `${getDomain(
-                                  //       API_URL_TENANT
-                                  //     )}/payroll/consolidated-payroll-report?period=${
-                                  //       periodSelected.id
-                                  //     }`,
-                                  //     "hoja_rayas.xlsx",
-                                  //     "GET"
-                                  //   )
-                                  // }
-                                >
-                                  Descargar hoja de raya
-                                </Button>
-                              </Col>
-                            </>
-                          )}
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              icon={<LockOutlined />}
+                              htmlType="button"
+                              onClick={() => sendClosePayroll()}
+                            >
+                              Cerrar nómina
+                            </Button>
+                          </Col>
+                        </>
+                      )}
+                      {/* 
 
                           
                           {step == 2 &&
@@ -980,25 +1039,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   <>
                     <Table
                       className="headers_transparent"
-                      dataSource={extraOrdinaryPayroll.map((item) => {
-                        item.key = item?.person.id;
-                        return item;
-                      })}
+                      dataSource={extraOrdinaryPayroll}
                       columns={persons}
                       expandable={{
                         expandedRowRender: (item) => renderConceptsTable(item),
                         expandIcon: ({ expanded, onExpand, record }) =>
                           ExpandedFunc(expanded, onExpand, record),
-
-                        // expanded ? (
-                        //   <DownOutlined
-                        //     onClick={(e) => onExpand(record, e)}
-                        //   />
-                        // ) : (
-                        //   <RightOutlined
-                        //     onClick={(e) => onExpand(record, e)}
-                        //   />
-                        // ),
                       }}
                       hideExpandIcon
                       loading={loading}
@@ -1054,7 +1100,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           person_id={personId}
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
-          sendCalculatePayroll={setObjectSend}
+          sendCalculatePayroll={setPayrollCalculate}
         />
       )}
       {genericModal && (

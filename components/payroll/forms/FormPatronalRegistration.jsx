@@ -18,6 +18,7 @@ const FormPatronalRegistration = ({
   patronalRegistration = {},
   pushed,
   currentNodeId,
+  imssDelegation = null,
   ...props
 }) => {
   const [information, setInformation] = useState(null);
@@ -53,6 +54,12 @@ const FormPatronalRegistration = ({
   const changeImssDelegation = (value) => {
     setImssDelegationId(value);
   };
+
+  useEffect(() => {
+    if (imssDelegation) {
+      setImssDelegationId(imssDelegation);
+    }
+  }, [imssDelegation]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -111,10 +118,10 @@ const FormPatronalRegistration = ({
           <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation changeImssDelegation={changeImssDelegation} />
+          <SelectImssDelegation rules={[ruleRequired]} changeImssDelegation={changeImssDelegation} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation imssDelegationId={imssDelegationId} />
+          <SelectImssSubdelegation rules={[ruleRequired]} imssDelegationId={imssDelegationId} />
         </Col>
       </Row>
     </Form>
