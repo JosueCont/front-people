@@ -18,6 +18,7 @@ const FormPatronalRegistration = ({
   patronalRegistration = {},
   pushed,
   currentNodeId,
+  imssDelegation = null,
   ...props
 }) => {
   const [information, setInformation] = useState(null);
@@ -53,6 +54,12 @@ const FormPatronalRegistration = ({
   const changeImssDelegation = (value) => {
     setImssDelegationId(value);
   };
+
+  useEffect(() => {
+    if (imssDelegation) {
+      setImssDelegationId(imssDelegation);
+    }
+  }, [imssDelegation]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
