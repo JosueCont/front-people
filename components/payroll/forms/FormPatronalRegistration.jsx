@@ -118,10 +118,10 @@ const FormPatronalRegistration = ({
           <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation changeImssDelegation={changeImssDelegation} />
+          <SelectImssDelegation rules={[ruleRequired]} changeImssDelegation={changeImssDelegation} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation imssDelegationId={imssDelegationId} />
+          <SelectImssSubdelegation rules={[ruleRequired]} imssDelegationId={imssDelegationId} />
         </Col>
       </Row>
     </Form>
