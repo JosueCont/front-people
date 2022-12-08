@@ -237,7 +237,14 @@ const MainLayoutUser = ({
           config={props.config}
         />
         <Layout>
-        
+          {!hideMenu && props.currentNode && (
+              <MainSiderUser
+                currentKey={currentKey}
+                defaultOpenKeys={
+                  props.defaultOpenKeys ? props.defaultOpenKeys : null
+                }
+              />
+            )}
           <Content>
             <div className="div-main-layout">{props.children}</div>
           </Content>
