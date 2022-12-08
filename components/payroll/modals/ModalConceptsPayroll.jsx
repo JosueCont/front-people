@@ -248,21 +248,23 @@ const ModalConceptsPayroll = ({
       "🚀 ~ file: ModalConceptsPayroll.jsx:302 ~ payroll.map ~ payroll",
       payroll
     );
-    if (
-      departureDate == undefined ||
-      departureDate == null ||
-      departureDate == ""
-    ) {
-      message.error("Debe seleccionar una fecah de salida");
-      return;
-    }
-    if (
-      motiveDeparture == undefined ||
-      motiveDeparture == null ||
-      motiveDeparture == ""
-    ) {
-      message.error("Debe esribir un motivo de salida");
-      return;
+    if (extraOrdinary) {
+      if (
+        departureDate == undefined ||
+        departureDate == null ||
+        departureDate == ""
+      ) {
+        message.error("Debe seleccionar una fecah de salida");
+        return;
+      }
+      if (
+        motiveDeparture == undefined ||
+        motiveDeparture == null ||
+        motiveDeparture == ""
+      ) {
+        message.error("Debe esribir un motivo de salida");
+        return;
+      }
     }
     let data = [];
     payroll.map((item) => {
