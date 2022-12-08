@@ -156,7 +156,10 @@ class WebApiPayroll {
   }
 
   static downloadRenegationCart(id) {
-    return WebApi.ApisType(`/payroll/resignation-letter?person_id=${id}`, 'get')
+    return WebApi.ApisType(
+      `/payroll/resignation-letter?person_id=${id}`,
+      "get"
+    );
   }
 
   static getPayrollList(data) {
@@ -191,65 +194,103 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/infonavit-credit`, "post", data);
   }
 
-  static getUserCredits(id){
-    return WebApi.ApisType(`payroll/infonavit-credit?person=${id}`, 'get')
+  static getUserCredits(id) {
+    return WebApi.ApisType(`payroll/infonavit-credit?person=${id}`, "get");
   }
 
   static saveIMSSInfonavit(data) {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
 
-  static editIMSSInfonavit(imssId, data){
+  static editIMSSInfonavit(imssId, data) {
     return WebApi.ApisType(`payroll/imss-person/${imssId}/`, "patch", data);
   }
 
-  static addInfonavit(data){
-    return WebApi.ApisType('payroll/person-infonavit-credit/', 'post', data)
+  static addInfonavit(data) {
+    return WebApi.ApisType("payroll/person-infonavit-credit/", "post", data);
   }
 
-  static editInfonavit(creditId, data){
-    return WebApi.ApisType(`payroll/person-infonavit-credit/${creditId}/`, 'put', data)
+  static editInfonavit(creditId, data) {
+    return WebApi.ApisType(
+      `payroll/person-infonavit-credit/${creditId}/`,
+      "put",
+      data
+    );
   }
 
   static extraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 
-  static setSalaryModification(data){
-    return WebApi.ApisType('/payroll/payroll-person/salary_modification/', "post", data)
+  static setSalaryModification(data) {
+    return WebApi.ApisType(
+      "/payroll/payroll-person/salary_modification/",
+      "post",
+      data
+    );
   }
 
-  static getMovementsIMSSLog(node, reg_patronal=''){
-    return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}`,'get')
+  static getMovementsIMSSLog(node, reg_patronal = "") {
+    return WebApi.ApisType(
+      `/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}`,
+      "get"
+    );
   }
 
-  static getPersonalCredits(id){
-    return WebApi.ApisType(`/payroll/imss-person/get_imss_person?person=${id}`, 'get')
+  static getPersonalCredits(id) {
+    return WebApi.ApisType(
+      `/payroll/imss-person/get_imss_person?person=${id}`,
+      "get"
+    );
   }
 
-  static importSalaryModification(data){
+  static importSalaryModification(data) {
     //payroll/payroll-person/import_salary_modification/
-    return WebApi.ApisType(`/payroll/payroll-person/import_salary_modification/`, 'post', data)
+    return WebApi.ApisType(
+      `/payroll/payroll-person/import_salary_modification/`,
+      "post",
+      data
+    );
   }
 
-  static importIMSSPerson(data){
+  static importIMSSPerson(data) {
     //payroll/payroll-person/import_salary_modification/
-    return WebApi.ApisType(`/payroll/imss-person/import_imss_person/`, 'post', data)
+    return WebApi.ApisType(
+      `/payroll/imss-person/import_imss_person/`,
+      "post",
+      data
+    );
   }
-
 
   static getIMSSMovements(node, patronal_registration) {
-    return WebApi.ApisType(`/payroll/affiliate-movements?node=${node}&patronal_registration=${patronal_registration}`, "get"
-    )
+    return WebApi.ApisType(
+      `/payroll/affiliate-movements?node=${node}&patronal_registration=${patronal_registration}`,
+      "get"
+    );
   }
 
-  static generateDispmagORSendMovement(type,regPatronal,listPeople=[], method=2){
+  static generateDispmagORSendMovement(
+    type,
+    regPatronal,
+    listPeople = [],
+    method = 2
+  ) {
     let data = {
-      type, patronal_id: regPatronal, list: listPeople, method
-    }
-    return WebApi.ApisType(`payroll/sua-movements`, "post", data)
+      type,
+      patronal_id: regPatronal,
+      list: listPeople,
+      method,
+    };
+    return WebApi.ApisType(`payroll/sua-movements`, "post", data);
   }
 
+  static consolidatedExtraordinaryPayroll(data) {
+    return WebApi.ApisType(
+      "/payroll/consolidated-extraordinary-payroll",
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPayroll;
