@@ -581,11 +581,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       movement_type: movementType,
     })
       .then((response) => {
-        // sendCalculatePayroll({ payment_period: periodSelected.id });
-        // setTimeout(() => {
-        //   message.success(messageSaveSuccess);
-        setLoading(false);
-        // }, 1000);
+        sendCalculateExtraordinaryPayrroll({
+          payment_period: periodSelected.id,
+          movement_type: movementType,
+        });
+        setTimeout(() => {
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        }, 1000);
       })
       .catch((error) => {
         setLoading(false);
