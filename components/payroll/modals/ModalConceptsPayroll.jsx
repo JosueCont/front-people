@@ -254,7 +254,7 @@ const ModalConceptsPayroll = ({
         departureDate == null ||
         departureDate == ""
       ) {
-        message.error("Debe seleccionar una fecah de salida");
+        message.error("Debe seleccionar una fecha de salida");
         return;
       }
       if (

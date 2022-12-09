@@ -16,6 +16,7 @@ import {
   Spin,
   Steps,
   Table,
+  Tag,
   Typography,
 } from "antd";
 import {
@@ -25,8 +26,12 @@ import {
   UserOutlined,
   LockOutlined,
   SearchOutlined,
+  UnlockOutlined,
+  FileDoneOutlined,
+  ExclamationCircleOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
 import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
@@ -34,10 +39,16 @@ import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
-import { messageError, optionMovement } from "../../../utils/constant";
+import {
+  messageError,
+  messageSaveSuccess,
+  optionMovement,
+} from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
+import moment, { locale } from "moment";
+import CfdiVaucher from "../../../components/payroll/cfdiVaucher";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -54,7 +65,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [extraOrdinaryPayroll, setExtraOrdinaryPayroll] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
-  const [totalBonus, setTotalBonus] = useState(null);
+  const [totalPayment, setTotalPayment] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [netPay, setNetPay] = useState(null);
   const [isOpen, setIsOpen] = useState(true);
@@ -90,6 +101,23 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       render: (item) => (
         <div>
           <Space>
+            {item.payroll_cfdi_person && (
+              <Tag
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+              >
+                {item.payroll_cfdi_person.status === 1 ? (
+                  <>
+                    <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Sin timbrar
+                  </>
+                ) : (
+                  <>
+                    <CheckCircleOutlined style={{ marginRight: "2px" }} />
+                    Timbrado
+                  </>
+                )}
+              </Tag>
+            )}
             <Avatar
               icon={<UserOutlined />}
               src={
@@ -408,7 +436,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       resetState();
       return;
     }
-    setTotalBonus(null);
+    setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
@@ -423,7 +451,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     sendCalculateExtraordinaryPayrroll({
       payment_period: period.id,
       calendar: value,
-      movementType: movementType,
+      movement_type: movementType,
     });
   };
 
@@ -432,23 +460,41 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setExtraOrdinaryPayroll([]);
     setCalendarSelect(null);
     setPeriodSelcted(null);
-    setTotalBonus(null);
+    setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
     setMovementType(null);
     setConsolidatedObj(null);
   };
 
+  const resetStateViews = () => {
+    setExtraOrdinaryPayroll([]);
+    setTotalPayment(null);
+    setTotalIsr(null);
+    setNetPay(null);
+    setConsolidatedObj(null);
+    setConsolidated(null);
+    setStep(0);
+    setIsOpen(true);
+    setObjectSend(null);
+    setPersonKeys([]);
+    setPersonId(null);
+    setListPersons([]);
+  };
+
   const sendCalculateExtraordinaryPayrroll = async (data) => {
     if (!movementType) return;
+    data.calendar = calendarSelect.id;
     setLoading(true);
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
+        console.log("🚀 ~ file: index.jsx:451 ~ .then ~ response", response);
         if (response.data.consolidated) {
           setConsolidated(response.data.consolidated);
           setIsOpen(response.data.consolidated.is_open);
           setExtraOrdinaryPayroll(response.data.payroll);
+          validatedStatusPayroll(response.data.consolidated);
         } else {
           setConsolidatedObj(response.data);
           if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
@@ -490,6 +536,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       setPersonKeys(selectedRowKeys);
       setListPersons(selectedRows);
     },
+
+    getCheckboxProps: (record) => ({
+      disabled:
+        record.payroll_cfdi_person && record.payroll_cfdi_person.status == 2,
+    }),
   };
 
   useEffect(() => {
@@ -513,10 +564,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const calculateExtra = () => {
-    console.log(
-      "🚀 ~ file: index.jsx:527 ~ calculateExtra ~ objectSend",
-      objectSend
-    );
     const objSend = objectSend.payroll.filter((item) => item.departure_date);
     if (objSend.length == 0) {
       message.error(
@@ -524,41 +571,31 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       );
       return;
     }
-    console.log("🚀 ~ file: index.jsx:529 ~ calculateExtra ~ objSend", objSend);
     sendCalculateExtraordinaryPayrroll({
       list: objSend,
-      // ? objectSend.payroll
-      // : listPersons.map((item) => {
-      //     return { person_id: item.key };
-      //   }),
-      // departure_date: departureDate.value,
-      movementType: movementType,
+      movement_type: movementType,
       calendar: calendarSelect.id,
       payment_period: periodSelected.id,
     });
-    // } else {
-    //   message.error("Se requeiere una fecha de pago");
-    // }
   };
 
   const sendClosePayroll = () => {
-    console.log(
-      "🚀 ~ file: index.jsx:548 ~ sendClosePayroll ~ consolidatedObj",
-      consolidatedObj
-    );
     // setGenericModal(false);
-    // setLoading(true);
+    setLoading(true);
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
       payroll: consolidatedObj,
       movement_type: movementType,
     })
       .then((response) => {
-        // sendCalculatePayroll({ payment_period: periodSelected.id });
-        // setTimeout(() => {
-        //   message.success(messageSaveSuccess);
-        setLoading(false);
-        // }, 1000);
+        sendCalculateExtraordinaryPayrroll({
+          payment_period: periodSelected.id,
+          movement_type: movementType,
+        });
+        setTimeout(() => {
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        }, 1000);
       })
       .catch((error) => {
         setLoading(false);
@@ -574,6 +611,36 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     console.log("🚀 ~ file: index.jsx:572 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
+  };
+
+  const validatedStatusPayroll = (data) => {
+    console.log(data);
+    if (data === null) {
+      setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
+      return;
+    }
+    setIsOpen(data.is_open);
+
+    if (data.status === 1 && data.is_open) {
+      setStep(1), setPreviuosStep(true), setNextStep(false);
+      return;
+    }
+    if (data.status === 1 && !data.is_open) {
+      setStep(2), setPreviuosStep(false), setNextStep(false);
+      return;
+    }
+    if (data.status === 2 && data.is_open) {
+      setStep(1), setPreviuosStep(true), setNextStep(true);
+      return;
+    }
+    if (data.status === 2) {
+      setStep(2), setPreviuosStep(false), setNextStep(true);
+      return;
+    }
+    if (data.status === 3 && !data.is_open) {
+      setStep(3), setPreviuosStep(true), setNextStep(false);
+      return;
+    }
   };
 
   const changeStep = (next_prev) => {
@@ -619,6 +686,235 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  const stampPayroll = (
+    data = {
+      payment_period: periodSelected.id,
+      movement_type: movementType,
+      payroll_type: "E",
+    }
+  ) => {
+    if (listPersons.length > 0)
+      data = {
+        payment_period: periodSelected.id,
+        array_cfdi: listPersons.map((item) => {
+          return item.payroll_cfdi_person.id;
+        }),
+      };
+    const inputPaymentDate = document.getElementById("payment_date");
+    if (inputPaymentDate.value != null && inputPaymentDate.value != "") {
+      data.pay_date = inputPaymentDate.value;
+      // if (department) data.department = department;
+      // if (job) data.job = job;
+      setGenericModal(false);
+      console.log("🚀 ~ file: index.jsx:641 ~ data", data);
+      setLoading(true);
+      WebApiPayroll.stampPayroll(data)
+        .then((response) => {
+          setLoading(false);
+          setMessageModal(4);
+          message.success(messageSendSuccess);
+          sendCalculateExtraordinaryPayrroll({
+            payment_period: periodSelected.id,
+            movement_type: movementType,
+          });
+        })
+        .catch(async (error) => {
+          console.log(error);
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            setMessageModal(1, error.response.data.message);
+            setGenericModal(true);
+          } else message.error(messageError);
+          setLoading(false);
+        });
+    } else {
+      message.error("Se requeiere una fecha de pago");
+    }
+  };
+
+  const setMessageModal = (type, data) => {
+    switch (type) {
+      case 1:
+        setInfoGenericModal({
+          title: data.toLowerCase().includes("fiscal information")
+            ? "Información fiscal"
+            : data.toLowerCase().includes("fiscal address")
+            ? "Dirección fiscal"
+            : data.toLowerCase().includes("folios")
+            ? "Folios"
+            : "Error",
+
+          title_message: data.toLowerCase().includes("fiscal information")
+            ? "Información fiscal faltante"
+            : data.toLowerCase().includes("fiscal address")
+            ? "Dirección fiscal faltante"
+            : data.toLowerCase().includes("folios")
+            ? "Folios insuficientes"
+            : "Error",
+          description: data.toLowerCase().includes("fiscal information")
+            ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
+            : data.toLowerCase().includes("fiscal address")
+            ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
+            : data.toLowerCase().includes("folios")
+            ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
+            : data,
+          type_alert: data.toLowerCase().includes("error")
+            ? "error"
+            : "warning",
+          action: () =>
+            data.toLowerCase().includes("fiscal information") ||
+            data.toLowerCase().includes("fiscal address")
+              ? router.push({
+                  pathname: `/business/${props.currentNode.id}`,
+                  query: {
+                    tab: 2,
+                  },
+                })
+              : setGenericModal(false),
+          title_action_button:
+            data.toLowerCase().includes("fiscal information") ||
+            data.toLowerCase().includes("fiscal address")
+              ? "Ver información fiscal"
+              : "Continuar",
+        });
+        break;
+      case 2:
+        setInfoGenericModal({
+          title: "Cerrar nómina",
+          title_message: "¿Esta seguro de cerrar la nómina?",
+          description:
+            "Una vez cerrada la nómina no podra realizar cambios o modificaciones.",
+          type_alert: "warning",
+          action: () => sendClosePayroll(),
+          title_action_button: "Sí, cerrar nómina",
+        });
+        setGenericModal(true);
+        break;
+      case 3:
+        setInfoGenericModal({
+          title: "Timbrar nómina",
+          title_message: "¿Esta seguro de timbrar la nómina?",
+          description:
+            "Verifica que la fecha de pago sea correcta, se emitiran todos los cfdi correspondientes ante el SAT.",
+          type_alert: "warning",
+          action: () => stampPayroll(),
+          components: (
+            <>
+              <Row
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                }}
+                justify="center"
+              >
+                <Form.Item label="Fecha de pago" style={{ width: "40%" }}>
+                  <DatePicker
+                    defaultValue={moment(periodSelected.payment_date)}
+                    moment={"YYYY"}
+                    id="payment_date"
+                    placeholder="Fecha de pago."
+                    locale={locale}
+                  />
+                </Form.Item>
+              </Row>
+            </>
+          ),
+          title_action_button: "Sí, timbrar",
+        });
+        setGenericModal(true);
+        break;
+      case 4:
+        setInfoGenericModal({
+          title: "Timbrado de nómina",
+          title_message: "Timbrado de nómina exitoso",
+          description:
+            "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
+          type_alert: "success",
+
+          closeButton: "Cerrar",
+          title_action_button: "Ver comprobantes",
+          viewActionButton: false,
+        });
+        setGenericModal(true);
+        break;
+      case 5:
+        setInfoGenericModal({
+          title: data.title,
+          title_message: data.title_message,
+          description: data.description,
+          type_alert: data.type_alert,
+          action: data.action,
+          title_action_button: data.title_action_button,
+          viewActionButton: data.viewActionButton,
+          components: data.components,
+        });
+        setGenericModal(true);
+        break;
+    }
+
+    return;
+  };
+
+  const cancelOneStamp = (data) => {
+    setMessageModal(5, {
+      title: "Cancelar nómina",
+      description:
+        "Al cancelar se debera timbrar un nuevo cfdi. Para poder completar la cancelación es necesario capturar el motivo por el cual se cancela.",
+      type_alert: "warning",
+      action: () =>
+        cfdiCancel.length > 0 ? cancelStamp(2) : cancelStamp(3, data),
+      title_action_button: "Cancelar cfdi",
+      components: (
+        <>
+          <Row
+            style={{
+              width: "100%",
+              marginTop: "5px",
+            }}
+          >
+            <Input.TextArea
+              maxLength={290}
+              id="motive"
+              placeholder="Capture el motivo de cancelacion."
+            />
+          </Row>
+        </>
+      ),
+    });
+  };
+
+  const cancelStamp = (type, id = null) => {
+    const inputMotive = document.getElementById("motive");
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
+      setLoading(true);
+      setGenericModal(false);
+      let data = {
+        motive: inputMotive.value.trim(),
+        payment_period: periodSelected.id,
+      };
+      if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
+      else if (type == 3) data.cfdis_id = [id];
+      WebApiPayroll.cancelCfdi(data)
+        .then((response) => {
+          message.success(messageUpdateSuccess);
+          extraOrdinaryPayroll({
+            payment_period: periodSelected.id,
+            movement_type: movementType,
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          message.error(messageError);
+        });
+    } else {
+      setLoading(false);
+      message.warning("Motivo requerido");
+    }
+  };
+
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Global
@@ -657,8 +953,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       />
       <MainLayout
         currentKey={["extraordinaryPayroll"]}
-        defaultOpenKeys={["managementRH","payroll"]}
-        >
+        defaultOpenKeys={["managementRH", "payroll"]}
+      >
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}
@@ -727,14 +1023,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                // sendCalculatePayroll({
-                                //   payment_period: value,
-                                // }),
-                                //   setPeriodSelcted(
-                                //     calendarSelect.periods.find(
-                                //       (p) => p.id == value
-                                //     )
-                                //   );
+                                resetStateViews(),
+                                  sendCalculateExtraordinaryPayrroll({
+                                    payment_period: value,
+                                    movement_type: movementType,
+                                    calendar: calendarSelect.id,
+                                  }),
+                                  setPeriodSelcted(
+                                    calendarSelect.periods.find(
+                                      (p) => p.id == value
+                                    )
+                                  );
                               }}
                               options={
                                 calendarSelect
@@ -873,7 +1172,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         )}
 
-                      {step >= 1 && consolidatedObj && (
+                      {step >= 1 && consolidatedObj && isOpen && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
@@ -888,67 +1187,64 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {/* 
+                      {step == 2 &&
+                        consolidated &&
+                        consolidated.status <= 2 && (
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              icon={<UnlockOutlined />}
+                              htmlType="button"
+                              // onClick={() =>
+                              //   setMessageModal(5, {
+                              //     title: "Abrir nómina",
+                              //     description:
+                              //       "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                              //     type_alert: "warning",
+                              //     action: () => openPayroll(1),
+                              //     title_action_button: "Abrir nómina",
+                              //     components: (
+                              //       <>
+                              //         <Row
+                              //           style={{
+                              //             width: "100%",
+                              //             marginTop: "5px",
+                              //           }}
+                              //         >
+                              //           <Input.TextArea
+                              //             maxLength={290}
+                              //             id="motive"
+                              //             placeholder="Capture el motivo de reapertura."
+                              //           />
+                              //         </Row>
+                              //       </>
+                              //     ),
+                              //   })
+                              // }
+                            >
+                              Abrir
+                            </Button>
+                          </Col>
+                        )}
+                      {step == 2 && consolidated && consolidated.status < 3 && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            icon={<FileDoneOutlined />}
+                            htmlType="button"
+                            onClick={() => setMessageModal(3)}
+                          >
+                            Timbrar nómina
+                          </Button>
+                        </Col>
+                      )}
 
-                          
-                          {step == 2 &&
-                            consolidated &&
-                            consolidated.status <= 2 && (
-                              <Col md={5} offset={1}>
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<UnlockOutlined />}
-                                  htmlType="button"
-                                  // onClick={() =>
-                                  //   setMessageModal(5, {
-                                  //     title: "Abrir nómina",
-                                  //     description:
-                                  //       "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                  //     type_alert: "warning",
-                                  //     action: () => openPayroll(1),
-                                  //     title_action_button: "Abrir nómina",
-                                  //     components: (
-                                  //       <>
-                                  //         <Row
-                                  //           style={{
-                                  //             width: "100%",
-                                  //             marginTop: "5px",
-                                  //           }}
-                                  //         >
-                                  //           <Input.TextArea
-                                  //             maxLength={290}
-                                  //             id="motive"
-                                  //             placeholder="Capture el motivo de reapertura."
-                                  //           />
-                                  //         </Row>
-                                  //       </>
-                                  //     ),
-                                  //   })
-                                  // }
-                                >
-                                  Abrir
-                                </Button>
-                              </Col>
-                            )}
+                      {/* 
                           {step >= 1 && (
                             <>
-                              {((isOpen &&
-                                consolidated &&
-                                consolidated.status <= 2) ||
-                                (isOpen && !consolidated)) && (
-                                <Col md={5} offset={1}>
-                                  <Button
-                                    size="large"
-                                    block
-                                    icon={<LockOutlined />}
-                                    htmlType="button"
-                                    onClick={() => setMessageModal(2)}
-                                  >
-                                    Cerrar nómina
-                                  </Button>
-                                </Col>
-                              )}
+                             
                               {step == 2 &&
                                 consolidated &&
                                 consolidated.status < 3 && (
@@ -1027,62 +1323,69 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 </div>
 
                 <Card className="card_table">
-                  {/* {step == 3 ? (
-              <CfdiVaucher
-                calendar={calendarSelect.id}
-                period={periodSelected.id}
-                viewFilter={false}
-                setKeys={setCfdiCancel}
-                clickCancelStamp={cancelOneStamp}
-              />
-            ) : ( */}
-                  <>
-                    <Table
-                      className="headers_transparent"
-                      dataSource={extraOrdinaryPayroll}
-                      columns={persons}
-                      expandable={{
-                        expandedRowRender: (item) => renderConceptsTable(item),
-                        expandIcon: ({ expanded, onExpand, record }) =>
-                          ExpandedFunc(expanded, onExpand, record),
-                      }}
-                      hideExpandIcon
-                      loading={loading}
-                      locale={{
-                        emptyText: loading
-                          ? "Cargando..."
-                          : "No se encontraron resultados.",
-                      }}
-                      rowSelection={
-                        movementType === 2 || movementType === 3
-                          ? rowSelectionPerson
-                          : null
-                      }
+                  {step == 3 ? (
+                    <CfdiVaucher
+                      calendar={calendarSelect.id}
+                      period={periodSelected.id}
+                      viewFilter={false}
+                      setKeys={setCfdiCancel}
+                      clickCancelStamp={cancelOneStamp}
+                      movementType={movementType}
                     />
-                    {totalBonus != null && totalIsr != null ? (
-                      <Col sm={24} md={24} lg={24}>
-                        <Row justify="end">
-                          <Col span={4} style={{ fontWeight: "bold" }}>
-                            <div>Total de aguinaldos:</div>
-                            <div>Total de ISR:</div>
-                            <div>Total a pagar:</div>
-                          </Col>
-                          <Col span={3} style={{ fontWeight: "bold" }}>
-                            <div>
-                              <NumberFormat prefix={"$"} number={totalBonus} />
-                            </div>
-                            <div>
-                              <NumberFormat prefix={"$"} number={totalIsr} />
-                            </div>
-                            <div>
-                              <NumberFormat prefix={"$"} number={netPay} />
-                            </div>
-                          </Col>
-                        </Row>
-                      </Col>
-                    ) : null}
-                  </>
-                  {/* )} */}
+                  ) : (
+                    <>
+                      <Table
+                        className="headers_transparent"
+                        dataSource={extraOrdinaryPayroll}
+                        columns={persons}
+                        expandable={{
+                          expandedRowRender: (item) =>
+                            renderConceptsTable(item),
+                          expandIcon: ({ expanded, onExpand, record }) =>
+                            ExpandedFunc(expanded, onExpand, record),
+                        }}
+                        hideExpandIcon
+                        loading={loading}
+                        locale={{
+                          emptyText: loading
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                        rowSelection={
+                          movementType === 2 || movementType === 3
+                            ? rowSelectionPerson
+                            : movementType == 1 && step == 2
+                            ? rowSelectionPerson
+                            : null
+                        }
+                      />
+                      {totalPayment != null && totalIsr != null ? (
+                        <Col sm={24} md={24} lg={24}>
+                          <Row justify="end">
+                            <Col span={4} style={{ fontWeight: "bold" }}>
+                              <div>Total de sueldos:</div>
+                              <div>Total de ISR:</div>
+                              <div>Total a pagar:</div>
+                            </Col>
+                            <Col span={3} style={{ fontWeight: "bold" }}>
+                              <div>
+                                <NumberFormat
+                                  prefix={"$"}
+                                  number={totalPayment}
+                                />
+                              </div>
+                              <div>
+                                <NumberFormat prefix={"$"} number={totalIsr} />
+                              </div>
+                              <div>
+                                <NumberFormat prefix={"$"} number={netPay} />
+                              </div>
+                            </Col>
+                          </Row>
+                        </Col>
+                      ) : null}
+                    </>
+                  )}
                 </Card>
               </>
             )}
