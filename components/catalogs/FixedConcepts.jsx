@@ -550,7 +550,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                 </Col>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item name="datum" label="Valor" rules={[ruleRequired,{
-                    message: 'this is custom',
+                    message: 'Se requiere un valor mayor a 0',
                     validator: (_, value) => {
                       if (value>0) {
                         return Promise.resolve();
