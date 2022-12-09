@@ -3,7 +3,7 @@ import WebApiIntranet from "../api/WebApiIntranet";
 import WebApiBackdoor from "../api/webApiBackdoor";
 
 const initialData = {
-    showMessage: true,
+    showMessage: false,
     title: 'ejemplo',
     message : 'detal' +
         'le de ejemplo',
