@@ -39,7 +39,11 @@ import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
-import { messageError, optionMovement } from "../../../utils/constant";
+import {
+  messageError,
+  messageSaveSuccess,
+  optionMovement,
+} from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
@@ -463,8 +467,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setConsolidatedObj(null);
   };
 
+  const resetStateViews = () => {
+    setExtraOrdinaryPayroll([]);
+    setTotalPayment(null);
+    setTotalIsr(null);
+    setNetPay(null);
+    setConsolidatedObj(null);
+    setConsolidated(null);
+    setStep(0);
+    setIsOpen(true);
+    setObjectSend(null);
+    setPersonKeys([]);
+    setPersonId(null);
+    setListPersons([]);
+  };
+
   const sendCalculateExtraordinaryPayrroll = async (data) => {
     if (!movementType) return;
+    data.calendar = calendarSelect.id;
     setLoading(true);
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
@@ -551,30 +571,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       );
       return;
     }
-    console.log("🚀 ~ file: index.jsx:529 ~ calculateExtra ~ objSend", objSend);
     sendCalculateExtraordinaryPayrroll({
       list: objSend,
-      // ? objectSend.payroll
-      // : listPersons.map((item) => {
-      //     return { person_id: item.key };
-      //   }),
-      // departure_date: departureDate.value,
       movement_type: movementType,
       calendar: calendarSelect.id,
       payment_period: periodSelected.id,
     });
-    // } else {
-    //   message.error("Se requeiere una fecha de pago");
-    // }
   };
 
   const sendClosePayroll = () => {
-    console.log(
-      "🚀 ~ file: index.jsx:548 ~ sendClosePayroll ~ consolidatedObj",
-      consolidatedObj
-    );
     // setGenericModal(false);
-    // setLoading(true);
+    setLoading(true);
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
       payroll: consolidatedObj,
@@ -1016,14 +1023,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                // sendCalculatePayroll({
-                                //   payment_period: value,
-                                // }),
-                                //   setPeriodSelcted(
-                                //     calendarSelect.periods.find(
-                                //       (p) => p.id == value
-                                //     )
-                                //   );
+                                resetStateViews(),
+                                  sendCalculateExtraordinaryPayrroll({
+                                    payment_period: value,
+                                    movement_type: movementType,
+                                    calendar: calendarSelect.id,
+                                  }),
+                                  setPeriodSelcted(
+                                    calendarSelect.periods.find(
+                                      (p) => p.id == value
+                                    )
+                                  );
                               }}
                               options={
                                 calendarSelect
@@ -1162,7 +1172,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         )}
 
-                      {step >= 1 && consolidatedObj && (
+                      {step >= 1 && consolidatedObj && isOpen && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
@@ -1320,6 +1330,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       viewFilter={false}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
+                      movementType={movementType}
                     />
                   ) : (
                     <>
