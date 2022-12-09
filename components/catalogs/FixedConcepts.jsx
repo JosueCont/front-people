@@ -12,7 +12,7 @@ import {
   Modal,
   Select,
   Checkbox,
-  Tabs,
+  Tabs
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -109,7 +109,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                                 <span style={{ fontWeight: "bold" }}>
                                   Nombre:
                                 </span>
-                                {item.name}
+                                {' '} {item.name}
                               </Row>
                               <Row>
                                 <span style={{ fontWeight: "bold" }}>
@@ -269,9 +269,15 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item) => {
+    let checksValues = {}
+
+    console.log(item)
     data.map((a) => {
-      let checked = document.getElementById(a.name);
-      if (item[a.name]) checked.click();
+      if (item[a.name]){
+        checksValues[a.name] = true;
+      }else{
+        checksValues[a.name]=false;
+      }
     });
     setEdit(true);
     setId(item.id);
@@ -287,6 +293,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       deduction_type: item.deduction_type,
       other_payment_type: item.other_payment_type,
       "": item.perception_type ? 1 : item.deduction_type ? 2 : 3,
+      ...checksValues
     });
     setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
   };
@@ -482,7 +489,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       >
         <TabPane tab="Conceptos fijos" key={"1"}>
           {key == 1 && (
-            <Form layout={"vertical"} form={form} onFinish={onFinishForm}>
+            <Form layout={"vertical"}  style={{paddingTop:20}} form={form} onFinish={onFinishForm}>
               <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
@@ -542,8 +549,17 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} md={12}>
-                  <Form.Item name="datum" label="Valor" rules={[ruleRequired]}>
-                    <Input type={"number"} min={0}/>
+                  <Form.Item name="datum" label="Valor" rules={[ruleRequired,{
+                    message: 'this is custom',
+                    validator: (_, value) => {
+                      if (value>0) {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject('Se requiere un valor mayor a 0');
+                      }
+                    }
+                  }]}>
+                    <Input type={"number"} />
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} md={12}>
@@ -592,7 +608,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         <TabPane tab="Grupos" key={"2"}>
           {key == 2 && (
             <>
-              <Form layout={"vertical"} form={formG} onFinish={saveGroup}>
+              <Form style={{paddingTop:20}} layout={"vertical"} form={formG} onFinish={saveGroup}>
                 <Row gutter={20} style={{ marginBottom: "10px" }}>
                   <Col span={8}>
                     <Form.Item
@@ -604,7 +620,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item name="fixed_concept" label="Concepto">
+                    <Form.Item name="fixed_concept"  rules={[ruleRequired]} label="Concepto">
                       <Select
                         placeholder="Conceptos fijos"
                         style={{ width: "100%" }}
