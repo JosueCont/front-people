@@ -22,10 +22,13 @@ import HowToRegOutlinedIcon from '@material-ui/icons/HowToRegOutlined';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
+import { getCurrentURL } from "../utils/constant";
+import { urlSocial, urlSukha, urlMyAccount} from "../config/config";
 
 const { Sider, Header, Content, Footer } = Layout;
 
 const MainSider = ({
+  user,
   hideMenu,
   currentKey,
   defaultOpenKeys = null,
@@ -55,47 +58,51 @@ const MainSider = ({
 
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
-    const pathRoutes = {
-      business: "/business",
-      asign: "/config/assignedCompanies",
-      patronal: "/business/patronalRegistrationNode",
-      persons: "/home/persons",
-      groups_people: "/home/groups",
-      catalogs: "/config/catalogs",
-      securityGroups: "/config/groups",
-      releases: "/comunication/releases",
-      events: "/comunication/events",
-      reports: "/reports",
-      lending: "/lending",
-      holidays: "/holidays",
-      permission: "/permission",
-      incapacity: "/incapacity",
-      bank_accounts: "/bank_accounts",
-      calculatePayroll: "/payroll/calculatePayroll",
-      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
-      paymentCalendar: "/payroll/paymentCalendar",
-      payrollVoucher: "/payroll/payrollVoucher",
-      calculatorSalary: "/payroll/calculatorSalary",
-      integrationFactors: "/business/integrationFactors",
-      importMassivePayroll: "/payroll/importMasivePayroll",
-      imssMovements: "/payroll/imssMovements",
-      bulk_upload: "/bulk_upload",
-      documentsLog: "/log/documentsLog",
-      intranet_groups: "/intranet/groups",
-      assessment_groups: "/assessment/groups",
-      assessment_profiles: "/assessment/profiles",
-      assessment_reports: "/assessment/reports",
-      ynl_general_dashboard: "/ynl/general-dashboard",
-      ynl_personal_dashboard: "/ynl/personal-dashboard",
-      jb_clients: "/jobbank/clients",
-      jb_vacancies: "/jobbank/vacancies",
-      jb_strategies: "/jobbank/strategies",
-      jb_profiles: "/jobbank/profiles",
-      jb_candidates: "/jobbank/candidates",
-      jb_settings: "/jobbank/settings",
-      jb_publications: "/jobbank/publications"
-    };
-    router.push("#");
+    const pathRoutes = {};
+    switch (key){
+      case "sukha":
+        // const link1 = document.createElement('a');
+        // link1.href = "https://demo.sukhatv.com/";
+        // link1.target = '_blank';
+        // link1.click();
+
+        const token1 = user.jwt_data.metadata.at(-1).token;
+        // const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
+        const link1 = document.createElement('a');
+        link1.href = url1;
+        link1.target = '_blank';
+        link1.click();
+        break;
+      case "khorflix":
+        const link2 = document.createElement('a');
+        link2.href = "https://iu.khorflix.com/";
+        link2.target = '_blank';
+        link2.click();
+        break;
+      case "careerlab":
+        const link3 = document.createElement('a');
+        link3.href = "https://platform.careerlab.hiumanlab.com/";
+        link3.target = '_blank';
+        link3.click();
+        break;
+      case "connect":
+        const token4 = user.jwt_data.metadata.at(-1).token;
+        const url4 = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token4}`;
+        const link4 = document.createElement('a');
+        link4.href = url4;
+        link4.target = '_blank';
+        link4.click();
+      case "myEvaluation":
+        const token5 = user.jwt_data.metadata.at(-1).token;
+        const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
+        const link5 = document.createElement('a');
+        link5.href = url5;
+        link5.target = '_blank';
+        link5.click();
+      default:
+        router.push('#');
+    }
   };
 
   let items = [];
@@ -105,13 +112,13 @@ const MainSider = ({
   function getMenuItems() {
     if (typeof window !== "undefined") {
       // Estrategia y planeación
-      items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />))
+      // items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />))
 
       // Administración de RH
-      items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />))
+      // items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />))
 
       // Reclutamiento y selección
-      items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
+      // items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
 
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
@@ -122,22 +129,22 @@ const MainSider = ({
         getItem("Khorflix", "khorflix"),
         getItem("Sukha", "sukha"),
         getItem("Careerlab", "careerlab"),
-        getItem("Concieo", "concieo")
+        // getItem("Concieo", "concieo")
       ]
       items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
 
       // desempeño
-      items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
+      // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
       let children3 = [getItem("KHOR Connect", "connect")]
       items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
 
       // Analytics
-      items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
+      // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
 
       // Analytics
-      items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />))
+      // items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />))
     }
 
     return items;
@@ -541,6 +548,7 @@ const MainSider = ({
 
 const mapState = (state) => {
   return {
+    user: state.userStore.user,
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,

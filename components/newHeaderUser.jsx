@@ -27,6 +27,7 @@ import { logoutAuth } from "../libs/auth";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
+import CardApps from "./dashboards-cards/CardApp";
 
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
@@ -38,7 +39,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const [person, setPerson] = useState();
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
-  const [isAdmin, setIsAdmin] = useState();
+  const [isAdmin, setIsAdmin] = useState(false);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -63,8 +64,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
           console.log('person', response.data)
+          console.log('person', response.data.is_admin)
           setPerson(response.data);
-          setIsAdmin(localStorage.getItem('is_admin'));
+          if (response.data.is_admin || localStorage.getItem('is_admin')){
+            setIsAdmin(true)
+          }
+          // setIsAdmin(localStorage.getItem('is_admin'));
         })
         .catch((error) => {
           console.log(error);
@@ -100,7 +105,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <Row>
           <Col span={24} style={{ padding: 10 }}>
 
-          {localStorage.getItem('is_admin') == 'true' && (
+          {isAdmin && (
               <p
                 className="text-menu"
                 onClick={() => router.push("/home/persons")}
@@ -194,6 +199,18 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
+                  <Dropdown overlay={<CardApps is_admin={false}/>} key="dropdown_apps">
+                      <div key="menu_apps_content">
+                        <BsFillGrid3X3GapFill
+                          style={{
+                            color: "white",
+                            fontSize: 30,
+                            display: "flex",
+                            margin: "auto",
+                          }}
+                        />
+                      </div>
+                    </Dropdown>
                     <Dropdown overlay={userCardDisplay} key="dropdown_user">
                       <div key="menu_user_content">
                         <Avatar
