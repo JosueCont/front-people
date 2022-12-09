@@ -3,11 +3,12 @@ import WebApiIntranet from "../api/WebApiIntranet";
 import WebApiBackdoor from "../api/webApiBackdoor";
 
 const initialData = {
-    showMessage: false,
-    title: '',
-    message : '',
+    showMessage: true,
+    title: 'ejemplo',
+    message : 'detal' +
+        'le de ejemplo',
     level: 'info', // info, success, warning, danger,
-    type:2 // 1 = modal, 2= notification
+    type:1 // 1 = modal, 2= notification
 };
 
 //variables backddor

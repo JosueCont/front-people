@@ -58,9 +58,9 @@ const ModalGenericNotification = ({
       }
 
       if(modalData.level==='error'){
-          message.error(info);
+          Modal.error(info);
       }else if (modalData.level==='warning'){
-          message.warning(info)
+          Modal.warning(info)
       }else if(modalData.level==='success'){
           Modal.success(info)
       }else{
