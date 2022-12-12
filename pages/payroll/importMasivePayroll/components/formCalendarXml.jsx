@@ -168,6 +168,9 @@ const FormCaledanrXml = ({
                     moment={"YYYY-MM-DD"}
                     placeholder=""
                     locale={locale}
+                    onChange={(value, dateString) => {
+                      calendar.calendar.start_date = dateString;
+                    }}
                     disabledDate={disablePeriod}
                   />
                 </Form.Item>
@@ -183,6 +186,9 @@ const FormCaledanrXml = ({
                     moment={"YYYY-MM-DD"}
                     placeholder=""
                     locale={locale}
+                    onChange={(value, dateString) => {
+                      calendar.calendar.activation_date = dateString;
+                    }}
                     disabledDate={disableActivation}
                   />
                 </Form.Item>
