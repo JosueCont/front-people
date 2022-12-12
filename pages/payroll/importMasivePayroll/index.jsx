@@ -404,7 +404,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   return (
     <MainLayout
       currentKey={["importMassivePayroll"]}
-       defaultOpenKeys={["managementRH","payroll"]}
+      defaultOpenKeys={["managementRH", "payroll"]}
     >
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>
@@ -585,6 +585,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 company={xmlImport.companies[companySelect]}
                 paymentPeriodicity={props.payment_periodicity}
                 setPerson={setPerson}
+                periodicities
               />
 
               <Col span={24}>
