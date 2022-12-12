@@ -105,13 +105,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text>Editar perfil</Text>
             </p>
 
-            {/* <p
+            <p
               className="text-menu"
               onClick={() => router.push("/user")}
 
             >
               <Text>Cambiar a la vista de Usuario</Text>
-            </p> */}
+            </p>
 
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p
@@ -228,7 +228,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    <Dropdown overlay={<CardApps />} key="dropdown_apps">
+                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
                           style={{

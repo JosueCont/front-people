@@ -29,8 +29,9 @@ import {
 } from "../../utils/constant";
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import {showHideMessage} from "../../redux/NotificationDuck";
 
-const InternalConcepts = ({ permissions, currentNode, ...props }) => {
+const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
   const [edit, setEdit] = useState(false);
@@ -245,7 +246,17 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
       setEdit(false);
       setLoading(false);
       resetForm();
-      message.error("Ocurrio un error intente de nuevo.");
+      let  msg = "Ocurrio un error intente de nuevos.";
+      if(error.response?.data?.message){
+        msg = error.response?.data?.message
+      }
+
+      // showHideMessage(true, {
+      //   title:msg,
+      //   level:'error',
+      //   type:2
+      // })
+
     }
   };
 
@@ -543,4 +554,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { doFiscalCatalogs })(InternalConcepts);
+export default connect(mapState, { doFiscalCatalogs, showHideMessage })(InternalConcepts);
