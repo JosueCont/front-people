@@ -433,7 +433,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   // }, [optionspPaymentCalendars]);
 
   const changeCalendar = (value) => {
-    console.log("🚀 ~ file: index.jsx:436 ~ changeCalendar ~ value", value);
     if (!value) {
       resetState();
       return;
@@ -490,7 +489,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        console.log("🚀 ~ file: index.jsx:451 ~ .then ~ response", response);
         if (response.data.consolidated) {
           setConsolidated(response.data.consolidated);
           setIsOpen(response.data.consolidated.is_open);
@@ -545,6 +543,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
+    console.log(
+      "🚀 ~ file: index.jsx:549 ~ useEffect ~ movementType",
+      movementType
+    );
     if (movementType && calendarSelect) {
       resetStateViews();
       sendCalculateExtraordinaryPayrroll({
@@ -552,7 +554,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         calendar: calendarSelect.id,
         movement_type: movementType,
       });
-    }
+    } else if (movementType === undefined) resetState();
   }, [movementType]);
 
   useEffect(() => {
@@ -722,7 +724,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       // if (department) data.department = department;
       // if (job) data.job = job;
       setGenericModal(false);
-      console.log("🚀 ~ file: index.jsx:641 ~ data", data);
       setLoading(true);
       WebApiPayroll.stampPayroll(data)
         .then((response) => {

@@ -131,12 +131,9 @@ const SelectCompany = ({ ...props }) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
         if (router.query.company) {
-          //console.log("query",router.query.company);
-          //console.log("datalist",dataList);
           let filterQuery = data.filter(
             (item) => item.id === parseInt(router.query.company)
           );
-          //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
         } else {
           setLoading(false);
@@ -155,7 +152,6 @@ const SelectCompany = ({ ...props }) => {
   };
 
   const setCompanySelect = async (item, is_admin_people) => {
-    //console.log("valor seleccionado",item)
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     localStorage.setItem("data", item.id);
@@ -169,11 +165,11 @@ const SelectCompany = ({ ...props }) => {
 
             switch (router.query.type) {
               case "admin":
-                localStorage.setItem('is_admin', true);
+                localStorage.setItem("is_admin", true);
                 useRouter.push("home/persons");
                 break;
               case "user":
-                localStorage.setItem('is_admin', false);
+                localStorage.setItem("is_admin", false);
                 useRouter.push("/user");
                 break;
             }
@@ -192,9 +188,9 @@ const SelectCompany = ({ ...props }) => {
             }
           }
         } else {
-          if(is_admin_people || admin){
+          if (is_admin_people || admin) {
             useRouter.push("/home/persons");
-          }else{
+          } else {
             useRouter.push("/user");
           }
         }

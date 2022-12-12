@@ -35,7 +35,7 @@ const FormPatronalRegistration = ({
         setInformation(response.data);
       })
       .catch((error) => {
-        console.log("Error", error);
+        console.log(error);
       });
   };
 
@@ -118,10 +118,16 @@ const FormPatronalRegistration = ({
           <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation rules={[ruleRequired]} changeImssDelegation={changeImssDelegation} />
+          <SelectImssDelegation
+            rules={[ruleRequired]}
+            changeImssDelegation={changeImssDelegation}
+          />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation rules={[ruleRequired]} imssDelegationId={imssDelegationId} />
+          <SelectImssSubdelegation
+            rules={[ruleRequired]}
+            imssDelegationId={imssDelegationId}
+          />
         </Col>
       </Row>
     </Form>
