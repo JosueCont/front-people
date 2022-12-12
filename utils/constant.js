@@ -551,12 +551,17 @@ export const popupWindow = (url) => {
   }
 };
 
-export const getCurrentURL = (tenant = false) => {
+export const getCurrentURL = (tenant = false, getTenant = false) => {
   if (typeof window !== "undefined") {
     let url = window.location.href;
     if (tenant) {
       let link = url.split(".");
-      return link[0];
+      if (getTenant){
+        const tenantSolo = link[0].split("://")
+        return tenantSolo[1];
+      }else{
+        return link[0];
+      }
     } else {
       return url;
     }
