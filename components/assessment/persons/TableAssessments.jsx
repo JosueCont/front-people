@@ -327,7 +327,7 @@ const TableAssessments = ({
         return record?.group ? 
         <>
           <span>{record.group.name}</span>
-          { record?.list_groups &&
+          { record?.list_groups?.length >=2 &&
             <Tooltip title="Ver grupos de evaluaciones">
               <UnorderedListOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> modalGroups(record.list_groups)} />
             </Tooltip> 
