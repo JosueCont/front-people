@@ -114,7 +114,7 @@ const SelectCompany = ({ ...props }) => {
             } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              setCompanySelect(response.data.nodes[0]);
+              setCompanySelect(response.data.nodes[0], response.data.is_admin);
             }
         }
         setLoading(false);
@@ -151,7 +151,7 @@ const SelectCompany = ({ ...props }) => {
       });
   };
 
-  const setCompanySelect = async (item) => {
+  const setCompanySelect = async (item, is_admin_people) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     localStorage.setItem("data", item.id);
@@ -188,7 +188,11 @@ const SelectCompany = ({ ...props }) => {
             }
           }
         } else {
-          useRouter.push("home/persons");
+          if (is_admin_people || admin) {
+            useRouter.push("/home/persons");
+          } else {
+            useRouter.push("/user");
+          }
         }
       })
       .catch((error) => {
