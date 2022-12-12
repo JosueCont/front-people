@@ -130,7 +130,7 @@ const ImssInformationNode = ({
       })
       .catch((error) => {
         setLoadingData(false);
-        console.log("error", error);
+        console.log(error);
       });
   };
 

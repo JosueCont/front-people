@@ -271,7 +271,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const sendFiles = (data) => {
     WebApiPayroll.importPayrollMasiveXml(data)
       .then((response) => {
-        console.log("IMPORT XML-->>> ", response.data);
         setLoading(false);
         message.success(messageUploadSuccess);
         setXmlImport(response.data);
@@ -336,7 +335,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       form_data.append("export", "False");
       form_data.append("save", "True");
       form_data.append("payroll", JSON.stringify(xmlImport));
-      console.log("IMPORT SEND-->>", xmlImport);
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
           processResponseSave(response);
@@ -404,7 +402,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   return (
     <MainLayout
       currentKey={["importMassivePayroll"]}
-       defaultOpenKeys={["managementRH","payroll"]}
+      defaultOpenKeys={["managementRH", "payroll"]}
     >
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>

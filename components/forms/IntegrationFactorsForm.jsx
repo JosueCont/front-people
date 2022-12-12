@@ -83,7 +83,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
         }
       })
       .catch((error) => {
-        console.log("error", error);
+        console.log(error);
         setTimeout(() => {
           message.error("Configuración existente");
           setLoading(false);
@@ -107,7 +107,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
         }
       })
       .catch((error) => {
-        console.log("Error", error);
+        console.log(error);
         setTimeout(() => {
           message.error("Configuración existente");
           setLoading(false);
@@ -311,7 +311,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
           {/* <Form
               form={ formExcel }
               layout = 'vertical'
-              onFinish={ (values) => { console.log("Values", values) } }
+              onFinish={ (values) => { console.log(values) } }
             >
               <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
                 <Form.Item>
