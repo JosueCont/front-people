@@ -42,6 +42,7 @@ import { Global } from "@emotion/core";
 import {
   messageError,
   messageSaveSuccess,
+  messageSendSuccess,
   optionMovement,
 } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
@@ -424,14 +425,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
-  useEffect(() => {
-    if (optionspPaymentCalendars.length == 1) {
-      form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
-      changeCalendar(optionspPaymentCalendars[0].value);
-    }
-  }, [optionspPaymentCalendars]);
+  // useEffect(() => {
+  //   if (optionspPaymentCalendars.length == 1) {
+  //     form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
+  //     changeCalendar(optionspPaymentCalendars[0].value);
+  //   }
+  // }, [optionspPaymentCalendars]);
 
   const changeCalendar = (value) => {
+    console.log("🚀 ~ file: index.jsx:436 ~ changeCalendar ~ value", value);
     if (!value) {
       resetState();
       return;
@@ -447,11 +449,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     form.setFieldsValue({
       periodicity: calendar.periodicity.description,
       period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
-    });
-    sendCalculateExtraordinaryPayrroll({
-      payment_period: period.id,
-      calendar: value,
-      movement_type: movementType,
     });
   };
 
@@ -483,6 +480,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
+    console.log(
+      "🚀 ~ file: index.jsx:489 ~ sendCalculateExtraordinaryPayrroll ~ calendarSelect",
+      calendarSelect
+    );
     if (!movementType) return;
     data.calendar = calendarSelect.id;
     setLoading(true);
@@ -544,8 +545,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
-    if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
+    if (movementType && calendarSelect) {
+      resetStateViews();
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        calendar: calendarSelect.id,
+        movement_type: movementType,
+      });
+    }
   }, [movementType]);
+
+  useEffect(() => {
+    if (movementType && calendarSelect)
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        calendar: calendarSelect.id,
+        movement_type: movementType,
+      });
+  }, [calendarSelect]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
     if (movementType > 1 && record.working_days)
@@ -608,7 +625,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    console.log("🚀 ~ file: index.jsx:572 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
   };
@@ -1028,12 +1044,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                     payment_period: value,
                                     movement_type: movementType,
                                     calendar: calendarSelect.id,
-                                  }),
-                                  setPeriodSelcted(
-                                    calendarSelect.periods.find(
-                                      (p) => p.id == value
-                                    )
-                                  );
+                                  });
+                                setPeriodSelcted(
+                                  calendarSelect.periods.find(
+                                    (p) => p.id == value
+                                  )
+                                );
                               }}
                               options={
                                 calendarSelect
