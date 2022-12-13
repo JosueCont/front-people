@@ -114,7 +114,7 @@ const SelectCompany = ({ ...props }) => {
             } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              setCompanySelect(response.data.nodes[0]);
+              setCompanySelect(response.data.nodes[0], response.data.is_admin);
             }
         }
         setLoading(false);
@@ -131,12 +131,9 @@ const SelectCompany = ({ ...props }) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
         if (router.query.company) {
-          //console.log("query",router.query.company);
-          //console.log("datalist",dataList);
           let filterQuery = data.filter(
             (item) => item.id === parseInt(router.query.company)
           );
-          //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
         } else {
           setLoading(false);
@@ -154,8 +151,7 @@ const SelectCompany = ({ ...props }) => {
       });
   };
 
-  const setCompanySelect = async (item) => {
-    //console.log("valor seleccionado",item)
+  const setCompanySelect = async (item, is_admin_people) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     localStorage.setItem("data", item.id);
@@ -169,11 +165,11 @@ const SelectCompany = ({ ...props }) => {
 
             switch (router.query.type) {
               case "admin":
-                localStorage.setItem('is_admin', true);
+                localStorage.setItem("is_admin", true);
                 useRouter.push("home/persons");
                 break;
               case "user":
-                localStorage.setItem('is_admin', false);
+                localStorage.setItem("is_admin", false);
                 useRouter.push("/user");
                 break;
             }
@@ -192,7 +188,11 @@ const SelectCompany = ({ ...props }) => {
             }
           }
         } else {
-          useRouter.push("home/persons");
+          if (is_admin_people || admin) {
+            useRouter.push("/home/persons");
+          } else {
+            useRouter.push("/user");
+          }
         }
       })
       .catch((error) => {

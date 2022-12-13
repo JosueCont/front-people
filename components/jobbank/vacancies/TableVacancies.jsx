@@ -183,7 +183,7 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                {/* <Menu.Item
+                <Menu.Item
                     key='3'
                     icon={<SettingOutlined />}
                     onClick={()=> router.push({
@@ -192,7 +192,7 @@ const TableVacancies = ({
                     })}
                 >
                     Configurar publicación
-                </Menu.Item> */}
+                </Menu.Item>
             </Menu>
         );
     };

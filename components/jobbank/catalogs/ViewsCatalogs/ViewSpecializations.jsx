@@ -48,7 +48,9 @@ const ViewSpecializations = () => {
             message.success('Especialización registrada');
         } catch (e) {
             console.log(e)
-            message.error('Especialización no registrada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Especialización no registrada';
+            message.error(msg);
         }
     }
 
@@ -59,7 +61,9 @@ const ViewSpecializations = () => {
             message.success('Especialización actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Especialización no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Especialización no actualizada';
+            message.error(msg);
         }
     }
 

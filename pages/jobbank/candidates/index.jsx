@@ -6,15 +6,20 @@ import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
 import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
-import { getCandidates } from '../../../redux/jobBankDuck';
+import { getCandidates, getSpecializationArea } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
-    getCandidates
+    getCandidates,
+    getSpecializationArea
 }) => {
 
     const router = useRouter();
+
+    useEffect(()=>{
+        if(currentNode) getSpecializationArea(currentNode.id);
+    },[currentNode])
 
     useEffect(()=>{
         if(currentNode){
@@ -58,5 +63,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState,{ getCandidates }
+    mapState,{
+        getCandidates,
+        getSpecializationArea
+    }
 )(withAuthSync(index));

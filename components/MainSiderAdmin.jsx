@@ -23,6 +23,8 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
 import _ from "lodash"
+import { urlSocial, urlSukha, urlMyAccount} from "../config/config";
+import { getCurrentURL } from "../utils/constant";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -102,7 +104,8 @@ const MainSider = ({
     switch (key){
       case "sukha":
         const link1 = document.createElement('a');
-        link1.href = "https://admin.demo.sukhatv.com/";
+        link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}`;
+        // link1.href = "https://admin.demo.sukhatv.com/";
         link1.target = '_blank';
         link1.click();
         break;

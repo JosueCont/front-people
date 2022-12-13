@@ -356,7 +356,7 @@
 }
 
 .title-action-border{
-    padding-bottom: 16px;
+    padding-bottom: 8px;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -393,6 +393,16 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.turn_rotative > .custom-required::before{
+    display: inline-block;
+    margin-right: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
 }
 
 .turn_rotative .ant-form-item-control-input{
@@ -627,6 +637,8 @@ div.estatus-connection p{
 
 button.custom-btn {
     background-color: #1f2733!important;
+    transition: display 0.5s;
+    /* transition-delay: 1000ms; */
 }
 
 .custom-cascader{
@@ -693,6 +705,28 @@ button.custom-btn {
 
 .item-list-row p{
     margin-bottom: 0px;
+    line-height: 1;
+}
+
+.title-history{
+    display: flex;
+    background: #ffff;
+    padding: 5px;
+    border-radius: 10px;
+    max-width: 100%;
+}
+
+.title-history p{
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.title-history p:nth-child(2){
+    color: rgba(0, 0, 0, 0.3);
 }
 
 /* Termina diseño bolsa de trabajo */

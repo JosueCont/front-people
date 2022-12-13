@@ -10,7 +10,8 @@ import {
 import {
     EllipsisOutlined,
     DeleteOutlined,
-    EditOutlined
+    EditOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getStrategies } from '../../../redux/jobBankDuck';
@@ -122,7 +123,7 @@ const TableStrategies = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/strategies/edit`,
@@ -132,11 +133,21 @@ const TableStrategies = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<SettingOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: {...router.query, strategy: item.id }
+                    })}
+                >
+                    Configurar publicación
                 </Menu.Item>
             </Menu>
         );
