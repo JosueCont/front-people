@@ -166,7 +166,7 @@ const SelectCompany = ({ ...props }) => {
             switch (router.query.type) {
               case "admin":
                 localStorage.setItem("is_admin", true);
-                useRouter.push("home/persons");
+                useRouter.push("/home/persons");
                 break;
               case "user":
                 localStorage.setItem("is_admin", false);
@@ -183,7 +183,7 @@ const SelectCompany = ({ ...props }) => {
                 useRouter.push("intranet/publications_statistics");
                 break;
               default:
-                useRouter.push("home/persons");
+                useRouter.push("/home/persons");
                 break;
             }
           }
