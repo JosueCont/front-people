@@ -25,8 +25,6 @@ const SelectPeriodicity = ({
     }
   }, [props.periodicity]);
 
-  console.log("Options", options);
-
   return (
     <>
       <Form.Item
