@@ -96,11 +96,11 @@ const ModalPost = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
+                    {/* <Col span={24}>
                         <Form.Item name='hashtags' label='Hashtags'>
                             <Input placeholder='Escriba las palabras clave'/>
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={24}>
                         <Form.Item
                             label='Imagen'
