@@ -49,7 +49,9 @@ const ViewCategories = () => {
             message.success('Categoría registrada');
         } catch (e) {
             console.log(e)
-            message.error('Categoría no registrada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Categoría no registrada';
+            message.error(msg);
         }
     }
 
@@ -60,7 +62,9 @@ const ViewCategories = () => {
             message.success('Categoría actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Categoría no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Categoría no actualizada';
+            message.error(msg);
         }
     }
 

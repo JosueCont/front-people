@@ -48,7 +48,9 @@ const ViewJobBoards = () => {
             message.success('Bolsa de empleo registrada');
         } catch (e) {
             console.log(e)
-            message.error('Bolsa de empleo no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no registrada';
+            message.error(msg);
         }
     }
 
@@ -59,7 +61,9 @@ const ViewJobBoards = () => {
             message.success('Bolsa de empleo actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Bolsa de empleo no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no actualizada';
+            message.error(msg);
         }
     }
 
