@@ -7,7 +7,9 @@ import {
   message,
   Switch,
   Tooltip,
-  Select
+  Select,
+  Tag,
+  Space
 } from 'antd';
 import {
   EllipsisOutlined,
@@ -15,8 +17,14 @@ import {
   EditOutlined,
   CopyOutlined,
   SettingOutlined,
-  ShareAltOutlined
+  ShareAltOutlined,
+  FacebookOutlined,
+  NotificationOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
+import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
@@ -56,9 +64,7 @@ const TablePublications = ({
             console.log(e)
             let txtError = e.response?.data?.message;
             let msgError = txtError ?? 'Vacante no publicada';
-            setTimeout(()=>{
-                message.error({content: msgError, key});
-            },1000);
+            message.error({content: msgError, key});
         }
     }
 
@@ -183,11 +189,31 @@ const TablePublications = ({
                 >
                     Publicar
                 </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<FileTextOutlined />}
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/publications/history/${item.id}`,
+                        query: router.query
+                    })}
+                >
+                    Ver historial
+                </Menu.Item>
             </Menu>
         );
     };
 
     const columns = [
+        {
+            title: 'Cliente',
+            dataIndex: ['vacant','customer','name'],
+            key: ['vacant','customer','name']
+        },
+        {
+            title: 'Vacante',
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant','job_position']
+        },
         {
             title: 'Cuenta',
             render: (item) =>{
@@ -195,11 +221,6 @@ const TablePublications = ({
                     <span>{getRed(item)}</span>
                 )
             }
-        },
-        {
-            title: 'Vacante',
-            dataIndex: ['vacant','job_position'],
-            key: ['vacant','job_position']
         },
         {
             title: 'Template',
@@ -225,6 +246,31 @@ const TablePublications = ({
                 )
             }
         },
+        // {
+        //     title: 'Historial',
+        //     render: (item) =>{
+        //         return(
+        //             <Space>
+        //                 {item.history?.length > 0 ? (
+        //                     <Tooltip title='Ver historial'>
+        //                         <EyeOutlined
+        //                             style={{cursor: 'pointer'}}
+        //                             // onClick={()=>showModalList(item)}
+        //                         />
+        //                     </Tooltip>
+        //                 ):(
+        //                     <EyeInvisibleOutlined />
+        //                 )}
+        //                 <Tag
+        //                     icon={<NotificationOutlined style={{color:'#52c41a'}} />}
+        //                     color='green' style={{fontSize: '14px'}}
+        //                 >
+        //                     {item.history?.length ?? 0}
+        //                 </Tag>
+        //             </Space>
+        //         )
+        //     }
+        // },
         {
             title: ()=> {
                 return(

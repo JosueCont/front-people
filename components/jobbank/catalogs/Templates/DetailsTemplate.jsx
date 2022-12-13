@@ -82,7 +82,9 @@ const DetailsTemplate = ({
             console.log(e)
             setFetching(false)
             setLoading({})
-            message.error('Tipo de template no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Tipo de template no registrado';
+            message.error(msg);
         }
     }
 
@@ -95,7 +97,9 @@ const DetailsTemplate = ({
         } catch (e) {
             console.log(e)
             setFetching(false);
-            message.error('Tipo de template no actualizado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Tipo de template no actualizado';
+            message.error(msg);
         }
     }
 
