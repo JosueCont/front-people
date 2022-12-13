@@ -89,7 +89,10 @@ const Permission = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["permission"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
+    <MainLayout
+      currentKey={["permission"]}
+      defaultOpenKeys={["managementRH", "concierge", "requests"]}
+    >
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -124,10 +127,7 @@ const Permission = ({ permissions, ...props }) => {
                         />
                       </Col>
                       <Col>
-                        <SelectDepartment
-                          companyId={props?.currentNode?.id}
-                          key="SelectDepartment"
-                        />
+                        <SelectDepartment companyId={props?.currentNode?.id} />
                       </Col>
                       <Col>
                         <Form.Item
