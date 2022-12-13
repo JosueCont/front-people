@@ -119,10 +119,9 @@ const ButtonUpdateSalaryMovement=({person, node, payrollPerson,onRefresh,...prop
                 </Form>
                 </Spin>
                 <Alert  type="info" description={'Al cambiar el salario se aplicará en la fecha programada,\n' +
-                    '                    si requieres enviar este movimiento ante el IMSS puedes consultarlo desde la opción "Movimientos del IMSS",\n' +
-                    '                    que se encuentra en el listado de personas'} />
-
-
+                    '                    si requieres enviar este movimiento ante el IMSS puedes consultarlo desde la opción "Movimientos IMSS"\n' +
+                    '                    ubicada en el menú lateral.'} />
+                
 
 
             </Modal>
