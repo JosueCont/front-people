@@ -19,7 +19,7 @@ const SelectMedicineUnity = ({
     await WebApiFiscal.FamilyMedicalUnit()
       .then((response) => {})
       .catch((error) => {
-        console.log("Error", error);
+        console.log(error);
       });
   };
 

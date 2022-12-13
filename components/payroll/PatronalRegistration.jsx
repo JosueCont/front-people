@@ -130,7 +130,7 @@ const ImssInformationNode = ({
       })
       .catch((error) => {
         setLoadingData(false);
-        console.log("error", error);
+        console.log(error);
       });
   };
 
@@ -167,8 +167,8 @@ const ImssInformationNode = ({
   const saveRegister = async (data) => {
     if (!(await validateForms())) return;
     data.node = currentNode.id;
-    if (isEdit) {
-      data.patronal.id = patronalData.id;
+    if (isEdit && patronalData?.id) {
+      data.patronal.id = patronalData?.id;
       if (patronalData.job_risk_premium && patronalData.job_risk_premium.id)
         data.jobRisk.id = patronalData.job_risk_premium.id;
       if (
@@ -366,6 +366,7 @@ const ImssInformationNode = ({
                 }
                 form={formPatronal}
                 currentNodeId={currentNode.id}
+                imssDelegation={patronalData && patronalData.imss_delegation}
               />
               <Row>
                 <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
@@ -397,7 +398,7 @@ const ImssInformationNode = ({
               />
             </Col>
           </Row>
-          <Row justify="end" style={{marginTop:20, marginBottom:20}}>
+          <Row justify="end" style={{ marginTop: 20, marginBottom: 20 }}>
             <Button onClick={resetForms} style={{ marginRight: "5px" }}>
               Cancelar
             </Button>
@@ -407,13 +408,13 @@ const ImssInformationNode = ({
           </Row>
 
           <Row>
-            <Title style={{ fontSize: "15px" }}>Configuracíon de movimientos automáticos</Title>
+            <Title style={{ fontSize: "15px" }}>
+              Configuracíon de movimientos automáticos
+            </Title>
           </Row>
-          <Divider style={{ marginTop:'2px' }} />
-          <AutomaticMovements
-              patronalData = { patronalData }
-          />
-          <Row style={{marginTop:20}}>
+          <Divider style={{ marginTop: "2px" }} />
+          <AutomaticMovements patronalData={patronalData} />
+          <Row style={{ marginTop: 20 }}>
             <Title style={{ fontSize: "15px" }}>Certificados digitales</Title>
           </Row>
           <Row>

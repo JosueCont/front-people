@@ -117,26 +117,22 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       : "";
     values.modify_by = "System";
     // values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    :  ""
-    console.log("Data", values);
     // funcion WEB API
 
     if (isEdit) {
       WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
         .then((response) => {
-          console.log("Response", response);
           message.success("Editado exitosamente");
           setLoadingTable(false);
           // setIsEdit(false);
         })
         .catch((error) => {
-          console.log("Error -->", error);
           message.error("Error al editar");
           setLoadingTable(false);
         });
     } else {
       WebApiPayroll.saveIMSSInfonavit(values)
         .then((response) => {
-          console.log("Response", response);
           message.success("Guardado exitosamente");
           setLoadingTable(false);
           localUserCredit();
@@ -147,7 +143,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             error.response.data &&
             error.response.data.message
           ) {
-            console.log("Error -->", error.response.data.message);
             // setMessageModal(1, error.response.data.message);
             // setGenericModal(true);
             message.error(error.response.data.message);
@@ -169,7 +164,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
-        console.log("Response manual", response);
         setLoadingTable(false);
         response &&
           response.data &&
@@ -197,10 +191,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     setLoadingTable(true);
     try {
       let response = await WebApiPayroll.getUserCredits(person_id);
-      console.log("Se esta haciendo el get");
       setInfonavitCredit(response.data);
     } catch (error) {
-      console.log("Error ===>", error);
+      console.log(error);
     } finally {
       setLoadingTable(false);
     }
@@ -212,7 +205,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       let response = await WebApiPayroll.getPersonalCredits(person_id);
       setUpdateCredit(response.data);
     } catch (error) {
-      console.log("Error", error);
+      console.log(error);
     } finally {
       setLodingIMSS(false);
     }
@@ -233,7 +226,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         message.success("Editado Exitosamente")) ||
         message.success("Agregado Exitosamente");
     } catch (error) {
-      console.log("Error", error);
       message.error("Error al editar");
     } finally {
       setLoadingModal(false);

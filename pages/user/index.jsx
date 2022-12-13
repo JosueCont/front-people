@@ -40,9 +40,9 @@ const index = ({
                 ))}
             </div> */}
               <Row gutter={16}>
-      <Col className="gutter-row" span={4}>
+      {/* <Col className="gutter-row" span={4}>
       <CardApps />
-      </Col>
+      </Col> */}
      
     </Row>
         </MainLayout>

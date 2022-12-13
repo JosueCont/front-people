@@ -22,6 +22,9 @@ import HowToRegOutlinedIcon from '@material-ui/icons/HowToRegOutlined';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
+import _ from "lodash"
+import { urlSocial, urlSukha, urlMyAccount} from "../config/config";
+import { getCurrentURL } from "../utils/constant";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -101,7 +104,8 @@ const MainSider = ({
     switch (key){
       case "sukha":
         const link1 = document.createElement('a');
-        link1.href = "https://admin.demo.sukhatv.com/";
+        link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}`;
+        // link1.href = "https://admin.demo.sukhatv.com/";
         link1.target = '_blank';
         link1.click();
         break;
@@ -150,16 +154,19 @@ const MainSider = ({
 
 
       // Administración de RH
- 
-      let children001 = [
-        getItem("Cálculo de nómina", "calculatePayroll"),
-        getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
-        getItem("Calendario de pagos", "paymentCalendar"),
-        getItem("Comprobantes fiscales", "payrollVoucher"),
-        getItem("Calculadora", "calculatorSalary"),
-        getItem("Importar nómina con XML", "importMassivePayroll"),
-        getItem("Movimientos IMSS", "imssMovements"),
-      ];
+      let children01 = []
+      if (props?.applications && (_.has(props.applications, "payroll") && props.applications["payroll"].active)) {
+        let children001 = [
+          getItem("Cálculo de nómina", "calculatePayroll"),
+          getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
+          getItem("Calendario de pagos", "paymentCalendar"),
+          getItem("Comprobantes fiscales", "payrollVoucher"),
+          getItem("Calculadora", "calculatorSalary"),
+          getItem("Importar nómina con XML", "importMassivePayroll"),
+          getItem("Movimientos IMSS", "imssMovements"),
+        ];
+        children01.push(getItem("Nómina", "payroll",<></>, children001))
+      }
       let children0001 =[
         getItem("Préstamos", "lending"),
         getItem("Vacaciones", "holidays"),
@@ -167,72 +174,85 @@ const MainSider = ({
         getItem("Incapacidad", "incapacity"),
         getItem("Cuentas bancarias", "bank_accounts"),
       ]
-
       let children002 = [
         getItem("Solicitudes", "requests", <></>, children0001),
         getItem("Comunicados", "releases"),
         getItem("Eventos", "events")
       ]
-      let children01 = [
-        getItem("Nómina", "payroll",<></>, children001),
-        getItem("Concierge", "concierge",<></>, children002)
-      ]
+      children01.push(getItem("Concierge", "concierge",<></>, children002))
       items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
 
       // Reclutamiento y selección
-      let children021 = [
-           getItem("Clientes", "jb_clients"),
-            getItem("Vacantes", "jb_vacancies"),
-            getItem("Estrategias", "jb_strategies"),
-            getItem("Template de vacante", "jb_profiles"),
-            getItem("Candidatos", "jb_candidates"),
-            getItem("Publicaciones", "jb_publications"),
-            getItem("Configuraciones", "jb_settings")
-      ]
-      let children02 = [
-        getItem("Bolsa de trabajo", "job_bank", <></>, children021)
-      ]
-      items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />, children02))
+      if (props?.applications && (_.has(props.applications, "jobbank") && props.applications["jobbank"].active)) {
+        let children021 = [
+          getItem("Clientes", "jb_clients"),
+          getItem("Vacantes", "jb_vacancies"),
+          getItem("Estrategias", "jb_strategies"),
+          getItem("Template de vacante", "jb_profiles"),
+          getItem("Candidatos", "jb_candidates"),
+          getItem("Publicaciones", "jb_publications"),
+          getItem("Configuraciones", "jb_settings")
+        ]
+        let children02 = [
+          getItem("Bolsa de trabajo", "job_bank", <></>, children021)
+        ]
+        items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />, children02))
+      }
 
       // Evaluación y diagnóstico
-      let children11 = [
-        getItem("Evaluaciones", "surveys"),
-        getItem("Grupos de evaluaciones", "assessment_groups"),
-        getItem("Perfiles de competencias", "assessment_profiles"),
-        getItem("Reportes de competencias", "assessment_reports"),
-      ]
-      let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
-      items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
+      if (props?.applications && (_.has(props.applications, "kuiz") && props.applications["kuiz"].active)) {
+        let children11 = [
+          getItem("Evaluaciones", "surveys"),
+          getItem("Grupos de evaluaciones", "assessment_groups"),
+          getItem("Perfiles de competencias", "assessment_profiles"),
+          getItem("Reportes de competencias", "assessment_reports"),
+        ]
+        let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
+        items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
+      }
 
       // Educación y desarrollo
-      let children2 = [
-        getItem("Khorflix", "khorflix"),
-        getItem("Sukha", "sukha"),
-        getItem("Careerlab", "careerlab"),
-        // getItem("Concieo", "concieo")
-      ]
-      items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      let children2 = [];
+      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active)) {
+        children2.push(getItem("Khorflix", "khorflix"))
+      }
+      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active)) {
+        children2.push(getItem("Sukha", "sukha"))
+      }
+      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active)) {
+        children2.push(getItem("Careerlab", "careerlab"))
+      }
+      if (children2.length > 0) {
+        items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      }
 
       // desempeño
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      let children31 = [
-        getItem("Dashboard general", "ynl_general_dashboard"),
-        getItem("Dashboard personal", "ynl_personal_dashboard"),
-      ]
-
-      let children32 = [
-        getItem("Configuración", "intranet_configuration"),
-        getItem("Grupos", "intranet_groups"),
-        getItem("Moderación", "publications_statistics"),
-      ];
-      let children3 = [
-        getItem("KHOR Connect", "intranet",  <></>, children32 ),
-        getItem("YNL", "ynl", <></>, children31),
-        // getItem("Notificaciones", "notificaciones"),
-      ]
-      items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      let children3 = []
+      if (props?.applications && (_.has(props.applications, "khorconnect") && props.applications["khorconnect"].active)) {
+        let children32 = [
+          getItem("Configuración", "intranet_configuration"),
+          getItem("Grupos", "intranet_groups"),
+          getItem("Moderación", "publications_statistics"),
+        ];
+        children3.push(
+          getItem("KHOR Connect", "intranet",  <></>, children32 ),
+        )
+      }
+      if (props?.applications && (_.has(props.applications, "ynl") && props.applications["ynl"].active)) {
+        let children31 = [
+          getItem("Dashboard general", "ynl_general_dashboard"),
+          getItem("Dashboard personal", "ynl_personal_dashboard"),
+        ]
+        children3.push(
+          getItem("YNL", "ynl", <></>, children31),
+        )
+      }
+      if (children3.length > 0) {
+        items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      }
 
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))

@@ -13,11 +13,18 @@ import {
   Spin,
   Alert,
   InputNumber,
+  DatePicker,
+  Form,
+  message,
+  Select,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
-import { get } from "lodash";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import moment from "moment";
+import TextArea from "antd/lib/input/TextArea";
+import { departureMotive } from "../../../utils/constant";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -34,6 +41,7 @@ const ModalConceptsPayroll = ({
   extraOrdinary = false,
   ...props
 }) => {
+  const [departureForm] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [concepts, setConcepts] = useState([]);
   const [perceptionsCat, setPerceptionsCat] = useState([]);
@@ -46,6 +54,8 @@ const ModalConceptsPayroll = ({
   const [twentyDays, setTwentyDays] = useState(false);
   const [threeMonths, setThreeMonths] = useState(false);
   const [antiquity, setAntiquity] = useState(false);
+  const [motiveDeparture, setMotiveDeparture] = useState(null);
+  const [departureDate, setDepartureDate] = useState("");
 
   useEffect(() => {
     if (
@@ -162,6 +172,7 @@ const ModalConceptsPayroll = ({
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <InputNumber
+                    key={item.id}
                     type="number"
                     name={item.id}
                     defaultValue={item.value}
@@ -198,6 +209,10 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:212 ~ listConcepts ~ value",
+      value
+    );
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -222,6 +237,10 @@ const ModalConceptsPayroll = ({
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:241 ~ listConcepts ~ currentStep",
+      currentStep
+    );
     currentStep == 0
       ? setCurrentStep(currentStep + 1)
       : is_cero && currentStep == 1
@@ -233,10 +252,30 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:302 ~ payroll.map ~ payroll",
+      payroll
+    );
+    if (extraOrdinary) {
+      if (
+        departureDate == undefined ||
+        departureDate == null ||
+        departureDate == ""
+      ) {
+        message.error("Debe seleccionar una fecha de salida");
+        return;
+      }
+      if (
+        motiveDeparture == undefined ||
+        motiveDeparture == null ||
+        motiveDeparture == ""
+      ) {
+        message.error("Debe esribir un motivo de salida");
+        return;
+      }
+    }
     let data = [];
     payroll.map((item) => {
-      console.log("Persona-->> ", item);
-
       if (item.person.id === person_id) {
         if (item.perceptions)
           item.perceptions.map((p) => {
@@ -255,6 +294,10 @@ const ModalConceptsPayroll = ({
           obj.twenty_day_compensantion = twentyDays;
           obj.three_months_compensation = threeMonths;
           obj.antiquity_compensation = antiquity;
+          obj.departure_date = departureDate;
+          obj.departure_motive = motiveDeparture;
+          obj.person = item.person;
+          obj.key = item.key;
         }
         data.push(obj);
       } else {
@@ -267,16 +310,24 @@ const ModalConceptsPayroll = ({
           other_payments: item.otherPayments,
         };
         if (extraOrdinary) {
-          obj.twenty_day_compensantion = twentyDays;
-          obj.three_months_compensation = threeMonths;
-          obj.antiquity_compensation = antiquity;
+          if (item.three_months_compensantion)
+            obj.twenty_day_compensantion = item.three_months_compensantion;
+          if (item.antiquity_compensation)
+            obj.antiquity_compensation = item.antiquity_compensation;
+          if (item.twenty_day_compensantion)
+            obj.twenty_day_compensantion = item.twenty_day_compensantion;
+          obj.person = item.person;
+          obj.key = item.key;
+          if (item.departure_date) obj.departure_date = item.departure_date;
+          if (item.departure_motive)
+            obj.departure_motive = item.departure_motive;
         }
         data.push(obj);
       }
     });
+
     clearConcept();
     calendar.payroll = data;
-    console.log("Calendar calculate-->> ", calendar);
     sendCalculatePayroll(calendar);
   };
 
@@ -309,6 +360,8 @@ const ModalConceptsPayroll = ({
     setAntiquity(false);
     setThreeMonths(false);
     setTwentyDays(false);
+    setMotiveDeparture(null);
+    setDepartureDate("");
     setVisible(false);
   };
 
@@ -334,6 +387,7 @@ const ModalConceptsPayroll = ({
             otherPayments.length > 0 ||
             threeMonths ||
             antiquity ||
+            (motiveDeparture != "" && motiveDeparture != null) ||
             twentyDays ? (
               <Button
                 size="large"
@@ -395,44 +449,65 @@ const ModalConceptsPayroll = ({
         </Steps>
         <Card hoverable style={{ width: "100%" }}>
           {extraOrdinary && (
-            <Row>
-              <Col span={12}>
-                <Checkbox
-                  key={"twenty_day_compensantion"}
-                  className="CheckGroup"
-                  checked={twentyDays}
-                  onChange={(value) => setTwentyDays(value.target.checked)}
-                >
-                  <span style={{ textTransform: "uppercase" }}>
-                    20 dias por año trabajado
-                  </span>
-                </Checkbox>
-              </Col>
-              <Col span={12}>
-                <Checkbox
-                  key={"three_months_compensantion"}
-                  className="CheckGroup"
-                  checked={threeMonths}
-                  onChange={(value) => setThreeMonths(value.target.checked)}
-                >
-                  <span style={{ textTransform: "uppercase" }}>
-                    90 dias de indemnizacion
-                  </span>
-                </Checkbox>
-              </Col>{" "}
-              <Col span={12}>
-                <Checkbox
-                  key={"antiquity_premium"}
-                  className="CheckGroup"
-                  checked={antiquity}
-                  onChange={(value) => setAntiquity(value.target.checked)}
-                >
-                  <span style={{ textTransform: "uppercase" }}>
-                    Prima de antigüedad
-                  </span>
-                </Checkbox>
-              </Col>
-            </Row>
+            <>
+              <Row>
+                <Col span={12}>
+                  <Checkbox
+                    key={"twenty_day_compensantion"}
+                    className="CheckGroup"
+                    checked={twentyDays}
+                    onChange={(value) => setTwentyDays(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      20 dias por año trabajado
+                    </span>
+                  </Checkbox>
+                </Col>
+                <Col span={12}>
+                  <Checkbox
+                    key={"three_months_compensantion"}
+                    className="CheckGroup"
+                    checked={threeMonths}
+                    onChange={(value) => setThreeMonths(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      90 dias de indemnizacion
+                    </span>
+                  </Checkbox>
+                </Col>
+                <Col span={12}>
+                  <Checkbox
+                    key={"antiquity_premium"}
+                    className="CheckGroup"
+                    checked={antiquity}
+                    onChange={(value) => setAntiquity(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      Prima de antigüedad
+                    </span>
+                  </Checkbox>
+                </Col>
+              </Row>
+              <Row style={{ paddingTop: "10px" }}>
+                <Col span={12}>
+                  <DatePicker
+                    moment={"YYYY"}
+                    id="departure_date"
+                    placeholder="Fecha de salida."
+                    onChange={(value, d) => setDepartureDate(d)}
+                    locale={locale}
+                  />
+                </Col>
+                <Col span={12}>
+                  <Select
+                    placeholder="Motivo de baja"
+                    style={{ width: "50%" }}
+                    options={departureMotive}
+                    onChange={(value) => setMotiveDeparture(value)}
+                  />
+                </Col>
+              </Row>
+            </>
           )}
           {currentStep == 0 ? (
             <>
@@ -552,7 +627,7 @@ const ModalConceptsPayroll = ({
                         <EditOutlined
                           style={{ marginRight: "10px" }}
                           key={"edit" + record.perception}
-                          onClick={() => listConcepts()}
+                          onClick={() => listConcepts(1)}
                         />
                         <DeleteOutlined
                           key={"delete" + record.perception}

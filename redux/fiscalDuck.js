@@ -400,8 +400,6 @@ export const ImssDelegation = () => async (dispatch, getState) => {
         return 0;
       });
 
-      console.log("Delegacíon ordenada", orderList);
-
       dispatch({
         type: IMSS_DELEGATION,
         payload: response.data.results,

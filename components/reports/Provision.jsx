@@ -8,7 +8,7 @@ import {
   Tooltip,
   Button,
   Typography,
-  DatePicker
+  DatePicker,
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
@@ -28,23 +28,23 @@ import { ruleRequired } from "../../utils/rules";
 import axios from "axios";
 
 const ProvisionsReport = ({ permissions, ...props }) => {
-
   const [form] = Form.useForm();
   const { Title } = Typography;
-  const [ loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [calendar, setCalendar] = useState(null);
-  const [ report, setReport ] = useState(1);
+  const [report, setReport] = useState(1);
 
-
-  console.log('Calendars', props.payment_calendar)
+  console.log("Calendars", props.payment_calendar);
 
   const disabledDate = (current) => {
-    return current && moment(current).startOf('year') > moment().startOf('year');
-  }
+    return (
+      current && moment(current).startOf("year") > moment().startOf("year")
+    );
+  };
 
   const clearFilter = () => {
-    form.resetFields()
-    setReport(1)
+    form.resetFields();
+    setReport(1);
   };
 
   const columns = [
@@ -125,35 +125,41 @@ const ProvisionsReport = ({ permissions, ...props }) => {
   ];
 
   const onFinish = async (values) => {
-    console.log("Values", values)
-    let url = `${getDomain(API_URL_TENANT)}/fiscal/${ report === 1? 'monthly' : 'bimonthly' }-imss-free/get_${ report === 1? 'monthly' : 'bimonthly' }_imss_provision/`
-    values.period = values.period? toInteger(moment(values.period).format('YYYY')) : null
+    let url = `${getDomain(API_URL_TENANT)}/fiscal/${
+      report === 1 ? "monthly" : "bimonthly"
+    }-imss-free/get_${report === 1 ? "monthly" : "bimonthly"}_imss_provision/`;
+    values.period = values.period
+      ? toInteger(moment(values.period).format("YYYY"))
+      : null;
 
-    let data = report == 1? {
-      period: values.period,
-      month: values.month,
-      patronal_registration: values.registro_patronal,
-      department: values.department,
-      job: values.job,
-      payment_calendar: calendar,
-      method: 'export'
-      // tag: ""
-    } : {
-      period: values.period,
-      start_month: values.month,
-      end_month: values.month + 1,
-      payment_calendar: calendar,
-      method: 'export'
-    }
+    let data =
+      report == 1
+        ? {
+            period: values.period,
+            month: values.month,
+            patronal_registration: values.registro_patronal,
+            department: values.department,
+            job: values.job,
+            payment_calendar: calendar,
+            method: "export",
+            // tag: ""
+          }
+        : {
+            period: values.period,
+            start_month: values.month,
+            end_month: values.month + 1,
+            payment_calendar: calendar,
+            method: "export",
+          };
 
-      downLoadFileBlob(
-        url,
-        "Provision_Report.xlsx",
-        "POST",
-        data,
-        "No se encontraron colaboradores"
-      )
-  }
+    downLoadFileBlob(
+      url,
+      "Provision_Report.xlsx",
+      "POST",
+      data,
+      "No se encontraron colaboradores"
+    );
+  };
 
   return (
     <>
@@ -169,8 +175,8 @@ const ProvisionsReport = ({ permissions, ...props }) => {
             layout="vertical"
             key="formFilter"
             className="formFilterReports"
-            onFinish={ onFinish }
-            defaultValue = {{
+            onFinish={onFinish}
+            defaultValue={{
               period: "",
               month: "",
               registro_patronal: "",
@@ -180,21 +186,21 @@ const ProvisionsReport = ({ permissions, ...props }) => {
             }}
           >
             <Row gutter={10}>
-            <Col lg={6} xs={22}>
-                <Form.Item 
-                  key='report_type' 
-                  name='report_type' 
-                  label='Tipo de reporte'
+              <Col lg={6} xs={22}>
+                <Form.Item
+                  key="report_type"
+                  name="report_type"
+                  label="Tipo de reporte"
                   rules={[ruleRequired]}
                 >
                   <Select
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     onChange={(e) => {
-                       e === 2 &&
-                      form.setFieldsValue({
-                        month: null
-                      })
-                      setReport(e)
+                      e === 2 &&
+                        form.setFieldsValue({
+                          month: null,
+                        });
+                      setReport(e);
                     }}
                     placeholder="Seleccionar reporte"
                   >
@@ -208,27 +214,38 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22}>
-                <Form.Item key='period' name='period' label='Periodo' rules={[ruleRequired]}>
-                  <DatePicker 
+                <Form.Item
+                  key="period"
+                  name="period"
+                  label="Periodo"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
                     picker="year"
-                    disabledDate={ disabledDate }
-                    locale = { locale }
-                    style = {{ width: '100%' }}
-                    placeholder = "Seleccionar año"
+                    disabledDate={disabledDate}
+                    locale={locale}
+                    style={{ width: "100%" }}
+                    placeholder="Seleccionar año"
                   />
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22}>
-                <Form.Item key='month' name="month" label= { report == 1?  "Mes" : "Bimestre" } rules={[ruleRequired]}>       
-                    <Select 
-                      options={report === 1? monthsName : bimestralMonths } 
-                      style = {{ width: '100%' }} 
-                      placeholder={report === 1 ? "Seleccionar mes" : "Seleccionar bimestre"}/>
+                <Form.Item
+                  key="month"
+                  name="month"
+                  label={report == 1 ? "Mes" : "Bimestre"}
+                  rules={[ruleRequired]}
+                >
+                  <Select
+                    options={report === 1 ? monthsName : bimestralMonths}
+                    style={{ width: "100%" }}
+                    placeholder={
+                      report === 1 ? "Seleccionar mes" : "Seleccionar bimestre"
+                    }
+                  />
                 </Form.Item>
               </Col>
-              {
-                report === 1 &&
-
+              {report === 1 && (
                 <Col lg={6} xs={22}>
                   <SelectPatronalRegistration
                     name={"registro_patronal"}
@@ -237,33 +254,31 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                     currentNode={props.currentNode}
                   />
                 </Col>
+              )}
 
-              }
-
-              {
-                report === 1 &&
-
-                <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
-                  <SelectDepartment/>
+              {report === 1 && (
+                <Col lg={6} xs={22} style={{ marginTop: "10px" }}>
+                  <SelectDepartment />
                 </Col>
+              )}
 
-              }
-
-              {
-                report === 1 &&
-
-                <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
+              {report === 1 && (
+                <Col lg={6} xs={22} style={{ marginTop: "10px" }}>
                   <SelectJob />
                 </Col>
-              }
+              )}
 
-              <Col lg={6} xs={22} style={{ marginTop: report === 1 ? '10px' : '' }}>
+              <Col
+                lg={6}
+                xs={22}
+                style={{ marginTop: report === 1 ? "10px" : "" }}
+              >
                 <SelectPaymentCalendar
-                    setCalendarId={(value) => setCalendar(value)}
-                    name="calendar"
-                    rules = {[ruleRequired]}
-                    style={{ width: '100%' }}
-                  />
+                  setCalendarId={(value) => setCalendar(value)}
+                  name="calendar"
+                  rules={[ruleRequired]}
+                  style={{ width: "100%" }}
+                />
               </Col>
               {/* <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
@@ -281,7 +296,12 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                   </Button>
                 </Tooltip>
               </Col> */}
-              <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }} >
+              <Col
+                style={{
+                  display: "flex",
+                  marginTop: report === 1 ? "" : "10px",
+                }}
+              >
                 <Tooltip
                   title="Limpiar filtro"
                   color={"#3d78b9"}
@@ -299,7 +319,10 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                   </Button>
                 </Tooltip>
               </Col>
-              <Col className="columnRightFilter" style={{marginTop: report === 1 ? '' : '10px'}}>
+              <Col
+                className="columnRightFilter"
+                style={{ marginTop: report === 1 ? "" : "10px" }}
+              >
                 <Button
                   style={{
                     background: "#fa8c16",
@@ -334,8 +357,8 @@ const ProvisionsReport = ({ permissions, ...props }) => {
         </Col>
       </Row> */}
     </>
-  )
-}
+  );
+};
 
 const mapState = (state) => {
   return {
