@@ -48,7 +48,9 @@ const ViewCompetences = () => {
             message.success('Competencia registrada');
         } catch (e) {
             console.log(e)
-            message.error('Competencia no registrada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Competencia no registrada';
+            message.error(msg);
         }
     }
 
@@ -59,7 +61,9 @@ const ViewCompetences = () => {
             message.success('Competencia actuailzada')
         } catch (e) {
             console.log(e)
-            message.error('Competencia no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Competencia no actualizada';
+            message.error(msg);
         }
     }
 

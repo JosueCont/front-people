@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Input, Row, Col, Form, Select } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
-  SearchOutlined,
   SyncOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
 import { createFiltersJB } from '../../../utils/functions';
+import ModalFilters from './ModalFilters';
+import TagFilters from './TagFilters';
 
 const SearchCandidates = ({
-    currentNode
+    currentNode,
+    load_specialization_area,
+    list_specialization_area
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
 
-    useEffect(()=>{
-        formSearch.setFieldsValue(router.query);
-    },[router])
+    const showModal = () =>{
+        let area = router.query?.area ? parseInt(router.query.area) : null;
+        let is_other = router.query?.other_area ? true : false;
+        formSearch.setFieldsValue({...router.query, area, is_other});
+        setOpenModal(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
+    }
 
     const onFinishSearch = (values) =>{
+        delete values.is_other;
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/candidates/',
@@ -33,83 +46,83 @@ const SearchCandidates = ({
         router.replace('/jobbank/candidates', undefined, {shallow: true});
     }
 
+    const getArea = (id) =>{
+        if(!id) return id;
+        const find_ = item => item.id == id;
+        let result = list_specialization_area.find(find_);
+        if(!result) return id;
+        return result.name;
+    }
+
+    const listKeys = {
+        fisrt_name__icontains: 'Nombre',
+        last_name__icontains: 'Apellidos',
+        email__icontains: 'Correo',
+        cell_phone: 'Teléfono',
+        job: 'Puesto',
+        is_active: 'Estatus',
+        area: 'Especialización',
+        other_area: 'Otra especialización'
+    }
+
+    const listValues = {
+        true: 'Activo',
+        false: 'Inactivo',
+    }
+
+    const listGets = {
+        area: getArea
+    }
+
     return (
-        <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
-            <Row gutter={[0,8]} style={{width: '100%'}}>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='fisrt_name__icontains'
-                        rules={[ruleWhiteSpace]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por nombre'/>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='last_name__icontains'
-                        rules={[ruleWhiteSpace]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por apellidos'/>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='email__icontains'
-                        rules={[ruleWhiteSpace]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por correo'/>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='cell_phone'
-                        rules={[onlyNumeric]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por teléfono'/>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='is_active'
-                        style={{marginBottom: 0}}
-                    >
-                       <Select
-                            allowClear
-                            placeholder='Estatus'
-                        >
-                            <Select.Option value='true' key='true'>Activo</Select.Option>
-                            <Select.Option value='false' key='false'>Inactivo</Select.Option>
-                        </Select>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} sm={23} md={23} xl={4} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
-                    <div style={{display: 'flex', gap: 8}}>
-                        <Button htmlType='submit'>
-                            <SearchOutlined />
-                        </Button>
-                        <Button onClick={()=> deleteFilter()}>
-                            <SyncOutlined />
-                        </Button>
-                    </div>
-                    <Button onClick={()=> router.push({
-                        pathname: '/jobbank/candidates/add',
-                        query: router.query
-                    })}>
-                        Agregar
-                    </Button>
-                </Col>
-            </Row>
-        </Form>
+        <>
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div span={24} className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                Filtros aplicados
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Button onClick={()=> showModal()}>
+                                    <SettingOutlined />
+                                </Button>
+                                <Button onClick={()=> deleteFilter()}>
+                                    <SyncOutlined />
+                                </Button>
+                                <Button onClick={()=> router.push({
+                                    pathname: '/jobbank/candidates/add',
+                                    query: router.query
+                                })}>
+                                    Agregar
+                                </Button>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={listKeys}
+                            listValues={listValues}
+                            listGets={listGets}
+                        />
+                    </Col>  
+                </Row>
+            </Card>
+            <ModalFilters
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
+        </>
     )
 }
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_specialization_area: state.jobBankStore.list_specialization_area,
+        load_specialization_area: state.jobBankStore.load_specialization_area,
     }
 }
 

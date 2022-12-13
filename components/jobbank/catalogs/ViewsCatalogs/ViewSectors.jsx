@@ -48,7 +48,9 @@ const ViewSectors = () => {
             message.success('Sector registrado');
         } catch (e) {
             console.log(e)
-            message.error('Sector no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Sector no registrado';
+            message.error(msg);
         }
     }
 
@@ -59,7 +61,9 @@ const ViewSectors = () => {
             message.success('Sector actualizado');
         } catch (e) {
             console.log(e)
-            message.error('Sector no actualizado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Sector no actualizado';
+            message.error(msg);
         }
     }
 

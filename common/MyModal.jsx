@@ -33,7 +33,7 @@ const MyModal = ({
         >
             <Row gutter={[0, 8]}>
                 <Col xs={24}>
-                    <h3 style={{fontWeight:'bold'}}>{title}</h3>
+                    <h3 style={{fontWeight:'bold', marginBottom: 0}}>{title}</h3>
                 </Col>
                 <Col xs={24}>
                     {props.children}

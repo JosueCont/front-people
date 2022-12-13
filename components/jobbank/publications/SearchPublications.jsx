@@ -68,7 +68,7 @@ const SearchPublications = ({
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={11} sm={12} md={8} xl={6}>
+                <Col xs={11} sm={12} md={8} xl={4}>
                     <Form.Item
                         name='vacant'
                         style={{marginBottom: 0}}
@@ -90,7 +90,7 @@ const SearchPublications = ({
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={6}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='profile'
                         style={{marginBottom: 0}}
@@ -112,6 +112,20 @@ const SearchPublications = ({
                                     {item.name}
                                 </Select.Option>
                             ))}
+                        </Select>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='is_published'
+                        style={{marginBottom: 0}}
+                    >
+                        <Select
+                            allowClear
+                            placeholder='Estatus'
+                        >
+                            <Select.Option value='true' key='true'>Publicado</Select.Option>
+                            <Select.Option value='false' key='false'>En borrador</Select.Option>
                         </Select>
                     </Form.Item>
                 </Col>

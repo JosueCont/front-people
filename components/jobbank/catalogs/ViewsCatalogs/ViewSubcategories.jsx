@@ -60,7 +60,11 @@ const ViewSubcategories = () => {
             message.success('Subcategoría registrada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no registrada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no registrada';
+            message.error(msg);
         }
     }
 
@@ -71,7 +75,11 @@ const ViewSubcategories = () => {
             message.success('Subcategoría actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no actualizada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no actualizada';
+            message.error(msg);
         }
     }
 

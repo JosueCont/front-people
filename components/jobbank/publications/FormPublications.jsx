@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { Row, Col, Input, Select, Form } from 'antd';
 import { ruleRequired } from '../../../utils/rules';
@@ -9,8 +10,7 @@ const FormPublications = ({
     formPublications,
     valuesDefault = {},
     disableField,
-    setDisabledField,
-    disabledClient
+    setDisabledField
 }) => {
 
     const {
@@ -23,10 +23,14 @@ const FormPublications = ({
         list_clients_options,
         load_clients_options,
         list_vacancies_fields,
-        // list_strategies_options,
-        // load_strategies_options
+        list_strategies_options,
+        load_strategies_options
     } = useSelector(state => state.jobBankStore);
-    const vacant = Form.useWatch('vacant', formPublications);
+    const router = useRouter();
+    const vacant = router?.query?.vacancy;
+    const strategy = router?.query?.strategy;
+    const client = router?.query.client;
+    // const vacant = Form.useWatch('vacant', formPublications);
     // const strategy = Form.useWatch('strategy', formPublications);
     const customer = Form.useWatch('customer', formPublications);
     const { formatData } = useProcessInfo();
@@ -35,30 +39,44 @@ const FormPublications = ({
     //     onChangeCustomer();
     // },[customer])
 
-    // useEffect(()=>{
-    //     if(list_strategies_options.length <= 0) return;
-    //     valuesByStrategy();
-    // },[strategy, list_strategies_options])
+    useEffect(()=>{
+        if(list_vacancies_options.length <= 0) return;
+        clientByVacant();
+    },[vacant, list_vacancies_options, customer])
+
+    useEffect(()=>{
+        if(list_strategies_options.length <= 0) return;
+        valuesByStrategy();
+    },[strategy, list_strategies_options, customer])
     
     const setValue = (key, val) => formPublications.setFieldsValue({[key]: val});
-    // const setCustomer = (val = null) => setValue('customer', val);
+    const setCustomer = (val = null) => setValue('customer', val);
     const setVacant = (val = null) => setValue('vacant', val);
     const setProfile = (val = null) => setValue('profile', val);
     
-    // const resetValues = () =>{
-    //     setCustomer()
-    //     setVacant()
-    // }
+    const resetValues = () =>{
+        setCustomer()
+        setVacant()
+    }
 
-    // const valuesByStrategy = () =>{
-    //     if(!strategy) return resetValues();
-    //     const _find = item => item.id == strategy;
-    //     let result = list_strategies_options.find(_find);
-    //     if(!result) return resetValues();
-    //     if(result.customer) setCustomer(result.customer);
-    //     let idVacant = result?.vacant?.id;
-    //     if(idVacant) setVacant(idVacant);
-    // }
+    const valuesByStrategy = () =>{
+        if(!strategy) return;
+        const _find = item => item.id == strategy;
+        let result = list_strategies_options.find(_find);
+        if(!result) return resetValues();
+        if(result.customer) setCustomer(result.customer);
+        let idVacant = result?.vacant?.id;
+        if(idVacant) setVacant(idVacant);
+    }
+
+    const clientByVacant = () =>{
+        if(!vacant) return;
+        const _find = item => item.id == vacant;
+        let result = list_vacancies_options.find(_find);
+        if(!result) return setCustomer();
+        if(!result.customer) return setCustomer();
+        setCustomer(result.customer.id);
+    }
 
     const templatesByClient = useMemo(()=>{
         if(!customer) return [];
@@ -105,6 +123,14 @@ const FormPublications = ({
         formPublications.setFieldsValue(activeFields);
     }
 
+    const onChangeDisabled = () =>{
+        if(!disableField) return;
+        setDisabledField(false)
+        formPublications.setFieldsValue({
+            profile: 'open_fields'
+        })
+    }
+
     return (
         <Row gutter={[24,0]}>
             {/* <Col span={5}>
@@ -140,7 +166,7 @@ const FormPublications = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={disabledClient}
+                        disabled={client || vacant || strategy}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
@@ -166,7 +192,7 @@ const FormPublications = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={vacantsByClient.length <=0}
+                        disabled={vacantsByClient.length <=0 || vacant || strategy}
                         loading={load_vacancies_options}
                         placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
@@ -233,7 +259,10 @@ const FormPublications = ({
                 </Form.Item>
             </Col>
             <Col span={24}>
-                <VacantFields disabledField={disableField}/>
+                <VacantFields
+                    disabledField={disableField}
+                    onChangeDisabled={onChangeDisabled}
+                />
             </Col>
         </Row>
     )
