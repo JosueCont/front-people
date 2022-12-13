@@ -674,6 +674,8 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal"
             : data.toLowerCase().includes("folios")
             ? "Folios"
+            : data.toLowerCase().includes("patronal")
+            ? "Registro patronal"
             : "Error",
 
           title_message: data.toLowerCase().includes("fiscal information")
@@ -682,13 +684,17 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal faltante"
             : data.toLowerCase().includes("folios")
             ? "Folios insuficientes"
+            : data.toLowerCase().includes("patronal")
+            ? "Registro patronal faltante"
             : "Error",
           description: data.toLowerCase().includes("fiscal information")
-            ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
+            ? "Falta información relevante para poder generar los cfdi, verifique la información fiscal de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
-            ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
+            ? "Datos en la dirección fiscal faltantes, verifique la información fiscal he intente de nuevo"
             : data.toLowerCase().includes("folios")
             ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
+            : data.toLowerCase().includes("patronal")
+            ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
             : data,
           type_alert: data.toLowerCase().includes("error")
             ? "error"
@@ -702,11 +708,15 @@ const CalculatePayroll = ({ ...props }) => {
                     tab: 2,
                   },
                 })
+              : data.toLowerCase().includes("patronal")
+              ? router.push({ pathname: "/business/patronalRegistrationNode" })
               : setGenericModal(false),
           title_action_button:
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
               ? "Ver información fiscal"
+              : data.toLowerCase().includes("patronal")
+              ? "Ver registro patronal"
               : "Continuar",
         });
         break;
@@ -1032,7 +1042,7 @@ const CalculatePayroll = ({ ...props }) => {
         />
         <MainLayout
           currentKey={["calculatePayroll"]}
-          defaultOpenKeys={["managementRH","payroll"]}
+          defaultOpenKeys={["managementRH", "payroll"]}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
@@ -1334,44 +1344,46 @@ const CalculatePayroll = ({ ...props }) => {
                             </Button>
                           </Col>
                         )}
-                        {step == 2 && consolidated && consolidated.status <= 2 && (
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              icon={<UnlockOutlined />}
-                              htmlType="button"
-                              onClick={() =>
-                                setMessageModal(5, {
-                                  title: "Abrir nómina",
-                                  description:
-                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                  type_alert: "warning",
-                                  action: () => openPayroll(1),
-                                  title_action_button: "Abrir nómina",
-                                  components: (
-                                    <>
-                                      <Row
-                                        style={{
-                                          width: "100%",
-                                          marginTop: "5px",
-                                        }}
-                                      >
-                                        <Input.TextArea
-                                          maxLength={290}
-                                          id="motive"
-                                          placeholder="Capture el motivo de reapertura."
-                                        />
-                                      </Row>
-                                    </>
-                                  ),
-                                })
-                              }
-                            >
-                              Abrir
-                            </Button>
-                          </Col>
-                        )}
+                        {step == 2 &&
+                          consolidated &&
+                          consolidated.status <= 2 && (
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                icon={<UnlockOutlined />}
+                                htmlType="button"
+                                onClick={() =>
+                                  setMessageModal(5, {
+                                    title: "Abrir nómina",
+                                    description:
+                                      "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                    type_alert: "warning",
+                                    action: () => openPayroll(1),
+                                    title_action_button: "Abrir nómina",
+                                    components: (
+                                      <>
+                                        <Row
+                                          style={{
+                                            width: "100%",
+                                            marginTop: "5px",
+                                          }}
+                                        >
+                                          <Input.TextArea
+                                            maxLength={290}
+                                            id="motive"
+                                            placeholder="Capture el motivo de reapertura."
+                                          />
+                                        </Row>
+                                      </>
+                                    ),
+                                  })
+                                }
+                              >
+                                Abrir
+                              </Button>
+                            </Col>
+                          )}
                         {step >= 1 && (
                           <>
                             {((isOpen &&

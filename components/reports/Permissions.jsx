@@ -243,7 +243,6 @@ const PermissionsReport = ({ permissions, ...props }) => {
                 <SelectDepartment
                   name="department"
                   companyId={props.currentNode.id}
-                  key="selectDepartament"
                 />
               </Col>
               <Col>
