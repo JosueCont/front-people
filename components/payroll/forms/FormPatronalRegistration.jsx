@@ -52,6 +52,7 @@ const FormPatronalRegistration = ({
   }, [information]);
 
   const changeImssDelegation = (value) => {
+    form.setFieldsValue({ imss_subdelegation: null });
     setImssDelegationId(value);
   };
 
