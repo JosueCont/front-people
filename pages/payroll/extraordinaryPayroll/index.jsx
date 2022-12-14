@@ -42,6 +42,7 @@ import { Global } from "@emotion/core";
 import {
   messageError,
   messageSaveSuccess,
+  messageSendSuccess,
   optionMovement,
 } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
@@ -424,12 +425,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
-  useEffect(() => {
-    if (optionspPaymentCalendars.length == 1) {
-      form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
-      changeCalendar(optionspPaymentCalendars[0].value);
-    }
-  }, [optionspPaymentCalendars]);
+  // useEffect(() => {
+  //   if (optionspPaymentCalendars.length == 1) {
+  //     form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
+  //     changeCalendar(optionspPaymentCalendars[0].value);
+  //   }
+  // }, [optionspPaymentCalendars]);
 
   const changeCalendar = (value) => {
     if (!value) {
@@ -447,11 +448,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     form.setFieldsValue({
       periodicity: calendar.periodicity.description,
       period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
-    });
-    sendCalculateExtraordinaryPayrroll({
-      payment_period: period.id,
-      calendar: value,
-      movement_type: movementType,
     });
   };
 
@@ -483,13 +479,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
+    console.log(
+      "🚀 ~ file: index.jsx:489 ~ sendCalculateExtraordinaryPayrroll ~ calendarSelect",
+      calendarSelect
+    );
     if (!movementType) return;
     data.calendar = calendarSelect.id;
     setLoading(true);
     // setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        console.log("🚀 ~ file: index.jsx:451 ~ .then ~ response", response);
         if (response.data.consolidated) {
           setConsolidated(response.data.consolidated);
           setIsOpen(response.data.consolidated.is_open);
@@ -544,8 +543,28 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
-    if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
+    console.log(
+      "🚀 ~ file: index.jsx:549 ~ useEffect ~ movementType",
+      movementType
+    );
+    if (movementType && calendarSelect) {
+      resetStateViews();
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        calendar: calendarSelect.id,
+        movement_type: movementType,
+      });
+    } else if (movementType === undefined) resetState();
   }, [movementType]);
+
+  useEffect(() => {
+    if (movementType && calendarSelect)
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        calendar: calendarSelect.id,
+        movement_type: movementType,
+      });
+  }, [calendarSelect]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
     if (movementType > 1 && record.working_days)
@@ -608,7 +627,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    console.log("🚀 ~ file: index.jsx:572 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
   };
@@ -706,7 +724,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       // if (department) data.department = department;
       // if (job) data.job = job;
       setGenericModal(false);
-      console.log("🚀 ~ file: index.jsx:641 ~ data", data);
       setLoading(true);
       WebApiPayroll.stampPayroll(data)
         .then((response) => {
@@ -1028,12 +1045,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                     payment_period: value,
                                     movement_type: movementType,
                                     calendar: calendarSelect.id,
-                                  }),
-                                  setPeriodSelcted(
-                                    calendarSelect.periods.find(
-                                      (p) => p.id == value
-                                    )
-                                  );
+                                  });
+                                setPeriodSelcted(
+                                  calendarSelect.periods.find(
+                                    (p) => p.id == value
+                                  )
+                                );
                               }}
                               options={
                                 calendarSelect

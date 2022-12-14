@@ -7,7 +7,7 @@ const SelectPeriodicity = ({
   rules = [],
   companyId,
   disabled = false,
-  onChangePeriodicy,
+  onChangePeriodicy = null,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -24,8 +24,6 @@ const SelectPeriodicity = ({
       setOptions(data);
     }
   }, [props.periodicity]);
-
-  console.log('Options', options)
 
   return (
     <>
@@ -46,7 +44,7 @@ const SelectPeriodicity = ({
           showSearch
           optionFilterProp="children"
           disabled={disabled}
-          onChange = { (e) => onChangePeriodicy(e) }
+          onChange={(e) => onChangePeriodicy && onChangePeriodicy(e)}
         >
           {options.map((item) => {
             return (

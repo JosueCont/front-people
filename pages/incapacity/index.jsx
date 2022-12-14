@@ -108,7 +108,10 @@ const Incapacity = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["incapacity"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
+    <MainLayout
+      currentKey={["incapacity"]}
+      defaultOpenKeys={["managementRH", "concierge", "requests"]}
+    >
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -143,10 +146,7 @@ const Incapacity = ({ ...props }) => {
                         />
                       </Col>
                       <Col>
-                        <SelectDepartment
-                          companyId={props.currentNode.id}
-                          key="SelectDepartment"
-                        />
+                        <SelectDepartment companyId={props.currentNode.id} />
                       </Col>
                       <Col>
                         <Form.Item

@@ -67,8 +67,8 @@ const MainSider = ({
         // link1.click();
 
         const token1 = user.jwt_data.metadata.at(-1).token;
-        // const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
-        const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
+        const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link1 = document.createElement('a');
         link1.href = url1;
         link1.target = '_blank';

@@ -19,9 +19,6 @@ const CalendarImport = ({
   useEffect;
 
   useEffect(() => {
-    console.log("Company", company);
-    console.log("paymentPeriodicity", paymentPeriodicity);
-    console.log("patronalSelect", patronalSelect);
     if (
       company != null &&
       paymentPeriodicity != null &&
@@ -91,7 +88,6 @@ const CalendarImport = ({
   };
 
   useEffect(() => {
-    console.log("Periodicities-->>", periodicities);
     if (calendarSelect != null && periodicities)
       setPerson(periodicities[calendarSelect].cfdis);
   }, [calendarSelect, periodicities]);

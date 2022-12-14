@@ -48,7 +48,9 @@ const ViewAcademics = () => {
             message.success('Carrera registrada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no registrada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Carrera no registrada';
+            message.error(msg);
         }
     }
 
@@ -59,7 +61,9 @@ const ViewAcademics = () => {
             message.success('Carrera actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya este' : 'Carrera no actualizada';
+            message.error(msg);
         }
     }
 

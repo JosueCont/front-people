@@ -43,6 +43,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [bankDisabled, setBankDisabled] = useState(false);
+  const [dailySalaryDisabled, setDailySalaryDisabled] = useState(false);
   const [disabledCalendar, setDisabledCalendar] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const [idPayroll, setIdPayroll] = useState(null);
@@ -166,6 +167,10 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
+            if(item.daily_salary){
+              setDailySalaryDisabled(true)
+            }
+
             if (item.payment_calendar)
               setDisabledCalendar(item.payment_calendar.locked);
           }
@@ -381,7 +386,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     maxLength={13}
                     rules={[fourDecimal, ruleRequired]}
                   >
-                    <Input maxLength={10} />
+                    <Input disabled={dailySalaryDisabled} maxLength={10} />
                   </Form.Item>
                 </Col>
                 {

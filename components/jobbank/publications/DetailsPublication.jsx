@@ -40,7 +40,6 @@ const DetailsPublication = ({
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [disableField, setDisabledField] = useState(false);
-    const [disabledClient, setDisabledClient] = useState(false);
     const [infoPublication, setInfoPublication] = useState({});
     const [valuesDefault, setValuesDefault] = useState({});
     const [fetching, setFetching] = useState(false);
@@ -53,10 +52,11 @@ const DetailsPublication = ({
     },[router])
 
     useEffect(()=>{
-        if(router.query.client && action == 'add'){
-            formPublications.resetFields()
-            keepClient();
-        }else setDisabledClient(false);
+        let check = Object.keys(router.query).length > 0;
+        if(check && action == 'add'){
+            formPublications.resetFields();
+            keepValues();
+        }
     },[router])
 
     useEffect(()=>{
@@ -78,10 +78,20 @@ const DetailsPublication = ({
         }
     }
 
+    const keepValues = () =>{
+        if(router.query?.client) keepClient();
+        if(router.query?.vacancy) keepVacancy();
+    }
+
     const keepClient = () =>{
-        setDisabledClient(true);
         formPublications.setFieldsValue({
             customer: router.query.client
+        })
+    }
+
+    const keepVacancy = () =>{
+        formPublications.setFieldsValue({
+            vacant: router.query.vacancy
         })
     }
 
@@ -155,7 +165,7 @@ const DetailsPublication = ({
 
     const actionCreate = () =>{
         formPublications.resetFields();
-        if (router.query?.client) keepClient();
+        keepValues();
         setDisabledField(false);
         setFetching(false)
         setLoading({})
@@ -207,7 +217,6 @@ const DetailsPublication = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormPublications
-                                disabledClient={disabledClient}
                                 formPublications={formPublications}
                                 disableField={disableField}
                                 setDisabledField={setDisabledField}

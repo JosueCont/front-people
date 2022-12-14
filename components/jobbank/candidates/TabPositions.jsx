@@ -56,12 +56,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true);
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.createCandidateLastJob(body);
-            message.success('Posición registrada');
+            message.success('Puesto registrado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no registrada');
+            message.error('Puesto no registrado');
         }
     }
 
@@ -70,12 +70,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.updateCandidateLastJob(itemToEdit.id, body);
-            message.success('Posición actualizada');
+            message.success('Puesto actualizado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no actualizada');
+            message.error('Puesto no actualizado');
         }
     }
 
@@ -84,11 +84,11 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteCandidateLastJob(id);
-            message.success('Posición eliminada');
+            message.success('Puesto eliminado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
-            message.error('Posición no eliminada');
+            message.error('Puesto no eliminado');
             setLoading(false)
         }
     }

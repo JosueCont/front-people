@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
-import { Row, Col, Form, Select, Input, Button, DatePicker} from 'antd';
+import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox} from 'antd';
 import { optionsLevelAcademic, optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
-import ListLangs from './ListLangs';
 
 const ModalEducation = ({
     title = '',
@@ -23,11 +22,13 @@ const ModalEducation = ({
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const status = Form.useWatch('status', formEducation);
+    const otherArea = Form.useWatch('other_area', formEducation);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
-        formEducation.setFieldsValue(itemToEdit);
+        let other_area = itemToEdit.specialitation_area ? false : true;
+        formEducation.setFieldsValue({...itemToEdit, other_area});
     },[itemToEdit])
 
 
@@ -36,8 +37,15 @@ const ModalEducation = ({
         formEducation.resetFields();
     }
 
+    const setValue = (key, val) => formEducation.setFieldsValue({[key]: val});
+    const setEndDate = (val = null) => setValue('end_date', val);
+    const setArea = (val = null) => setValue('specialitation_area', val);
+    const setOther = (val = null) => setValue('specialitation_area_other', val);
+
     const onFinish = (values) =>{
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
+        if(values.other_area) values.specialitation_area = null;
+        else values.specialitation_area_other = null;
         setLoading(true);
         setTimeout(()=>{
             setLoading(false)
@@ -47,7 +55,12 @@ const ModalEducation = ({
     }
 
     const onChangeStatus = (value) =>{
-        if(value == 1) formEducation.setFieldsValue({end_date: null});
+        if(value == 1) setEndDate();
+    }
+
+    const onChangeOther = ({target : { checked }}) =>{
+        if(checked) setArea();
+        else setOther();
     }
 
     return (
@@ -62,6 +75,7 @@ const ModalEducation = ({
                 form={formEducation}
                 onFinish={onFinish}
                 layout='vertical'
+                initialValues={{other_area: false}}
             >
                 <Row gutter={[24,0]}>
                     <Col span={12}>
@@ -120,14 +134,15 @@ const ModalEducation = ({
                         <Form.Item
                             name='specialitation_area'
                             label='Área de especialización'
-                            rules={[ruleRequired]}
+                            dependencies={['other_area']}
+                            rules={[otherArea ? {validator: (_, value) => Promise.resolve()} : ruleRequired]}
                         >
                             <Select
                                 allowClear
                                 showSearch
-                                placeholder='Seleccionar una opción'
+                                placeholder='Seleccionar un área'
                                 notFoundContent='No se encontraron resultados'
-                                disabled={load_specialization_area}
+                                disabled={otherArea}
                                 loading={load_specialization_area}
                                 optionFilterProp='children'
                             >
@@ -139,13 +154,32 @@ const ModalEducation = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col span={12} className='turn_rotative_content'>
+                        <div className='turn_rotative'>
+                            <label className={`${otherArea ? "custom-required": ""}`}>
+                                ¿Otra área de especialización?
+                            </label>
+                            <Form.Item
+                                name='other_area'
+                                valuePropName='checked'
+                                style={{marginBottom: 0}}
+                            >
+                                <Checkbox onChange={onChangeOther}/>
+                            </Form.Item>
+                        </div>
                         <Form.Item
                             name='specialitation_area_other'
-                            label='Otra área de especialización'
-                            rules={[ruleWhiteSpace]}
+                            dependencies={['other_area']}
+                            rules={[
+                                ruleWhiteSpace,
+                                otherArea ? ruleRequired : {validator: (_, value) => Promise.resolve()}
+                            ]}
                         >
-                            <Input maxLength={200} placeholder='Especifica la especialización'/>
+                             <Input
+                                disabled={!otherArea}
+                                maxLength={200}
+                                placeholder='Especifica la especialización'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>

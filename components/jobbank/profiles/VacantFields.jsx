@@ -11,7 +11,8 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 
 const VacantFields = ({
-    disabledField = false
+    disabledField = false,
+    onChangeDisabled = ()=>{}
 }) => {
     
     const {
@@ -39,7 +40,12 @@ const VacantFields = ({
                             <div style={{background: '#f0f0f0', padding: '8px 16px', borderRadius: '12px'}}>
                                 <Row gutter={[8,0]} className='section-list-fields'>
                                     {Array.isArray(val) && _.chunk(val, Math.ceil(val.length/4)).map((record, idx) => (
-                                        <Col xs={24} md={12} lg={8} xl={6} key={`record_${idx}`} style={{display: 'flex', flexDirection: 'column'}}>
+                                        <Col
+                                            xs={24} md={12} lg={8} xl={6}
+                                            key={`record_${idx}`}
+                                            style={{display: 'flex', flexDirection: 'column'}}
+                                            onClick={()=> onChangeDisabled()}
+                                        >
                                             {record.map((item, index) => (
                                                 <Form.Item name={`${key}|${item.field}`} key={`item_${idx}_${index}`} valuePropName='checked' noStyle>
                                                     <Checkbox style={{marginLeft: 0}} disabled={disabledField}>
