@@ -11,16 +11,27 @@ const FormCaledanrXml = ({
   calendar,
   paymentPeriodicity = [],
   dataImportCalendar,
+  perceptions_type = null,
   ...props
 }) => {
   const [formCalendar] = Form.useForm();
   const [currentYear, setCurrentYear] = useState(moment().year());
   const [periodicityCode, setPeriodicityCode] = useState("");
   const [lastPeriodDate, setlastPeriodDate] = useState(null);
+  const [perception, setPerception] = useState("");
 
   useEffect(() => {
     calendar.calendar.perception_type = calendar.perception;
   }, []);
+
+  useEffect(() => {
+    if (calendar.perception) {
+      let percep = perceptions_type.find(
+        (item) => item.id == calendar.perception
+      );
+      if (percep) setPerception(percep.code == "001" ? "Nomina" : "Asimilados");
+    }
+  }, [perceptions_type, calendar]);
 
   const onChangePeriod = (item) => {
     calendar.calendar.start_date = item.target.value;
@@ -110,16 +121,28 @@ const FormCaledanrXml = ({
     <>
       {calendar && (
         <>
-          <Row style={{ width: "100%", padding: 10 }}>
-            {/* <Col span={24}>
+          {/* <Row style={{ width: "100%", padding: 10 }}>
+            <Col span={24}>
               <h3>
                 <b>Fecha de inicio del calendario</b>
               </h3>
             </Col>
             <Col span={24}>
               <PrintPeriods periods={calendar.period_list} />
-            </Col> */}
+            </Col>
+          </Row> */}
+          <Row style={{ width: "100%", padding: 10 }}>
+            <Col
+              span={24}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              {" "}
+              <span style={{ fontSize: 20, fontWeiht: "bold" }}>
+                {perception}
+              </span>
+            </Col>
           </Row>
+
           <Form form={formCalendar} layout="vertical">
             <Row gutter={[16, 6]}>
               <Col>

@@ -11,6 +11,7 @@ const GenericModal = ({
   viewActionButton = true,
   closeButton = "Cancelar",
   maskClosable = true,
+  viewActionButtonCancell = true,
 }) => {
   return (
     <Modal
@@ -19,14 +20,16 @@ const GenericModal = ({
       footer={
         <Col>
           <Space>
-            <Button
-              size="large"
-              htmlType="button"
-              onClick={() => setVisible(false)}
-              style={{ paddingLeft: 50, paddingRight: 50 }}
-            >
-              {closeButton}
-            </Button>
+            {viewActionButtonCancell && (
+              <Button
+                size="large"
+                htmlType="button"
+                onClick={() => setVisible(false)}
+                style={{ paddingLeft: 50, paddingRight: 50 }}
+              >
+                {closeButton}
+              </Button>
+            )}
 
             {viewActionButton && (
               <Button
