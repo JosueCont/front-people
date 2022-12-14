@@ -48,6 +48,14 @@ const FormProfiles = ({
         formProfile.setFieldsValue(activeFields);
     }
 
+    const onChangeDisabled = () =>{
+        if(!disabledField) return;
+        setDisabledField(false)
+        formProfile.setFieldsValue({
+            profile_type: 'open_fields'
+        })
+    }
+
     return (
         <Row gutter={[24,0]}>
             <Col xs={24} lg={10}>
@@ -109,7 +117,10 @@ const FormProfiles = ({
                 </Form.Item>
             </Col>
             <Col span={24}>
-                <VacantFields disabledField={disabledField}/>
+                <VacantFields
+                    disabledField={disabledField}
+                    onChangeDisabled={onChangeDisabled}
+                />
             </Col>
         </Row>
     )

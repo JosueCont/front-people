@@ -10,6 +10,7 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import {ruleEmail, rulePhone} from "../../utils/rules";
 
 const GeneralData = ({ node_id, ...props }) => {
   let router = useRouter();
@@ -66,19 +67,18 @@ const GeneralData = ({ node_id, ...props }) => {
       })
       .catch(function (error) {
         message.error(messageError);
-        console.log(error);
       });
   };
   return (
     <Form onFinish={onFinish} layout={"vertical"} form={form}>
       <Row className="container-items-center">
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="contact_email" label="Email:">
+          <Form.Item rules={[ruleEmail]} name="contact_email" label="Email:">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="contact_phone" label="Teléfono:">
+          <Form.Item rules={[rulePhone]} name="contact_phone" label="Teléfono:">
             <Input />
           </Form.Item>
         </Col>

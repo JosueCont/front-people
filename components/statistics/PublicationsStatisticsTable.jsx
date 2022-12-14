@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Table, Select, Checkbox, Row, Col, Badge } from "antd";
 import styled from "styled-components";
 import _ from "lodash";
@@ -133,7 +133,7 @@ const PublicationsStatisticsTable = ({
       render: (publication) => (
         <>
           {publication && publication != "" ? (
-          <div dangerouslySetInnerHTML={{__html: publication}}></div>
+            <div dangerouslySetInnerHTML={{ __html: publication }}></div>
           ) : (
             <i>*Esta publicación es de contenido multimedia</i>
           )}
@@ -198,55 +198,55 @@ const PublicationsStatisticsTable = ({
 
   const handleChange = (pagination) => {
     // if(props.parameters && props.parameters != '')
-    console.log("pagination",pagination);
-    if(pagination.pageSize > 10){
-      let queryParam = `&limit=${pagination.pageSize}`
-      changePage(
-          props.currentNode,
-          pagination.current,
-          parameters ? parameters : '',
-          queryParam
-      );
-    }else{
-      let queryParam = `&limit=10`
+    if (pagination.pageSize > 10) {
+      let queryParam = `&limit=${pagination.pageSize}`;
       changePage(
         props.currentNode,
         pagination.current,
-        parameters ? parameters : '',
+        parameters ? parameters : "",
+        queryParam
+      );
+    } else {
+      let queryParam = `&limit=10`;
+      changePage(
+        props.currentNode,
+        pagination.current,
+        parameters ? parameters : "",
         queryParam
       );
     }
   };
 
-  const viewAllPublications = (e) =>{
-    if(e.target.checked){
-      setViewAllSize(true)
-      let queryParam = `&limit=${total}`
+  const viewAllPublications = (e) => {
+    if (e.target.checked) {
+      setViewAllSize(true);
+      let queryParam = `&limit=${total}`;
       changePage(
         props.currentNode,
         current,
-        parameters ? parameters : '',
+        parameters ? parameters : "",
         queryParam
       );
-    }else{
-      setViewAllSize(false)
-      let queryParam = `&limit=10`
+    } else {
+      setViewAllSize(false);
+      let queryParam = `&limit=10`;
       changePage(
         props.currentNode,
         current,
-        parameters ? parameters : '',
+        parameters ? parameters : "",
         queryParam
       );
     }
-  }
+  };
 
   return (
     <>
       <Row justify="end">
-        <Checkbox onChange={viewAllPublications}><b>Ver todas las publicaciones</b></Checkbox>
+        <Checkbox onChange={viewAllPublications}>
+          <b>Ver todas las publicaciones</b>
+        </Checkbox>
       </Row>
-      { !viewAllSize &&
-        (
+      {!viewAllSize && (
         <CustomTable
           columns={columns}
           scroll={{ x: 800 }}
@@ -259,10 +259,8 @@ const PublicationsStatisticsTable = ({
           onChange={handleChange}
           loading={fetching}
         />
-        )
-      }
-      { viewAllSize &&
-        (
+      )}
+      {viewAllSize && (
         <CustomTable
           columns={columns}
           scroll={{ x: 800 }}
@@ -274,8 +272,7 @@ const PublicationsStatisticsTable = ({
           onChange={handleChange}
           loading={fetching}
         />
-        )
-      }
+      )}
     </>
   );
 };

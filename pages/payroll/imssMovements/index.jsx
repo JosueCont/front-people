@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin, message, Modal, Typography } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Collapse,
+  Row,
+  Col,
+  Space,
+  Spin,
+  message,
+  Modal,
+  Typography,
+} from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -12,30 +23,29 @@ import MovementsIMSS from "../../../components/payroll/fiscalMovements/Movements
 import UploadFile from "../../../components/UploadFile";
 import MovementsSection from "../../../components/payroll/ImssMovements/MovementsSection";
 import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
-const { Text  } = Typography
+const { Text } = Typography;
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
   const [loading, setLoading] = useState(false);
-  const [showList, setShowList]=useState(false)
+  const [showList, setShowList] = useState(false);
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [patronalSelected, setPatronalSelected] = useState(null);
-  const [files, setFiles ] = useState([])
-  const [file, setFile]=useState(null)
-  const [ modalVisible, setModalVisible ] = useState(false)
+  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
 
-  useEffect(()=>{
-    if(file){
-        setShowList(true)
+  useEffect(() => {
+    if (file) {
+      setShowList(true);
     } else {
-        setShowList(false)
+      setShowList(false);
     }
-},[file])
-
+  }, [file]);
 
   useEffect(() => {
     patronalSelected && getFiles();
@@ -47,61 +57,62 @@ const ImssMovements = ({ ...props }) => {
       .then((response) => {
         setFiles(response.data.results);
         setLoading(false);
-        console.log("Response", response);
       })
       .catch((error) => {
         setLoading(false);
-        console.log("error", error);
+        console.log(error);
       });
   };
 
   const syncEmaandEva = async () => {
-    setLoading(true)
-    let data = new FormData()
-    
-    data.append('node', props.currentNode.id)
-    data.append('patronal_registration', patronalSelected)
+    setLoading(true);
+    let data = new FormData();
+
+    data.append("node", props.currentNode.id);
+    data.append("patronal_registration", patronalSelected);
 
     try {
-      let response = await WebApiPeople.forceListEbaAndEmaFiles(data)
-      console.log("Response", response)
-      message.success('Solicitud de Emisiones realizada con éxito, verifique mas tarde sus documentos')
+      let response = await WebApiPeople.forceListEbaAndEmaFiles(data);
+      message.success(
+        "Solicitud de Emisiones realizada con éxito, verifique mas tarde sus documentos"
+      );
     } catch (error) {
-      console.error('Error', error)
-      message.error('Error al pedir las emsiones. Intente más tarde')
+      console.error("Error", error);
+      message.error("Error al pedir las emsiones. Intente más tarde");
     } finally {
       setLoading(false);
     }
   };
 
   const importEBAEMAFiles = async () => {
+    setLoading(true);
+    let data = new FormData();
 
-    setLoading(true)
-    let data = new FormData()
-
-    data.append('node', props.currentNode.id)
-    data.append('patronal_registration', patronalSelected)
-    data.append('File', file)
+    data.append("node", props.currentNode.id);
+    data.append("patronal_registration", patronalSelected);
+    data.append("File", file);
 
     try {
-      let response = await WebApiPeople.importEMAandEvaFiles(data)
-      if(response) {
-        message.success('Importacion correcta')
-        getFiles()
+      let response = await WebApiPeople.importEMAandEvaFiles(data);
+      if (response) {
+        message.success("Importacion correcta");
+        getFiles();
       }
     } catch (error) {
-      console.log('Error', error.data)
-      
+      console.log(rror.data);
     } finally {
-      setLoading(false)
-      setModalVisible(false)
-      setFile(null)
+      setLoading(false);
+      setModalVisible(false);
+      setFile(null);
     }
-  }
+  };
 
   return (
     <>
-      <MainLayout currentKey={["imssMovements"]}  defaultOpenKeys={["managementRH","payroll"]}>
+      <MainLayout
+        currentKey={["imssMovements"]}
+        defaultOpenKeys={["managementRH", "payroll"]}
+      >
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}
@@ -118,9 +129,9 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Collapse defaultActiveKey={['1']}>
+            <Collapse defaultActiveKey={["1"]}>
               <Panel header="Movimientos IMSS" key="1">
-                <MovementsSection/>
+                <MovementsSection />
 
                 {/*<Collapse
                   expandIcon={({ isActive }) => (
@@ -158,28 +169,31 @@ const ImssMovements = ({ ...props }) => {
                       onChange={(value) => setPatronalSelected(value)}
                     />
                   </Col>
-                  <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
+                  <Col
+                    span={10}
+                    style={{ display: "flex", justifyContent: "end" }}
+                  >
                     <Col span={5} style={{ marginRight: 20 }}>
-                        <Button
-                            disabled = { patronalSelected? false : true }
-                            onClick={ () => setModalVisible(true)}
-                        >
-                          importar
-                        </Button>
+                      <Button
+                        disabled={patronalSelected ? false : true}
+                        onClick={() => setModalVisible(true)}
+                      >
+                        importar
+                      </Button>
                     </Col>
-                     <Col span={7}>
-                        <Button 
-                          onClick={ () => syncEmaandEva() }
-                          loading={loading}
-                          disabled = { patronalSelected?  false : true }
-                        >
-                            Sincronizar
-                        </Button>
+                    <Col span={7}>
+                      <Button
+                        onClick={() => syncEmaandEva()}
+                        loading={loading}
+                        disabled={patronalSelected ? false : true}
+                      >
+                        Sincronizar
+                      </Button>
                     </Col>
                   </Col>
                 </Row>
                 <EmaYEvaFiles
-                  files={  files?.length > 0 ? files : []}
+                  files={files?.length > 0 ? files : []}
                   loading={loading}
                 />
               </Panel>
@@ -195,20 +209,18 @@ const ImssMovements = ({ ...props }) => {
       <Modal
         title="Importar EMA y EBA"
         centered
-        visible = { modalVisible }
-        onCancel = { () => {
-            setModalVisible(false)
-            setFile(null)
-          } 
-        }
+        visible={modalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+          setFile(null);
+        }}
         footer={[
           <Button
             key="back"
-            onClick={ () => {
-              setModalVisible(false)
-              setFile(null)
-            } 
-          }
+            onClick={() => {
+              setModalVisible(false);
+              setFile(null);
+            }}
             style={{ padding: "0 10px", marginLeft: 15 }}
           >
             Cancelar
@@ -218,31 +230,31 @@ const ImssMovements = ({ ...props }) => {
             type="primary"
             onClick={() => importEBAEMAFiles()}
             style={{ padding: "0 10px", marginLeft: 15 }}
-            loading = { loading }
-            disabled = { file? false : true }
+            loading={loading}
+            disabled={file ? false : true}
           >
             Subir archivos
           </Button>,
         ]}
       >
-          <Row justify='start'>
-            <Col span={24}>
-              <Text>
-                La importación de EMA/EBA puede ser solamente por período. 
-                Agrega los archivos descargados del imss a una carpeta comprimida 
-                en formato .zip
-              </Text>
-            </Col>
-            <Col span={24} style={{ marginTop: 20 }}>
-              <UploadFile
-                textButton={"Importar EMA y EBA"}
-                setFile={setFile}
-                validateExtension={".zip"}
-                size = {'middle'}
-                showList = {showList}
-              />
-            </Col>
-          </Row>
+        <Row justify="start">
+          <Col span={24}>
+            <Text>
+              La importación de EMA/EBA puede ser solamente por período. Agrega
+              los archivos descargados del imss a una carpeta comprimida en
+              formato .zip
+            </Text>
+          </Col>
+          <Col span={24} style={{ marginTop: 20 }}>
+            <UploadFile
+              textButton={"Importar EMA y EBA"}
+              setFile={setFile}
+              validateExtension={".zip"}
+              size={"middle"}
+              showList={showList}
+            />
+          </Col>
+        </Row>
       </Modal>
     </>
   );

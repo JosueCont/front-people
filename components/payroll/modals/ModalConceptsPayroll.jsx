@@ -9,8 +9,6 @@ import {
   Steps,
   Card,
   Checkbox,
-  Input,
-  Spin,
   Alert,
   InputNumber,
   DatePicker,
@@ -22,8 +20,6 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import moment from "moment";
-import TextArea from "antd/lib/input/TextArea";
 import { departureMotive } from "../../../utils/constant";
 
 const { Step } = Steps;
@@ -209,6 +205,10 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:212 ~ listConcepts ~ value",
+      value
+    );
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -233,6 +233,10 @@ const ModalConceptsPayroll = ({
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:241 ~ listConcepts ~ currentStep",
+      currentStep
+    );
     currentStep == 0
       ? setCurrentStep(currentStep + 1)
       : is_cero && currentStep == 1
@@ -254,7 +258,7 @@ const ModalConceptsPayroll = ({
         departureDate == null ||
         departureDate == ""
       ) {
-        message.error("Debe seleccionar una fecah de salida");
+        message.error("Debe seleccionar una fecha de salida");
         return;
       }
       if (
@@ -320,7 +324,6 @@ const ModalConceptsPayroll = ({
 
     clearConcept();
     calendar.payroll = data;
-    console.log("Calendar calculate-->> ", calendar);
     sendCalculatePayroll(calendar);
   };
 
@@ -620,7 +623,7 @@ const ModalConceptsPayroll = ({
                         <EditOutlined
                           style={{ marginRight: "10px" }}
                           key={"edit" + record.perception}
-                          onClick={() => listConcepts()}
+                          onClick={() => listConcepts(1)}
                         />
                         <DeleteOutlined
                           key={"delete" + record.perception}

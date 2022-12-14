@@ -459,14 +459,23 @@ export const getFiltersJB = (obj = {}) =>{
       let offset = (parseInt(val) - 1) * 10;
       return query +=`&limit=10&offset=${offset}`;
     }
-    let value = val == 'open_fields' ? "" : val;
+    let value = ['open_fields','others'].includes(val) ? "" : val;
     return query += `&${key}=${value}`;
   }, '');
 }
 
+const keysToDeleteJB = [
+  'id',
+  'client',
+  'vacancy',
+  'catalog',
+  'strategy',
+  'start',
+  'end'
+]
 export const deleteFiltersJb = (
   filters = {},
-  listDelete = ['id','client','vacancy','catalog']
+  listDelete = keysToDeleteJB
 ) =>{
   let newFilters = {...filters};
   const remove = item => {
@@ -475,3 +484,7 @@ export const deleteFiltersJb = (
   listDelete.forEach(remove);
   return newFilters;
 }
+
+export const getFileExtension = (filename) => {
+  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+};

@@ -41,6 +41,7 @@ const CfdiVaucher = ({
   setKeys,
   department = null,
   job = null,
+  movementType = null,
   ...props
 }) => {
   const router = useRouter();
@@ -206,6 +207,7 @@ const CfdiVaucher = ({
       let filter = `calendar=${calendar}&period=${period}`;
       if (department) filter = filter + `&department=${department}`;
       if (job) filter = filter + `&job=${job}`;
+      if (movementType) filter = filter + `&movement_type=${movementType}`;
       getVoucher(filter);
     }
   }, [router.query]);

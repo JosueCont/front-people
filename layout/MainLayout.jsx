@@ -15,6 +15,7 @@ import Cookie from "js-cookie";
 
 
 import Head from "next/head";
+import ModalGenericNotification from "../components/modal/ModalGenericNotification";
 
 const { Content } = Layout;
 
@@ -238,6 +239,7 @@ const MainLayout = ({
           }
         `}
       />
+      <ModalGenericNotification/>
       <Helmet>
         {props.config && props.config.concierge_icon ? (
           <link

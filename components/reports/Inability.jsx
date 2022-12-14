@@ -276,7 +276,6 @@ const InabilityReport = ({ permissions, ...props }) => {
                   style={{ width: 100 }}
                   name="department"
                   companyId={props.currenNode && props.currenNode.id}
-                  key="selectDepartament"
                 />
               </Col>
               <Col>
@@ -300,7 +299,7 @@ const InabilityReport = ({ permissions, ...props }) => {
                   key="send_date"
                   labelCol={24}
                 >
-                  <RangePicker onChange={onchangeRange} locale = { locale }/>
+                  <RangePicker onChange={onchangeRange} locale={locale} />
                 </Form.Item>
               </Col>
               <Col style={{ display: "flex" }}>
