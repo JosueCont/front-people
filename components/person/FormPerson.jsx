@@ -294,6 +294,20 @@ const FormPerson = ({
                         </Form.Item>
                       </Col>
                     )}
+                    {config.applications.find(
+                    (item) => item.app === "SUKHATV" && item.is_active
+                    )  && (
+                    <Col lg={8} xs={24}>
+                      <Form.Item
+                          label='¿Es administrador SukhaTV?'
+                          key="itemAccessSukhaAdmin"
+                          name="is_sukhatv_admin"
+                          rules={[ruleRequired]}
+                      >
+                        <SelectAccessSukha/>
+                      </Form.Item>
+                    </Col>
+                    )}
                   </>
                 )}
 

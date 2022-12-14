@@ -88,6 +88,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
       sukhatv_access: person.sukhatv_access,
+      is_sukhatv_admin: person.is_sukhatv_admin,
 
     });
     if (person.work_title) {
@@ -535,6 +536,17 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                     <Select options={SukhaAccess} />
                   </Form.Item>
                 </Col>
+              )}
+              {config.applications.find(
+                  (item) => item.app === "SUKHATV" && item.is_active) && (
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                        name="is_sukhatv_admin"
+                        label="¿Es administrador SukhaTV?"
+                    >
+                      <Select options={SukhaAccess} />
+                    </Form.Item>
+                  </Col>
               )}
             </Row>
             <Row gutter={20}>
