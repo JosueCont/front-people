@@ -358,6 +358,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
   const saveImportPayrroll = async () => {
     if (files.length > 0) {
+      const validated = validateBeforeSubmit();
+      // if (!validated) return;
       setLoading(true);
       let form_data = new FormData();
       files.map((item) => {
@@ -460,26 +462,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
       {/* <ModalSuccessImport /> */}
       <ModalResumeData />
-
-      {visibleMessageModal && (
-        <GenericModal
-          visible={visibleMessageModal}
-          setVisible={(value) => setVisibleMessageModal(value)}
-          title={titileMessage}
-          width="50%"
-          titleActionButton="Aceptar"
-          actionButton={() => {
-            successImport
-              ? router.push({ pathname: "/select-company" })
-              : setVisibleMessageModal(false);
-          }}
-          viewActionButtonCancell={successImport ? false : true}
-        >
-          <>
-            <Alert message={descriptionImport} type="info" />
-          </>
-        </GenericModal>
-      )}
 
       {xmlImport && (
         <Form layout="vertical">
@@ -731,6 +713,26 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           setVisible={setModal}
           setFiles={setFiles}
         />
+      )}
+
+      {visibleMessageModal && (
+        <GenericModal
+          visible={visibleMessageModal}
+          setVisible={(value) => setVisibleMessageModal(value)}
+          title={titileMessage}
+          width="50%"
+          titleActionButton="Aceptar"
+          actionButton={() => {
+            successImport
+              ? router.push({ pathname: "/select-company" })
+              : setVisibleMessageModal(false);
+          }}
+          viewActionButtonCancell={successImport ? false : true}
+        >
+          <>
+            <Alert message={descriptionImport} type="info" />
+          </>
+        </GenericModal>
       )}
     </MainLayout>
   );

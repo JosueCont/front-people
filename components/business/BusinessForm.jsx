@@ -43,7 +43,7 @@ import {
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ ...props }) => {
+const businessForm = ({ currentNode, ...props }) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -78,16 +78,14 @@ const businessForm = ({ ...props }) => {
 
   const deleteBusiness = async (id) => {
     setLoading(true);
+
     WebApiPeople.deleteNode(id)
       .then(function (response) {
-        if (response.status === 200) {
-          Router.push("/business");
-        }
         message.success(messageDeleteSuccess);
+        if (currentNode.id === id) Router.push("/select-company");
         getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
-        if (currentNode.id === id) Router.push("/select-company");
         setLoading(false);
       })
       .catch(function (error) {
@@ -215,33 +213,6 @@ const businessForm = ({ ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error);
-      });
-  };
-
-  const getBusiness = () => {
-    setLoading(true);
-    WebApiPeople.getCompaniesPeople(personId)
-      .then((response) => {
-        setBusiness([]);
-        setBusiness(response.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setBusiness([]);
-        console.log(e);
-        setLoading(false);
-      });
-  };
-
-  const getNodesTree = () => {
-    WebApiPeople.getNodeTree({
-      person: personId,
-    })
-      .then((response) => {
-        setNodesTree(response.data);
-      })
-      .catch((error) => {
         console.log(error);
       });
   };
