@@ -34,6 +34,7 @@ const MainSider = ({
   defaultOpenKeys = 'null',
   hideProfile = true,
   onClickImage = true,
+  user,
   ...props
 }) => {
   const router = useRouter();
@@ -103,8 +104,9 @@ const MainSider = ({
     };
     switch (key){
       case "sukha":
+        const token1 = user.jwt_data.metadata.at(-1).token;
         const link1 = document.createElement('a');
-        link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}`;
+        link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
         // link1.href = "https://admin.demo.sukhatv.com/";
         link1.target = '_blank';
         link1.click();
@@ -679,6 +681,7 @@ const MainSider = ({
 
 const mapState = (state) => {
   return {
+    user: state.userStore.user,
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,

@@ -210,7 +210,7 @@ const businessForm = ({ ...props }) => {
     setBusiness([]);
     await WebApiPeople.getCompanys()
       .then((response) => {
-        setBusiness(response.data.results.map((item) => (item.key = item.id)));
+        setBusiness(response.data.results);
         setLoading(false);
       })
       .catch((error) => {
