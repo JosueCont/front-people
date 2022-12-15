@@ -617,3 +617,14 @@ export const departureMotive = [
   { value: 9, label: "Jubilación" },
   { value: 10, label: "Pensión" },
 ];
+
+export const KhorflixAccess = [
+  {
+    label: "Sí",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  },
+];

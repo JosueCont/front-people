@@ -23,7 +23,7 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
 import _ from "lodash"
-import { urlSocial, urlSukha, urlMyAccount} from "../config/config";
+import { urlSocial, urlSukha, urlMyAccount, urlKhorflx} from "../config/config";
 import { getCurrentURL } from "../utils/constant";
 
 const { Sider, Header, Content, Footer } = Layout;
@@ -112,11 +112,19 @@ const MainSider = ({
         link1.click();
         break;
       case "khorflix":
+        const token2 = user.jwt_data.metadata.at(-1).token;
         const link2 = document.createElement('a');
-        link2.href = "https://admin.iu.khorflix.com/";
+        link2.href = `https://admin.${getCurrentURL(true, true)}.${urlKhorflx}/validation?token=${token2}`;
+        // link1.href = "https://admin.demo.sukhatv.com/";
         link2.target = '_blank';
         link2.click();
         break;
+
+        // const link2 = document.createElement('a');
+        // link2.href = "https://admin.iu.khorflix.com/";
+        // link2.target = '_blank';
+        // link2.click();
+        // break;
       case "careerlab":
         const link3 = document.createElement('a');
         link3.href = "https://admin.platform.careerlab.hiumanlab.com/";

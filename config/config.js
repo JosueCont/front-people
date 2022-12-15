@@ -34,7 +34,11 @@ export const urlSocial = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
   : process.env.BASE_URL_SOCIAL_TENANT;
   
-  export const urlSukha = process.browser
+export const urlSukha = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_SUKHATV_TENANT
   : process.env.BASE_URL_SUKHATV_TENANT;
+
+export const urlKhorflx = process.browser
+  ? process.env.NEXT_PUBLIC_BASE_URL_KHORFLIX_TENANT
+  : process.env.BASE_URL_KHORFLIX_TENANT;
 

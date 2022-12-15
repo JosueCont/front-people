@@ -27,7 +27,8 @@ import {
   messageError,
   messageUpdateSuccess,
   periodicity,
-  SukhaAccess
+  SukhaAccess,
+  KhorflixAccess
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
@@ -89,7 +90,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       intranet_access: person.intranet_access,
       sukhatv_access: person.sukhatv_access,
       is_sukhatv_admin: person.is_sukhatv_admin,
-
+      khorflix_access: person.khorflix_access,
+      is_khorflix_admin: person.is_khorflix_admin,
     });
     if (person.work_title) {
       formPerson.setFieldsValue({
@@ -545,6 +547,28 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                         label="¿Es administrador SukhaTV?"
                     >
                       <Select options={SukhaAccess} />
+                    </Form.Item>
+                  </Col>
+              )}
+              {config.applications.find(
+                  (item) => item.app === "KHORFLIX" && item.is_active) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="khorflix_access"
+                    label="Acceso a Khorflix"
+                  >
+                    <Select options={KhorflixAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                  (item) => item.app === "KHORFLIX" && item.is_active) && (
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                        name="is_khorflix_admin"
+                        label="¿Es administrador Khorflix?"
+                    >
+                      <Select options={KhorflixAccess} />
                     </Form.Item>
                   </Col>
               )}
