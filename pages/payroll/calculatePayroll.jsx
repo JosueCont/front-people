@@ -573,6 +573,9 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
+          if(error.response.data.message.includes("concepto interno")){
+
+          }
           setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
@@ -665,6 +668,21 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const setMessageModal = (type, data) => {
+    const check_configuration = (data)=>{
+      if (data.includes("concepto interno")) {
+        let words = data.split(" ")
+        let data_parts = words.map(x=>{
+          if (x === "configuración"){
+            return <a style={{color: "blue"}} onClick={()=>router.push("/config/catalogs/")}>configuración&nbsp;</a>
+          }else{
+            return <span>{x}&nbsp;</span>
+          }
+        })
+        return <span>{data_parts}</span>
+      }else{
+        return data
+      }
+    }
     switch (type) {
       case 1:
         setInfoGenericModal({
@@ -695,7 +713,7 @@ const CalculatePayroll = ({ ...props }) => {
             ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
             : data.toLowerCase().includes("patronal")
             ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
-            : data,
+            : check_configuration(data),
           type_alert: data.toLowerCase().includes("error")
             ? "error"
             : "warning",
