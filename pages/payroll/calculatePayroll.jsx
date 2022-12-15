@@ -588,6 +588,9 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
+          if(error.response.data.message.includes("concepto interno")){
+
+          }
           setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
@@ -680,6 +683,21 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const setMessageModal = (type, data) => {
+    const check_configuration = (data)=>{
+      if (data.includes("concepto interno")) {
+        let words = data.split(" ")
+        let data_parts = words.map(x=>{
+          if (x === "configuración"){
+            return <a style={{color: "blue"}} onClick={()=>router.push("/config/catalogs/")}>configuración&nbsp;</a>
+          }else{
+            return <span>{x}&nbsp;</span>
+          }
+        })
+        return <span>{data_parts}</span>
+      }else{
+        return data
+      }
+    }
     switch (type) {
       case 1:
         setInfoGenericModal({
@@ -689,7 +707,8 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal"
             : data.toLowerCase().includes("folios")
             ? "Folios"
-            : data.toLowerCase().includes("patronal")
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
             ? "Registro patronal"
             : "Error",
 
@@ -699,7 +718,8 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal faltante"
             : data.toLowerCase().includes("folios")
             ? "Folios insuficientes"
-            : data.toLowerCase().includes("patronal")
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
             ? "Registro patronal faltante"
             : "Error",
           description: data.toLowerCase().includes("fiscal information")
@@ -708,9 +728,10 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Datos en la dirección fiscal faltantes, verifique la información fiscal he intente de nuevo"
             : data.toLowerCase().includes("folios")
             ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
-            : data.toLowerCase().includes("patronal")
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
             ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
-            : data,
+            : check_configuration(data),
           type_alert: data.toLowerCase().includes("error")
             ? "error"
             : "warning",
@@ -723,14 +744,16 @@ const CalculatePayroll = ({ ...props }) => {
                     tab: 2,
                   },
                 })
-              : data.toLowerCase().includes("patronal")
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
               ? router.push({ pathname: "/business/patronalRegistrationNode" })
               : setGenericModal(false),
           title_action_button:
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
               ? "Ver información fiscal"
-              : data.toLowerCase().includes("patronal")
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
               ? "Ver registro patronal"
               : "Continuar",
         });
