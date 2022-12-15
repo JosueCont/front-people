@@ -3,7 +3,7 @@ import { Select, Form } from "antd";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 const { Option } = Select;
-const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
+const SelectTaxRegime = ({ rules=[], taxRegimeSelected = null, ...props }) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -24,6 +24,7 @@ const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
       key={"SelectTaxRegime"}
       name={props.name ? props.name : "tax_regime"}
       label={props.label ? props.label : "Régimen fiscal"}
+      rules = {rules}
     >
       <Select
         key="SelectTaxRegime"
