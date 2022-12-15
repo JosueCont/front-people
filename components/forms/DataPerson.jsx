@@ -17,7 +17,7 @@ import { useState } from "react";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
-
+import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
 import { useEffect } from "react";
 import moment from "moment";
 import {
@@ -43,7 +43,7 @@ import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import locale from "antd/lib/date-picker/locale/es_ES";
 
-const DataPerson = ({ config, person = null, setPerson, ...props }) => {
+const DataPerson = ({ currentNode,config, person = null, setPerson, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -89,8 +89,13 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       intranet_access: person.intranet_access,
       sukhatv_access: person.sukhatv_access,
       is_sukhatv_admin: person.is_sukhatv_admin,
-
+      patronal_registration: null
     });
+    if (person.patronal_registration){
+      formPerson.setFieldsValue({
+        patronal_registration: person.patronal_registration
+      });
+    }
     if (person.work_title) {
       formPerson.setFieldsValue({
         person_department: person.work_title.department.id,
@@ -137,6 +142,9 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   };
 
   const onFinishPerson = (value) => {
+    if (value.patronal_registration === undefined){
+      value.patronal_registration = null
+    }
     if (dateIngPlatform) value.register_date = dateIngPlatform;
     else delete value["register_date"];
     if (birthDate) value.birth_date = birthDate;
@@ -610,6 +618,14 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 >
                   <Input maxLength={11} />
                 </Form.Item>
+              </Col>
+              <Col lg={8} xs={24} md={12}>
+                <SelectPatronalRegistration
+                  name={"patronal_registration"}
+                  value_form={"patronal_registration"}
+                  textLabel={"Registro Patronal"}
+                  currentNode={currentNode}
+                />
               </Col>
             </Row>
           </Col>
