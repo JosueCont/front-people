@@ -602,7 +602,8 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  { catalog: "specialization", name: "Áreas de especialización" },
+  { catalog: "areas", name: "Áreas de especialización" },
+  { catalog: "subareas", name: "Subáreas de especialización" },
 ];
 
 export const departureMotive = [

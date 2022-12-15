@@ -344,6 +344,22 @@ class WebApiJobBank {
     static deleteSpecializationArea(id){
         return WebApi.ApisType(`/job-bank/specialization-area-study/${id}/`, 'delete');
     }
+
+    static getSpecializationSubArea(node, query){
+        return WebApi.ApisType(`/job-bank/specialization-sub-area/?node=${node}${query}`, 'get');
+    }
+
+    static createSpecializationSubArea(data){
+        return WebApi.ApisType('/job-bank/specialization-sub-area/', 'post', data);
+    }
+
+    static updateSpecializationSubArea(id, data){
+        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'put', data);
+    }
+
+    static deleteSpecializationSubArea(id){
+        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'delete');
+    }
 }
 
 export default WebApiJobBank;
