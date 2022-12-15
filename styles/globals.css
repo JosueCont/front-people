@@ -160,7 +160,7 @@ header.ant-layout-header
 .formPermission .ant-input-number-disabled,
 .ant-input-disabled {
   /* background-color: #fff !important; */
-  color: #000 !important;
+  /* color: #000 !important; */
 }
 
 .formFilterReports .ant-col .ant-form-item {
