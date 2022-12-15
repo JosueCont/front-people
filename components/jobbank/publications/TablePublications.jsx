@@ -32,6 +32,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import ModalPost from './ModalPost';
 import { getFiltersJB } from '../../../utils/functions';
+import { redirectTo } from '../../../utils/constant';
 
 const TablePublications = ({
     currentNode,
@@ -56,10 +57,8 @@ const TablePublications = ({
         try {
             message.loading({content: 'Publicando vacante...', key});
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
-            setTimeout(()=>{
-                getPublicationsWithFilters();
-                message.success({content: 'Vacante publicada', key});
-            },1000);
+            getPublicationsWithFilters();
+            message.success({content: 'Vacante publicada', key});
         } catch (e) {
             console.log(e)
             let txtError = e.response?.data?.message;
@@ -140,6 +139,18 @@ const TablePublications = ({
         };
     }
 
+    const validateHistory = (item) =>{
+        if(item.history?.length > 1){
+            router.push({
+                pathname: `/jobbank/publications/history/${item.id}`,
+                query: router.query
+            })
+            return;
+        }
+        let url = item.history?.at(-1)?.post_url;
+        redirectTo(url, true);
+    }
+
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -189,16 +200,15 @@ const TablePublications = ({
                 >
                     Publicar
                 </Menu.Item>
-                <Menu.Item
-                    key='3'
-                    icon={<FileTextOutlined />}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/publications/history/${item.id}`,
-                        query: router.query
-                    })}
-                >
-                    Ver historial
-                </Menu.Item>
+                {item.history?.length > 0 && (
+                    <Menu.Item
+                        key='4'
+                        icon={item.history?.length > 1 ? <FileTextOutlined /> : <NotificationOutlined/>}
+                        onClick={()=> validateHistory(item)}
+                    >
+                        {item.history?.length > 1 ? 'Ver historial' : 'Ir a publicación'}
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };

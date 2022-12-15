@@ -626,6 +626,11 @@ div.estatus-connection p{
 
 .table-custom .ant-table-thead tr > th.ant-table-cell{
     background: #f0f0f0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.table-custom .ant-table-tbody > tr > td{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .table-custom .ant-table-tbody > tr.ant-table-row:hover > td,
@@ -635,12 +640,31 @@ div.estatus-connection p{
     background: #f0f0f0;
 }
 
+.table-title-custom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.table-title-custom p{
+    margin-bottom: 0px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
 button.custom-btn {
     background-color: #1f2733!important;
     transition: display 0.5s;
     /* transition-delay: 1000ms; */
 }
 
+.custom-cascader-empty{
+    width: 100%;
+}
+.custom-cascader-empty div.ant-select-selector{
+    border-radius: 10px!important;
+}
 .custom-cascader{
     width: calc(100% - 32px);
 }

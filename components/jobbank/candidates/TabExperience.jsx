@@ -25,7 +25,11 @@ import { useSelector } from 'react-redux';
 import DeleteItems from '../../../common/DeleteItems';
 import ListCompetences from './ListCompetences';
 
-const TabExperience = ({ sizeCol = 8, action }) => {
+const TabExperience = ({
+    action,
+    setInfoExperience,
+    infoExperience
+}) => {
 
     const {
         load_competences,
@@ -40,7 +44,6 @@ const TabExperience = ({ sizeCol = 8, action }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoExperience, setInfoExperience] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalList, setOpenModalList] = useState(false);
     const [itemSelected, setItemSelected] = useState({});
@@ -241,15 +244,22 @@ const TabExperience = ({ sizeCol = 8, action }) => {
             }
         },
         {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>

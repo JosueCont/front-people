@@ -6,7 +6,7 @@ import { redirectTo } from '../../../utils/constant';
 import moment from 'moment';
 import SearchHistory from './SearchHistory';
 
-const TableHistory = () => {
+const TableHistory = ({ newFilters = {} }) => {
 
     const router = useRouter();
     const [infoPublication, setInfoPublication] = useState({});
@@ -23,7 +23,7 @@ const TableHistory = () => {
         let date = moment(item.timestamp).format('DD-MM-YYYY');
         let check_start = date >= router.query?.start;
         let check_end = date <= router.query?.end;
-        let check_code = item.code_post == router.query?.code_post;
+        let check_code = item.code_post == router.query?.account;
         let check_dates = check_start && check_end;
         if(check_dates && check_code) return true;
         if(check_dates) return true;
@@ -32,8 +32,10 @@ const TableHistory = () => {
     }
 
     const onFilterHistory = (history = []) =>{
-        let size = Object.keys(router.query).length;
-        if(size > 1){
+        let valid = ['start','end','account'];
+        let keys = Object.keys(router.query);
+        let exist = keys.some(item => valid.includes(item));
+        if(exist){
             let results = history?.filter(search_);
             setInfoHistory(results);
             return;
@@ -90,7 +92,10 @@ const TableHistory = () => {
     return (
         <Row gutter={[16,16]}>
             <Col span={24}>
-                <SearchHistory infoPublication={infoPublication}/>
+                <SearchHistory
+                    infoPublication={infoPublication}
+                    newFilters={newFilters}
+                />
             </Col>
             <Col span={24}>
                 <Table
