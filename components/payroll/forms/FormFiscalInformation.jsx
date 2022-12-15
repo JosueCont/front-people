@@ -46,7 +46,7 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
           <Form.Item
             name="person_type"
             label="Tipo de persona"
-            // rules={[ruleRequired]}
+            rules={[ruleRequired]}
           >
             <Select
               options={personType}
@@ -81,7 +81,7 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
           </Form.Item>
         </Col>
         <Col lg={13} xs={22}>
-          <SelectTaxRegime />
+          <SelectTaxRegime rules={[ruleRequired]}/>
         </Col>
         <Col lg={4} xs={22} md={12}>
           <Form.Item

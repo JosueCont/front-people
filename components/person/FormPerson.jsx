@@ -25,6 +25,7 @@ import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import SelectAccessSukha from "../selects/SelectAccessSukha";
+import SelectAccessKhorflix from "../selects/SelectAccessKhorflix";
 import { ruleRequired, nameLastname } from "../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
@@ -279,10 +280,9 @@ const FormPerson = ({
                     <Col lg={8} xs={24}>
                       <SelectGroup viewLabel={true} />
                     </Col>
-                    {
-                  config.applications.find(
+                    {config.applications.find(
                     (item) => item.app === "SUKHATV" && item.is_active
-                  )  && (
+                    )  && (
                       <Col lg={8} xs={24}>
                         <Form.Item
                           label='Acceso a Sukha'
@@ -305,6 +305,34 @@ const FormPerson = ({
                           rules={[ruleRequired]}
                       >
                         <SelectAccessSukha/>
+                      </Form.Item>
+                    </Col>
+                    )}
+                    {config.applications.find(
+                    (item) => item.app === "KHORFLIX" && item.is_active
+                    )  && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          label='Acceso a Khorflix'
+                          key="itemAccessKhorflix"
+                          name="khorflix_access"
+                          rules={[ruleRequired]}  
+                          >
+                          <SelectAccessKhorflix/>
+                        </Form.Item>
+                      </Col>
+                    )}
+                    {config.applications.find(
+                    (item) => item.app === "KHORFLIX" && item.is_active
+                    )  && (
+                    <Col lg={8} xs={24}>
+                      <Form.Item
+                          label='¿Es administrador Khorflix?'
+                          key="itemAccessKhorflixAdmin"
+                          name="is_khorflix_admin"
+                          rules={[ruleRequired]}
+                      >
+                        <SelectAccessKhorflix/>
                       </Form.Item>
                     </Col>
                     )}
