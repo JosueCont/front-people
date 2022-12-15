@@ -167,6 +167,11 @@ const ModalConceptsPayroll = ({
               <Row style={{ marginBottom: "8px" }}>
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
+                  <Row wrap={false}>
+                    {
+                        item.data_type === 1 &&
+                        <span style={{marginRight: "7px", marginTop: "3px"}}>$</span>
+                    }
                   <InputNumber
                     key={item.id}
                     type="number"
@@ -176,6 +181,11 @@ const ModalConceptsPayroll = ({
                     controls={false}
                     onChange={(e) => changeHandler(type, item.id)(e)}
                   />
+                    {
+                        item.data_type === 2 &&
+                        <span style={{marginLeft: "7px", marginTop: "3px"}}>UNIDAD(ES)</span>
+                    }
+                  </Row>
                 </Col>
               </Row>
             </Col>
