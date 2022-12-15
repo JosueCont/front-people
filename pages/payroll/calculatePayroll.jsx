@@ -158,7 +158,11 @@ const CalculatePayroll = ({ ...props }) => {
         <div>
           <NumberFormat
             prefix={"$"}
-            number={item.calculation.total_perceptions}
+            number={
+              item.calculation && item.calculation.total_perceptions
+                ? item.calculation.total_perceptions
+                : 0.0
+            }
           />
         </div>
       ),
@@ -171,7 +175,11 @@ const CalculatePayroll = ({ ...props }) => {
         <div>
           <NumberFormat
             prefix={"$"}
-            number={item.calculation.total_deductions}
+            number={
+              item.calculation && item.calculation.total_deductions
+                ? item.calculation.total_deductions
+                : 0.0
+            }
           />
         </div>
       ),
@@ -182,7 +190,14 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.calculation.net_salary} />
+          <NumberFormat
+            prefix={"$"}
+            number={
+              item.calculation && item.calculation.net_salary
+                ? item.calculation.net_salary
+                : 0.0
+            }
+          />
         </div>
       ),
     },

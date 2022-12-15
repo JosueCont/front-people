@@ -19,7 +19,11 @@ import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
 import moment from 'moment';
 
-const TabPositions = ({ sizeCol = 8, action }) => {
+const TabPositions = ({
+    action,
+    setInfoPositions,
+    infoPositions
+}) => {
 
     const {
         list_sectors,
@@ -30,7 +34,6 @@ const TabPositions = ({ sizeCol = 8, action }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
@@ -178,15 +181,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             }
         },
         {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -219,7 +229,7 @@ const TabPositions = ({ sizeCol = 8, action }) => {
                 }}
             />
             <ModalPositions
-                title={validateAction() && openModal ? 'Editar posición' : 'Agregar posición'}
+                title={validateAction() && openModal ? 'Editar puesto' : 'Agregar puesto'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}

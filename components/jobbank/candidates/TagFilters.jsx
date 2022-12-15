@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 
@@ -9,10 +9,19 @@ const TagFilters = ({
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let querys = {...router.query};
+        if(querys['page']) delete querys['page'];
+        setNewFilters(querys);
+    },[router])
 
     const removeFilter = (key) =>{
         let filters = {...router.query};
         if(filters[key]) delete filters[key];
+        setNewFilters({})
         router.replace({
             pathname: router.asPath?.split('?')[0],
             query: filters
@@ -27,8 +36,8 @@ const TagFilters = ({
 
     return (
         <div className='body-list-items scroll-bar'>
-            {Object.keys(router.query).length > 0 ?
-                Object.entries(router.query).map(([key, val], idx) =>(
+            {Object.keys(newFilters).length > 0 ?
+                Object.entries(newFilters).map(([key, val], idx) =>(
                 <div className='item-list-row' key={idx}>
                     <p>
                         {listKeys[key] ?? key}:&nbsp;

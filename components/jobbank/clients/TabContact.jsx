@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Input, List, Button } from 'antd';
+import { Alert, Button, Table, message, Menu, Dropdown } from 'antd';
+import { valueToFilter} from '../../../utils/functions';
 import {
-    ruleWhiteSpace,
-    ruleEmail,
-    rulePhone
-} from '../../../utils/rules';
-import { validateNum, validateMaxLength } from '../../../utils/functions';
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
+    CloseOutlined,
+    EllipsisOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined
+} from '@ant-design/icons';
+import ModalContact from './ModalContact';
+import DeleteItems from '../../../common/DeleteItems';
 
 const TabContact = ({
     contactList,
@@ -14,125 +17,170 @@ const TabContact = ({
     formClients
 }) => {
 
-    const [infoContact, setInfoContact] = useState({});
+    const [itemToEdit, setItemToEdit] = useState({});
+    const [openModal, setOpenModal] = useState(false);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [itemsToDelete, setItemsToDelete] = useState([]);
 
-    const addContact = () =>{
-        let check = [
-            'name_contact',
-            'contact_job',
-            'contact_email',
-            'contact_phone'
-        ]
-        let errors = formClients.getFieldsError();
-        const _some = item => check.includes(item.name[0]) && item.errors.length > 0;
-        let exist = errors.some(_some)
-        if(exist) return;
-        let newList = [...contactList, infoContact];
+    const actionCreate = (values) =>{
+        // const some_ = item => valueToFilter(item.name) == valueToFilter(values.name);
+        // let exist = contactList.some(some_);
+        // if(exist){
+        //     message.error('Este nombre ya existe');
+        //     return;
+        // }
+        let newList = [...contactList, values];
         setContactList(newList);
-        setInfoContact({})
-        const reset = item => formClients.setFieldsValue({[item]: null});
-        check.forEach(reset);
     }
 
-    const onChangeContact = ({ target }) =>{
-        let { name, value } = target;
-        setInfoContact({...infoContact, [name]: value})
+    const actionUpdate = (values) =>{
+        // const filter_ = (item, idx) => valueToFilter(item.name) == valueToFilter(values.name);
+        // let results = contactList.filter(filter_);
+        // if(results.length > 1){
+        //     message.error('Este nombre ya existe');
+        //     return;
+        // }
+        const updItem = (item, idx) =>
+            itemToEdit.index == idx
+                ? {...item, ...values}
+                : item;
+        let newList = contactList.map(updItem);
+        setContactList(newList);
     }
 
-    const deleteItem = (idx) =>{
+    const actionDelete = () =>{
+        let index = itemsToDelete?.at(-1)?.index;
         let newList = [...contactList];
-        newList.splice(idx, 1);
-        setContactList(newList)
+        newList.splice(index, 1);
+        setContactList(newList);
     }
+
+    const openModalRemove = (item) =>{
+        setItemsToDelete([item])
+        setOpenModalDelete(true)
+    }
+
+    const openModalEdit = (item)=>{
+        setItemToEdit(item)
+        setOpenModal(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        setItemToEdit({})
+    }
+
+    const closeModalDelete = () =>{
+        setOpenModalDelete(false)
+        setItemsToDelete([])
+    }
+
+    const validateAction = () => Object.keys(itemToEdit).length > 0;
+
+    const menuItem = (item) => {
+        return (
+            <Menu>
+                <Menu.Item
+                    key='1'
+                    icon={<EditOutlined/>}
+                    onClick={()=> openModalEdit(item)}
+                >
+                    Editar
+                </Menu.Item>
+                <Menu.Item
+                    key='2'
+                    icon={<DeleteOutlined/>}
+                    onClick={()=> openModalRemove(item)}
+                >
+                    Eliminar
+                </Menu.Item>
+            </Menu>
+        );
+    };
+
+    const columns = [
+        {
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
+        },
+        {
+            title: 'Puesto',
+            dataIndex: 'job_position',
+            key: 'job_position'
+        },
+        {
+            title: 'Correo',
+            dataIndex: 'email',
+            key: 'email'
+        },
+        {
+            title: 'Teléfono',
+            dataIndex: 'phone',
+            key: 'phone'
+        },
+        {
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
+            render: (item, record, index)=> (
+                <Dropdown overlay={()=> menuItem({...item, index})}>
+                    <Button size='small'>
+                        <EllipsisOutlined />
+                    </Button>
+                </Dropdown>
+            )
+        }
+    ]
 
     return (
-        <Row gutter={[24,24]} className='tab-contact'>
-            <Col xs={24} xl={14} xxl={16}>
-                <Row gutter={[24,0]}>
-                    <Col xs={24} md={12}>
-                        <Form.Item
-                            name='name_contact'
-                            label='Nombre del contacto'
-                            rules={[ruleWhiteSpace]}
-                        >
-                            <Input
-                                name='name'
-                                maxLength={50}
-                                placeholder='Nombre del contacto'
-                                onChange={onChangeContact}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} md={12}>
-                        <Form.Item
-                            name='contact_job'
-                            label='Ocupación del contacto'
-                            rules={[ruleWhiteSpace]}
-                        >
-                            <Input
-                                name='job_position'
-                                maxLength={100}
-                                placeholder='Ocupación del contacto'
-                                onChange={onChangeContact}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} md={12}>
-                        <Form.Item
-                            name='contact_email'
-                            label='Correo del contacto'
-                            rules={[ruleEmail]}
-                        >
-                            <Input
-                                name='email'
-                                maxLength={50}
-                                placeholder='Correo del contacto'
-                                onChange={onChangeContact}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} md={12}>
-                        <Form.Item
-                            name='contact_phone'
-                            label='Teléfono del contacto'
-                            rules={[rulePhone]}
-                        >
-                            <Input
-                                name='phone'
-                                placeholder='Teléfono del contacto'
-                                maxLength={10}
-                                onKeyDown={validateNum}
-                                onKeyPress={validateMaxLength}
-                                onChange={onChangeContact}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                        <Button onClick={()=> addContact()}>Agregar</Button>
-                    </Col>
-                </Row>
-            </Col>
-            <Col xs={24} xl={10} xxl={8} className='list_interviewers'>
-                <List
-                    header='Contactos'
-                    itemLayout='horizontal'
-                    dataSource={contactList}
-                    locale={{emptyText: 'No se encontraron resultados'}}
-                    size='small'
-                    renderItem={(item, idx) => (
-                        <List.Item
-                            key={`item_${idx}`}
-                            actions={[<CloseOutlined onClick={()=> deleteItem(idx)}/>]}
-                        >
-                            <List.Item.Meta
-                                title={`${item.name ?? ''} - ${item.job_position ?? ''}`}
-                                description={`${item.email ?? ''} / ${item.phone ?? ''}`}
-                            />
-                        </List.Item>
-                    )}
-                />
-            </Col>
-        </Row>
+        <>
+            <Alert
+                message={`Cualquier modificación, eliminación o nuevo contacto agregado,
+                es necesario "Guardar/Actualizar" para almacenar los cambios realizados, de lo
+                contrario estos se pierden.`}
+                type="warning"
+                showIcon
+                style={{marginBottom: 16}}
+            />
+            <Table
+                className='table-custom'
+                size='small'
+                rowKey={(item, idx)=> idx}
+                columns={columns}
+                dataSource={contactList}
+                locale={{ emptyText: contactList.length > 0
+                    ? 'Cargando...'
+                    : 'No se encontraron resultados'
+                }}
+                pagination={{
+                    total: contactList.length,
+                    hideOnSinglePage: true,
+                    showSizeChanger: false
+                }}
+            />
+            <ModalContact
+                title={validateAction() && openModal ? 'Editar contacto' : 'Agregar contacto'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+            <DeleteItems
+                title='¿Estás seguro de eliminar este contacto?'
+                visible={openModalDelete}
+                keyTitle='name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+                timeLoad={1000}
+            />
+        </>
     )
 }
 

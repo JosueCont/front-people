@@ -12,7 +12,8 @@ const DeleteItems = ({
     actionDelete = ()=> {},//function
     textCancel = 'Cancelar', //string
     textDelete = 'Eliminar', //string
-    viewAsList = false, //boolean
+    viewAsList = false, //boolean,
+    timeLoad = 2000
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ const DeleteItems = ({
             actionDelete()
             setLoading(false)
             close()
-        },2000)
+        }, timeLoad)
     }
 
     return(
