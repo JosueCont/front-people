@@ -425,14 +425,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
-  // useEffect(() => {
-  //   if (optionspPaymentCalendars.length == 1) {
-  //     form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
-  //     changeCalendar(optionspPaymentCalendars[0].value);
-  //   }
-  // }, [optionspPaymentCalendars]);
-
   const changeCalendar = (value) => {
+    resetStateViews();
     if (!value) {
       resetState();
       return;
@@ -481,10 +475,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
-    console.log(
-      "🚀 ~ file: index.jsx:489 ~ sendCalculateExtraordinaryPayrroll ~ calendarSelect",
-      calendarSelect
-    );
     if (!movementType) return;
     data.calendar = calendarSelect.id;
     setLoading(true);
@@ -615,7 +605,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         });
         setTimeout(() => {
           message.success(messageSaveSuccess);
-          setLoading(false);
+          // setLoading(false);
         }, 1000);
       })
       .catch((error) => {
