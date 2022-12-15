@@ -471,6 +471,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setConsolidatedObj(null);
     setConsolidated(null);
     setStep(0);
+    setPreviuosStep(false);
+    setNextStep(true);
     setIsOpen(true);
     setObjectSend(null);
     setPersonKeys([]);
@@ -717,6 +719,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         array_cfdi: listPersons.map((item) => {
           return item.payroll_cfdi_person.id;
         }),
+        movement_type: movementType,
+        payroll_type: "E",
       };
     const inputPaymentDate = document.getElementById("payment_date");
     if (inputPaymentDate.value != null && inputPaymentDate.value != "") {
@@ -727,6 +731,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       setLoading(true);
       WebApiPayroll.stampPayroll(data)
         .then((response) => {
+          setPersonKeys([]);
+          setPersonId(null);
+          setListPersons([]);
           setLoading(false);
           setMessageModal(4);
           message.success(messageSendSuccess);
@@ -1068,7 +1075,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col xxs={24} xl={4}>
+                        {/* <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
                             onChange={(value) =>
@@ -1087,7 +1094,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                 : setJob(null)
                             }
                           />
-                        </Col>
+                        </Col> */}
                         {(job || department) && (
                           <Col xxs={1} xl={1}>
                             <Button
@@ -1204,7 +1211,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {step == 2 &&
+                      {/* {step == 2 &&
                         consolidated &&
                         consolidated.status <= 2 && (
                           <Col md={5} offset={1}>
@@ -1243,7 +1250,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                               Abrir
                             </Button>
                           </Col>
-                        )}
+                        )} */}
                       {step == 2 && consolidated && consolidated.status < 3 && (
                         <Col md={5} offset={1}>
                           <Button

@@ -82,10 +82,10 @@ const businessForm = ({ currentNode, ...props }) => {
     WebApiPeople.deleteNode(id)
       .then(function (response) {
         message.success(messageDeleteSuccess);
-        if (currentNode.id === id) Router.push("/select-company");
-        getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
+        if (currentNode.id === id) Router.push("/select-company");
+        getCopaniesList();
         setLoading(false);
       })
       .catch(function (error) {
