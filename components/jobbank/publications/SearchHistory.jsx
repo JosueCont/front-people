@@ -4,11 +4,13 @@ import { DatePicker, Form, Row, Col, Button} from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
+    ArrowLeftOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 
 const SearchHistory = ({
-    infoPublication = {}
+    infoPublication = {},
+    newFilters = {}
 }) => {
 
     const router = useRouter();
@@ -28,7 +30,7 @@ const SearchHistory = ({
     },[router])
 
     const onFinish = (values) =>{
-        let filters = {};
+        let filters = {...newFilters};
         if(values.dates){
             filters['start'] = values.dates[0].format(formatDate);
             filters['end'] = values.dates[1].format(formatDate);
@@ -41,7 +43,17 @@ const SearchHistory = ({
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace(url, undefined, {shallow: true});
+        router.replace({
+            pathname: url,
+            query: newFilters
+        }, undefined, {shallow: true});
+    }
+
+    const actionBack = () =>{
+        router.push({
+            pathname: '/jobbank/publications',
+            query: newFilters
+        })
     }
 
     return (
@@ -72,6 +84,12 @@ const SearchHistory = ({
                         </Button>
                         <Button onClick={()=> deleteFilter()}>
                             <SyncOutlined />
+                        </Button>
+                        <Button
+                            onClick={()=> actionBack()}
+                            icon={<ArrowLeftOutlined />}
+                        >
+                            Regresar
                         </Button>
                     </div>
                 </Col>

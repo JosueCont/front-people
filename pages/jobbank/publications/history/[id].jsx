@@ -38,7 +38,7 @@ const index = () => {
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Historial</Breadcrumb.Item>
             </Breadcrumb>
-            <TableHistory/>
+            <TableHistory newFilters={newFilters}/>
         </MainLayout>
     )
 }
