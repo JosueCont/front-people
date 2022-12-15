@@ -1,9 +1,9 @@
 import React from "react";
 import { Form, Select } from "antd";
-import { SukhaAccess } from "../../utils/constant";
+import { KhorflixAccess } from "../../utils/constant";
 import { ruleRequired } from "../../utils/rules";
 
-const SelectAccessSukha = ({
+const SelectAccessKhorflix = ({
   viewLabel = false,
   onChange,
   value,
@@ -13,10 +13,9 @@ const SelectAccessSukha = ({
     <Select
       defaultValue={value||undefined}
       onChange={onChange}
-      options={SukhaAccess}
-      //placeholder="Acceso a Khor Connect"
+      options={KhorflixAccess}
     />
   );
 };
 
-export default SelectAccessSukha;
+export default SelectAccessKhorflix;
