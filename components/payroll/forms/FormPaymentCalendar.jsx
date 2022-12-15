@@ -189,7 +189,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setPeriod(item.period);
         setLocked(item.locked);
         setSelectPeriodicity(item.periodicity.id);
-        if (item.benefits) {
+        if (item.belongs_to) {
           setPolitics(true);
           checks.map((a) => {
             let checked = document.getElementById(a.name);
@@ -269,7 +269,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     if (startDate) {
       value.start_date = startDate;
     }
-    value.activation_date = activationDate != "" ? activationDate : null;
+    if (activationDate) value.activation_date = activationDate;
 
     if (period) {
       value.period = parseInt(period);
@@ -435,12 +435,12 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <Form.Item
                 key="SelectSalaryDays"
                 name="salary_days"
-                label="Dias a pagar"
+                label="Días a pagar"
                 rules={[ruleRequired]}
               >
                 <Select
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
-                  placeholder="Dias a pagar"
+                  placeholder="Días a pagar"
                   style={
                     props.style ? props.style : { width: "100% !important" }
                   }
@@ -543,6 +543,23 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
+                name="activation_date"
+                label="Inicio de uso de calendario"
+                rules={[ruleRequired]}
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  onChange={onChangeActivationDate}
+                  moment={"YYYY-MM-DD"}
+                  placeholder=""
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale={locale}
+                  disabledDate={disablePeriod}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22}>
+              <Form.Item
                 name="pay_before"
                 label="¿Pagar días antes?"
                 rules={[onlyNumeric]}
@@ -555,7 +572,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       }}
                     >
                       <span>
-                        <small>Pagar sabados</small>
+                        <small>Pagar sábados</small>
                         <Switch
                           size="small"
                           checked={paymentSaturday}
@@ -569,7 +586,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                         />
                       </span>
                       <span>
-                        <small>Pagar Domingos</small>
+                        <small>Pagar domingos</small>
                         <Switch
                           size="small"
                           checked={paymentSunday}

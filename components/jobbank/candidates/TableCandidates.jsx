@@ -133,14 +133,14 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item key='1'>
+                <Menu.Item key='1'>
                     <Clipboard
                         text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`}
                         title='Actualización'
                         border={false}
                         tooltipTitle='Copiar link de actualización'
                     />
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
@@ -166,17 +166,20 @@ const TableCandidates = ({
         {
             title: 'Nombre',
             dataIndex: 'fisrt_name',
-            key: 'fisrt_name'
+            key: 'fisrt_name',
+            ellipsis: true
         },
         {
             title: 'Apellidos',
             dataIndex: 'last_name',
-            key: 'last_name'
+            key: 'last_name',
+            ellipsis: true
         },
         {
             title:'Correo',
             dataIndex: 'email',
-            key: 'email'
+            key: 'email',
+            ellipsis: true
         },
         {
             title: 'Teléfono',

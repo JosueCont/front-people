@@ -63,6 +63,10 @@ const ModalEducation = ({
         else setOther();
     }
 
+    const disabledDate = (current) => {
+        return current && current > moment().endOf("day");
+    };
+
     return (
         <MyModal
             title={title}
@@ -115,6 +119,7 @@ const ModalEducation = ({
                             <DatePicker
                                 style={{width: '100%'}}
                                 disabled={![2,3].includes(status)}
+                                disabledDate={disabledDate}
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 inputReadOnly

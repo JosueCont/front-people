@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getSectors } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
-import RegisterClient from '../../../components/jobbank/clients/RegisterClient';
+import DetailsClients from '../../../components/jobbank/clients/DetailsClients';
 
 const client = ({
     currentNode,
@@ -15,7 +15,11 @@ const client = ({
 
     return (
         <AutoRegister>
-            <RegisterClient/>
+            <div className='content-center'>
+                <div style={{width: '70%'}}>
+                    <DetailsClients isAutoRegister={true} action='add'/>
+                </div>
+            </div>
         </AutoRegister>
     )
 }
