@@ -303,22 +303,23 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       let calendar_saved = calendars.filter((elem) => elem.calendar.saved);
 
       if (calendar_not_saved.length > 0) {
-        let description = "";
+        let text = "";
         calendar_not_saved.map((item) => {
-          if (description != "") {
-            description =
-              description +
-              (
-                <span>
-                  <b>{item.calendar.name}:</b> {item.calendar.message}
-                </span>
-              );
+          if (text != "") {
+            let desc =
+              item.calendar.name +
+              ": " +
+              (item.calendar.message != ""
+                ? item.calendar.message
+                : "Error al guardar");
+            text = text + ", " + " - " + desc;
           } else {
-            description = (
-              <span>
-                <b>{item.calendar.name}:</b> {item.calendar.message}
-              </span>
-            );
+            text =
+              item.calendar.name +
+              ": " +
+              (item.calendar.message != ""
+                ? item.calendar.message
+                : "Error al guardar");
           }
         });
         if (calendar_saved.length > 0) {
@@ -328,16 +329,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         }
 
         setTitleMessage("Importación correcta");
-        setDescriptionImport(description);
+        setDescriptionImport(text);
       } else {
         setSuccessImport(true);
         // si no encontramos errores en la lista de saved
-        let description = (
-          <span>
-            <b>{company_list.length}:</b> Empresas y <b>{calendars.length}:</b>{" "}
-            Calendarios guardados correctamente
-          </span>
-        );
+        let description =
+          company_list.length +
+          "Empresas y " +
+          calendars.length +
+          "  Calendarios guardados correctamente";
+
         setTitleMessage("Importación correcta");
         setDescriptionImport(description);
       }
