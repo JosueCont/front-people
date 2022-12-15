@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
+import SelectGeographicArea from "../../components/selects/SelectGeographicArea";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
 import { monthsName, typeCalculate } from "../../utils/constant";
@@ -91,7 +92,10 @@ const calculatorSalary = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["calculatorSalary"]}  defaultOpenKeys={["managementRH","payroll"]}>
+    <MainLayout
+      currentKey={["calculatorSalary"]}
+      defaultOpenKeys={["managementRH", "payroll"]}
+    >
       <Global
         styles={`
           .card-calculator .ant-card-body{
@@ -162,8 +166,8 @@ const calculatorSalary = ({ ...props }) => {
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
-              className={"pointer"}
-              onClick={() => route.push({ pathname: "/home/persons/" })}
+            className={"pointer"}
+            onClick={() => route.push({ pathname: "/home/persons/" })}
           >
             Inicio
           </Breadcrumb.Item>
@@ -238,6 +242,12 @@ const calculatorSalary = ({ ...props }) => {
                           </Form.Item>
                         </Col>
                       )}
+                      <Col md={12}>
+                        <SelectGeographicArea
+                          size="large"
+                          rules={[ruleRequired]}
+                        />
+                      </Col>
                     </Row>
                     <Row gutter={10}>
                       <Col
@@ -274,7 +284,13 @@ const calculatorSalary = ({ ...props }) => {
                                 {changeType ? "Nómina" : "Asimilado"}
                               </Text>
                             </Col>
-                            <Col span={8} className="border-results">
+                            <Col
+                              span={8}
+                              style={{
+                                backgroundColor: type == 1 && "yellow",
+                              }}
+                              className="border-results"
+                            >
                               <Text strong>
                                 $ {numberFormat(salary.gross_salary)}
                               </Text>

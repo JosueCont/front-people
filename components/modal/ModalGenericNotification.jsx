@@ -21,7 +21,6 @@ const ModalGenericNotification = ({
          }else if(modalData.type===2 && modalData.showMessage){
              showNotification()
          }
-         console.log('***** Modal data',modalData)
      }
   },[modalData])
 

@@ -34,8 +34,6 @@ const ProvisionsReport = ({ permissions, ...props }) => {
   const [calendar, setCalendar] = useState(null);
   const [report, setReport] = useState(1);
 
-  console.log("Calendars", props.payment_calendar);
-
   const disabledDate = (current) => {
     return (
       current && moment(current).startOf("year") > moment().startOf("year")

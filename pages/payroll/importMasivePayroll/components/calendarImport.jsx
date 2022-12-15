@@ -9,6 +9,7 @@ const CalendarImport = ({
   paymentPeriodicity = null,
   patronalSelect = null,
   setPerson,
+  perceptions_type,
   ...props
 }) => {
   const [validDatas, setValidDatas] = useState(false);
@@ -34,8 +35,15 @@ const CalendarImport = ({
                 name: "",
                 type_tax: "",
                 perception_type: "",
-                start_date: "",
-                period: 2022,
+                start_date: p.start_date
+                  ? p.start_date
+                  : String(p.period) + "-01-01",
+                activation_date: p.activation_date
+                  ? p.activation_date
+                  : p.start_date
+                  ? p.start_date
+                  : String(p.period) + "-01-01",
+                period: p.period,
                 active: false,
                 annual_adjustment: false,
                 monthly_adjustment: false,
@@ -53,8 +61,15 @@ const CalendarImport = ({
               name: "",
               type_tax: "",
               perception_type: "",
-              start_date: "",
-              period: 2022,
+              start_date: p.start_date
+                ? p.start_date
+                : String(p.period) + "-01-01",
+              activation_date: p.activation_date
+                ? p.activation_date
+                : p.start_date
+                ? p.start_date
+                : String(p.period) + "-01-01",
+              period: p.period,
               active: true,
               annual_adjustment: false,
               monthly_adjustment: false,
@@ -133,6 +148,7 @@ const CalendarImport = ({
                   <FormCaledanrXml
                     calendar={periodicities[calendarSelect]}
                     paymentPeriodicity={paymentPeriodicity}
+                    perceptions_type={perceptions_type}
                   />
                 </Row>
               </Row>

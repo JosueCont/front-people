@@ -9,8 +9,6 @@ import {
   Steps,
   Card,
   Checkbox,
-  Input,
-  Spin,
   Alert,
   InputNumber,
   DatePicker,
@@ -22,8 +20,6 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import moment from "moment";
-import TextArea from "antd/lib/input/TextArea";
 import { departureMotive } from "../../../utils/constant";
 
 const { Step } = Steps;

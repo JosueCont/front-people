@@ -176,19 +176,20 @@ const NodeTreeView = ({ ...props }) => {
                         <DeleteOutlined onClick={() => modalDelete(true, p)} />
                       </Tooltip>
                     )}
-                  {props.permissions.company && props.permissions.company.edit && (
-                    <Tooltip placement="top" title="Editar">
-                      <EditOutlined
-                        onClick={() =>
-                          modalCreateUpdate({
-                            bool: true,
-                            edit: p,
-                            parent: parent,
-                          })
-                        }
-                      />
-                    </Tooltip>
-                  )}
+                  {props.permissions.company &&
+                    props.permissions.company.edit && (
+                      <Tooltip placement="top" title="Editar">
+                        <EditOutlined
+                          onClick={() =>
+                            modalCreateUpdate({
+                              bool: true,
+                              edit: p,
+                              parent: parent,
+                            })
+                          }
+                        />
+                      </Tooltip>
+                    )}
                 </IconButton>
 
                 {p.children && p.children.length > 0 ? (

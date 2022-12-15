@@ -290,15 +290,17 @@ const businessForm = ({ ...props }) => {
         return (
           <div>
             <Row gutter={24}>
-              {props.permissions && props.permissions.edit && props.config.nomina_enabled && (
-                <Col className="gutter-row" span={6}>
-                  <Link href={`/business/${item.id}`}>
-                    <Tooltip title="Configuración">
-                      <SettingOutlined />
-                    </Tooltip>
-                  </Link>
-                </Col>
-              )}
+              {props.permissions &&
+                props.permissions.edit &&
+                props.config.nomina_enabled && (
+                  <Col className="gutter-row" span={6}>
+                    <Link href={`/business/${item.id}`}>
+                      <Tooltip title="Configuración">
+                        <SettingOutlined />
+                      </Tooltip>
+                    </Link>
+                  </Col>
+                )}
               {props.permissions && props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Tooltip title="Editar">
@@ -430,7 +432,10 @@ const businessForm = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["strategyPlaning","company"]}>
+    <MainLayout
+      currentKey={["business"]}
+      defaultOpenKeys={["strategyPlaning", "company"]}
+    >
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -568,7 +573,9 @@ const businessForm = ({ ...props }) => {
               }
             >
               {business.map((bus) => (
-                <Option value={bus.id}>{bus.name}</Option>
+                <Option value={bus.id} key={bus.key}>
+                  {bus.name}
+                </Option>
               ))}
             </Select>
           </Form.Item>
