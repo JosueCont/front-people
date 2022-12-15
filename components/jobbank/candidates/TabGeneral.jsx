@@ -21,22 +21,23 @@ import {
 } from '../../../utils/rules';
 import { connect } from 'react-redux'; 
 import { useRouter } from 'next/router';
-import { validateNum } from '../../../utils/functions';
+import { getFileExtension } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { ToTopOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { redirectTo } from '../../../utils/constant';
 import ListLangs from './ListLangs';
 
 const TabGeneral = ({
-    sizeCol = 8,
     action,
     currentNode,
     setDisabledTab,
-    isAutoRegister = false,
-    newFilters = {}
+    isAutoRegister,
+    newFilters = {},
+    setInfoCandidate,
+    infoCandidate
 }) => {
 
-    const rule_languages = {text:'', status:''};
+    const rule_init = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -48,15 +49,16 @@ const TabGeneral = ({
     const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
     const nameCV = Form.useWatch('cv_name_read', formCandidate);
-    const [infoCandidate, setInfoCandidate] = useState({});
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
+    const [ruleCV, setRuleCV] = useState(rule_init);
+    const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
     //Idiomas
     const [currentValue, setCurrentValue] = useState([]);
     const [listLangDomain, setListLangDomain] = useState([]);
-    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
+    const [ruleLanguages, setRuleLanguages] = useState(rule_init);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -73,7 +75,8 @@ const TabGeneral = ({
     const setValueForm = () =>{
         setDisabledTab(false)
         setCurrentValue([])
-        setRuleLanguages(rule_languages)
+        setRuleLanguages(rule_init)
+        setRuleCV(rule_init)
         formCandidate.resetFields();
         const getLang = item => ({lang: item.lang, domain: item.domain});
         let listLanguages = infoCandidate.languages.map(getLang);
@@ -129,13 +132,23 @@ const TabGeneral = ({
         let dataCandidate = new FormData();
         dataCandidate.append('node', currentNode.id);
         let noValid = [undefined, null, '', ' '];
-        Object.entries(obj).map(([key, val])=>{if(!noValid.includes(val)) dataCandidate.append(key, val)});
+        Object.entries(obj).map(([key, val])=>{
+            let value = noValid.includes(val) ? "" : val;
+            dataCandidate.append(key, value);
+        });
         if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
-        if(listLangDomain.length > 0) dataCandidate.append('languages', JSON.stringify(listLangDomain));
+        dataCandidate.append('languages', JSON.stringify(listLangDomain));
         return dataCandidate;
     }
 
     const onFinish = (values) =>{
+        if(!values.cv_name_read){
+            let text = 'Este campo es requerido';
+            setRuleCV({text, status: 'error'})
+            setLoading({})
+            return;
+        }
+        setRuleCV(rule_init);
         const body = createData(values);
         setFetching(true);
         const actionFunction = {
@@ -145,6 +158,14 @@ const TabGeneral = ({
         actionFunction[action](body);
     }
 
+    const onFailed = (e) =>{
+        if(!nameCV){
+            let text = 'Este campo es requerido';
+            setRuleCV({text, status: 'error'})
+        }
+        setLoading({})
+    }
+
     const actionCreate = () =>{
         formCandidate.resetFields();
         setFetching(false);
@@ -152,7 +173,8 @@ const TabGeneral = ({
         setFileCV([]);
         setCurrentValue([])
         setListLangDomain([])
-        setRuleLanguages(rule_languages)
+        setRuleLanguages(rule_init)
+        setRuleCV(rule_init)
     }
 
     const actionSaveAnd = (id) =>{
@@ -166,12 +188,12 @@ const TabGeneral = ({
                 pathname: '/jobbank/candidates/edit',
                 query: {...newFilters, id }
             }),
-            default: () => router.replace({
-                pathname: `/jobbank/${router.query.uid}/candidate/`,
+            auto: () => router.replace({
+                pathname: `/jobbank/${router.query?.uid}/candidate/`,
                 query: { id }
             }, undefined, { shallow: true })
         }
-        let selected = isAutoRegister ? 'default' : actionType;
+        let selected = isAutoRegister ? 'auto' : actionType;
         actionFunction[selected]();
     }
 
@@ -183,12 +205,23 @@ const TabGeneral = ({
     }
 
     const setFileSelected = ({target : { files }}) =>{
-        if(Object.keys(files).length <= 0) return false;
+        if(Object.keys(files).length <= 0){
+            let text = 'No se pudo cargar el archivo, intente de nuevo';
+            setRuleCV({text, status: 'error'});
+            return;
+        }
+        let extension = getFileExtension(files[0].name);
+        if(!typeFileCV.includes(extension.toLowerCase())){
+            let text = 'El archivo seleccionado no es válido';
+            setRuleCV({text, status: 'error'});
+            return;
+        }
         formCandidate.setFieldsValue({cv_name_read: files[0].name});
         setFileCV([files[0]]);
     }
 
     const openFile = () =>{
+        setRuleCV(rule_init)
         inputFile.current.value = null;
         inputFile.current.click();
     }
@@ -207,7 +240,7 @@ const TabGeneral = ({
                         layout='vertical'
                         form={formCandidate}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
+                        onFinishFailed={onFailed}
                         initialValues={{is_active: true}}
                     >
                         <Row gutter={[24,0]}>
@@ -291,20 +324,23 @@ const TabGeneral = ({
                             <Col span={24}>
                                 <Form.Item
                                     label='CV'
-                                    name='cv_name_read'
-                                    rules={[ruleRequired]}
+                                    required
+                                    tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                                    help={ruleCV?.text}
+                                    validateStatus={ruleCV?.status}
                                 >
                                     <Input.Group compact>
-                                        <Input
-                                            readOnly
-                                            style={{
-                                                width: `calc(100% - 64px)`,
-                                                borderTopLeftRadius: 10,
-                                                borderBottomLeftRadius: 10
-                                            }}
-                                            value={nameCV}
-                                            placeholder='Archivo seleccionado'
-                                        />
+                                        <Form.Item name='cv_name_read' noStyle>
+                                            <Input
+                                                readOnly
+                                                style={{
+                                                    width: `calc(100% - 64px)`,
+                                                    borderTopLeftRadius: 10,
+                                                    borderBottomLeftRadius: 10
+                                                }}
+                                                placeholder='Archivo seleccionado'
+                                            />
+                                        </Form.Item>
                                         {infoCandidate.cv ? (
                                             <Button
                                                 className='custom-btn'
@@ -329,6 +365,7 @@ const TabGeneral = ({
                                         <input
                                             type='file'
                                             style={{display: 'none'}}
+                                            accept={typeFileCV.reduce((acc, item) => acc +=`.${item}, `,'')}
                                             ref={inputFile}
                                             onChange={setFileSelected}
                                         />
@@ -343,7 +380,7 @@ const TabGeneral = ({
                                     currentValue={currentValue}
                                     setRuleLanguages={setRuleLanguages}
                                     ruleLanguages={ruleLanguages}
-                                    rule_languages={rule_languages}
+                                    rule_languages={rule_init}
                                     changeColor={true}
                                 />
                             </Col>

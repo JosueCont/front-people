@@ -57,7 +57,7 @@ const ListLangs = ({
 
     const addLang = () =>{
         if(currentValue.length <=0){
-            let msg = {text: 'Este campo es requerido', status: 'error'};
+            let msg = {text: 'Seleccionar un idioma', status: 'error'};
             setRuleLanguages(msg);
             return;
         }
@@ -81,17 +81,19 @@ const ListLangs = ({
                         onChange={onChangeLanguaje}
                         placeholder='Seleccionar idioma y dominio'
                         notFoundContent='No se encontraron resultados'
-                        className='custom-cascader'
+                        className={currentValue?.length > 0 ? 'custom-cascader':'custom-cascader-empty'}
                         value={currentValue}
                     />
-                    <Button
-                        icon={<PlusOutlined/>}
-                        onClick={()=> addLang()}
-                        style={{
-                            borderTopRightRadius: '10px',
-                            borderBottomRightRadius: '10px'
-                        }}
-                    />
+                    {currentValue?.length > 0 && (
+                        <Button
+                            icon={<PlusOutlined/>}
+                            onClick={()=> addLang()}
+                            style={{
+                                borderTopRightRadius: '10px',
+                                borderBottomRightRadius: '10px'
+                            }}
+                        />
+                    )}
                 </Input.Group>
             </Form.Item>
             <Form.Item>

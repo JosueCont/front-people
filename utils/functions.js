@@ -465,24 +465,17 @@ export const getFiltersJB = (obj = {}) =>{
 }
 
 const keysToDeleteJB = [
-  'id',
-  'client',
-  'vacancy',
-  'catalog',
-  'strategy',
-  'start',
-  'end'
-]
+  'id', 'client', 'vacancy', 'catalog',
+  'strategy', 'start', 'end'
+];
 export const deleteFiltersJb = (
-  filters = {},
+  obj = {},
   listDelete = keysToDeleteJB
 ) =>{
-  let newFilters = {...filters};
-  const remove = item => {
-    if(newFilters[item]) delete newFilters[item]
-  };
-  listDelete.forEach(remove);
-  return newFilters;
+  return Object.entries(obj).reduce((filters, [key, val]) =>{
+    if(listDelete.includes(key)) return filters;
+    return {...filters, [key]: val};
+  }, {});
 }
 
 export const getFileExtension = (filename) => {
