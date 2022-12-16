@@ -920,6 +920,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           });
         })
         .catch((error) => {
+          console.log("🚀 ~ file: index.jsx:923 ~ cancelStamp ~ error", error);
           setLoading(false);
           message.error(messageError);
         });
@@ -1344,7 +1345,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       viewFilter={false}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
-                      movementType={movementType}
                     />
                   ) : (
                     <>
