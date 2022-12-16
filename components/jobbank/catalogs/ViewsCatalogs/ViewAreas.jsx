@@ -7,7 +7,7 @@ import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewSpecializations = () => {
+const ViewAreas = () => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
@@ -45,11 +45,11 @@ const ViewSpecializations = () => {
         try {
             await WebApiJobBank.createSpecializationArea({...values, node: currentNode.id});
             getWithFilters();
-            message.success('Especialización registrada');
+            message.success('Área registrada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Especialización no registrada';
+            let msg = error ? 'Este nombre ya existe' : 'Área no registrada';
             message.error(msg);
         }
     }
@@ -58,11 +58,11 @@ const ViewSpecializations = () => {
         try {
             await WebApiJobBank.updateSpecializationArea(id, values);
             getWithFilters();
-            message.success('Especialización actualizada');
+            message.success('Área actualizada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Especialización no actualizada';
+            let msg = error ? 'Este nombre ya existe' : 'Área no actualizada';
             message.error(msg);
         }
     }
@@ -71,10 +71,10 @@ const ViewSpecializations = () => {
         try {
             await WebApiJobBank.deleteSpecializationArea(id);
             getWithFilters();
-            message.success('Especialización eliminada');
+            message.success('Área eliminada');
         } catch (e) {
             console.log(e)
-            message.error('Especialización no eliminada');
+            message.error('Área no eliminada');
         }
     }
 
@@ -85,9 +85,9 @@ const ViewSpecializations = () => {
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar especialización'
-                    titleEdit='Editar especialización'
-                    titleDelete='¿Estás seguro de eliminar esta especialización?'
+                    titleCreate='Agregar área'
+                    titleEdit='Editar área'
+                    titleDelete='¿Estás seguro de eliminar esta aréa?'
                     actionCreate={actionCreate}
                     actionUpdate={actionUpdate}
                     actionDelete={actionDelete}
@@ -102,4 +102,4 @@ const ViewSpecializations = () => {
     )
 }
 
-export default ViewSpecializations;
+export default ViewAreas;
