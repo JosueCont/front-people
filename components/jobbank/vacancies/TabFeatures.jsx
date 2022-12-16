@@ -174,6 +174,7 @@ const TabFeatures = ({
         <Form.Item
           name='status'
           label='Estatus de la vacante'
+          rules={[ruleRequired]}
         >
           <Select
             allowClear
@@ -353,7 +354,7 @@ const TabFeatures = ({
           name='requires_travel_availability'
         >
           <Select
-            allowClear
+            // allowClear
             placeholder='Seleccionar una opción'
             notFoundContent='No se encontraron resultados'
           >
@@ -378,7 +379,7 @@ const TabFeatures = ({
         <Form.Item
           name='description'
           label='Descripción de la vacante'
-          rules={[ruleWhiteSpace]}
+          // rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
             autoSize={{minRows: 5, maxRows: 5}}
