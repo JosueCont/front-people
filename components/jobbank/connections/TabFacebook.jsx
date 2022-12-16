@@ -101,14 +101,14 @@ const TabFacebook = ({
                 app_id: infoConnection.data_config?.app_id,
                 secret_key: infoConnection.data_config?.secret_key
             });
-            if(!resp.data?.page_token || !resp.data?.user_toke){
+            if(!resp.data?.page_token || !resp.data?.user_token){
                 setMessageError(msgError);
                 deletePermissions();
                 return;
             }
             formFacebook.setFieldsValue({
                 is_valid: true,
-                'data_config|user_access_token': resp.data.user_toke,
+                'data_config|user_access_token': resp.data.user_token,
                 'data_config|page_access_token': resp.data.page_token
             });
             setTimeout(()=>{
