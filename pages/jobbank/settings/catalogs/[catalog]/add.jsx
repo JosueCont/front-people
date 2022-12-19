@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { withAuthSync } from '../../../../../libs/auth';
 import { useRouter } from 'next/router';
 import AddOrEditTemplate from '../../../../../components/jobbank/catalogs/Templates/AddOrEditTemplate';
 
@@ -15,4 +16,4 @@ const add = () => {
     )
 }
 
-export default add
+export default withAuthSync(add);

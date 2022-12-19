@@ -42,7 +42,7 @@ const FormStrategies = ({
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
     const vacant = Form.useWatch('vacant', formStrategies);
     //Campos de lectura, se toma de la vacante.
-    const salary = Form.useWatch('salary_read', formStrategies);
+    const salary = Form.useWatch('salary', formStrategies);
 
     useEffect(()=>{
         getSalary()
@@ -56,7 +56,7 @@ const FormStrategies = ({
     const setAmount = (val = null) => setValue('amount_to_collect', val);
     const setVacant = (val = null) => setValue('vacant', val);
     //Campos de lectura, se toma de la vacante.
-    const setSalary = (val = null) => setValue('salary_read', val);
+    const setSalary = (val = null) => setValue('salary', val);
     const setStatus = (val = null) => setValue('vacant_status_read', val);
     const setProyect = (val = null) => setValue('num_project_read', val);
 
@@ -307,8 +307,8 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    // name='salary'
-                    name='salary_read'
+                    name='salary'
+                    // name='salary_read'
                     label='Sueldo (MXN)'
                     tooltip={`El valor se obtiene de acuerdo al registro de la vacante
                         seleccionada, si no se visualiza este dato debe dirigirse al módulo de

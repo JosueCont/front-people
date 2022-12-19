@@ -1,4 +1,5 @@
 import React from 'react';
+import { withAuthSync } from '../../../libs/auth';
 import AddOrEditClients from '../../../components/jobbank/clients/AddOrEditClients';
 
 const edit = () => {
@@ -7,4 +8,4 @@ const edit = () => {
     )
 }
 
-export default edit
+export default withAuthSync(edit)

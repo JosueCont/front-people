@@ -140,9 +140,9 @@ const TabContact = ({
     return (
         <>
             <Alert
-                message={`Cualquier modificación, eliminación o nuevo contacto agregado,
+                message={`Al modificar, eliminar o agregar nuevo contacto
                 es necesario "Guardar/Actualizar" para almacenar los cambios realizados, de lo
-                contrario estos se pierden.`}
+                contrario estos se perderán.`}
                 type="warning"
                 showIcon
                 style={{marginBottom: 16}}

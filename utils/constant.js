@@ -579,14 +579,6 @@ export const getHost = () => {
   }
 };
 
-export const deleteKeyByValue = (values) => {
-  return Object.entries(values).reduce((obj, [key, val]) => {
-    if (!val) return obj;
-    if (Array.isArray(val) && val.length <= 0) return obj;
-    return { ...obj, [key]: val };
-  }, {});
-};
-
 export const redirectTo = (url, newWindow = false) => {
   const link = document.createElement("a");
   link.href = url;
