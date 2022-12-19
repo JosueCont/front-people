@@ -20,6 +20,7 @@ const initialState = {
     list_jobboards_options: [],
     list_publications: {},
     list_specialization_area: [],
+    list_specialization_sub_area: [],
     list_strategies_options: [],
     load_clients: false,
     load_vacancies: false,
@@ -40,6 +41,7 @@ const initialState = {
     load_publications: false,
     load_profiles_options: false,
     load_specialization_area: false,
+    load_specialization_sub_area: false,
     load_strategies_options: false,
     jobbank_page: 1,
     jobbank_filters: "",
@@ -69,6 +71,7 @@ const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 const GET_JOBBOARDS = "GET_JOBBOARDS";
 const GET_SPECIALIZATION_AREA = "GET_SPECIALIZATION_AREA";
+const GET_SPECIALIZATION_SUB_AREA = "GET_SPECIALIZATION_SUB_AREA";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -181,6 +184,11 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state,
                 list_strategies_options: action.payload,
                 load_strategies_options: action.fetching
+            }
+        case GET_SPECIALIZATION_SUB_AREA:
+            return{...state,
+                list_specialization_sub_area: action.payload,
+                load_specialization_sub_area: action.fetching
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -441,6 +449,18 @@ export const getSpecializationArea = (node) => async (dispatch) =>{
     try {
         let response = await WebApiJobBank.getSpecializationArea(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getSpecializationSubArea = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_SPECIALIZATION_SUB_AREA, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true});
+    try {
+        let response = await WebApiJobBank.getSpecializationSubArea(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
@@ -17,18 +17,27 @@ const ModalEducation = ({
 
     const {
         list_specialization_area,
-        load_specialization_area
+        load_specialization_area,
+        list_specialization_sub_area,
+        load_specialization_sub_area
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const status = Form.useWatch('status', formEducation);
+    const currentArea = Form.useWatch('specialitation_area', formEducation);
     const otherArea = Form.useWatch('other_area', formEducation);
+    const otherSubArea = Form.useWatch('other_sub_area', formEducation);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
-        let other_area = itemToEdit.specialitation_area ? false : true;
-        formEducation.setFieldsValue({...itemToEdit, other_area});
+        let other_area = itemToEdit.specialitation_area
+            ? false : itemToEdit.specialitation_area_other
+            ? true: false;
+        let other_sub_area = itemToEdit.specialitation_sub_area
+            ? false : itemToEdit.specialitation_sub_area_other
+            ? true : false;
+        formEducation.setFieldsValue({...itemToEdit, other_area, other_sub_area});
     },[itemToEdit])
 
 
@@ -40,12 +49,16 @@ const ModalEducation = ({
     const setValue = (key, val) => formEducation.setFieldsValue({[key]: val});
     const setEndDate = (val = null) => setValue('end_date', val);
     const setArea = (val = null) => setValue('specialitation_area', val);
-    const setOther = (val = null) => setValue('specialitation_area_other', val);
+    const setOtherArea = (val = null) => setValue('specialitation_area_other', val);
+    const setSubArea = (val = null) => setValue('specialitation_sub_area', val);
+    const setOtherSubArea = (val = null) => setValue('specialitation_sub_area_other', val);
 
     const onFinish = (values) =>{
-        if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
-        if(values.other_area) values.specialitation_area = null;
-        else values.specialitation_area_other = null;
+        // if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
+        // if(values.other_area) values.specialitation_area = null;
+        // else values.specialitation_area_other = null;
+        // if(values.other_sub_area) values.specialitation_sub_area = null;
+        // else values.specialitation_sub_area_other = null;
         setLoading(true);
         setTimeout(()=>{
             setLoading(false)
@@ -58,14 +71,30 @@ const ModalEducation = ({
         if(value == 1) setEndDate();
     }
 
-    const onChangeOther = ({target : { checked }}) =>{
+    const onChangeArea = (value) =>{
+        setSubArea();
+    }
+
+    const onChangeOtherArea = ({target : { checked }}) =>{
         if(checked) setArea();
-        else setOther();
+        else setOtherArea();
+        setSubArea();
+    }
+
+    const onChangeOtherSubArea = ({target : { checked }}) =>{
+        if(checked) setSubArea();
+        else setOtherSubArea();
     }
 
     const disabledDate = (current) => {
         return current && current > moment().endOf("day");
     };
+
+    const optionsByArea = useMemo(() =>{
+        if(!currentArea) return [];
+        const options = item => item.area == currentArea;
+        return list_specialization_sub_area.filter(options);
+    }, [currentArea])
 
     return (
         <MyModal
@@ -150,6 +179,7 @@ const ModalEducation = ({
                                 disabled={otherArea}
                                 loading={load_specialization_area}
                                 optionFilterProp='children'
+                                onChange={onChangeArea}
                             >
                                 {list_specialization_area?.length > 0 && list_specialization_area.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -169,7 +199,7 @@ const ModalEducation = ({
                                 valuePropName='checked'
                                 style={{marginBottom: 0}}
                             >
-                                <Checkbox onChange={onChangeOther}/>
+                                <Checkbox onChange={onChangeOtherArea}/>
                             </Form.Item>
                         </div>
                         <Form.Item
@@ -183,7 +213,59 @@ const ModalEducation = ({
                              <Input
                                 disabled={!otherArea}
                                 maxLength={200}
-                                placeholder='Especifica la especialización'
+                                placeholder='Especifica el área'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='specialitation_sub_area'
+                            label='Subárea de especialización'
+                            // dependencies={['other_area','other_sub_area']}
+                            // rules={[ otherArea || otherSubArea ? {validator: (_, value) => Promise.resolve()} : ruleRequired]}
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una subárea'
+                                notFoundContent='No se encontraron resultados'
+                                disabled={otherSubArea || optionsByArea.length <= 0}
+                                loading={load_specialization_sub_area}
+                                optionFilterProp='children'
+                            >
+                                {optionsByArea.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12} className='turn_rotative_content'>
+                        <div className='turn_rotative'>
+                            <label className={`${otherSubArea ? "custom-required": ""}`}>
+                                ¿Otra subárea de especialización?
+                            </label>
+                            <Form.Item
+                                name='other_sub_area'
+                                valuePropName='checked'
+                                style={{marginBottom: 0}}
+                            >
+                                <Checkbox onChange={onChangeOtherSubArea}/>
+                            </Form.Item>
+                        </div>
+                        <Form.Item
+                            name='specialitation_sub_area_other'
+                            dependencies={['other_sub_area']}
+                            rules={[
+                                ruleWhiteSpace,
+                                otherSubArea ? ruleRequired : {validator: (_, value) => Promise.resolve()}
+                            ]}
+                        >
+                             <Input
+                                disabled={!otherSubArea}
+                                maxLength={200}
+                                placeholder='Especifica la subárea'
                             />
                         </Form.Item>
                     </Col>

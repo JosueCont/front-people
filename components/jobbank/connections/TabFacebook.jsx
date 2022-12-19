@@ -96,12 +96,20 @@ const TabFacebook = ({
         let msgError = 'Acceso no obtenido';
         try {
             setMessageLoading('Guardando acceso...');
-            let body = { token: response.accessToken };
-            let resp = await WebApiJobBank.getTokenFB(body);
-            if(!resp.data?.token) return setMessageError(msgError);
+            let resp = await WebApiJobBank.getTokenFB({
+                token: response.accessToken,
+                app_id: infoConnection.data_config?.app_id,
+                secret_key: infoConnection.data_config?.secret_key
+            });
+            if(!resp.data?.page_token || !resp.data?.user_token){
+                setMessageError(msgError);
+                deletePermissions();
+                return;
+            }
             formFacebook.setFieldsValue({
                 is_valid: true,
-                'data_config|page_access_token': resp.data.token
+                'data_config|user_access_token': resp.data.user_token,
+                'data_config|page_access_token': resp.data.page_token
             });
             setTimeout(()=>{
                 btnSubmit.current.click();
@@ -134,7 +142,10 @@ const TabFacebook = ({
     }
 
     const validateResp = (resp) =>{
-        if(!resp.authResponse) return onFail({status: 'loginCancelled'});
+        if(!resp.authResponse){
+            onFail({status: 'loginCancelled'});
+            return;
+        }
         onSuccess(resp.authResponse);
         FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
@@ -142,7 +153,10 @@ const TabFacebook = ({
     }
 
     const validateLogin = () =>{
-        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
+        if (!window.FB){
+            onFail({status: 'facebookNotLoaded'});
+            return;
+        }
         FacebookLoginClient.login(validateResp, {
             scope: 'public_profile,email,pages_show_list,pages_manage_posts'
         });
@@ -164,7 +178,6 @@ const TabFacebook = ({
     }
 
     const deletePermissions = () =>{
-        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         window.FB.api('/me/permissions', 'delete', (res)=>{
             console.log('delete', res)
         })
@@ -186,7 +199,7 @@ const TabFacebook = ({
             onFinish={onFinish}
             id='form-facebook'
             layout='vertical'
-            initialValues={{code: 'FB'}}
+            initialValues={{code: 'FB_IG'}}
         >
             <Row gutter={[24,0]}>
                 {infoConnection.data_config?.page_access_token && (
@@ -198,13 +211,13 @@ const TabFacebook = ({
                         </Form.Item>
                     </Col>
                 )}
-                <Col xs={24} xxl={16}>
+                <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
+                    <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
+                        <Checkbox/>
+                    </Form.Item>
+                </Col>
+                <Col span={24}>
                     <Row gutter={[24,0]}>
-                        <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
-                            <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
-                                <Checkbox/>
-                            </Form.Item>
-                        </Col>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
                                 name='is_active'
@@ -287,6 +300,19 @@ const TabFacebook = ({
                         </Col>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
+                                name='data_config|ig_user_id'
+                                label='Identificador (User ID)'
+                                tooltip='Parámetro necesario para publicar en Instagram'
+                                rules={[ruleRequired, ruleWhiteSpace]}
+                            >
+                                <Input
+                                    maxLength={50}
+                                    placeholder='Llave secreta de la aplicación'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12} lg={8}>
+                            <Form.Item
                                 name='data_config|secret_key'
                                 label='Llave secreta'
                                 rules={[ruleWhiteSpace]}
@@ -297,21 +323,35 @@ const TabFacebook = ({
                                 />
                             </Form.Item>
                         </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name='data_config|page_access_token'
+                                label='Token de acceso (página)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    disabled
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name='data_config|user_access_token'
+                                label='Token de acceso (usuario)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    // disabled
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>
                     </Row>
-                </Col>
-                <Col xs={24} xxl={8}>
-                    <Form.Item
-                        name='data_config|page_access_token'
-                        label='Token de acceso'
-                        tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
-                        rules={[ruleWhiteSpace]}
-                    >
-                        <Input.TextArea
-                            disabled
-                            autoSize={{minRows: 5, maxRows: 5}}
-                            placeholder='Token de acceso'
-                        />
-                    </Form.Item>
                 </Col>
                 <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                     {/* <FacebookLogin

@@ -579,14 +579,6 @@ export const getHost = () => {
   }
 };
 
-export const deleteKeyByValue = (values) => {
-  return Object.entries(values).reduce((obj, [key, val]) => {
-    if (!val) return obj;
-    if (Array.isArray(val) && val.length <= 0) return obj;
-    return { ...obj, [key]: val };
-  }, {});
-};
-
 export const redirectTo = (url, newWindow = false) => {
   const link = document.createElement("a");
   link.href = url;
@@ -602,7 +594,8 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  { catalog: "specialization", name: "Áreas de especialización" },
+  { catalog: "areas", name: "Áreas de especialización" },
+  { catalog: "subareas", name: "Subáreas de especialización" },
 ];
 
 export const departureMotive = [

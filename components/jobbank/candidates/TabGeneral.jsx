@@ -129,9 +129,9 @@ const TabGeneral = ({
     }
 
     const createData = (obj) =>{
+        let noValid = [undefined, null, '', ' '];
         let dataCandidate = new FormData();
         dataCandidate.append('node', currentNode.id);
-        let noValid = [undefined, null, '', ' '];
         Object.entries(obj).map(([key, val])=>{
             let value = noValid.includes(val) ? "" : val;
             dataCandidate.append(key, value);

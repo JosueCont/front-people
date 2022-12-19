@@ -58,9 +58,11 @@ const DetailsClients = ({
             formClients.resetFields();
             let prev = infoClient.files ?? [];
             let contact = infoClient.contact_list ?? [];
+            let business_name = infoClient.business_name
+                ? infoClient.business_name : null;
             setPrevDocs(prev);
             setContactList(contact);
-            formClients.setFieldsValue(infoClient);
+            formClients.setFieldsValue({...infoClient, business_name});
         }
     },[infoClient])
 
@@ -77,9 +79,13 @@ const DetailsClients = ({
     }
 
     const createData = (obj) =>{
+        let noValid = [undefined, null,""," "];
         let dataClient = new FormData();
         dataClient.append('auto_register', isAutoRegister);
-        Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
+        Object.entries(obj).map(([key, val])=>{
+            let value = noValid.includes(val) ? "" : val;
+            dataClient.append(key, value);
+        });
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
         if(contactList.length > 0) dataClient.append('contact_list', JSON.stringify(contactList));
         let toDelete = prevDocs.filter(item => item.is_deleted);
