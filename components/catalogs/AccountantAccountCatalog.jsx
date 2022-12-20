@@ -244,7 +244,7 @@ const CostCenterCatalog = ({ permissions,cat_accounts, currentNode,cat_cost_cent
           <Row>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item name="account" label="Cuenta" rules={[ruleRequired]}>
-                <Input />
+                <Input  maxLength={40} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>

@@ -639,7 +639,7 @@ const DataPerson = ({ currentNode,config, person = null, setPerson, ...props }) 
                 <Form.Item
                   name="imss"
                   label="IMSS"
-                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+                  rules={[ onlyNumeric, minLengthNumber]}
                 >
                   <Input maxLength={11} />
                 </Form.Item>
