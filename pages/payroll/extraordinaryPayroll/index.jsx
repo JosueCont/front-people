@@ -30,6 +30,7 @@ import {
   FileDoneOutlined,
   ExclamationCircleOutlined,
   CheckCircleOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -43,6 +44,7 @@ import {
   messageError,
   messageSaveSuccess,
   messageSendSuccess,
+  messageUpdateSuccess,
   optionMovement,
 } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
@@ -482,10 +484,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
+          let calculateExist = [];
+          calculateExist = response.data.payroll.filter(
+            (a) => a.payroll_cfdi_person.status === 1
+          );
+
+          if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           setConsolidated(response.data.consolidated);
-          setIsOpen(response.data.consolidated.is_open);
           setExtraOrdinaryPayroll(response.data.payroll);
-          validatedStatusPayroll(response.data.consolidated);
         } else {
           setConsolidatedObj(response.data);
           if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
@@ -512,6 +518,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             );
           }
         }
+        validatedStatusPayroll(response.data.consolidated);
         setLoading(false);
         // setObjectSend(null);
       })
@@ -535,10 +542,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: index.jsx:549 ~ useEffect ~ movementType",
-      movementType
-    );
     if (movementType && calendarSelect) {
       resetStateViews();
       sendCalculateExtraordinaryPayrroll({
@@ -591,7 +594,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const sendClosePayroll = () => {
-    // setGenericModal(false);
     setLoading(true);
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
@@ -605,16 +607,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         });
         setTimeout(() => {
           message.success(messageSaveSuccess);
-          // setLoading(false);
         }, 1000);
       })
       .catch((error) => {
         setLoading(false);
-        // sendCalculatePayroll({ payment_period: periodSelected.id });
-        // setTimeout(() => {
-        //   message.error(messageError);
-        //   console.log(error);
-        // }, 1000);
       });
   };
 
@@ -624,8 +620,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const validatedStatusPayroll = (data) => {
-    console.log(data);
-    if (data === null) {
+    console.log(
+      "🚀 ~ file: index.jsx:625 ~ validatedStatusPayroll ~ data",
+      data
+    );
+
+    if (data === null || data === undefined) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
     }
@@ -908,22 +908,50 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       let data = {
         motive: inputMotive.value.trim(),
         payment_period: periodSelected.id,
+        movement_type: movementType,
       };
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
       else if (type == 3) data.cfdis_id = [id];
       WebApiPayroll.cancelCfdi(data)
         .then((response) => {
           message.success(messageUpdateSuccess);
-          extraOrdinaryPayroll({
+          sendCalculateExtraordinaryPayrroll({
             payment_period: periodSelected.id,
             movement_type: movementType,
           });
         })
         .catch((error) => {
-          console.log(
-            "🚀 ~ file:   index.jsx:923 ~ cancelStamp ~ error",
-            error
-          );
+          setLoading(false);
+          message.error(messageError);
+        });
+    } else {
+      setLoading(false);
+      message.warning("Motivo requerido");
+    }
+  };
+
+  const openPayroll = (type) => {
+    let data = {
+      payment_period: periodSelected.id,
+      movement_type: movementType,
+    };
+    if (listPersons.length > 0)
+      data.cfdis = listPersons.map((item) => {
+        return item.payroll_cfdi_person.id;
+      });
+    const inputMotive = document.getElementById("motive");
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
+      (data.opening_reason = inputMotive.value.trim()), setLoading(true);
+      setGenericModal(false);
+      WebApiPayroll.openConsolidationPayroll(data)
+        .then((response) => {
+          message.success(messageUpdateSuccess);
+          sendCalculateExtraordinaryPayrroll({
+            payment_period: periodSelected.id,
+            movement_type: movementType,
+          });
+        })
+        .catch((error) => {
           setLoading(false);
           message.error(messageError);
         });
@@ -1135,45 +1163,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         padding: "20px",
                       }}
                     >
-                      {/* <Col md={4}>
-                        <Button
-                          size="large"
-                          block
-                          htmlType="button"
-                          icon={<FileExcelOutlined />} 
-                          // onClick={() => {
-                          //   isOpen
-                          //     ? downLoadFileBlob(
-                          //         `${getDomain(
-                          //           API_URL_TENANT
-                          //         )}/payroll/payroll-calculus`,
-                          //         "Nomina.xlsx",
-                          //         "POST",
-                          //         {
-                          //           payment_period: periodSelected.id,
-                          //           extended_report: "True",
-                          //           department: department,
-                          //           job: job,
-                          //           payroll: payroll.map((item) => {
-                          //             item.person_id = item.person.id;
-                          //             return item;
-                          //           }),
-                          //         }
-                          //       )
-                          //     : downLoadFileBlob(
-                          //         `${getDomain(
-                          //           API_URL_TENANT
-                          //         )}/payroll/payroll-report?payment_period=${
-                          //           periodSelected.id
-                          //         }`,
-                          //         "Nomina.xlsx",
-                          //         "GET"
-                          //       );
-                          // }}
-                        > Descargar nómina
-                        </Button>
-                      </Col> */}
-
                       {personKeys &&
                         personKeys.length > 0 &&
                         objectSend &&
@@ -1205,7 +1194,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {/* {step == 2 &&
+                      {step == 2 &&
                         consolidated &&
                         consolidated.status <= 2 && (
                           <Col md={5} offset={1}>
@@ -1214,37 +1203,37 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                               block
                               icon={<UnlockOutlined />}
                               htmlType="button"
-                              // onClick={() =>
-                              //   setMessageModal(5, {
-                              //     title: "Abrir nómina",
-                              //     description:
-                              //       "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                              //     type_alert: "warning",
-                              //     action: () => openPayroll(1),
-                              //     title_action_button: "Abrir nómina",
-                              //     components: (
-                              //       <>
-                              //         <Row
-                              //           style={{
-                              //             width: "100%",
-                              //             marginTop: "5px",
-                              //           }}
-                              //         >
-                              //           <Input.TextArea
-                              //             maxLength={290}
-                              //             id="motive"
-                              //             placeholder="Capture el motivo de reapertura."
-                              //           />
-                              //         </Row>
-                              //       </>
-                              //     ),
-                              //   })
-                              // }
+                              onClick={() =>
+                                setMessageModal(5, {
+                                  title: "Abrir nómina",
+                                  description:
+                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                  type_alert: "warning",
+                                  action: () => openPayroll(1),
+                                  title_action_button: "Abrir nómina",
+                                  components: (
+                                    <>
+                                      <Row
+                                        style={{
+                                          width: "100%",
+                                          marginTop: "5px",
+                                        }}
+                                      >
+                                        <Input.TextArea
+                                          maxLength={290}
+                                          id="motive"
+                                          placeholder="Capture el motivo de reapertura."
+                                        />
+                                      </Row>
+                                    </>
+                                  ),
+                                })
+                              }
                             >
                               Abrir
                             </Button>
                           </Col>
-                        )} */}
+                        )}
                       {step == 2 && consolidated && consolidated.status < 3 && (
                         <Col md={5} offset={1}>
                           <Button
@@ -1255,6 +1244,45 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             onClick={() => setMessageModal(3)}
                           >
                             Timbrar nómina
+                          </Button>
+                        </Col>
+                      )}
+
+                      {step == 3 && (
+                        <Col md={6} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            icon={<StopOutlined />}
+                            htmlType="button"
+                            onClick={() =>
+                              setMessageModal(5, {
+                                title: "Cancelar nómina",
+                                description:
+                                  "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                type_alert: "warning",
+                                action: () => cancelStamp(),
+                                title_action_button: "Cancelar nómina",
+                                components: (
+                                  <>
+                                    <Row
+                                      style={{
+                                        width: "100%",
+                                        marginTop: "5px",
+                                      }}
+                                    >
+                                      <Input.TextArea
+                                        maxLength={290}
+                                        id="motive"
+                                        placeholder="Capture el motivo de cancelacion."
+                                      />
+                                    </Row>
+                                  </>
+                                ),
+                              })
+                            }
+                          >
+                            Cancelar todos los cfdis
                           </Button>
                         </Col>
                       )}
