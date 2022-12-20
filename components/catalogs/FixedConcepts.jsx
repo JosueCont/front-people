@@ -12,7 +12,7 @@ import {
   Modal,
   Select,
   Checkbox,
-  Tabs
+  Tabs,
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -108,8 +108,8 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                               <Row>
                                 <span style={{ fontWeight: "bold" }}>
                                   Nombre:
-                                </span>
-                                {' '} {item.name}
+                                </span>{" "}
+                                {item.name}
                               </Row>
                               <Row>
                                 <span style={{ fontWeight: "bold" }}>
@@ -193,21 +193,30 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       props.deductions_int &&
       props.other_payments_int
     ) {
-      setPerceptionsCat(
-        props.perceptions_int.map((item) => {
-          return { value: item.id, label: item.description };
-        })
-      );
-      setDeductionsCat(
-        props.deductions_int.map((item) => {
-          return { value: item.id, label: item.description };
-        })
-      );
-      setOtherPaymentsCat(
-        props.other_payments_int.map((item) => {
-          return { value: item.id, label: item.description };
-        })
-      );
+      // Solo se muestran los conceptos internos por empresa
+      let perceptions = [];
+      props.perceptions_int.filter((item) => {
+        if (item.node == currentNode.id) {
+          perceptions.push({ value: item.id, label: item.description });
+        }
+      });
+      setPerceptionsCat(perceptions);
+
+      let deductions = [];
+      props.deductions_int.filter((item) => {
+        if (item.node == currentNode.id) {
+          deductions.push({ value: item.id, label: item.description });
+        }
+      });
+      setDeductionsCat(deductions);
+
+      let other_paymets = [];
+      props.other_payments_int.filter((item) => {
+        if (item.node == currentNode.id) {
+          other_paymets.push({ value: item.id, label: item.description });
+        }
+      });
+      setOtherPaymentsCat(other_paymets);
     }
   }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
 
@@ -269,14 +278,14 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item) => {
-    let checksValues = {}
+    let checksValues = {};
 
-    console.log(item)
+    console.log(item);
     data.map((a) => {
-      if (item[a.name]){
+      if (item[a.name]) {
         checksValues[a.name] = true;
-      }else{
-        checksValues[a.name]=false;
+      } else {
+        checksValues[a.name] = false;
       }
     });
     setEdit(true);
@@ -293,7 +302,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       deduction_type: item.deduction_type,
       other_payment_type: item.other_payment_type,
       "": item.perception_type ? 1 : item.deduction_type ? 2 : 3,
-      ...checksValues
+      ...checksValues,
     });
     setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
   };
@@ -489,7 +498,12 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       >
         <TabPane tab="Conceptos fijos" key={"1"}>
           {key == 1 && (
-            <Form layout={"vertical"}  style={{paddingTop:20}} form={form} onFinish={onFinishForm}>
+            <Form
+              layout={"vertical"}
+              style={{ paddingTop: 20 }}
+              form={form}
+              onFinish={onFinishForm}
+            >
               <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
@@ -549,16 +563,25 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} md={12}>
-                  <Form.Item name="datum" label="Valor" rules={[ruleRequired,{
-                    message: 'Se requiere un valor mayor a 0',
-                    validator: (_, value) => {
-                      if (value>0) {
-                        return Promise.resolve();
-                      } else {
-                        return Promise.reject('Se requiere un valor mayor a 0');
-                      }
-                    }
-                  }]}>
+                  <Form.Item
+                    name="datum"
+                    label="Valor"
+                    rules={[
+                      ruleRequired,
+                      {
+                        message: "Se requiere un valor mayor a 0",
+                        validator: (_, value) => {
+                          if (value > 0) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject(
+                              "Se requiere un valor mayor a 0"
+                            );
+                          }
+                        },
+                      },
+                    ]}
+                  >
                     <Input type={"number"} />
                   </Form.Item>
                 </Col>
@@ -587,7 +610,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     name="max_delays"
                     label="Máximo de retardos"
                   >
-                    <Input type={"number"} min={0}/>
+                    <Input type={"number"} min={0} />
                   </Form.Item>
                 </Col>
                 <RenderConditions data={data} />
@@ -608,7 +631,12 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         <TabPane tab="Grupos" key={"2"}>
           {key == 2 && (
             <>
-              <Form style={{paddingTop:20}} layout={"vertical"} form={formG} onFinish={saveGroup}>
+              <Form
+                style={{ paddingTop: 20 }}
+                layout={"vertical"}
+                form={formG}
+                onFinish={saveGroup}
+              >
                 <Row gutter={20} style={{ marginBottom: "10px" }}>
                   <Col span={8}>
                     <Form.Item
@@ -620,7 +648,11 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item name="fixed_concept"  rules={[ruleRequired]} label="Concepto">
+                    <Form.Item
+                      name="fixed_concept"
+                      rules={[ruleRequired]}
+                      label="Concepto"
+                    >
                       <Select
                         placeholder="Conceptos fijos"
                         style={{ width: "100%" }}
