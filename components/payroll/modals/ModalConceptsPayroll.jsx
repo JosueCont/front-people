@@ -217,10 +217,6 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:212 ~ listConcepts ~ value",
-      value
-    );
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -245,10 +241,6 @@ const ModalConceptsPayroll = ({
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:241 ~ listConcepts ~ currentStep",
-      currentStep
-    );
     currentStep == 0
       ? setCurrentStep(currentStep + 1)
       : is_cero && currentStep == 1
@@ -260,10 +252,6 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:302 ~ payroll.map ~ payroll",
-      payroll
-    );
     if (extraOrdinary) {
       if (
         departureDate == undefined ||
@@ -330,6 +318,8 @@ const ModalConceptsPayroll = ({
           if (item.departure_motive)
             obj.departure_motive = item.departure_motive;
         }
+        if (item.payroll_cfdi_person)
+          obj.payroll_cfdi_person = item.payroll_cfdi_person;
         data.push(obj);
       }
     });

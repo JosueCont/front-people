@@ -195,7 +195,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         listPersons &&
         listPersons.find((a) => a.key === item.key) && (
           <>
-            {(movementType == 2 || movementType == 3) && (
+            {(movementType == 2 || movementType == 3) && step == 0 && (
               <Button
                 size="small"
                 onClick={() => {
@@ -484,12 +484,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
-          let calculateExist = [];
-          calculateExist = response.data.payroll.filter(
-            (a) => a.payroll_cfdi_person.status === 1
-          );
+          if (movementType === 1) {
+            let calculateExist = [];
+            calculateExist = response.data.payroll.filter(
+              (a) => a.payroll_cfdi_person.status === 1
+            );
 
-          if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
+            if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
+          }
           setConsolidated(response.data.consolidated);
           setExtraOrdinaryPayroll(response.data.payroll);
         } else {
@@ -537,7 +539,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
     getCheckboxProps: (record) => ({
       disabled:
-        record.payroll_cfdi_person && record.payroll_cfdi_person.status == 2,
+        (record.payroll_cfdi_person &&
+          record.payroll_cfdi_person.status == 2) ||
+        (!record.payroll_cfdi_person && !isOpen),
     }),
   };
 
@@ -601,6 +605,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       movement_type: movementType,
     })
       .then((response) => {
+        // resetStateViews();
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
           movement_type: movementType,
@@ -615,6 +620,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
+    console.log("🚀 ~ file: index.jsx:623 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
   };
@@ -651,6 +657,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       setStep(3), setPreviuosStep(true), setNextStep(false);
       return;
     }
+    if (data.status === 3 && data.is_open) {
+      setStep(0), setPreviuosStep(true), setNextStep(true);
+      return;
+    }
   };
 
   const changeStep = (next_prev) => {
@@ -659,7 +669,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       if (step == 0) {
         setStep(step + 1);
         setPreviuosStep(true);
-        if (isOpen) setNextStep(false);
+        if (isOpen)
+          if (movementType > 1 && isOpen) setNextStep(true);
+          else setNextStep(false);
         return;
       }
       if (step == 1) {
@@ -677,19 +689,22 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       //previous
       if (step == 1) {
         setStep(step - 1);
-        setPreviuosStep(false);
+        if (movementType > 1 && isOpen) setPreviuosStep(true);
+        else setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
         return;
       }
       if (step == 2) {
         setStep(step - 1);
-        setPreviuosStep(false);
+        if (movementType > 1 && isOpen) setPreviuosStep(true);
+        else setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
         return;
       }
       if (step == 3) {
         setStep(step - 1);
-        setPreviuosStep(false);
+        if (movementType > 1 && isOpen) setPreviuosStep(true);
+        else setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
         return;
       }
@@ -1097,26 +1112,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             />
                           </Form.Item>
                         </Col>
-                        {/* <Col xxs={24} xl={4}>
-                          <SelectDepartment
-                            size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setDepartment(value)
-                                : setDepartment(null)
-                            }
-                          />
-                        </Col>
-                        <Col xxs={24} xl={4}>
-                          <SelectJob
-                            size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setJob(value)
-                                : setJob(null)
-                            }
-                          />
-                        </Col> */}
                         {(job || department) && (
                           <Col xxs={1} xl={1}>
                             <Button
@@ -1194,46 +1189,47 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {step == 2 &&
+                      {((step == 2 &&
                         consolidated &&
-                        consolidated.status <= 2 && (
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              icon={<UnlockOutlined />}
-                              htmlType="button"
-                              onClick={() =>
-                                setMessageModal(5, {
-                                  title: "Abrir nómina",
-                                  description:
-                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                  type_alert: "warning",
-                                  action: () => openPayroll(1),
-                                  title_action_button: "Abrir nómina",
-                                  components: (
-                                    <>
-                                      <Row
-                                        style={{
-                                          width: "100%",
-                                          marginTop: "5px",
-                                        }}
-                                      >
-                                        <Input.TextArea
-                                          maxLength={290}
-                                          id="motive"
-                                          placeholder="Capture el motivo de reapertura."
-                                        />
-                                      </Row>
-                                    </>
-                                  ),
-                                })
-                              }
-                            >
-                              Abrir
-                            </Button>
-                          </Col>
-                        )}
+                        consolidated.status <= 2) ||
+                        (step == 2 && movementType >= 1 && !isOpen)) && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            icon={<UnlockOutlined />}
+                            htmlType="button"
+                            onClick={() =>
+                              setMessageModal(5, {
+                                title: "Abrir nómina",
+                                description:
+                                  "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                type_alert: "warning",
+                                action: () => openPayroll(1),
+                                title_action_button: "Abrir nómina",
+                                components: (
+                                  <>
+                                    <Row
+                                      style={{
+                                        width: "100%",
+                                        marginTop: "5px",
+                                      }}
+                                    >
+                                      <Input.TextArea
+                                        maxLength={290}
+                                        id="motive"
+                                        placeholder="Capture el motivo de reapertura."
+                                      />
+                                    </Row>
+                                  </>
+                                ),
+                              })
+                            }
+                          >
+                            Abrir
+                          </Button>
+                        </Col>
+                      )}
                       {step == 2 && consolidated && consolidated.status < 3 && (
                         <Col md={5} offset={1}>
                           <Button
@@ -1376,6 +1372,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       viewFilter={false}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
+                      movementType={movementType}
                     />
                   ) : (
                     <>
