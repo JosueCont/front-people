@@ -66,13 +66,16 @@ const MovementsIMSS=({ currentNode })=>{
                 let sts = ""
                 switch(status) {
                     case 1:
-                        sts = "Enviado"
+                        sts = "Creado"
                         break
                     case 2:
-                        sts = "En proceso"
+                        sts = "Enviado"
                         break
                     case 3:
-                        sts = "Procesando"
+                        sts = "En proceso"
+                        break
+                    case 4:
+                        sts = "Procesado"
                         break
                     default:
                         sts = ""
