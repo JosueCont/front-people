@@ -128,7 +128,7 @@ const addEvent = (props) => {
   }, [props.currentNode]);
 
   return (
-    <MainLayout currentKey={["events"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["events"]} defaultOpenKeys={["managementRH","concierge","events"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -136,7 +136,8 @@ const addEvent = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => router.push({ pathname: "/comunication/events" })}

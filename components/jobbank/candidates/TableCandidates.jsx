@@ -166,38 +166,41 @@ const TableCandidates = ({
         {
             title: 'Nombre',
             dataIndex: 'fisrt_name',
-            key: 'fisrt_name'
+            key: 'fisrt_name',
+            ellipsis: true
         },
         {
             title: 'Apellidos',
             dataIndex: 'last_name',
-            key: 'last_name'
+            key: 'last_name',
+            ellipsis: true
         },
         {
             title:'Correo',
             dataIndex: 'email',
-            key: 'email'
+            key: 'email',
+            ellipsis: true
         },
         {
             title: 'Teléfono',
             dataIndex: 'cell_phone',
             key: 'cell_phone'
         },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <Switch
-        //                 size='small'
-        //                 defaultChecked={item.is_active}
-        //                 checked={item.is_active}
-        //                 checkedChildren="Activo"
-        //                 unCheckedChildren="Inactivo"
-        //                 onChange={(e)=> actionStatus(e, item)}
-        //             />
-        //         )
-        //     }
-        // },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={item.is_active}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }
+        },
         {
             title: ()=>{
                 return(

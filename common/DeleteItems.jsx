@@ -12,6 +12,8 @@ const DeleteItems = ({
     actionDelete = ()=> {},//function
     textCancel = 'Cancelar', //string
     textDelete = 'Eliminar', //string
+    viewAsList = false, //boolean,
+    timeLoad = 2000
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ const DeleteItems = ({
             actionDelete()
             setLoading(false)
             close()
-        },2000)
+        }, timeLoad)
     }
 
     return(
@@ -59,12 +61,14 @@ const DeleteItems = ({
                     <Button onClick={()=> close()}>
                         {textCancel}
                     </Button>
-                    <Button
-                        loading={loading}
-                        onClick={()=> onFinish()}
-                    >
-                        {textDelete}
-                    </Button>
+                    {!viewAsList && (
+                        <Button
+                            loading={loading}
+                            onClick={()=> onFinish()}
+                        >
+                            {textDelete}
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </MyModal>

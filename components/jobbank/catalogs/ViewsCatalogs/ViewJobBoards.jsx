@@ -1,65 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
+import { Row, Col, message } from 'antd';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getJobBoards } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
+import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
 const ViewJobBoards = () => {
 
-    const {
-        list_jobboards_options,
-        load_jobboards_options
-    } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
-    const dispatch = useDispatch();
+    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getJobBoards(currentNode.id));
-    },[currentNode])
+        getWithFilters();
+    },[currentNode, router])
 
-    useEffect(()=>{
-        setLoading(load_jobboards_options);
-    },[load_jobboards_options])
-    
-    useEffect(()=>{
-        setMainData(list_jobboards_options);
-    },[list_jobboards_options])
+    const getJobBoards = async (node, query = '') =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getJobBoards(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+    }
+
+    const getWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let params = deleteFiltersJb(router.query);
+        let filters = getFiltersJB(params);
+        setNumPage(page);
+        getJobBoards(currentNode.id, filters);
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createJobBoard({...values, node: currentNode.id});
-            dispatch(getJobBoards(currentNode.id));
+            getWithFilters();
             message.success('Bolsa de empleo registrada');
         } catch (e) {
             console.log(e)
-            message.error('Bolsa de empleo no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no registrada';
+            message.error(msg);
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateJobBoard(itemToEdit.id, values);
-            dispatch(getJobBoards(currentNode.id));
+            await WebApiJobBank.updateJobBoard(id, values);
+            getWithFilters();
             message.success('Bolsa de empleo actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Bolsa de empleo no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no actualizada';
+            message.error(msg);
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteJobBoard(id);
-            dispatch(getJobBoards(currentNode.id));
+            getWithFilters();
             message.success('Bolsa de empleo eliminada');
         } catch (e) {
             console.log(e)
@@ -70,12 +81,7 @@ const ViewJobBoards = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_jobboards_options}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -87,12 +93,9 @@ const ViewJobBoards = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
+                    numPage={numPage}
                 />
             </Col>
         </Row> 

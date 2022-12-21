@@ -4,18 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ruleRequired } from '../../../../utils/rules';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import {
-    getSubCategories,
-    getMainCategories
-} from '../../../../redux/jobBankDuck';
+import { getMainCategories } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
+import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
 const ViewSubcategories = () => {
 
     const {
-        list_sub_categories,
-        load_sub_categories,
         list_main_categories,
         load_main_categories,
     } = useSelector(state => state.jobBankStore);
@@ -24,51 +20,73 @@ const ViewSubcategories = () => {
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [mainData, setMainData] = useState({});
+    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getSubCategories(currentNode.id));
+        getWithFilters();
+    },[currentNode, router])
+    
+    useEffect(()=>{
+        if(!currentNode) return;
         dispatch(getMainCategories(currentNode.id));
     },[currentNode])
 
-    useEffect(()=>{
-        setLoading(load_sub_categories);
-    },[load_sub_categories])
-    
-    useEffect(()=>{
-        setMainData(list_sub_categories);
-    },[list_sub_categories])
+    const getSubCategories = async (node, query = '') =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getSubCategories(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            setLoading(false)
+            console.log(e)
+        }
+    }
+
+    const getWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let params = deleteFiltersJb(router.query);
+        let filters = getFiltersJB(params);
+        setNumPage(page);
+        getSubCategories(currentNode.id, filters);
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSubCategory({...values, node: currentNode.id});
-            dispatch(getSubCategories(currentNode.id));
+            getWithFilters();
             message.success('Subcategoría registrada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no registrada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no registrada';
+            message.error(msg);
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateSubCategory(itemToEdit.id, values);
-            dispatch(getSubCategories(currentNode.id));
+            await WebApiJobBank.updateSubCategory(id, values);
+            getWithFilters();
             message.success('Subcategoría actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no actualizada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no actualizada';
+            message.error(msg);
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteSubCategory(id);
-            dispatch(getSubCategories(currentNode.id));
+            getWithFilters();
             message.success('Subcategoría eliminada');
         } catch (e) {
             console.log(e)
@@ -103,12 +121,7 @@ const ViewSubcategories = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_sub_categories}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -120,13 +133,10 @@ const ViewSubcategories = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     extraFields={<SelectCategory/>}
+                    numPage={numPage}
                 />
             </Col>
         </Row> 

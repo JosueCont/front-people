@@ -10,7 +10,8 @@ import {
 import {
     EllipsisOutlined,
     DeleteOutlined,
-    EditOutlined
+    EditOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getStrategies } from '../../../redux/jobBankDuck';
@@ -26,9 +27,7 @@ const TableStrategies = ({
     jobbank_page,
     getStrategies,
     load_clients_options,
-    list_clients_options,
-    load_vacancies_options,
-    list_vacancies_options,
+    list_clients_options
 }) => {
 
     const router = useRouter();
@@ -84,14 +83,6 @@ const TableStrategies = ({
         return client_.name;
     }
 
-    const getVacant = (item) =>{
-        if(!item.vacant) return null;
-        const vacant = record => record.id === item.vacant;
-        let vacant_ = list_vacancies_options.find(vacant);
-        if(!vacant_) return null;
-        return vacant_.job_position;
-    }
-
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -132,7 +123,7 @@ const TableStrategies = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/strategies/edit`,
@@ -142,11 +133,21 @@ const TableStrategies = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<SettingOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: {...router.query, strategy: item.id }
+                    })}
+                >
+                    Configurar publicación
                 </Menu.Item>
             </Menu>
         );
@@ -168,11 +169,8 @@ const TableStrategies = ({
         },
         {
             title: 'Vacante',
-            render: (item) =>{
-                return(
-                    <span>{getVacant(item)}</span>
-                )
-            }
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant','job_position']
         },
         // {
         //     title: 'Asignación',
@@ -245,8 +243,6 @@ const mapState = (state) =>{
         load_strategies: state.jobBankStore.load_strategies,
         load_clients_options: state.jobBankStore.load_clients_options,
         list_clients_options: state.jobBankStore.list_clients_options,
-        load_vacancies_options: state.jobBankStore.load_vacancies_options,
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }

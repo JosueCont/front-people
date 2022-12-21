@@ -63,6 +63,7 @@ const ProfileUser = () => {
             <ConfigProvider locale={esES}>
                 <Breadcrumb>
                     <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                    <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
                     <Breadcrumb.Item href='/home/persons/'>Personas</Breadcrumb.Item>
                     <Breadcrumb.Item href={`/home/profile/${person.id}`}>
                         {fullName}

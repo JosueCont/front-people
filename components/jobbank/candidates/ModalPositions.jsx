@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
@@ -20,6 +20,7 @@ const ModalPositions = ({
     } = useSelector(state => state.jobBankStore);
     const [formPosition] = Form.useForm();
     const [loading, setLoading] = useState();
+    const startDate = Form.useWatch('start_date', formPosition);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -33,6 +34,9 @@ const ModalPositions = ({
         formPosition.resetFields();
     }
 
+    const setValue = (key, val) => formPosition.setFieldsValue({[key]: val});
+    const setEndDate = (val = null) => setValue('end_date', val);
+
     const onFinish = (values) =>{
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
         if(values.start_date) values.start_date = values.start_date.format('YYYY-MM-DD');
@@ -42,6 +46,20 @@ const ModalPositions = ({
             actionForm(values)
             onCloseModal()
         },2000)
+    }
+    
+    const onChangeStart = (value) =>{
+        setEndDate();
+    }
+
+    const disabledStart = (current) =>{
+        return current && current > moment().endOf("day");
+    }
+
+    const disabledEnd = (current) =>{
+        let valid_start = current < startDate?.startOf("day");
+        let valid_end = current > moment().endOf("day");
+        return current && (valid_start || valid_end);
     }
 
     return (
@@ -85,8 +103,10 @@ const ModalPositions = ({
                             <DatePicker
                                 style={{width: '100%'}}
                                 placeholder='Seleccionar una fecha'
+                                disabledDate={disabledStart}
                                 format='DD-MM-YYYY'
                                 inputReadOnly
+                                onChange={onChangeStart}
                             />
                         </Form.Item>
                     </Col>
@@ -97,7 +117,9 @@ const ModalPositions = ({
                         >
                             <DatePicker
                                 style={{width: '100%'}}
+                                disabled={!startDate}
                                 placeholder='Seleccionar una fecha'
+                                disabledDate={disabledEnd}
                                 format='DD-MM-YYYY'
                                 inputReadOnly
                             />

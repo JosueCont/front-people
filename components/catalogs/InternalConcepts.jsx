@@ -29,8 +29,9 @@ import {
 } from "../../utils/constant";
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import {showHideMessage} from "../../redux/NotificationDuck";
 
-const InternalConcepts = ({ permissions, currentNode, ...props }) => {
+const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
   const [edit, setEdit] = useState(false);
@@ -41,7 +42,10 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
+  //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
+
+
   const columns = [
     {
       title: "Código",
@@ -115,6 +119,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     }
   }, [key]);
 
+
   useEffect(() => {
     if (
       (props.perceptions_int, props.deductions_int, props.other_payments_int)
@@ -182,7 +187,11 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     } catch (error) {
       setLoading(false);
       console.log(error);
-      message.error(messageError);
+      let  msg = "Ocurrio un error intente de nuevos.";
+      if(error.response?.data?.message){
+        msg = error.response?.data?.message
+      }
+      message.error(msg);
     }
   };
 
@@ -196,8 +205,12 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         description: item.description,
         data_type: item.data_type,
         perception_type: item.perception_type.id,
-
         show: item.show,
+        is_salary: item.is_salary,
+        is_holiday: item.is_holiday,
+        is_rest_day: item.is_rest_day,
+        is_seventh_day: item.is_seventh_day,
+        apply_assimilated: item.apply_assimilated
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -241,7 +254,18 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
       setEdit(false);
       setLoading(false);
       resetForm();
-      message.error("Ocurrio un error intente de nuevo.");
+      let  msg = "Ocurrio un error intente de nuevos.";
+      if(error.response?.data?.message){
+        msg = error.response?.data?.message
+      }
+      message.error(msg);
+
+      // showHideMessage(true, {
+      //   title:msg,
+      //   level:'error',
+      //   type:2
+      // })
+
     }
   };
 
@@ -295,14 +319,27 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     return (
       <Form.Item
         name={
-          key == 1
+          key === 1
             ? "perception_type"
-            : key == 2
+            : key === 2
             ? "deduction_type"
             : "other_type_payment"
         }
-        label={key == 1 ? "Percepción" : key == 2 ? "Deducción" : "Otro pago"}
-        rules={[ruleRequired]}
+        label={key === 1 ? "Percepción" : key === 2 ? "Deducción" : "Otro pago"}
+        rules={[ruleRequired
+         //  ,{
+         //  validator(_, value) {
+         //    let item = data.find((it)=> it.id === value)
+         //    if (apply_assimilated && !item?.is_assimilated) {
+         //      return Promise.reject('Este concepto no aplica para asimilado.');
+         //    }
+         //    if(!apply_assimilated && !item?.is_payroll){
+         //      return Promise.reject('Este concepto no aplica para nómina.');
+         //    }
+         //    return Promise.resolve();
+         //  },
+         // },
+        ]}
       >
         <Select
           showSearch
@@ -314,7 +351,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             return (
               <>
                 <Option key={item.id} value={item.id}>
-                  {item.description}
+                  {item.description} { item && item.is_assimilated && `(Aplica a asimilado)`}
                 </Option>
                 ;
               </>
@@ -373,13 +410,74 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               <Switch defaultChecked />
             </Form.Item>
           </Col>
+          <Col lg={6} xs={22} md={12}>
+            <Form.Item
+                name="apply_assimilated"
+                label="Aplica asimilado"
+                valuePropName="checked"
+            >
+              <Switch  />
+            </Form.Item>
+          </Col>
+          {
+            key === 1 &&
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                      name="is_salary"
+                      label="¿Es sueldo?"
+                      valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+          }
+
         </Row>
+        {
+          key === 1 && <Row>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_holiday"
+                    label="¿Es festivo?"
+                    valuePropName="checked"
+                >
+                  <Switch  />
+                </Form.Item>
+              </Col>
+
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_rest_day"
+                    label="¿Es descanso?"
+                    valuePropName="checked"
+                >
+                  <Switch  />
+                </Form.Item>
+              </Col>
+
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name="is_seventh_day"
+                    label="¿Es séptimo día?"
+                    valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+
+
+
+            </Row>
+        }
+
+
+
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
-            <Button onClick={resetForm}>Cancelar</Button>
+            <Button loading={loading} onClick={resetForm}>Cancelar</Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" htmlType="submit">
               Guardar
             </Button>
           </Col>
@@ -434,7 +532,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm  percepciones/>
+              <RenderForm  percepciones />
             </Form>
           )}
         </TabPane>
@@ -491,4 +589,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { doFiscalCatalogs })(InternalConcepts);
+export default connect(mapState, { doFiscalCatalogs, showHideMessage })(InternalConcepts);

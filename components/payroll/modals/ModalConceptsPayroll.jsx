@@ -9,15 +9,18 @@ import {
   Steps,
   Card,
   Checkbox,
-  Input,
-  Spin,
   Alert,
   InputNumber,
+  DatePicker,
+  Form,
+  message,
+  Select,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
-import { get } from "lodash";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import { departureMotive } from "../../../utils/constant";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -31,8 +34,11 @@ const ModalConceptsPayroll = ({
   calendar,
   sendCalculatePayroll,
   payrollType,
+  extraOrdinary = false,
+  movementType = null,
   ...props
 }) => {
+  const [departureForm] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [concepts, setConcepts] = useState([]);
   const [perceptionsCat, setPerceptionsCat] = useState([]);
@@ -42,6 +48,11 @@ const ModalConceptsPayroll = ({
   const [deductions, setDeductions] = useState([]);
   const [otherPayments, setOtherPayments] = useState([]);
   const [ceros, setCeros] = useState(false);
+  const [twentyDays, setTwentyDays] = useState(false);
+  const [threeMonths, setThreeMonths] = useState(false);
+  const [antiquity, setAntiquity] = useState(false);
+  const [motiveDeparture, setMotiveDeparture] = useState(null);
+  const [departureDate, setDepartureDate] = useState("");
 
   useEffect(() => {
     if (
@@ -157,14 +168,27 @@ const ModalConceptsPayroll = ({
               <Row style={{ marginBottom: "8px" }}>
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
-                  <InputNumber
-                    type="number"
-                    name={item.id}
-                    defaultValue={item.value}
-                    formatter={(value) => value.replace("-", "")}
-                    controls={false}
-                    onChange={(e) => changeHandler(type, item.id)(e)}
-                  />
+                  <Row wrap={false}>
+                    {item.data_type === 1 && (
+                      <span style={{ marginRight: "7px", marginTop: "3px" }}>
+                        $
+                      </span>
+                    )}
+                    <InputNumber
+                      key={item.id}
+                      type="number"
+                      name={item.id}
+                      defaultValue={item.value}
+                      formatter={(value) => value.replace("-", "")}
+                      controls={false}
+                      onChange={(e) => changeHandler(type, item.id)(e)}
+                    />
+                    {item.data_type === 2 && (
+                      <span style={{ marginLeft: "7px", marginTop: "3px" }}>
+                        UNIDAD(ES)
+                      </span>
+                    )}
+                  </Row>
                 </Col>
               </Row>
             </Col>
@@ -234,32 +258,78 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
+    if (extraOrdinary) {
+      if (
+        departureDate == undefined ||
+        departureDate == null ||
+        departureDate == ""
+      ) {
+        message.error("Debe seleccionar una fecha de salida");
+        return;
+      }
+      if (
+        motiveDeparture == undefined ||
+        motiveDeparture == null ||
+        motiveDeparture == ""
+      ) {
+        message.error("Debe esribir un motivo de salida");
+        return;
+      }
+    }
     let data = [];
     payroll.map((item) => {
       if (item.person.id === person_id) {
-        item.perceptions.map((p) => {
-          if (p.type == "046") {
-            perceptions.push(p);
-            return;
-          }
-        });
-        data.push({
+        if (item.perceptions)
+          item.perceptions.map((p) => {
+            if (p.type == "046") {
+              perceptions.push(p);
+              return;
+            }
+          });
+        const obj = {
           person_id: person_id,
           perceptions: perceptions,
           deductions: deductions,
           other_payments: otherPayments,
-        });
+        };
+        if (extraOrdinary) {
+          obj.twenty_day_compensantion = twentyDays;
+          obj.three_months_compensation = threeMonths;
+          obj.antiquity_compensation = antiquity;
+          obj.departure_date = departureDate;
+          obj.departure_motive = motiveDeparture;
+          obj.person = item.person;
+          obj.key = item.key;
+        }
+        data.push(obj);
       } else {
-        data.push({
+        const obj = {
           person_id: item.person.id,
           perceptions: item.perceptions,
-          deductions: item.deductions.filter(
+          deductions: item.deductions?.filter(
             (item) => item.type != "001" && item.type != "002"
           ),
           other_payments: item.otherPayments,
-        });
+        };
+        if (extraOrdinary) {
+          if (item.three_months_compensantion)
+            obj.twenty_day_compensantion = item.three_months_compensantion;
+          if (item.antiquity_compensation)
+            obj.antiquity_compensation = item.antiquity_compensation;
+          if (item.twenty_day_compensantion)
+            obj.twenty_day_compensantion = item.twenty_day_compensantion;
+          obj.person = item.person;
+          obj.key = item.key;
+          if (item.departure_date) obj.departure_date = item.departure_date;
+          if (item.departure_motive)
+            obj.departure_motive = item.departure_motive;
+        }
+        if (item.payroll_cfdi_person)
+          obj.payroll_cfdi_person = item.payroll_cfdi_person;
+        data.push(obj);
       }
     });
+
     clearConcept();
     calendar.payroll = data;
     sendCalculatePayroll(calendar);
@@ -291,6 +361,11 @@ const ModalConceptsPayroll = ({
     setOtherPayments([]);
     payroll = null;
     person_id = null;
+    setAntiquity(false);
+    setThreeMonths(false);
+    setTwentyDays(false);
+    setMotiveDeparture(null);
+    setDepartureDate("");
     setVisible(false);
   };
 
@@ -313,7 +388,11 @@ const ModalConceptsPayroll = ({
             </Button>
             {perceptions.length > 0 ||
             deductions.length > 0 ||
-            otherPayments.length > 0 ? (
+            otherPayments.length > 0 ||
+            threeMonths ||
+            antiquity ||
+            (motiveDeparture != "" && motiveDeparture != null) ||
+            twentyDays ? (
               <Button
                 size="large"
                 htmlType="button"
@@ -350,7 +429,10 @@ const ModalConceptsPayroll = ({
             disabled={
               perceptions.length > 0 ||
               deductions.length > 0 ||
-              otherPayments.length > 0
+              otherPayments.length > 0 ||
+              threeMonths ||
+              antiquity ||
+              twentyDays
                 ? false
                 : true
             }
@@ -370,9 +452,72 @@ const ModalConceptsPayroll = ({
           />
         </Steps>
         <Card hoverable style={{ width: "100%" }}>
+          {extraOrdinary && (
+            <>
+              <Row>
+                <Col span={24} style={{ marginBottom: "8px" }}>
+                  <Checkbox
+                    key={"twenty_day_compensantion"}
+                    className="CheckGroup"
+                    checked={twentyDays}
+                    onChange={(value) => setTwentyDays(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      20 dias por año trabajado
+                    </span>
+                  </Checkbox>
+                </Col>
+                <Col span={24} style={{ marginBottom: "8px" }}>
+                  <Checkbox
+                    key={"three_months_compensantion"}
+                    className="CheckGroup"
+                    checked={threeMonths}
+                    onChange={(value) => setThreeMonths(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      90 dias de indemnizacion
+                    </span>
+                  </Checkbox>
+                </Col>
+                <Col span={24} style={{ marginBottom: "8px" }}>
+                  <Checkbox
+                    key={"antiquity_premium"}
+                    className="CheckGroup"
+                    checked={antiquity}
+                    onChange={(value) => setAntiquity(value.target.checked)}
+                  >
+                    <span style={{ textTransform: "uppercase" }}>
+                      Prima de antigüedad
+                    </span>
+                  </Checkbox>
+                </Col>
+              </Row>
+              <Row style={{ paddingTop: "20px" }}>
+                <Col span={4}>
+                  <DatePicker
+                    moment={"YYYY"}
+                    id="departure_date"
+                    placeholder="Fecha de salida."
+                    onChange={(value, d) => setDepartureDate(d)}
+                    locale={locale}
+                  />
+                </Col>
+                <Col span={8}>
+                  <Select
+                    placeholder="Motivo de baja"
+                    style={{ width: "50%" }}
+                    options={departureMotive}
+                    onChange={(value) => setMotiveDeparture(value)}
+                  />
+                </Col>
+              </Row>
+              <br />
+              <hr />
+            </>
+          )}
           {currentStep == 0 ? (
             <>
-              {perceptionsCat.length > 0 && (
+              {perceptionsCat.length > 0 && movementType != 3 && (
                 <>
                   <h2>Percepciones</h2>
                   <Checkbox.Group
@@ -388,7 +533,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {deductionsCat.length > 0 && (
+              {deductionsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Deducciones</h2>
@@ -405,7 +550,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {otherPaymentsCat.length > 0 && (
+              {otherPaymentsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Otros pagos</h2>
@@ -488,7 +633,7 @@ const ModalConceptsPayroll = ({
                         <EditOutlined
                           style={{ marginRight: "10px" }}
                           key={"edit" + record.perception}
-                          onClick={() => listConcepts()}
+                          onClick={() => listConcepts(1)}
                         />
                         <DeleteOutlined
                           key={"delete" + record.perception}

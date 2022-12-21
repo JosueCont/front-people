@@ -166,12 +166,12 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
 export const getFiscalTaxRegime = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getTaxRegime()
     .then((response) => {
-      // dispatch({
-      //   type: TAX_REGIME,
-      //   payload: response.data.results.filter(
-      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
-      //   ),
-      // });
+      //   dispatch({
+      //     type: TAX_REGIME,
+      //     payload: response.data.results.filter(
+      //       (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //     ),
+      //   });
       dispatch({
         type: TAX_REGIME,
         payload: response.data.results,
@@ -212,7 +212,6 @@ export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
       // let unorderDeductions = response.data.results.filter(
       //   (item) => Number(item.version_cfdi.version) <= use_cfdi
       // );
-
       let unorderDeductions = response.data.results;
 
       let orderDeductions = unorderDeductions.sort((a, b) => {

@@ -158,7 +158,11 @@ const CalculatePayroll = ({ ...props }) => {
         <div>
           <NumberFormat
             prefix={"$"}
-            number={item.calculation.total_perceptions}
+            number={
+              item.calculation && item.calculation.total_perceptions
+                ? item.calculation.total_perceptions
+                : 0.0
+            }
           />
         </div>
       ),
@@ -171,7 +175,11 @@ const CalculatePayroll = ({ ...props }) => {
         <div>
           <NumberFormat
             prefix={"$"}
-            number={item.calculation.total_deductions}
+            number={
+              item.calculation && item.calculation.total_deductions
+                ? item.calculation.total_deductions
+                : 0.0
+            }
           />
         </div>
       ),
@@ -182,7 +190,14 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.calculation.net_salary} />
+          <NumberFormat
+            prefix={"$"}
+            number={
+              item.calculation && item.calculation.net_salary
+                ? item.calculation.net_salary
+                : 0.0
+            }
+          />
         </div>
       ),
     },
@@ -573,6 +588,8 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
+          if (error.response.data.message.includes("concepto interno")) {
+          }
           setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
@@ -665,6 +682,28 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const setMessageModal = (type, data) => {
+    const check_configuration = (data) => {
+      if (data.includes("concepto interno")) {
+        let words = data.split(" ");
+        let data_parts = words.map((x) => {
+          if (x === "configuración") {
+            return (
+              <a
+                style={{ color: "blue" }}
+                onClick={() => router.push("/config/catalogs/")}
+              >
+                configuración&nbsp;
+              </a>
+            );
+          } else {
+            return <span>{x}&nbsp;</span>;
+          }
+        });
+        return <span>{data_parts}</span>;
+      } else {
+        return data;
+      }
+    };
     switch (type) {
       case 1:
         setInfoGenericModal({
@@ -674,6 +713,9 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal"
             : data.toLowerCase().includes("folios")
             ? "Folios"
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Registro patronal"
             : "Error",
 
           title_message: data.toLowerCase().includes("fiscal information")
@@ -682,14 +724,20 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Dirección fiscal faltante"
             : data.toLowerCase().includes("folios")
             ? "Folios insuficientes"
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Registro patronal faltante"
             : "Error",
           description: data.toLowerCase().includes("fiscal information")
-            ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
+            ? "Falta información relevante para poder generar los cfdi, verifique la información fiscal de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
-            ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
+            ? "Datos en la dirección fiscal faltantes, verifique la información fiscal he intente de nuevo"
             : data.toLowerCase().includes("folios")
             ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
-            : data,
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
+            : check_configuration(data),
           type_alert: data.toLowerCase().includes("error")
             ? "error"
             : "warning",
@@ -702,11 +750,17 @@ const CalculatePayroll = ({ ...props }) => {
                     tab: 2,
                   },
                 })
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
+              ? router.push({ pathname: "/business/patronalRegistrationNode" })
               : setGenericModal(false),
           title_action_button:
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
               ? "Ver información fiscal"
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
+              ? "Ver registro patronal"
               : "Continuar",
         });
         break;
@@ -1032,7 +1086,7 @@ const CalculatePayroll = ({ ...props }) => {
         />
         <MainLayout
           currentKey={["calculatePayroll"]}
-          defaultOpenKeys={["payroll"]}
+          defaultOpenKeys={["managementRH", "payroll"]}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
@@ -1041,6 +1095,7 @@ const CalculatePayroll = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
             <Breadcrumb.Item>Nómina</Breadcrumb.Item>
             <Breadcrumb.Item>Cálculo de nómina</Breadcrumb.Item>
           </Breadcrumb>
@@ -1333,44 +1388,46 @@ const CalculatePayroll = ({ ...props }) => {
                             </Button>
                           </Col>
                         )}
-                        {step == 2 && consolidated && consolidated.status <= 2 && (
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              icon={<UnlockOutlined />}
-                              htmlType="button"
-                              onClick={() =>
-                                setMessageModal(5, {
-                                  title: "Abrir nómina",
-                                  description:
-                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                  type_alert: "warning",
-                                  action: () => openPayroll(1),
-                                  title_action_button: "Abrir nómina",
-                                  components: (
-                                    <>
-                                      <Row
-                                        style={{
-                                          width: "100%",
-                                          marginTop: "5px",
-                                        }}
-                                      >
-                                        <Input.TextArea
-                                          maxLength={290}
-                                          id="motive"
-                                          placeholder="Capture el motivo de reapertura."
-                                        />
-                                      </Row>
-                                    </>
-                                  ),
-                                })
-                              }
-                            >
-                              Abrir
-                            </Button>
-                          </Col>
-                        )}
+                        {step == 2 &&
+                          consolidated &&
+                          consolidated.status <= 2 && (
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                icon={<UnlockOutlined />}
+                                htmlType="button"
+                                onClick={() =>
+                                  setMessageModal(5, {
+                                    title: "Abrir nómina",
+                                    description:
+                                      "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                    type_alert: "warning",
+                                    action: () => openPayroll(1),
+                                    title_action_button: "Abrir nómina",
+                                    components: (
+                                      <>
+                                        <Row
+                                          style={{
+                                            width: "100%",
+                                            marginTop: "5px",
+                                          }}
+                                        >
+                                          <Input.TextArea
+                                            maxLength={290}
+                                            id="motive"
+                                            placeholder="Capture el motivo de reapertura."
+                                          />
+                                        </Row>
+                                      </>
+                                    ),
+                                  })
+                                }
+                              >
+                                Abrir
+                              </Button>
+                            </Col>
+                          )}
                         {step >= 1 && (
                           <>
                             {((isOpen &&

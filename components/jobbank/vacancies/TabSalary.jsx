@@ -34,7 +34,7 @@ const TabSalary = ({ formVacancies }) => {
                 <Form.Item
                     name='gross_salary'
                     label='Sueldo mensual bruto (MXN)'
-                    rules={[numCommaAndDot()]}
+                    rules={[ruleRequired, numCommaAndDot()]}
                 >
                     <Input
                         maxLength={20}

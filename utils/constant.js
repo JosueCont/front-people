@@ -86,66 +86,67 @@ export const typeStreet = [
 export const typeEmployee = [
   {
     label: "Trab. permanente",
-    value: 1
+    value: 1,
   },
   {
     label: "Trab. Ev. Ciudad",
-    value: 2
+    value: 2,
   },
   {
     label: "Trab. Ev. Construcción",
-    value: 3
+    value: 3,
   },
   {
     label: "Eventual del campo",
-    value: 4
+    value: 4,
   },
-]
+];
 
 export const typeSalary = [
   {
     label: "Salario fijo",
-    value: 0
+    value: 0,
   },
   {
     label: "Salario variable",
-    value: 1
+    value: 1,
   },
   {
     label: "Salario mixto",
-    value: 2
+    value: 2,
   },
-]
+];
 
 export const reduceDays = [
-  {  
-    label: 'un día',
-    value: 1
+  {
+    label: "un día",
+    value: 1,
   },
   {
-    label: 'dos días',
-    value: 2
+    label: "dos días",
+    value: 2,
   },
   {
-    label: 'tres días',
-    value: 3
-  },{
-    label: 'cuatro días',
-    value: 4
+    label: "tres días",
+    value: 3,
   },
   {
-    label: 'cinco días',
-    value: 5
+    label: "cuatro días",
+    value: 4,
   },
   {
-    label: 'Jornada reducida',
-    value: 6
+    label: "cinco días",
+    value: 5,
   },
   {
-    label: 'Jornada normal',
-    value: 0
-  }
-]
+    label: "Jornada reducida",
+    value: 6,
+  },
+  {
+    label: "Jornada normal",
+    value: 0,
+  },
+];
 
 export const periodicity = [
   {
@@ -169,15 +170,15 @@ export const periodicity = [
 export const statusSelect = [
   {
     label: "Todos",
-    value: -1,
+    value: "-1",
   },
   {
     label: "Activos",
-    value: true,
+    value: "true",
   },
   {
     label: "Inactivos",
-    value: false,
+    value: "false",
   },
 ];
 
@@ -272,30 +273,30 @@ export const monthsName = [
 
 export const bimestralMonths = [
   {
-    label:"Enero - Febrero",
-    value: 1
+    label: "Enero - Febrero",
+    value: 1,
   },
   {
-    label:"Marzo - Abril",
-    value: 3
+    label: "Marzo - Abril",
+    value: 3,
   },
   {
-    label:"Mayo - Junio",
-    value: 5
+    label: "Mayo - Junio",
+    value: 5,
   },
   {
-    label:"Julio - Agosto",
-    value: 7
+    label: "Julio - Agosto",
+    value: 7,
   },
   {
-    label:"Septiembre - Octubre",
-    value: 9
+    label: "Septiembre - Octubre",
+    value: 9,
   },
   {
-    label:"Noviembre - Diciembre",
-    value: 11
-  }
-]
+    label: "Noviembre - Diciembre",
+    value: 11,
+  },
+];
 
 export const intranetAccess = [
   {
@@ -320,7 +321,7 @@ export const SukhaAccess = [
   {
     label: "No",
     value: false,
-  }
+  },
 ];
 export const statusActivePost = [
   {
@@ -415,99 +416,117 @@ export const CalculationEmploymentSubsidy = [
 ];
 
 export const optionsSubproduct = [
-  {value: 1, key: 1, label: 'Ejecutivo'},
-  {value: 2, key: 2, label: 'Gerencial'},
-  {value: 3, key: 3, label: 'Operativo'},
-  {value: 4, key: 4, label: 'Sourcing'}
+  { value: 1, key: 1, label: "Ejecutivo" },
+  { value: 2, key: 2, label: "Gerencial" },
+  { value: 3, key: 3, label: "Operativo" },
+  { value: 4, key: 4, label: "Sourcing" },
 ];
 
 export const optionsTypeJob = [
-  {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Híbrido'},
-  {value: 3, key: 3, label: 'Desde casa'}
+  { value: 1, key: 1, label: "Presencial" },
+  { value: 2, key: 2, label: "Híbrido" },
+  { value: 3, key: 3, label: "Desde casa" },
 ];
 
 export const optionsTypeContract = [
-  {value: 1, key: 1, label: 'Indeterminado'},
-  {value: 2, key: 2, label: 'Temporal'},
-  {value: 3, key: 3, label: 'Prácticas'}
+  { value: 1, key: 1, label: "Indeterminado" },
+  { value: 2, key: 2, label: "Temporal" },
+  { value: 3, key: 3, label: "Prácticas" },
 ];
 
 export const optionsGenders = [
-  {value: 1, key: 1, label: 'Masculino'},
-  {value: 2, key: 2, label: 'Femenino'},
-  {value: 3, key: 3, label: 'Indistinto'}
+  { value: 1, key: 1, label: "Masculino" },
+  { value: 2, key: 2, label: "Femenino" },
+  { value: 3, key: 3, label: "Indistinto" },
 ];
 
 export const optionsLevelAcademic = [
-  {value: 1, key: 1, label: 'Primaria'},
-  {value: 2, key: 2, label: 'Secundaria'},
-  {value: 3, key: 3, label: 'Bachillerato'},
-  {value: 4, key: 4, label: 'Bachillerato tecnológico'},
-  {value: 5, key: 5, label: 'Licenciatura'},
-  {value: 6, key: 6, label: 'Especialidad'},
-  {value: 7, key: 7, label: 'Maestría'},
-  {value: 8, key: 8, label: 'Doctorado'},
+  { value: 1, key: 1, label: "Primaria" },
+  { value: 2, key: 2, label: "Secundaria" },
+  { value: 3, key: 3, label: "Bachillerato" },
+  { value: 4, key: 4, label: "Bachillerato tecnológico" },
+  { value: 5, key: 5, label: "Licenciatura" },
+  { value: 6, key: 6, label: "Especialidad" },
+  { value: 7, key: 7, label: "Maestría" },
+  { value: 8, key: 8, label: "Doctorado" },
 ];
 
 export const optionsStatusAcademic = [
-  {value: 1, key: 1, label: 'En concurso'},
-  {value: 2, key: 2, label: 'Trunca'},
-  {value: 3, key: 3, label: 'Concluida'}
-]
-
-export const optionsStatusVacant = [
-  {value: 1, key: 1, label: 'Activa'},
-  {value: 2, key: 2, label: 'Cancelada'},
-  {value: 3, key: 3, label: 'Standby'},
-  {value: 4, key: 4, label: 'Cubierta'},
+  { value: 1, key: 1, label: "En curso" },
+  { value: 2, key: 2, label: "Trunca" },
+  { value: 3, key: 3, label: "Concluida" },
 ];
 
-export const optionsLangVacant= [
-  {value: 1, key: 1, label: 'Inglés'},
-  {value: 2, key: 2, label: 'Francés'},
-  {value: 3, key: 3, label: 'Italiano'},
+export const optionsStatusVacant = [
+  { value: 1, key: 1, label: "Activa" },
+  { value: 2, key: 2, label: "Cancelada" },
+  { value: 3, key: 3, label: "Standby" },
+  { value: 4, key: 4, label: "Cubierta" },
+];
+
+export const optionsLangVacant = [
+  { value: 1, key: 1, label: "Inglés" },
+  { value: 2, key: 2, label: "Francés" },
+  { value: 3, key: 3, label: "Italiano" },
 ];
 
 export const optionsPaymentPeriod = [
-  {value: 1, key: 1, label: 'Diario'},
-  {value: 2, key: 2, label: 'Semanal'},
-  {value: 3, key: 3, label: 'Quincenal'},
-  {value: 4, key: 4, label: 'Mensual'},
+  { value: 1, key: 1, label: "Diario" },
+  { value: 2, key: 2, label: "Semanal" },
+  { value: 3, key: 3, label: "Quincenal" },
+  { value: 4, key: 4, label: "Mensual" },
 ];
 
 export const optionsTypeSale = [
-  {value: 1, key: 1, label: 'Cliente activo recurrente'},
-  {value: 2, key: 2, label: 'Croselling'},
-  {value: 3, key: 3, label: 'Upselling'},
-  {value: 4, key: 4, label: 'Sourcing'}
+  { value: 1, key: 1, label: "Cliente activo recurrente" },
+  { value: 2, key: 2, label: "Croselling" },
+  { value: 3, key: 3, label: "Upselling" },
+  { value: 4, key: 4, label: "Sourcing" },
 ];
 
 export const optionsJobBank = [
-  {value: 1, key: 1, label: 'Computrabajo'},
-  {value: 2, key: 2, label: 'OCC'},
-  {value: 3, key: 3, label: 'Universidades'},
-  {value: 4, key: 4, label: 'Indeed'},
-  {value: 5, key: 5, label: 'Talenteca'},
-  {value: 6, key: 6, label: 'HEX'},
-  {value: 7, key: 7, label: 'Otros'}
-]
+  { value: 1, key: 1, label: "Computrabajo" },
+  { value: 2, key: 2, label: "OCC" },
+  { value: 3, key: 3, label: "Universidades" },
+  { value: 4, key: 4, label: "Indeed" },
+  { value: 5, key: 5, label: "Talenteca" },
+  { value: 6, key: 6, label: "HEX" },
+  { value: 7, key: 7, label: "Otros" },
+];
 
 export const optionsEconomicBenefits = [
-  {value: 1, key: 1, label: 'Sin prestaciones'},
-  {value: 2, key: 2, label: 'Prestaciones de ley'},
-  {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
-]
+  { value: 1, key: 1, label: "Sin prestaciones" },
+  { value: 2, key: 2, label: "Prestaciones de ley" },
+  { value: 3, key: 3, label: "Prestaciones superiores a la ley" },
+];
 
 export const optionMovement = [
-  {value: 1, label:"Aguinaldo"},
-  {value: 2, label:"Finiquito"},
-  {value: 3, label:"Liquidación"}
-]
+  { value: 1, label: "Aguinaldo" },
+  { value: 2, label: "Finiquito" },
+  { value: 3, label: "Liquidación" },
+];
 export const optionsBusinessName = [
-  {value: "1", key: "1", label: 'Física'},
-  {value: "2", key: "2", label: 'Moral'}
-]
+  { value: "1", key: "1", label: "Física" },
+  { value: "2", key: "2", label: "Moral" },
+];
+
+export const optionsDomainLang = [
+  { value: 1, key: 1, label: "Básico" },
+  { value: 2, key: 2, label: "Intermedio" },
+  { value: 3, key: 3, label: "Avanzado" },
+  { value: 4, key: 4, label: "Experto" },
+];
+
+// es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
+export const FACTOR_SDI = 1.0452;
+
+// para los tipos de movimientos imss
+export const movementsTypes = [
+  "No identificado",
+  "Alta/Reingreso",
+  "Modificación de salario",
+  "Baja",
+];
 
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
@@ -532,12 +551,17 @@ export const popupWindow = (url) => {
   }
 };
 
-export const getCurrentURL = (tenant = false) => {
+export const getCurrentURL = (tenant = false, getTenant = false) => {
   if (typeof window !== "undefined") {
     let url = window.location.href;
     if (tenant) {
       let link = url.split(".");
-      return link[0];
+      if (getTenant){
+        const tenantSolo = link[0].split("://")
+        return tenantSolo[1];
+      }else{
+        return link[0];
+      }
     } else {
       return url;
     }
@@ -555,28 +579,45 @@ export const getHost = () => {
   }
 };
 
-export const deleteKeyByValue = (values) =>{
-  return Object.entries(values).reduce((obj, [key, val]) =>{
-    if(!val) return obj;
-    if(Array.isArray(val) && val.length <= 0) return obj;
-    return {...obj, [key]: val }
-  }, {});
-}
-
-export const redirectTo = (url, newWindow = false) =>{
-  const link = document.createElement('a');
+export const redirectTo = (url, newWindow = false) => {
+  const link = document.createElement("a");
   link.href = url;
-  link.target = newWindow ? '_blank' : '_self';
+  link.target = newWindow ? "_blank" : "_self";
   link.click();
-}
+};
 
 export const catalogsJobbank = [
-  {catalog: 'categories', name: 'Categorías'},
-  {catalog: 'subcategories', name: 'Subcategorías' },
-  {catalog: 'academic', name: 'Carreras'},
-  {catalog: 'competences', name: 'Competencias'},
-  {catalog: 'profiles', name: 'Tipos de template'},
-  {catalog: 'sectors', name: 'Sectores'},
-  {catalog: 'jobboars', name: 'Bolsas de empleo'},
-  {catalog: 'specialization', name: 'Áreas de especialización'}
+  { catalog: "categories", name: "Categorías" },
+  { catalog: "subcategories", name: "Subcategorías" },
+  { catalog: "academic", name: "Carreras" },
+  { catalog: "competences", name: "Competencias" },
+  { catalog: "profiles", name: "Tipos de template" },
+  { catalog: "sectors", name: "Sectores" },
+  { catalog: "jobboars", name: "Bolsas de empleo" },
+  { catalog: "areas", name: "Áreas de especialización" },
+  { catalog: "subareas", name: "Subáreas de especialización" },
+];
+
+export const departureMotive = [
+  { value: 1, label: "Termino de contrato" },
+  { value: 2, label: "Separación voluntaria" },
+  { value: 3, label: "Abandono de empleo" },
+  { value: 4, label: "Defunción" },
+  { value: 5, label: "Clausura" },
+  { value: 6, label: "Otras" },
+  { value: 7, label: "Ausentismo" },
+  { value: 8, label: "Rescisión de contrato" },
+  { value: 9, label: "Jubilación" },
+  { value: 10, label: "Pensión" },
+];
+
+export const KhorflixAccess = [
+  {
+    label: "Sí",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  },
 ];

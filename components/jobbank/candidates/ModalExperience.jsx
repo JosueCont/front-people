@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Row, Col, Form, Select, Input, Button, InputNumber } from 'antd';
 import MyModal from '../../../common/MyModal';
 import { ruleRequired, onlyNumeric } from '../../../utils/rules';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
 
 const ModalExperience = ({
@@ -37,11 +37,11 @@ const ModalExperience = ({
         })
       }
 
-    const optionsByCategory = () =>{
+    const optionsByCategory = useMemo(()=>{
         if(!categorySelected) return [];
         const options = item => item.category === categorySelected;
         return list_sub_categories.filter(options);
-      }
+    },[categorySelected])
 
     const onCloseModal = () =>{
         close();
@@ -55,6 +55,18 @@ const ModalExperience = ({
             actionForm(values)
             onCloseModal()
         },2000)
+    }
+
+    const ruleMaxYears = {
+        type: 'number',
+        max: 90,
+        message: 'Experiencia máxima menor o igual a 90 años'
+    }
+
+    const ruleMinYears = {
+        type: 'number',
+        min: 1,
+        message: 'Experiencia mínima mayor o igual a 1 año'
     }
 
     return (
@@ -106,11 +118,11 @@ const ModalExperience = ({
                                 showSearch
                                 placeholder='Seleccionar una subcategoría'
                                 notFoundContent='No se encontraron resultados'
-                                disabled={optionsByCategory().length <= 0}
+                                disabled={optionsByCategory.length <= 0}
                                 loading={load_sub_categories}
                                 optionFilterProp='children'
                             >
-                                {optionsByCategory().map(item=> (
+                                {optionsByCategory.map(item=> (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -122,13 +134,19 @@ const ModalExperience = ({
                         <Form.Item
                             name='experience_years'
                             label='Años de experiencia'
-                            rules={[onlyNumeric]}
+                            rules={[ruleRequired, ruleMinYears, ruleMaxYears]}
                         >
-                            <Input
-                                placeholder='Años de experiencia'
-                                maxLength={10}
-                                onKeyPress={e => e.which == 32 && e.preventDefault()}
+                            <InputNumber
+                                type='number'
+                                maxLength={2}
+                                controls={false}
                                 onKeyDown={validateNum}
+                                onKeyPress={validateMaxLength}
+                                placeholder='Años de experiencia'
+                                style={{
+                                    width: '100%',
+                                    border: '1px solid black'
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -136,14 +154,16 @@ const ModalExperience = ({
                         <Form.Item
                             name='competences'
                             label='Competencias'
+                            rules={[ruleRequired]}
                         >
                             <Select
                                 mode='multiple'
-                                maxTagCount={2}
+                                maxTagCount={1}
                                 disabled={load_competences}
                                 loading={load_competences}
                                 placeholder='Seleccionar las competencias'
                                 notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
                             >
                                 {list_competences.length > 0 && list_competences.map(item => (
                                     <Select.Option value={item.id} key={item.id}>

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getVacantFields } from '../../../../redux/jobBankDuck';
 import DetailsTemplate from './DetailsTemplate';
+import { deleteFiltersJb } from '../../../../utils/functions';
 
 const AddOrEditTemplate = ({
     action = 'add',
@@ -13,13 +14,19 @@ const AddOrEditTemplate = ({
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        setNewFilters(deleteFiltersJb(router.query));
+    },[router])
 
     useEffect(()=>{
         if(currentNode) getVacantFields(currentNode.id);
     },[currentNode])
 
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -27,6 +34,7 @@ const AddOrEditTemplate = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
@@ -48,7 +56,7 @@ const AddOrEditTemplate = ({
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
-            <DetailsTemplate action={action}/>
+            <DetailsTemplate action={action} newFilters={newFilters}/>
         </MainLayout>
     )
 }

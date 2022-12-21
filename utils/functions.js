@@ -44,8 +44,15 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
-      Textmessage && message.error(Textmessage) 
-      console.log(e);
+      console.log('Error xd', e.response)
+      let errorMessage = e.response?.data?.message || ""
+       if (errorMessage !== ""){
+        message.error(errorMessage)
+      } else if(Textmessage){
+        message.error(Textmessage)
+      }else if(e?.response?.status===404){
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      } 
     });
 };
 
@@ -452,6 +459,25 @@ export const getFiltersJB = (obj = {}) =>{
       let offset = (parseInt(val) - 1) * 10;
       return query +=`&limit=10&offset=${offset}`;
     }
-    return query += `&${key}=${val}`;
+    let value = ['open_fields','others'].includes(val) ? "" : val;
+    return query += `&${key}=${value}`;
   }, '');
 }
+
+const keysToDeleteJB = [
+  'id', 'client', 'vacancy', 'catalog',
+  'strategy', 'start', 'end'
+];
+export const deleteFiltersJb = (
+  obj = {},
+  listDelete = keysToDeleteJB
+) =>{
+  return Object.entries(obj).reduce((filters, [key, val]) =>{
+    if(listDelete.includes(key)) return filters;
+    return {...filters, [key]: val};
+  }, {});
+}
+
+export const getFileExtension = (filename) => {
+  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+};

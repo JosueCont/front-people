@@ -23,9 +23,9 @@ import WebApiJobBank from '../../../../api/WebApiJobBank';
 
 const DetailsTemplate = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
-
     
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
@@ -37,8 +37,6 @@ const DetailsTemplate = ({
     const btnSave = useRef(null);
     const [formTemplate] = Form.useForm();
     const [loading, setLoading] = useState({});
-    const [prevDocs, setPrevDocs] = useState([]);
-    const [newDocs, setNewDocs] = useState([]);
     const [actionType, setActionType] = useState('');
     const [infoTemplate, setInfoTemplate] = useState({});
     const [fetching, setFetching] = useState(false);
@@ -84,7 +82,9 @@ const DetailsTemplate = ({
             console.log(e)
             setFetching(false)
             setLoading({})
-            message.error('Tipo de template no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Tipo de template no registrado';
+            message.error(msg);
         }
     }
 
@@ -97,7 +97,9 @@ const DetailsTemplate = ({
         } catch (e) {
             console.log(e)
             setFetching(false);
-            message.error('Tipo de template no actualizado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Tipo de template no actualizado';
+            message.error(msg);
         }
     }
 
@@ -120,6 +122,7 @@ const DetailsTemplate = ({
     const actionBack = () =>{
         router.push({
             pathname: '/jobbank/settings/catalogs/profiles',
+            query: newFilters
         })
     }
 
@@ -129,7 +132,7 @@ const DetailsTemplate = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/settings/catalogs/profiles/edit',
-                query: { id }
+                query: {...newFilters, id }
             })
         }
         actionFunction[actionType]();

@@ -22,14 +22,17 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import moment from 'moment';
 
-const TabSchool = ({ sizeCol = 8, action }) => {
+const TabSchool = ({
+    action,
+    setInfoEducation,
+    infoEducation
+}) => {
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoEducation, setInfoEducation] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
@@ -185,7 +188,8 @@ const TabSchool = ({ sizeCol = 8, action }) => {
         {
             title: 'Institución',
             dataIndex: 'institution_name',
-            key: 'institution_name'
+            key: 'institution_name',
+            ellipsis: true
         },
         {
             title: 'Fecha finalización',
@@ -196,15 +200,22 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             }
         },
         {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>

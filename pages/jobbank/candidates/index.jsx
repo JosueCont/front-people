@@ -6,15 +6,20 @@ import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
 import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
-import { getCandidates } from '../../../redux/jobBankDuck';
+import { getCandidates, getSpecializationArea } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
-    getCandidates
+    getCandidates,
+    getSpecializationArea
 }) => {
 
     const router = useRouter();
+
+    useEffect(()=>{
+        if(currentNode) getSpecializationArea(currentNode.id);
+    },[currentNode])
 
     useEffect(()=>{
         if(currentNode){
@@ -25,7 +30,7 @@ const index = ({
     },[currentNode, router])
 
     return (
-        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -33,6 +38,7 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Candidatos</Breadcrumb.Item>
             </Breadcrumb>
@@ -57,5 +63,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState,{ getCandidates }
+    mapState,{
+        getCandidates,
+        getSpecializationArea
+    }
 )(withAuthSync(index));

@@ -25,7 +25,7 @@ const DetailsPublication = ({
     action,
     currentNode,
     currentUser,
-    list_vacancies_options
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -40,7 +40,6 @@ const DetailsPublication = ({
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [disableField, setDisabledField] = useState(false);
-    const [disabledVacant, setDisabledVacant] = useState(false);
     const [infoPublication, setInfoPublication] = useState({});
     const [valuesDefault, setValuesDefault] = useState({});
     const [fetching, setFetching] = useState(false);
@@ -53,10 +52,11 @@ const DetailsPublication = ({
     },[router])
 
     useEffect(()=>{
-        if(router.query.vacancy && action == 'add'){
-            formPublications.resetFields()
-            keepVacancy();
-        }else setDisabledVacant(false);
+        let check = Object.keys(router.query).length > 0;
+        if(check && action == 'add'){
+            formPublications.resetFields();
+            keepValues();
+        }
     },[router])
 
     useEffect(()=>{
@@ -78,32 +78,33 @@ const DetailsPublication = ({
         }
     }
 
+    const keepValues = () =>{
+        if(router.query?.client) keepClient();
+        if(router.query?.vacancy) keepVacancy();
+    }
+
+    const keepClient = () =>{
+        formPublications.setFieldsValue({
+            customer: router.query.client
+        })
+    }
+
     const keepVacancy = () =>{
-        setDisabledVacant(true);
         formPublications.setFieldsValue({
             vacant: router.query.vacancy
         })
     }
 
-    const clientByVacant = (vacant) =>{
-        if(!vacant) return null;
-        const _find = item => item.id == vacant;
-        let result = list_vacancies_options.find(_find);
-        if(!result) return null;
-        if(!result.customer) return null;
-        return result.customer.id;
-    }
-
     const setValuesForm = () =>{
         let results = {};
-        let customer = clientByVacant(infoPublication.vacant);
         let existFields = Object.keys(infoPublication.fields).length > 0;
         let existFieldsName = infoPublication.profile && Object.keys(infoPublication.profile?.fields_name).length > 0;
         if(existFields && !existFieldsName) results = formatData(infoPublication.fields);
         if(existFieldsName && !existFields) results = formatData(infoPublication.profile.fields_name);
         let all_info = {
-            ...results, customer,
-            vacant: infoPublication.vacant,
+            ...results,
+            customer: infoPublication?.vacant?.customer?.id,
+            vacant: infoPublication?.vacant?.id,
             profile: infoPublication.profile?.id ?? 'open_fields',
             code_post: infoPublication.code_post
         }
@@ -151,48 +152,35 @@ const DetailsPublication = ({
         actionFunction[action](bodyData);
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.vacancy) delete newFilters.vacancy;
-        return newFilters;
-    }
-
     const actionBack = () =>{
-        let filters = getNewFilters();
-        if(router.query?.vacancy) router.push({
-            pathname: '/jobbank/vacancies',
-            query: filters
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: newFilters
         });
         else router.push({
             pathname: '/jobbank/publications',
-            query: filters
+            query: newFilters
         });
     }
 
     const actionCreate = () =>{
         formPublications.resetFields();
-        if (router.query?.vacancy) keepVacancy();
+        keepValues();
         setDisabledField(false);
-        setLoadStrategies(false)
+        setFetching(false)
         setLoading({})
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/publications/edit',
-            query: {...filters, id }
-        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/publications/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -229,7 +217,6 @@ const DetailsPublication = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormPublications
-                                disabledVacant={disabledVacant}
                                 formPublications={formPublications}
                                 disableField={disableField}
                                 setDisabledField={setDisabledField}
@@ -286,7 +273,6 @@ const DetailsPublication = ({
 
 const mapState = (state) =>{
   return{
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }

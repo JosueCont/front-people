@@ -26,6 +26,8 @@ const DetailsClients = ({
     action,
     user,
     currentNode,
+    newFilters = {},
+    isAutoRegister = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -56,9 +58,11 @@ const DetailsClients = ({
             formClients.resetFields();
             let prev = infoClient.files ?? [];
             let contact = infoClient.contact_list ?? [];
+            let business_name = infoClient.business_name
+                ? infoClient.business_name : null;
             setPrevDocs(prev);
             setContactList(contact);
-            formClients.setFieldsValue(infoClient);
+            formClients.setFieldsValue({...infoClient, business_name});
         }
     },[infoClient])
 
@@ -75,8 +79,13 @@ const DetailsClients = ({
     }
 
     const createData = (obj) =>{
+        let noValid = [undefined, null,""," "];
         let dataClient = new FormData();
-        Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
+        dataClient.append('auto_register', isAutoRegister);
+        Object.entries(obj).map(([key, val])=>{
+            let value = noValid.includes(val) ? "" : val;
+            dataClient.append(key, value);
+        });
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
         if(contactList.length > 0) dataClient.append('contact_list', JSON.stringify(contactList));
         let toDelete = prevDocs.filter(item => item.is_deleted);
@@ -135,12 +144,6 @@ const DetailsClients = ({
         setLoading({})
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        return newFilters;
-    }
-
     const actionCreate = () =>{
         formClients.resetFields();
         setFetching(false)
@@ -148,18 +151,9 @@ const DetailsClients = ({
     }
 
     const actionBack = () =>{
-        let filters = getNewFilters();
         router.push({
             pathname: '/jobbank/clients',
-            query: filters
-        })
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/clients/edit',
-            query: {...filters, id }
+            query: newFilters
         })
     }
 
@@ -167,9 +161,14 @@ const DetailsClients = ({
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/clients/edit',
+                query: {...newFilters, id }
+            }),
+            auto: actionCreate
         }
-        actionFunction[actionType](id);
+        let selected = isAutoRegister ? 'auto' : actionType;
+        actionFunction[selected]();
     }
 
     const getSaveAnd = (type) =>{
@@ -189,12 +188,14 @@ const DetailsClients = ({
                             : 'Información del cliente'
                         }
                     </p>
-                    <Button
-                        onClick={()=> actionBack()}
-                        icon={<ArrowLeftOutlined />}
-                    >
-                        Regresar
-                    </Button>
+                    {!isAutoRegister && (
+                        <Button
+                            onClick={()=> actionBack()}
+                            icon={<ArrowLeftOutlined />}
+                        >
+                            Regresar
+                        </Button>
+                    )}
                 </Col>
                 <Col span={24}>
                     <Form
@@ -216,7 +217,7 @@ const DetailsClients = ({
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab='Información de contacto'
+                                tab='Información de contactos'
                                 key='tab_2'
                                 forceRender
                             >
@@ -247,7 +248,7 @@ const DetailsClients = ({
                     </Form>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
-                    {action == 'add' ? (
+                    {action == 'add' && !isAutoRegister ? (
                         <>
                             <button
                                 htmlType='submit'
@@ -283,7 +284,7 @@ const DetailsClients = ({
                             htmlType='submit'
                             loading={fetching}
                         >
-                            Actualizar
+                           {isAutoRegister && action == 'add' ? 'Guardar' : 'Actualizar'}
                         </Button>
                     )}
                 </Col>

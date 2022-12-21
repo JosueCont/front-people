@@ -176,13 +176,16 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item, param) => {
+    console.log(item,'item')
     setEdit(true);
     setId(item.id);
     form.setFieldsValue({
       node: item.node.id,
       name: item.name,
       code: item.code,
-      skill_profile_id: item.skill_profile?.id
+      skill_profile_id: item.skill_profile?.id,
+      cost_center: item?.cost_center,
+      tag: item?.tag
     });
   };
 

@@ -19,7 +19,11 @@ import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
 import moment from 'moment';
 
-const TabPositions = ({ sizeCol = 8, action }) => {
+const TabPositions = ({
+    action,
+    setInfoPositions,
+    infoPositions
+}) => {
 
     const {
         list_sectors,
@@ -30,7 +34,6 @@ const TabPositions = ({ sizeCol = 8, action }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
@@ -56,12 +59,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true);
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.createCandidateLastJob(body);
-            message.success('Posición registrada');
+            message.success('Puesto registrado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no registrada');
+            message.error('Puesto no registrado');
         }
     }
 
@@ -70,12 +73,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.updateCandidateLastJob(itemToEdit.id, body);
-            message.success('Posición actualizada');
+            message.success('Puesto actualizado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no actualizada');
+            message.error('Puesto no actualizado');
         }
     }
 
@@ -84,11 +87,11 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteCandidateLastJob(id);
-            message.success('Posición eliminada');
+            message.success('Puesto eliminado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
-            message.error('Posición no eliminada');
+            message.error('Puesto no eliminado');
             setLoading(false)
         }
     }
@@ -152,7 +155,7 @@ const TabPositions = ({ sizeCol = 8, action }) => {
 
     const columns = [
         {
-            title: 'Posición',
+            title: 'Puesto',
             dataIndex: 'position_name',
             key: 'position_name'
         },
@@ -178,15 +181,22 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             }
         },
         {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -219,7 +229,7 @@ const TabPositions = ({ sizeCol = 8, action }) => {
                 }}
             />
             <ModalPositions
-                title={validateAction() && openModal ? 'Editar posición' : 'Agregar posición'}
+                title={validateAction() && openModal ? 'Editar puesto' : 'Agregar puesto'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}

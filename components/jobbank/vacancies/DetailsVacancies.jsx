@@ -26,9 +26,11 @@ import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
 
+    const rule_languages = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -44,11 +46,16 @@ const DetailsVacancies = ({
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
+    const [currentValue, setCurrentValue] = useState([]);
+    const [listLangDomain, setListLangDomain] = useState([]);
+    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
     const { setValuesForm, createData } = useProcessInfo({
         formVacancies,
         infoVacant,
         setListInterviewers,
-        listInterviewers
+        listInterviewers,
+        listLangDomain,
+        setListLangDomain
     });
 
     useEffect(()=>{
@@ -135,7 +142,8 @@ const DetailsVacancies = ({
     const onFinishFailed = (e) =>{
         setLoading({})
         if(e.errorFields.length <= 0) return false;
-        message.error('Verificar que se han ingresado el Cliente y Nombre de la vacante');
+        message.error(`Verificar que se ha seleccionado el Cliente
+            e ingresado Nombre de la vacante y el Sueldo mensual bruto.`);
     }
 
     const actionCreate = () =>{
@@ -143,42 +151,32 @@ const DetailsVacancies = ({
         if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
-    }
-
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.client) delete newFilters.client;
-        return newFilters;
+        setCurrentValue([])
+        setRuleLanguages(rule_languages)
+        setListLangDomain([])
     }
 
     const actionBack = () =>{
-        let filters = getNewFilters();
         if(router.query?.client) router.push({
             pathname: '/jobbank/clients',
-            query: filters
+            query: newFilters
         });
         else router.push({
             pathname: '/jobbank/vacancies',
-            query: filters
+            query: newFilters
         });
-    }
-
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/vacancies/edit',
-            query: {...filters, id }
-        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/vacancies/edit',
+                query: {...newFilters, id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -237,7 +235,17 @@ const DetailsVacancies = ({
                                 key='tab_2'
                             >
                                 <Spin spinning={fetching}>
-                                    <TabEducation formVacancies={formVacancies}/>
+                                    <TabEducation
+                                        formVacancies={formVacancies}
+                                        //Parámetros para idiomas
+                                        listLangDomain={listLangDomain}
+                                        setListLangDomain={setListLangDomain}
+                                        setCurrentValue={setCurrentValue}
+                                        currentValue={currentValue}
+                                        setRuleLanguages={setRuleLanguages}
+                                        ruleLanguages={ruleLanguages}
+                                        rule_languages={rule_languages}
+                                    />
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane

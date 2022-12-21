@@ -1,42 +1,40 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { Row, Col, Input, Button, Form } from 'antd';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { valueToFilter } from '../../../utils/functions';
+import { createFiltersJB } from '../../../utils/functions';
 import {
     SearchOutlined,
     SyncOutlined
 } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 const SearchCatalogs = ({
-    listComplete,
-    setItemsFilter,
-    setLoading,
     setOpenModal,
     actionBtn,
     textBtn = 'Agregar',
     iconBtn = <></>
 }) => {
 
+    const router = useRouter();
     const [formSearch] = Form.useForm();
+    const url = router.asPath?.split('?')[0];
+
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
 
     const onFinish = (values) =>{
-        if(!values.name) return false;
-        setLoading(true)
-        const search = item => valueToFilter(item.name).includes(valueToFilter(values.name));
-        let results = listComplete.filter(search);
-        setTimeout(()=>{
-            setItemsFilter(results);
-            setLoading(false);
-        },1000)
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: url,
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        setLoading(true);
-        setTimeout(() => {
-            setItemsFilter(listComplete);
-            setLoading(false);
-        },1000);
+        router.replace(url, undefined, {shallow: true});
     }
 
     return (
@@ -49,7 +47,7 @@ const SearchCatalogs = ({
             <Row style={{width: '100%'}}>
                 <Col span={8}>
                     <Form.Item
-                        name='name'
+                        name='name__unaccent__icontains'
                         rules={[ruleWhiteSpace]}
                         style={{marginBottom: 0}}
                     >

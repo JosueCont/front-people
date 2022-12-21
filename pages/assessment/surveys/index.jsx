@@ -15,7 +15,7 @@ import {
   Dropdown,
   Menu,
   ConfigProvider,
-  Checkbox
+  Checkbox,
 } from "antd";
 import {
   SearchOutlined,
@@ -42,7 +42,7 @@ import {
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
-import {FormattedMessage} from "react-intl";
+import { FormattedMessage } from "react-intl";
 import esES from "antd/lib/locale/es_ES";
 
 const AssessmentScreen = ({
@@ -65,15 +65,13 @@ const AssessmentScreen = ({
   const [showModalCreateGroup, setShowModalCreateGroup] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
   const [configPagination, setConfigPagination] = useState({
-    showSizeChanger:true
+    showSizeChanger: true,
   });
   const [filterValues, filterActive, onFilterReset] = useFilter();
 
   useEffect(() => {
     if (props.currentNode) {
-      props.assessmentLoadAction(
-        props.currentNode.id,
-      );
+      props.assessmentLoadAction(props.currentNode.id);
       getCategories();
       updPagination(1);
     }
@@ -85,11 +83,11 @@ const AssessmentScreen = ({
       setAssessments(assessmentStore.assessments);
     }
     assessmentStore.active_modal === types.CREATE_ASSESSMENTS
-        ? setShowCreateAssessment(true)
-        : setShowCreateAssessment(false);
-      assessmentStore.active_modal === types.UPDATE_ASSESSMENTS
-        ? setShowUpdateAssessment(true)
-        : setShowUpdateAssessment(false);
+      ? setShowCreateAssessment(true)
+      : setShowCreateAssessment(false);
+    assessmentStore.active_modal === types.UPDATE_ASSESSMENTS
+      ? setShowUpdateAssessment(true)
+      : setShowUpdateAssessment(false);
   }, [assessmentStore]);
 
   const HandleCreateAssessment = () => {
@@ -210,10 +208,7 @@ const AssessmentScreen = ({
   const onFinishSearch = ({ name }) => {
     if (name.trim()) {
       setNameSearch(name);
-      props.assessmentLoadAction(
-        props.currentNode?.id,
-        `&name=${name}`
-      );
+      props.assessmentLoadAction(props.currentNode?.id, `&name=${name}`);
     } else {
       resetSearch();
     }
@@ -222,9 +217,7 @@ const AssessmentScreen = ({
   const resetSearch = () => {
     form.resetFields();
     setNameSearch("");
-    props.assessmentLoadAction(
-      props.currentNode?.id
-    );
+    props.assessmentLoadAction(props.currentNode?.id);
   };
 
   const menuTable = () => {
@@ -244,55 +237,50 @@ const AssessmentScreen = ({
   };
 
   useEffect(() => {
-    console.log('testsSelected',testsSelected);
-  }, [testsSelected])
-  
+    console.log("testsSelected", testsSelected);
+  }, [testsSelected]);
 
   const rowSelectionGroup = {
     selectedRowKeys: testsKeys,
-    onChange:  (selectedRowKeys, selectedRows) => {
-
+    onChange: (selectedRowKeys, selectedRows) => {
       //Los elementos de la pagina actual
       let currentList = filterActive ? filterValues : assessments;
       let temp1 = [...testsKeys];
       let temp2 = [...testsSelected];
 
       /* Remover los actuales para volver a setearlos */
-        currentList.map(item => {
-          let idx = temp1.findIndex(element => element === item.id)
-          if(idx > -1){
-            temp1.splice(idx,1);
-          }
+      currentList.map((item) => {
+        let idx = temp1.findIndex((element) => element === item.id);
+        if (idx > -1) {
+          temp1.splice(idx, 1);
+        }
 
-          let idz = temp2.findIndex(element => element.id === item.id)
-          if(idz > -1){
-            temp2.splice(idz,1);
-          }
-        })
+        let idz = temp2.findIndex((element) => element.id === item.id);
+        if (idz > -1) {
+          temp2.splice(idz, 1);
+        }
+      });
 
+      //Recorremos la seleccion actual y la seteamos a la seleccio1n global (solo keys)
+      selectedRowKeys.map((item) => {
+        let idx = temp1.findIndex((element) => element === item);
+        if (idx < 0) {
+          temp1.push(item);
+        }
+      });
+      setTestsKeys(temp1);
+      /* setCurrentKeys(selectedRowKeys); */
 
-
-        //Recorremos la seleccion actual y la seteamos a la seleccio1n global (solo keys)
-        selectedRowKeys.map(item =>{
-          let idx = temp1.findIndex(element => element === item);
-          if (idx < 0){
-            temp1.push(item)
-          }
-        }); 
-        setTestsKeys(temp1);
-        /* setCurrentKeys(selectedRowKeys); */
-        
-
-        //Recorremos la selección actual de objetos
-        selectedRows.map(item => {
-          let idz = temp2.findIndex(element => element.id === item.id);
-          if(idz < 0){
-            temp2.push(item)
-            /* setTestsSelected([...testsSelected, item]) */
-          }
-        })
-        setTestsSelected(temp2);
-        /* setCurrentSelected(selectedRows); */
+      //Recorremos la selección actual de objetos
+      selectedRows.map((item) => {
+        let idz = temp2.findIndex((element) => element.id === item.id);
+        if (idz < 0) {
+          temp2.push(item);
+          /* setTestsSelected([...testsSelected, item]) */
+        }
+      });
+      setTestsSelected(temp2);
+      /* setCurrentSelected(selectedRows); */
     },
   };
 
@@ -320,21 +308,20 @@ const AssessmentScreen = ({
       </Menu>
     );
   };
-  
+
   const onChangeViewAllAssessments = (e) => {
-    console.log("Select: ", e.target.checked)
-    let isSelected = e.target.checked
-    if(isSelected){
+    let isSelected = e.target.checked;
+    if (isSelected) {
       setConfigPagination({
-        showSizeChanger: false, 
-        pageSize: filterActive ? filterValues.length : assessments.length 
-      })
-    }else{
+        showSizeChanger: false,
+        pageSize: filterActive ? filterValues.length : assessments.length,
+      });
+    } else {
       setConfigPagination({
-        showSizeChanger: true,  
-      })
+        showSizeChanger: true,
+      });
     }
-  }
+  };
   const columns = [
     {
       title: "Nombre",
@@ -419,7 +406,10 @@ const AssessmentScreen = ({
   ];
 
   return (
-    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout
+      currentKey={["surveys"]}
+      defaultOpenKeys={["evaluationDiagnosis", "kuiz"]}
+    >
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -427,6 +417,7 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
@@ -481,7 +472,13 @@ const AssessmentScreen = ({
           )}
         </Row>
         <Row justify="end">
-          <Checkbox onChange={onChangeViewAllAssessments} style={{marginBottom:"4px"}} > <b>Ver todas las evaluaciones</b> </Checkbox>
+          <Checkbox
+            onChange={onChangeViewAllAssessments}
+            style={{ marginBottom: "4px" }}
+          >
+            {" "}
+            <b>Ver todas las evaluaciones</b>{" "}
+          </Checkbox>
         </Row>
         <Row>
           <Col span={24}>

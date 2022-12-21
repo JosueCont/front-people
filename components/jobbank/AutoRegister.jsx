@@ -14,7 +14,7 @@ const AutoRegister = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(router.query.uid) getCompay(router.query.uid);
+        if(router.query?.uid) getCompay(router.query.uid);
     },[router])
 
     const getCompay = async (uid) =>{
@@ -31,9 +31,7 @@ const AutoRegister = ({
             hideMenu={true}
             onClickImage={false}
         >
-            <div className='content-center'>
-                {children}
-            </div>
+            {children}
         </MainLayout>
     )
 }

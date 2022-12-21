@@ -11,6 +11,7 @@ import dataImportCalendar from "./ImportCalendarDuck"
 import ynlReducer from "./ynlDuck";
 import backdoorReducer from "./backdoorDuck";
 import jobBankReducer from "./jobBankDuck";
+import NotificationReducer from "./NotificationDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
   importCalendarStore: dataImportCalendar,
   ynlStore: ynlReducer,
   backdoorStore: backdoorReducer,
-  jobBankStore: jobBankReducer
+  jobBankStore: jobBankReducer,
+  NotificationStore:NotificationReducer
 });
 const composeEnhancers =
     typeof window === 'object' &&

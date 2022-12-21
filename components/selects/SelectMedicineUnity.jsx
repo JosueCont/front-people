@@ -11,20 +11,17 @@ const SelectMedicineUnity = ({
   name = "medicine_unity",
   ...props
 }) => {
-
   useEffect(() => {
-    FamilyMedicalUnits()
-  },[])
+    FamilyMedicalUnits();
+  }, []);
 
   const FamilyMedicalUnits = async () => {
     await WebApiFiscal.FamilyMedicalUnit()
-    .then((response) => {
-      console.log("Response", response)
-    })
-    .catch((error) => {
-      console.log("Error", error)
-    })
-  }
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Form.Item
@@ -34,20 +31,18 @@ const SelectMedicineUnity = ({
       rules={rules}
     >
       <Select
-        disabled = { disabled }
-        placeholder = "Unidad de medicina familiar"
-        key='selected_unity'
+        disabled={disabled}
+        placeholder="Unidad de medicina familiar"
+        key="selected_unity"
         allowClear
         notFoundContent={"No se encontraron resultados."}
         showSearch
         optionFilterProp="children"
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}
-      >
-
-      </Select>
+      ></Select>
     </Form.Item>
-  )
-}
+  );
+};
 
-export default SelectMedicineUnity
+export default SelectMedicineUnity;

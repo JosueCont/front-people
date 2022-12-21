@@ -2,7 +2,7 @@ import {React, useEffect, useState} from 'react'
 import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker, List} from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
-  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined, TeamOutlined, UnorderedListOutlined  } from '@ant-design/icons';
+  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined, TeamOutlined, UnorderedListOutlined, ArrowLeftOutlined  } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -327,7 +327,7 @@ const TableAssessments = ({
         return record?.group ? 
         <>
           <span>{record.group.name}</span>
-          { record?.list_groups &&
+          { record?.list_groups?.length >=2 &&
             <Tooltip title="Ver grupos de evaluaciones">
               <UnorderedListOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> modalGroups(record.list_groups)} />
             </Tooltip> 
@@ -511,6 +511,21 @@ const TableAssessments = ({
     }
   }
   
+  const getNewFilters = () =>{
+    console.log(router.query);
+    let newFilters = {...router.query};
+    if(newFilters.id) delete newFilters.id;
+    return newFilters;
+  }
+  
+  const actionBack = () =>{
+    let filters = getNewFilters();
+    router.push({
+        pathname: '/home/persons',
+        query: filters
+    })
+  }
+  
   const expandedRowRender = (item) => {
     const columnsHistory = [
       {
@@ -592,7 +607,19 @@ const TableAssessments = ({
   return (
     <>
         <div style={{padding:"16px", backgroundColor:"white", borderRadius:"15px"}}>
-            <h2>Asignaciones de {user_profile.first_name} {user_profile.flast_name} ({numberAssessments})</h2>
+            <Row>
+              <Col span={12}>
+                <h2>Asignaciones de {user_profile.first_name} {user_profile.flast_name} ({numberAssessments})</h2>
+              </Col>
+              <Col span={12} style={{display:"flex", justifyContent:"flex-end"}}>
+                <Button
+                  icon={<ArrowLeftOutlined />}
+                  onClick={()=> actionBack()}
+                >
+                  Regresar
+                </Button>
+              </Col>
+            </Row>
             <Row gutter={[16,16]} style={{marginBottom:"16px"}}>
               <Col
                 xs={24}

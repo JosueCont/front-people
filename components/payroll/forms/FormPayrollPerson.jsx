@@ -30,6 +30,7 @@ import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -42,11 +43,13 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [bankDisabled, setBankDisabled] = useState(false);
+  const [dailySalaryDisabled, setDailySalaryDisabled] = useState(false);
   const [disabledCalendar, setDisabledCalendar] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPersonList, setPayrolPersonList] = useState([]);
+  const [payrollPerson, setPayrollPerson] = useState(null);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
@@ -133,6 +136,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       .then((response) => {
         if (response.data) {
           let item = response.data;
+          setPayrollPerson(item)
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type ? item.contract_type.id : null,
@@ -163,6 +167,10 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
+            if(item.daily_salary){
+              setDailySalaryDisabled(true)
+            }
+
             if (item.payment_calendar)
               setDisabledCalendar(item.payment_calendar.locked);
           }
@@ -378,7 +386,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     maxLength={13}
                     rules={[fourDecimal, ruleRequired]}
                   >
-                    <Input maxLength={10} />
+                    <Input disabled={dailySalaryDisabled} maxLength={10} />
                   </Form.Item>
                 </Col>
                 {
@@ -564,6 +572,13 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                 )}
               </Row>
               <Row justify={"end"}>
+                <Form.Item>
+                  <ButtonUpdateSalaryMovement onRefresh={()=>{
+                    getPayrollPerson();
+                    getPaymentCalendar();
+                    PayrollList();
+                  }} person={person} node={person.node} payrollPerson={payrollPerson} />
+                </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
                     Guardar

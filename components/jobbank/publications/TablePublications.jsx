@@ -7,7 +7,9 @@ import {
   message,
   Switch,
   Tooltip,
-  Select
+  Select,
+  Tag,
+  Space
 } from 'antd';
 import {
   EllipsisOutlined,
@@ -15,8 +17,14 @@ import {
   EditOutlined,
   CopyOutlined,
   SettingOutlined,
-  ShareAltOutlined
+  ShareAltOutlined,
+  FacebookOutlined,
+  NotificationOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
+import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
@@ -24,6 +32,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import ModalPost from './ModalPost';
 import { getFiltersJB } from '../../../utils/functions';
+import { redirectTo } from '../../../utils/constant';
 
 const TablePublications = ({
     currentNode,
@@ -31,8 +40,6 @@ const TablePublications = ({
     jobbank_page,
     list_publications,
     load_publications,
-    list_vacancies_options,
-    list_profiles_options,
     list_connections,
     load_connections,
     getPublications
@@ -50,14 +57,13 @@ const TablePublications = ({
         try {
             message.loading({content: 'Publicando vacante...', key});
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
-            setTimeout(()=>{
-                message.success({content: 'Vacante publicada', key});
-            },1000);
+            getPublicationsWithFilters();
+            message.success({content: 'Vacante publicada', key});
         } catch (e) {
             console.log(e)
-            setTimeout(()=>{
-                message.error({content: 'Vacante no publicada', key});
-            },1000);
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Vacante no publicada';
+            message.error({content: msgError, key});
         }
     }
 
@@ -65,7 +71,7 @@ const TablePublications = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deletePublication({ids});
-            getPublicationsWithFilters(currentNode.id);
+            getPublicationsWithFilters();
             if(ids.length > 1) message.success('Publicaciones eliminadas');
             else message.success('Publicación eliminada');
         } catch (e) {
@@ -101,22 +107,6 @@ const TablePublications = ({
         setItemsToDelete([])
     }
 
-    const getVacant = (item) =>{
-        if(!item.vacant) return null;
-        const vacant = record => record.id == item.vacant;
-        let vacant_ = list_vacancies_options.find(vacant);
-        if(!vacant_) return null;
-        return vacant_.job_position;
-    }
-
-    const getTemplate = (item) =>{
-        if(!item.profile) return 'Personalizado';
-        const template = record => record.id == item.profile.id;
-        let template_ = list_profiles_options.find(template);
-        if(!template_) return null;
-        return template_.name;
-    }
-
     const getRed = (item) =>{
         if(!item.code_post) return null;
         const red = record => record.code == item.code_post;
@@ -147,6 +137,18 @@ const TablePublications = ({
             if(newQuery.page) delete newQuery.page;
             savePage(newQuery)
         };
+    }
+
+    const validateHistory = (item) =>{
+        if(item.history?.length > 1){
+            router.push({
+                pathname: `/jobbank/publications/history/${item.id}`,
+                query: router.query
+            })
+            return;
+        }
+        let url = item.history?.at(-1)?.post_url;
+        redirectTo(url, true);
     }
 
     const rowSelection = {
@@ -198,11 +200,30 @@ const TablePublications = ({
                 >
                     Publicar
                 </Menu.Item>
+                {item.history?.length > 0 && (
+                    <Menu.Item
+                        key='4'
+                        icon={item.history?.length > 1 ? <FileTextOutlined /> : <NotificationOutlined/>}
+                        onClick={()=> validateHistory(item)}
+                    >
+                        {item.history?.length > 1 ? 'Ver historial' : 'Ir a publicación'}
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
 
     const columns = [
+        {
+            title: 'Cliente',
+            dataIndex: ['vacant','customer','name'],
+            key: ['vacant','customer','name']
+        },
+        {
+            title: 'Vacante',
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant','job_position']
+        },
         {
             title: 'Cuenta',
             render: (item) =>{
@@ -212,18 +233,10 @@ const TablePublications = ({
             }
         },
         {
-            title: 'Vacante',
-            render: (item) =>{
-                return(
-                    <span>{getVacant(item)}</span>
-                )
-            }
-        },
-        {
             title: 'Template',
             render: (item) =>{
                 return(
-                    <span>{getTemplate(item)}</span>
+                    <span>{item.profile?.name ?? 'Personalizado'}</span>
                 )
             }
         },
@@ -243,6 +256,31 @@ const TablePublications = ({
                 )
             }
         },
+        // {
+        //     title: 'Historial',
+        //     render: (item) =>{
+        //         return(
+        //             <Space>
+        //                 {item.history?.length > 0 ? (
+        //                     <Tooltip title='Ver historial'>
+        //                         <EyeOutlined
+        //                             style={{cursor: 'pointer'}}
+        //                             // onClick={()=>showModalList(item)}
+        //                         />
+        //                     </Tooltip>
+        //                 ):(
+        //                     <EyeInvisibleOutlined />
+        //                 )}
+        //                 <Tag
+        //                     icon={<NotificationOutlined style={{color:'#52c41a'}} />}
+        //                     color='green' style={{fontSize: '14px'}}
+        //                 >
+        //                     {item.history?.length ?? 0}
+        //                 </Tag>
+        //             </Space>
+        //         )
+        //     }
+        // },
         {
             title: ()=> {
                 return(
@@ -313,8 +351,6 @@ const mapState = (state) =>{
         jobbank_page: state.jobBankStore.jobbank_page,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
-        list_profiles_options: state.jobBankStore.list_profiles_options,
         list_connections: state.jobBankStore.list_connections,
         load_connections: state.jobBankStore.load_connections,
         currentUser: state.userStore.user,

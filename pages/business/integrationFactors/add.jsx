@@ -34,8 +34,8 @@ const add = ({ ...props }) => {
   return (<>
     <MainLayout
       currentKey={["integrationFactors"]}
-      defaultOpenKeys={["company"]}
-    >
+      defaultOpenKeys={["strategyPlaning","company"]}
+      >
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -43,6 +43,7 @@ const add = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>

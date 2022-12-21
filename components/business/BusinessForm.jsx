@@ -43,7 +43,7 @@ import {
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ ...props }) => {
+const businessForm = ({ currentNode, ...props }) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -78,13 +78,14 @@ const businessForm = ({ ...props }) => {
 
   const deleteBusiness = async (id) => {
     setLoading(true);
+
     WebApiPeople.deleteNode(id)
       .then(function (response) {
         message.success(messageDeleteSuccess);
-        if (props.currentNode.id === id) Router.push("/select-company");
-        getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
+        if (currentNode.id === id) Router.push("/select-company");
+        getCopaniesList();
         setLoading(false);
       })
       .catch(function (error) {
@@ -212,33 +213,6 @@ const businessForm = ({ ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error);
-      });
-  };
-
-  const getBusiness = () => {
-    setLoading(true);
-    WebApiPeople.getCompaniesPeople(personId)
-      .then((response) => {
-        setBusiness([]);
-        setBusiness(response.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setBusiness([]);
-        console.log(e);
-        setLoading(false);
-      });
-  };
-
-  const getNodesTree = () => {
-    WebApiPeople.getNodeTree({
-      person: personId,
-    })
-      .then((response) => {
-        setNodesTree(response.data);
-      })
-      .catch((error) => {
         console.log(error);
       });
   };
@@ -429,7 +403,10 @@ const businessForm = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
+    <MainLayout
+      currentKey={["business"]}
+      defaultOpenKeys={["strategyPlaning", "company"]}
+    >
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -437,6 +414,7 @@ const businessForm = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
@@ -566,7 +544,9 @@ const businessForm = ({ ...props }) => {
               }
             >
               {business.map((bus) => (
-                <Option value={bus.id}>{bus.name}</Option>
+                <Option value={bus.id} key={bus.key}>
+                  {bus.name}
+                </Option>
               ))}
             </Select>
           </Form.Item>

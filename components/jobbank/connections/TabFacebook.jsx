@@ -15,7 +15,8 @@ import {
     Tag,
     message,
     Checkbox,
-    Select
+    Select,
+    Alert
 } from 'antd';
 import {
     ruleRequired,
@@ -36,6 +37,18 @@ const TabFacebook = ({
     getConnections
 }) => {
 
+    const config_success = {
+        msg: `La configuración actual se encuentra en funcionamiento,
+        se recomienda no actualizar ningún parámetro, excepto "¿Activar aplicación?"
+        en caso de ser necesario.`,
+        type: 'success'
+    };
+    const config_error = {
+        msg: `La configuración actual ha fallado, se recomienda iniciar sesión de nuevo
+            y conceder todos los permisos requeridos.`,
+        type: 'error'
+    };
+    const validate_config = {'true': config_success, 'false': config_error};
     const router = useRouter();
     const btnSubmit = useRef(null);
     const [formFacebook] = Form.useForm();
@@ -73,8 +86,9 @@ const TabFacebook = ({
         if(!app_id) return;
         FacebookLoginClient.init({
             appId: infoConnection.data_config.app_id,
-            version: 'v15.0',
-            localStorage: false
+            version: 'v14.0',
+            localStorage: false,
+            xfbml: true
         });
     }
 
@@ -82,18 +96,31 @@ const TabFacebook = ({
         let msgError = 'Acceso no obtenido';
         try {
             setMessageLoading('Guardando acceso...');
-            let body = { token: response.accessToken };
-            let resp = await WebApiJobBank.getTokenFB(body);
-            if(!resp.data?.token) return setMessageError(msgError);
-            let obj = {'data_config|page_access_token': resp.data.token};
-            formFacebook.setFieldsValue(obj);
+            let resp = await WebApiJobBank.getTokenFB({
+                token: response.accessToken,
+                app_id: infoConnection.data_config?.app_id,
+                secret_key: infoConnection.data_config?.secret_key
+            });
+            if(!resp.data?.page_token || !resp.data?.user_token){
+                setMessageError(msgError);
+                deletePermissions();
+                return;
+            }
+            formFacebook.setFieldsValue({
+                is_valid: true,
+                'data_config|user_access_token': resp.data.user_token,
+                'data_config|page_access_token': resp.data.page_token
+            });
             setTimeout(()=>{
                 btnSubmit.current.click();
             },1000)
         } catch (e) {
             console.log(e)
-            console.log('error get token', e.response)
-            setMessageError(msgError);
+            let txtError = e.response?.data?.message;
+            let msgSelected = txtError ?? msgError;
+            setMessageError(msgSelected);
+            deletePermissions();
+            getConnections(currentNode.id);
         }
     }
     
@@ -115,17 +142,23 @@ const TabFacebook = ({
     }
 
     const validateResp = (resp) =>{
-        console.log('response', resp)
-        if(!resp.authResponse) return onFail(resp);
+        if(!resp.authResponse){
+            onFail({status: 'loginCancelled'});
+            return;
+        }
         onSuccess(resp.authResponse);
+        FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
         // FacebookLoginClient.getProfile(onProfileSuccess, { fields });
     }
 
     const validateLogin = () =>{
-        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
+        if (!window.FB){
+            onFail({status: 'facebookNotLoaded'});
+            return;
+        }
         FacebookLoginClient.login(validateResp, {
-            scope: 'public_profile, email'
+            scope: 'public_profile,email,pages_show_list,pages_manage_posts'
         });
     }
 
@@ -144,6 +177,11 @@ const TabFacebook = ({
         }
     }
 
+    const deletePermissions = () =>{
+        window.FB.api('/me/permissions', 'delete', (res)=>{
+            console.log('delete', res)
+        })
+    }
 
     const btnLogin = ({onClick}) => (
         <Button
@@ -161,13 +199,24 @@ const TabFacebook = ({
             onFinish={onFinish}
             id='form-facebook'
             layout='vertical'
-            initialValues={{
-                code: 'FB',
-                is_active: false
-            }}
+            initialValues={{code: 'FB_IG'}}
         >
             <Row gutter={[24,0]}>
-                <Col xs={24} xxl={16}>
+                {infoConnection.data_config?.page_access_token && (
+                    <Col span={24}>
+                        <Form.Item>
+                            <Alert
+                                message={validate_config[infoConnection.is_valid].msg}
+                                type={validate_config[infoConnection.is_valid].type} showIcon />
+                        </Form.Item>
+                    </Col>
+                )}
+                <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
+                    <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
+                        <Checkbox/>
+                    </Form.Item>
+                </Col>
+                <Col span={24}>
                     <Row gutter={[24,0]}>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
@@ -251,6 +300,19 @@ const TabFacebook = ({
                         </Col>
                         <Col xs={24} md={12} lg={8}>
                             <Form.Item
+                                name='data_config|ig_user_id'
+                                label='Identificador (User ID)'
+                                tooltip='Parámetro necesario para publicar en Instagram'
+                                rules={[ruleRequired, ruleWhiteSpace]}
+                            >
+                                <Input
+                                    maxLength={50}
+                                    placeholder='Llave secreta de la aplicación'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={12} lg={8}>
+                            <Form.Item
                                 name='data_config|secret_key'
                                 label='Llave secreta'
                                 rules={[ruleWhiteSpace]}
@@ -261,23 +323,37 @@ const TabFacebook = ({
                                 />
                             </Form.Item>
                         </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name='data_config|page_access_token'
+                                label='Token de acceso (página)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    disabled
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name='data_config|user_access_token'
+                                label='Token de acceso (usuario)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    // disabled
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>
                     </Row>
                 </Col>
-                <Col xs={24} xxl={8}>
-                    <Form.Item
-                        name='data_config|page_access_token'
-                        label='Token de acceso'
-                        tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
-                        rules={[ruleWhiteSpace]}
-                    >
-                        <Input.TextArea
-                            disabled
-                            autoSize={{minRows: 5, maxRows: 5}}
-                            placeholder='Token de acceso'
-                        />
-                    </Form.Item>
-                </Col>
-                <Col span={24} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                     {/* <FacebookLogin
                         appId='637006797889798'
                         autoLoad={true}
@@ -286,18 +362,21 @@ const TabFacebook = ({
                         onProfileSuccess={onProfileSuccess}
                         render={btnLogin}
                     /> */}
-                    <Button
-                        className='btn-login-facebook'
-                        onClick={()=> validateLogin()}
-                        disabled={loading}
-                        icon={<FacebookFilled />}
-                    >
-                        Iniciar sesión
-                    </Button>
+                   {!infoConnection.is_valid && (
+                        <Button
+                            className='btn-login-facebook'
+                            onClick={()=> validateLogin()}
+                            disabled={loading}
+                            icon={<FacebookFilled />}
+                        >
+                            Iniciar sesión
+                        </Button>
+                   )}
                     <Button
                         loading={loading}
                         ref={btnSubmit}
                         htmlType='submit'
+                        style={{marginLeft: 'auto'}}
                     >
                         Guardar
                     </Button>

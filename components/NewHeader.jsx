@@ -46,7 +46,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   }, []);
 
   const getPerson = async () => {
-      console.log(props);
     let user = Cookie.get();
     if (user && user != undefined && user.token) {
       user = JSON.parse(user.token);
@@ -60,7 +59,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           if (response.data.mlast_name)
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
-          console.log('person', response.data)
           setPerson(response.data);
         })
         .catch((error) => {
@@ -106,7 +104,15 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             >
               <Text>Editar perfil</Text>
             </p>
-            
+
+            <p
+              className="text-menu"
+              onClick={() => router.push("/user")}
+
+            >
+              <Text>Cambiar a la vista de Usuario</Text>
+            </p>
+
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p
                 className="text-menu"
@@ -124,7 +130,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 <Text>Cambiar de empresa</Text>
               </p>
             )}
-            
+
             {props.config &&
               props.config.applications &&
               props.config.applications.find(
@@ -222,7 +228,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    <Dropdown overlay={<CardApps />} key="dropdown_apps">
+                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
                           style={{
