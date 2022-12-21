@@ -35,6 +35,7 @@ const ModalConceptsPayroll = ({
   sendCalculatePayroll,
   payrollType,
   extraOrdinary = false,
+  movementType = null,
   ...props
 }) => {
   const [departureForm] = Form.useForm();
@@ -168,23 +169,25 @@ const ModalConceptsPayroll = ({
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <Row wrap={false}>
-                    {
-                        item.data_type === 1 &&
-                        <span style={{marginRight: "7px", marginTop: "3px"}}>$</span>
-                    }
-                  <InputNumber
-                    key={item.id}
-                    type="number"
-                    name={item.id}
-                    defaultValue={item.value}
-                    formatter={(value) => value.replace("-", "")}
-                    controls={false}
-                    onChange={(e) => changeHandler(type, item.id)(e)}
-                  />
-                    {
-                        item.data_type === 2 &&
-                        <span style={{marginLeft: "7px", marginTop: "3px"}}>UNIDAD(ES)</span>
-                    }
+                    {item.data_type === 1 && (
+                      <span style={{ marginRight: "7px", marginTop: "3px" }}>
+                        $
+                      </span>
+                    )}
+                    <InputNumber
+                      key={item.id}
+                      type="number"
+                      name={item.id}
+                      defaultValue={item.value}
+                      formatter={(value) => value.replace("-", "")}
+                      controls={false}
+                      onChange={(e) => changeHandler(type, item.id)(e)}
+                    />
+                    {item.data_type === 2 && (
+                      <span style={{ marginLeft: "7px", marginTop: "3px" }}>
+                        UNIDAD(ES)
+                      </span>
+                    )}
                   </Row>
                 </Col>
               </Row>
@@ -212,13 +215,14 @@ const ModalConceptsPayroll = ({
         if (item.id === name)
           item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
+    if (type === 3)
+      otherPayments.map((item) => {
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
+      });
   };
 
   const listConcepts = (value = null) => {
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:212 ~ listConcepts ~ value",
-      value
-    );
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -243,10 +247,6 @@ const ModalConceptsPayroll = ({
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:241 ~ listConcepts ~ currentStep",
-      currentStep
-    );
     currentStep == 0
       ? setCurrentStep(currentStep + 1)
       : is_cero && currentStep == 1
@@ -258,10 +258,6 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
-    console.log(
-      "🚀 ~ file: ModalConceptsPayroll.jsx:302 ~ payroll.map ~ payroll",
-      payroll
-    );
     if (extraOrdinary) {
       if (
         departureDate == undefined ||
@@ -328,6 +324,8 @@ const ModalConceptsPayroll = ({
           if (item.departure_motive)
             obj.departure_motive = item.departure_motive;
         }
+        if (item.payroll_cfdi_person)
+          obj.payroll_cfdi_person = item.payroll_cfdi_person;
         data.push(obj);
       }
     });
@@ -457,7 +455,7 @@ const ModalConceptsPayroll = ({
           {extraOrdinary && (
             <>
               <Row>
-                <Col span={12}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"twenty_day_compensantion"}
                     className="CheckGroup"
@@ -469,7 +467,7 @@ const ModalConceptsPayroll = ({
                     </span>
                   </Checkbox>
                 </Col>
-                <Col span={12}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"three_months_compensantion"}
                     className="CheckGroup"
@@ -481,7 +479,7 @@ const ModalConceptsPayroll = ({
                     </span>
                   </Checkbox>
                 </Col>
-                <Col span={12}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"antiquity_premium"}
                     className="CheckGroup"
@@ -494,8 +492,8 @@ const ModalConceptsPayroll = ({
                   </Checkbox>
                 </Col>
               </Row>
-              <Row style={{ paddingTop: "10px" }}>
-                <Col span={12}>
+              <Row style={{ paddingTop: "20px" }}>
+                <Col span={4}>
                   <DatePicker
                     moment={"YYYY"}
                     id="departure_date"
@@ -504,7 +502,7 @@ const ModalConceptsPayroll = ({
                     locale={locale}
                   />
                 </Col>
-                <Col span={12}>
+                <Col span={8}>
                   <Select
                     placeholder="Motivo de baja"
                     style={{ width: "50%" }}
@@ -513,11 +511,13 @@ const ModalConceptsPayroll = ({
                   />
                 </Col>
               </Row>
+              <br />
+              <hr />
             </>
           )}
           {currentStep == 0 ? (
             <>
-              {perceptionsCat.length > 0 && (
+              {perceptionsCat.length > 0 && movementType != 3 && (
                 <>
                   <h2>Percepciones</h2>
                   <Checkbox.Group
@@ -533,7 +533,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {deductionsCat.length > 0 && (
+              {deductionsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Deducciones</h2>
@@ -550,7 +550,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {otherPaymentsCat.length > 0 && (
+              {otherPaymentsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Otros pagos</h2>
