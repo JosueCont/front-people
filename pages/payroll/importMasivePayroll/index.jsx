@@ -162,12 +162,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     let numCompanies = data.companies.length;
     let numRegPatronales = 0;
     let numXML = 0;
+    let extraordinary = 0;
 
     //buscamos cuantos registros patronales se cargaron
     data.companies.map((company) => {
       if (_.get(company, "patronal_registrations", null)) {
         numRegPatronales =
-          numRegPatronales + company.patronal_registrations.length;
+          numRegPatronales + company?.patronal_registrations?.length;
       }
     });
 
@@ -175,10 +176,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     data.companies.forEach((company) => {
       if (_.get(company, "patronal_registrations", null)) {
         company.patronal_registrations.forEach((regPatr, i) => {
+          console.log('company?.extraordinary', regPatr?.extraordinary)
+          extraordinary = extraordinary +  (regPatr?.extraordinary ? regPatr?.extraordinary?.length : 0);
+
           regPatr.periodicities.forEach((periodicity, i) => {
             console.log(periodicity?.cfdis.length);
             numXML =
               numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
+
           });
         });
       }
@@ -190,12 +195,19 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
             numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
         });
       }
+
+
+      if (_.get(company, "extraordinary", null)) {
+        extraordinary += company.extraordinary.length;
+      }
+
     });
 
     let resume = {
       numCompanies,
       numRegPatronales,
       numXML,
+      extraordinary
     };
 
     setResumeData(resume);
@@ -215,7 +227,10 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           />
         </Col>
         <Col span={12}>
-          <Statistic title="xml Importados" value={resumeData?.numXML} />
+          <Statistic title="xml Importados" value={resumeData?.numXML + resumeData?.extraordinary} />
+        </Col>
+        <Col span={12}>
+          <Statistic title="Extraordinarios" value={resumeData?.extraordinary} />
         </Col>
       </Row>
     );
@@ -333,12 +348,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       } else {
         setSuccessImport(true);
         // si no encontramos errores en la lista de saved
-        let description =
-          company_list.length +
-          "Empresas y " +
-          calendars.length +
-          "  Calendarios guardados correctamente";
-
+        let description = `${company_list.length} Empresas y ${calendars.length} Calendarios guardados correctamente.`;
         setTitleMessage("Importación correcta");
         setDescriptionImport(description);
       }
