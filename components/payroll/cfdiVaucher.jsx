@@ -109,7 +109,7 @@ const CfdiVaucher = ({
       title: () => {
         return (
           <>
-            {!viewFilter && !movementType && (
+            {!viewFilter && (
               <Dropdown overlay={menuGeneric}>
                 <Button
                   style={{
@@ -161,7 +161,7 @@ const CfdiVaucher = ({
                 </a>
               )
             )}
-            {!viewFilter && !movementType && (
+            {!viewFilter && (
               <Tooltip title="Cancelar" color={"#3d78b9"} key={"#3d78b9"}>
                 <Button
                   type="primary"
@@ -408,7 +408,7 @@ const CfdiVaucher = ({
                   ? "Cargando..."
                   : "No se encontraron resultados.",
               }}
-              rowSelection={!movementType && rowSelectionPerson}
+              rowSelection={!rowSelectionPerson}
               pagination={false}
             />
           </Col>
