@@ -80,7 +80,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       data.append("cer", certificate);
       data.append("key", key);
       data.append("password", password);
-      WebApiFiscal.uploadCsds(data)
+      WebApiFiscal.uploadCsdsMultiEmmiter(data)
         .then((response) => {
           message.success(messageUploadSuccess);
         })
