@@ -46,7 +46,6 @@ const TabPositions = ({
         try {
             setLoading(true);
             let response = await WebApiJobBank.getCandidateLastJob(id);
-            console.log("🚀 ~ file: TabPositions.jsx:49 ~ getInfoPosition ~ response", response)
             setInfoPositions(response.data);
             setLoading(false);
         } catch (e) {

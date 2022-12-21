@@ -260,7 +260,6 @@ export const getVacanciesOptions = (node, query = '') => async (dispatch) =>{
     try {
         let param = `&paginate=0&status=1${query}`;
         let response = await WebApiJobBank.getVacancies(node, param);
-        console.log("🚀 ~ file: jobBankDuck.js:263 ~ getVacanciesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)

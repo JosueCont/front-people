@@ -58,7 +58,6 @@ const TabExperience = ({
         try {
             setLoading(true)
             let response = await WebApiJobBank.getCandidateExperience(id);
-            console.log("🚀 ~ file: TabExperience.jsx:61 ~ getInfoExperience ~ response", response)
             setInfoExperience(response.data);
             setLoading(false)
         } catch (e) {

@@ -45,7 +45,6 @@ const TabSchool = ({
         try {
             setLoading(true);
             let response = await WebApiJobBank.getCandidateEducation(id);
-            console.log("🚀 ~ file: TabSchool.jsx:48 ~ getInfoEducation ~ response", response)
             setInfoEducation(response.data);
             setLoading(false);
         } catch (e) {

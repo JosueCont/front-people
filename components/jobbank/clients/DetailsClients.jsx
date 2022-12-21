@@ -71,7 +71,6 @@ const DetailsClients = ({
         try {
             setFetching(true);
             let response = await WebApiJobBank.getInfoClient(id);
-            console.log("🚀 ~ file: DetailsClients.jsx:74 ~ getInfoClient ~ response", response)
             setInfoClient(response.data);
             setFetching(false);
         } catch (e) {
