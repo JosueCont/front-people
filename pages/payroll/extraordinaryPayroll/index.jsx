@@ -606,6 +606,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     })
       .then((response) => {
         // resetStateViews();
+        if (movementType == 2 || movementType == 3) {
+          setListPersons([]);
+          setPersonKeys([]);
+        }
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
           movement_type: movementType,
@@ -1446,6 +1450,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
           sendCalculatePayroll={setPayrollCalculate}
+          movementType={movementType}
         />
       )}
       {genericModal && (
