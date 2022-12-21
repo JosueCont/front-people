@@ -11,7 +11,8 @@ import {
     UploadOutlined,
     DeleteOutlined,
     ReloadOutlined,
-    SelectOutlined
+    SelectOutlined,
+    QuestionCircleOutlined
 } from '@ant-design/icons';
 import { valueToFilter } from '../../../utils/functions';
 import { redirectTo } from '../../../utils/constant';
@@ -28,12 +29,20 @@ const TabDocuments = ({
 
     const setFileSelected = ({target : { files }}) =>{
         if(Object.keys(files).length <= 0) return false;
+        let size = files[0].size / 1024 / 1024;
+        if(size > 10){
+            message.error(`Archivo pesado: ${size.toFixed(2)}mb`);
+            return;
+        }
         let nameFile = valueToFilter(files[0].name);
         const existNew = (item) => valueToFilter(item.name) == nameFile;
         const existPrev = (item) => valueToFilter(item.document.split('/').at(-1)) == nameFile;
         let existNew_ = newDocs.some(existNew);
         let existPrev_ = prevDocs.some(existPrev);
-        if(existNew_ || existPrev_) return message.error('Archivo existente');
+        if(existNew_ || existPrev_){
+            message.error('Archivo existente');
+            return;
+        }
         let newList = [...newDocs, files[0]];
         setNewDocs(newList)
     }
@@ -63,13 +72,18 @@ const TabDocuments = ({
                 <div className='content-list-files'>
                     <div className='head-list-files'>
                         <p style={{marginBottom: 0}}>Archivos cargados ({newDocs.length + prevDocs.length})</p>
-                        <Button
-                            size={'small'}
-                            icon={<UploadOutlined />}
-                            onClick={()=> openFile()}
-                        />
+                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                            <Tooltip title='Tamaño de archivo permitido, menor o igual a 10mb.'>
+                                <QuestionCircleOutlined style={{color: 'rgba(0,0,0,0.4)', fontSize: '16px'}}/>
+                            </Tooltip>
+                            <Button
+                                size='small'
+                                icon={<UploadOutlined />}
+                                onClick={()=> openFile()}
+                            />
+                        </div>
                         <input
-                            type={'file'}
+                            type='file'
                             style={{display: 'none'}}
                             ref={inputFile}
                             onChange={setFileSelected}
@@ -79,7 +93,7 @@ const TabDocuments = ({
                         <div className='body-list-files scroll-bar'>
                             {prevDocs.length > 0 && prevDocs.map((item, idx) => (
                                 <div
-                                    key={`item_${item.id}`}
+                                    key={`prev_${item.id}`}
                                     className='item-list-files'
                                     style={{color: item.is_deleted ? '#dc3545': 'black'}}
                                 >
@@ -102,7 +116,7 @@ const TabDocuments = ({
                             ))}
                             {newDocs.length > 0 && newDocs.map((item, idx) => (
                                 <div
-                                    key={`item_${idx}`}
+                                    key={`new_${idx}`}
                                     className='item-list-files'
                                     style={{color: '#28a745'}}
                                 >

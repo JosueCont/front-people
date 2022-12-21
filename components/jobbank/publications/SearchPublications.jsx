@@ -131,12 +131,16 @@ const SearchPublications = ({
                 </Col>
                 <Col xs={12} sm={23} md={23} xl={8} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
-                        <Button htmlType='submit'>
-                            <SearchOutlined />
-                        </Button>
-                        <Button onClick={()=> deleteFilter()}>
-                            <SyncOutlined />
-                        </Button>
+                        <Tooltip title='Buscar'>
+                            <Button htmlType='submit'>
+                                <SearchOutlined />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title='Limpiar filtros'>
+                            <Button onClick={()=> deleteFilter()}>
+                                <SyncOutlined />
+                            </Button>
+                        </Tooltip>
                     </div>
                     <Button onClick={()=> router.push({
                         pathname: '/jobbank/publications/add',

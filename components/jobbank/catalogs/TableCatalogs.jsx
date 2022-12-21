@@ -77,12 +77,14 @@ const TableCatalogs = ({
     })
 
     const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
-            savePage(newQuery)
+        let newQuery = {...router.query, page: current};
+        if(newQuery.catalog) delete newQuery.catalog;
+        if(current > 1){
+            savePage(newQuery);
+            return; 
         }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const menuItem = (item) => {

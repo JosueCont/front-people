@@ -40,12 +40,13 @@ const TabPositions = ({
         if(router.query.id && action == 'edit'){
             getInfoPosition(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoPosition = async (id) =>{
         try {
             setLoading(true);
             let response = await WebApiJobBank.getCandidateLastJob(id);
+            console.log("🚀 ~ file: TabPositions.jsx:49 ~ getInfoPosition ~ response", response)
             setInfoPositions(response.data);
             setLoading(false);
         } catch (e) {
@@ -155,14 +156,19 @@ const TabPositions = ({
 
     const columns = [
         {
-            title: 'Puesto',
-            dataIndex: 'position_name',
-            key: 'position_name'
-        },
-        {
             title: 'Empresa',
             dataIndex: 'company',
             key: 'company'
+        },
+        {
+            title: 'Sector',
+            dataIndex: ['sector', 'name'],
+            key: ['sector', 'name']
+        },
+        {
+            title: 'Puesto',
+            dataIndex: 'position_name',
+            key: 'position_name'
         },
         {
             title: 'Fecha inicio',
@@ -237,9 +243,10 @@ const TabPositions = ({
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
            <DeleteItems
-                title='¿Estás seguro de eliminar esta posición?'
+                title='¿Estás seguro de eliminar este puesto?'
                 visible={openModalDelete}
-                keyTitle='position_name'
+                keyTitle='company'
+                keyDescription='position_name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

@@ -12,8 +12,10 @@ const ModalFilters = ({
 }) => {
 
     const {
-        load_specialization_area,
-        list_specialization_area
+        load_main_categories,
+        list_main_categories,
+        list_states,
+        load_states
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
     const isOther = Form.useWatch('is_other', formSearch);
@@ -54,7 +56,7 @@ const ModalFilters = ({
                     <Col span={12}>
                         <Form.Item
                             label='Nombre'
-                            name='fisrt_name__icontains'
+                            name='fisrt_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por nombre'/>
@@ -63,7 +65,7 @@ const ModalFilters = ({
                     <Col span={12}>
                         <Form.Item
                             label='Apellidos'
-                            name='last_name__icontains'
+                            name='last_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por apellidos'/>
@@ -72,7 +74,7 @@ const ModalFilters = ({
                     <Col span={12}>
                         <Form.Item
                             label='Correo'
-                            name='email__icontains'
+                            name='email__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por correo'/>
@@ -121,10 +123,10 @@ const ModalFilters = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={isOther}
-                                loading={load_specialization_area}
+                                loading={load_main_categories}
                                 optionFilterProp='children'
                             >
-                                {list_specialization_area?.length > 0 && list_specialization_area.map(item => (
+                                {list_main_categories?.length > 0 && list_main_categories.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -150,6 +152,39 @@ const ModalFilters = ({
                                 disabled={!isOther}
                                 maxLength={200}
                                 placeholder='Especifique la especialización'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='state'
+                            label='Estado'
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                disabled={load_states}
+                                loading={load_states}
+                                optionFilterProp='children'
+                            >
+                                {list_states?.length > 0 && list_states.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Municipio'
+                            name='municipality__unaccent__icontains'
+                        >
+                             <Input
+                                maxLength={200}
+                                placeholder='Especifique el municipio'
                             />
                         </Form.Item>
                     </Col>

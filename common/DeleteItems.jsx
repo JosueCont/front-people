@@ -16,6 +16,8 @@ const DeleteItems = ({
     timeLoad = 2000
 }) =>{
 
+    let access_title = keyTitle.replaceAll(' ','').split(',');
+    let access_description = keyDescription.replaceAll(' ','').split(',');
     const [loading, setLoading] = useState(false);
 
     const onFinish = () =>{
@@ -25,6 +27,22 @@ const DeleteItems = ({
             setLoading(false)
             close()
         }, timeLoad)
+    }
+
+    const getTitle = (item) =>{
+        if(!keyTitle.trim()) return null;
+        return access_title.reduce((acc, current) =>{
+            if(!acc[current]) return null;
+            return acc[current];
+        }, item)
+    }
+
+    const getDescription = (item) =>{
+        if(!keyDescription.trim()) return null;
+        return access_description.reduce((acc, current) =>{
+            if(!acc[current]) return null;
+            return acc[current];
+        }, item)
     }
 
     return(
@@ -43,8 +61,8 @@ const DeleteItems = ({
                         renderItem={item => (
                             <List.Item key={item.id}>
                                 <List.Item.Meta
-                                    title={item[keyTitle]}
-                                    description={item[keyDescription]}
+                                    title={getTitle(item)}
+                                    description={getDescription(item)}
                                 />
                             </List.Item>
                         )}

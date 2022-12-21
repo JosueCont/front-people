@@ -13,7 +13,7 @@ export const useProcessInfo = ({
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {
-            if(Array.isArray(val) && val.length <=0) return {...obj, [key]: null};
+            if(Array.isArray(val) && val.length <=0) return {...obj, [key]: undefined};
             return {...obj, [key]: val ?? null};
         }, {});
     };
@@ -85,6 +85,10 @@ export const useProcessInfo = ({
     const valuesSalary = ({salary}) =>{
         const have_info = haveProperties(salary);
         if(!have_info) return {};
+        if(salary.gross_salary){
+            let salary_ = parseFloat(salary.gross_salary.replaceAll(',',''));
+            salary.gross_salary = salary_.toLocaleString("es-MX", {maximumFractionDigits: 4});
+        }
         delete salary.id;
         return salary;
     }
@@ -126,13 +130,10 @@ export const useProcessInfo = ({
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
         else info.academics_degree = [];
         if(info.experiences) info.experiences = info.experiences.split(',');
-        else info.experiences = undefined;
+        else info.experiences = [];
         if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
-        else info.technical_skills = undefined;
-        if(info.gross_salary){
-            let salary_ = parseFloat(info.gross_salary.replaceAll(',',''));
-            info.gross_salary = salary_.toLocaleString("es-MX", {maximumFractionDigits: 4});
-        }
+        else info.technical_skills = [];
+        if(info.gross_salary) info.gross_salary = info.gross_salary.replaceAll(',','');
         return info;
     }
 

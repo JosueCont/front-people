@@ -22,6 +22,7 @@ const initialState = {
     list_specialization_area: [],
     list_specialization_sub_area: [],
     list_strategies_options: [],
+    list_states: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -43,6 +44,7 @@ const initialState = {
     load_specialization_area: false,
     load_specialization_sub_area: false,
     load_strategies_options: false,
+    load_states: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
@@ -67,9 +69,12 @@ const GET_CONNECTIONS = "GET_CONNECTIONS";
 const GET_SECTORS = "GET_SECTORS";
 const GET_COMPETENCES = "GET_COMPETENCES";
 const GET_ACADEMICS = "GET_ACADEMICS";
+const GET_JOBBOARDS = "GET_JOBBOARDS";
+const GET_STATES = "GET_STATES";
+
 const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
-const GET_JOBBOARDS = "GET_JOBBOARDS";
+
 const GET_SPECIALIZATION_AREA = "GET_SPECIALIZATION_AREA";
 const GET_SPECIALIZATION_SUB_AREA = "GET_SPECIALIZATION_SUB_AREA";
 
@@ -190,6 +195,11 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_specialization_sub_area: action.payload,
                 load_specialization_sub_area: action.fetching
             }
+        case GET_STATES:
+            return {...state,
+                list_states: action.payload,
+                load_states: action.fetching
+            }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
         case SET_FILTERS:
@@ -250,6 +260,7 @@ export const getVacanciesOptions = (node, query = '') => async (dispatch) =>{
     try {
         let param = `&paginate=0&status=1${query}`;
         let response = await WebApiJobBank.getVacancies(node, param);
+        console.log("🚀 ~ file: jobBankDuck.js:263 ~ getVacanciesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -443,6 +454,7 @@ export const getJobBoards = (node) => async(dispatch) => {
     }
 }
 
+//* Sustituido por getMainCategories, son los mismos registros
 export const getSpecializationArea = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_SPECIALIZATION_AREA, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true});
@@ -455,12 +467,25 @@ export const getSpecializationArea = (node) => async (dispatch) =>{
     }
 }
 
+//* Sustituido por getSubCategories, son los mismos registros.
 export const getSpecializationSubArea = (node) => async (dispatch) =>{
     const typeFunction = {type: GET_SPECIALIZATION_SUB_AREA, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true});
     try {
         let response = await WebApiJobBank.getSpecializationSubArea(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getListStates = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_STATES, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true});
+    try {
+        let response = await WebApiJobBank.getListStates(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

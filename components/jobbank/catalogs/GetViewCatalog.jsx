@@ -20,9 +20,9 @@ const GetViewCatalog = () =>{
     if(catalog == 'competences') return <ViewCompetences/>;
     if(catalog == 'sectors') return <ViewSectors/>;
     if(catalog == 'jobboars') return <ViewJobBoards/>;
-    if(catalog == 'areas') return <ViewAreas/>;
+    // if(catalog == 'areas') return <ViewAreas/>;
     if(catalog == 'profiles') return <ViewTemplates/>;
-    if(catalog == 'subareas') return <ViewSubAreas/>;
+    // if(catalog == 'subareas') return <ViewSubAreas/>;
 
     return <></>;
 }

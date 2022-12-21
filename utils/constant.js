@@ -594,9 +594,14 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  { catalog: "areas", name: "Áreas de especialización" },
-  { catalog: "subareas", name: "Subáreas de especialización" },
+  // { catalog: "areas", name: "Áreas de especialización" },
+  // { catalog: "subareas", name: "Subáreas de especialización" },
 ];
+
+export const accounstJobbank = [
+  {value: 'FB', key: 'FB', label: 'Facebook'},
+  {value: 'IG', key: 'IG', label: 'Instagram'}
+]
 
 export const departureMotive = [
   { value: 1, label: "Termino de contrato" },

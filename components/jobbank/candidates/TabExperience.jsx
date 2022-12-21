@@ -52,12 +52,13 @@ const TabExperience = ({
         if(router.query.id && action == 'edit'){
             getInfoExperience(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoExperience = async (id) =>{
         try {
             setLoading(true)
             let response = await WebApiJobBank.getCandidateExperience(id);
+            console.log("🚀 ~ file: TabExperience.jsx:61 ~ getInfoExperience ~ response", response)
             setInfoExperience(response.data);
             setLoading(false)
         } catch (e) {
@@ -199,19 +200,13 @@ const TabExperience = ({
     const columns = [
         {
             title: 'Categoría',
-            render: (item) =>{
-                return (
-                    <span>{getCategory(item)}</span>
-                )
-            }
+            dataIndex: ['category', 'name'],
+            key: ['category', 'name']
         },
         {
             title: 'Subcategoría',
-            render: (item) =>{
-                return(
-                    <span>{getSubCategory(item)}</span>
-                )
-            }
+            dataIndex: ['sub_category', 'name'],
+            key: ['sub_category', 'name']
         },
         {
             title: 'Años de experiencia',
@@ -302,7 +297,8 @@ const TabExperience = ({
             <DeleteItems
                 title='¿Estás seguro de eliminar esta experiencia?'
                 visible={openModalDelete}
-                keyTitle='experience_years'
+                keyTitle='category, name'
+                keyDescription='sub_category, name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

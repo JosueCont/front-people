@@ -141,7 +141,7 @@ const TabRecruitment = ({
             <Form.Item
               name='observations'
               label='Durante la entrevista'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 autoSize={{minRows: 3, maxRows: 3}}
@@ -153,7 +153,7 @@ const TabRecruitment = ({
             <Form.Item
               name='rejection_reasons'
               label='Motivos potenciales al rechazo'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 autoSize={{minRows: 3, maxRows: 3}}

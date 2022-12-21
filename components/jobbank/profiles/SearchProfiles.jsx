@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Button, Input, Row, Col, Form, Select } from 'antd';
+import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
@@ -68,12 +68,16 @@ const SearchProfiles = ({
                             </Form.Item>
                         </Col>
                         <Col span={4} style={{display: 'flex', gap: '8px'}}>
-                            <Button htmlType='submit'>
-                                <SearchOutlined />
-                            </Button>
-                            <Button onClick={()=> deleteFilter()}>
-                                <SyncOutlined />
-                            </Button>
+                            <Tooltip title='Buscar'>
+                                <Button htmlType='submit'>
+                                    <SearchOutlined />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title='Limpiar filtros'>
+                                <Button onClick={()=> deleteFilter()}>
+                                    <SyncOutlined />
+                                </Button>
+                            </Tooltip>
                         </Col>
                     </Row>
                 </Form>
