@@ -42,7 +42,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
-  const apply_assimilated = Form.useWatch('apply_assimilated', form);
+  //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
 
@@ -196,7 +196,6 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     setId(item.id);
 
     if (key == 1) {
-      console.log(item)
       form.setFieldsValue({
         code: item.code,
         description: item.description,
@@ -322,18 +321,20 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
             : "other_type_payment"
         }
         label={key === 1 ? "Percepción" : key === 2 ? "Deducción" : "Otro pago"}
-        rules={[ruleRequired, {
-          validator(_, value) {
-            let item = data.find((it)=> it.id === value)
-            if (apply_assimilated && !item?.is_assimilated) {
-              return Promise.reject('Este concepto no aplica para asimilado.');
-            }
-            if(!apply_assimilated && !item?.is_payroll){
-              return Promise.reject('Este concepto no aplica para nómina.');
-            }
-            return Promise.resolve();
-          },
-        },]}
+        rules={[ruleRequired
+         //  ,{
+         //  validator(_, value) {
+         //    let item = data.find((it)=> it.id === value)
+         //    if (apply_assimilated && !item?.is_assimilated) {
+         //      return Promise.reject('Este concepto no aplica para asimilado.');
+         //    }
+         //    if(!apply_assimilated && !item?.is_payroll){
+         //      return Promise.reject('Este concepto no aplica para nómina.');
+         //    }
+         //    return Promise.resolve();
+         //  },
+         // },
+        ]}
       >
         <Select
           showSearch
