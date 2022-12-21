@@ -188,7 +188,6 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
       // let underorderPerseptions = response.data.results.filter(
       //   (item) => Number(item.version_cfdi.version) <= use_cfdi
       // );
-
       let underorderPerseptions = response.data.results;
 
       let orderedPerseptions = underorderPerseptions.sort((a, b) => {
