@@ -187,7 +187,11 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     } catch (error) {
       setLoading(false);
       console.log(error);
-      message.error(messageError);
+      let  msg = "Ocurrio un error intente de nuevos.";
+      if(error.response?.data?.message){
+        msg = error.response?.data?.message
+      }
+      message.error(msg);
     }
   };
 
@@ -254,6 +258,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       if(error.response?.data?.message){
         msg = error.response?.data?.message
       }
+      message.error(msg);
 
       // showHideMessage(true, {
       //   title:msg,
@@ -469,10 +474,10 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
 
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
-            <Button onClick={resetForm}>Cancelar</Button>
+            <Button loading={loading} onClick={resetForm}>Cancelar</Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" htmlType="submit">
               Guardar
             </Button>
           </Col>
