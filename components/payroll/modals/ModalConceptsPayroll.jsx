@@ -214,6 +214,11 @@ const ModalConceptsPayroll = ({
         if (item.id === name)
           item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
+    if (type === 3)
+      otherPayments.map((item) => {
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
+      });
   };
 
   const listConcepts = (value = null) => {
