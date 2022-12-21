@@ -598,6 +598,21 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const sendClosePayroll = () => {
+    if (movementType > 1) {
+      if (objectSend == null || objectSend.length == 0) {
+        message.error(
+          "Debe seleccionar almenos una persona y generar el calculo."
+        );
+        return;
+      }
+      const objSend = objectSend.payroll.filter((item) => item.departure_date);
+      if (objSend.length == 0) {
+        message.error(
+          "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
+        );
+        return;
+      }
+    }
     setLoading(true);
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
@@ -606,6 +621,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     })
       .then((response) => {
         // resetStateViews();
+        if (movementType == 2 || movementType == 3) {
+          setListPersons([]);
+          setPersonKeys([]);
+        }
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
           movement_type: movementType,
@@ -1446,6 +1465,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
           sendCalculatePayroll={setPayrollCalculate}
+          movementType={movementType}
         />
       )}
       {genericModal && (

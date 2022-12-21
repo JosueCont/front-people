@@ -35,6 +35,7 @@ const ModalConceptsPayroll = ({
   sendCalculatePayroll,
   payrollType,
   extraOrdinary = false,
+  movementType = null,
   ...props
 }) => {
   const [departureForm] = Form.useForm();
@@ -454,7 +455,7 @@ const ModalConceptsPayroll = ({
           {extraOrdinary && (
             <>
               <Row>
-                <Col span={8}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"twenty_day_compensantion"}
                     className="CheckGroup"
@@ -466,7 +467,7 @@ const ModalConceptsPayroll = ({
                     </span>
                   </Checkbox>
                 </Col>
-                <Col span={8}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"three_months_compensantion"}
                     className="CheckGroup"
@@ -478,7 +479,7 @@ const ModalConceptsPayroll = ({
                     </span>
                   </Checkbox>
                 </Col>
-                <Col span={8}>
+                <Col span={24} style={{ marginBottom: "8px" }}>
                   <Checkbox
                     key={"antiquity_premium"}
                     className="CheckGroup"
@@ -516,7 +517,7 @@ const ModalConceptsPayroll = ({
           )}
           {currentStep == 0 ? (
             <>
-              {perceptionsCat.length > 0 && (
+              {perceptionsCat.length > 0 && movementType != 3 && (
                 <>
                   <h2>Percepciones</h2>
                   <Checkbox.Group
@@ -532,7 +533,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {deductionsCat.length > 0 && (
+              {deductionsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Deducciones</h2>
@@ -549,7 +550,7 @@ const ModalConceptsPayroll = ({
                   </Checkbox.Group>
                 </>
               )}
-              {otherPaymentsCat.length > 0 && (
+              {otherPaymentsCat.length > 0 && movementType != 3 && (
                 <>
                   <hr />
                   <h2>Otros pagos</h2>
