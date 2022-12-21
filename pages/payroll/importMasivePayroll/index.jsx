@@ -348,7 +348,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       } else {
         setSuccessImport(true);
         // si no encontramos errores en la lista de saved
-        let description = `${company_list.length} Empresas y ${calendars.length} Calendarios guardados correctamente`;
+        let description = `${company_list.length} Empresas y ${calendars.length} Calendarios guardados correctamente.`;
         setTitleMessage("Importación correcta");
         setDescriptionImport(description);
       }
