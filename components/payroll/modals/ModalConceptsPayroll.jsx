@@ -233,10 +233,6 @@ const ModalConceptsPayroll = ({
     if (perceptions.length > 0)
       perceptions.map((item) => {
         data.push(item);
-        console.log(
-          "🚀 ~ file: ModalConceptsPayroll.jsx:233 ~ perceptions.map ~ item",
-          item
-        );
         if (item.value <= 0) is_cero = true;
       });
     if (deductions.length > 0)
@@ -247,10 +243,6 @@ const ModalConceptsPayroll = ({
     if (otherPayments.length > 0)
       otherPayments.map((item) => {
         data.push(item);
-        console.log(
-          "🚀 ~ file: ModalConceptsPayroll.jsx:249 ~ otherPayments.map ~ item",
-          item
-        );
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
