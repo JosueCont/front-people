@@ -168,23 +168,25 @@ const ModalConceptsPayroll = ({
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <Row wrap={false}>
-                    {
-                        item.data_type === 1 &&
-                        <span style={{marginRight: "7px", marginTop: "3px"}}>$</span>
-                    }
-                  <InputNumber
-                    key={item.id}
-                    type="number"
-                    name={item.id}
-                    defaultValue={item.value}
-                    formatter={(value) => value.replace("-", "")}
-                    controls={false}
-                    onChange={(e) => changeHandler(type, item.id)(e)}
-                  />
-                    {
-                        item.data_type === 2 &&
-                        <span style={{marginLeft: "7px", marginTop: "3px"}}>UNIDAD(ES)</span>
-                    }
+                    {item.data_type === 1 && (
+                      <span style={{ marginRight: "7px", marginTop: "3px" }}>
+                        $
+                      </span>
+                    )}
+                    <InputNumber
+                      key={item.id}
+                      type="number"
+                      name={item.id}
+                      defaultValue={item.value}
+                      formatter={(value) => value.replace("-", "")}
+                      controls={false}
+                      onChange={(e) => changeHandler(type, item.id)(e)}
+                    />
+                    {item.data_type === 2 && (
+                      <span style={{ marginLeft: "7px", marginTop: "3px" }}>
+                        UNIDAD(ES)
+                      </span>
+                    )}
                   </Row>
                 </Col>
               </Row>
@@ -212,6 +214,11 @@ const ModalConceptsPayroll = ({
         if (item.id === name)
           item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
+    if (type === 3)
+      otherPayments.map((item) => {
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
+      });
   };
 
   const listConcepts = (value = null) => {
@@ -230,6 +237,10 @@ const ModalConceptsPayroll = ({
     if (perceptions.length > 0)
       perceptions.map((item) => {
         data.push(item);
+        console.log(
+          "🚀 ~ file: ModalConceptsPayroll.jsx:233 ~ perceptions.map ~ item",
+          item
+        );
         if (item.value <= 0) is_cero = true;
       });
     if (deductions.length > 0)
@@ -240,6 +251,10 @@ const ModalConceptsPayroll = ({
     if (otherPayments.length > 0)
       otherPayments.map((item) => {
         data.push(item);
+        console.log(
+          "🚀 ~ file: ModalConceptsPayroll.jsx:249 ~ otherPayments.map ~ item",
+          item
+        );
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
