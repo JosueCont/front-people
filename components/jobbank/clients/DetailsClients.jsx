@@ -46,12 +46,13 @@ const DetailsClients = ({
     const [contactList, setContactList] = useState([]);
     const [infoClient, setInfoClient] = useState({});
     const [fetching, setFetching] = useState(false);
+    const [currentKey, setCurrentKey] = useState('1');
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoClient(router.query.id)
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(Object.keys(infoClient).length > 0 && action == 'edit'){
@@ -178,6 +179,19 @@ const DetailsClients = ({
         btnSave.current.click();
     }
 
+    const onChangeTab = (tab) =>{
+        if(action == 'add'){
+            setCurrentKey(tab)
+            return;
+        }
+        let querys = {...router.query, tab};
+        if(querys['tab'] == '1') delete querys['tab'];
+        router.replace({
+            pathname: router.asPath.split('?')[0],
+            query: querys
+        }, undefined, {shallow: true})
+    }
+
     return (
         <Card>
             <Row gutter={[16,16]}>
@@ -207,10 +221,18 @@ const DetailsClients = ({
                         onFinishFailed={onFinishFailed}
                         initialValues={{is_active: true}}
                     >
-                        <Tabs type='card'>
+                        <Tabs
+                            type='card'
+                            activeKey={action == 'edit'
+                                ? router.query?.tab ?? '1'
+                                : currentKey
+                            }
+                            onChange={onChangeTab}
+                        >
                             <Tabs.TabPane
                                 tab='Información del cliente'
-                                key='tab_1'
+                                forceRender
+                                key='1'
                             >
                                 <Spin spinning={fetching}>
                                     <TabClient/>
@@ -218,7 +240,7 @@ const DetailsClients = ({
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab='Información de contactos'
-                                key='tab_2'
+                                key='2'
                                 forceRender
                             >
                                 <Spin spinning={fetching}>
@@ -231,7 +253,7 @@ const DetailsClients = ({
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab='Carga de documentos'
-                                key='tab_3'
+                                key='3'
                                 forceRender
                             >
                                 <Spin spinning={fetching}>

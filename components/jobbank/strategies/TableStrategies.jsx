@@ -227,8 +227,8 @@ const TableStrategies = ({
                     : '¿Estás seguro de eliminar esta estrategia?'
                 }
                 visible={openModalDelete}
-                keyTitle='product'
-                keyDescription='assignment_date'
+                keyTitle='vacant, job_position'
+                keyDescription='product'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

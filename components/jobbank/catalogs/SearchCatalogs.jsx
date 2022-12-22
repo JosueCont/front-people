@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Row, Col, Input, Button, Form } from 'antd';
+import { Row, Col, Input, Button, Form, Tooltip } from 'antd';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { createFiltersJB } from '../../../utils/functions';
 import {
@@ -55,12 +55,16 @@ const SearchCatalogs = ({
                     </Form.Item>
                 </Col>
                 <Col span={8} style={{display: 'flex', gap: '8px'}}>
-                    <Button htmlType='submit'>
-                        <SearchOutlined />
-                    </Button>
-                    <Button onClick={()=> deleteFilter()}>
-                        <SyncOutlined />
-                    </Button>
+                    <Tooltip title='Buscar'>
+                        <Button htmlType='submit'>
+                            <SearchOutlined />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title='Limpiar filtros'>
+                        <Button onClick={()=> deleteFilter()}>
+                            <SyncOutlined />
+                        </Button>
+                    </Tooltip>
                 </Col>
                 <Col span={8} style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <Button icon={iconBtn} onClick={()=> actionBtn ? actionBtn() : setOpenModal(true)}>

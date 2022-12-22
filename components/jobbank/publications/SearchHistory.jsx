@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { DatePicker, Form, Row, Col, Button} from 'antd';
+import { DatePicker, Form, Row, Col, Button, Select} from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
     ArrowLeftOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
+import { accounstJobbank } from '../../../utils/constant';
 
 const SearchHistory = ({
     infoPublication = {},
@@ -35,6 +36,7 @@ const SearchHistory = ({
             filters['start'] = values.dates[0].format(formatDate);
             filters['end'] = values.dates[1].format(formatDate);
         }
+        if(values.account) filters['account'] = values.account;
         router.replace({
             pathname: url,
             query: filters
@@ -64,13 +66,24 @@ const SearchHistory = ({
             style={{width: '100%'}}
         >
             <Row align='middle' style={{width: '100%'}}>
-                <Col span={12} style={{display: 'flex'}}>
+                <Col span={8} style={{display: 'flex'}}>
                     <div className='title-history'>
                         <p>{infoPublication?.vacant?.job_position}</p>
-                        <p>&nbsp;/&nbsp;{infoPublication?.profile?.name}</p>
+                        <p>&nbsp;/&nbsp;{infoPublication?.profile?.name ?? 'Personalizado'}</p>
                     </div>
                 </Col>
-                <Col span={12} className='content-end' style={{gap: 8}}>
+                <Col span={16} className='content-end' style={{gap: 8}}>
+                    <Form.Item name='account' style={{margin:0}}>
+                        <Select
+                            allowClear
+                            showSearch
+                            placeholder='Cuenta'
+                            notFoundContent='No se encontraron resultados'
+                            optionFilterProp='label'
+                            options={accounstJobbank}
+                            style={{width: '110px'}}
+                        />
+                    </Form.Item>
                     <Form.Item name='dates' style={{margin:0}}>
                         <DatePicker.RangePicker
                             style={{width: '100%'}}

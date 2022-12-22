@@ -438,6 +438,7 @@ export const validateNum = (e) =>{
 }
 
 export const validateMaxLength = (e) =>{
+  if(e.which == 32) e.preventDefault();
   if(e.target.maxLength
     && e.target.maxLength
     == e.target.value.length
@@ -465,8 +466,15 @@ export const getFiltersJB = (obj = {}) =>{
 }
 
 const keysToDeleteJB = [
-  'id', 'client', 'vacancy', 'catalog',
-  'strategy', 'start', 'end'
+  'id',
+  'client',
+  'vacancy',
+  'catalog',
+  'strategy',
+  'start',
+  'end',
+  'account',
+  'tab'
 ];
 export const deleteFiltersJb = (
   obj = {},

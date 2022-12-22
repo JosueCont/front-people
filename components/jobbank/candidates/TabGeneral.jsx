@@ -34,7 +34,9 @@ const TabGeneral = ({
     isAutoRegister,
     newFilters = {},
     setInfoCandidate,
-    infoCandidate
+    infoCandidate,
+    list_states,
+    load_states
 }) => {
 
     const rule_init = {text:'', status:''};
@@ -49,6 +51,7 @@ const TabGeneral = ({
     const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
     const nameCV = Form.useWatch('cv_name_read', formCandidate);
+    const state = Form.useWatch('state', formCandidate);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
@@ -64,7 +67,7 @@ const TabGeneral = ({
         if(router.query.id && action == 'edit'){
             getInfoCandidate(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         setDisabledTab(true)
@@ -82,8 +85,9 @@ const TabGeneral = ({
         let listLanguages = infoCandidate.languages.map(getLang);
         let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
         let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        let state = infoCandidate?.state?.id ?? null;
         setListLangDomain(listLang)
-        formCandidate.setFieldsValue({...infoCandidate, cv_name_read});
+        formCandidate.setFieldsValue({...infoCandidate, cv_name_read, state});
     }
 
     const getInfoCandidate = async (id) =>{
@@ -231,6 +235,10 @@ const TabGeneral = ({
         formCandidate.setFieldsValue({cv_name_read: null});
     }
 
+    const onChangeState = (value) =>{
+        if(!value) formCandidate.setFieldsValue({municipality: null});
+    }
+
     return (
         <Row>
             <Col span={24}>
@@ -296,11 +304,35 @@ const TabGeneral = ({
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
-                                    name='location'
-                                    label='Localidad'
+                                    name='state'
+                                    label='Estado'
+                                    // rules={[rulePhone]}
+                                >
+                                    <Select
+                                        allowClear
+                                        showSearch
+                                        placeholder='Seleccionar un estado'
+                                        notFoundContent='No se encontraron resultados'
+                                        disabled={load_states}
+                                        loading={load_states}
+                                        optionFilterProp='children'
+                                        onChange={onChangeState}
+                                    >
+                                        {list_states?.length > 0 && list_states.map(item => (
+                                            <Select.Option value={item.id} key={item.id}>
+                                                {item.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='municipality'
+                                    label='Municipio'
                                     rules={[ruleWhiteSpace]}
                                 >
-                                    <Input maxLength={300} placeholder='Localidad'/>
+                                    <Input disabled={!state} maxLength={300} placeholder='Especificar el municipio'/>
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -321,7 +353,7 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Código postal'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={24}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     label='CV'
                                     required
@@ -464,7 +496,9 @@ const TabGeneral = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_states: state.jobBankStore.list_states,
+        load_states: state.jobBankStore.load_states
     }
 }
 
