@@ -14,8 +14,9 @@ import TabGeneral from './TabGeneral';
 import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
-import DocExpedient from './DocExpedient';
-import Expedient from './Expedient';
+
+//*Necesario para la libreria react-pdf
+const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
 
 const DetailsCandidates = ({
     action,
