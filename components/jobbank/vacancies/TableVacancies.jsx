@@ -183,16 +183,18 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                <Menu.Item
-                    key='3'
-                    icon={<SettingOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/publications/add',
-                        query: {...router.query, vacancy: item.id }
-                    })}
-                >
-                    Configurar publicación
-                </Menu.Item>
+                {item.status == 1 && (
+                    <Menu.Item
+                        key='4'
+                        icon={<SettingOutlined />}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/publications/add',
+                            query: {...router.query, vacancy: item.id }
+                        })}
+                    >
+                        Configurar publicación
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
