@@ -16,8 +16,6 @@ const DeleteItems = ({
     timeLoad = 2000
 }) =>{
 
-    let access_title = keyTitle?.replaceAll(' ','')?.split(',');
-    let access_description = keyDescription?.replaceAll(' ','')?.split(',');
     const [loading, setLoading] = useState(false);
 
     const onFinish = () =>{
@@ -31,6 +29,7 @@ const DeleteItems = ({
 
     const getTitle = (item) =>{
         if(!keyTitle.trim()) return null;
+        let access_title = keyTitle?.replaceAll(' ','')?.split(',');
         return access_title.reduce((acc, current) =>{
             if(!acc[current]) return null;
             return acc[current];
@@ -39,6 +38,7 @@ const DeleteItems = ({
 
     const getDescription = (item) =>{
         if(!keyDescription.trim()) return null;
+        let access_description = keyDescription?.replaceAll(' ','')?.split(',');
         return access_description.reduce((acc, current) =>{
             if(!acc[current]) return null;
             return acc[current];
