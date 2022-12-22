@@ -12,16 +12,16 @@ const TagFilters = ({
     const [newFilters, setNewFilters] = useState({});
 
     useEffect(()=>{
+        setNewFilters({})
         if(Object.keys(router.query).length <= 0) return;
         let querys = {...router.query};
         if(querys['page']) delete querys['page'];
         setNewFilters(querys);
-    },[router])
+    },[router.query])
 
     const removeFilter = (key) =>{
         let filters = {...router.query};
         if(filters[key]) delete filters[key];
-        setNewFilters({})
         router.replace({
             pathname: router.asPath?.split('?')[0],
             query: filters

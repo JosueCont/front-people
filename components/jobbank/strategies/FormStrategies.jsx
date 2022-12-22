@@ -42,7 +42,7 @@ const FormStrategies = ({
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
     const vacant = Form.useWatch('vacant', formStrategies);
     //Campos de lectura, se toma de la vacante.
-    const salary = Form.useWatch('salary_read', formStrategies);
+    const salary = Form.useWatch('salary', formStrategies);
 
     useEffect(()=>{
         getSalary()
@@ -56,7 +56,7 @@ const FormStrategies = ({
     const setAmount = (val = null) => setValue('amount_to_collect', val);
     const setVacant = (val = null) => setValue('vacant', val);
     //Campos de lectura, se toma de la vacante.
-    const setSalary = (val = null) => setValue('salary_read', val);
+    const setSalary = (val = null) => setValue('salary', val);
     const setStatus = (val = null) => setValue('vacant_status_read', val);
     const setProyect = (val = null) => setValue('num_project_read', val);
 
@@ -90,9 +90,9 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
-        const options = item => item.customer?.id === clientSelected;
+        const options = item => item.customer?.id == clientSelected;
         return newListVacant.filter(options);
-    }, [clientSelected])
+    }, [clientSelected, newListVacant])
 
     const disabledDate = (current) => {
         return current && current < moment().startOf("day");
@@ -247,7 +247,8 @@ const FormStrategies = ({
                 <Form.Item
                     name='vacant'
                     label='Vacante'
-                    tooltip='El listado se habilita si el cliente seleccionado tiene vacantes registradas.'
+                    tooltip={`El listado se habilita si existen vacantes registradas,
+                    activas y no asignadas a una estrategia, según el cliente seleccionado.`}
                     rules={[ruleRequired]}
                 >
                     <Select
@@ -307,8 +308,8 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    // name='salary'
-                    name='salary_read'
+                    name='salary'
+                    // name='salary_read'
                     label='Sueldo (MXN)'
                     tooltip={`El valor se obtiene de acuerdo al registro de la vacante
                         seleccionada, si no se visualiza este dato debe dirigirse al módulo de
@@ -525,7 +526,7 @@ const FormStrategies = ({
                             name='searches'
                             label='Búsquedas'
                             tooltip='Nombre(s) de clientes para encontrar una vacante similar'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 autoSize={{ minRows: 4, maxRows: 4 }}
@@ -537,7 +538,7 @@ const FormStrategies = ({
                         <Form.Item
                             name='target_company'
                             label='Empresas target'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
@@ -552,7 +553,7 @@ const FormStrategies = ({
                         <Form.Item
                             name='comments'
                             label='Comentarios'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Comentarios'

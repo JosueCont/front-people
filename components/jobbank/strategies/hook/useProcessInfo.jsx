@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { deleteKeyByValue } from '../../../../utils/constant';
 
 export const useProcessInfo = ({
     infoStrategy,
@@ -9,8 +8,15 @@ export const useProcessInfo = ({
 
     const { setFieldsValue } = formStrategies;
 
+    const checkValues = (values) => {
+        return Object.entries(values).reduce((obj, [key, val]) => {
+            if(Array.isArray(val) && val.length <=0) return {...obj, [key]: undefined};
+            return {...obj, [key] : val ?? null};
+        }, {});
+    };
+
     const setValuesForm = () =>{
-        let info = deleteKeyByValue(infoStrategy);
+        let info = checkValues(infoStrategy);
         if(info.assignment_date) info.assignment_date = moment(info.assignment_date);
         if(info.candidates_date_send) info.candidates_date_send = moment(info.candidates_date_send);
         if(info.candidate_acceptance_date) info.candidate_acceptance_date = moment(info.candidate_acceptance_date);
@@ -24,7 +30,8 @@ export const useProcessInfo = ({
     }
 
     const createData = (obj) =>{
-        let info = deleteKeyByValue(obj);
+        let info = checkValues(obj);
+        if(!info.job_vacancies) info.job_vacancies = [];
         if(info.assignment_date) info.assignment_date = info.assignment_date.format('YYYY-MM-DD');
         if(info.candidates_date_send) info.candidates_date_send = info.candidates_date_send.format('YYYY-MM-DD');
         if(info.candidate_acceptance_date) info.candidate_acceptance_date = info.candidate_acceptance_date.format('YYYY-MM-DD');

@@ -551,6 +551,19 @@ const CalculatePayroll = ({ ...props }) => {
     sendCalculatePayroll({ payment_period: period.id });
   };
 
+  useEffect(() => {
+    if (periodSelected && periodSelected != undefined && calendarSelect) {
+      const calendar = paymentCalendars.find(
+        (item) => item.id === calendarSelect.id
+      );
+      let period = calendar.periods.find((p) => p.id == periodSelected.id);
+
+      form.setFieldsValue({
+        payment_day: period.payment_date,
+      });
+    }
+  }, [periodSelected]);
+
   const sendCalculatePayroll = async (dataToSend) => {
     setStep(0);
     setPayroll([]);

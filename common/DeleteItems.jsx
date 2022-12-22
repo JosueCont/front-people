@@ -27,6 +27,24 @@ const DeleteItems = ({
         }, timeLoad)
     }
 
+    const getTitle = (item) =>{
+        if(!keyTitle.trim()) return null;
+        let access_title = keyTitle?.replaceAll(' ','')?.split(',');
+        return access_title.reduce((acc, current) =>{
+            if(!acc[current]) return null;
+            return acc[current];
+        }, item)
+    }
+
+    const getDescription = (item) =>{
+        if(!keyDescription.trim()) return null;
+        let access_description = keyDescription?.replaceAll(' ','')?.split(',');
+        return access_description.reduce((acc, current) =>{
+            if(!acc[current]) return null;
+            return acc[current];
+        }, item)
+    }
+
     return(
         <MyModal
             title={title}
@@ -43,8 +61,8 @@ const DeleteItems = ({
                         renderItem={item => (
                             <List.Item key={item.id}>
                                 <List.Item.Meta
-                                    title={item[keyTitle]}
-                                    description={item[keyDescription]}
+                                    title={getTitle(item)}
+                                    description={getDescription(item)}
                                 />
                             </List.Item>
                         )}

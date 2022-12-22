@@ -30,7 +30,8 @@ const FormPublications = ({
     const vacant = router?.query?.vacancy;
     const strategy = router?.query?.strategy;
     const client = router?.query.client;
-    // const vacant = Form.useWatch('vacant', formPublications);
+    const vacancy = Form.useWatch('vacant', formPublications);
+    const template = Form.useWatch('profile', formPublications);
     // const strategy = Form.useWatch('strategy', formPublications);
     const customer = Form.useWatch('customer', formPublications);
     const { formatData } = useProcessInfo();
@@ -82,13 +83,13 @@ const FormPublications = ({
         if(!customer) return [];
         const _filter = item => item.customer == customer;
         return list_profiles_options.filter(_filter);
-    },[customer, list_profiles_options])
+    },[customer, list_profiles_options, template])
 
     const vacantsByClient = useMemo(()=>{
         if(!customer) return [];
-        const options = item => item.customer?.id === customer;
+        const options = item => item.customer?.id == customer;
         return list_vacancies_options.filter(options);
-    },[customer, list_vacancies_options])
+    },[customer, list_vacancies_options, vacancy])
 
     const onChangeCustomer = () =>{
         setProfile();

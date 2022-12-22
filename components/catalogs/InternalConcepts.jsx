@@ -42,7 +42,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
-  const apply_assimilated = Form.useWatch('apply_assimilated', form);
+  //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
 
@@ -187,7 +187,11 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     } catch (error) {
       setLoading(false);
       console.log(error);
-      message.error(messageError);
+      let  msg = "Ocurrio un error intente de nuevos.";
+      if(error.response?.data?.message){
+        msg = error.response?.data?.message
+      }
+      message.error(msg);
     }
   };
 
@@ -196,7 +200,6 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     setId(item.id);
 
     if (key == 1) {
-      console.log(item)
       form.setFieldsValue({
         code: item.code,
         description: item.description,
@@ -255,6 +258,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       if(error.response?.data?.message){
         msg = error.response?.data?.message
       }
+      message.error(msg);
 
       // showHideMessage(true, {
       //   title:msg,
@@ -322,18 +326,20 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
             : "other_type_payment"
         }
         label={key === 1 ? "Percepción" : key === 2 ? "Deducción" : "Otro pago"}
-        rules={[ruleRequired, {
-          validator(_, value) {
-            let item = data.find((it)=> it.id === value)
-            if (apply_assimilated && !item?.is_assimilated) {
-              return Promise.reject('Este concepto no aplica para asimilado.');
-            }
-            if(!apply_assimilated && !item?.is_payroll){
-              return Promise.reject('Este concepto no aplica para nómina.');
-            }
-            return Promise.resolve();
-          },
-        },]}
+        rules={[ruleRequired
+         //  ,{
+         //  validator(_, value) {
+         //    let item = data.find((it)=> it.id === value)
+         //    if (apply_assimilated && !item?.is_assimilated) {
+         //      return Promise.reject('Este concepto no aplica para asimilado.');
+         //    }
+         //    if(!apply_assimilated && !item?.is_payroll){
+         //      return Promise.reject('Este concepto no aplica para nómina.');
+         //    }
+         //    return Promise.resolve();
+         //  },
+         // },
+        ]}
       >
         <Select
           showSearch
@@ -468,10 +474,10 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
 
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
-            <Button onClick={resetForm}>Cancelar</Button>
+            <Button loading={loading} onClick={resetForm}>Cancelar</Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" htmlType="submit">
               Guardar
             </Button>
           </Col>

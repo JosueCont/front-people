@@ -94,7 +94,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         <Form.Item
                             name='description'
                             label='Descripción del cliente'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Escriba una breve descripción'
@@ -109,7 +109,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         <Form.Item
                             name='comments'
                             label='Comentarios adicionales'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                             // style={{marginBottom: 0}}
                         >
                             <Input.TextArea

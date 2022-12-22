@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { deleteKeyByValue } from '../../../../utils/constant';
 
 export const useProcessInfo = ({
     formVacancies,
@@ -11,6 +10,13 @@ export const useProcessInfo = ({
 }) =>{
 
     const { setFieldsValue } = formVacancies;
+
+    const checkValues = (values) => {
+        return Object.entries(values).reduce((obj, [key, val]) => {
+            if(Array.isArray(val) && val.length <=0) return {...obj, [key]: undefined};
+            return {...obj, [key]: val ?? null};
+        }, {});
+    };
 
     const haveProperties = (obj) => Object.keys(obj).length > 0;
 
@@ -79,6 +85,10 @@ export const useProcessInfo = ({
     const valuesSalary = ({salary}) =>{
         const have_info = haveProperties(salary);
         if(!have_info) return {};
+        if(salary.gross_salary){
+            let salary_ = parseFloat(salary.gross_salary.replaceAll(',',''));
+            salary.gross_salary = salary_.toLocaleString("es-MX", {maximumFractionDigits: 4});
+        }
         delete salary.id;
         return salary;
     }
@@ -98,7 +108,7 @@ export const useProcessInfo = ({
         let info_education = valuesEducation(vacant);
         let info_salary = valuesSalary(vacant);
         let info_recruitment = valuesRecruitment(vacant);
-        let all_info = deleteKeyByValue({
+        let all_info = checkValues({
             ...info_features,
             ...info_education,
             ...info_salary,
@@ -108,21 +118,22 @@ export const useProcessInfo = ({
     }
 
     const createData = (obj) =>{
-        let info = deleteKeyByValue(obj);
+        let info = checkValues(obj);
+        info.interviewers = listInterviewers;
+        info.languages = listLangDomain;
         if(info.assignment_date){
             let formatDate = info.assignment_date.format('YYYY-MM-DD');
             info.assignment_date = formatDate;
         }
         if(info.age_min && info.age_max) info.age_range = [info.age_min, info.age_max];
+        else info.age_range = [];
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
+        else info.academics_degree = [];
         if(info.experiences) info.experiences = info.experiences.split(',');
+        else info.experiences = [];
         if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
-        if(listInterviewers.length > 0) info.interviewers = listInterviewers;
-        if(listLangDomain.length > 0) info.languages = listLangDomain;
-        if(info.gross_salary){
-            let salary_ = parseFloat(info.gross_salary.replaceAll(',',''));
-            info.gross_salary = salary_.toLocaleString("es-MX", {maximumFractionDigits: 4});
-        }
+        else info.technical_skills = [];
+        if(info.gross_salary) info.gross_salary = info.gross_salary.replaceAll(',','');
         return info;
     }
 

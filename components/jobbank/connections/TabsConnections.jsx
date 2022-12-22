@@ -16,7 +16,7 @@ const TabsConnections = ({
     const router = useRouter();
 
     const connections = {
-        FB: {
+        'FB_IG': {
             name: 'Facebook',
             icon: <FaFacebookSquare/>
         },
@@ -58,11 +58,11 @@ const TabsConnections = ({
                 <Col span={24} className='tabs-vacancies'>
                     <Tabs type='card' tabPosition='top'>
                         <Tabs.TabPane
-                            key='FB'
-                            tab={getNameTab('FB')}
+                            key='FB_IG'
+                            tab={getNameTab('FB_IG')}
                         >
                             <Spin spinning={load_connections}>
-                                <TabFacebook infoConnection={appInfo('FB')}/>
+                                <TabFacebook infoConnection={appInfo('FB_IG')}/>
                             </Spin>
                         </Tabs.TabPane>
                         <Tabs.TabPane

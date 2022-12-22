@@ -5,6 +5,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { redirectTo } from '../../../utils/constant';
 import moment from 'moment';
 import SearchHistory from './SearchHistory';
+import { accounstJobbank } from '../../../utils/constant';
 
 const TableHistory = ({ newFilters = {} }) => {
 
@@ -12,48 +13,65 @@ const TableHistory = ({ newFilters = {} }) => {
     const [infoPublication, setInfoPublication] = useState({});
     const [infoHistory, setInfoHistory] = useState([]);
     const [loading, setLoading] = useState(false);
-    const nameList = {'FB': 'Facebook'};
-    moment.locale('es-mx');
 
     useEffect(()=>{
         if(router.query?.id) getInfoHistory(router.query.id);
-    },[router])
+    },[router.query?.id])
 
-    const search_ = item =>{
-        let date = moment(item.timestamp).format('DD-MM-YYYY');
-        let check_start = date >= router.query?.start;
-        let check_end = date <= router.query?.end;
-        let check_code = item.code_post == router.query?.account;
-        let check_dates = check_start && check_end;
-        if(check_dates && check_code) return true;
-        if(check_dates) return true;
-        if(check_code) return true;
-        return false;
-    }
-
-    const onFilterHistory = (history = []) =>{
-        let valid = ['start','end','account'];
-        let keys = Object.keys(router.query);
-        let exist = keys.some(item => valid.includes(item));
-        if(exist){
-            let results = history?.filter(search_);
-            setInfoHistory(results);
-            return;
-        }
-        setInfoHistory(history);
-    }
+    useEffect(()=>{
+        if(Object.keys(infoPublication).length <= 0) return;
+        setLoading(true)
+        onFilterHistory();
+    },[infoPublication, router.query])
 
     const getInfoHistory = async (id) =>{
         try {
             setLoading(true)
             let response = await WebApiJobBank.getInfoPublication(id);
             setInfoPublication(response.data);
-            onFilterHistory(response.data?.history);
-            setLoading(false)
         } catch (e) {
             console.log(e)
             setLoading(false)
         }
+    }
+
+    const searchItems = (size) =>{
+        return infoPublication.history?.filter(item =>{
+            let date = moment(item.timestamp).format('DD-MM-YYYY');
+            let check_start = date >= router.query?.start;
+            let check_end = date <= router.query?.end;
+            let check_code = item.code_post == router.query?.account;
+            if(size == 3 && check_start && check_end && check_code) return true;
+            if(size == 2 && check_start && check_end) return true;
+            if(size == 1 && check_code) return true;
+            return false;
+        });
+    }
+
+    const onFilterHistory = () =>{
+        let valid = ['start','end','account'];
+        let keys = Object.keys(router.query);
+        let results = keys.filter(item => valid.includes(item));
+        if(results.length > 0){
+            let records = searchItems(results.length);
+            setTimeout(()=>{
+                setInfoHistory(records);
+                setLoading(false)
+            },1000)
+            return;
+        }
+        setTimeout(()=>{
+            setInfoHistory(infoPublication.history);
+            setLoading(false)
+        },1000)
+    }
+
+    const getAccount = (item) =>{
+        if(!item.code_post) return null;
+        const find_ = record => record.value == item.code_post;
+        let result = accounstJobbank.find(find_);
+        if(!result) return null;
+        return result.label;
     }
 
     const columns = [
@@ -61,7 +79,7 @@ const TableHistory = ({ newFilters = {} }) => {
             title: 'Cuenta',
             render: (item) =>{
                 return(
-                    <span>{nameList[item.code_post]}</span>
+                    <span>{getAccount(item)}</span>
                 )
             }
         },
@@ -77,14 +95,14 @@ const TableHistory = ({ newFilters = {} }) => {
         {
             title: 'Publicación',
             render: (item) =>{
-                return(
+                return item.post_url ? (
                     <a
                         style={{color: '#1890ff'}}
                         onClick={()=> redirectTo(item.post_url, true)}
                     >
                         Ir a publicación
                     </a>
-                )
+                ) : <></>;
             }
         }
     ]

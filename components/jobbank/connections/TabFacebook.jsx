@@ -26,10 +26,17 @@ import {
 import { getConnections } from '../../../redux/jobBankDuck';
 import { connect } from 'react-redux';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { FacebookFilled } from '@ant-design/icons';
+import {
+    FacebookFilled,
+    ToTopOutlined,
+    EyeOutlined,
+    DeleteOutlined
+} from '@ant-design/icons';
 import { useProcessInfo } from './hook/useProcessInfo';
 import { FacebookLoginClient } from '@greatsumini/react-facebook-login';
 import { useRouter } from 'next/router';
+import { redirectTo } from '../../../utils/constant';
+import { getFileExtension } from '../../../utils/functions';
 
 const TabFacebook = ({
     infoConnection = {},
@@ -51,9 +58,12 @@ const TabFacebook = ({
     const validate_config = {'true': config_success, 'false': config_error};
     const router = useRouter();
     const btnSubmit = useRef(null);
+    const inputFile = useRef(null);
     const [formFacebook] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [fileImg, setFileImg] = useState([]);
     const { createData, formatData } = useProcessInfo();
+    const typeFile = ['png','jpg','jpeg'];
 
     useLayoutEffect(()=>{
         (async ()=>{
@@ -78,7 +88,10 @@ const TabFacebook = ({
     const setValuesForm = () =>{
         formFacebook.resetFields();
         let values = formatData(infoConnection);
-        formFacebook.setFieldsValue(values);
+        let image_read = infoConnection.default_image
+            ? infoConnection.default_image.split('/').at(-1)
+            : null; 
+        formFacebook.setFieldsValue({...values, image_read});
     }
 
     const initFacebook = async () =>{
@@ -92,16 +105,54 @@ const TabFacebook = ({
         });
     }
 
+    const passFormData = (values) =>{
+        let objValues = createData(values);
+        let dataFacebook = new FormData();
+        dataFacebook.append('node', currentNode.id);
+        if(fileImg.length > 0) dataFacebook.append('default_image', fileImg[0]);
+        Object.entries(objValues).map(item =>{
+            let value = typeof item[1] == 'object'
+                ? JSON.stringify(item[1])
+                : item[1];
+            dataFacebook.append(item[0], value)
+        });
+        return dataFacebook;
+    }
+
+    const onFinish = async (values) =>{
+        try {
+            setLoading(true)
+            let body = passFormData(values);
+            await WebApiJobBank.updateConnection(infoConnection.id, body);
+            setMessageSucces('Conexión actualizada');
+            setLoading(false)
+            setFileImg([])
+            getConnections(currentNode.id);
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            setMessageError('Conexión no actualizada');
+        }
+    }
+
     const onSuccess = async (response) =>{
         let msgError = 'Acceso no obtenido';
         try {
             setMessageLoading('Guardando acceso...');
-            let body = { token: response.accessToken };
-            let resp = await WebApiJobBank.getTokenFB(body);
-            if(!resp.data?.token) return setMessageError(msgError);
+            let resp = await WebApiJobBank.getTokenFB({
+                token: response.accessToken,
+                app_id: infoConnection.data_config?.app_id,
+                secret_key: infoConnection.data_config?.secret_key
+            });
+            if(!resp.data?.page_token || !resp.data?.user_token){
+                setMessageError(msgError);
+                deletePermissions();
+                return;
+            }
             formFacebook.setFieldsValue({
                 is_valid: true,
-                'data_config|page_access_token': resp.data.token
+                'data_config|user_access_token': resp.data.user_token,
+                'data_config|page_access_token': resp.data.page_token
             });
             setTimeout(()=>{
                 btnSubmit.current.click();
@@ -134,7 +185,10 @@ const TabFacebook = ({
     }
 
     const validateResp = (resp) =>{
-        if(!resp.authResponse) return onFail({status: 'loginCancelled'});
+        if(!resp.authResponse){
+            onFail({status: 'loginCancelled'});
+            return;
+        }
         onSuccess(resp.authResponse);
         FacebookLoginClient.logout(onLogout);
         // const fields = 'name,email,picture';
@@ -142,29 +196,22 @@ const TabFacebook = ({
     }
 
     const validateLogin = () =>{
-        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
+        if (!window.FB){
+            onFail({status: 'facebookNotLoaded'});
+            return;
+        }
         FacebookLoginClient.login(validateResp, {
-            scope: 'public_profile,email,pages_show_list,pages_manage_posts'
+            scope: `email,
+                public_profile,
+                pages_show_list,
+                pages_manage_posts,
+                instagram_basic,
+                instagram_content_publish,
+            `
         });
     }
 
-    const onFinish = async (values) =>{
-        try {
-            setLoading(true)
-            let body = createData(values);
-            await WebApiJobBank.updateConnection(infoConnection.id, {...body, node: currentNode.id});
-            setMessageSucces('Conexión actualizada');
-            setLoading(false)
-            getConnections(currentNode.id);
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            setMessageError('Conexión no actualizada');
-        }
-    }
-
     const deletePermissions = () =>{
-        if (!window.FB) return onFail({status: 'facebookNotLoaded'});
         window.FB.api('/me/permissions', 'delete', (res)=>{
             console.log('delete', res)
         })
@@ -180,13 +227,44 @@ const TabFacebook = ({
         </Button>
     )
 
+    const openFile = () =>{
+        inputFile.current.value = null;
+        inputFile.current.click();
+    }
+
+    const setFileSelected = ({target : { files }}) =>{
+        if(Object.keys(files).length <= 0){
+            let msg = 'No se pudo cargar el archivo, intente de nuevo';
+            message.error(msg)
+            return;
+        }
+        let extension = getFileExtension(files[0].name);
+        if(!typeFile.includes(extension.toLowerCase())){
+            let msg = 'El archivo seleccionado no es válido';
+            message.error(msg);
+            return;
+        }
+        let size = files[0].size / 1024 / 1024;
+        if(size > 10){
+            message.error(`Archivo pesado: ${size.toFixed(2)}mb`);
+            return;
+        }
+        setFileImg([files[0]]);
+        formFacebook.setFieldsValue({image_read: files[0].name});
+    }
+
+    const resetImg = () =>{
+        setFileImg([]);
+        formFacebook.setFieldsValue({image_read: null});
+    }
+
     return (
         <Form
             form={formFacebook}
             onFinish={onFinish}
             id='form-facebook'
             layout='vertical'
-            initialValues={{code: 'FB'}}
+            initialValues={{code: 'FB_IG'}}
         >
             <Row gutter={[24,0]}>
                 {infoConnection.data_config?.page_access_token && (
@@ -198,120 +276,201 @@ const TabFacebook = ({
                         </Form.Item>
                     </Col>
                 )}
-                <Col xs={24} xxl={16}>
-                    <Row gutter={[24,0]}>
-                        <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
-                            <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
-                                <Checkbox/>
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='is_active'
-                                label='¿Activar aplicación?'
-                                rules={[ruleRequired]}
-                            >
-                                <Select
-                                    allowClear
-                                    placeholder='Seleccionar una opción'
-                                >
-                                    <Select.Option value={true} key={true}>Sí</Select.Option>
-                                    <Select.Option value={false} key={false}>No</Select.Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='name'
-                                label='Nombre'
-                                rules={[ruleRequired, ruleWhiteSpace]}
-                            >
-                                <Input
-                                    maxLength={20}
-                                    placeholder='Nombre de la conexión'
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='code'
-                                label='Código'
-                                rules={[ruleRequired, ruleWhiteSpace]}
-                            >
-                                <Input
-                                    disabled
-                                    maxLength={10}
-                                    placeholder='Código de la conexión'
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='data_config|app_url'
-                                label='URL de la conexión'
-                                rules={[
-                                    ruleURL,
-                                    ruleRequired,
-                                    ruleWhiteSpace
-                            ]}
-                            >
-                                <Input
-                                    // maxLength={10}
-                                    placeholder='Ej. https://graph.facebook.com/'
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='data_config|app_id'
-                                label='Identificador (App ID)'
-                                rules={[ruleRequired, ruleWhiteSpace]}
-                            >
-                                <Input
-                                    maxLength={50}
-                                    placeholder='ID de la aplicación'
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='data_config|page_id'
-                                label='Identificador (Page ID)'
-                                rules={[ruleRequired, ruleWhiteSpace]}
-                            >
-                                <Input
-                                    maxLength={50}
-                                    placeholder='ID de la página'
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} md={12} lg={8}>
-                            <Form.Item
-                                name='data_config|secret_key'
-                                label='Llave secreta'
-                                rules={[ruleWhiteSpace]}
-                            >
-                                <Input
-                                    maxLength={50}
-                                    placeholder='Llave secreta de la aplicación'
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
+                <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
+                    <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
+                        <Checkbox/>
+                    </Form.Item>
                 </Col>
-                <Col xs={24} xxl={8}>
+                <Col xs={24} md={12} lg={8}>
                     <Form.Item
-                        name='data_config|page_access_token'
-                        label='Token de acceso'
-                        tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
-                        rules={[ruleWhiteSpace]}
+                        name='is_active'
+                        label='¿Activar aplicación?'
+                        rules={[ruleRequired]}
                     >
-                        <Input.TextArea
-                            disabled
-                            autoSize={{minRows: 5, maxRows: 5}}
-                            placeholder='Token de acceso'
+                        <Select
+                            allowClear
+                            placeholder='Seleccionar una opción'
+                        >
+                            <Select.Option value={true} key={true}>Sí</Select.Option>
+                            <Select.Option value={false} key={false}>No</Select.Option>
+                        </Select>
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='name'
+                        label='Nombre'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            maxLength={20}
+                            placeholder='Nombre de la conexión'
                         />
                     </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='code'
+                        label='Código'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            readOnly
+                            maxLength={10}
+                            placeholder='Código de la conexión'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        label='Imagen predeterminada'
+                        tooltip={`Esta imagen (${typeFile.join(', ')}) será utilizada en caso de que
+                        no se haya seleccionado ninguna antes de realizar la publicación.`}
+                        required
+                    >
+                        <Input.Group compact>
+                            <Form.Item
+                                noStyle
+                                name='image_read'
+                                rules={[ruleRequired]}
+                            >
+                                <Input
+                                    readOnly
+                                    placeholder='Ningún archivo seleccionado'
+                                    style={{
+                                        width: 'calc(100% - 64px)',
+                                        borderTopLeftRadius: 10,
+                                        borderBottomLeftRadius: 10
+                                    }}
+                                />
+                            </Form.Item>
+                            {infoConnection.default_image ? (
+                                <Button
+                                    className='custom-btn'
+                                    onClick={()=> redirectTo(infoConnection.default_image, true)}
+                                    icon={<EyeOutlined />}
+                                />
+                            ): (
+                                <Button
+                                    className='custom-btn'
+                                    onClick={()=> resetImg()}
+                                    icon={<DeleteOutlined />}
+                                />
+                            )}
+                            <Button
+                                icon={<ToTopOutlined />}
+                                onClick={()=> openFile()}
+                                style={{
+                                    borderTopRightRadius: 10,
+                                    borderBottomRightRadius: 10
+                                }}
+                            />
+                            <input
+                                type='file'
+                                style={{display: 'none'}}
+                                accept={typeFile.reduce((acc, item) => acc +=`.${item}, `,'')}
+                                ref={inputFile}
+                                onChange={setFileSelected}
+                            />
+                        </Input.Group>
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='data_config|app_url'
+                        label='URL de la conexión'
+                        rules={[
+                            ruleURL,
+                            ruleRequired,
+                            ruleWhiteSpace
+                    ]}
+                    >
+                        <Input
+                            // maxLength={10}
+                            placeholder='Ej. https://graph.facebook.com/'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='data_config|app_id'
+                        label='Identificador (App ID)'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            maxLength={50}
+                            placeholder='ID de la aplicación'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='data_config|page_id'
+                        label='Identificador (Page ID)'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            maxLength={50}
+                            placeholder='ID de la página'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='data_config|ig_user_id'
+                        label='Identificador (User ID)'
+                        tooltip='Parámetro necesario para publicar en Instagram'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            maxLength={50}
+                            placeholder='Llave secreta de la aplicación'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                        name='data_config|secret_key'
+                        label='Llave secreta'
+                        rules={[ruleRequired, ruleWhiteSpace]}
+                    >
+                        <Input
+                            maxLength={50}
+                            placeholder='Llave secreta de la aplicación'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col span={24}>
+                    <Row gutter={[24,0]}>
+                        <Col xs={24} lg={12}>
+                            <Form.Item
+                                name='data_config|page_access_token'
+                                label='Token de acceso (página)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                // rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    readOnly
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} lg={12}>
+                            <Form.Item
+                                name='data_config|user_access_token'
+                                label='Token de acceso (usuario)'
+                                tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
+                                // rules={[ruleWhiteSpace]}
+                            >
+                                <Input.TextArea
+                                    readOnly
+                                    autoSize={{minRows: 4, maxRows: 4}}
+                                    placeholder='Token de acceso'
+                                />
+                            </Form.Item>
+                        </Col>  
+                    </Row>
                 </Col>
                 <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                     {/* <FacebookLogin

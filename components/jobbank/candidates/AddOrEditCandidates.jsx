@@ -9,7 +9,7 @@ import {
     getSubCategories,
     getCompetences,
     getSectors,
-    getSpecializationArea
+    getListStates
 } from '../../../redux/jobBankDuck';
 import { deleteFiltersJb } from '../../../utils/functions';
 
@@ -20,7 +20,7 @@ const AddOrEditCandidates = ({
     getSubCategories,
     getCompetences,
     getSectors,
-    getSpecializationArea
+    getListStates
 }) => {
 
     const router = useRouter();
@@ -37,7 +37,7 @@ const AddOrEditCandidates = ({
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
             getSectors(currentNode.id);
-            getSpecializationArea(currentNode.id);
+            getListStates(currentNode.id);
         }
     },[currentNode])
 
@@ -82,6 +82,6 @@ export default connect(
         getSubCategories,
         getCompetences,
         getSectors,
-        getSpecializationArea
+        getListStates
     }
 )(AddOrEditCandidates);

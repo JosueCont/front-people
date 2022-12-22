@@ -286,7 +286,7 @@ const TableVacancies = ({
             }
             visible={openModalDelete}
             keyTitle='job_position'
-            keyDescription='description'
+            keyDescription='customer, name'
             close={closeModalDelete}
             itemsToDelete={itemsToDelete}
             actionDelete={actionDelete}

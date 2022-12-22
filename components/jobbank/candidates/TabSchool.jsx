@@ -39,7 +39,7 @@ const TabSchool = ({
         if(router.query.id && action == 'edit'){
             getInfoEducation(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoEducation = async (id) =>{
         try {
@@ -86,7 +86,7 @@ const TabSchool = ({
             setLoading(true)
             let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteCandidateEducation(id);
-            message.success('Educación eliminadaa');
+            message.success('Educación eliminada');
             getInfoEducation(router.query.id);
         } catch (e) {
             console.log(e)
@@ -108,7 +108,8 @@ const TabSchool = ({
     }
 
     const openModalRemove = (item) =>{
-        setItemsToDelete([item])
+        let level_academic = getAcademic(item);
+        setItemsToDelete([{...item, level_academic}]);
         setOpenModalDelete(true)
     }
 
@@ -178,18 +179,18 @@ const TabSchool = ({
             }
         },
         {
+            title: 'Institución',
+            dataIndex: 'institution_name',
+            key: 'institution_name',
+            ellipsis: true
+        },
+        {
             title: 'Estatus',
             render: (item) =>{
                 return(
                     <span>{getStatus(item)}</span>
                 )
             }
-        },
-        {
-            title: 'Institución',
-            dataIndex: 'institution_name',
-            key: 'institution_name',
-            ellipsis: true
         },
         {
             title: 'Fecha finalización',
@@ -258,7 +259,8 @@ const TabSchool = ({
            <DeleteItems
                 title='¿Estás seguro de eliminar esta educación?'
                 visible={openModalDelete}
-                keyTitle='institution_name'
+                keyTitle='level_academic'
+                keyDescription='institution_name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

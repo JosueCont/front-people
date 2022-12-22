@@ -347,7 +347,7 @@ const TableClients = ({
                 }
                 visible={openModalDelete}
                 keyTitle='name'
-                keyDescription='business_name'
+                keyDescription='rfc'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

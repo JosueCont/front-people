@@ -82,7 +82,7 @@ const ModalContact = ({
                         <Form.Item
                             name='email'
                             label='Correo del contacto'
-                            rules={[ruleEmail]}
+                            rules={[ruleRequired, ruleEmail]}
                         >
                             <Input
                                 maxLength={50}
@@ -94,7 +94,7 @@ const ModalContact = ({
                         <Form.Item
                             name='phone'
                             label='Teléfono del contacto'
-                            rules={[rulePhone]}
+                            rules={[ruleRequired, rulePhone]}
                         >
                             <Input
                                 placeholder='Teléfono del contacto'

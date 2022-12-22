@@ -26,7 +26,8 @@ const ModalPositions = ({
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
         if(itemToEdit.start_date) itemToEdit.start_date = moment(itemToEdit.start_date);
-        formPosition.setFieldsValue(itemToEdit);
+        let sector = itemToEdit.sector?.id ?? null;
+        formPosition.setFieldsValue({...itemToEdit, sector});
     },[itemToEdit])
 
     const onCloseModal = () =>{

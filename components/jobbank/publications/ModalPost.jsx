@@ -83,6 +83,7 @@ const ModalPost = ({
                     <Col span={24}>
                         <Form.Item name='start_message' label='Mensaje inicial'>
                             <Input.TextArea
+                                maxLength={2000}
                                 autoSize={{minRows: 3, maxRows: 3}}
                                 placeholder='Escriba el mensaje'
                             />
@@ -91,6 +92,7 @@ const ModalPost = ({
                     <Col span={24}>
                         <Form.Item name='end_message' label='Mensaje final'>
                             <Input.TextArea
+                                maxLength={2000}
                                 autoSize={{minRows: 3, maxRows: 3}}
                                 placeholder='Escriba el mensaje'
                             />
