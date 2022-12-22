@@ -16,8 +16,8 @@ const DeleteItems = ({
     timeLoad = 2000
 }) =>{
 
-    let access_title = keyTitle.replaceAll(' ','').split(',');
-    let access_description = keyDescription.replaceAll(' ','').split(',');
+    let access_title = keyTitle?.replaceAll(' ','')?.split(',');
+    let access_description = keyDescription?.replaceAll(' ','')?.split(',');
     const [loading, setLoading] = useState(false);
 
     const onFinish = () =>{
