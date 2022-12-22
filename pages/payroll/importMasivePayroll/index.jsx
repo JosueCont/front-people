@@ -176,14 +176,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     data.companies.forEach((company) => {
       if (_.get(company, "patronal_registrations", null)) {
         company.patronal_registrations.forEach((regPatr, i) => {
-          console.log('company?.extraordinary', regPatr?.extraordinary)
-          extraordinary = extraordinary +  (regPatr?.extraordinary ? regPatr?.extraordinary?.length : 0);
+          console.log("company?.extraordinary", regPatr?.extraordinary);
+          extraordinary =
+            extraordinary +
+            (regPatr?.extraordinary ? regPatr?.extraordinary?.length : 0);
 
           regPatr.periodicities.forEach((periodicity, i) => {
             console.log(periodicity?.cfdis.length);
             numXML =
               numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
-
           });
         });
       }
@@ -196,18 +197,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         });
       }
 
-
       if (_.get(company, "extraordinary", null)) {
         extraordinary += company.extraordinary.length;
       }
-
     });
 
     let resume = {
       numCompanies,
       numRegPatronales,
       numXML,
-      extraordinary
+      extraordinary,
     };
 
     setResumeData(resume);
@@ -227,10 +226,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           />
         </Col>
         <Col span={12}>
-          <Statistic title="xml Importados" value={resumeData?.numXML + resumeData?.extraordinary} />
+          <Statistic
+            title="xml Importados"
+            value={resumeData?.numXML + resumeData?.extraordinary}
+          />
         </Col>
         <Col span={12}>
-          <Statistic title="Extraordinarios" value={resumeData?.extraordinary} />
+          <Statistic
+            title="Extraordinarios"
+            value={resumeData?.extraordinary}
+          />
         </Col>
       </Row>
     );
