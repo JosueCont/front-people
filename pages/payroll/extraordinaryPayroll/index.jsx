@@ -147,7 +147,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       title: "Antigüedad",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.antiquity}</div>,
+      render: (item) => <div>{item.person.antiquity}</div>,
     },
     {
       title: "Salario diario",

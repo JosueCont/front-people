@@ -63,8 +63,8 @@ const TableVacancies = ({
 
     const actionDuplicate = async (item) =>{
         const key = 'updatable';
+        message.loading({content: 'Duplicando vacante...', key});
         try {
-            message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
