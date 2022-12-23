@@ -23,10 +23,9 @@ const SearchCandidates = ({
     const [openModal, setOpenModal] = useState(false);
 
     const showModal = () =>{
-        let area = router.query?.area ? parseInt(router.query.area) : null;
         let is_other = router.query?.other_area ? true : false;
         let state = router.query?.state ? parseInt(router.query.state) : null;
-        formSearch.setFieldsValue({...router.query, area, is_other, state});
+        formSearch.setFieldsValue({...router.query, is_other, state});
         setOpenModal(true)
     }
 

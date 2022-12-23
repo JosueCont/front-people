@@ -228,7 +228,8 @@ const DetailsVacancies = ({
                         // requiredMark={false}
                         initialValues={{
                             vo_bo: false,
-                            rotative_turn: false
+                            rotative_turn: false,
+                            requires_travel_availability: false
                         }}
                     >
                         <Tabs

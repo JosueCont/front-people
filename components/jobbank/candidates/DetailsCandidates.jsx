@@ -14,8 +14,9 @@ import TabGeneral from './TabGeneral';
 import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
-import DocExpedient from './DocExpedient';
-import Expedient from './Expedient';
+
+//*Necesario para la libreria react-pdf
+const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
 
 const DetailsCandidates = ({
     action,
@@ -28,9 +29,9 @@ const DetailsCandidates = ({
     const [disableTab, setDisabledTab] = useState(true);
     const [currenKey, setCurrentKey] = useState('1');
     const [infoCandidate, setInfoCandidate] = useState({});
-    const [infoEducation, setInfoEducation] = useState({});
-    const [infoExperience, setInfoExperience] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
+    const [infoEducation, setInfoEducation] = useState([]);
+    const [infoExperience, setInfoExperience] = useState([]);
+    const [infoPositions, setInfoPositions] = useState([]);
 
     const actionBack = () =>{
         router.push({

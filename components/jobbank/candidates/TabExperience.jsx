@@ -21,7 +21,6 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
 import DeleteItems from '../../../common/DeleteItems';
 import ListCompetences from './ListCompetences';
 
@@ -31,14 +30,6 @@ const TabExperience = ({
     infoExperience
 }) => {
 
-    const {
-        load_competences,
-        list_competences,
-        load_main_categories,
-        list_main_categories,
-        load_sub_categories,
-        list_sub_categories
-    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -57,7 +48,7 @@ const TabExperience = ({
     const getInfoExperience = async (id) =>{
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getCandidateExperience(id);
+            let response = await WebApiJobBank.getCandidateExperience(id, '&paginate=0');
             setInfoExperience(response.data);
             setLoading(false)
         } catch (e) {
@@ -143,22 +134,6 @@ const TabExperience = ({
     const closeModalList = () =>{
         setItemToEdit({})
         setOpenModalList(false)
-    }
-
-    const getCategory = (item) =>{
-        if(!item.category) return null;
-        const find_ = record => record.id == item.category;
-        let result = list_main_categories.find(find_);
-        if(!result) return null;
-        return result.name;
-    }
-
-    const getSubCategory = (item) =>{
-        if(!item.sub_category) return null;
-        const find_ = record => record.id == item.sub_category;
-        let result = list_sub_categories.find(find_);
-        if(!result) return null;
-        return result.name;
     }
 
     const menuTable = () => {
@@ -274,13 +249,12 @@ const TabExperience = ({
                 className='table-custom'
                 columns={columns}
                 loading={loading}
-                dataSource={infoExperience.results}
-                locale={{ emptyText: loading
+                dataSource={infoExperience}
+                locale={{emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoExperience.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
