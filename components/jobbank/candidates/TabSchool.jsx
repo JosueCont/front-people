@@ -44,7 +44,7 @@ const TabSchool = ({
     const getInfoEducation = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getCandidateEducation(id);
+            let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             setInfoEducation(response.data);
             setLoading(false);
         } catch (e) {
@@ -237,13 +237,12 @@ const TabSchool = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoEducation.results}
+                dataSource={infoEducation}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoEducation.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}

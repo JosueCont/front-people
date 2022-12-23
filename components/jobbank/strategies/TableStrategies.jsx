@@ -157,10 +157,12 @@ const TableStrategies = ({
         {
             title: 'Producto',
             dataIndex: 'product',
-            key: 'product'
+            key: 'product',
+            ellipsis: true
         },
         {
             title: 'Cliente',
+            ellipsis: true,
             render: (item) =>{
                 return(
                     <span>{getClient(item)}</span>
@@ -170,7 +172,8 @@ const TableStrategies = ({
         {
             title: 'Vacante',
             dataIndex: ['vacant','job_position'],
-            key: ['vacant','job_position']
+            key: ['vacant','job_position'],
+            ellipsis: true
         },
         // {
         //     title: 'Asignación',
@@ -187,6 +190,7 @@ const TableStrategies = ({
                     </Dropdown>
                 )
             },
+            width: 60, 
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>

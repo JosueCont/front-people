@@ -29,9 +29,9 @@ const DetailsCandidates = ({
     const [disableTab, setDisabledTab] = useState(true);
     const [currenKey, setCurrentKey] = useState('1');
     const [infoCandidate, setInfoCandidate] = useState({});
-    const [infoEducation, setInfoEducation] = useState({});
-    const [infoExperience, setInfoExperience] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
+    const [infoEducation, setInfoEducation] = useState([]);
+    const [infoExperience, setInfoExperience] = useState([]);
+    const [infoPositions, setInfoPositions] = useState([]);
 
     const actionBack = () =>{
         router.push({
