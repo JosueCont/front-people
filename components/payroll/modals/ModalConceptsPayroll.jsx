@@ -166,29 +166,27 @@ const ModalConceptsPayroll = ({
           return (
             <Col span={12}>
               <Row style={{ marginBottom: "8px" }}>
-                <Col span={18}>{item.description}</Col>
-                <Col span={4}>
-                  <Row wrap={false}>
-                    {item.data_type === 1 && (
-                      <span style={{ marginRight: "7px", marginTop: "3px" }}>
-                        $
-                      </span>
-                    )}
-                    <InputNumber
-                      key={item.id}
-                      type="number"
-                      name={item.id}
-                      defaultValue={item.value}
-                      formatter={(value) => value.replace("-", "")}
-                      controls={false}
-                      onChange={(e) => changeHandler(type, item.id)(e)}
-                    />
-                    {item.data_type === 2 && (
-                      <span style={{ marginLeft: "7px", marginTop: "3px" }}>
-                        UNIDAD(ES)
-                      </span>
-                    )}
-                  </Row>
+                <Col span={16}>{item.description}</Col>
+                <Col span={6}>
+                  {item.data_type === 1 && (
+                    <span style={{ marginRight: "7px", marginTop: "3px" }}>
+                      $
+                    </span>
+                  )}
+                  <InputNumber
+                    key={item.id}
+                    type="number"
+                    name={item.id}
+                    defaultValue={item.value}
+                    formatter={(value) => value.replace("-", "")}
+                    controls={false}
+                    onChange={(e) => changeHandler(type, item.id)(e)}
+                  />
+                  {item.data_type === 2 && (
+                    <span style={{ marginLeft: "7px", marginTop: "3px" }}>
+                      UNIDAD(ES)
+                    </span>
+                  )}
                 </Col>
               </Row>
             </Col>
