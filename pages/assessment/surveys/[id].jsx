@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Breadcrumb,
   Button,
@@ -32,6 +32,7 @@ import {
   questionOrderAction,
 } from "../../../redux/assessmentDuck";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const Detail = ({ assessmentStore, ...props }) => {
   const { Panel } = Collapse;
@@ -244,7 +245,9 @@ const Detail = ({ assessmentStore, ...props }) => {
         <Breadcrumb.Item className={"pointer"} href="/home/persons/">
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => router.push({ pathname: "/assessment/surveys" })}>

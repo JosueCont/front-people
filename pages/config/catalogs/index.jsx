@@ -1,5 +1,5 @@
 import { withAuthSync } from "../../../libs/auth";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Breadcrumb, Tabs, Card, Tooltip } from "antd";
 import {
   ApartmentOutlined,
@@ -32,6 +32,7 @@ import AccountantAccountCatalog from "../../../components/catalogs/AccountantAcc
 import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 import {FormattedMessage} from "react-intl";
 import React from "react";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
@@ -46,7 +47,9 @@ const configBusiness = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
         </Breadcrumb>

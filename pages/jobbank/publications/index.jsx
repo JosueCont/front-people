@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
@@ -12,7 +12,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
-import { getFiltersJB } from '../../../utils/functions';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -49,7 +49,9 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Publicaciones</Breadcrumb.Item>
             </Breadcrumb>

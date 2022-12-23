@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
-import NewHeader from "../components/NewHeader";
+import NewHeader from "../components/newHeaderUser";
 import MainSider from "../components/MainSider";
 import MainSiderAdmin from "../components/MainSiderAdmin";
 import WebApiPeople from "../api/WebApiPeople";
@@ -266,10 +266,9 @@ const MainLayout = ({
           config={props.config}
         />
 
-        {isAdmin?
-            <Layout>
+          <Layout>
             {!hideMenu && props.currentNode && (
-              <MainSiderAdmin
+              <MainSider
                 currentKey={currentKey}
                 defaultOpenKeys={
                   props.defaultOpenKeys ? props.defaultOpenKeys : null
@@ -280,21 +279,6 @@ const MainLayout = ({
               <div className="div-main-layout">{props.children}</div>
             </Content>
           </Layout>
-        :  
-         <Layout>
-        {!hideMenu && props.currentNode && (
-          <MainSider
-            currentKey={currentKey}
-            defaultOpenKeys={
-              props.defaultOpenKeys ? props.defaultOpenKeys : null
-            }
-          />
-        )}
-        <Content>
-          <div className="div-main-layout">{props.children}</div>
-        </Content>
-      </Layout> 
-       }
         
       </Layout>
       {props.currentNode && (

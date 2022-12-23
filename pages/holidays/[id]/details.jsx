@@ -11,7 +11,7 @@ import {
   Input,
   Modal,
 } from "antd";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -22,6 +22,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const HolidaysDetails = (props) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -169,8 +170,12 @@ const HolidaysDetails = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/holidays" })}>Vacaciones</Breadcrumb.Item>

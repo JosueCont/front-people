@@ -1,5 +1,5 @@
 import React from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";

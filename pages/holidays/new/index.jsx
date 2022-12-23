@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -52,8 +53,12 @@ const HolidaysNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/holidays" })}>Vacaciones</Breadcrumb.Item>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../../layout/MainLayout";
+import MainLayout from "../../../../layout/MainInter";
 import { Breadcrumb, Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../../components/payroll/forms/FormPaymentCalendar";
 import { connect } from "react-redux";
+import { verifyMenuNewForTenant } from "../../../../utils/functions";
 
 const EditPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
@@ -21,7 +22,9 @@ const EditPaymentCalendar = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item
             className={"pointer"}

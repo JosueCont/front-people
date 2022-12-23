@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../../layout/MainLayout'
+import MainLayout from '../../../layout/MainInter'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
 import TableAssessments from '../../../components/assessment/persons/TableAssessments'
 import { useRouter } from 'next/router';

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { Row, Col, Table, Breadcrumb, message, Modal } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { EyeOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const DocumentLog = ({ ...props }) => {
   const route = useRouter();
@@ -100,7 +101,9 @@ const DocumentLog = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
         <Breadcrumb.Item>Carga de documentos</Breadcrumb.Item>
       </Breadcrumb>

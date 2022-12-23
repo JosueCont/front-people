@@ -2,6 +2,21 @@ import axios from "axios";
 import WebApiPeople from "../api/WebApiPeople";
 import { message } from "antd";
 import { typeHttp } from "../config/config";
+import { tenant_ } from "../api/axiosApi";
+
+
+export const verifyMenuNewForTenant=() => {
+  let tenantList = process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU?process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU:null
+  if (tenantList){
+    if (tenantList.includes(tenant_)){
+      return true
+    }else{
+      return false
+    }
+  }else{
+    return false
+  }
+}
 
 export const generateYear = (year_init = 2020) => {
   let yearsArray = [];

@@ -7,6 +7,7 @@ import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/newHeaderUser";
+// import NewHeaderUser from "../components/newHeaderUser";
 import Head from "next/head";
 import MainSiderUser from "../components/MainSiderUser";
 
