@@ -6,6 +6,7 @@ import moment from "moment";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../../api/WebApiPayroll";
 import Calendar from "rc-year-calendar";
+import 'rc-year-calendar/locales/rc-year-calendar.es'
 import { verifyMenuNewForTenant } from "../../../../utils/functions";
 
 const Calendars = () => {
