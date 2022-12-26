@@ -67,12 +67,10 @@ const configBusiness = ({ ...props }) => {
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Departamentos">
                         <div className="container-title-tab">
                           <GoldOutlined />
                           <div className="text-title-tab">Departamentos</div>
                         </div>
-                      </Tooltip>
                     }
                     key="tab_1"
                   >
@@ -86,14 +84,12 @@ const configBusiness = ({ ...props }) => {
                 {props.permissions.job.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Puestos de trabajo">
                         <div className="container-title-tab">
                           <ApartmentOutlined />
                           <div className="text-title-tab">
                             Puestos de trabajo
                           </div>
                         </div>
-                      </Tooltip>
                     }
                     key="tab_2"
                   >
@@ -107,14 +103,12 @@ const configBusiness = ({ ...props }) => {
                 {props.permissions.person_type.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Tipos de persona">
                         <div className="container-title-tab">
                           <UserOutlined />
                           <div className="text-title-tab">
                             Tipos de personas
                           </div>
                         </div>
-                      </Tooltip>
                     }
                     key="tab_3"
                   >
@@ -128,12 +122,10 @@ const configBusiness = ({ ...props }) => {
                 {props.permissions.relationship.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Parentescos">
                         <div className="container-title-tab">
                           <UserSwitchOutlined />
                           <div className="text-title-tab">Parentescos</div>
                         </div>
-                      </Tooltip>
                     }
                     key="tab_4"
                   >
@@ -147,14 +139,12 @@ const configBusiness = ({ ...props }) => {
                 {props.permissions.document_type.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Tipos de documento">
                         <div className="container-title-tab">
                           <FileOutlined />
                           <div className="text-title-tab">
                             Tipos de documento
                           </div>
                         </div>
-                      </Tooltip>
                     }
                     key="tab_5"
                   >
@@ -167,12 +157,10 @@ const configBusiness = ({ ...props }) => {
                 )}
                 <TabPane
                   tab={
-                    <Tooltip title="Departamentos">
                       <div className="container-title-tab">
                         <GoldOutlined />
                         <div className="text-title-tab">Plazas</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_6"
                 >
@@ -195,12 +183,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Conceptos internos">
                       <div className="container-title-tab">
                         <PicRightOutlined />
                         <div className="text-title-tab">Conceptos internos</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_7"
                 >
@@ -211,12 +197,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Conceptos fijos">
                       <div className="container-title-tab">
                         <PicRightOutlined />
                         <div className="text-title-tab">Conceptos fijos</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_8"
                 >
@@ -228,12 +212,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Cuentas contables">
                       <div className="container-title-tab">
                         <ReadOutlined />
                         <div className="text-title-tab">Cuentas contables</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_9"
                 >
@@ -244,12 +226,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Centros de costo">
                       <div className="container-title-tab">
                         <DollarCircleOutlined />
                         <div className="text-title-tab">Centros de costos</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_10"
                 >
@@ -260,12 +240,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Etiquetas">
                       <div className="container-title-tab">
                         <TagsOutlined />
                         <div className="text-title-tab">Etiquetas</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_11"
                 >
@@ -276,12 +254,10 @@ const configBusiness = ({ ...props }) => {
                 </TabPane>
                 <TabPane
                   tab={
-                    <Tooltip title="Departamentos">
                       <div className="container-title-tab">
                         <GoldOutlined />
                         <div className="text-title-tab">Sucursales</div>
                       </div>
-                    </Tooltip>
                   }
                   key="tab_12"
                 >
