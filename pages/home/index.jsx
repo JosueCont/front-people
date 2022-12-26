@@ -32,7 +32,7 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import {
@@ -48,6 +48,7 @@ import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -744,7 +745,9 @@ const homeScreen = ({ ...props }) => {
     <MainLayout currentKey="1">
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

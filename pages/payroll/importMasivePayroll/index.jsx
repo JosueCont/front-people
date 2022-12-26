@@ -21,7 +21,7 @@ import {
   LeftCircleTwoTone,
   RightCircleTwoTone,
 } from "@ant-design/icons";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { withAuthSync } from "../../../libs/auth";
@@ -38,6 +38,7 @@ import CalendarImport from "./components/calendarImport";
 import GenericModal from "../../../components/modal/genericModal";
 import { getTypeTax } from "../../../redux/fiscalDuck";
 import _ from "lodash";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -461,7 +462,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Importar nómina con XML</Breadcrumb.Item>
         </Breadcrumb>

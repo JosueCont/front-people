@@ -18,7 +18,7 @@ import {
   ExclamationCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 const { confirm } = Modal;
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
@@ -29,6 +29,7 @@ import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 import { getProfileGroups } from "../../../redux/catalogCompany";
 import {FormattedMessage} from "react-intl";
 import { getFiltersJB } from "../../../utils/functions";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
@@ -156,7 +157,9 @@ useEffect(()=>{
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>

@@ -1,26 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import MyModal from '../../../common/MyModal';
 import { Row, Col, Button, List } from 'antd';
-import { useSelector } from 'react-redux';
 
 const ListCompetences = ({
     visible,
     close,
     itemSelected
 }) => {
-
-    const {
-        load_competences,
-        list_competences
-    } = useSelector(state => state.jobBankStore);
-    const [listItems, setListItems] = useState([]);
-
-    useEffect(()=>{
-        if(Object.keys(itemSelected).length <= 0) return;
-        if(itemSelected.competences?.length <= 0) return;
-        let results = list_competences.filter(item => itemSelected.competences.includes(item.id))
-        setListItems(results);
-    },[itemSelected])
 
     return (
         <MyModal
@@ -34,8 +20,7 @@ const ListCompetences = ({
                     <List
                         size='small'
                         itemLayout='horizontal'
-                        dataSource={listItems}
-                        loading={load_competences}
+                        dataSource={itemSelected.competences}
                         renderItem={(item, idx) => (
                             <List.Item key={item.id}>
                                 <List.Item.Meta title={item.name}/>

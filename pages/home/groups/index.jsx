@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { connect, useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
@@ -7,6 +7,7 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import PersonsGroupSearch from "../../../components/person/groups/PersonsGroupSearch";
 import PersonsTable from "../../../components/person/groups/PersonsTable";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const GroupsPeople = () => {
   const router = useRouter();
@@ -127,7 +128,9 @@ const GroupsPeople = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>

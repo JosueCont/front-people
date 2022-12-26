@@ -127,8 +127,8 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/candidate/massive_delete/', 'post', data);
     }
 
-    static getCandidateEducation(id){
-        return WebApi.ApisType(`/job-bank/candidate-education/?candidate=${id}`, 'get');
+    static getCandidateEducation(id, query){
+        return WebApi.ApisType(`/job-bank/candidate-education/?candidate=${id}${query}`, 'get');
     }
 
     static createCandidateEducation(data){
@@ -143,8 +143,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidate-education/${id}/`, 'delete');
     }
 
-    static getCandidateExperience(id){
-        return WebApi.ApisType(`/job-bank/candidate-experience/?candidate=${id}`, 'get');
+    static getCandidateExperience(id, query){
+        return WebApi.ApisType(`/job-bank/candidate-experience/?candidate=${id}${query}`, 'get');
     }
 
     static createCandidateExperience(data){
@@ -159,8 +159,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidate-experience/${id}/`, 'delete');
     }
 
-    static getCandidateLastJob(id){
-        return WebApi.ApisType(`/job-bank/candidate-last-job/?candidate=${id}`, 'get');
+    static getCandidateLastJob(id, query){
+        return WebApi.ApisType(`/job-bank/candidate-last-job/?candidate=${id}${query}`, 'get');
     }
 
     static createCandidateLastJob(data){

@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Row, Col, Table, Breadcrumb, Modal, message, Button } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -118,7 +118,8 @@ const DetailsBulkUpload = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Reporte de errores</Breadcrumb.Item>
+
+        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/bulk_upload" })}

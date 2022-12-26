@@ -206,7 +206,7 @@ const FormStrategies = ({
                 >
                     <InputNumber
                         type='number'
-                        readOnly
+                        disabled
                         maxLength={10}
                         controls={false}
                         placeholder='Número de proyecto'
@@ -320,12 +320,7 @@ const FormStrategies = ({
                         // numCommaAndDot()
                     ]}
                 >
-                    <Input
-                        readOnly
-                        // maxLength={20}
-                        placeholder='Ej. 70,500.5999'
-                        // onKeyPress={e => e.which == 32 && e.preventDefault()}
-                    />
+                    <Input disabled placeholder='Ej. 70,500.5999'/>
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -358,11 +353,7 @@ const FormStrategies = ({
                     label='Monto a cobrar'
                     tooltip='El valor será calculado de manera automática según el sueldo y porcentaje a cobrar.'
                 >
-                    <Input
-                        readOnly
-                        controls={false}
-                        placeholder='Monto a cobrar'
-                    />
+                    <Input disabled placeholder='Monto a cobrar'/>
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>

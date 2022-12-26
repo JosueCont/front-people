@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -24,6 +24,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from "react-redux";
 import { DeleteOutline } from "@material-ui/icons";
 import { messageDeleteSuccess, messageError } from "../../../utils/constant";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const PaymentCalendars = ({ ...props }) => {
   const { Column } = Table;
@@ -117,7 +118,9 @@ const PaymentCalendars = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calendario de pagos</Breadcrumb.Item>
         </Breadcrumb>

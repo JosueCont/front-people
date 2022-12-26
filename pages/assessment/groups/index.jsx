@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { connect, useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
@@ -9,6 +9,7 @@ import AssessmentsSearch from "../../../components/assessment/groups/Assessments
 import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
 import { getCategories } from "../../../redux/assessmentDuck";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   const router = useRouter();
@@ -123,7 +124,9 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos de evaluaciones</Breadcrumb.Item>
       </Breadcrumb>

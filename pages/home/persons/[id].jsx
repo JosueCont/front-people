@@ -4,10 +4,11 @@ import { withAuthSync } from "../../../libs/auth";
 import { useRouter } from "next/router";
 import { Breadcrumb, Spin } from "antd";
 import WebApiPeople from "../../../api/WebApiPeople";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const EmployeeDetailPage = (...props) => {
   const router = useRouter();
@@ -45,7 +46,9 @@ const EmployeeDetailPage = (...props) => {
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item >Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+            {verifyMenuNewForTenant() && 
+              <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+            }
             <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
             <Breadcrumb.Item className={"pointer"}
                              onClick={() => router.push({ pathname: "/home/persons/" })}>Personas</Breadcrumb.Item>

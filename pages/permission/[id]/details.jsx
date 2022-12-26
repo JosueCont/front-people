@@ -9,13 +9,14 @@ import {
   Input,
   notification,
 } from "antd";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import { withAuthSync } from "../../../libs/auth";
 import cookie from "js-cookie";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const PermissionDetails = () => {
   const route = useRouter();
@@ -133,8 +134,12 @@ const PermissionDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/permission" })}>Permisos</Breadcrumb.Item>

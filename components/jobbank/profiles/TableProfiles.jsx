@@ -40,28 +40,32 @@ const TableProfiles = ({
         try {
             await WebApiJobBank.deleteProfile({ids});
             getProfilesWithFilters();
-            if(ids.length > 1) message.success('Perfiles eliminados');
-            else message.success('Perfil eliminado');
+            let msg = ids.length > 1
+                ? 'Templates eliminados'
+                : 'Template eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Perfiles no eliminados');
-            else message.error('Perfil no eliminado');
+            let msg = ids.length > 1
+                ? 'Templates no eliminados'
+                : 'Template no eliminado';
+            message.error(msg);
         }
     }
 
     const actionDuplicate = async (item) =>{
         const key = 'updatable';
+        message.loading({content: 'Duplicando template...', key});
         try {
-            message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateProfile(item.id);
             setTimeout(()=>{
-                message.success({content: 'Perfil duplicado', key});
+                message.success({content: 'Template duplicado', key});
                 getProfilesWithFilters();
             },1000);
         } catch (e) {
             console.log(e);
             setTimeout(()=>{
-                message.error({content: 'Perfil no duplicada', key});
+                message.error({content: 'Template no duplicado', key});
             },1000)
         }
     }
@@ -85,7 +89,7 @@ const TableProfiles = ({
             setOpenModalDelete(true)
         }else{
             setOpenModalDelete(false)
-            message.error('Selecciona al menos dos perfiles')
+            message.error('Selecciona al menos dos templates')
         }
     }
 

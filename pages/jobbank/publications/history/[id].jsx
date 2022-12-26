@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
 import TableHistory from '../../../../components/jobbank/publications/TableHistory';
-import { deleteFiltersJb } from '../../../../utils/functions';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../../utils/functions';
 
 const index = () => {
 
@@ -25,7 +25,9 @@ const index = () => {
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'

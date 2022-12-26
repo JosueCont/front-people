@@ -5,9 +5,10 @@ import CardUser from '../../../components/psychometry/CardUser';
 import TableAssessments from '../../../components/psychometry/TableAssessments';
 import WebApiPeople from '../../../api/WebApiPeople';
 import WebApiAssessment from '../../../api/WebApiAssessment';
-import MainLayout from '../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainInter';
 import esES from "antd/lib/locale/es_ES";
 import { withAuthSync } from '../../../libs/auth';
+import { verifyMenuNewForTenant } from '../../../utils/functions';
 
 const ProfileUser = () => {
 
@@ -63,7 +64,9 @@ const ProfileUser = () => {
             <ConfigProvider locale={esES}>
                 <Breadcrumb>
                     <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                    <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+                    {verifyMenuNewForTenant() && 
+                        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+                    }
                     <Breadcrumb.Item href='/home/persons/'>Personas</Breadcrumb.Item>
                     <Breadcrumb.Item href={`/home/profile/${person.id}`}>
                         {fullName}

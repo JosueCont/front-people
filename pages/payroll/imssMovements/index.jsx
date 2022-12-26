@@ -14,7 +14,7 @@ import {
   Typography,
 } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
 import EmaYEvaFiles from "./EmaYEvaFiles";
@@ -23,6 +23,7 @@ import MovementsIMSS from "../../../components/payroll/fiscalMovements/Movements
 import UploadFile from "../../../components/UploadFile";
 import MovementsSection from "../../../components/payroll/ImssMovements/MovementsSection";
 import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 const { Text } = Typography;
 
 const ImssMovements = ({ ...props }) => {
@@ -120,7 +121,9 @@ const ImssMovements = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
         </Breadcrumb>

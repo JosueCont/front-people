@@ -33,7 +33,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
-import MainLayoutAdmin from "../../../layout/MainLayout_admin";
+import MainLayoutAdmin from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
 import { withAuthSync } from "../../../libs/auth";
 import { setDataUpload } from "../../../redux/UserDuck";
