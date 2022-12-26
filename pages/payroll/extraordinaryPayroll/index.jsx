@@ -970,10 +970,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       payment_period: periodSelected.id,
       movement_type: movementType,
     };
-    if (listPersons.length > 0)
-      data.cfdis = listPersons.map((item) => {
-        return item.payroll_cfdi_person.id;
-      });
+    // if (listPersons.length > 0)
+    //   data.cfdis = listPersons.map((item) => {
+    //     return item.payroll_cfdi_person.id;
+    //   });
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
       (data.opening_reason = inputMotive.value.trim()), setLoading(true);
