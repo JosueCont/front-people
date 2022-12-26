@@ -12,8 +12,10 @@ import TagFilters from './TagFilters';
 
 const SearchCandidates = ({
     currentNode,
-    load_specialization_area,
-    list_specialization_area
+    load_main_categories,
+    list_main_categories,
+    list_states,
+    load_states
 }) => {
 
     const router = useRouter();
@@ -21,9 +23,9 @@ const SearchCandidates = ({
     const [openModal, setOpenModal] = useState(false);
 
     const showModal = () =>{
-        let area = router.query?.area ? parseInt(router.query.area) : null;
         let is_other = router.query?.other_area ? true : false;
-        formSearch.setFieldsValue({...router.query, area, is_other});
+        let state = router.query?.state ? parseInt(router.query.state) : null;
+        formSearch.setFieldsValue({...router.query, is_other, state});
         setOpenModal(true)
     }
 
@@ -49,20 +51,30 @@ const SearchCandidates = ({
     const getArea = (id) =>{
         if(!id) return id;
         const find_ = item => item.id == id;
-        let result = list_specialization_area.find(find_);
+        let result = list_main_categories.find(find_);
+        if(!result) return id;
+        return result.name;
+    }
+
+    const getState = (id) =>{
+        if(!id) return id;
+        const find_ = item => item.id == id;
+        let result = list_states.find(find_);
         if(!result) return id;
         return result.name;
     }
 
     const listKeys = {
-        fisrt_name__icontains: 'Nombre',
-        last_name__icontains: 'Apellidos',
-        email__icontains: 'Correo',
+        fisrt_name__unaccent__icontains: 'Nombre',
+        last_name__unaccent__icontains: 'Apellidos',
+        email__unaccent__icontains: 'Correo',
         cell_phone: 'Teléfono',
         job: 'Puesto',
         is_active: 'Estatus',
         area: 'Especialización',
-        other_area: 'Otra especialización'
+        other_area: 'Otra especialización',
+        state: 'Estado',
+        municipality__unaccent__icontains: 'Municipio'
     }
 
     const listValues = {
@@ -71,7 +83,8 @@ const SearchCandidates = ({
     }
 
     const listGets = {
-        area: getArea
+        area: getArea,
+        state: getState
     }
 
     return (
@@ -84,12 +97,16 @@ const SearchCandidates = ({
                                 Filtros aplicados
                             </p>
                             <div className='content-end' style={{gap: 8}}>
-                                <Button onClick={()=> showModal()}>
-                                    <SettingOutlined />
-                                </Button>
-                                <Button onClick={()=> deleteFilter()}>
-                                    <SyncOutlined />
-                                </Button>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Limpiar filtros'>
+                                    <Button onClick={()=> deleteFilter()}>
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                                 <Button onClick={()=> router.push({
                                     pathname: '/jobbank/candidates/add',
                                     query: router.query
@@ -121,8 +138,10 @@ const SearchCandidates = ({
 const mapState = (state) =>{
     return{
         currentNode: state.userStore.current_node,
-        list_specialization_area: state.jobBankStore.list_specialization_area,
-        load_specialization_area: state.jobBankStore.load_specialization_area,
+        list_main_categories: state.jobBankStore.list_main_categories,
+        load_main_categories: state.jobBankStore.load_main_categories,
+        list_states: state.jobBankStore.list_states,
+        load_states: state.jobBankStore.load_states
     }
 }
 

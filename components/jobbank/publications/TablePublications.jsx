@@ -54,16 +54,21 @@ const TablePublications = ({
 
     const actionShare = async (values) =>{
         const key = 'updatable';
+        message.loading({content: 'Publicando vacante...', key});
         try {
-            message.loading({content: 'Publicando vacante...', key});
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
-            getPublicationsWithFilters();
-            message.success({content: 'Vacante publicada', key});
+            setTimeout(()=>{
+                getPublicationsWithFilters();
+                message.success({content: 'Vacante publicada', key});
+            }, 1000)
         } catch (e) {
             console.log(e)
             let txtError = e.response?.data?.message;
-            let msgError = txtError ?? 'Vacante no publicada';
-            message.error({content: msgError, key});
+            let errorExtra = e.response?.data?.extra;
+            let msgError = errorExtra ?? txtError ?? 'Vacante no publicada';
+            setTimeout(()=>{
+                message.error({content: msgError, key});
+            },1000)
         }
     }
 
@@ -139,17 +144,17 @@ const TablePublications = ({
         };
     }
 
-    const validateHistory = (item) =>{
-        if(item.history?.length > 1){
-            router.push({
-                pathname: `/jobbank/publications/history/${item.id}`,
-                query: router.query
-            })
-            return;
-        }
-        let url = item.history?.at(-1)?.post_url;
-        redirectTo(url, true);
-    }
+    // const validateHistory = (item) =>{
+    //     if(item.history?.length > 1){
+    //         router.push({
+    //             pathname: `/jobbank/publications/history/${item.id}`,
+    //             query: router.query
+    //         })
+    //         return;
+    //     }
+    //     let url = item.history?.at(-1)?.post_url;
+    //     redirectTo(url, true);
+    // }
 
     const rowSelection = {
         selectedRowKeys: itemsKeys,
@@ -203,10 +208,13 @@ const TablePublications = ({
                 {item.history?.length > 0 && (
                     <Menu.Item
                         key='4'
-                        icon={item.history?.length > 1 ? <FileTextOutlined /> : <NotificationOutlined/>}
-                        onClick={()=> validateHistory(item)}
+                        icon={<NotificationOutlined/>}
+                        onClick={()=> router.push({
+                            pathname: `/jobbank/publications/history/${item.id}`,
+                            query: router.query
+                        })}
                     >
-                        {item.history?.length > 1 ? 'Ver historial' : 'Ir a publicación'}
+                        Ver historial
                     </Menu.Item>
                 )}
             </Menu>
@@ -256,31 +264,6 @@ const TablePublications = ({
                 )
             }
         },
-        // {
-        //     title: 'Historial',
-        //     render: (item) =>{
-        //         return(
-        //             <Space>
-        //                 {item.history?.length > 0 ? (
-        //                     <Tooltip title='Ver historial'>
-        //                         <EyeOutlined
-        //                             style={{cursor: 'pointer'}}
-        //                             // onClick={()=>showModalList(item)}
-        //                         />
-        //                     </Tooltip>
-        //                 ):(
-        //                     <EyeInvisibleOutlined />
-        //                 )}
-        //                 <Tag
-        //                     icon={<NotificationOutlined style={{color:'#52c41a'}} />}
-        //                     color='green' style={{fontSize: '14px'}}
-        //                 >
-        //                     {item.history?.length ?? 0}
-        //                 </Tag>
-        //             </Space>
-        //         )
-        //     }
-        // },
         {
             title: ()=> {
                 return(
@@ -336,7 +319,8 @@ const TablePublications = ({
                     : '¿Estás seguro de eliminar esta publicación?'
                 }
                 visible={openModalDelete}
-                keyTitle='code_post'
+                keyTitle='vacant, job_position'
+                keyDescription='profile, name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

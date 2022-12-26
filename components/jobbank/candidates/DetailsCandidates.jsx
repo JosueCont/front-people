@@ -14,8 +14,8 @@ import TabGeneral from './TabGeneral';
 import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
-import DocExpedient from './DocExpedient';
-//Necesario para la libreria react-pdf
+
+//*Necesario para la libreria react-pdf
 const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
 
 const DetailsCandidates = ({
@@ -27,16 +27,30 @@ const DetailsCandidates = ({
 
     const router = useRouter();
     const [disableTab, setDisabledTab] = useState(true);
+    const [currenKey, setCurrentKey] = useState('1');
     const [infoCandidate, setInfoCandidate] = useState({});
-    const [infoEducation, setInfoEducation] = useState({});
-    const [infoExperience, setInfoExperience] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
+    const [infoEducation, setInfoEducation] = useState([]);
+    const [infoExperience, setInfoExperience] = useState([]);
+    const [infoPositions, setInfoPositions] = useState([]);
 
     const actionBack = () =>{
         router.push({
             pathname: '/jobbank/candidates',
             query: newFilters
         })
+    }
+
+    const onChangeTab = (tab) =>{
+        if(action == 'add'){
+            setCurrentKey(tab)
+            return;
+        }
+        let querys = {...router.query, tab};
+        if(querys['tab'] == '1') delete querys['tab'];
+        router.replace({
+            pathname: router.asPath.split('?')[0],
+            query: querys
+        }, undefined, {shallow: true})
     }
 
     return (
@@ -50,13 +64,13 @@ const DetailsCandidates = ({
                         }
                     </p>
                     {!isAutoRegister && (
-                        <div>
-                            {/* <Expedient
+                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                            <Expedient
                                 infoCandidate={infoCandidate}
                                 infoEducation={infoEducation}
                                 infoExperience={infoExperience}
                                 infoPositions={infoPositions}
-                            /> */}
+                            />
                             <Button
                                 onClick={()=> actionBack()}
                                 icon={<ArrowLeftOutlined />}
@@ -67,9 +81,17 @@ const DetailsCandidates = ({
                     )}
                 </Col>
                 <Col span={24} className='tabs-vacancies'>
-                    <Tabs type='card'>
+                    <Tabs
+                        type='card'
+                        activeKey={action == 'edit'
+                            ? router.query?.tab ?? '1'
+                            : currenKey
+                        }
+                        onChange={onChangeTab}
+                    >
                         <Tabs.TabPane
                             tab='Datos generales'
+                            forceRender
                             key='1'
                         >
                             <TabGeneral
@@ -117,7 +139,12 @@ const DetailsCandidates = ({
                                 infoPositions={infoPositions}
                             />
                         </Tabs.TabPane>
-                        {/* <Tabs.TabPane tab='Expediente' forceRender key='5'>
+                        {/* <Tabs.TabPane
+                            tab='Expediente'
+                            disabled={disableTab}
+                            forceRender
+                            key='5'
+                        >
                             <DocExpedient
                                 infoCandidate={infoCandidate}
                                 infoEducation={infoEducation}

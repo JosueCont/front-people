@@ -13,7 +13,6 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
@@ -25,10 +24,6 @@ const TabPositions = ({
     infoPositions
 }) => {
 
-    const {
-        list_sectors,
-        load_sectors
-    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -40,12 +35,12 @@ const TabPositions = ({
         if(router.query.id && action == 'edit'){
             getInfoPosition(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoPosition = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getCandidateLastJob(id);
+            let response = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0');
             setInfoPositions(response.data);
             setLoading(false);
         } catch (e) {
@@ -155,14 +150,19 @@ const TabPositions = ({
 
     const columns = [
         {
-            title: 'Puesto',
-            dataIndex: 'position_name',
-            key: 'position_name'
-        },
-        {
             title: 'Empresa',
             dataIndex: 'company',
             key: 'company'
+        },
+        {
+            title: 'Sector',
+            dataIndex: ['sector', 'name'],
+            key: ['sector', 'name']
+        },
+        {
+            title: 'Puesto',
+            dataIndex: 'position_name',
+            key: 'position_name'
         },
         {
             title: 'Fecha inicio',
@@ -217,13 +217,12 @@ const TabPositions = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoPositions.results}
+                dataSource={infoPositions}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoPositions.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -237,9 +236,10 @@ const TabPositions = ({
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
            <DeleteItems
-                title='¿Estás seguro de eliminar esta posición?'
+                title='¿Estás seguro de eliminar este puesto?'
                 visible={openModalDelete}
-                keyTitle='position_name'
+                keyTitle='company'
+                keyDescription='position_name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

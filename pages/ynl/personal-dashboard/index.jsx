@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../../layout/MainLayout'
+import MainLayout from '../../../layout/MainInter'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space, Spin} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
 import { useSelector } from 'react-redux'
 import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
+import { verifyMenuNewForTenant } from '../../../utils/functions';
 
 
 const index = () => {
@@ -227,7 +228,9 @@ const index = () => {
                   >
                       <FormattedMessage defaultMessage="Inicio" id="web.init" />
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+                  {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+                  }
                   <Breadcrumb.Item>YNL</Breadcrumb.Item>
                   <Breadcrumb.Item>Dashboard personal</Breadcrumb.Item>
               </Breadcrumb>

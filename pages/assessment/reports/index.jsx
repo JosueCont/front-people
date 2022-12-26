@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { connect, useDispatch } from "react-redux";
 import { Breadcrumb, message, Tabs } from "antd";
@@ -8,6 +8,7 @@ import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
 import { getPersonsCompany } from "../../../redux/UserDuck";
 import ReportsCompetences from "../../../components/assessment/reports/ReportsCompetences";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const Index = ({
   currentNode,
@@ -38,7 +39,9 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        }
           <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
       </Breadcrumb>

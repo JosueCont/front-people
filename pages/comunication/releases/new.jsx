@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -27,6 +27,7 @@ import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectPersonType from "../../../components/selects/SelectPersonType";
 import { ruleRequired } from "../../../utils/rules";
 import { typeMessage } from "../../../utils/constant";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 import SelectGender from "../../../components/selects/SelectGender";
 import { connect } from "react-redux";
 
@@ -144,8 +145,12 @@ const Newrelease = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/comunication/releases" })}>Comunicados</Breadcrumb.Item>

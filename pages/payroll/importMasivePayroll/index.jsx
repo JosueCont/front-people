@@ -21,7 +21,7 @@ import {
   LeftCircleTwoTone,
   RightCircleTwoTone,
 } from "@ant-design/icons";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { withAuthSync } from "../../../libs/auth";
@@ -38,6 +38,7 @@ import CalendarImport from "./components/calendarImport";
 import GenericModal from "../../../components/modal/genericModal";
 import { getTypeTax } from "../../../redux/fiscalDuck";
 import _ from "lodash";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -176,14 +177,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     data.companies.forEach((company) => {
       if (_.get(company, "patronal_registrations", null)) {
         company.patronal_registrations.forEach((regPatr, i) => {
-          console.log('company?.extraordinary', regPatr?.extraordinary)
-          extraordinary = extraordinary +  (regPatr?.extraordinary ? regPatr?.extraordinary?.length : 0);
+          console.log("company?.extraordinary", regPatr?.extraordinary);
+          extraordinary =
+            extraordinary +
+            (regPatr?.extraordinary ? regPatr?.extraordinary?.length : 0);
 
           regPatr.periodicities.forEach((periodicity, i) => {
             console.log(periodicity?.cfdis.length);
             numXML =
               numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
-
           });
         });
       }
@@ -196,18 +198,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         });
       }
 
-
       if (_.get(company, "extraordinary", null)) {
         extraordinary += company.extraordinary.length;
       }
-
     });
 
     let resume = {
       numCompanies,
       numRegPatronales,
       numXML,
-      extraordinary
+      extraordinary,
     };
 
     setResumeData(resume);
@@ -227,10 +227,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           />
         </Col>
         <Col span={12}>
-          <Statistic title="xml Importados" value={resumeData?.numXML + resumeData?.extraordinary} />
+          <Statistic
+            title="xml Importados"
+            value={resumeData?.numXML + resumeData?.extraordinary}
+          />
         </Col>
         <Col span={12}>
-          <Statistic title="Extraordinarios" value={resumeData?.extraordinary} />
+          <Statistic
+            title="Extraordinarios"
+            value={resumeData?.extraordinary}
+          />
         </Col>
       </Row>
     );
@@ -456,7 +462,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Importar nómina con XML</Breadcrumb.Item>
         </Breadcrumb>

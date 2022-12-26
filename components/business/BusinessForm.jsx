@@ -27,7 +27,7 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import NodeTreeView from "./TreeView/treeview";
 import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
@@ -37,8 +37,9 @@ import {
   messageDeleteSuccess,
   messageError,
   messageSaveSuccess,
-  messageUpdateSuccess,
+  messageUpdateSuccess
 } from "../../utils/constant";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -414,11 +415,13 @@ const businessForm = ({ currentNode, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => (treeTable ? "" : setTreeTable(true))}
+          // className={"pointer"}
+          // onClick={() => (treeTable ? "" : setTreeTable(true))}
         >
           Empresas
         </Breadcrumb.Item>

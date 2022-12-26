@@ -28,7 +28,17 @@ const ModalExperience = ({
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
-        formExperience.setFieldsValue(itemToEdit);
+        let category = itemToEdit.category?.id ?? null;
+        let sub_category = itemToEdit.sub_category?.id ?? null;
+        let competences = itemToEdit.competences?.length > 0
+            ? itemToEdit.competences?.map(item => item.id)
+            : [];
+        formExperience.setFieldsValue({
+            ...itemToEdit,
+            category,
+            sub_category,
+            competences
+        });
     },[itemToEdit])
 
     const onChangeCategory = (value) =>{

@@ -1,24 +1,32 @@
 import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
 import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
-import { getCandidates, getSpecializationArea } from '../../../redux/jobBankDuck';
-import { getFiltersJB } from '../../../utils/functions';
+import {
+    getCandidates,
+    getMainCategories,
+    getListStates
+} from '../../../redux/jobBankDuck';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
     getCandidates,
-    getSpecializationArea
+    getListStates,
+    getMainCategories
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode) getSpecializationArea(currentNode.id);
+        if(currentNode){
+            getMainCategories(currentNode.id);
+            getListStates(currentNode.id);
+        }
     },[currentNode])
 
     useEffect(()=>{
@@ -38,7 +46,9 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Candidatos</Breadcrumb.Item>
             </Breadcrumb>
@@ -65,6 +75,7 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getCandidates,
-        getSpecializationArea
+        getListStates,
+        getMainCategories
     }
 )(withAuthSync(index));

@@ -21,7 +21,6 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
 import DeleteItems from '../../../common/DeleteItems';
 import ListCompetences from './ListCompetences';
 
@@ -31,14 +30,6 @@ const TabExperience = ({
     infoExperience
 }) => {
 
-    const {
-        load_competences,
-        list_competences,
-        load_main_categories,
-        list_main_categories,
-        load_sub_categories,
-        list_sub_categories
-    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -52,12 +43,12 @@ const TabExperience = ({
         if(router.query.id && action == 'edit'){
             getInfoExperience(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoExperience = async (id) =>{
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getCandidateExperience(id);
+            let response = await WebApiJobBank.getCandidateExperience(id, '&paginate=0');
             setInfoExperience(response.data);
             setLoading(false)
         } catch (e) {
@@ -145,22 +136,6 @@ const TabExperience = ({
         setOpenModalList(false)
     }
 
-    const getCategory = (item) =>{
-        if(!item.category) return null;
-        const find_ = record => record.id == item.category;
-        let result = list_main_categories.find(find_);
-        if(!result) return null;
-        return result.name;
-    }
-
-    const getSubCategory = (item) =>{
-        if(!item.sub_category) return null;
-        const find_ = record => record.id == item.sub_category;
-        let result = list_sub_categories.find(find_);
-        if(!result) return null;
-        return result.name;
-    }
-
     const menuTable = () => {
         return (
             <Menu>
@@ -199,19 +174,13 @@ const TabExperience = ({
     const columns = [
         {
             title: 'Categoría',
-            render: (item) =>{
-                return (
-                    <span>{getCategory(item)}</span>
-                )
-            }
+            dataIndex: ['category', 'name'],
+            key: ['category', 'name']
         },
         {
             title: 'Subcategoría',
-            render: (item) =>{
-                return(
-                    <span>{getSubCategory(item)}</span>
-                )
-            }
+            dataIndex: ['sub_category', 'name'],
+            key: ['sub_category', 'name']
         },
         {
             title: 'Años de experiencia',
@@ -280,13 +249,12 @@ const TabExperience = ({
                 className='table-custom'
                 columns={columns}
                 loading={loading}
-                dataSource={infoExperience.results}
-                locale={{ emptyText: loading
+                dataSource={infoExperience}
+                locale={{emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoExperience.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -302,7 +270,8 @@ const TabExperience = ({
             <DeleteItems
                 title='¿Estás seguro de eliminar esta experiencia?'
                 visible={openModalDelete}
-                keyTitle='experience_years'
+                keyTitle='category, name'
+                keyDescription='sub_category, name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}

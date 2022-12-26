@@ -63,8 +63,8 @@ const TableVacancies = ({
 
     const actionDuplicate = async (item) =>{
         const key = 'updatable';
+        message.loading({content: 'Duplicando vacante...', key});
         try {
-            message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
@@ -183,16 +183,18 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                <Menu.Item
-                    key='3'
-                    icon={<SettingOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/publications/add',
-                        query: {...router.query, vacancy: item.id }
-                    })}
-                >
-                    Configurar publicación
-                </Menu.Item>
+                {item.status == 1 && (
+                    <Menu.Item
+                        key='4'
+                        icon={<SettingOutlined />}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/publications/add',
+                            query: {...router.query, vacancy: item.id }
+                        })}
+                    >
+                        Configurar publicación
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
@@ -286,7 +288,7 @@ const TableVacancies = ({
             }
             visible={openModalDelete}
             keyTitle='job_position'
-            keyDescription='description'
+            keyDescription='customer, name'
             close={closeModalDelete}
             itemsToDelete={itemsToDelete}
             actionDelete={actionDelete}

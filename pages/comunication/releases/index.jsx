@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Tooltip,
   Row,
@@ -26,6 +26,7 @@ import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const Releases = ({ permissions, ...props }) => {
   /* React */
@@ -152,8 +153,12 @@ const Releases = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

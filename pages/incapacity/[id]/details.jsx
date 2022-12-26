@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -16,6 +16,7 @@ import Incapacityform from "../../../components/forms/IncapacityForm";
 import { withAuthSync } from "../../../libs/auth";
 import cookie from "js-cookie";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const IncapacityDetails = () => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -130,8 +131,12 @@ const IncapacityDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
           <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

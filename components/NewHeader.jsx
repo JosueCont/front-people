@@ -28,6 +28,7 @@ import CardApps from "./dashboards-cards/CardApp";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
+import { verifyMenuNewForTenant } from "../utils/functions"
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -105,13 +106,14 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text>Editar perfil</Text>
             </p>
 
-            <p
+            { verifyMenuNewForTenant() &&
+              <p
               className="text-menu"
               onClick={() => router.push("/user")}
 
             >
               <Text>Cambiar a la vista de Usuario</Text>
-            </p>
+            </p>}
 
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p

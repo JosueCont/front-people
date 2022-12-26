@@ -16,10 +16,10 @@ const ModalEducation = ({
 }) => {
 
     const {
-        list_specialization_area,
-        load_specialization_area,
-        list_specialization_sub_area,
-        load_specialization_sub_area
+        load_main_categories,
+        list_main_categories,
+        load_sub_categories,
+        list_sub_categories
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -37,7 +37,15 @@ const ModalEducation = ({
         let other_sub_area = itemToEdit.specialitation_sub_area
             ? false : itemToEdit.specialitation_sub_area_other
             ? true : false;
-        formEducation.setFieldsValue({...itemToEdit, other_area, other_sub_area});
+        let specialitation_area = itemToEdit.specialitation_area?.id ?? null;
+        let specialitation_sub_area = itemToEdit.specialitation_sub_area?.id ?? null;
+        formEducation.setFieldsValue({
+            ...itemToEdit,
+            other_area,
+            other_sub_area,
+            specialitation_area,
+            specialitation_sub_area
+        });
     },[itemToEdit])
 
 
@@ -54,7 +62,7 @@ const ModalEducation = ({
     const setOtherSubArea = (val = null) => setValue('specialitation_sub_area_other', val);
 
     const onFinish = (values) =>{
-        // if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
+        if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
         // if(values.other_area) values.specialitation_area = null;
         // else values.specialitation_area_other = null;
         // if(values.other_sub_area) values.specialitation_sub_area = null;
@@ -92,8 +100,8 @@ const ModalEducation = ({
 
     const optionsByArea = useMemo(() =>{
         if(!currentArea) return [];
-        const options = item => item.area == currentArea;
-        return list_specialization_sub_area.filter(options);
+        const options = item => item.category == currentArea;
+        return list_sub_categories.filter(options);
     }, [currentArea])
 
     return (
@@ -108,7 +116,7 @@ const ModalEducation = ({
                 form={formEducation}
                 onFinish={onFinish}
                 layout='vertical'
-                initialValues={{other_area: false}}
+                initialValues={{other_area: false, other_sub_area: false}}
             >
                 <Row gutter={[24,0]}>
                     <Col span={12}>
@@ -177,11 +185,11 @@ const ModalEducation = ({
                                 placeholder='Seleccionar un área'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={otherArea}
-                                loading={load_specialization_area}
+                                loading={load_main_categories}
                                 optionFilterProp='children'
                                 onChange={onChangeArea}
                             >
-                                {list_specialization_area?.length > 0 && list_specialization_area.map(item => (
+                                {list_main_categories?.length > 0 && list_main_categories.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -230,7 +238,7 @@ const ModalEducation = ({
                                 placeholder='Seleccionar una subárea'
                                 notFoundContent='No se encontraron resultados'
                                 disabled={otherSubArea || optionsByArea.length <= 0}
-                                loading={load_specialization_sub_area}
+                                loading={load_sub_categories}
                                 optionFilterProp='children'
                             >
                                 {optionsByArea.map(item => (

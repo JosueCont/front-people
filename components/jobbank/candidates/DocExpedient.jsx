@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import {
     View,
     Text,
@@ -6,12 +6,8 @@ import {
     Document,
     Page,
     PDFViewer,
-    StyleSheet,
-    usePDF,
-    pdf,
-    PDFDownloadLink,
-    BlobProvider
 } from '@react-pdf/renderer';
+import { optionsLevelAcademic } from '../../../utils/constant';
 
 const DocExpedient = ({
     infoCandidate,
@@ -23,6 +19,14 @@ const DocExpedient = ({
     // useEffect(()=>{
     //     console.log('experiencia--->', infoEducation)
     // },[infoEducation])
+
+    const getAcademic = (item) =>{
+        if(!item.study_level) return null;
+        const find_ = record => record.value == item.study_level;
+        let result = optionsLevelAcademic.find(find_);
+        if(!result) return null;
+        return result.label;
+    }
 
     const SectionEducation = () => (
         <View style={{
@@ -43,14 +47,14 @@ const DocExpedient = ({
                     flexDirection: 'column'
                 }}>
                     {infoEducation.results?.map((item, idx) => (
-                         <View style={{
+                         <View key={idx} style={{
                             marginBottom: 4,
                             display: 'flex',
                             flexDirection: 'column'
                         }}>
-                            <Text style={{fontSize: 14, marginBottom: 2}}>{item.institution_name ?? 'Escuela'}</Text>
+                            <Text style={{fontSize: 14, marginBottom: 2}}>{item.institution_name ?? null}</Text>
                             <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>
-                               {item.study_level} - {item.end_date ?? 'Fecha'}
+                               {getAcademic(item)} - {item.end_date ?? null}
                             </Text>
                         </View>
                     ))}
@@ -74,7 +78,7 @@ const DocExpedient = ({
             {infoPositions.results?.length > 0 && (
                 <View style={{marginTop: 12}}>
                     {infoPositions?.results?.map((item, idx) =>(
-                        <View style={{
+                        <View key={idx} style={{
                             display: 'flex',
                             flexDirection: 'row',
                             flexWrap: 'wrap',
@@ -96,7 +100,7 @@ const DocExpedient = ({
                                 paddingLeft: 6
                             }}>
                                 <Text style={{fontSize: 14, marginBottom: 2}}>{item.position_name}</Text>
-                                <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>Aqui el sector</Text>
+                                <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>{item.sector?.name ?? null}</Text>
                             </View>
                         </View>
                     ))}
@@ -106,7 +110,7 @@ const DocExpedient = ({
     )
 
     return (
-        <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
+        // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
                 <Page size='LETTER' style={{padding: 24}}>
                     <View style={{textAlign: 'center', marginBottom: 12}}>
@@ -134,8 +138,8 @@ const DocExpedient = ({
                     </View>
                 </Page>
             </Document>
-        </PDFViewer>
+        // </PDFViewer>
     )
 }
 
-export default DocExpedient
+export default memo(DocExpedient);

@@ -33,7 +33,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
-import MainLayout from "../../../layout/MainLayout_admin";
+import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
 import { withAuthSync } from "../../../libs/auth";
 import { setDataUpload } from "../../../redux/UserDuck";
@@ -52,7 +52,7 @@ import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import router, { useRouter } from "next/router";
 import { useLayoutEffect } from "react";
-import { downLoadFileBlob, getDomain } from "../../../utils/functions";
+import { downLoadFileBlob, getDomain, verifyMenuNewForTenant } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
 import WebApiYnl from "../../../api/WebApiYnl";
 import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
@@ -1228,7 +1228,9 @@ const homeScreen = ({ ...props }) => {
       <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
         <Breadcrumb>
           <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
           <Breadcrumb.Item>Personas</Breadcrumb.Item>
         </Breadcrumb>

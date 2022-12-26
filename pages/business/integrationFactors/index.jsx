@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import MainLayout from '../../../layout/MainLayout'
+import MainLayout from '../../../layout/MainInter'
 import {
   Row,
   Col,
@@ -26,6 +26,7 @@ import { Global } from "@emotion/core";
 import { connect } from "react-redux";
 import WebApiFiscal from '../../../api/WebApiFiscal';
 import moment from 'moment';
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const integrationFactorsIndex = ({ ...props }) =>{
 
@@ -192,7 +193,9 @@ const integrationFactorsIndex = ({ ...props }) =>{
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         </Breadcrumb>

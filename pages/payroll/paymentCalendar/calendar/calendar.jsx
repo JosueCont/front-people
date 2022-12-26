@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../../layout/MainLayout";
+import MainLayout from "../../../../layout/MainInter";
 import { Row, Col, Breadcrumb, Button, Switch } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../../api/WebApiPayroll";
 import Calendar from "rc-year-calendar";
+import { verifyMenuNewForTenant } from "../../../../utils/functions";
 
 const Calendars = () => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -82,7 +83,9 @@ const Calendars = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Nómina</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

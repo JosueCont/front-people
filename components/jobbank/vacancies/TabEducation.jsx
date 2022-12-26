@@ -205,7 +205,7 @@ const TabEducation = ({
             <Form.Item
               name='language_activities'
               label='¿Para qué actividades lo utiliza?'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Especificar según los idiomas seleccionados'
@@ -220,7 +220,7 @@ const TabEducation = ({
             <Form.Item
               name='knowledge'
               label='Conocimientos requeridos'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
@@ -235,7 +235,7 @@ const TabEducation = ({
             <Form.Item
               name='experiences'
               label='Experiencia requerida'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Separar cada experiencia con una coma'
@@ -250,7 +250,7 @@ const TabEducation = ({
             <Form.Item
               name='technical_skills'
               label='Habilidades técnicas'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Separar cada habilidad técnica con una coma'

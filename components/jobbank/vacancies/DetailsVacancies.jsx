@@ -46,6 +46,7 @@ const DetailsVacancies = ({
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
+    const [currentKey, setCurrentKey] = useState('1');
     const [currentValue, setCurrentValue] = useState([]);
     const [listLangDomain, setListLangDomain] = useState([]);
     const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
@@ -62,7 +63,7 @@ const DetailsVacancies = ({
         if(router.query.id && action == 'edit'){
             getInfoVacant(router.query.id)
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(Object.keys(infoVacant).length > 0 && action == 'edit'){
@@ -186,6 +187,19 @@ const DetailsVacancies = ({
         btnSave.current.click();
     }
 
+    const onChangeTab = (tab) =>{
+        if(action == 'add'){
+            setCurrentKey(tab)
+            return;
+        }
+        let querys = {...router.query, tab};
+        if(querys['tab'] == '1') delete querys['tab'];
+        router.replace({
+            pathname: router.asPath.split('?')[0],
+            query: querys
+        }, undefined, {shallow: true})
+    }
+
     return (
         <Card>
             <Row gutter={[16,16]}>
@@ -214,13 +228,22 @@ const DetailsVacancies = ({
                         // requiredMark={false}
                         initialValues={{
                             vo_bo: false,
-                            rotative_turn: false
+                            rotative_turn: false,
+                            requires_travel_availability: false
                         }}
                     >
-                        <Tabs type='card'>
+                        <Tabs
+                            type='card'
+                            activeKey={action == 'edit'
+                                ? router.query?.tab ?? '1'
+                                : currentKey
+                            }
+                            onChange={onChangeTab}
+                        >
                             <Tabs.TabPane
                                 tab='Características del puesto'
-                                key='tab_1'
+                                forceRender
+                                key='1'
                             >
                                 <Spin spinning={fetching}>
                                     <TabFeatures
@@ -232,7 +255,7 @@ const DetailsVacancies = ({
                             <Tabs.TabPane
                                 tab='Educación, competencias y habilidades'
                                 forceRender
-                                key='tab_2'
+                                key='2'
                             >
                                 <Spin spinning={fetching}>
                                     <TabEducation
@@ -251,7 +274,7 @@ const DetailsVacancies = ({
                             <Tabs.TabPane
                                 tab='Sueldo y prestaciones'
                                 forceRender
-                                key='tab_3'
+                                key='3'
                             >
                                 <Spin spinning={fetching}>
                                     <TabSalary formVacancies={formVacancies}/>
@@ -260,7 +283,7 @@ const DetailsVacancies = ({
                             <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender
-                                key='tab_4'
+                                key='4'
                             >
                                 <Spin spinning={fetching}>
                                     <TabRecruitment
