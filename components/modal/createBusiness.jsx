@@ -21,10 +21,10 @@ const ModalCreateBusiness = ({
   setVisible,
   user,
   afterAction = null,
+  business=[],
   ...props
 }) => {
   const [form] = Form.useForm();
-  const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
   const [loadingLogo, setLoadingLogo] = useState(false);
   const [logo, setLogo] = useState(null);

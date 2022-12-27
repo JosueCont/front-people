@@ -1,0 +1,12 @@
+diff --git a/node_modules/rc-year-calendar/locales/rc-year-calendar.es.js b/node_modules/rc-year-calendar/locales/rc-year-calendar.es.js
+index 02c9377..3d2b742 100644
+--- a/node_modules/rc-year-calendar/locales/rc-year-calendar.es.js
++++ b/node_modules/rc-year-calendar/locales/rc-year-calendar.es.js
+@@ -5,6 +5,7 @@
+  * Spanish translation for bootstrap-datepicker
+  * Bruno Bonamin <bruno.bonamin@gmail.com>
+  */
++ const Calendar = require('rc-year-calendar');
+ 
+ Calendar.locales['es'] = {
+ 	days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],

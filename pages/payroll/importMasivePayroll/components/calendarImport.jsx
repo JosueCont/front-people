@@ -89,7 +89,7 @@ const CalendarImport = ({
 
   useEffect(() => {
     if (calendarSelect != null && periodicities)
-      setPerson(periodicities[calendarSelect].cfdis);
+      setPerson(periodicities[calendarSelect]?.cfdis);
   }, [calendarSelect, periodicities]);
 
   return (

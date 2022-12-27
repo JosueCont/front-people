@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../layout/MainLayout";
+import MainLayout from "../layout/MainInter";
 import {
   Breadcrumb,
   Row,

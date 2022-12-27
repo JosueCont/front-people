@@ -16,7 +16,7 @@ import {
   Tabs,
   Table,
 } from "antd";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
 import {
@@ -31,6 +31,7 @@ import {
 } from "../../../utils/constant";
 import { getProfileGroups } from "../../../redux/catalogCompany";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -796,7 +797,9 @@ const GroupAdd = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

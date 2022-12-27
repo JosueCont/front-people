@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { withAuthSync } from "../../../libs/auth";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Breadcrumb, Table, Typography } from "antd";
 import { FormattedMessage } from "react-intl";
 import Router, { useRouter } from "next/router";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
 import PersonalizationForm from "../../../components/personalization/PersonalizationForm";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 const personalizationConfig = () => {
   const router = useRouter();
   const [config, setConfig] = useState(null);
@@ -118,6 +119,9 @@ const personalizationConfig = () => {
           >
             Inicio
           </Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Personalización</Breadcrumb.Item>
         </Breadcrumb>

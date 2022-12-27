@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from '../../../layout/MainLayout'
+import MainLayout from '../../../layout/MainInter'
 import {
   Button,
   Col,
@@ -10,6 +10,7 @@ import {
 import WebApiFiscal from '../../../api/WebApiFiscal';
 import { Breadcrumb } from 'antd';
 import { useRouter } from "next/router";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const detailIntegrator = () => {
 
@@ -78,7 +79,9 @@ const detailIntegrator = () => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
           <Breadcrumb.Item>Detalle</Breadcrumb.Item>

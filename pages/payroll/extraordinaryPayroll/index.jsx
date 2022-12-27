@@ -36,7 +36,7 @@ import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
 import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
@@ -52,6 +52,7 @@ import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
 import moment, { locale } from "moment";
 import CfdiVaucher from "../../../components/payroll/cfdiVaucher";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -969,10 +970,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       payment_period: periodSelected.id,
       movement_type: movementType,
     };
-    if (listPersons.length > 0)
-      data.cfdis = listPersons.map((item) => {
-        return item.payroll_cfdi_person.id;
-      });
+    // if (listPersons.length > 0)
+    //   data.cfdis = listPersons.map((item) => {
+    //     return item.payroll_cfdi_person.id;
+    //   });
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
       (data.opening_reason = inputMotive.value.trim()), setLoading(true);
@@ -1042,7 +1043,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Nominas extraordinarias</Breadcrumb.Item>
         </Breadcrumb>

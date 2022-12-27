@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -19,6 +19,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -177,8 +178,12 @@ const HolidaysNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/lending" })}>Préstamos</Breadcrumb.Item>

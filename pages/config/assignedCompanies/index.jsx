@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -23,6 +23,7 @@ import { connect } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { messageError, messageSaveSuccess } from "../../../utils/constant";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -155,7 +156,9 @@ const SelectCompany = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Asignar empresa</Breadcrumb.Item>
       </Breadcrumb>
