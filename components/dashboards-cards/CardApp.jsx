@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
-import { urlMyAccount, urlPeople, urlSocial, urlSukha } from "../../config/config";
+import { urlMyAccount, urlPeople, urlSocial, urlSukha, urlCareerlab, urlKhorflx } from "../../config/config";
 import {FaGooglePlay, FaApple} from "react-icons/fa";
 import _ from "lodash"
 
@@ -128,13 +128,13 @@ const CardApps = ({ user, config, ...props }) => {
       case "careerlab":
         const token2 = user.jwt_data.metadata.at(-1).token;
         // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
-        const url2 = "https://platform.careerlab.hiumanlab.com/"
+        const url2 = `https://platform.${urlCareerlab}/validation?token=${token2}`
         redirectTo(url2, true);
         break;
       case "khorflix":
         const token3 = user.jwt_data.metadata.at(-1).token;
         // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
-        const url3 = "https://iu.khorflix.com/"
+        const url3 = `${getCurrentURL(true)}.${urlKhorflx}/validation?token=${token3}`
         redirectTo(url3, true);
         break;
       default:

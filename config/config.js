@@ -42,3 +42,7 @@ export const urlKhorflx = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_KHORFLIX_TENANT
   : process.env.BASE_URL_KHORFLIX_TENANT;
 
+export const urlCareerlab = process.browser
+  ? process.env.NEXT_PUBLIC_BASE_URL_CAREERLAB_TENANT
+  : process.env.BASE_URL_CAREERLAB_TENANT;
+
