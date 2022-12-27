@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
@@ -21,6 +21,8 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
@@ -34,14 +36,16 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getCandidates(currentNode.id, filters, page);
+            setCurrentPage(page)
+            setCurrentFilters(filters)
         }
     },[currentNode, router])
 
     return (
-        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
+        <MainLayout currentKey='jb_candidates' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
@@ -50,15 +54,9 @@ const index = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Candidatos</Breadcrumb.Item>
             </Breadcrumb>
-            <div
-                className={'container'}
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}>
+            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
                 <SearchCandidates/>
-                <TableCandidates/>
+                <TableCandidates currentPage={currentPage} currentFilters={currentFilters}/>
             </div>
         </MainLayout>
     )

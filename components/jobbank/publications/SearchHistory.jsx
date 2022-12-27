@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { DatePicker, Form, Row, Col, Button, Select} from 'antd';
 import {
@@ -7,13 +8,16 @@ import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
-import { accounstJobbank } from '../../../utils/constant';
 
 const SearchHistory = ({
     infoPublication = {},
     newFilters = {}
 }) => {
 
+    const {
+        list_connections_options,
+        load_connections_options
+    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const url = router?.asPath?.split('?')[0];
@@ -28,7 +32,7 @@ const SearchHistory = ({
             ]
         }
         formSearch.setFieldsValue(filters);  
-    },[router])
+    },[router.query])
 
     const onFinish = (values) =>{
         let filters = {...newFilters};
@@ -77,12 +81,19 @@ const SearchHistory = ({
                         <Select
                             allowClear
                             showSearch
+                            disabled={load_connections_options}
+                            loading={load_connections_options}
                             placeholder='Cuenta'
                             notFoundContent='No se encontraron resultados'
-                            optionFilterProp='label'
-                            options={accounstJobbank}
+                            optionFilterProp='children'
                             style={{width: '110px'}}
-                        />
+                        >
+                            {list_connections_options.length > 0 && list_connections_options.map(item=> (
+                                <Select.Option value={item.code} key={item.code}>
+                                    {item.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Form.Item name='dates' style={{margin:0}}>
                         <DatePicker.RangePicker

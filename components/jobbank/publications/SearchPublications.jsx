@@ -7,14 +7,15 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
+import { optionsStatusVacant } from '../../../utils/constant';
 
 const SearchPublications = ({
     load_vacancies_options,
     list_vacancies_options,
     load_profiles_options,
     list_profiles_options,
-    list_connections,
-    load_connections,
+    list_connections_options,
+    load_connections_options,
     currentNode
 }) => {
 
@@ -22,10 +23,16 @@ const SearchPublications = ({
     const [formSearch] = Form.useForm();
 
     useEffect(()=>{
-        formSearch.setFieldsValue(router.query);
+        let values = {...router.query};
+        if(values.vacant__status) values.vacant__status = parseInt(values.vacant__status);
+        if(values.account_to_share?.trim()) values.account_to_share = JSON.parse(values.account_to_share);
+        formSearch.setFieldsValue(values);
     },[router])
 
     const onFinishSearch = (values) =>{
+        let check = values.account_to_share?.length > 0;
+        if(check) values.account_to_share = JSON.stringify(values.account_to_share);
+        else values.account_to_share = null;
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/publications/',
@@ -48,27 +55,28 @@ const SearchPublications = ({
             <Row gutter={[0,8]} style={{width: '100%'}}>
                 <Col xs={12} md={8} xl={4}>
                     <Form.Item
-                        name='code_post'
+                        name='account_to_share'
                         style={{marginBottom: 0}}
                     >
                         <Select
                             allowClear
-                            showSearch
-                            disabled={load_connections}
-                            loading={load_connections}
+                            mode='multiple'
+                            maxTagCount={1}
+                            disabled={load_connections_options}
+                            loading={load_connections_options}
                             placeholder='Cuenta'
                             notFoundContent='No se encontraron resultados'
                             optionFilterProp='children'
                         >
-                            {list_connections.length > 0 && list_connections.map(item=> (
-                                <Select.Option value={item.code} key={item.code}>
+                            {list_connections_options.length > 0 && list_connections_options.map(item=> (
+                                <Select.Option value={item.id} key={item.id}>
                                     {item.name}
                                 </Select.Option>
                             ))}
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={11} sm={12} md={8} xl={4}>
+                <Col xs={12} md={8} xl={4}>
                     <Form.Item
                         name='vacant'
                         style={{marginBottom: 0}}
@@ -88,6 +96,15 @@ const SearchPublications = ({
                                 </Select.Option>
                             ))}
                         </Select>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item name='vacant__status' style={{marginBottom: 0}}>
+                        <Select
+                            allowClear
+                            placeholder='Estatus vacante'
+                            options={optionsStatusVacant}
+                        />
                     </Form.Item>
                 </Col>
                 <Col xs={12} md={8} xl={4}>
@@ -129,7 +146,7 @@ const SearchPublications = ({
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={12} sm={23} md={23} xl={8} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
+                <Col xs={12} sm={23} md={23} xl={4} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
                         <Tooltip title='Buscar'>
                             <Button htmlType='submit'>
@@ -161,8 +178,8 @@ const mapState = (state) =>{
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
         load_profiles_options: state.jobBankStore.load_profiles_options,
         list_profiles_options: state.jobBankStore.list_profiles_options,
-        list_connections: state.jobBankStore.list_connections,
-        load_connections: state.jobBankStore.load_connections
+        list_connections_options: state.jobBankStore.list_connections_options,
+        load_connections_options: state.jobBankStore.load_connections_options
     }
 }
 

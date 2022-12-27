@@ -25,11 +25,13 @@ const AddOrEditCandidates = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id','tab'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
-        setNewFilters(deleteFiltersJb(router.query));
-    },[router])
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
@@ -42,10 +44,10 @@ const AddOrEditCandidates = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
+        <MainLayout currentKey='jb_candidates' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
@@ -53,7 +55,7 @@ const AddOrEditCandidates = ({
                 <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({
                         pathname: '/jobbank/candidates',
                         query: newFilters

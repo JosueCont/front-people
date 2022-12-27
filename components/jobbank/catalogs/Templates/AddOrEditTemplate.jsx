@@ -15,10 +15,12 @@ const AddOrEditTemplate = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
-        setNewFilters(deleteFiltersJb(router.query));
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
     },[router])
 
     useEffect(()=>{
@@ -29,7 +31,7 @@ const AddOrEditTemplate = ({
         <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio

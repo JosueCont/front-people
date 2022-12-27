@@ -456,29 +456,18 @@ export const createFiltersJB = (obj = {}) =>{
 
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
-    if(key == 'page'){
+    if(key == "page"){
       let offset = (parseInt(val) - 1) * 10;
       return query +=`&limit=10&offset=${offset}`;
     }
-    let value = ['open_fields','others'].includes(val) ? "" : val;
+    let value = val == "open_fields" ? "" : val;
     return query += `&${key}=${value}`;
   }, '');
 }
 
-const keysToDeleteJB = [
-  'id',
-  'client',
-  'vacancy',
-  'catalog',
-  'strategy',
-  'start',
-  'end',
-  'account',
-  'tab'
-];
 export const deleteFiltersJb = (
   obj = {},
-  listDelete = keysToDeleteJB
+  listDelete = []
 ) =>{
   return Object.entries(obj).reduce((filters, [key, val]) =>{
     if(listDelete.includes(key)) return filters;

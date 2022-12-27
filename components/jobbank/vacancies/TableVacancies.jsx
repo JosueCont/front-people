@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   Button,
   Menu,
   Dropdown,
   message,
-  Select
+  Select,
+  Tag,
+  Tooltip
 } from 'antd';
 import {
   EllipsisOutlined,
@@ -20,14 +22,15 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import { optionsStatusVacant } from '../../../utils/constant';
-import { getFiltersJB } from '../../../utils/functions';
 
 const TableVacancies = ({
     load_vacancies,
     jobbank_page,
     list_vacancies,
     getVacancies,
-    currentNode
+    currentNode,
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -40,20 +43,20 @@ const TableVacancies = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacanciesWithFilters();
-            if(ids.length > 1) message.success('Vacantes eliminadas');
-            else message.success('Vacante eliminada');
+            getVacancies(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
+            message.success(msg)
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Vacantes no eliminadas');
-            else message.error('Vacante no eliminada');
+            let msg = ids.length > 1 ? 'Vacantes no eliminadas' : 'Vacante no eliminada';
+            message.error(msg);
         }
     }
 
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacanciesWithFilters();
+            getVacancies(currentNode.id, currentFilters, currentPage);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -68,7 +71,7 @@ const TableVacancies = ({
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
-                getVacanciesWithFilters();
+                getVacancies(currentNode.id, currentFilters, currentPage);
             },1000)
         } catch (e) {
             console.log(e)
@@ -76,12 +79,6 @@ const TableVacancies = ({
                 message.error({content: 'Vacante no duplicada', key});
             },1000)
         }
-    }
-
-    const getVacanciesWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(router.query);
-        getVacancies(currentNode.id, filters, page);
     }
 
     const openModalManyDelete = () =>{
@@ -103,22 +100,30 @@ const TableVacancies = ({
     }
 
     const openModalRemove = (item) =>{
-        if(item.has_estrategy){
-            let msg = `Esta vacante no se puede eliminar,
-            ya que se encuentra asociada a una estrategia.`;
-            message.error({content: msg, duration: 4});
-            return;
-        }
+        setViewAsList(item.has_estrategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        if(viewAsList) return;
+        setViewAsList(false)
         setItemsKeys([])
         setItemsToDelete([])
     }
+
+    const titleDelete = useMemo(()=>{
+        if(viewAsList){
+            return itemsToDelete.length > 1
+            ? `Estas vacantes no se pueden eliminar, ya que
+                se encuentran asociadas a una estrategia.`
+            : `Esta vacante no se puede eliminar, ya que
+                se encuentra asociada a una estrategia`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estas vacantes?'
+            : '¿Estás seguro de eliminar esta vacante?';
+    },[viewAsList, itemsToDelete])
 
     const savePage = (query) => router.replace({
         pathname: '/jobbank/vacancies',
@@ -126,12 +131,13 @@ const TableVacancies = ({
     })
 
     const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
-            savePage(newQuery)
-        };
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -215,7 +221,6 @@ const TableVacancies = ({
         title: 'Estatus',
         render: (item) =>{
             return (
-                // <span>{getStatus(item)}</span>
                 <Select
                     size='small'
                     style={{width: 101}}
@@ -226,6 +231,22 @@ const TableVacancies = ({
                     onChange={(e) => actionStatus(e, item)}
                 />
             )
+        }
+    },
+    {
+        title: 'Estrategia',
+        render: (item) =>{
+            return item.has_estrategy ? (
+                <a
+                    style={{color: '#1890ff'}}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/strategies/edit',
+                        query: {id: item.has_estrategy}
+                    })}
+                >
+                    Ver estrategia
+                </a>
+            ) : <></>;
         }
     },
     {
@@ -244,7 +265,7 @@ const TableVacancies = ({
                 </Dropdown>
             )
         },
-        // width: 80, 
+        width: 60, 
         render: (item) =>{
             return (
                 <Dropdown overlay={()=> menuItem(item)}>
@@ -279,13 +300,7 @@ const TableVacancies = ({
             }}
         />
         <DeleteItems
-            title={viewAsList
-                ? `Estas vacantes no se pueden eliminar,
-                    ya que se encuentran asociadas a una estrategia.`
-                : itemsToDelete.length > 1
-                ? '¿Estás seguro de eliminar estas vacantes?'
-                : '¿Estás seguro de eliminar esta vacante?'
-            }
+            title={titleDelete}
             visible={openModalDelete}
             keyTitle='job_position'
             keyDescription='customer, name'

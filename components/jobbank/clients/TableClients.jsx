@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -37,7 +37,9 @@ const TableClients = ({
     load_clients,
     jobbank_page,
     currentNode,
-    getClients
+    getClients,
+    currentFilters,
+    currentPage
 }) => {
 
     const router = useRouter();
@@ -51,13 +53,13 @@ const TableClients = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            getClientsWithFilters();
-            if(checked) message.success('Cliente activado');
-            if(!checked) message.success ('Cliente desactivado');
+            getClients(currentNode.id, currentFilters, currentPage);
+            let msg = checked ? 'Cliente activado' : 'Cliente desactivado';
+            message.success(msg)
         } catch (e) {
             console.log(e)
-            if(checked) message.error('Cliente no activado');
-            if(!checked) message.error('Cliente no desactivado');
+            let msg = checked ? 'Cliente no activado' : 'Cliente no desactivado';
+            message.error(msg)
         }
     }
 
@@ -65,22 +67,17 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClientsWithFilters();
-            if(ids.length > 1) message.success('Clientes eliminados');
-            else message.success('Cliente eliminado');
+            getClients(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Clientes eliminados' : 'Cliente eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
             let msgTxt = e.response?.data?.message;
-            if(msgTxt) return message.error(msgTxt);
-            if(ids.length > 1) message.error('Clientes no eliminados');
-            else message.error('Cliente no eliminado');
+            let msg = msgTxt ?? ids.length > 1
+                ? 'Clientes no eliminados'
+                : 'Cliente no eliminado';
+            message.error(msg);
         }
-    }
-
-    const getClientsWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(router.query);
-        getClients(currentNode.id, filters, page);
     }
 
     const closeModalList = () =>{
@@ -90,7 +87,6 @@ const TableClients = ({
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        if(viewAsList) return;
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -114,12 +110,7 @@ const TableClients = ({
     }
 
     const openModalRemove = (item) =>{
-        if(item.has_estrategy){
-            let msg = `Este cliente no se puede eliminar,
-            ya que se encuentra asociado a una estrategia.`;
-            message.error({content: msg, duration: 4});
-            return;
-        }
+        setViewAsList(item.has_estrategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -129,18 +120,33 @@ const TableClients = ({
         setItemToEdit(item)
     }
 
+    const titleDelete = useMemo(()=>{
+        if(viewAsList){
+            return itemsToDelete.length > 1
+            ? `Estos clientes no se pueden eliminar,
+                ya que se encuentran asociados a una estrategia.`
+            : `Este cliente no se puede eliminar, ya que
+                se encuentra asociado a una estrategia`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estos clientes?'
+            : '¿Estás seguro de eliminar este cliente?';
+        
+    },[viewAsList, itemsToDelete])
+
     const savePage = (query) => router.replace({
         pathname: '/jobbank/clients',
         query
     })
 
     const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
-            savePage(newQuery)
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
         }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -167,7 +173,7 @@ const TableClients = ({
                 icon={<UserOutlined style={{color:'#52c41a'}} />}
                 color='green' style={{fontSize: '14px'}}
             >
-                {item.contact_list ? item.contact_list.length : 0}
+                {item.contact_list ? item.contact_list?.length : 0}
             </Tag>
         </Space>
     )
@@ -318,8 +324,8 @@ const TableClients = ({
     return (
         <>
             <Table
-                size={'small'}
-                rowKey={'id'}
+                size='small'
+                rowKey='id'
                 columns={columns}
                 dataSource={list_clients.results}
                 loading={load_clients}
@@ -338,13 +344,7 @@ const TableClients = ({
                 }}
             />
             <DeleteItems
-                title={viewAsList
-                    ? `Estos clientes no se pueden eliminar,
-                        ya que se encuentran asociados a una estrategia.`
-                    : itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos clientes?'
-                    : '¿Estás seguro de eliminar este cliente?'
-                }
+                title={titleDelete}
                 visible={openModalDelete}
                 keyTitle='name'
                 keyDescription='rfc'

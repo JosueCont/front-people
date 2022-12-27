@@ -5,8 +5,6 @@ import {
     Form,
     Input,
     Select,
-    DatePicker,
-    InputNumber,
     Spin,
     message,
     Button,
@@ -50,13 +48,11 @@ const TabGeneral = ({
     const btnSave = useRef(null);
     const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
-    const nameCV = Form.useWatch('cv_name_read', formCandidate);
     const state = Form.useWatch('state', formCandidate);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
-    const [ruleCV, setRuleCV] = useState(rule_init);
     const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
     //Idiomas
     const [currentValue, setCurrentValue] = useState([]);
@@ -79,7 +75,6 @@ const TabGeneral = ({
         setDisabledTab(false)
         setCurrentValue([])
         setRuleLanguages(rule_init)
-        setRuleCV(rule_init)
         formCandidate.resetFields();
         const getLang = item => ({lang: item.lang, domain: item.domain});
         let listLanguages = infoCandidate.languages.map(getLang);
@@ -111,8 +106,8 @@ const TabGeneral = ({
         } catch (e) {
             console.log(e)
             let msgEmail = e.response?.data?.email;
-            if(msgEmail) message.error('Este correo ya existe');
-            else message.error('Candidato no actualizado');
+            let msg = msgEmail ? 'Este correo ya existe' : 'Candidato no actualizado';
+            message.error(msg);
             setFetching(false)
         }
     }
@@ -127,8 +122,8 @@ const TabGeneral = ({
             setFetching(false);
             setLoading({})
             let msgEmail = e.response?.data?.email;
-            if(msgEmail) message.error('Este correo ya existe');
-            else message.error('Candidato no registrado');
+            let msg = msgEmail ? 'Este correo ya existe' : 'Candidato no registrado';
+            message.error(msg);
         }
     }
 
@@ -146,13 +141,6 @@ const TabGeneral = ({
     }
 
     const onFinish = (values) =>{
-        if(!values.cv_name_read){
-            let text = 'Este campo es requerido';
-            setRuleCV({text, status: 'error'})
-            setLoading({})
-            return;
-        }
-        setRuleCV(rule_init);
         const body = createData(values);
         setFetching(true);
         const actionFunction = {
@@ -163,10 +151,6 @@ const TabGeneral = ({
     }
 
     const onFailed = (e) =>{
-        if(!nameCV){
-            let text = 'Este campo es requerido';
-            setRuleCV({text, status: 'error'})
-        }
         setLoading({})
     }
 
@@ -178,7 +162,6 @@ const TabGeneral = ({
         setCurrentValue([])
         setListLangDomain([])
         setRuleLanguages(rule_init)
-        setRuleCV(rule_init)
     }
 
     const actionSaveAnd = (id) =>{
@@ -210,14 +193,12 @@ const TabGeneral = ({
 
     const setFileSelected = ({target : { files }}) =>{
         if(Object.keys(files).length <= 0){
-            let text = 'No se pudo cargar el archivo, intente de nuevo';
-            setRuleCV({text, status: 'error'});
+            message.error('No se pudo cargar el archivo, intente de nuevo');
             return;
         }
         let extension = getFileExtension(files[0].name);
         if(!typeFileCV.includes(extension.toLowerCase())){
-            let text = 'El archivo seleccionado no es válido';
-            setRuleCV({text, status: 'error'});
+            message.error('El archivo seleccionado no es válido');
             return;
         }
         formCandidate.setFieldsValue({cv_name_read: files[0].name});
@@ -225,7 +206,6 @@ const TabGeneral = ({
     }
 
     const openFile = () =>{
-        setRuleCV(rule_init)
         inputFile.current.value = null;
         inputFile.current.click();
     }
@@ -358,11 +338,9 @@ const TabGeneral = ({
                                     label='CV'
                                     required
                                     tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
-                                    help={ruleCV?.text}
-                                    validateStatus={ruleCV?.status}
                                 >
                                     <Input.Group compact>
-                                        <Form.Item name='cv_name_read' noStyle>
+                                        <Form.Item name='cv_name_read' noStyle rules={[ruleRequired]}>
                                             <Input
                                                 readOnly
                                                 style={{

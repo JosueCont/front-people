@@ -23,23 +23,25 @@ const AddOrEditStrategies = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'client'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
-        setNewFilters(deleteFiltersJb(router.query));
-    },[router])
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
             getClientsOptions(currentNode.id);
-            getVacanciesOptions(currentNode.id,'&has_strategy=0');
+            getVacanciesOptions(currentNode.id,'&status=1&has_strategy=0');
             getPersonsCompany(currentNode.id);
             getJobBoards(currentNode.id);
         }
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
+        <MainLayout currentKey='jb_strategies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -50,7 +52,7 @@ const AddOrEditStrategies = ({
                 <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({
                         pathname: '/jobbank/strategies',
                         query: newFilters
@@ -60,7 +62,7 @@ const AddOrEditStrategies = ({
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
-            <div className={'container'}>
+            <div className='container'>
                 <DetailsStrategies action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>

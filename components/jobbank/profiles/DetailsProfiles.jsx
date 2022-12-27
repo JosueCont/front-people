@@ -1,8 +1,7 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
+    useRef
 } from 'react';
 import {
     Card,
@@ -36,8 +35,6 @@ const DetailsProfiles = ({
     const router = useRouter();
     const btnSave = useRef(null);
     const [formProfile] = Form.useForm();
-    const { setFieldsValue, resetFields } = formProfile;
-    const [disabledClient, setDisabledClient] = useState(false);
     const [valuesDefault, setValuesDefault] = useState({});
     const [disabledField, setDisabledField] = useState(false);
     const [loading, setLoading] = useState({});
@@ -50,18 +47,18 @@ const DetailsProfiles = ({
         if(router.query.id && action == 'edit'){
             getInfoProfile(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(router.query.client && action == 'add'){
-            resetFields()
+            formProfile.resetFields()
             keepClient()
-        } else setDisabledClient(false)
-    },[router])
+        }
+    },[router.query])
 
     useEffect(()=>{
         if(Object.keys(infoProfile).length > 0 && action == 'edit'){
-            resetFields()
+            formProfile.resetFields()
             setValuesForm()
         }
     },[infoProfile])
@@ -79,9 +76,8 @@ const DetailsProfiles = ({
     }
 
     const keepClient = () =>{
-        setDisabledClient(true)
-        let customer = router.query.client;
-        setFieldsValue({ customer })
+        let customer = router.query?.client;
+        formProfile.setFieldsValue({ customer })
     }
 
     const setValuesForm = () => {
@@ -96,7 +92,7 @@ const DetailsProfiles = ({
             setDisabledField(!infoProfile.profile_type.form_enable);
         }else setDisabledField(false);
         setValuesDefault(all_info);
-        setFieldsValue(all_info);
+        formProfile.setFieldsValue(all_info);
     }
 
     const onFinisUpdate = async (values) =>{
@@ -105,9 +101,9 @@ const DetailsProfiles = ({
             message.success('Template actualizado');
             getInfoProfile(infoProfile.id)
         } catch (e) {
-            if(e.response?.data?.message == 'Este nombre ya existe'){
-                message.error(e.response?.data?.message);
-            } else message.error('Template no actualizado');
+            let msgApi = e.response?.data?.message;
+            let msg = msgApi ?? 'Template no actualizado';
+            message.error(msg);
             setFetching(false)
             console.log(e)
         }
@@ -119,9 +115,9 @@ const DetailsProfiles = ({
             message.success('Template registrado')
             actionSaveAnd(response.data.id)
         } catch (e) {
-            if(e.response?.data?.message == 'Este nombre ya existe'){
-                message.error(e.response?.data?.message);
-            } else message.error('Template no registrado');
+            let msgApi = e.response?.data?.message;
+            let msg = msgApi ?? 'Template no registrado';
+            message.error(msg);
             setLoading({})
             setFetching(false)
             console.log(e)
@@ -135,7 +131,7 @@ const DetailsProfiles = ({
             message.error('Seleccionar los campos del template');
             setFetching(false);
             setLoading({})
-            return false;
+            return;
         }
         const actionFunction = {
             edit: onFinisUpdate,
@@ -145,7 +141,7 @@ const DetailsProfiles = ({
     }
 
     const actionCreate = () =>{
-        resetFields();
+        formProfile.resetFields();
         if(router.query?.client) keepClient();
         setDisabledField(false)
         setFetching(false)
@@ -203,6 +199,7 @@ const DetailsProfiles = ({
                     <Spin spinning={fetching}>
                         <Form
                             id='form-profiles'
+                            layout='vertical'
                             form={formProfile}
                             onFinish={onFinish}
                             // requiredMark={false}
@@ -212,7 +209,7 @@ const DetailsProfiles = ({
                             <FormProfiles
                                 valuesDefault={valuesDefault}
                                 formProfile={formProfile}
-                                disabledClient={disabledClient}
+                                disabledClient={router.query?.client}
                                 disabledField={disabledField}
                                 setDisabledField={setDisabledField}
                             />

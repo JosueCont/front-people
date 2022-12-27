@@ -19,6 +19,8 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode) getSectors(currentNode.id);
@@ -26,11 +28,15 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let page = router.query.page
+                ? parseInt(router.query.page)
+                : 1;
             let filters = getFiltersJB(router.query);
             getClients(currentNode.id, filters, page)
+            setCurrentPage(page)
+            setCurrentFilters(filters)
         }
-    },[currentNode, router])
+    },[currentNode, router.query])
 
     return (
         <MainLayout currentKey={'jb_clients'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -45,15 +51,9 @@ const index = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Clientes</Breadcrumb.Item>
             </Breadcrumb>
-            <div
-                className={'container'}
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}>
+            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
                 <SearchClients/>
-                <TableClients/>
+                <TableClients currentPage={currentPage} currentFilters={currentFilters}/>
             </div>
         </MainLayout>
     )

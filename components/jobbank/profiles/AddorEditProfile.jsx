@@ -21,11 +21,13 @@ const AddorEditProfile = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'client'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
-        setNewFilters(deleteFiltersJb(router.query));
-    },[router])
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
@@ -36,10 +38,10 @@ const AddorEditProfile = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_profiles'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
+        <MainLayout currentKey='jb_profiles' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
@@ -47,7 +49,7 @@ const AddorEditProfile = ({
                 <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({
                         pathname: '/jobbank/profiles',
                         query: newFilters
