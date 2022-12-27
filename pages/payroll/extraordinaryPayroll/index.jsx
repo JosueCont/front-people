@@ -17,6 +17,7 @@ import {
   Steps,
   Table,
   Tag,
+  Tooltip,
   Typography,
 } from "antd";
 import {
@@ -31,6 +32,7 @@ import {
   ExclamationCircleOutlined,
   CheckCircleOutlined,
   StopOutlined,
+  FileExcelOutlined,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -190,6 +192,28 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       ),
     },
     {
+      title: "",
+      className: "cursor_pointer",
+      render: (item) => (
+        <>
+          {movementType == 2 && (
+            <div>
+              <Tooltip placement="top" title="Carta de renuncia">
+                <Button
+                  size="small"
+                  onClick={() => {
+                    downloadResignationLetter(item.person.id);
+                  }}
+                >
+                  <FileExcelOutlined />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ),
+    },
+    {
       key: "actions",
       className: "cell-actions",
       render: (item) =>
@@ -215,6 +239,33 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         ),
     },
   ];
+
+  const downloadResignationLetter = async (id) => {
+    try {
+      let response = await WebApiPayroll.downloadRenegationCart(id);
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Carta de renuncia.pdf";
+      link.click();
+    } catch (error) {
+      error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        message.error(error.response.data.message);
+    }
+
+    // downLoadFileBlob(
+    //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
+    //   "carta_de_renuncia.pdf",
+    //   "GET",
+    // );
+  };
 
   const renderConceptsTable = (data) => {
     let dataPerceptions = data?.perception;
@@ -1043,9 +1094,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          {verifyMenuNewForTenant() && 
+          {verifyMenuNewForTenant() && (
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-          }
+          )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Nominas extraordinarias</Breadcrumb.Item>
         </Breadcrumb>
