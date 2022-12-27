@@ -138,8 +138,10 @@ const MainSider = ({
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      let children3 = [getItem("KHOR Connect", "connect")]
-      items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      if (user && (user.intranet_access === 2 || user.intranet_access === 3)){
+        let children3 = [getItem("KHOR Connect", "connect")]
+        items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      }
 
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
