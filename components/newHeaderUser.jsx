@@ -28,6 +28,7 @@ import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
 import CardApps from "./dashboards-cards/CardApp";
+import { verifyMenuNewForTenant } from "../utils/functions"
 
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
@@ -63,8 +64,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           if (response.data.mlast_name)
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
-          console.log('person', response.data)
-          console.log('person', response.data.is_admin)
           setPerson(response.data);
           if (response.data.is_admin || localStorage.getItem('is_admin')){
             setIsAdmin(true)
@@ -114,6 +113,92 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               </p>
             )}
 
+            <p className="text-menu" onClick={() => setLogOut(true)}>
+              <Text>Cerrar sesión</Text>
+            </p>
+          </Col>
+        </Row>
+      </Card>
+    </>
+  );
+
+  const userCardDisplayMenuOld = () => (
+    <>
+      <Card className="card_menu">
+        <div style={{ paddingTop: 20, paddingLeft: 20, paddingRight: 20 }}>
+          <Row gutter={[20]}>
+            <Col style={{ display: "flex" }}>
+              <Avatar
+                key="avatar_key"
+                icon={<UserOutlined />}
+                src={person.photo_thumbnail}
+                style={{ margin: "auto" }}
+              />
+            </Col>
+            <Col>
+              <Text strong>{person.fullName}</Text>
+              <br />
+              <Text>{person.email}</Text>
+              <br />
+              <small>
+                <b>{props.currentNode ? props.currentNode.name : ""}</b>
+              </small>
+            </Col>
+          </Row>
+          <Divider className="divider-primary" style={{ margin: "10px 0px" }} />
+        </div>
+        <Row>
+          <Col span={24} style={{ padding: 10 }}>
+            <p
+              className="text-menu"
+              onClick={() => {
+                !person.nodes && props.currentNode
+                  ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
+                  : router.push(`/home/persons/${person.id}`);
+              }}
+            >
+              <Text>Editar perfil</Text>
+            </p>
+
+            { verifyMenuNewForTenant() &&
+              <p
+              className="text-menu"
+              onClick={() => router.push("/user")}
+
+            >
+              <Text>Cambiar a la vista de Usuario</Text>
+            </p>}
+
+            {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
+              <p
+                className="text-menu"
+                onClick={() => router.push("/select-company")}
+              >
+                <Text>Cambiar de empresa</Text>
+              </p>
+            )} */}
+
+            {pathname !== "/select-company" && (
+              <p
+                className="text-menu"
+                onClick={() => router.push("/select-company")}
+              >
+                <Text>Cambiar de empresa</Text>
+              </p>
+            )}
+
+            {props.config &&
+              props.config.applications &&
+              props.config.applications.find(
+                (item) => item.app === "PAYROLL" && item.is_active
+              ) && (
+                <p
+                  className="text-menu"
+                  onClick={() => setModalCfdiVersion(true)}
+                >
+                  <Text>Cambiar version de CDFI</Text>
+                </p>
+              )}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
@@ -211,7 +296,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                         />
                       </div>
                     </Dropdown>
-                    <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                    <Dropdown overlay={verifyMenuNewForTenant()?userCardDisplay:userCardDisplayMenuOld} key="dropdown_user">
                       <div key="menu_user_content">
                         <Avatar
                           key="avatar_key"

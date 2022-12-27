@@ -1,8 +1,9 @@
 import { Breadcrumb, Spin } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../../components/payroll/forms/FormPaymentCalendar";
-import MainLayout from "../../../../layout/MainLayout";
+import MainLayout from "../../../../layout/MainInter";
 import { withAuthSync } from "../../../../libs/auth";
+import { verifyMenuNewForTenant } from "../../../../utils/functions";
 
 const PaymentCalendar = () => {
   const route = useRouter();
@@ -15,7 +16,9 @@ const PaymentCalendar = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Nómina</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}

@@ -11,7 +11,7 @@ class WebApiPeople {
   }
 
   static getCompanys() {
-    return WebApi.ApisType(`/business/node/`, "get");
+    return WebApi.ApisType(`/business/node/?active=true`, "get");
   }
 
   static getCompany(data) {

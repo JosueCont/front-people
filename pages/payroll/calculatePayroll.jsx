@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import {
   Row,
   Col,
@@ -42,7 +42,7 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { downLoadFileBlob, getDomain } from "../../utils/functions";
+import { downLoadFileBlob, getDomain, verifyMenuNewForTenant } from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -1108,7 +1108,9 @@ const CalculatePayroll = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            {verifyMenuNewForTenant() && 
+              <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            }
             <Breadcrumb.Item>Nómina</Breadcrumb.Item>
             <Breadcrumb.Item>Cálculo de nómina</Breadcrumb.Item>
           </Breadcrumb>
@@ -1267,7 +1269,7 @@ const CalculatePayroll = ({ ...props }) => {
                                       let data = new FormData();
                                       data.append(
                                         "File",
-                                        info.fileList[0].originFileObj
+                                          info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
                                       );
                                       data.append("department", department);
                                       data.append("job", job);
@@ -1275,9 +1277,11 @@ const CalculatePayroll = ({ ...props }) => {
                                         "payment_period",
                                         periodSelected.id
                                       );
-                                      importPayrollCaculate(data);
                                       info.file = null;
                                       info.fileList = [];
+                                      importPayrollCaculate(data);
+
+
                                     }
                                   }
                                 },

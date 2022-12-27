@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import {
   Form,
@@ -44,6 +44,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import { FormattedMessage } from "react-intl";
 import esES from "antd/lib/locale/es_ES";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -417,7 +418,9 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>

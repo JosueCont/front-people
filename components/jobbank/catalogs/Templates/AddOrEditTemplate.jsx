@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getVacantFields } from '../../../../redux/jobBankDuck';
 import DetailsTemplate from './DetailsTemplate';
-import { deleteFiltersJb } from '../../../../utils/functions';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../../utils/functions';
 
 const AddOrEditTemplate = ({
     action = 'add',
@@ -36,7 +36,9 @@ const AddOrEditTemplate = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'

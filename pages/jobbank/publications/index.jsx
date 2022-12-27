@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
@@ -8,29 +8,27 @@ import {
     getPublications,
     getProfilesOptions,
     getVacanciesOptions,
-    getConnectionsOptions
+    getConnections
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
-import { getFiltersJB } from '../../../utils/functions';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
     getPublications,
     getProfilesOptions,
     getVacanciesOptions,
-    getConnectionsOptions
+    getConnections
 }) => {
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id);
+            getConnections(currentNode.id, true);
         }
     },[currentNode])
 
@@ -39,10 +37,8 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getPublications(currentNode.id, filters, page);
-            setCurrentPage(page)
-            setCurrentFilters(filters)
         }
-    },[currentNode, router.query])
+    },[currentNode, router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -53,13 +49,15 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Publicaciones</Breadcrumb.Item>
             </Breadcrumb>
             <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
                 <SearchPublications/>
-                <TablePublications currentPage={currentPage} currentFilters={currentFilters}/>
+                <TablePublications/>
             </div>
         </MainLayout>
     )
@@ -76,6 +74,6 @@ export default connect(
         getPublications,
         getProfilesOptions,
         getVacanciesOptions,
-        getConnectionsOptions
+        getConnections
     }
 )(withAuthSync(index));

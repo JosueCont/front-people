@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
-import { withAuthSync } from '../../../../libs/auth';
+import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getConnections } from '../../../../redux/jobBankDuck';
-import SearchConnections from '../../../../components/jobbank/connections/SearchConnections';
-import TableConnections from '../../../../components/jobbank/connections/TableConnections';
-import { getFiltersJB } from '../../../../utils/functions';
+import { getConnections } from '../../../redux/jobBankDuck';
+import TabsConnections from '../../../components/jobbank/connections/TabsConnections';
+import { verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -15,18 +14,10 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
-        if(currentNode){
-            let page = router.query.page ? parseInt(router.query.page) : 1;
-            let filters = getFiltersJB(router.query);
-            getConnections(currentNode.id, filters, page);
-            setCurrentPage(page)
-            setCurrentFilters(filters)
-        }
-    },[currentNode, router.query])
+        if(currentNode) getConnections(currentNode.id);
+    },[currentNode])
 
     return (
         <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -37,7 +28,9 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
@@ -47,10 +40,7 @@ const index = ({
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Conexiones</Breadcrumb.Item>
             </Breadcrumb>
-            <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
-                <SearchConnections/>
-                <TableConnections currentPage={currentPage} currentFilters={currentFilters}/>
-            </div>
+            <TabsConnections/>
         </MainLayout>
     )
 }

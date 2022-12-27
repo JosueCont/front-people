@@ -451,6 +451,7 @@ const SelectCompany = ({ ...props }) => {
             </Modal>
             <ModalCreateBusiness
               user={props.user}
+              business={dataList}
               visible={createNode}
               setVisible={setCreateNode}
               afterAction={(value) => personForKhonnectId(value)}

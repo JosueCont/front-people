@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Breadcrumb, notification } from "antd";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const PermissionEdit = () => {
   const route = useRouter();
@@ -77,8 +78,12 @@ const PermissionEdit = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
           <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/permission" })}>Permisos</Breadcrumb.Item>

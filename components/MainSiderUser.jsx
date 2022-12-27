@@ -23,7 +23,7 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
 import { getCurrentURL } from "../utils/constant";
-import { urlSocial, urlSukha, urlMyAccount, urlKhorflx} from "../config/config";
+import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../config/config";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -61,11 +61,6 @@ const MainSider = ({
     const pathRoutes = {};
     switch (key){
       case "sukha":
-        // const link1 = document.createElement('a');
-        // link1.href = "https://demo.sukhatv.com/";
-        // link1.target = '_blank';
-        // link1.click();
-
         const token1 = user.jwt_data.metadata.at(-1).token;
         const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
@@ -83,14 +78,10 @@ const MainSider = ({
         link2.target = '_blank';
         link2.click();
         break;
-        // const link2 = document.createElement('a');
-        // link2.href = "https://iu.khorflix.com/";
-        // link2.target = '_blank';
-        // link2.click();
-        // break;
       case "careerlab":
+        const token3 = user.jwt_data.metadata.at(-1).token;
         const link3 = document.createElement('a');
-        link3.href = "https://platform.careerlab.hiumanlab.com/";
+        link3.href = `https://platform.${urlCareerlab}/validation?token=${token3}`;
         link3.target = '_blank';
         link3.click();
         break;
@@ -101,6 +92,7 @@ const MainSider = ({
         link4.href = url4;
         link4.target = '_blank';
         link4.click();
+        break;
       case "myEvaluation":
         const token5 = user.jwt_data.metadata.at(-1).token;
         const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
@@ -108,6 +100,7 @@ const MainSider = ({
         link5.href = url5;
         link5.target = '_blank';
         link5.click();
+        break;
       default:
         router.push('#');
     }
@@ -145,8 +138,10 @@ const MainSider = ({
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      let children3 = [getItem("KHOR Connect", "connect")]
-      items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      if (user && (user.intranet_access === 2 || user.intranet_access === 3)){
+        let children3 = [getItem("KHOR Connect", "connect")]
+        items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
+      }
 
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))

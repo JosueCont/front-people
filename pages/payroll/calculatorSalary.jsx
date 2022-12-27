@@ -19,14 +19,15 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectGeographicArea from "../../components/selects/SelectGeographicArea";
 import SelectYear from "../../components/selects/SelectYear";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { monthsName, typeCalculate } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
-import { numberFormat } from "../../utils/functions";
+import { numberFormat, verifyMenuNewForTenant } from "../../utils/functions";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
+import { useEffect } from "react";
 const { TabPane } = Tabs;
 
 const calculatorSalary = ({ ...props }) => {
@@ -36,6 +37,8 @@ const calculatorSalary = ({ ...props }) => {
   const [type, setType] = useState(0);
   const [allowance, setAllowance] = useState(false);
   const [changeType, setChangeType] = useState(false);
+  const [personSalary, setPersonSalary] = useState(null);
+  const [periodicity, setPeriodicity] = useState(null);
 
   const { Text, Title } = Typography;
 
@@ -82,7 +85,10 @@ const calculatorSalary = ({ ...props }) => {
     if (props.peopleCompany) {
       WebApiPayroll.getPayrollPerson(value)
         .then((response) => {
-          form.setFieldsValue({ salary: response.data.daily_salary });
+          setPersonSalary(response.data.daily_salary);
+          form.setFieldsValue({
+            salary: response.data.daily_salary,
+          });
         })
         .catch((e) => {
           setLoading(false);
@@ -90,6 +96,41 @@ const calculatorSalary = ({ ...props }) => {
         });
     }
   };
+
+  useEffect(() => {
+    const periodicitySelected = props.periodicities.find(
+      (item) => item.id == periodicity
+    )?.description;
+    let new_salary = "";
+    if (
+      personSalary &&
+      periodicitySelected &&
+      periodicitySelected != undefined
+    ) {
+      switch (periodicitySelected) {
+        case "Diario":
+          new_salary = personSalary;
+          break;
+        case "Semanal":
+          new_salary = personSalary * 7;
+          break;
+        case "Catorcenal":
+          new_salary = personSalary * 14;
+          break;
+        case "Quincenal":
+          new_salary = personSalary * 15;
+          break;
+        case "Mensual":
+          new_salary = personSalary * 30;
+          break;
+        default:
+          break;
+      }
+      form.setFieldsValue({
+        salary: new_salary,
+      });
+    }
+  }, [personSalary, periodicity]);
 
   return (
     <MainLayout
@@ -171,7 +212,9 @@ const calculatorSalary = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && (
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+          )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calculadora</Breadcrumb.Item>
         </Breadcrumb>
@@ -203,7 +246,11 @@ const calculatorSalary = ({ ...props }) => {
                         />
                       </Col>
                       <Col span={12}>
-                        <Form.Item label="Tipo de calculo" name="type">
+                        <Form.Item
+                          label="Tipo de calculo"
+                          name="type"
+                          rules={[ruleRequired]}
+                        >
                           <Select
                             size="large"
                             options={typeCalculate}
@@ -224,10 +271,18 @@ const calculatorSalary = ({ ...props }) => {
                         </Form.Item>
                       </Col>
                       <Col md={12}>
-                        <SelectPeriodicity size="large" />
+                        <SelectPeriodicity
+                          size="large"
+                          onChangePeriodicy={(value) => setPeriodicity(value)}
+                          rules={[ruleRequired]}
+                        />
                       </Col>
                       <Col md={12}>
-                        <SelectYear size="large" label={"Periodo"} />
+                        <SelectYear
+                          size="large"
+                          label={"Periodo"}
+                          rules={[ruleRequired]}
+                        />
                       </Col>
 
                       {changeType && (
@@ -428,6 +483,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     permissions: state.userStore.permissions,
     peopleCompany: state.catalogStore.people_company,
+    periodicities: state.fiscalStore.payment_periodicity,
   };
 };
 

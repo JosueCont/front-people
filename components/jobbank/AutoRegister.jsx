@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MainLayout from '../../layout/MainLayout';
+import MainLayout from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';

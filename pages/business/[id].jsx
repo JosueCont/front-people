@@ -1,7 +1,7 @@
 import { Breadcrumb, Spin, Typography, Tabs, Row, Button } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import GeneralData from "../../components/business/GeneralData";

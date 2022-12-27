@@ -1,31 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
 import TableHistory from '../../../../components/jobbank/publications/TableHistory';
-import { deleteFiltersJb } from '../../../../utils/functions';
-import { getConnectionsOptions } from '../../../../redux/jobBankDuck';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../../utils/functions';
 
-const index = ({
-    currentNode,
-    getConnectionsOptions
-}) => {
+const index = () => {
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deletekeys = ['id', 'start', 'end', 'account'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
-        let filters = deleteFiltersJb(router.query, deletekeys);
-        setNewFilters(filters);
-    },[router.query])
-
-    useEffect(()=>{
-        if(currentNode) getConnectionsOptions(currentNode.id);
-    },[currentNode])
+        setNewFilters(deleteFiltersJb(router.query));
+    },[router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -36,7 +25,9 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
@@ -54,14 +45,4 @@ const index = ({
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(
-    mapState,{
-        getConnectionsOptions
-    }
-)(withAuthSync(index));
+export default withAuthSync(index);

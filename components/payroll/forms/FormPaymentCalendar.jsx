@@ -427,6 +427,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             <Col lg={8} xs={22}>
               <SelectPeriodicity
                 size={"large"}
+                rules={[ruleRequired]}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
                 onChangePeriodicy={onChangePeriodicy}
               />
@@ -450,6 +451,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             </Col>
             <Col lg={8} xs={22}>
               <SelectTypeTax
+                  rules={[ruleRequired]}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>

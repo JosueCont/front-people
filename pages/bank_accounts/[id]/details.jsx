@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -18,6 +18,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
 import jsCookie from "js-cookie";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const BankAccountsDetails = () => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -207,8 +208,12 @@ const BankAccountsDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-        <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
