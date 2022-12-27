@@ -218,6 +218,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         description: item.description,
         data_type: item.data_type,
         deduction_type: item.deduction_type.id,
+        apply_assimilated: item.apply_assimilated,
         show: item.show,
       });
     } else if (key == 3) {
@@ -225,6 +226,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         code: item.code,
         description: item.description,
         data_type: item.data_type,
+        apply_assimilated: item.apply_assimilated,
         other_type_payment: item.other_type_payment.id,
         show: item.show,
       });
