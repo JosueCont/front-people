@@ -1288,7 +1288,7 @@ const CalculatePayroll = ({ ...props }) => {
                               }}
                             >
                               <Button size="sm" icon={<UploadOutlined />}>
-                                Subir nóminass
+                                Subir nómina
                               </Button>
                             </Upload>
                           )}
