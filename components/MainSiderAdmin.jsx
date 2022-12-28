@@ -42,8 +42,6 @@ const MainSider = ({
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
 
-  console.log('Props', props)
-
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
