@@ -42,6 +42,8 @@ const MainSider = ({
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
 
+  console.log('Props', props)
+
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
@@ -143,6 +145,7 @@ const MainSider = ({
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
     if (typeof window !== "undefined") {
+      console.log('Apps', props?.applications)
       // Estrategia y planeación
       let children0 = [
         getItem("Empresas", "business"),

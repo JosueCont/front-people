@@ -24,7 +24,7 @@ import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
 import { getCurrentURL } from "../utils/constant";
 import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../config/config";
-
+import _ from "lodash"
 const { Sider, Header, Content, Footer } = Layout;
 
 const MainSider = ({
@@ -112,6 +112,7 @@ const MainSider = ({
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
     if (typeof window !== "undefined") {
+      console.log('Apps', props?.applications )
       // Estrategia y planeación
       // items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />))
 
@@ -126,13 +127,25 @@ const MainSider = ({
       items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
 
       // Educación y desarrollo
-      let children2 = [
-        getItem("Khorflix", "khorflix"),
-        getItem("Sukha", "sukha"),
-        getItem("Careerlab", "careerlab"),
-        // getItem("Concieo", "concieo")
-      ]
-      items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      // let children2 = [
+      //   getItem("Khorflix", "khorflix"),
+      //   getItem("Sukha", "sukha"),
+      //   getItem("Careerlab", "careerlab"),
+      //   // getItem("Concieo", "concieo")
+      // ]
+      let children2 = [];
+      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active)) {
+        children2.push(getItem("Khorflix", "khorflix"))
+      }
+      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active)) {
+        children2.push(getItem("Sukha", "sukha"))
+      }
+      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active)) {
+        children2.push(getItem("Careerlab", "careerlab"))
+      }
+      if (children2.length > 0) {
+        items.push(getItem("Educación y desarrollo", "education", <BankOutlined />, children2))
+      }
 
       // desempeño
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))

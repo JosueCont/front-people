@@ -145,6 +145,8 @@ const CardApps = ({ user, config, ...props }) => {
     }
   };
 
+  console.log('Apps', props)
+
   return (
     <ContentApps>
       <Card bordered={false}>
