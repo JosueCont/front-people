@@ -1269,7 +1269,7 @@ const CalculatePayroll = ({ ...props }) => {
                                       let data = new FormData();
                                       data.append(
                                         "File",
-                                        info.fileList[0].originFileObj
+                                          info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
                                       );
                                       data.append("department", department);
                                       data.append("job", job);
@@ -1277,9 +1277,11 @@ const CalculatePayroll = ({ ...props }) => {
                                         "payment_period",
                                         periodSelected.id
                                       );
-                                      importPayrollCaculate(data);
                                       info.file = null;
                                       info.fileList = [];
+                                      importPayrollCaculate(data);
+
+
                                     }
                                   }
                                 },

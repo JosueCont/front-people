@@ -64,8 +64,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           if (response.data.mlast_name)
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
-          console.log('person', response.data)
-          console.log('person', response.data.is_admin)
           setPerson(response.data);
           if (response.data.is_admin || localStorage.getItem('is_admin')){
             setIsAdmin(true)
