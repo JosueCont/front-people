@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Input, Select, Form } from 'antd';
 import { ruleRequired } from '../../../../utils/rules';
-import VacantFields from '../../profiles/VacantFields';
+import VacantFields from '../../VacantFields';
 
 const FormTemplate = () => {
     return (

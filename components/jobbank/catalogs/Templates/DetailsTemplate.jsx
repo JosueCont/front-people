@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import FormTemplate from './FormTemplate';
-import { useProcessInfo } from '../../profiles/hook/useProcessInfo';
+import { useInfoProfile } from '../../hook/useInfoProfile';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 
 const DetailsTemplate = ({
@@ -40,7 +40,7 @@ const DetailsTemplate = ({
     const [actionType, setActionType] = useState('');
     const [infoTemplate, setInfoTemplate] = useState({});
     const [fetching, setFetching] = useState(false);
-    const { createData, formatData } = useProcessInfo();
+    const { createData, formatData } = useInfoProfile();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){

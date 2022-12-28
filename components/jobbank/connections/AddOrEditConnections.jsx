@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import DetailsConnections from './DetailsConnections';
 import { connect } from 'react-redux';
 import { getSectors } from '../../../redux/jobBankDuck';
-import { deleteFiltersJb } from '../../../utils/functions';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddOrEditConnections = ({
     action = 'add',
@@ -32,7 +32,9 @@ const AddOrEditConnections = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Configuraciones</Breadcrumb.Item>
                 <Breadcrumb.Item

@@ -9,41 +9,39 @@ import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
 import ModalFilters from './ModalFilters';
 import TagFilters from '../TagFilters';
-import { useFiltersCandidate } from '../hook/useFiltersCandidate';
+import { useFiltersSelection } from '../hook/useFiltersSelection';
 
-const SearchCandidates = ({
+const SearchSelection = ({
     currentNode
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys } = useFiltersCandidate();
-
-    const showModal = () =>{
-        let is_other = router.query?.other_area ? true : false;
-        let state = router.query?.state ? parseInt(router.query.state) : null;
-        formSearch.setFieldsValue({...router.query, is_other, state});
-        setOpenModal(true)
-    }
-
-    const closeModal = () =>{
-        setOpenModal(false)
-        formSearch.resetFields()
-    }
+    const { listKeys, listGets } = useFiltersSelection();
 
     const onFinishSearch = (values) =>{
-        delete values.is_other;
         let filters = createFiltersJB(values);
         router.replace({
-            pathname: '/jobbank/candidates/',
+            pathname: '/jobbank/selection',
             query: filters
         }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace('/jobbank/candidates', undefined, {shallow: true});
+        router.replace('/jobbank/selection', undefined, {shallow: true});
+    }
+
+    const showModal = () =>{
+        let status = router.query?.status ? parseInt(router.query.status) : null;
+        formSearch.setFieldsValue({...router.query, status});
+        setOpenModal(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
     }
 
     return (
@@ -93,10 +91,10 @@ const SearchCandidates = ({
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
     }
 }
 
-export default connect(mapState)(SearchCandidates)
+export default connect(mapState)(SearchSelection);

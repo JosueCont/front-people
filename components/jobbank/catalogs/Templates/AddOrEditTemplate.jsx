@@ -15,13 +15,13 @@ const AddOrEditTemplate = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deleteKeys = ['id'];
+    const deleteKeys = ['id','catalog'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
         let filters = deleteFiltersJb(router.query, deleteKeys);
         setNewFilters(filters);
-    },[router])
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode) getVacantFields(currentNode.id);
@@ -42,19 +42,22 @@ const AddOrEditTemplate = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
-                    onClick={() => router.replace('/jobbank/settings')}
+                    onClick={() => router.push('/jobbank/settings')}
                 >
                     Configuraciones
                 </Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
-                    onClick={() => router.replace('/jobbank/settings/catalogs')}
+                    onClick={() => router.push('/jobbank/settings/catalogs')}
                 >
                     Catálogos
                 </Breadcrumb.Item>
                 <Breadcrumb.Item
                      className='pointer'
-                     onClick={() => router.replace('/jobbank/settings/catalogs/profiles')}
+                     onClick={() => router.push({
+                        pathname: '/jobbank/settings/catalogs/profiles',
+                        query: newFilters
+                     })}
                 >
                     Tipos de template
                 </Breadcrumb.Item>

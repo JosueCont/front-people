@@ -31,9 +31,8 @@ import { FacebookLoginClient } from '@greatsumini/react-facebook-login';
 import { redirectTo } from '../../../utils/constant';
 import { getFileExtension } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { ConnectionContext } from './context/ConnectionContext';
+import { ConnectionContext } from '../context/ConnectionContext';
 import { useRouter } from 'next/router';
-import { useProcessInfo } from './hook/useProcessInfo';
 
 const FormFBIG = () => {
 
@@ -61,7 +60,6 @@ const FormFBIG = () => {
     const btnSubmit = useRef(null);
     const inputFile = useRef(null);
     const typeFile = ['png','jpg','jpeg'];
-    const { formatData } = useProcessInfo();
 
     useEffect(()=>{
         (async ()=>{

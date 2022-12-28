@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const useProcessInfo = ({ setOptionVacant }) => {
+export const useInfoStrategy = ({ setOptionVacant }) => {
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {

@@ -11,8 +11,7 @@ import {
 import {
     optionsSubproduct,
     optionsTypeSale,
-    optionsStatusVacant,
-    optionsJobBank
+    optionsStatusVacant
 } from '../../../utils/constant';
 import moment from 'moment';
 import { validateNum, getFullName, validateMaxLength } from '../../../utils/functions';

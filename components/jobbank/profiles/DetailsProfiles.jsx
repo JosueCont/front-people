@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import FormProfiles from './FormProfiles';
-import { useProcessInfo } from './hook/useProcessInfo';
+import { useInfoProfile } from '../hook/useInfoProfile';
 
 const DetailsProfiles = ({
     action,
@@ -41,7 +41,7 @@ const DetailsProfiles = ({
     const [actionType, setActionType] = useState('');
     const [infoProfile, setInfoProfile] = useState({});
     const [fetching, setFetching] = useState(false);
-    const { formatData, createData } = useProcessInfo();
+    const { formatData, createData } = useInfoProfile();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){

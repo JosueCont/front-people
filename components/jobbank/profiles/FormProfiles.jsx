@@ -7,9 +7,9 @@ import {
     Input,
 } from 'antd';
 import { useSelector } from 'react-redux';
-import { useProcessInfo } from './hook/useProcessInfo';
+import { useInfoProfile } from '../hook/useInfoProfile';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
-import VacantFields from './VacantFields';
+import VacantFields from '../VacantFields';
 
 const FormProfiles = ({
     formProfile,
@@ -25,7 +25,7 @@ const FormProfiles = ({
         list_clients_options,
         list_vacancies_fields
     } = useSelector(state => state.jobBankStore);
-    const { formatData } = useProcessInfo();
+    const { formatData } = useInfoProfile();
 
     const onChangeType = (value) =>{
         setDisabledField(false);

@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { Row, Col, Input, Select, Form } from 'antd';
 import { ruleRequired } from '../../../utils/rules';
-import VacantFields from '../profiles/VacantFields';
-import { useProcessInfo } from '../profiles/hook/useProcessInfo';
+import VacantFields from '../VacantFields';
+import { useInfoProfile } from '../hook/useInfoProfile';
 
 const FormPublications = ({
     formPublications,
@@ -34,7 +34,7 @@ const FormPublications = ({
     const template = Form.useWatch('profile', formPublications);
     // const strategy = Form.useWatch('strategy', formPublications);
     const customer = Form.useWatch('customer', formPublications);
-    const { formatData } = useProcessInfo();
+    const { formatData } = useInfoProfile();
 
     // useEffect(()=>{
     //     onChangeCustomer();
