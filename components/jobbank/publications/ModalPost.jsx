@@ -101,7 +101,7 @@ const ModalPost = ({
                     <Col span={24}>
                         <Form.Item
                             name='accounts_to_share'
-                            label='Cuentas conectadas'
+                            label='Publicar en'
                             rules={[ruleRequired]}
                         >
                             <Select
