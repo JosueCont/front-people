@@ -5,27 +5,23 @@ import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { useRouter } from 'next/router';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewTemplates = () => {
+const ViewTemplates = ({
+    filtersString,
+    filtersQuery,
+    currentPage
+}) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [numPage, setNumPage] = useState(1);
-    const [newFilters, setNewFilters] = useState({});
-
-    useEffect(()=>{
-        if(Object.keys(router.query).length <= 0) return;
-        setNewFilters(deleteFiltersJb(router.query));
-    },[router])
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getProfilesTypes(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getProfilesTypes = async (node, query = '') =>{
         try {
@@ -39,17 +35,10 @@ const ViewTemplates = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(newFilters);
-        setNumPage(page);
-        getProfilesTypes(currentNode.id, filters);
-    }
-
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteProfileType(id);
-            getWithFilters();
+            getProfilesTypes(currentNode.id, filtersString);
             message.success('Template eliminado');
         } catch (e) {
             console.log(e)
@@ -60,7 +49,7 @@ const ViewTemplates = () => {
     const openModalEdit = (item) =>{
         router.push({
             pathname: '/jobbank/settings/catalogs/profiles/edit',
-            query: {...newFilters, id: item.id}
+            query: {...filtersQuery, id: item.id}
         })
     }
 
@@ -70,7 +59,7 @@ const ViewTemplates = () => {
                 <SearchCatalogs
                     actionBtn={()=> router.push({
                         pathname: '/jobbank/settings/catalogs/profiles/add',
-                        query: newFilters
+                        query: filtersQuery
                     })}
                 />
             </Col>
@@ -85,7 +74,7 @@ const ViewTemplates = () => {
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     actionBtnEdit={openModalEdit}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

@@ -14,8 +14,8 @@ const FormPublications = ({
 }) => {
 
     const {
-        list_connections,
-        load_connections,
+        list_connections_options,
+        load_connections_options,
         load_vacancies_options,
         load_profiles_options,
         list_vacancies_options,
@@ -29,7 +29,7 @@ const FormPublications = ({
     const router = useRouter();
     const vacant = router?.query?.vacancy;
     const strategy = router?.query?.strategy;
-    const client = router?.query.client;
+    const client = router?.query?.client;
     const vacancy = Form.useWatch('vacant', formPublications);
     const template = Form.useWatch('profile', formPublications);
     // const strategy = Form.useWatch('strategy', formPublications);
@@ -65,7 +65,7 @@ const FormPublications = ({
         const _find = item => item.id == strategy;
         let result = list_strategies_options.find(_find);
         if(!result) return resetValues();
-        if(result.customer) setCustomer(result.customer);
+        if(result.customer?.id) setCustomer(result.customer.id);
         let idVacant = result?.vacant?.id;
         if(idVacant) setVacant(idVacant);
     }
@@ -237,29 +237,29 @@ const FormPublications = ({
             </Col>
             <Col span={6}>
                 <Form.Item
-                    name='code_post'
+                    name='account_to_share'
                     label='Cuentas conectadas'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select
-                        allowClear
-                        showSearch
-                        disabled={load_connections}
-                        loading={load_connections}
-                        placeholder='Seleccionar una cuenta'
+                        mode='multiple'
+                        maxTagCount={1}
+                        disabled={load_connections_options}
+                        loading={load_connections_options}
+                        placeholder='Seleccionar las cuentas'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {list_connections.length > 0 && list_connections.map(item=> (
-                            <Select.Option value={item.code} key={item.code}>
+                        {list_connections_options.length > 0 && list_connections_options.map(item=> (
+                            <Select.Option value={item.id} key={item.id}>
                                 {item.name}
                             </Select.Option>
                         ))}
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={24}>
+            <Col span={24} style={{paddingTop: 12}}>
                 <VacantFields
                     disabledField={disableField}
                     onChangeDisabled={onChangeDisabled}

@@ -31,8 +31,8 @@ const DeleteItems = ({
         if(!keyTitle.trim()) return null;
         let access_title = keyTitle?.replaceAll(' ','')?.split(',');
         return access_title.reduce((acc, current) =>{
-            if(!acc[current]) return null;
-            return acc[current];
+            if(!acc) return null;
+            return acc[current] ?? null;
         }, item)
     }
 
@@ -40,8 +40,8 @@ const DeleteItems = ({
         if(!keyDescription.trim()) return null;
         let access_description = keyDescription?.replaceAll(' ','')?.split(',');
         return access_description.reduce((acc, current) =>{
-            if(!acc[current]) return null;
-            return acc[current];
+            if(!acc) return null;
+            return acc[current] ?? null;
         }, item)
     }
 

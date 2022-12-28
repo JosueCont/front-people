@@ -6,17 +6,12 @@ import {
   Input,
   Select,
   DatePicker,
-  Button,
   Checkbox,
-  Switch,
   InputNumber
 } from 'antd';
 import {
   ruleRequired,
   ruleWhiteSpace,
-  ruleMinAge,
-  ruleMaxAge,
-  onlyNumeric
 } from '../../../utils/rules';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
 import {
@@ -27,17 +22,20 @@ import {
   optionsStatusVacant
 } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import moment from 'moment';
 
 const TabFeatures = ({
-  disabledClient,
-  formVacancies
+  formVacancies,
+  hasEstrategy,
+  disabledClient
 }) => {
 
   const {
     load_clients_options,
     list_clients_options
   } = useSelector(state => state.jobBankStore);
+  const router = useRouter();
   const rotativeTurn = Form.useWatch('rotative_turn', formVacancies);
 
   const styleDisabled = {
@@ -89,12 +87,16 @@ const TabFeatures = ({
         <Form.Item
           name='customer_id'
           label='Cliente'
+          tooltip={hasEstrategy
+            ? `Este campo no es posible actualizarlo,
+            ya que la vacante en encuentra asociada a una estrategia.
+            ` : ''}
           rules={[ruleRequired]}
         >
           <Select
             allowClear
             showSearch
-            disabled={disabledClient}
+            disabled={hasEstrategy || disabledClient}
             loading={load_clients_options}
             placeholder='Seleccionar un cliente'
             notFoundContent='No se encontraron resultados'

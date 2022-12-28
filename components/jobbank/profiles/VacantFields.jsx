@@ -33,7 +33,7 @@ const VacantFields = ({
                 {Object.keys(list_vacancies_fields).length > 0
                     && Object.entries(list_vacancies_fields).map(([key, val], idx) => (
                     <Fragment key={`section_${idx}`}>
-                        <Divider style={{marginBottom: 0}} key={`divider_${idx}`} plain>
+                        <Divider style={{margin: 0}} key={`divider_${idx}`} plain>
                             {titleSection[key]}
                         </Divider>
                         <Col key={`col_${idx}`} span={24}>

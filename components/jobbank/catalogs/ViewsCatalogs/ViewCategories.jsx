@@ -8,7 +8,10 @@ import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewCategories = () => {
+const ViewCategories = ({
+    filtersString,
+    currentPage
+ }) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
@@ -19,8 +22,8 @@ const ViewCategories = () => {
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getMainCategories(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getMainCategories = async (node, query = '') =>{
         try {
@@ -34,18 +37,10 @@ const ViewCategories = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getMainCategories(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createMainCategoy({...values, node: currentNode.id});
-            getWithFilters()
+            getMainCategories(currentNode.id, filtersString);
             message.success('Categoría registrada');
         } catch (e) {
             console.log(e)
@@ -58,7 +53,7 @@ const ViewCategories = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateMainCategory(id, values);
-            getWithFilters()
+            getMainCategories(currentNode.id, filtersString);
             message.success('Categoría actualizada');
         } catch (e) {
             console.log(e)
@@ -71,7 +66,7 @@ const ViewCategories = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteMainCategory(id);
-            getWithFilters()
+            getMainCategories(currentNode.id, filtersString);
             message.success('Categoría eliminada');
         } catch (e) {
             console.log(e)
@@ -114,7 +109,7 @@ const ViewCategories = () => {
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     extraOptions={extraOptions}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

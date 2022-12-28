@@ -20,7 +20,7 @@ const ListCatalogs = () => {
         let exist = Object.keys(router.query).length > 0;
         if(!exist) onReset();
         else onFilter();
-    },[router])
+    },[router.query])
 
     const onReset = (values = catalogsJobbank) =>{
         setTimeout(()=>{

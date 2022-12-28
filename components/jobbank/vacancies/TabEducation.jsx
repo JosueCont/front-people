@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Form,
   Row,
@@ -8,26 +8,13 @@ import {
 } from 'antd';
 import { useSelector } from 'react-redux';
 import {
-  ruleRequired,
-  ruleWhiteSpace
-} from '../../../utils/rules';
-import {
   optionsLevelAcademic,
   optionsStatusAcademic,
-  optionsLangVacant
 } from '../../../utils/constant';
-import ListLangs from '../candidates/ListLangs';
 
 const TabEducation = ({
+  children,
   formVacancies,
-  //Parámetros para idiomas
-  listLangDomain,
-  setListLangDomain,
-  setCurrentValue,
-  currentValue,
-  rule_languages,
-  ruleLanguages,
-  setRuleLanguages,
 }) => {
 
   const {
@@ -188,16 +175,7 @@ const TabEducation = ({
         </Form.Item>
       </Col> */}
       <Col span={24}>
-        <ListLangs
-          changeColor={true}
-          listLangDomain={listLangDomain}
-          setListLangDomain={setListLangDomain}
-          setCurrentValue={setCurrentValue}
-          currentValue={currentValue}
-          setRuleLanguages={setRuleLanguages}
-          ruleLanguages={ruleLanguages}
-          rule_languages={rule_languages}
-        />
+        {children}
       </Col>
       <Col span={24}>
         <Row gutter={[24,0]}>

@@ -20,7 +20,7 @@ const SearchProfiles = ({
 
     useEffect(()=>{
         formSearch.setFieldsValue(router.query);
-    },[router])
+    },[router.query])
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);

@@ -1,20 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Form, Input, Row, Col } from 'antd';
+import { Button, Form, Input, Row, Col, Select } from 'antd';
 import MyModal from '../../../common/MyModal';
 import { useSelector } from 'react-redux';
 import {
     ToTopOutlined,
     DeleteOutlined
 } from '@ant-design/icons';
-import { getFileExtension } from '../../../utils/functions'; 
+import { getFileExtension } from '../../../utils/functions';
+import { ruleRequired } from '../../../utils/rules';
 
 const ModalPost = ({
     visible = false,
     close = () =>{},
     title = '',
-    actionForm = () =>{}
+    actionForm = () =>{},
+    itemToPublish = {}
 }) => {
 
+    const {
+        list_connections_options,
+        load_connections_options
+    } = useSelector(state => state.jobBankStore);
     const currentUser = useSelector(state => state.userStore.user);
     const rule_img = {msg: '', status: ''};
     const inputFile = useRef(null);
@@ -23,6 +29,14 @@ const ModalPost = ({
     const [fileImg, setFileImg] = useState([]);
     const [ruleImg, setRuleImg] = useState(rule_img);
     const typeFile = ['png','jpg','jpeg'];
+
+    useEffect(()=>{
+        if(Object.keys(itemToPublish).length <= 0) return;
+        let accounts_to_share = itemToPublish.account_to_share?.length > 0
+            ? itemToPublish.account_to_share
+            : [];
+        formPost.setFieldsValue({accounts_to_share})
+    },[itemToPublish])
 
     const setFileSelected = ({target : { files }}) =>{
         if(Object.keys(files).length <= 0){
@@ -42,7 +56,11 @@ const ModalPost = ({
     const createData = (obj) =>{
         let dataPost = new FormData();
         dataPost.append('person', currentUser.id);
-        Object.entries(obj).map(([key, val])=>{ if(val) dataPost.append(key, val) });
+        Object.entries(obj).map(([key, val])=>{
+            const account = item => dataPost.append('accounts_to_share', item);
+            if(val && Array.isArray(val)) val.map(account);
+            else if(val) dataPost.append(key, val);
+        });
         if(fileImg.length > 0) dataPost.append('image', fileImg[0]);
         return dataPost;
     }
@@ -81,10 +99,34 @@ const ModalPost = ({
             <Form form={formPost} layout='vertical' onFinish={onFinish}>
                 <Row>
                     <Col span={24}>
+                        <Form.Item
+                            name='accounts_to_share'
+                            label='Cuentas conectadas'
+                            rules={[ruleRequired]}
+                        >
+                            <Select
+                                mode='multiple'
+                                maxTagCount='responsive'
+                                disabled={load_connections_options}
+                                loading={load_connections_options}
+                                placeholder='Seleccionar las cuentas'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                            >
+                                {list_connections_options.length > 0 && list_connections_options.map(item=> (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
                         <Form.Item name='start_message' label='Mensaje inicial'>
                             <Input.TextArea
+                                showCount
                                 maxLength={2000}
-                                autoSize={{minRows: 3, maxRows: 3}}
+                                autoSize={{minRows: 2, maxRows: 2}}
                                 placeholder='Escriba el mensaje'
                             />
                         </Form.Item>
@@ -92,8 +134,9 @@ const ModalPost = ({
                     <Col span={24}>
                         <Form.Item name='end_message' label='Mensaje final'>
                             <Input.TextArea
+                                showCount
                                 maxLength={2000}
-                                autoSize={{minRows: 3, maxRows: 3}}
+                                autoSize={{minRows: 2, maxRows: 2}}
                                 placeholder='Escriba el mensaje'
                             />
                         </Form.Item>

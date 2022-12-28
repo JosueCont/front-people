@@ -5,9 +5,11 @@ import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewJobBoards = () => {
+const ViewJobBoards = ({
+    filtersString,
+    currentPage
+}) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
@@ -18,8 +20,8 @@ const ViewJobBoards = () => {
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getJobBoards(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getJobBoards = async (node, query = '') =>{
         try {
@@ -33,18 +35,10 @@ const ViewJobBoards = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getJobBoards(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createJobBoard({...values, node: currentNode.id});
-            getWithFilters();
+            getJobBoards(currentNode.id, filtersString);
             message.success('Bolsa de empleo registrada');
         } catch (e) {
             console.log(e)
@@ -57,7 +51,7 @@ const ViewJobBoards = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateJobBoard(id, values);
-            getWithFilters();
+            getJobBoards(currentNode.id, filtersString);
             message.success('Bolsa de empleo actualizada');
         } catch (e) {
             console.log(e)
@@ -70,7 +64,7 @@ const ViewJobBoards = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteJobBoard(id);
-            getWithFilters();
+            getJobBoards(currentNode.id, filtersString);
             message.success('Bolsa de empleo eliminada');
         } catch (e) {
             console.log(e)
@@ -95,7 +89,7 @@ const ViewJobBoards = () => {
                     catalogLoading={loading}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

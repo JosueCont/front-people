@@ -175,16 +175,24 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidate-last-job/${id}/`, 'delete');
     }
 
-    static getConnections(node){
-        return WebApi.ApisType(`/job-bank/sharin-setup/?node=${node}`, 'get');
+    static getConnections(node, query){
+        return WebApi.ApisType(`/job-bank/sharin-setup/?node=${node}${query}`, 'get');
     }
 
-    static getTokenFB (data){
-        return WebApi.ApisType('/job-bank/get-facebook-token/', 'post', data);
+    static getDetailsConnection(id){
+        return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'get');
     }
 
     static updateConnection(id, data){
         return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'put', data);
+    }
+
+    static updateConnectionStatus(id, data){
+        return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'patch', data);
+    }
+
+    static getTokenFB (data){
+        return WebApi.ApisType('/job-bank/get-facebook-token/', 'post', data);
     }
 
     static getPublications(node, query){
