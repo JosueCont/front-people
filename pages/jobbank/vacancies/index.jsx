@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import TableVacancies from '../../../components/jobbank/vacancies/TableVacancies';
