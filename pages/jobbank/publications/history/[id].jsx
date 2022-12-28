@@ -3,6 +3,7 @@ import MainLayout from '../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
 import TableHistory from '../../../../components/jobbank/publications/TableHistory';
 import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../../utils/functions';
 import { getConnectionsOptions } from '../../../../redux/jobBankDuck';

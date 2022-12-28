@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
-import { withAuthSync } from '../../../libs/auth';
+import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getConnections } from '../../../redux/jobBankDuck';
+import { getConnections } from '../../../../redux/jobBankDuck';
 import SearchConnections from '../../../../components/jobbank/connections/SearchConnections';
 import TableConnections from '../../../../components/jobbank/connections/TableConnections';
-import { verifyMenuNewForTenant, getFiltersJB } from '../../../utils/functions';
+import { verifyMenuNewForTenant, getFiltersJB } from '../../../../utils/functions';
 
 const index = ({
     currentNode,
