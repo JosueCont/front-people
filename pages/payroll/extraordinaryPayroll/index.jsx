@@ -214,6 +214,28 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       ),
     },
     {
+      title: "",
+      className: "cursor_pointer",
+      render: (item) => (
+        <>
+          {consolidated && item.payroll_cfdi_person && (
+            <div>
+              <Tooltip placement="top" title="Comprobante de pago">
+                <Button
+                  size="small"
+                  onClick={() => {
+                    downloadReceipt(item);
+                  }}
+                >
+                  <FileExcelOutlined />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ),
+    },
+    {
       key: "actions",
       className: "cell-actions",
       render: (item) =>
@@ -259,12 +281,27 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         error.response.data.message &&
         message.error(error.response.data.message);
     }
+  };
 
-    // downLoadFileBlob(
-    //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
-    //   "carta_de_renuncia.pdf",
-    //   "GET",
-    // );
+  const downloadReceipt = async (data) => {
+    try {
+      let response = await WebApiPayroll.downLoadReceipt(data);
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Carta de renuncia.pdf";
+      link.click();
+    } catch (error) {
+      error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        message.error(error.response.data.message);
+    }
   };
 
   const renderConceptsTable = (data) => {
