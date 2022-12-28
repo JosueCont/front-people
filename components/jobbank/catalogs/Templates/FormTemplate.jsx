@@ -34,7 +34,7 @@ const FormTemplate = () => {
                     />
                 </Form.Item>
             </Col>
-            <Col span={24}>
+            <Col span={24} style={{paddingTop: 12}}>
                 <VacantFields/>
             </Col>
         </Row>

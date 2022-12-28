@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { Table, Button, Row, Col } from 'antd';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { redirectTo } from '../../../utils/constant';
 import moment from 'moment';
 import SearchHistory from './SearchHistory';
-import { accounstJobbank } from '../../../utils/constant';
 
 const TableHistory = ({ newFilters = {} }) => {
 
+    const {
+        list_connections_options,
+        load_connections_options
+    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [infoPublication, setInfoPublication] = useState({});
     const [infoHistory, setInfoHistory] = useState([]);
@@ -68,10 +72,10 @@ const TableHistory = ({ newFilters = {} }) => {
 
     const getAccount = (item) =>{
         if(!item.code_post) return null;
-        const find_ = record => record.value == item.code_post;
-        let result = accounstJobbank.find(find_);
+        const find_ = record => record.code == item.code_post;
+        let result = list_connections_options.find(find_);
         if(!result) return null;
-        return result.label;
+        return result.name;
     }
 
     const columns = [

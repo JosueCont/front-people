@@ -23,6 +23,7 @@ import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useProcessInfo } from './hook/useProcessInfo';
+import ListLangs from '../candidates/ListLangs';
 
 const DetailsVacancies = ({
     action,
@@ -42,22 +43,15 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
+    const { setValuesForm, createData } = useProcessInfo();
+     //Idiomas
     const [currentValue, setCurrentValue] = useState([]);
     const [listLangDomain, setListLangDomain] = useState([]);
     const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
-    const { setValuesForm, createData } = useProcessInfo({
-        formVacancies,
-        infoVacant,
-        setListInterviewers,
-        listInterviewers,
-        listLangDomain,
-        setListLangDomain
-    });
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -68,7 +62,15 @@ const DetailsVacancies = ({
     useEffect(()=>{
         if(Object.keys(infoVacant).length > 0 && action == 'edit'){
             formVacancies.resetFields()
-            setValuesForm();
+            let allValues = setValuesForm(infoVacant);
+            formVacancies.setFieldsValue(allValues)
+            let inters = allValues?.interviewers?.length > 0
+                ? allValues.interviewers : [];
+            let langs = allValues?.languages?.length > 0
+                ? allValues.languages?.map(item => ({lang: item.lang, domain: item.domain}))
+                : []; 
+            setListInterviewers(inters)
+            setListLangDomain(langs)
         }
     },[infoVacant])
 
@@ -76,8 +78,8 @@ const DetailsVacancies = ({
         if(router.query.client && action == 'add'){
             formVacancies.resetFields()
             keepClient()
-        }else setDisabledClient(false)
-    },[router])
+        }
+    },[router.query])
 
 
     const getInfoVacant = async (id) =>{
@@ -93,7 +95,6 @@ const DetailsVacancies = ({
     }
 
     const keepClient = () =>{
-        setDisabledClient(true)
         formVacancies.setFieldsValue({
             customer_id: router.query.client
         })
@@ -132,7 +133,9 @@ const DetailsVacancies = ({
 
     const onFinish = (values) => {
         setFetching(true);
-        const bodyData = createData(values);
+        let bodyData = createData(values);
+        bodyData.interviewers = listInterviewers;
+        bodyData.languages = listLangDomain;
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -248,7 +251,8 @@ const DetailsVacancies = ({
                                 <Spin spinning={fetching}>
                                     <TabFeatures
                                         formVacancies={formVacancies}
-                                        disabledClient={disabledClient}
+                                        disabledClient={router.query?.client}
+                                        hasEstrategy={infoVacant?.has_estrategy}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -258,17 +262,18 @@ const DetailsVacancies = ({
                                 key='2'
                             >
                                 <Spin spinning={fetching}>
-                                    <TabEducation
-                                        formVacancies={formVacancies}
-                                        //Parámetros para idiomas
-                                        listLangDomain={listLangDomain}
-                                        setListLangDomain={setListLangDomain}
-                                        setCurrentValue={setCurrentValue}
-                                        currentValue={currentValue}
-                                        setRuleLanguages={setRuleLanguages}
-                                        ruleLanguages={ruleLanguages}
-                                        rule_languages={rule_languages}
-                                    />
+                                    <TabEducation formVacancies={formVacancies}>
+                                        <ListLangs
+                                            changeColor={true}
+                                            listLangDomain={listLangDomain}
+                                            setListLangDomain={setListLangDomain}
+                                            setCurrentValue={setCurrentValue}
+                                            currentValue={currentValue}
+                                            setRuleLanguages={setRuleLanguages}
+                                            ruleLanguages={ruleLanguages}
+                                            rule_languages={rule_languages}
+                                        />
+                                    </TabEducation>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane

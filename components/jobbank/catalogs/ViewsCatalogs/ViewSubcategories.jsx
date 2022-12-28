@@ -7,9 +7,11 @@ import { useRouter } from 'next/router';
 import { getMainCategories } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewSubcategories = () => {
+const ViewSubcategories = ({
+    filtersString,
+    currentPage
+ }) => {
 
     const {
         list_main_categories,
@@ -21,12 +23,11 @@ const ViewSubcategories = () => {
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState({});
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getSubCategories(currentNode.id, filtersString);
+    },[currentNode, filtersString])
     
     useEffect(()=>{
         if(!currentNode) return;
@@ -45,18 +46,10 @@ const ViewSubcategories = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getSubCategories(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSubCategory({...values, node: currentNode.id});
-            getWithFilters();
+            getSubCategories(currentNode.id, filtersString);
             message.success('Subcategoría registrada');
         } catch (e) {
             console.log(e)
@@ -71,7 +64,7 @@ const ViewSubcategories = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateSubCategory(id, values);
-            getWithFilters();
+            getSubCategories(currentNode.id, filtersString);
             message.success('Subcategoría actualizada');
         } catch (e) {
             console.log(e)
@@ -86,7 +79,7 @@ const ViewSubcategories = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteSubCategory(id);
-            getWithFilters();
+            getSubCategories(currentNode.id, filtersString);
             message.success('Subcategoría eliminada');
         } catch (e) {
             console.log(e)
@@ -136,7 +129,7 @@ const ViewSubcategories = () => {
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     extraFields={<SelectCategory/>}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

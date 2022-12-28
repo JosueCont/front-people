@@ -15,14 +15,11 @@ import {
   EllipsisOutlined,
   DeleteOutlined,
   EditOutlined,
-  CopyOutlined,
-  SettingOutlined,
   ShareAltOutlined,
   FacebookOutlined,
   NotificationOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  FileTextOutlined
+  LinkedinOutlined,
+  InstagramOutlined
 } from '@ant-design/icons';
 import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { useRouter } from 'next/router';
@@ -32,7 +29,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import ModalPost from './ModalPost';
 import { getFiltersJB } from '../../../utils/functions';
-import { redirectTo } from '../../../utils/constant';
+import { optionsStatusVacant } from '../../../utils/constant';
 
 const TablePublications = ({
     currentNode,
@@ -40,9 +37,11 @@ const TablePublications = ({
     jobbank_page,
     list_publications,
     load_publications,
-    list_connections,
-    load_connections,
-    getPublications
+    list_connections_options,
+    load_connections_options,
+    getPublications,
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -58,7 +57,7 @@ const TablePublications = ({
         try {
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
             setTimeout(()=>{
-                getPublicationsWithFilters();
+                getPublications(currentNode.id, currentFilters, currentPage);
                 message.success({content: 'Vacante publicada', key});
             }, 1000)
         } catch (e) {
@@ -76,20 +75,14 @@ const TablePublications = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deletePublication({ids});
-            getPublicationsWithFilters();
-            if(ids.length > 1) message.success('Publicaciones eliminadas');
-            else message.success('Publicación eliminada');
+            getPublications(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Publicaciones eliminadas' : 'Publicación eliminada';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Publicaciones no eliminadas');
-            else message.error('Publicación no eliminada');
+            let msg = ids.length > 1 ? 'Publicacione no eliminadas' : 'Publicación no eliminada';
+            message.error(msg);
         }
-    }
-
-    const getPublicationsWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(router.query);
-        getPublications(currentNode.id, filters, page);
     }
 
     const openModalManyDelete = () =>{
@@ -112,12 +105,26 @@ const TablePublications = ({
         setItemsToDelete([])
     }
 
+    const nameAndIcon = (item) =>{
+        const list = {
+            FB: { icon: <FacebookOutlined/>, color: "#3b5999"},
+            IG: { icon: <InstagramOutlined />, color: "#E1306C"}
+        }
+        return list[item.code];
+    }
+
     const getRed = (item) =>{
-        if(!item.code_post) return null;
-        const red = record => record.code == item.code_post;
-        let red_ = list_connections.find(red);
-        if(!red_) return null;
-        return red_.name;
+        if(item.account_to_share?.length <= 0) return [];
+        const red = record => item.account_to_share.includes(record.id);
+        return list_connections_options.filter(red);
+    }
+
+    const getStatus = (item) =>{
+        if(!item.vacant?.status) return null;
+        const find_ = record => record.value == item.vacant?.status;
+        let result = optionsStatusVacant.find(find_);
+        if(!result) return null;
+        return result.label;
     }
 
     const closeModalShare = () =>{
@@ -143,18 +150,6 @@ const TablePublications = ({
             savePage(newQuery)
         };
     }
-
-    // const validateHistory = (item) =>{
-    //     if(item.history?.length > 1){
-    //         router.push({
-    //             pathname: `/jobbank/publications/history/${item.id}`,
-    //             query: router.query
-    //         })
-    //         return;
-    //     }
-    //     let url = item.history?.at(-1)?.post_url;
-    //     redirectTo(url, true);
-    // }
 
     const rowSelection = {
         selectedRowKeys: itemsKeys,
@@ -233,12 +228,22 @@ const TablePublications = ({
             key: ['vacant','job_position']
         },
         {
-            title: 'Cuenta',
+            title: 'Estatus vacante',
             render: (item) =>{
                 return(
-                    <span>{getRed(item)}</span>
+                    <span>{getStatus(item)}</span>
                 )
             }
+        },
+        {
+            title: 'Cuenta',
+            render: (item) =>(
+                <div style={{display: 'flex', flexFlow: 'row wrap'}}>
+                    {getRed(item).map(record => (
+                        <Tag>{record.name}</Tag>
+                    ))}
+                </div>
+            )
         },
         {
             title: 'Template',
@@ -256,14 +261,14 @@ const TablePublications = ({
         //         )
         //     }
         // },
-        {
-            title: 'Estatus',
-            render: (item) =>{
-                return(
-                    <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
-                )
-            }
-        },
+        // {
+        //     title: 'Estatus',
+        //     render: (item) =>{
+        //         return(
+        //             <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
+        //         )
+        //     }
+        // },
         {
             title: ()=> {
                 return(
@@ -312,6 +317,7 @@ const TablePublications = ({
                 visible={openModalShare}
                 actionForm={actionShare}
                 close={closeModalShare}
+                itemToPublish={itemToPublish}
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
@@ -335,8 +341,8 @@ const mapState = (state) =>{
         jobbank_page: state.jobBankStore.jobbank_page,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
-        list_connections: state.jobBankStore.list_connections,
-        load_connections: state.jobBankStore.load_connections,
+        list_connections_options: state.jobBankStore.list_connections_options,
+        list_connections_options: state.jobBankStore.list_connections_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }

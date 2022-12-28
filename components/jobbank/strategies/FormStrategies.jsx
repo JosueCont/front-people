@@ -329,8 +329,8 @@ const FormStrategies = ({
                     label='Porcentaje a cobrar'
                     rules={[
                         ruleRequired,
-                        {type: 'number', min: 1, message: 'Mínimo de porcentaje mayor o igual a 1'},
-                        {type: 'number', max: 100, message: 'Máximo de porcentaje menor o igual a 100'}
+                        {type: 'number', min: 1, message: 'Porcentaje mínimo mayor o igual a 1'},
+                        {type: 'number', max: 100, message: 'Porcentaje máximo menor o igual a 100'}
                     ]}
                 >
                     <InputNumber
@@ -339,6 +339,7 @@ const FormStrategies = ({
                         controls={false}
                         placeholder='Porcentaje a cobrar'
                         onKeyDown={validateNum}
+                        onPaste={validateNum}
                         onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
@@ -367,6 +368,7 @@ const FormStrategies = ({
                         placeholder='Estimado de facturación'
                         onKeyDown={validateNum}
                         onKeyPress={validateMaxLength}
+                        onPaste={validateNum}
                         style={{
                             width: '100%',
                             border: '1px solid black'

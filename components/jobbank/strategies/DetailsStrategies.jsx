@@ -38,33 +38,29 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [disabledClient, setDisabledClient] = useState(false);
     const [infoStrategy, setInfoStrategy] = useState({});
     const [fetching, setFetching] = useState(false);
     const [optionVacant, setOptionVacant] = useState([]);
-    const { createData, setValuesForm } = useProcessInfo({
-        infoStrategy,
-        formStrategies,
-        setOptionVacant
-    });
+    const { createData, setValuesForm } = useProcessInfo({setOptionVacant});
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoStrategy(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(router.query.client && action == 'add'){
             formStrategies.resetFields()
             keepClient()
-        }else setDisabledClient(false);
-    },[router])
+        }
+    },[router.query])
 
     useEffect(()=>{
         if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
             formStrategies.resetFields();
-            setValuesForm()
+            let allValues = setValuesForm(infoStrategy);
+            formStrategies.setFieldsValue(allValues);
         }
     },[infoStrategy])
 
@@ -82,7 +78,6 @@ const DetailsStrategies = ({
     }
 
     const keepClient = () =>{
-        setDisabledClient(true)
         formStrategies.setFieldsValue({
             customer: router.query.client
         })
@@ -194,7 +189,7 @@ const DetailsStrategies = ({
                             <FormStrategies
                                 optionVacant={optionVacant}
                                 formStrategies={formStrategies}
-                                disabledClient={disabledClient}
+                                disabledClient={router.query?.client}
                             />
                         </Form>
                     </Spin>

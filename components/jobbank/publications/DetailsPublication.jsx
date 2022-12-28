@@ -1,8 +1,7 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
+    useRef
 } from 'react';
 import {
     Card,
@@ -49,15 +48,14 @@ const DetailsPublication = ({
         if(router.query.id && action == 'edit'){
             getInfoPublication(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
-        let check = Object.keys(router.query).length > 0;
-        if(check && action == 'add'){
+        if(Object.keys(router.query).length > 0 && action == 'add'){
             formPublications.resetFields();
             keepValues();
         }
-    },[router])
+    },[router.query])
 
     useEffect(()=>{
         if(Object.keys(infoPublication).length > 0 && action == 'edit'){
@@ -96,17 +94,19 @@ const DetailsPublication = ({
     }
 
     const setValuesForm = () =>{
-        let results = {};
         let existFields = Object.keys(infoPublication.fields).length > 0;
         let existFieldsName = infoPublication.profile && Object.keys(infoPublication.profile?.fields_name).length > 0;
-        if(existFields && !existFieldsName) results = formatData(infoPublication.fields);
-        if(existFieldsName && !existFields) results = formatData(infoPublication.profile.fields_name);
+        let results = existFields && !existFieldsName
+            ? formatData(infoPublication.fields)
+            : existFieldsName && !existFields
+            ? formatData(infoPublication.profile.fields_name)
+            : {}; 
         let all_info = {
             ...results,
             customer: infoPublication?.vacant?.customer?.id,
             vacant: infoPublication?.vacant?.id,
             profile: infoPublication.profile?.id ?? 'open_fields',
-            code_post: infoPublication.code_post
+            account_to_share: infoPublication.account_to_share
         }
         setValuesDefault(all_info)
         formPublications.setFieldsValue(all_info);
@@ -145,6 +145,13 @@ const DetailsPublication = ({
         setFetching(true)
         let bodyData = createData(values, 'fields');
         if(bodyData.profile) bodyData.fields = {};
+        let exist = Object.keys(bodyData.fields).length > 0;
+        if(!bodyData.profile && !exist){
+            message.error('Seleccionar los campos de la publicación');
+            setFetching(false)
+            setLoading({})
+            return;
+        }
         const actionFunction = {
             edit: onFinishUpdate,
             add: onFinishCreate
@@ -156,7 +163,15 @@ const DetailsPublication = ({
         if(router.query?.client) router.push({
             pathname: '/jobbank/clients',
             query: newFilters
-        });
+        })
+        else if(router.query?.vacancy) router.push({
+            pathname: '/jobbank/vacancies',
+            query: newFilters
+        })
+        else if(router.query?.strategy) router.push({
+            pathname: '/jobbank/strategies',
+            query: newFilters
+        })
         else router.push({
             pathname: '/jobbank/publications',
             query: newFilters

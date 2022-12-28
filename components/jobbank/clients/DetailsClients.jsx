@@ -88,7 +88,7 @@ const DetailsClients = ({
             dataClient.append(key, value);
         });
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
-        if(contactList.length > 0) dataClient.append('contact_list', JSON.stringify(contactList));
+        dataClient.append('contact_list', JSON.stringify(contactList));
         let toDelete = prevDocs.filter(item => item.is_deleted);
         const saveToDelete = (item, idx) => dataClient.append(`delete_files_id[${idx}]`, item.id);
         if(toDelete.length > 0) toDelete.map(saveToDelete);

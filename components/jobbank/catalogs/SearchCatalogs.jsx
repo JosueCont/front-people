@@ -22,7 +22,7 @@ const SearchCatalogs = ({
 
     useEffect(()=>{
         formSearch.setFieldsValue(router.query);
-    },[router])
+    },[router.query])
 
     const onFinish = (values) =>{
         let filters = createFiltersJB(values);

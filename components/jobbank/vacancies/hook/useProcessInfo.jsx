@@ -1,15 +1,6 @@
 import moment from 'moment';
 
-export const useProcessInfo = ({
-    formVacancies,
-    infoVacant,
-    setListInterviewers,
-    listInterviewers,
-    listLangDomain,
-    setListLangDomain
-}) =>{
-
-    const { setFieldsValue } = formVacancies;
+export const useProcessInfo = () =>{
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {
@@ -20,26 +11,26 @@ export const useProcessInfo = ({
 
     const haveProperties = (obj) => Object.keys(obj).length > 0;
 
-    const getSubObj = () =>{
-        let features = {...infoVacant};
+    const getSubObj = (values) =>{
+        let features = {...values};
         let education = {};
         let salary = {};
         let recruitment = {};
 
-        if(infoVacant.education_and_competence){
-            education = Object.assign(infoVacant.education_and_competence);
+        if(values.education_and_competence){
+            education = Object.assign(values.education_and_competence);
             delete features.education_and_competence;
         }
-        if(infoVacant.salary_and_benefits){
-            salary = Object.assign(infoVacant.salary_and_benefits);
+        if(values.salary_and_benefits){
+            salary = Object.assign(values.salary_and_benefits);
             delete features.salary_and_benefits;
         }
-        if(infoVacant.recruitment_process){
-            recruitment = Object.assign(infoVacant.recruitment_process);
+        if(values.recruitment_process){
+            recruitment = Object.assign(values.recruitment_process);
             delete features.recruitment_process;
         }
-        if(infoVacant.customer){
-            features.customer_id = infoVacant.customer?.id;
+        if(values.customer){
+            features.customer_id = values.customer?.id;
             delete features.customer;
         }
         return{ features, education, salary, recruitment };
@@ -65,7 +56,6 @@ export const useProcessInfo = ({
             sub_category,
             academics_degree,
             competences,
-            languages,
             experiences,
             technical_skills
         } = details;
@@ -74,7 +64,6 @@ export const useProcessInfo = ({
         if(sub_category && Object.keys(sub_category).length > 0) details['sub_category'] = sub_category.id;
         if(academics_degree?.length > 0) details['academics_degree'] = academics_degree.at(-1).id;
         if(competences?.length > 0) details['competences'] = competences.map(item=> item.id);
-        if(languages?.length > 0) setListLangDomain(languages.map(item => ({lang: item.lang, domain: item.domain})));
         if(experiences?.length > 0) details['experiences'] = experiences.join(',\n');
         if(technical_skills?.length > 0) details['technical_skills'] = technical_skills.join(',\n');
         
@@ -96,31 +85,26 @@ export const useProcessInfo = ({
     const valuesRecruitment = ({recruitment}) => {
         const have_info = haveProperties(recruitment);
         if(!have_info) return {};
-        const { interviewers } = recruitment;
-        if(interviewers?.length > 0) setListInterviewers(interviewers);
         delete recruitment.id;
         return recruitment;
     }
 
-    const setValuesForm = async () =>{
-        let vacant = getSubObj();
+    const setValuesForm = (values) =>{
+        let vacant = getSubObj(values);
         let info_features = valuesFeatures(vacant);
         let info_education = valuesEducation(vacant);
         let info_salary = valuesSalary(vacant);
         let info_recruitment = valuesRecruitment(vacant);
-        let all_info = checkValues({
+        return checkValues({
             ...info_features,
             ...info_education,
             ...info_salary,
             ...info_recruitment
         });
-        setFieldsValue(all_info);
     }
 
-    const createData = (obj) =>{
-        let info = checkValues(obj);
-        info.interviewers = listInterviewers;
-        info.languages = listLangDomain;
+    const createData = (values) =>{
+        let info = checkValues(values);
         if(info.assignment_date){
             let formatDate = info.assignment_date.format('YYYY-MM-DD');
             info.assignment_date = formatDate;

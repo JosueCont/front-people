@@ -598,11 +598,6 @@ export const catalogsJobbank = [
   // { catalog: "subareas", name: "Subáreas de especialización" },
 ];
 
-export const accounstJobbank = [
-  {value: 'FB', key: 'FB', label: 'Facebook'},
-  {value: 'IG', key: 'IG', label: 'Instagram'}
-]
-
 export const departureMotive = [
   { value: 1, label: "Termino de contrato" },
   { value: 2, label: "Separación voluntaria" },
