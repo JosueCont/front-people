@@ -29,6 +29,7 @@ import {
   periodicity,
   SukhaAccess,
   KhorflixAccess,
+  CareerlabAccess
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
@@ -97,6 +98,8 @@ const DataPerson = ({
       is_sukhatv_admin: person.is_sukhatv_admin,
       khorflix_access: person.khorflix_access,
       is_khorflix_admin: person.is_khorflix_admin,
+      careerlab_access: person.careerlab_access,
+      is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
     });
     if (person.patronal_registration) {
@@ -587,6 +590,27 @@ const DataPerson = ({
                     label="¿Es administrador Khorflix?"
                   >
                     <Select options={KhorflixAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "CAREERLAB" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="is_careerlab_admin"
+                    label="¿Es administrador Careerlab?"
+                  >
+                    <Select options={CareerlabAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "KHORFLIX" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item name="careerlab_access" label="Acceso a Careerlab">
+                    <Select options={CareerlabAccess} />
                   </Form.Item>
                 </Col>
               )}

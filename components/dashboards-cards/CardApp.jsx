@@ -200,7 +200,7 @@ const CardApps = ({ user, config, ...props }) => {
             </Space>
           </Col> */}
           {props?.applications &&
-          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && !props.is_admin?
+          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && !props.is_admin && user.khorflix_access?
               <Col span={8}>
                 <Space
                     direction="vertical"
@@ -214,7 +214,7 @@ const CardApps = ({ user, config, ...props }) => {
               : null
           }
           {props?.applications &&
-          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && !props.is_admin?
+          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && !props.is_admin && user.sukhatv_access?
               <Col span={8}>
                 <Space
                     direction="vertical"
@@ -228,7 +228,7 @@ const CardApps = ({ user, config, ...props }) => {
               : null
           }
           {props?.applications &&
-          (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && !props.is_admin?
+          (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && !props.is_admin && user.careerlab?
               <Col span={8}>
                 <Space
                     direction="vertical"

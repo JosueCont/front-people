@@ -225,13 +225,13 @@ const MainSider = ({
 
       // Educación y desarrollo
       let children2 = [];
-      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && user?.khorflix_access) {
+      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && user?.is_khorflix_admin) {
         children2.push(getItem("Khorflix", "khorflix"))
       }
-      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.sukhatv_access) {
+      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.is_sukhatv_admin) {
         children2.push(getItem("Sukha", "sukha"))
       }
-      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.careerlab_access) {
+      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.is_careerlab_admin) {
         children2.push(getItem("Careerlab", "careerlab"))
       }
       if (children2.length > 0) {
