@@ -291,6 +291,10 @@ class WebApiPayroll {
       data
     );
   }
+
+  static downLoadReceipt(data) {
+    return WebApi.ApisType("/payroll/payroll-receipt", "post", data);
+  }
 }
 
 export default WebApiPayroll;
