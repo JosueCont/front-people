@@ -494,7 +494,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
               </Form.Item>
             </Col>
             <Col span={5}>
-              <Form.Item label="Empresa">
+              <Form.Item extra={companies && companies.length>1 ?
+                  `${companySelect+1}/${companies.length}`:''} label="Empresa">
                 <Select
                   options={companies}
                   size="middle"
@@ -518,7 +519,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           {patronals.length > 0 && (
             <Row align="center" style={{ width: "100%" }}>
               <Col span={3}>
-                <Form.Item label="Registro patronal">
+                <Form.Item extra={patronals && patronals.length>1 ?
+                    `${patronalSelect+1}/${patronals.length}`:''} label="Registro patronal">
                   <Select
                     options={patronals}
                     size="middle"
@@ -635,6 +637,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 company={xmlImport.companies[companySelect]}
                 paymentPeriodicity={props.payment_periodicity}
                 setPerson={setPerson}
+                companies={xmlImport.companies}
                 periodicities
                 perceptions_type={props.perceptions_type}
               />
