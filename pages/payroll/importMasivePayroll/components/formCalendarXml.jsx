@@ -39,26 +39,18 @@ const FormCaledanrXml = ({
 
   const PrintPeriods = ({ periods = [] }) => {
     return (
-      <>
-        <Radio.Group
-          onChange={(e) => onChangePeriod(e)}
-          required
-          defaultValue={calendar.calendar.start_date}
-        >
+      <Col>
+        <ul>
           {periods.map((item, i) => {
             return (
-              <Col>
-                <Radio
-                  key={item.payment_start_date + i}
-                  value={`${item.payment_start_date},${item.payment_end_date}`}
-                >
+                <li>
                   {item.payment_start_date} - {item.payment_end_date}
-                </Radio>
-              </Col>
+                </li>
             );
           })}
-        </Radio.Group>
-      </>
+        </ul>
+
+      </Col>
     );
   };
 
@@ -121,16 +113,16 @@ const FormCaledanrXml = ({
     <>
       {calendar && (
         <>
-          {/* <Row style={{ width: "100%", padding: 10 }}>
+           <Row style={{ width: "100%", padding: 10 }}>
             <Col span={24}>
               <h3>
-                <b>Fecha de inicio del calendario</b>
+                <b>Periodos</b>
               </h3>
             </Col>
             <Col span={24}>
               <PrintPeriods periods={calendar.period_list} />
             </Col>
-          </Row> */}
+          </Row>
           <Row style={{ width: "100%", padding: 10 }}>
             <Col
               span={24}
