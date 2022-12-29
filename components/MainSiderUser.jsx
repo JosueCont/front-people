@@ -133,13 +133,13 @@ const MainSider = ({
       //   // getItem("Concieo", "concieo")
       // ]
       let children2 = [];
-      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active)) {
+      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && user?.khorflix_access) {
         children2.push(getItem("Khorflix", "khorflix"))
       }
-      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active)) {
+      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.sukhatv_access) {
         children2.push(getItem("Sukha", "sukha"))
       }
-      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active)) {
+      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.careerlab_access) {
         children2.push(getItem("Careerlab", "careerlab"))
       }
       if (children2.length > 0) {

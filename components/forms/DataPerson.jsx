@@ -126,9 +126,9 @@ const DataPerson = ({
         birth_date: moment(person.birth_date),
       });
 
-    if (person.register_date)
+    if (person.timestamp)
       formPerson.setFieldsValue({
-        register_date: moment(person.register_date),
+        register_date: moment(person.timestamp),
       });
 
     getGroupPerson(config, person.khonnect_id)
@@ -531,6 +531,7 @@ const DataPerson = ({
                     onChange={onChangeIngPlatform}
                     moment={"YYYY-MM-DD"}
                     placeholder="Fecha de ingreso a la plataforma"
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>
