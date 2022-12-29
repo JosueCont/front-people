@@ -7,19 +7,21 @@ import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewSectors = () => {
+const ViewSectors = ({
+    filtersString,
+    currentPage
+}) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getSectors(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getSectors = async (node, query = '') => {
         try {
@@ -33,18 +35,10 @@ const ViewSectors = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getSectors(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSector({...values, node: currentNode.id});
-            getWithFilters();
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector registrado');
         } catch (e) {
             console.log(e)
@@ -57,7 +51,7 @@ const ViewSectors = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateSector(id, values);
-            getWithFilters();
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector actualizado');
         } catch (e) {
             console.log(e)
@@ -70,7 +64,7 @@ const ViewSectors = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteSector(id);
-            getWithFilters();
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector eliminado');
         } catch (e) {
             console.log(e)
@@ -95,7 +89,7 @@ const ViewSectors = () => {
                     catalogLoading={loading}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

@@ -18,7 +18,7 @@ import { getStrategies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
-import { getFiltersJB } from '../../../utils/functions';
+import { optionsStatusVacant } from '../../../utils/constant';
 
 const TableStrategies = ({
     list_strategies,
@@ -26,8 +26,8 @@ const TableStrategies = ({
     currentNode,
     jobbank_page,
     getStrategies,
-    load_clients_options,
-    list_clients_options
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -39,20 +39,14 @@ const TableStrategies = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteStrategy({ids});
-            getStrategiesWithFilters();
-            if(ids.length > 1) message.success('Estrategias eliminadas');
-            else message.success('Estrategia eliminada');
+            getStrategies(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Estrategias eliminadas' : 'Estrategia eliminada';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Estrategias no eliminadas');
-            else message.error('Estrategia no eliminada');
+            let msg = ids.length > 1 ? 'Estrategias no eliminadas' : 'Estrategia no eliminada';
+            message.error(msg);
         }
-    }
-
-    const getStrategiesWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(router.query);
-        getStrategies(currentNode.id, filters, page);
     }
 
     const openModalManyDelete = () =>{
@@ -75,12 +69,12 @@ const TableStrategies = ({
         setItemsToDelete([])
     }
 
-    const getClient = (item) =>{
-        if(!item.customer) return null;
-        const client = record => record.id === item.customer;
-        let client_ = list_clients_options.find(client);
-        if(!client_) return null;
-        return client_.name;
+    const getStatus = (item) =>{
+        if(!item.vacant?.status) return null;
+        const find_ = record => record.value == item.vacant?.status;
+        let result = optionsStatusVacant.find(find_);
+        if(!result) return null;
+        return result.label;
     }
 
     const rowSelection = {
@@ -97,12 +91,13 @@ const TableStrategies = ({
     })
 
     const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
             savePage(newQuery)
-        };
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const menuTable = () => {
@@ -155,24 +150,29 @@ const TableStrategies = ({
 
     const columns = [
         {
-            title: 'Producto',
-            dataIndex: 'product',
-            key: 'product',
-            ellipsis: true
-        },
-        {
             title: 'Cliente',
-            ellipsis: true,
-            render: (item) =>{
-                return(
-                    <span>{getClient(item)}</span>
-                )
-            }
+            dataIndex: ['vacant','customer','name'],
+            key: ['vacant','customer','name'],
+            ellipsis: true
         },
         {
             title: 'Vacante',
             dataIndex: ['vacant','job_position'],
             key: ['vacant','job_position'],
+            ellipsis: true
+        },
+        {
+            title: 'Estatus vacante',
+            render: (item) =>{
+                return(
+                    <span>{getStatus(item)}</span>
+                )
+            }
+        },
+        {
+            title: 'Producto',
+            dataIndex: 'product',
+            key: 'product',
             ellipsis: true
         },
         // {
@@ -245,8 +245,6 @@ const mapState = (state) =>{
     return {
         list_strategies: state.jobBankStore.list_strategies,
         load_strategies: state.jobBankStore.load_strategies,
-        load_clients_options: state.jobBankStore.load_clients_options,
-        list_clients_options: state.jobBankStore.list_clients_options,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }

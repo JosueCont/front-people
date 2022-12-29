@@ -46,7 +46,7 @@ const DetailsTemplate = ({
         if(router.query.id && action == 'edit'){
             getInfoTemplate(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(Object.keys(infoTemplate).length > 0 && action == 'edit'){

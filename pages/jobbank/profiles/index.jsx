@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../layout/MainInter';
 import { withAuthSync } from '../../../libs/auth';
 import { connect } from 'react-redux';
@@ -19,6 +19,8 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('')
 
     useEffect(()=>{
         if(currentNode){
@@ -31,8 +33,10 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getProfilesList(currentNode.id, filters, page);
+            setCurrentPage(page)
+            setCurrentFilters(filters)
         }
-    },[currentNode, router])
+    },[currentNode, router.query])
 
     return (
         <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -58,7 +62,7 @@ const index = ({
                 }}
             >
                 <SearchProfiles/>
-                <TableProfiles/>    
+                <TableProfiles currentPage={currentPage} currentFilters={currentFilters}/>  
             </div>
         </MainLayout>
     )

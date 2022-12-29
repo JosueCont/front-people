@@ -5,21 +5,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewAcademics = () => {
+const ViewAcademics = ({
+    filtersString,
+    currentPage
+}) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState({});
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getAcademics(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getAcademics = async (node, query = '') =>{
         try {
@@ -33,18 +34,10 @@ const ViewAcademics = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getAcademics(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createAcademic({...values, node: currentNode.id});
-            getWithFilters();
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera registrada');
         } catch (e) {
             console.log(e)
@@ -57,7 +50,7 @@ const ViewAcademics = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateAcademic(id, values);
-            getWithFilters();
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera actualizada');
         } catch (e) {
             console.log(e)
@@ -70,7 +63,7 @@ const ViewAcademics = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteAcademic(id);
-            getWithFilters();
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera eliminada')
         } catch (e) {
             console.log(e)
@@ -95,7 +88,7 @@ const ViewAcademics = () => {
                     catalogLoading={loading}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

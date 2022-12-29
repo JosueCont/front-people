@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ import {
     getPublications,
     getProfilesOptions,
     getVacanciesOptions,
-    getConnections
+    getConnectionsOptions
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
@@ -19,16 +19,18 @@ const index = ({
     getPublications,
     getProfilesOptions,
     getVacanciesOptions,
-    getConnections
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getConnections(currentNode.id, true);
+            getConnectionsOptions(currentNode.id);
         }
     },[currentNode])
 
@@ -37,8 +39,10 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getPublications(currentNode.id, filters, page);
+            setCurrentPage(page)
+            setCurrentFilters(filters)
         }
-    },[currentNode, router])
+    },[currentNode, router.query])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
@@ -57,7 +61,7 @@ const index = ({
             </Breadcrumb>
             <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
                 <SearchPublications/>
-                <TablePublications/>
+                <TablePublications currentPage={currentPage} currentFilters={currentFilters}/>
             </div>
         </MainLayout>
     )
@@ -74,6 +78,6 @@ export default connect(
         getPublications,
         getProfilesOptions,
         getVacanciesOptions,
-        getConnections
+        getConnectionsOptions
     }
 )(withAuthSync(index));

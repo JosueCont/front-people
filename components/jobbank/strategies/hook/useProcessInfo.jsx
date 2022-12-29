@@ -1,12 +1,6 @@
 import moment from 'moment';
 
-export const useProcessInfo = ({
-    infoStrategy,
-    formStrategies,
-    setOptionVacant
-}) => {
-
-    const { setFieldsValue } = formStrategies;
+export const useProcessInfo = ({ setOptionVacant }) => {
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {
@@ -15,8 +9,9 @@ export const useProcessInfo = ({
         }, {});
     };
 
-    const setValuesForm = () =>{
-        let info = checkValues(infoStrategy);
+    const setValuesForm = (values) =>{
+        let info = checkValues(values);
+        if(info.customer?.id) info.customer = info.customer?.id;
         if(info.assignment_date) info.assignment_date = moment(info.assignment_date);
         if(info.candidates_date_send) info.candidates_date_send = moment(info.candidates_date_send);
         if(info.candidate_acceptance_date) info.candidate_acceptance_date = moment(info.candidate_acceptance_date);
@@ -26,7 +21,7 @@ export const useProcessInfo = ({
             setOptionVacant([info.vacant])
             info.vacant = info.vacant.id;
         }
-        setFieldsValue(info);
+        return info;
     }
 
     const createData = (obj) =>{

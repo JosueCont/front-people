@@ -7,19 +7,21 @@ import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewCompetences = () => {
+const ViewCompetences = ({
+    filtersString,
+    currentPage
+}) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getWithFilters();
-    },[currentNode, router])
+        getCompetences(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
     const getCompetences = async (node, query = '') =>{
         try {
@@ -33,18 +35,10 @@ const ViewCompetences = () => {
         }
     }
 
-    const getWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let params = deleteFiltersJb(router.query);
-        let filters = getFiltersJB(params);
-        setNumPage(page);
-        getCompetences(currentNode.id, filters);
-    }
-
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createCompetence({...values, node: currentNode.id});
-            getWithFilters();
+            getCompetences(currentNode.id, filtersString);
             message.success('Competencia registrada');
         } catch (e) {
             console.log(e)
@@ -57,7 +51,7 @@ const ViewCompetences = () => {
     const actionUpdate = async (id, values) =>{
         try {
             await WebApiJobBank.updateCompetence(id, values);
-            getWithFilters();
+            getCompetences(currentNode.id, filtersString);
             message.success('Competencia actuailzada')
         } catch (e) {
             console.log(e)
@@ -70,7 +64,7 @@ const ViewCompetences = () => {
     const actionDelete = async (id) =>{
         try {
             await WebApiJobBank.deleteCompetence(id);
-            getWithFilters();
+            getCompetences(currentNode.id, filtersString);
             message.success('Competencia eliminada');
         } catch (e) {
             console.log(e)
@@ -95,7 +89,7 @@ const ViewCompetences = () => {
                     catalogLoading={loading}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
-                    numPage={numPage}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

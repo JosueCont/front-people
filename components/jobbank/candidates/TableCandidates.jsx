@@ -25,7 +25,9 @@ const TableCandidates = ({
     jobbank_page,
     getCandidates,
     list_candidates,
-    load_candidates
+    load_candidates,
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -37,33 +39,27 @@ const TableCandidates = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidatesWithFilters();
-            if(ids.length > 1) message.success('Candidatos eliminados');
-            else message.success('Candidato eliminado');
+            getCandidates(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Candidatos no eliminados');
-            else message.error('Candidato no eliminado');
+            let msg = ids.length > 1 ? 'Candidatos no eliminados' : 'Candidato no eliminado';
+            message.error(msg);
         }
     }
 
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidatesWithFilters();
-            if(checked) message.success('Candidato activado');
-            if(!checked) message.success ('Candidato desactivado');
+            getCandidates(currentNode.id, currentFilters, currentPage);
+            let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(checked) message.error('Candidato no activado');
-            if(!checked) message.error('Candidato no desactivado');
+            let msg = checked ? 'Candidato no activado' : 'Candidato no desactivado';
+            message.error(msg);
         }
-    }
-
-    const getCandidatesWithFilters = () =>{
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB(router.query);
-        getCandidates(currentNode.id, filters, page);
     }
 
     const openModalManyDelete = () =>{
@@ -92,12 +88,13 @@ const TableCandidates = ({
     })
 
     const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
-            savePage(newQuery)
-        };
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
