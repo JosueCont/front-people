@@ -24,7 +24,6 @@ export const Dashboard = ({stadistics, ...props}) => {
   ]
 
   useEffect(() => {
-    console.log("aqui el resumen",stadistics)
     setStartDate(stadistics.start_date);
     setEndDate(stadistics.end_date);
     if(stadistics?.feeling?.count > 0){

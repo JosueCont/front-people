@@ -512,7 +512,6 @@ const TableAssessments = ({
   }
   
   const getNewFilters = () =>{
-    console.log(router.query);
     let newFilters = {...router.query};
     if(newFilters.id) delete newFilters.id;
     return newFilters;
