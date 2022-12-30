@@ -456,14 +456,14 @@ const DataPerson = ({
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24} md={12}>
+              {/* <Col lg={8} xs={24} md={12}>
                 <Form.Item label="Empresa">
                   <Input
                     readOnly
                     value={props.currentNode && props.currentNode.name}
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
               <Col lg={8} xs={24} md={12}>
                 <SelectDepartment
                   disabled={
