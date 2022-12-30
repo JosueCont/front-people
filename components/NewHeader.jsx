@@ -29,6 +29,7 @@ import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
+import { getCurrentURL } from "../utils/constant";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -106,7 +107,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text>Editar perfil</Text>
             </p>
 
-            { verifyMenuNewForTenant() &&
+            { verifyMenuNewForTenant() && process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER?!process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER.includes(getCurrentURL(true, true)):true &&
               <p
               className="text-menu"
               onClick={() => router.push("/user")}

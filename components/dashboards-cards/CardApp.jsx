@@ -122,13 +122,23 @@ const CardApps = ({ user, config, ...props }) => {
       case "sukhatv":
         const token1 = user.jwt_data.metadata.at(-1).token;
         // const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
-        const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        let url1;
+        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
+          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
+            url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
+          }else{
+            url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+          }
+        }else{
+          url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        }
         redirectTo(url1, true);
         break;
       case "careerlab":
         const token2 = user.jwt_data.metadata.at(-1).token;
         // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
-        const url2 = `https://platform.${urlCareerlab}/validation?token=${token2}`
+        // const url2 = `https://platform.${urlCareerlab}/validation?token=${token2}`
+        const url2 = `https://platform.${urlCareerlab}`
         redirectTo(url2, true);
         break;
       case "khorflix":

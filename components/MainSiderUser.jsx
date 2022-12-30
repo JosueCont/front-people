@@ -62,7 +62,16 @@ const MainSider = ({
     switch (key){
       case "sukha":
         const token1 = user.jwt_data.metadata.at(-1).token;
-        const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        let url1;
+        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
+          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
+            url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
+          }else{
+            url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+          }
+        }else{
+          url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
+        }
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link1 = document.createElement('a');
         link1.href = url1;
@@ -81,7 +90,8 @@ const MainSider = ({
       case "careerlab":
         const token3 = user.jwt_data.metadata.at(-1).token;
         const link3 = document.createElement('a');
-        link3.href = `https://platform.${urlCareerlab}/validation?token=${token3}`;
+        // link3.href = `https://platform.${urlCareerlab}/validation?token=${token3}`;
+        link3.href = `https://platform.${urlCareerlab}`;
         link3.target = '_blank';
         link3.click();
         break;
