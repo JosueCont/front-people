@@ -73,7 +73,6 @@ const AutomaticMovements = ({patronalData}) => {
       title: "Configurado",
       key: 'status',
       render: (record) => {
-        console.log('record', record?.service)
         if(record?.service){
            if(record?.service==='INFONAVIT' && hasCredentialInfonavit){
              return <CheckCircleOutlined style={{color:'green'}} />
@@ -166,7 +165,6 @@ const AutomaticMovements = ({patronalData}) => {
       }else{
         setHasCredentialIMSS(false)
       }
-      console.log('Response imss', response?.data.results?.credentials)
     } catch (error) {
       setHasCredentialIMSS(false)
       console.log('Error', error)
@@ -183,7 +181,6 @@ const AutomaticMovements = ({patronalData}) => {
       }else{
         setHasCredentialInfonavit(false)
       }
-      console.log('Response Infonavit', response?.data.results?.credentials)
     } catch (error) {
       setHasCredentialInfonavit(false)
       console.log('Error', error)
@@ -196,7 +193,6 @@ const AutomaticMovements = ({patronalData}) => {
 
   const onFinishImss = async (values) => {
 
-    console.log('vals', values)
     const formData = new FormData();
     formData.append('endpoint', 'imss')
     formData.append('patronal_registration', patronalData.id)
@@ -215,9 +211,7 @@ const AutomaticMovements = ({patronalData}) => {
     // values.key = keyFile
 
     try {
-      console.log('Values -->', values)
       let response = await WebApiPeople.addNewCredentials(formData)
-      console.log('Response', response)
       message.success('Guardado correctamente.') 
 
     } catch (error) {
@@ -241,9 +235,7 @@ const AutomaticMovements = ({patronalData}) => {
     values.patronal_registration = patronalData.id
 
     try {
-      console.log('Values -->', values)
       let response = await WebApiPeople.addNewCredentials(values)
-      console.log('Response', response)
       message.success('Guardado correctamente.') 
 
     } catch (error) {

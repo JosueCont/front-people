@@ -19,6 +19,10 @@ const EmployeeDetailPage = (...props) => {
     if (router.query.id) getPerson(router.query.id);
   }, [router.query]);
 
+  useEffect(() => {
+    if (router.query.id) getPerson(router.query.id)
+  }, [router.query.id])
+
   const getPerson = async (data) => {
     try {
       let response = await WebApiPeople.getPerson(data);

@@ -149,10 +149,8 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     }
     // if (info.fileList.length > 0) {
     if (info.file.status === "done") {
-      console.log(info)
       setImagen(info.fileList[0]);
       getBase64(info.file.originFileObj, (imageUrl) => {
-        console.log(imageUrl)
         setLoadingLogo(false);
         setImageUrl(imageUrl);
       });
