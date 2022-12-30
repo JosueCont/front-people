@@ -139,7 +139,6 @@ const FilterDashboard = ({currentNode,
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
             companies: value === 4 ? [dataForm.valuesSelected] ?? [] : []
         }
-        console.log("data a consultar",data);
         //Consultas
         getTopPersons(data);
         getDailyEmotions(data);

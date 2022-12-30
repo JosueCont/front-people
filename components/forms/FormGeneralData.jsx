@@ -30,7 +30,6 @@ const FormGeneralData = ({ person_id = null }) => {
   const getGeneralData = async () => {
     try {
       let response = await WebApi.getGeneralDataPerson(person_id);
-      console.log('Data', response.data)
       formGeneralData.setFieldsValue({
         place_birth: response.data.place_birth,
         nationality: response.data.nationality,

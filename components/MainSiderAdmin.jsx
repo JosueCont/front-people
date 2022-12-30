@@ -152,7 +152,6 @@ const MainSider = ({
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
     if (typeof window !== "undefined") {
-      console.log('Apps', user)
       // Estrategia y planeación
       let children0 = [
         getItem("Empresas", "business"),
