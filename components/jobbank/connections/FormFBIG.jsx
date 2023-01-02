@@ -136,7 +136,7 @@ const FormFBIG = () => {
     }
 
     const onLogout = (response) =>{
-        console.log('logout', response)
+        console.log('logout')
     }
 
     const validateResp = (resp) =>{
@@ -166,7 +166,7 @@ const FormFBIG = () => {
 
     const deletePermissions = () =>{
         window.FB.api('/me/permissions', 'delete', (res)=>{
-            console.log('delete', res)
+            console.log('delete')
         })
     }
 

@@ -176,7 +176,6 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item, param) => {
-    console.log(item,'item')
     setEdit(true);
     setId(item.id);
     form.setFieldsValue({

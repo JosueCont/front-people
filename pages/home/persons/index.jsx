@@ -1239,112 +1239,126 @@ const homeScreen = ({ ...props }) => {
             <>
               <div className="top-container-border-radius">
                 <Row justify={"space-between"} className={"formFilter"}>
-                  <Col>
+                  <Col span={24}>
                     <Form
                       onFinish={filter}
                       layout={"vertical"}
                       form={formFilter}
                     >
-                      <Row gutter={[10]}>
-                        <Col>
-                          <Form.Item name="name" label={"Nombre"}>
-                            <Input
-                              allowClear={true}
-                              placeholder="Nombre(s)"
-                              style={{ width: 150 }}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col>
-                          <Form.Item name="flast_name" label={"Apellido"}>
-                            <Input
-                              allowClear={true}
-                              placeholder="Apellido(s)"
-                              style={{ width: 150 }}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col>
-                          <Form.Item name="code" label={"Núm. empleado"}>
-                            <Input
-                              allowClear={true}
-                              placeholder="Núm. empleado"
-                              style={{ width: 100 }}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col>
-                          <Form.Item name="gender" label="Género">
-                            <Select
-                              options={genders}
-                              notFoundContent={"No se encontraron resultados."}
-                              placeholder="Todos"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col>
-                          <SelectDepartment onChange={setDepSelect} />
-                        </Col>
-                        <Col>
-                          <SelectJob department={depSelect} />
-                        </Col>
-                        <Col>
-                          <Form.Item name="is_active" label="Estatus">
-                            <Select
-                              options={statusSelect}
-                              placeholder="Estatus"
-                              notFoundContent={"No se encontraron resultados."}
-                              style={{ width: 90 }}
-                            />
-                          </Form.Item>
+                      <Row gutter={[10]} style={{marginBottom:10}}>
+                        <Col span={24}>
+                          <Row gutter={[10]} style={{marginBottom:10}}>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="name" label={"Nombre"}>
+                                <Input
+                                    allowClear={true}
+                                    placeholder="Nombre(s)"
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="flast_name" label={"Apellido"}>
+                                <Input
+                                    allowClear={true}
+                                    placeholder="Apellido(s)"
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="code" label={"Núm. empleado"}>
+                                <Input
+                                    allowClear={true}
+                                    placeholder="Núm. empleado"
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          <Row gutter={[10]} style={{marginBottom:10}}>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="gender" label="Género">
+                                <Select
+                                    options={genders}
+                                    notFoundContent={"No se encontraron resultados."}
+                                    placeholder="Todos"
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <SelectDepartment onChange={setDepSelect} />
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <SelectJob department={depSelect} />
+                            </Col>
+                          </Row>
+                          <Row gutter={[10]} style={{marginBottom:10}}>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="is_active" label="Estatus">
+                                <Select
+                                    options={statusSelect}
+                                    placeholder="Estatus"
+                                    notFoundContent={"No se encontraron resultados."}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col
+                                className="button-filter-person"
+                                style={{ display: "flex", marginTop: "10px" }}
+                                xs={12} md={4}
+                            >
+                              <Tooltip
+                                  title="Filtrar"
+                                  color={"#3d78b9"}
+                                  key={"#filtrar"}
+                              >
+                                <Button style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                                  <SearchOutlined /> Filtrar
+                                </Button>
+                              </Tooltip>
+                            </Col>
+                            <Col
+                                xs={12} md={4}
+                                className="button-filter-person"
+                                style={{ display: "flex", marginTop: "10px" }}
+                            >
+                              <Tooltip
+                                  title="Limpiar filtros"
+                                  color={"#3d78b9"}
+                                  key={"#3d78b9"}
+                              >
+                                <Button
+                                    onClick={() => resetFilter()}
+                                    style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
+                                >
+                                  <SyncOutlined /> Limpar filtro
+                                </Button>
+                              </Tooltip>
+                            </Col>
+                            <Col
+                                xs={12} md={4}
+                                className="button-filter-person"
+                                style={{ display: "flex", marginTop: "10px" }}
+                            >
+                              {permissions.create && (
+                                  <Button
+                                      style={{width:'100%'}}
+                                      className="btn-add-person"
+                                      onClick={() => getModalPerson(true)}
+                                      style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
+                                  >
+                                    <PlusOutlined />
+                                    Agregar persona
+                                  </Button>
+                              )}
+                            </Col>
+                          </Row>
+
                         </Col>
 
-                        <Col
-                          className="button-filter-person"
-                          style={{ display: "flex", marginTop: "10px" }}
-                        >
-                          <Tooltip
-                            title="Filtrar"
-                            color={"#3d78b9"}
-                            key={"#filtrar"}
-                          >
-                            <Button className="btn-filter" htmlType="submit">
-                              <SearchOutlined />
-                            </Button>
-                          </Tooltip>
-                        </Col>
-                        <Col
-                          className="button-filter-person"
-                          style={{ display: "flex", marginTop: "10px" }}
-                        >
-                          <Tooltip
-                            title="Limpiar filtros"
-                            color={"#3d78b9"}
-                            key={"#3d78b9"}
-                          >
-                            <Button
-                              onClick={() => resetFilter()}
-                              style={{ marginTop: "auto", marginLeft: 10 }}
-                            >
-                              <SyncOutlined />
-                            </Button>
-                          </Tooltip>
-                        </Col>
-                        <Col
-                          className="button-filter-person"
-                          style={{ display: "flex", marginTop: "10px" }}
-                        >
-                          {permissions.create && (
-                            <Button
-                              className="btn-add-person"
-                              onClick={() => getModalPerson(true)}
-                              style={{ marginTop: "auto", marginLeft: 10 }}
-                            >
-                              <PlusOutlined />
-                              Agregar persona
-                            </Button>
-                          )}
-                        </Col>
+
+
+
+
+
                       </Row>
                     </Form>
                   </Col>

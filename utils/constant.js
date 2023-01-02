@@ -626,3 +626,14 @@ export const KhorflixAccess = [
     value: false,
   },
 ];
+
+export const CareerlabAccess = [
+  {
+    label: "Sí",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  },
+];

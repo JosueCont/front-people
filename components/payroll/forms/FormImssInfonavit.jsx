@@ -127,8 +127,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           // setIsEdit(false);
         })
         .catch((error) => {
-          message.error("Error al editar");
-          setLoadingTable(false);
+          if (
+              error?.response?.data?.message
+          ) {
+            message.error(error?.response?.data?.message);
+            setLoadingTable(false);
+          } else message.error(messageError);
         });
     } else {
       WebApiPayroll.saveIMSSInfonavit(values)
@@ -139,13 +143,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         })
         .catch(async (error) => {
           if (
-            error.response &&
-            error.response.data &&
-            error.response.data.message
+            error?.response?.data?.message
           ) {
-            // setMessageModal(1, error.response.data.message);
-            // setGenericModal(true);
-            message.error(error.response.data.message);
+            message.error(error?.response?.data?.message);
             setLoadingTable(false);
           } else message.error(messageError);
           setLoadingTable(false);
@@ -410,9 +410,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="sbc"
                 label="Salario diario"
                 maxLength={13}
+
                 rules={[fourDecimal, ruleRequired]}
               >
-                <Input maxLength={10} />
+                <Input disabled={
+                  updateCredit && updateCredit.is_registered ? true : false
+                } maxLength={10} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -434,9 +437,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 style={{ marginRight: 20 }}
                 type="primary"
                 htmlType="submit"
-                disabled={
-                  updateCredit && updateCredit.is_registered ? true : false
-                }
               >
                 Guardar
               </Button>

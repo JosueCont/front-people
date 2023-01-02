@@ -130,8 +130,6 @@ const CostCenterCatalog = ({ permissions,cat_accounts, currentNode,cat_cost_cent
         data
       );
 
-      console.log(response)
-
       getAccountantAccount(currentNode.id)
         .then((response) => {
           resetForm();

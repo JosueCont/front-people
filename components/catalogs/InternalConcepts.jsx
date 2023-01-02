@@ -160,8 +160,6 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       form.validateFields();
       return;
     }
-
-    console.log(value);
     value.node = currentNode.id;
     if (edit) {
       updateRegister(value);
