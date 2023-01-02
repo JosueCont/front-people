@@ -1,4 +1,4 @@
-import { Row, Col, Form, Input, Radio, Switch, Select, DatePicker } from "antd";
+import { Row, Col, Form, Input,Collapse, Radio, Switch, Select, DatePicker } from "antd";
 import { useEffect } from "react";
 import SelectTypeTax from "../../../../components/selects/SelectTypeTax";
 import { salaryDays } from "../../../../utils/constant";
@@ -6,6 +6,7 @@ import { ruleRequired } from "../../../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
 import { useState } from "react";
+const { Panel } = Collapse;
 
 const FormCaledanrXml = ({
   calendar,
@@ -39,26 +40,22 @@ const FormCaledanrXml = ({
 
   const PrintPeriods = ({ periods = [] }) => {
     return (
-      <>
-        <Radio.Group
-          onChange={(e) => onChangePeriod(e)}
-          required
-          defaultValue={calendar.calendar.start_date}
-        >
-          {periods.map((item, i) => {
-            return (
-              <Col>
-                <Radio
-                  key={item.payment_start_date + i}
-                  value={`${item.payment_start_date},${item.payment_end_date}`}
-                >
-                  {item.payment_start_date} - {item.payment_end_date}
-                </Radio>
-              </Col>
-            );
-          })}
-        </Radio.Group>
-      </>
+      <Col span={10}>
+        <Collapse>
+          <Panel header={`Periodos identificados (${periods ? periods.length : 0})`} key="1">
+            <ul>
+              {periods.map((item, i) => {
+                return (
+                    <li>
+                      {item.payment_start_date} - {item.payment_end_date}
+                    </li>
+                );
+              })}
+            </ul>
+          </Panel>
+        </Collapse>
+
+      </Col>
     );
   };
 
@@ -121,20 +118,15 @@ const FormCaledanrXml = ({
     <>
       {calendar && (
         <>
-          {/* <Row style={{ width: "100%", padding: 10 }}>
-            <Col span={24}>
-              <h3>
-                <b>Fecha de inicio del calendario</b>
-              </h3>
-            </Col>
+           <Row style={{ width: "100%", padding: 10 }}>
             <Col span={24}>
               <PrintPeriods periods={calendar.period_list} />
             </Col>
-          </Row> */}
+          </Row>
           <Row style={{ width: "100%", padding: 10 }}>
             <Col
               span={24}
-              style={{ display: "flex", justifyContent: "center" }}
+              style={{ display: "flex", justifyContent: "start" }}
             >
               {" "}
               <span style={{ fontSize: 20, fontWeiht: "bold" }}>
@@ -243,7 +235,7 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <Form.Item label="¿Activo?">
                   <SwitchCalendar
                     status={calendar.calendar.active}
@@ -251,7 +243,7 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <Form.Item label="Ajuste mensual">
                   <SwitchCalendar
                     status={calendar.calendar.monthly_adjustment}
@@ -259,7 +251,7 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <Form.Item label="Ajuste anual">
                   <SwitchCalendar
                     status={calendar.calendar.annual_adjustment}

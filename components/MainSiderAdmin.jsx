@@ -106,7 +106,15 @@ const MainSider = ({
       case "sukha":
         const token1 = user.jwt_data.metadata.at(-1).token;
         const link1 = document.createElement('a');
-        link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
+        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
+          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
+            link1.href = `https://admin.demo.${urlSukha}/validation?token=${token1}`;
+          }else{
+            link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
+          }
+        }else{
+          link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
+        }
         // link1.href = "https://admin.demo.sukhatv.com/";
         link1.target = '_blank';
         link1.click();
@@ -128,7 +136,8 @@ const MainSider = ({
       case "careerlab":
         const token3 = user.jwt_data.metadata.at(-1).token;
         const link3 = document.createElement('a');
-        link3.href = `https://admin.platform.${urlCareerlab}/validation?token=${token3}`;
+        // link3.href = `https://admin.platform.${urlCareerlab}/validation?token=${token3}`;
+        link3.href = `https://admin.platform.${urlCareerlab}`;
         link3.target = '_blank';
         link3.click();
         break;
@@ -224,13 +233,13 @@ const MainSider = ({
 
       // Educación y desarrollo
       let children2 = [];
-      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active)) {
+      if (props?.applications && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && user?.is_khorflix_admin) {
         children2.push(getItem("Khorflix", "khorflix"))
       }
-      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active)) {
+      if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.is_sukhatv_admin) {
         children2.push(getItem("Sukha", "sukha"))
       }
-      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active)) {
+      if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.is_careerlab_admin) {
         children2.push(getItem("Careerlab", "careerlab"))
       }
       if (children2.length > 0) {

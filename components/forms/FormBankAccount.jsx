@@ -22,6 +22,7 @@ import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, twoDigit, expMonths, expYear } from "../../utils/rules";
 import SelectBank from "../selects/SelectBank";
 import { ruleRequired } from "../../utils/rules";
+import moment from "moment";
 
 const FormBanckAccount = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -120,6 +121,24 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   /* Events */
   const formBankAcc = (value) => {
+    if(value?.expiration_month){
+      let month = parseInt(value?.expiration_month)
+      if(month<1 || month>12){
+        message.error('El valor del mes es incorrecto, valor aceptable entre 01 y 12.')
+        return
+      }
+    }
+
+    if(value?.expiration_year){
+      let year = parseInt(value?.expiration_year)
+      let currentYear = parseInt(moment().format('YY'))
+      if(year<currentYear){
+        message.error('El valor del año es incorrecto, no puede ser menor al actual.')
+        return
+      }
+    }
+
+
     if (upBankAcc) {
       value.id = idBankAcc;
       updateBankAcc(value);
@@ -294,7 +313,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               label="Número de cuenta"
               rules={[onlyNumeric]}
             >
-              <Input minLength={11} maxLength={11} />
+              <Input  maxLength={11} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12}>
@@ -319,19 +338,19 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
-              rules={[twoDigit, expMonths]}
+              rules={[twoDigit]}
               validateTrigger="onBlur"
             >
-              <Input maxLength={2} />
+              <Input minLengyh={2} maxLength={2} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12} offset={1}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"
-              rules={[twoDigit, expYear]}
+              rules={[twoDigit]}
             >
-              <Input maxLength={2} />
+              <Input minLengyh={2} maxLength={2} />
             </Form.Item>
           </Col>
         </Row>
