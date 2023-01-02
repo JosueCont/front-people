@@ -1,10 +1,11 @@
 import { React, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
 import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPeople from "../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const PermissionNew = () => {
   const route = useRouter();
@@ -43,7 +44,7 @@ const PermissionNew = () => {
   };
 
   return (
-    <MainLayout currentKey={["permission"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["permission"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -51,6 +52,12 @@ const PermissionNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/permission" })}>Permisos</Breadcrumb.Item>

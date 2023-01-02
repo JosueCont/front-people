@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import {
   Row,
   Col,
@@ -21,6 +21,7 @@ import SelectBank from "../../components/selects/SelectBank";
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
+import { verifyMenuNewForTenant } from "../../utils/functions"
 
 const BankAccounts = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -167,7 +168,7 @@ const BankAccounts = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["bank_accounts"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["bank_accounts"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -175,6 +176,12 @@ const BankAccounts = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() &&
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Cuentas bancarias</Breadcrumb.Item>
       </Breadcrumb>

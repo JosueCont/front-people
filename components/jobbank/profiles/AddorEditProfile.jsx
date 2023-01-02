@@ -1,26 +1,33 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import DetailsProfiles from './DetailsProfiles';
 import { connect } from 'react-redux';
 import {
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddorEditProfile = ({
     action = 'add',
     currentNode,
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile,
     getClientsOptions
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'client'];
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
@@ -30,32 +37,32 @@ const AddorEditProfile = ({
         };
     },[currentNode])
 
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoProfile(router.query.id)
-        }
-    },[router])
-
     return (
-        <MainLayout currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_profiles' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/profiles'})}
+                    className='pointer'
+                    onClick={() => router.push({
+                        pathname: '/jobbank/profiles',
+                        query: newFilters
+                    })}
                 >
                     Template de vacante
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className={'container'}>
-                <DetailsProfiles action={action}/>
+                <DetailsProfiles action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )
@@ -71,7 +78,6 @@ export default connect(
     mapState,{
         getProfilesTypes,
         getVacantFields,
-        getInfoProfile,
         getClientsOptions
     }
 )(AddorEditProfile);

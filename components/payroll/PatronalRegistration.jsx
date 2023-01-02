@@ -32,6 +32,7 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import LegalRepresentative from "./forms/LegalRepresentative";
 import FormFiscalAddress from "./forms/FormFiscalAddress";
 import FormPatronalRegistration from "./forms/FormPatronalRegistration";
+import AutomaticMovements from "../business/AutomaticMovements";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
@@ -129,7 +130,7 @@ const ImssInformationNode = ({
       })
       .catch((error) => {
         setLoadingData(false);
-        console.log("error", error);
+        console.log(error);
       });
   };
 
@@ -166,8 +167,8 @@ const ImssInformationNode = ({
   const saveRegister = async (data) => {
     if (!(await validateForms())) return;
     data.node = currentNode.id;
-    if (isEdit) {
-      data.patronal.id = patronalData.id;
+    if (isEdit && patronalData?.id) {
+      data.patronal.id = patronalData?.id;
       if (patronalData.job_risk_premium && patronalData.job_risk_premium.id)
         data.jobRisk.id = patronalData.job_risk_premium.id;
       if (
@@ -317,8 +318,6 @@ const ImssInformationNode = ({
     });
   };
 
-  console.log("Patronal Data", patronalData);
-
   return (
     <>
       <Row style={{ marginBottom: "15px" }} justify="end">
@@ -367,6 +366,7 @@ const ImssInformationNode = ({
                 }
                 form={formPatronal}
                 currentNodeId={currentNode.id}
+                imssDelegation={patronalData && patronalData.imss_delegation}
               />
               <Row>
                 <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
@@ -398,7 +398,7 @@ const ImssInformationNode = ({
               />
             </Col>
           </Row>
-          <Row justify="end">
+          <Row justify="end" style={{ marginTop: 20, marginBottom: 20 }}>
             <Button onClick={resetForms} style={{ marginRight: "5px" }}>
               Cancelar
             </Button>
@@ -406,7 +406,15 @@ const ImssInformationNode = ({
               Guardar
             </Button>
           </Row>
+
           <Row>
+            <Title style={{ fontSize: "15px" }}>
+              Configuracíon de movimientos automáticos
+            </Title>
+          </Row>
+          <Divider style={{ marginTop: "2px" }} />
+          <AutomaticMovements patronalData={patronalData} />
+          <Row style={{ marginTop: 20 }}>
             <Title style={{ fontSize: "15px" }}>Certificados digitales</Title>
           </Row>
           <Row>

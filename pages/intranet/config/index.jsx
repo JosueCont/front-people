@@ -1,5 +1,5 @@
 import { withAuthSync } from "../../../libs/auth";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Breadcrumb, Table, Typography, notification } from "antd";
 import { FormattedMessage } from "react-intl";
 import { React, useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
 import WebApiIntranet from "../../../api/WebApiIntranet";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const configIntranet = ({user, ...props}) => {
   const { currentNode } = props;
@@ -109,7 +110,7 @@ const configIntranet = ({user, ...props}) => {
   };
 
   return (
-    <MainLayout currentKey={["intranet_configuration"]} defaultOpenKeys={["intranet"]}>
+    <MainLayout currentKey={["intranet_configuration"]} defaultOpenKeys={["commitment","intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
           <Breadcrumb.Item
               className={"pointer"}
@@ -117,7 +118,10 @@ const configIntranet = ({user, ...props}) => {
           >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+          }
+          <Breadcrumb.Item>KHOR Connect</Breadcrumb.Item>
           <Breadcrumb.Item>Configuración</Breadcrumb.Item>
       </Breadcrumb>
       { validatePermition ? (

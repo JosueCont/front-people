@@ -20,20 +20,11 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useProcessInfo } from './hook/useProcessInfo';
-import {
-    setLoadStrategies,
-    getInfoStrategy,
-    setInfoStrategy
-} from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
     currentNode,
-    load_strategies,
-    info_strategy,
-    setLoadStrategies,
-    getInfoStrategy,
-    setInfoStrategy
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -47,46 +38,62 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [disabledClient, setDisabledClient] = useState(false);
-    const { createData, setValuesForm } = useProcessInfo({
-        info_strategy,
-        formStrategies
-    });
-
-    useLayoutEffect(()=>{
-        setInfoStrategy()
-    },[])
+    const [infoStrategy, setInfoStrategy] = useState({});
+    const [fetching, setFetching] = useState(false);
+    const [optionVacant, setOptionVacant] = useState([]);
+    const { createData, setValuesForm } = useProcessInfo({setOptionVacant});
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
-            formStrategies.resetFields()
-            keepCustomer()
-        }else setDisabledClient(false);
-    },[router])
-
-    useEffect(()=>{
-        if(Object.keys(info_strategy).length > 0 && action == 'edit'){
-            formStrategies.resetFields();
-            setValuesForm()
+        if(router.query.id && action == 'edit'){
+            getInfoStrategy(router.query.id);
         }
-    },[info_strategy])
+    },[router.query?.id])
 
-    const keepCustomer = () =>{
-        setDisabledClient(true)
+    useEffect(()=>{
+        if(router.query.client && action == 'add'){
+            formStrategies.resetFields()
+            keepClient()
+        }
+    },[router.query])
+
+    useEffect(()=>{
+        if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
+            formStrategies.resetFields();
+            let allValues = setValuesForm(infoStrategy);
+            formStrategies.setFieldsValue(allValues);
+        }
+    },[infoStrategy])
+
+
+    const getInfoStrategy = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoStrategy(id);
+            setInfoStrategy(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
+
+    const keepClient = () =>{
         formStrategies.setFieldsValue({
-            customer: router.query.customer
+            customer: router.query.client
         })
     }
 
     const onFinishUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateStrategy(info_strategy.id, values);
+            await WebApiJobBank.updateStrategy(infoStrategy.id, values);
             message.success('Estrategia actualizada');
-            getInfoStrategy(info_strategy.id);
+            getInfoStrategy(infoStrategy.id);
         } catch (e) {
             console.log(e)
-            message.error('Estrategia no actualizada');
-            setLoadStrategies(false);
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no actualizada';
+            message.error(msgError);
+            setFetching(false);
         }
     }
 
@@ -97,14 +104,16 @@ const DetailsStrategies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
-            setLoadStrategies(false)
+            let txtError = e.response?.data?.message;
+            let msgError = txtError ?? 'Estrategia no registrada';
+            message.error(msgError);
+            setFetching(false)
             setLoading({})
-            message.error('Estrategia no registrada');
         }
     }
 
     const onFinish = (values) =>{
-        setLoadStrategies(true)
+        setFetching(true)
         const bodyData = createData(values);
         const actionFunction = {
             edit: onFinishUpdate,
@@ -114,14 +123,20 @@ const DetailsStrategies = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.customer) router.push('/jobbank/clients');
-        else router.push('/jobbank/strategies');
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: newFilters
+        });
+        else router.push({
+            pathname: '/jobbank/strategies',
+            query: newFilters
+        });
     }
 
     const actionCreate = () =>{
         formStrategies.resetFields();
-        if (router.query?.customer) keepCustomer();
-        setLoadStrategies(false)
+        if (router.query?.client) keepClient();
+        setFetching(false)
         setLoading({})
     }
 
@@ -131,7 +146,7 @@ const DetailsStrategies = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/strategies/edit',
-                query: { id }
+                query: {...newFilters, id }
             })
         }
         actionFunction[actionType]();
@@ -162,7 +177,7 @@ const DetailsStrategies = ({
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_strategies}>
+                    <Spin spinning={fetching}>
                         <Form
                             id='form-strategies'
                             form={formStrategies}
@@ -172,8 +187,9 @@ const DetailsStrategies = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormStrategies
+                                optionVacant={optionVacant}
                                 formStrategies={formStrategies}
-                                disabledClient={disabledClient}
+                                disabledClient={router.query?.client}
                             />
                         </Form>
                     </Spin>
@@ -213,7 +229,7 @@ const DetailsStrategies = ({
                         <Button
                             form='form-strategies'
                             htmlType='submit'
-                            loading={load_strategies}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -226,16 +242,8 @@ const DetailsStrategies = ({
 
 const mapState = (state) =>{
     return{
-        load_strategies: state.jobBankStore.load_strategies,
-        info_strategy: state.jobBankStore.info_strategy,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadStrategies,
-        getInfoStrategy,
-        setInfoStrategy
-    }
-)(DetailsStrategies);
+export default connect(mapState)(DetailsStrategies);

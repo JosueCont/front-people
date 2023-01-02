@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsClients from './DetailsClients';
 import { connect } from 'react-redux';
 import { getSectors } from '../../../redux/jobBankDuck';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddOrEditClients = ({
     action = 'add',
@@ -13,13 +14,21 @@ const AddOrEditClients = ({
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'tab'];
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode) getSectors(currentNode.id);
     },[currentNode])
 
     return (
-        <MainLayout currentKey='jb_clients' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_clients' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -27,17 +36,23 @@ const AddOrEditClients = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
-                    onClick={() => router.push({ pathname: '/jobbank/clients'})}
+                    onClick={() => router.push({
+                        pathname: '/jobbank/clients',
+                        query: newFilters
+                    })}
                 >
                     Clientes
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className='container'>
-                <DetailsClients action={action}/>
+                <DetailsClients action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )

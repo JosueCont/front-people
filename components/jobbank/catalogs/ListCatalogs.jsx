@@ -7,12 +7,34 @@ import {
 } from '@ant-design/icons';
 import { catalogsJobbank } from '../../../utils/constant';
 import SearchCatalogs from './SearchCatalogs';
+import { valueToFilter } from '../../../utils/functions';
 
 const ListCatalogs = () => {
 
     const router = useRouter();
-    const [listCatalogs, setLisCatalogs] = useState(catalogsJobbank);
+    const [listCatalogs, setLisCatalogs] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(()=>{
+        setLoading(true);
+        let exist = Object.keys(router.query).length > 0;
+        if(!exist) onReset();
+        else onFilter();
+    },[router.query])
+
+    const onReset = (values = catalogsJobbank) =>{
+        setTimeout(()=>{
+            setLisCatalogs(values);
+            setLoading(false)
+        },1000)
+    }
+
+    const onFilter = () =>{
+        let name = Object.values(router.query)[0];
+        const search = item => valueToFilter(item.name).includes(valueToFilter(name));
+        let results = catalogsJobbank.filter(search);
+        onReset(results)
+    }
 
     const redirect = (item) =>{
         let url = `/jobbank/settings/catalogs/${item.catalog}`;
@@ -39,9 +61,6 @@ const ListCatalogs = () => {
         <Row gutter={[0,24]}>
             <Col span={24}>
                 <SearchCatalogs
-                    listComplete={catalogsJobbank}
-                    setItemsFilter={setLisCatalogs}
-                    setLoading={setLoading}
                     actionBtn={()=> router.replace('/jobbank/settings')}
                     textBtn='Regresar'
                     iconBtn={<ArrowLeftOutlined />}

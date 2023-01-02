@@ -14,10 +14,7 @@ import {
     EditOutlined,
     CopyOutlined
 } from '@ant-design/icons';
-import {
-    setJobbankPage,
-    getProfilesList
-} from '../../../redux/jobBankDuck';
+import { getProfilesList } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
@@ -29,8 +26,9 @@ const TableProfiles = ({
     load_profiles,
     load_clients_options,
     list_clients_options,
-    setJobbankPage,
-    getProfilesList
+    getProfilesList,
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -42,29 +40,29 @@ const TableProfiles = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteProfile({ids});
-            getProfilesList(currentNode.id);
-            if(ids.length > 1) message.success('Perfiles eliminados');
-            else message.success('Perfil eliminado');
+            getProfilesList(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Templates eliminados' : 'Template eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Perfiles no eliminados');
-            else message.error('Perfil no eliminado');
+            let msg = ids.length > 1 ? 'Templates no eliminados' : 'Template no eliminado';
+            message.error(msg);
         }
     }
 
     const actionDuplicate = async (item) =>{
         const key = 'updatable';
+        message.loading({content: 'Duplicando template...', key});
         try {
-            message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateProfile(item.id);
             setTimeout(()=>{
-                message.success({content: 'Perfil duplicado', key});
-                getProfilesList(currentNode.id);
+                message.success({content: 'Template duplicado', key});
+                getProfilesList(currentNode.id, currentFilters, currentPage);
             },1000);
         } catch (e) {
             console.log(e);
             setTimeout(()=>{
-                message.error({content: 'Perfil no duplicada', key});
+                message.error({content: 'Template no duplicado', key});
             },1000)
         }
     }
@@ -82,7 +80,7 @@ const TableProfiles = ({
             setOpenModalDelete(true)
         }else{
             setOpenModalDelete(false)
-            message.error('Selecciona al menos dos perfiles')
+            message.error('Selecciona al menos dos templates')
         }
     }
 
@@ -97,14 +95,19 @@ const TableProfiles = ({
         setItemsToDelete([])
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/profiles',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        if (current == 1) getProfilesList(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getProfilesList(currentNode?.id, queryParam, current)
-        } 
+        let newQuery = {...router.query, page: current}
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -137,7 +140,7 @@ const TableProfiles = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/profiles/edit`,
-                        query:{ id: item.id }
+                        query:{...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -220,8 +223,8 @@ const TableProfiles = ({
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos perfiles?'
-                    : '¿Estás seguro de eliminar este perfil?'
+                    ? '¿Estás seguro de eliminar estos templates?'
+                    : '¿Estás seguro de eliminar este template?'
                 }
                 visible={openModalDelete}
                 keyTitle='name'
@@ -245,8 +248,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, {
-        setJobbankPage,
-        getProfilesList
-    }
+    mapState, { getProfilesList }
 )(TableProfiles);

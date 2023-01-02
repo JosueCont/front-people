@@ -12,6 +12,8 @@ const DeleteItems = ({
     actionDelete = ()=> {},//function
     textCancel = 'Cancelar', //string
     textDelete = 'Eliminar', //string
+    viewAsList = false, //boolean,
+    timeLoad = 2000
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -22,7 +24,25 @@ const DeleteItems = ({
             actionDelete()
             setLoading(false)
             close()
-        },2000)
+        }, timeLoad)
+    }
+
+    const getTitle = (item) =>{
+        if(!keyTitle.trim()) return null;
+        let access_title = keyTitle?.replaceAll(' ','')?.split(',');
+        return access_title.reduce((acc, current) =>{
+            if(!acc) return null;
+            return acc[current] ?? null;
+        }, item)
+    }
+
+    const getDescription = (item) =>{
+        if(!keyDescription.trim()) return null;
+        let access_description = keyDescription?.replaceAll(' ','')?.split(',');
+        return access_description.reduce((acc, current) =>{
+            if(!acc) return null;
+            return acc[current] ?? null;
+        }, item)
     }
 
     return(
@@ -41,8 +61,8 @@ const DeleteItems = ({
                         renderItem={item => (
                             <List.Item key={item.id}>
                                 <List.Item.Meta
-                                    title={item[keyTitle]}
-                                    description={item[keyDescription]}
+                                    title={getTitle(item)}
+                                    description={getDescription(item)}
                                 />
                             </List.Item>
                         )}
@@ -59,12 +79,14 @@ const DeleteItems = ({
                     <Button onClick={()=> close()}>
                         {textCancel}
                     </Button>
-                    <Button
-                        loading={loading}
-                        onClick={()=> onFinish()}
-                    >
-                        {textDelete}
-                    </Button>
+                    {!viewAsList && (
+                        <Button
+                            loading={loading}
+                            onClick={()=> onFinish()}
+                        >
+                            {textDelete}
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </MyModal>

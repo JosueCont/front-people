@@ -1,69 +1,77 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
-    getInfoPublication,
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
-    getConnections,
-    getClientsOptions
+    getConnectionsOptions,
+    getClientsOptions,
+    getStrategiesOptions
 } from '../../../redux/jobBankDuck';
 import DetailsPublication from './DetailsPublication';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddOrEditPublication = ({
     action = 'add',
     currentNode,
-    getInfoPublication,
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
-    getConnections,
-    getClientsOptions
+    getConnectionsOptions,
+    getClientsOptions,
+    getStrategiesOptions
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'client', 'vacancy', 'strategy'];
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
-
             getProfilesOptions(currentNode.id);
-            getVacanciesOptions(currentNode.id);
+            getVacanciesOptions(currentNode.id, '&status=1');
             getVacantFields(currentNode.id);
             getClientsOptions(currentNode.id);
-            //isOptions/true
-            getConnections(currentNode.id, true);
+            getStrategiesOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id);
         }
     },[currentNode])
 
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoPublication(router.query.id);
-        }
-    },[router])
-
     return (
-        <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/publications'})}
+                    className='pointer'
+                    onClick={() => router.push({
+                        pathname: '/jobbank/publications',
+                        query: newFilters
+                    })}
                 >
                     Publicaciones
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className='container'>
-               <DetailsPublication action={action}/>
+               <DetailsPublication action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )
@@ -77,11 +85,11 @@ const mapState = (state) =>{
 
 export default connect(
     mapState,{
-        getInfoPublication,
         getProfilesOptions,
         getVacanciesOptions,
         getVacantFields,
-        getConnections,
-        getClientsOptions
+        getConnectionsOptions,
+        getClientsOptions,
+        getStrategiesOptions
     }
 )(AddOrEditPublication);

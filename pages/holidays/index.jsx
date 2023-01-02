@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import {
   Row,
   Col,
@@ -23,6 +23,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const Holidays = (props) => {
   const { Column } = Table;
@@ -104,7 +105,10 @@ const Holidays = (props) => {
   };
 
   return (
-    <MainLayout currentKey={["holidays"]} defaultOpenKeys={["requests"]}>
+    <MainLayout
+      currentKey={["holidays"]}
+      defaultOpenKeys={["managementRH", "concierge", "requests"]}
+    >
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -112,6 +116,12 @@ const Holidays = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
@@ -141,7 +151,6 @@ const Holidays = (props) => {
                         <SelectDepartment
                           name="department"
                           companyId={props.currentNode}
-                          key="selectDepartament"
                         />
                       </Col>
                       <Col>

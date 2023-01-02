@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -8,10 +8,10 @@ import {
     Switch,
     Space,
     Tag,
-    Tooltip
+    Tooltip,
+    Modal
 } from 'antd';
 import { useRouter } from 'next/router';
-import ModalClients from './ModalClients';
 import {
     EllipsisOutlined,
     DeleteOutlined,
@@ -21,63 +21,45 @@ import {
     FileTextOutlined,
     PlusOutlined,
     LinkOutlined,
-    UserOutlined
+    UserOutlined,
+    SettingOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
-import {
-    getClients,
-    setJobbankPage
-} from '../../../redux/jobBankDuck';
+import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import Clipboard from '../../../components/Clipboard';
 import ViewContacts from './ViewContacts';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TableClients = ({
     list_clients,
     load_clients,
-    setJobbankPage,
     jobbank_page,
     currentNode,
     getClients,
-    jobbank_filters
+    currentFilters,
+    currentPage
 }) => {
 
     const router = useRouter();
-    const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [openModalList, setOpenModalList] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-
-    const actionUpdate = async (values) =>{
-        try {
-            await WebApiJobBank.updateClient(itemToEdit.id, values);
-            validateGetClients();
-            message.success('Información actualizada');
-            return true;
-        } catch (e) {
-            console.log(e)
-            if(e.response?.data['rfc']){
-                message.error('RFC ya registrado');
-                return 'RFC_EXIST';
-            } else message.error('Información no actualizada');
-            return false;
-        }
-    }
+    const [viewAsList, setViewAsList] = useState(false);
 
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            validateGetClients();
-            if(checked) message.success('Cliente activado');
-            if(!checked) message.success ('Cliente desactivado');
+            getClients(currentNode.id, currentFilters, currentPage);
+            let msg = checked ? 'Cliente activado' : 'Cliente desactivado';
+            message.success(msg)
         } catch (e) {
             console.log(e)
-            // validateGetClients();
-            if(checked) message.error('Cliente no activado');
-            if(!checked) message.error('Cliente no desactivado');
+            let msg = checked ? 'Cliente no activado' : 'Cliente no desactivado';
+            message.error(msg)
         }
     }
 
@@ -85,19 +67,17 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            validateGetClients();
-            if(ids.length > 1) message.success('Clientes eliminados');
-            else message.success('Cliente eliminado');
+            getClients(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Clientes eliminados' : 'Cliente eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Clientes no eliminados');
-            else message.error('Cliente no eliminado');
+            let msgTxt = e.response?.data?.message;
+            let msg = msgTxt ?? ids.length > 1
+                ? 'Clientes no eliminados'
+                : 'Cliente no eliminado';
+            message.error(msg);
         }
-    }
-
-    const closeModalEdit = () =>{
-        setOpenModal(false)
-        setItemToEdit({})
     }
 
     const closeModalList = () =>{
@@ -112,22 +92,27 @@ const TableClients = ({
     }
 
     const openModalManyDelete = () =>{
+        const filter_ = item => item.has_estrategy;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setViewAsList(true)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setViewAsList(false);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos clientes')
+            return;
         }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos clientes')
     }
 
     const openModalRemove = (item) =>{
+        setViewAsList(item.has_estrategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
-    }
-
-    const openModalEdit = (item)=>{
-        setItemToEdit(item)
-        setOpenModal(true)
     }
 
     const showModalList = (item) =>{
@@ -135,21 +120,33 @@ const TableClients = ({
         setItemToEdit(item)
     }
 
+    const titleDelete = useMemo(()=>{
+        if(viewAsList){
+            return itemsToDelete.length > 1
+            ? `Estos clientes no se pueden eliminar,
+                ya que se encuentran asociados a una estrategia.`
+            : `Este cliente no se puede eliminar, ya que
+                se encuentra asociado a una estrategia`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estos clientes?'
+            : '¿Estás seguro de eliminar este cliente?';
+        
+    },[viewAsList, itemsToDelete])
+
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/clients',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        validateGetClients(current)
-    }
-
-    const validateGetClients = (current) =>{
-        let page = current ?? jobbank_page;
-        if (page > 1) getClientsWithFilters(page);
-        else getClients(currentNode?.id, jobbank_filters);
-    }
-
-    const getClientsWithFilters = (page) =>{
-        let offset = (page - 1) * 10;
-        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
-        getClients(currentNode?.id, query, page)
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -176,7 +173,7 @@ const TableClients = ({
                 icon={<UserOutlined style={{color:'#52c41a'}} />}
                 color='green' style={{fontSize: '14px'}}
             >
-                {item.contact_list ? item.contact_list.length : 0}
+                {item.contact_list ? item.contact_list?.length : 0}
             </Tag>
         </Space>
     )
@@ -209,7 +206,6 @@ const TableClients = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    // onClick={()=> openModalEdit(item)}
                     onClick={()=> router.push({
                         pathname: '/jobbank/clients/edit',
                         query: {...router.query, id: item.id }
@@ -224,37 +220,51 @@ const TableClients = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Divider/>
-                <Menu.Item
-                    key='3'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/vacancies/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar vacante
-                </Menu.Item>
-                <Menu.Item
-                    key='4'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/profiles/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar perfil
-                </Menu.Item>
-                <Menu.Item
-                    key='5'
-                    icon={<PlusOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/strategies/add',
-                        query: { customer: item.id }
-                    })}
-                >
-                    Registrar estrategia
-                </Menu.Item>
+                {item.is_active && (
+                    <>
+                        <Menu.Divider/>
+                        <Menu.Item
+                            key='3'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/vacancies/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar vacante
+                        </Menu.Item>
+                        <Menu.Item
+                            key='4'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/profiles/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar template
+                        </Menu.Item>
+                        <Menu.Item
+                            key='5'
+                            icon={<PlusOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/strategies/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Registrar estrategia
+                        </Menu.Item>
+                        <Menu.Item
+                            key='3'
+                            icon={<SettingOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/publications/add',
+                                query: {...router.query, client: item.id }
+                            })}
+                        >
+                            Configurar publicación
+                        </Menu.Item>
+                    </>
+                )}
             </Menu>
         );
     };
@@ -314,8 +324,8 @@ const TableClients = ({
     return (
         <>
             <Table
-                size={'small'}
-                rowKey={'id'}
+                size='small'
+                rowKey='id'
                 columns={columns}
                 dataSource={list_clients.results}
                 loading={load_clients}
@@ -333,35 +343,22 @@ const TableClients = ({
                     showSizeChanger: false
                 }}
             />
-            <ModalClients
-                title={'Editar cliente'}
-                visible={openModal}
-                actionForm={actionUpdate}
-                close={closeModalEdit}
-                itemToEdit={itemToEdit}
-                textSave='Actualizar'
+            <DeleteItems
+                title={titleDelete}
+                visible={openModalDelete}
+                keyTitle='name'
+                keyDescription='rfc'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+                textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
+                viewAsList={viewAsList}
             />
-            {openModalDelete && (
-                <DeleteItems
-                    title={itemsToDelete.length > 1
-                        ? '¿Estás seguro de eliminar estos clientes?'
-                        : '¿Estás seguro de eliminar este cliente?'
-                    }
-                    visible={openModalDelete}
-                    keyTitle='name'
-                    keyDescription='business_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-            )}
-           {openModalList && (
-                <ViewContacts
-                    visible={openModalList}
-                    itemContact={itemToEdit}
-                    close={closeModalList}
-                />
-           )}
+           <ViewContacts
+                visible={openModalList}
+                itemContact={itemToEdit}
+                close={closeModalList}
+            />
         </>
     )
 }
@@ -370,15 +367,11 @@ const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, {
-        getClients,
-        setJobbankPage
-    }
+    mapState, { getClients }
 )(TableClients);

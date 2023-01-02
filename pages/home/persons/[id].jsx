@@ -4,10 +4,11 @@ import { withAuthSync } from "../../../libs/auth";
 import { useRouter } from "next/router";
 import { Breadcrumb, Spin } from "antd";
 import WebApiPeople from "../../../api/WebApiPeople";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const EmployeeDetailPage = (...props) => {
   const router = useRouter();
@@ -17,6 +18,10 @@ const EmployeeDetailPage = (...props) => {
   useEffect(() => {
     if (router.query.id) getPerson(router.query.id);
   }, [router.query]);
+
+  useEffect(() => {
+    if (router.query.id) getPerson(router.query.id)
+  }, [router.query.id])
 
   const getPerson = async (data) => {
     try {
@@ -41,10 +46,13 @@ const EmployeeDetailPage = (...props) => {
           }
         `}
       />
-      <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item >Inicio</Breadcrumb.Item>
+            {verifyMenuNewForTenant() && 
+              <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+            }
             <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
             <Breadcrumb.Item className={"pointer"}
                              onClick={() => router.push({ pathname: "/home/persons/" })}>Personas</Breadcrumb.Item>

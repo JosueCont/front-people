@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../../layout/MainLayout'
+import MainLayout from '../../../layout/MainInter'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
@@ -9,6 +9,7 @@ import { SidebarYnl } from '../../../components/dashboard-ynl/SidebarYnl';
 import Dashboard from '../../../components/dashboard-ynl/Dashboard';
 import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
 import { useSelector } from 'react-redux'
+import { verifyMenuNewForTenant } from '../../../utils/functions';
 
 
 const index = ({}) => {
@@ -41,7 +42,7 @@ const index = ({}) => {
   }, [validateUser]);
   
   return (
-    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
+    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["commitment","ynl"]}>
       <Global
         styles={css`
             :root {
@@ -192,6 +193,9 @@ const index = ({}) => {
           >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
           </Breadcrumb.Item>
+          {verifyMenuNewForTenant() && 
+            <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+          }
           <Breadcrumb.Item>YNL</Breadcrumb.Item>
           <Breadcrumb.Item>Dashboard general</Breadcrumb.Item>
       </Breadcrumb>

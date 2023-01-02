@@ -1,5 +1,5 @@
 import React from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
@@ -9,7 +9,7 @@ const NewPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
   return (
     <>
-      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["managementRH","payroll"]}>
         <div
           className="container-border-radius"
           style={{ width: "100%", backgroundColor: "white", padding: "2%" }}

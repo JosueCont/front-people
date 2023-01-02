@@ -356,7 +356,7 @@
 }
 
 .title-action-border{
-    padding-bottom: 16px;
+    padding-bottom: 8px;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -393,6 +393,16 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.turn_rotative > .custom-required::before{
+    display: inline-block;
+    margin-right: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
 }
 
 .turn_rotative .ant-form-item-control-input{
@@ -561,6 +571,7 @@
 }
 
 button.btn-login-facebook{
+    margin-right: auto;
     border-color: transparent!important;
     background: linear-gradient(
         to bottom right,
@@ -615,6 +626,11 @@ div.estatus-connection p{
 
 .table-custom .ant-table-thead tr > th.ant-table-cell{
     background: #f0f0f0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.table-custom .ant-table-tbody > tr > td{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .table-custom .ant-table-tbody > tr.ant-table-row:hover > td,
@@ -622,6 +638,119 @@ div.estatus-connection p{
 .table-custom .ant-table-tbody > tr.ant-table-placeholder:hover > td,
 .table-custom .ant-table-tbody{
     background: #f0f0f0;
+}
+
+.table-title-custom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.table-title-custom p{
+    margin-bottom: 0px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+button.custom-btn {
+    background-color: #1f2733!important;
+    transition: display 0.5s;
+    /* transition-delay: 1000ms; */
+}
+
+.custom-cascader-empty{
+    width: 100%;
+}
+.custom-cascader-empty div.ant-select-selector{
+    border-radius: 10px!important;
+}
+.custom-cascader{
+    width: calc(100% - 32px);
+}
+
+.custom-cascader div.ant-select-selector{
+    border-top-left-radius: 10px!important;
+    border-bottom-left-radius: 10px!important;
+}
+
+.content-list-items{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.head-list-items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.placeholder-list-items{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transition: all 1s;
+}
+
+.placeholder-list-items p{
+    margin-bottom: 0px;
+    color: #d9d9d9;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.body-list-items{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-flow: row wrap;
+    transition: all 1s;
+    /* max-height: 100px; */
+    overflow: auto;
+}
+
+.item-list-row{
+    display: flex;
+    gap: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #cccc;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 12px;
+    transition: all 0.5s;
+}
+
+.item-list-row p{
+    margin-bottom: 0px;
+    line-height: 1;
+}
+
+.title-history{
+    display: flex;
+    background: #ffff;
+    padding: 5px;
+    border-radius: 10px;
+    max-width: 100%;
+}
+
+.title-history p{
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.title-history p:nth-child(2){
+    color: rgba(0, 0, 0, 0.3);
 }
 
 /* Termina diseño bolsa de trabajo */

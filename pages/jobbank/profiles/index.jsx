@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { withAuthSync } from '../../../libs/auth';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import {
     getProfilesList,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -17,15 +18,28 @@ const index = ({
     getClientsOptions
 }) => {
 
+    const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('')
+
     useEffect(()=>{
         if(currentNode){
-            getProfilesList(currentNode.id);
             getClientsOptions(currentNode.id);
         }
     },[currentNode])
 
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getProfilesList(currentNode.id, filters, page);
+            setCurrentPage(page)
+            setCurrentFilters(filters)
+        }
+    },[currentNode, router.query])
+
     return (
-        <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>
+        <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -33,6 +47,9 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Template de vacante</Breadcrumb.Item>
             </Breadcrumb>
@@ -45,7 +62,7 @@ const index = ({
                 }}
             >
                 <SearchProfiles/>
-                <TableProfiles/>    
+                <TableProfiles currentPage={currentPage} currentFilters={currentFilters}/>  
             </div>
         </MainLayout>
     )

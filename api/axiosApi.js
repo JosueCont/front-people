@@ -25,6 +25,7 @@ export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
 export const domainApiWithTenant = `${tenant}.${domainApi}`;
+export const tenant_ = tenant
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,

@@ -13,22 +13,21 @@ import {
     DeleteOutlined,
     EditOutlined,
 } from '@ant-design/icons';
-import {
-    setJobbankPage
-} from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
     jobbank_page,
-    setJobbankPage,
     getCandidates,
     list_candidates,
-    load_candidates
+    load_candidates,
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -40,13 +39,26 @@ const TableCandidates = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id);
-            if(ids.length > 1) message.success('Perfiles eliminados');
-            else message.success('Perfil eliminado');
+            getCandidates(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Perfiles no eliminados');
-            else message.error('Perfil no eliminado');
+            let msg = ids.length > 1 ? 'Candidatos no eliminados' : 'Candidato no eliminado';
+            message.error(msg);
+        }
+    }
+
+    const actionStatus = async (checked, item) =>{
+        try {
+            await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
+            getCandidates(currentNode.id, currentFilters, currentPage);
+            let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
+            message.success(msg);
+        } catch (e) {
+            console.log(e)
+            let msg = checked ? 'Candidato no activado' : 'Candidato no desactivado';
+            message.error(msg);
         }
     }
 
@@ -70,14 +82,19 @@ const TableCandidates = ({
         setItemsToDelete([])
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/candidates',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        // if (current == 1) getCandidates(currentNode?.id);
-        // if (current > 1) {
-        //     const offset = (current - 1) * 10;
-        //     const queryParam = `&limit=10&offset=${offset}`;
-        //     getCandidates(currentNode?.id, queryParam, current)
-        // }
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -126,7 +143,7 @@ const TableCandidates = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/candidates/edit`,
-                        query:{ id: item.id }
+                        query:{...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -145,21 +162,41 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            render: (item) =>{
-                return(
-                    <span>{item?.fisrt_name} {item?.last_name}</span>
-                )
-            }
+            dataIndex: 'fisrt_name',
+            key: 'fisrt_name',
+            ellipsis: true
+        },
+        {
+            title: 'Apellidos',
+            dataIndex: 'last_name',
+            key: 'last_name',
+            ellipsis: true
         },
         {
             title:'Correo',
             dataIndex: 'email',
-            key: 'email'
+            key: 'email',
+            ellipsis: true
         },
         {
             title: 'Teléfono',
             dataIndex: 'cell_phone',
             key: 'cell_phone'
+        },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={item.is_active}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }
         },
         {
             title: ()=>{
@@ -205,19 +242,18 @@ const TableCandidates = ({
                     showSizeChanger: false
                 }}
             />
-            {openModalDelete && (
-                <DeleteItems
-                    title={itemsToDelete.length > 1
-                        ? '¿Estás seguro de eliminar estos candidatos?'
-                        : '¿Estás seguro de eliminar este candidato?'
-                    }
-                    visible={openModalDelete}
-                    keyTitle='name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-            )}
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estos candidatos?'
+                    : '¿Estás seguro de eliminar este candidato?'
+                }
+                visible={openModalDelete}
+                keyTitle='fisrt_name'
+                keyDescription='last_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }
@@ -232,8 +268,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, {
-        getCandidates,
-        setJobbankPage
-    }
+    mapState, { getCandidates }
 )(TableCandidates);

@@ -2,6 +2,21 @@ import axios from "axios";
 import WebApiPeople from "../api/WebApiPeople";
 import { message } from "antd";
 import { typeHttp } from "../config/config";
+import { tenant_ } from "../api/axiosApi";
+
+
+export const verifyMenuNewForTenant=() => {
+  let tenantList = process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU?process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU:null
+  if (tenantList){
+    if (tenantList.includes(tenant_)){
+      return true
+    }else{
+      return false
+    }
+  }else{
+    return false
+  }
+}
 
 export const generateYear = (year_init = 2020) => {
   let yearsArray = [];
@@ -44,8 +59,15 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
-      Textmessage && message.error(Textmessage) 
-      console.log(e);
+      console.log('Error xd', e.response)
+      let errorMessage = e.response?.data?.message || ""
+       if (errorMessage !== ""){
+        message.error(errorMessage)
+      } else if(Textmessage){
+        message.error(Textmessage)
+      }else if(e?.response?.status===404){
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      } 
     });
 };
 
@@ -431,6 +453,7 @@ export const validateNum = (e) =>{
 }
 
 export const validateMaxLength = (e) =>{
+  if(e.which == 32) e.preventDefault();
   if(e.target.maxLength
     && e.target.maxLength
     == e.target.value.length
@@ -438,9 +461,9 @@ export const validateMaxLength = (e) =>{
 }
 
 export const createFiltersJB = (obj = {}) =>{
-  let check = [undefined, null, '', ' '];
+  let noValid = [undefined, null, '', ' '];
   return Object.entries(obj).reduce((query, [key, val])=>{
-    if(check.includes(val)) return query;
+    if(noValid.includes(val)) return query;
     let value = val.toString().trim();
     return {...query, [key]: value}
   }, {});
@@ -448,6 +471,25 @@ export const createFiltersJB = (obj = {}) =>{
 
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
-    return query += `&${key}=${val}`;
+    if(key == "page"){
+      let offset = (parseInt(val) - 1) * 10;
+      return query +=`&limit=10&offset=${offset}`;
+    }
+    let value = val == "open_fields" ? "" : val;
+    return query += `&${key}=${value}`;
   }, '');
 }
+
+export const deleteFiltersJb = (
+  obj = {},
+  listDelete = []
+) =>{
+  return Object.entries(obj).reduce((filters, [key, val]) =>{
+    if(listDelete.includes(key)) return filters;
+    return {...filters, [key]: val};
+  }, {});
+}
+
+export const getFileExtension = (filename) => {
+  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+};

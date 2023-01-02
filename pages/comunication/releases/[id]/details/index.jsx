@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Button, Typography, Breadcrumb, Table } from "antd";
 import { FileTextOutlined } from "@ant-design/icons";
-import MainLayout from "../../../../../layout/MainLayout";
+import MainLayout from "../../../../../layout/MainInter";
 import { Global, css } from "@emotion/core";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../../../../libs/auth";
 import { API_URL } from "../../../../../config/config";
 import axiosApi from './../../../../../api/axiosApi';
 import Axios from "axios";
+import { verifyMenuNewForTenant } from "../../../../../utils/functions";
 
 const Details = () => {
   const { Title, Text } = Typography;
@@ -81,7 +82,7 @@ const Details = () => {
           }
         `}
       />
-      <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
+      <MainLayout currentKey={["releases"]} defaultOpenKeys={["managementRH","concierge","releases"]}>
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}
@@ -89,7 +90,12 @@ const Details = () => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+          {verifyMenuNewForTenant() &&
+            <>
+              <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+              <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+            </>
+          }
           <Breadcrumb.Item className={"pointer"}
                            onClick={() => route.push({ pathname: "/comunication/releases" })}>
             Comunicados

@@ -1,5 +1,5 @@
 import React from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { Row, Col, Breadcrumb, Tabs } from "antd";
 import { useRouter } from "next/router";
 
@@ -20,13 +20,14 @@ import LoanIcon from "../../components/icons/Loan";
 import HealthIcon from "../../components/icons/Health";
 import PermissionIcon from "../../components/icons/Permissions";
 import ProvisionIcon from "../../components/icons/Provision";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const Reports = () => {
   const route = useRouter();
   const { TabPane } = Tabs;
 
   return (
-    <MainLayout currentKey={["reports"]} defaultOpenKeys={["reports"]}>
+    <MainLayout currentKey={["reports"]} defaultOpenKeys={["utilities","reports"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -34,6 +35,9 @@ const Reports = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
       </Breadcrumb>
       <div

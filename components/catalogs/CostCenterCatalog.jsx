@@ -129,8 +129,6 @@ const CostCenterCatalog = ({ permissions, currentNode,cat_cost_center,getCostCen
         data
       );
 
-      console.log(response)
-
       getCostCenter(currentNode.id)
         .then((response) => {
           resetForm();

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
@@ -11,6 +11,7 @@ import {
     getAcademics,
     getCompetences
 } from '../../../redux/jobBankDuck';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddOrEditVacancies = ({
     action = 'add',
@@ -23,6 +24,14 @@ const AddOrEditVacancies = ({
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id', 'client', 'tab'];
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
@@ -35,7 +44,7 @@ const AddOrEditVacancies = ({
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_vacancies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -43,17 +52,23 @@ const AddOrEditVacancies = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/vacancies'})}
+                    onClick={() => router.push({
+                        pathname: '/jobbank/vacancies',
+                        query: newFilters
+                    })}
                 >
                     Vacantes
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className={'container'}>
-                <DetailsVacancies action={action}/>
+                <DetailsVacancies action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )

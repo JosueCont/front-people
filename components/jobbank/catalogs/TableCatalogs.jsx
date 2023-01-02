@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Dropdown,
@@ -10,6 +10,7 @@ import {
     DeleteOutlined,
     EditOutlined,
 } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import ModalCatalogs from './ModalCatalogs';
 import DeleteItems from '../../../common/DeleteItems';
 
@@ -19,23 +20,26 @@ const TableCatalogs = ({
     titleDelete = '',
     actionCreate = ()=>{},
     actionUpdate = ()=>{},
-    actionDelete =()=>{},
+    actionDelete = ()=>{},
+    actionBtnEdit,
     catalogResults = [],
     catalogLoading = false,
-    setItemToEdit,
-    itemToEdit,
-    setItemsToDelete,
-    itemsToDelete,
     openModal,
     setOpenModal,
+    numPage = 1,
     //No requeridos
-    useModal = true,
     extraFields = <></>,
     extraOptions = ()=> <></>
 }) => {
-    const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const router = useRouter();
+    const [itemToEdit, setItemToEdit] = useState({});
+    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
+    
+    const validateAction = useMemo(()=>{
+        return Object.keys(itemToEdit).length > 0
+    },[itemToEdit])
 
     const closeModal = () =>{
         setOpenModal(false)
@@ -57,13 +61,42 @@ const TableCatalogs = ({
         setOpenModal(true)
     }
 
+    const getActionForm = (values) =>{
+        if(validateAction) actionUpdate(itemToEdit.id, values);
+        else actionCreate(values);
+    }
+
+    const actionRemove = () =>{
+        let id = itemsToDelete.at(-1).id;
+        actionDelete(id);
+    }
+
+    const savePage = (query) => router.replace({
+        pathname: router.asPath.split('?')[0],
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        let newQuery = {...router.query, page: current};
+        if(newQuery.catalog) delete newQuery.catalog;
+        if(current > 1){
+            savePage(newQuery);
+            return; 
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
+    }
+
     const menuItem = (item) => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)}
+                    onClick={()=> actionBtnEdit
+                        ? actionBtnEdit(item)
+                        : openModalEdit(item)
+                    }
                 >
                     Editar
                 </Menu.Item>
@@ -105,37 +138,36 @@ const TableCatalogs = ({
                 size='small'
                 rowKey='id'
                 columns={columns}
-                dataSource={catalogResults}
+                onChange={onChangePage}
+                dataSource={catalogResults.results}
                 loading={catalogLoading}
                 locale={{ emptyText: catalogLoading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
+                    current: numPage,
+                    total: catalogResults.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
             />
-            {openModal && useModal && (
-                <ModalCatalogs
-                    title={validateAction() ? titleEdit : titleCreate}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                >{extraFields}</ModalCatalogs>
-            )}
-            {openModalDelete && (
-                <DeleteItems
-                    title={titleDelete}
-                    visible={openModalDelete}
-                    keyTitle='name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-            )}  
+            <ModalCatalogs
+                title={validateAction ? titleEdit : titleCreate}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={getActionForm}
+                textSave={validateAction ? 'Actualizar' : 'Guardar'}
+            >{extraFields}</ModalCatalogs>
+            <DeleteItems
+                title={titleDelete}
+                visible={openModalDelete}
+                keyTitle='name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionRemove}
+            />
         </>
     )
 }

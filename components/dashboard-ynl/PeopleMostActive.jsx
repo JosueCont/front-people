@@ -18,7 +18,6 @@ const PeopleMostActive = ({ynlStore,...props}) => {
 
 
     useEffect(() => {
-        console.log('ynlStore', ynlStore)
         if(ynlStore){
             let data = ynlStore.filter((item)=> {
                     return item!==null

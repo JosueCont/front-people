@@ -10,31 +10,24 @@ import {
 import {
     EllipsisOutlined,
     DeleteOutlined,
-    EditOutlined
+    EditOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import {
-    setJobbankPage,
-    getStrategies,
-    setJobbankFilters
-} from '../../../redux/jobBankDuck';
+import { getStrategies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
+import { optionsStatusVacant } from '../../../utils/constant';
 
 const TableStrategies = ({
     list_strategies,
     load_strategies,
     currentNode,
     jobbank_page,
-    setJobbankPage,
     getStrategies,
-    load_clients_options,
-    list_clients_options,
-    load_vacancies_options,
-    list_vacancies_options,
-    jobbank_filters,
-    setJobbankFilters
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
@@ -46,13 +39,13 @@ const TableStrategies = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteStrategy({ids});
-            getStrategies(currentNode.id);
-            if(ids.length > 1) message.success('Estrategias eliminadas');
-            else message.success('Estrategia eliminada');
+            getStrategies(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Estrategias eliminadas' : 'Estrategia eliminada';
+            message.success(msg);
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Estrategias no eliminadas');
-            else message.error('Estrategia no eliminada');
+            let msg = ids.length > 1 ? 'Estrategias no eliminadas' : 'Estrategia no eliminada';
+            message.error(msg);
         }
     }
 
@@ -76,20 +69,12 @@ const TableStrategies = ({
         setItemsToDelete([])
     }
 
-    const getClient = (item) =>{
-        if(!item.customer) return null;
-        const client = record => record.id === item.customer;
-        let client_ = list_clients_options.find(client);
-        if(!client_) return null;
-        return client_.name;
-    }
-
-    const getVacant = (item) =>{
-        if(!item.vacant) return null;
-        const vacant = record => record.id === item.vacant;
-        let vacant_ = list_vacancies_options.find(vacant);
-        if(!vacant_) return null;
-        return vacant_.job_position;
+    const getStatus = (item) =>{
+        if(!item.vacant?.status) return null;
+        const find_ = record => record.value == item.vacant?.status;
+        let result = optionsStatusVacant.find(find_);
+        if(!result) return null;
+        return result.label;
     }
 
     const rowSelection = {
@@ -100,21 +85,19 @@ const TableStrategies = ({
         }
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/strategies',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        validateGetStrategies(current)
-    }
-
-    const validateGetStrategies = (current) =>{
-        let page = current ?? jobbank_page;
-        if(page > 1) getStrategiesWithFilters(page);
-        else getStrategies(currentNode?.id, jobbank_filters);
-    }
-
-    const getStrategiesWithFilters = (page) =>{
-        let offset = (page - 1) * 10;
-        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
-        getStrategies(currentNode?.id, query, page);
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery)
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const menuTable = () => {
@@ -135,21 +118,31 @@ const TableStrategies = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/strategies/edit`,
-                        query:{ id: item.id }
+                        query:{...router.query, id: item.id }
                     })}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<SettingOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: {...router.query, strategy: item.id }
+                    })}
+                >
+                    Configurar publicación
                 </Menu.Item>
             </Menu>
         );
@@ -157,25 +150,30 @@ const TableStrategies = ({
 
     const columns = [
         {
-            title: 'Producto',
-            dataIndex: 'product',
-            key: 'product'
-        },
-        {
             title: 'Cliente',
-            render: (item) =>{
-                return(
-                    <span>{getClient(item)}</span>
-                )
-            }
+            dataIndex: ['vacant','customer','name'],
+            key: ['vacant','customer','name'],
+            ellipsis: true
         },
         {
             title: 'Vacante',
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant','job_position'],
+            ellipsis: true
+        },
+        {
+            title: 'Estatus vacante',
             render: (item) =>{
                 return(
-                    <span>{getVacant(item)}</span>
+                    <span>{getStatus(item)}</span>
                 )
             }
+        },
+        {
+            title: 'Producto',
+            dataIndex: 'product',
+            key: 'product',
+            ellipsis: true
         },
         // {
         //     title: 'Asignación',
@@ -192,6 +190,7 @@ const TableStrategies = ({
                     </Dropdown>
                 )
             },
+            width: 60, 
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -232,8 +231,8 @@ const TableStrategies = ({
                     : '¿Estás seguro de eliminar esta estrategia?'
                 }
                 visible={openModalDelete}
-                keyTitle='product'
-                keyDescription='assignment_date'
+                keyTitle='vacant, job_position'
+                keyDescription='product'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
@@ -246,20 +245,11 @@ const mapState = (state) =>{
     return {
         list_strategies: state.jobBankStore.list_strategies,
         load_strategies: state.jobBankStore.load_strategies,
-        load_clients_options: state.jobBankStore.load_clients_options,
-        list_clients_options: state.jobBankStore.list_clients_options,
-        load_vacancies_options: state.jobBankStore.load_vacancies_options,
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, {
-        setJobbankPage,
-        getStrategies,
-        setJobbankFilters
-    }
+    mapState, { getStrategies }
 )(TableStrategies);

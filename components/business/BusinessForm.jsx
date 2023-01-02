@@ -27,7 +27,7 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import NodeTreeView from "./TreeView/treeview";
 import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
@@ -37,13 +37,14 @@ import {
   messageDeleteSuccess,
   messageError,
   messageSaveSuccess,
-  messageUpdateSuccess,
+  messageUpdateSuccess
 } from "../../utils/constant";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ ...props }) => {
+const businessForm = ({ currentNode, ...props }) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -78,16 +79,14 @@ const businessForm = ({ ...props }) => {
 
   const deleteBusiness = async (id) => {
     setLoading(true);
+
     WebApiPeople.deleteNode(id)
       .then(function (response) {
-        if (response.status === 200) {
-          Router.push("/business");
-        }
         message.success(messageDeleteSuccess);
-        getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
         if (currentNode.id === id) Router.push("/select-company");
+        getCopaniesList();
         setLoading(false);
       })
       .catch(function (error) {
@@ -219,33 +218,6 @@ const businessForm = ({ ...props }) => {
       });
   };
 
-  const getBusiness = () => {
-    setLoading(true);
-    WebApiPeople.getCompaniesPeople(personId)
-      .then((response) => {
-        setBusiness([]);
-        setBusiness(response.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setBusiness([]);
-        console.log(e);
-        setLoading(false);
-      });
-  };
-
-  const getNodesTree = () => {
-    WebApiPeople.getNodeTree({
-      person: personId,
-    })
-      .then((response) => {
-        setNodesTree(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const columns = [
     {
       title: "Nombre",
@@ -290,15 +262,17 @@ const businessForm = ({ ...props }) => {
         return (
           <div>
             <Row gutter={24}>
-              {props.permissions && props.permissions.edit && props.config.nomina_enabled && (
-                <Col className="gutter-row" span={6}>
-                  <Link href={`/business/${item.id}`}>
-                    <Tooltip title="Configuración">
-                      <SettingOutlined />
-                    </Tooltip>
-                  </Link>
-                </Col>
-              )}
+              {props.permissions &&
+                props.permissions.edit &&
+                props.config.nomina_enabled && (
+                  <Col className="gutter-row" span={6}>
+                    <Link href={`/business/${item.id}`}>
+                      <Tooltip title="Configuración">
+                        <SettingOutlined />
+                      </Tooltip>
+                    </Link>
+                  </Col>
+                )}
               {props.permissions && props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Tooltip title="Editar">
@@ -430,7 +404,10 @@ const businessForm = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
+    <MainLayout
+      currentKey={["business"]}
+      defaultOpenKeys={["strategyPlaning", "company"]}
+    >
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -438,10 +415,13 @@ const businessForm = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => (treeTable ? "" : setTreeTable(true))}
+          // className={"pointer"}
+          // onClick={() => (treeTable ? "" : setTreeTable(true))}
         >
           Empresas
         </Breadcrumb.Item>
@@ -567,7 +547,9 @@ const businessForm = ({ ...props }) => {
               }
             >
               {business.map((bus) => (
-                <Option value={bus.id}>{bus.name}</Option>
+                <Option value={bus.id} key={bus.key}>
+                  {bus.name}
+                </Option>
               ))}
             </Select>
           </Form.Item>

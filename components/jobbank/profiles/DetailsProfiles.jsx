@@ -1,8 +1,7 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
+    useRef
 } from 'react';
 import {
     Card,
@@ -19,21 +18,12 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import FormProfiles from './FormProfiles';
-import {
-    getInfoProfile,
-    setLoadProfiles,
-    setInfoProfile
-} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsProfiles = ({
     action,
     currentNode,
-    info_profile,
-    load_profiles,
-    setLoadProfiles,
-    getInfoProfile,
-    setInfoProfile
+    newFilters = {}
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -45,63 +35,76 @@ const DetailsProfiles = ({
     const router = useRouter();
     const btnSave = useRef(null);
     const [formProfile] = Form.useForm();
-    const { setFieldsValue, resetFields } = formProfile;
-    const [disabledClient, setDisabledClient] = useState(false);
     const [valuesDefault, setValuesDefault] = useState({});
     const [disabledField, setDisabledField] = useState(false);
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const [infoProfile, setInfoProfile] = useState({});
+    const [fetching, setFetching] = useState(false);
     const { formatData, createData } = useProcessInfo();
 
-    useLayoutEffect(()=>{
-        setInfoProfile()
-    },[])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoProfile(router.query.id);
+        }
+    },[router.query?.id])
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
-            resetFields()
-            keepCustomer()
-        } else setDisabledClient(false)
-    },[router])
+        if(router.query.client && action == 'add'){
+            formProfile.resetFields()
+            keepClient()
+        }
+    },[router.query])
 
     useEffect(()=>{
-        if(Object.keys(info_profile).length > 0 && action == 'edit'){
-            resetFields()
+        if(Object.keys(infoProfile).length > 0 && action == 'edit'){
+            formProfile.resetFields()
             setValuesForm()
         }
-    },[info_profile])
+    },[infoProfile])
 
-    const keepCustomer = () =>{
-        setDisabledClient(true)
-        let customer = router.query.customer;
-        setFieldsValue({ customer })
+    const getInfoProfile = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoProfile(id);
+            setInfoProfile(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
+
+    const keepClient = () =>{
+        let customer = router.query?.client;
+        formProfile.setFieldsValue({ customer })
     }
 
     const setValuesForm = () => {
-        let result = formatData(info_profile.fields_name);
+        let result = formatData(infoProfile.fields_name);
         let all_info = {
             ...result,
-            name: info_profile.name,
-            customer: info_profile.customer
+            name: infoProfile.name,
+            customer: infoProfile.customer
         };
-        if(info_profile.profile_type){
-            all_info['profile_type'] = info_profile.profile_type.id;
-            setDisabledField(!info_profile.profile_type.form_enable);
+        if(infoProfile.profile_type){
+            all_info['profile_type'] = infoProfile.profile_type.id;
+            setDisabledField(!infoProfile.profile_type.form_enable);
         }else setDisabledField(false);
         setValuesDefault(all_info);
-        setFieldsValue(all_info);
+        formProfile.setFieldsValue(all_info);
     }
 
     const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateProfile(info_profile.id, {...values, node: currentNode.id});
+            await WebApiJobBank.updateProfile(infoProfile.id, {...values, node: currentNode.id});
             message.success('Template actualizado');
-            getInfoProfile(info_profile.id)
+            getInfoProfile(infoProfile.id)
         } catch (e) {
-            if(e.response?.data?.message == 'Este nombre ya existe'){
-                message.error(e.response?.data?.message);
-            } else message.error('Template no actualizado');
-            setLoadProfiles(false)
+            let msgApi = e.response?.data?.message;
+            let msg = msgApi ?? 'Template no actualizado';
+            message.error(msg);
+            setFetching(false)
             console.log(e)
         }
     }
@@ -112,23 +115,23 @@ const DetailsProfiles = ({
             message.success('Template registrado')
             actionSaveAnd(response.data.id)
         } catch (e) {
-            if(e.response?.data?.message == 'Este nombre ya existe'){
-                message.error(e.response?.data?.message);
-            } else message.error('Template no registrado');
+            let msgApi = e.response?.data?.message;
+            let msg = msgApi ?? 'Template no registrado';
+            message.error(msg);
             setLoading({})
-            setLoadProfiles(false)
+            setFetching(false)
             console.log(e)
         }
     }
 
     const onFinish = (values) => {
-        setLoadProfiles(true);
+        setFetching(true);
         const bodyData = createData(values, 'fields_name');
         if(Object.keys(bodyData.fields_name).length <= 0){
             message.error('Seleccionar los campos del template');
-            setLoadProfiles(false);
+            setFetching(false);
             setLoading({})
-            return false;
+            return;
         }
         const actionFunction = {
             edit: onFinisUpdate,
@@ -138,16 +141,22 @@ const DetailsProfiles = ({
     }
 
     const actionCreate = () =>{
-        resetFields();
-        if(router.query?.customer) keepCustomer();
+        formProfile.resetFields();
+        if(router.query?.client) keepClient();
         setDisabledField(false)
-        setLoadProfiles(false)
+        setFetching(false)
         setLoading({})
     }
 
     const actionBack = () =>{
-        if(router.query?.customer) router.push('/jobbank/clients');
-        else router.push('/jobbank/profiles');
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: newFilters
+        });
+        else router.push({
+            pathname: '/jobbank/profiles',
+            query: newFilters
+        });
     }
 
     const actionSaveAnd = (id) =>{
@@ -156,7 +165,7 @@ const DetailsProfiles = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/profiles/edit',
-                query: { id }
+                query: {...newFilters, id }
             })
         }
         actionFunction[actionType]();
@@ -187,9 +196,10 @@ const DetailsProfiles = ({
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_profiles}>
+                    <Spin spinning={fetching}>
                         <Form
                             id='form-profiles'
+                            layout='vertical'
                             form={formProfile}
                             onFinish={onFinish}
                             // requiredMark={false}
@@ -199,7 +209,7 @@ const DetailsProfiles = ({
                             <FormProfiles
                                 valuesDefault={valuesDefault}
                                 formProfile={formProfile}
-                                disabledClient={disabledClient}
+                                disabledClient={router.query?.client}
                                 disabledField={disabledField}
                                 setDisabledField={setDisabledField}
                             />
@@ -241,7 +251,7 @@ const DetailsProfiles = ({
                         <Button
                             htmlType='submit'
                             form='form-profiles'
-                            loading={load_profiles}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -254,16 +264,8 @@ const DetailsProfiles = ({
 
 const mapState = (state) =>{
     return{
-        load_profiles: state.jobBankStore.load_profiles,
-        info_profile: state.jobBankStore.info_profile,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadProfiles,
-        getInfoProfile,
-        setInfoProfile
-    }
-)(DetailsProfiles);
+export default connect(mapState)(DetailsProfiles);

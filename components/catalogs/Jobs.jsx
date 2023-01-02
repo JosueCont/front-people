@@ -182,7 +182,9 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
       node: item.node.id,
       name: item.name,
       code: item.code,
-      skill_profile_id: item.skill_profile?.id
+      skill_profile_id: item.skill_profile?.id,
+      cost_center: item?.cost_center,
+      tag: item?.tag
     });
   };
 

@@ -17,7 +17,7 @@ import { useState } from "react";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
-
+import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
 import { useEffect } from "react";
 import moment from "moment";
 import {
@@ -27,14 +27,18 @@ import {
   messageError,
   messageUpdateSuccess,
   periodicity,
+  SukhaAccess,
+  KhorflixAccess,
+  CareerlabAccess
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   curpFormat,
-  minLengthNumber, nameLastname,
+  minLengthNumber,
+  nameLastname,
   onlyNumeric,
   rfcFormat,
-  ruleRequired
+  ruleRequired,
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
@@ -42,7 +46,13 @@ import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import locale from "antd/lib/date-picker/locale/es_ES";
 
-const DataPerson = ({ config, person = null, setPerson, ...props }) => {
+const DataPerson = ({
+  currentNode,
+  config,
+  person = null,
+  setPerson,
+  ...props
+}) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -63,11 +73,10 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   useEffect(() => {
     setPersonWT(person.id);
     setFormPerson(person);
-  }, []);
+  }, [person]);
 
   const setFormPerson = (person) => {
     setPersonWT(false);
-
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,
@@ -84,7 +93,19 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
+      sukhatv_access: person.sukhatv_access,
+      is_sukhatv_admin: person.is_sukhatv_admin,
+      khorflix_access: person.khorflix_access,
+      is_khorflix_admin: person.is_khorflix_admin,
+      careerlab_access: person.careerlab_access,
+      is_careerlab_admin: person.is_careerlab_admin,
+      patronal_registration: null,
     });
+    if (person.patronal_registration) {
+      formPerson.setFieldsValue({
+        patronal_registration: person.patronal_registration,
+      });
+    }
     if (person.work_title) {
       formPerson.setFieldsValue({
         person_department: person.work_title.department.id,
@@ -107,9 +128,9 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
         birth_date: moment(person.birth_date),
       });
 
-    if (person.register_date)
+    if (person.timestamp)
       formPerson.setFieldsValue({
-        register_date: moment(person.register_date),
+        register_date: moment(person.timestamp),
       });
 
     getGroupPerson(config, person.khonnect_id)
@@ -131,6 +152,9 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   };
 
   const onFinishPerson = (value) => {
+    if (value.patronal_registration === undefined) {
+      value.patronal_registration = null;
+    }
     if (dateIngPlatform) value.register_date = dateIngPlatform;
     else delete value["register_date"];
     if (birthDate) value.birth_date = birthDate;
@@ -172,7 +196,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
     let data = new FormData();
     data.append("id", person.id);
     data.append("photo", info.file.originFileObj);
-    if (!loadImge){
+    if (!loadImge) {
       upImageProfile(data, info, numberPhoto);
     }
   };
@@ -321,7 +345,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="first_name"
                   label="Nombre(s)"
-                  rules={[{ message: "Ingresa un nombre" },nameLastname]}
+                  rules={[{ message: "Ingresa un nombre" }, nameLastname]}
                 >
                   <Input />
                 </Form.Item>
@@ -330,7 +354,10 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="flast_name"
                   label="Apellido Paterno"
-                  rules={[{ message: "Ingresa un apellido paterno" },nameLastname]}
+                  rules={[
+                    { message: "Ingresa un apellido paterno" },
+                    nameLastname,
+                  ]}
                 >
                   <Input />
                 </Form.Item>
@@ -401,7 +428,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                       label="Fecha de ingreso laboral"
                     >
                       <DatePicker
-                        locale={ locale }
+                        locale={locale}
                         onChange={onChangeDateAdmission}
                         moment={"YYYY-MM-DD"}
                         readOnly
@@ -421,19 +448,22 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="mlast_name"
                   label="Apellido Materno"
-                  rules={[{ message: "Ingresa un apellido paterno" },nameLastname]}
+                  rules={[
+                    { message: "Ingresa un apellido paterno" },
+                    nameLastname,
+                  ]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24} md={12}>
+              {/* <Col lg={8} xs={24} md={12}>
                 <Form.Item label="Empresa">
                   <Input
                     readOnly
                     value={props.currentNode && props.currentNode.name}
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
               <Col lg={8} xs={24} md={12}>
                 <SelectDepartment
                   disabled={
@@ -462,7 +492,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                   onChange={(item) => {
                     setJobSelected(item), setPersonWT(true);
                   }}
-                  rules = { [ruleRequired] }
+                  // rules = { [ruleRequired] }
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -473,7 +503,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                     job={jobSelected}
                     person={personWT}
                     name={"work_title_id"}
-                    rules = { [ruleRequired] }
+                    rules={[ruleRequired]}
                   />
                 ) : (
                   <Form.Item name="work_title" label="Plaza laboral">
@@ -498,11 +528,12 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                   label="Fecha de ingreso a la plataforma"
                 >
                   <DatePicker
-                    locale={ locale }
+                    locale={locale}
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
                     moment={"YYYY-MM-DD"}
                     placeholder="Fecha de ingreso a la plataforma"
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>
@@ -519,6 +550,69 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
               <Col lg={8} xs={24} md={12}>
                 <SelectGroup viewLabel={true} required={false} />
               </Col>
+              {config.applications.find(
+                (item) => item.app === "SUKHATV" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item name="sukhatv_access" label="Acceso a Sukha Tv">
+                    <Select options={SukhaAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "SUKHATV" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="is_sukhatv_admin"
+                    label="¿Es administrador SukhaTV?"
+                  >
+                    <Select options={SukhaAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "KHORFLIX" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item name="khorflix_access" label="Acceso a Khorflix">
+                    <Select options={KhorflixAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "KHORFLIX" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="is_khorflix_admin"
+                    label="¿Es administrador Khorflix?"
+                  >
+                    <Select options={KhorflixAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "CAREERLAB" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="is_careerlab_admin"
+                    label="¿Es administrador Careerlab?"
+                  >
+                    <Select options={CareerlabAccess} />
+                  </Form.Item>
+                </Col>
+              )}
+              {config.applications.find(
+                (item) => item.app === "KHORFLIX" && item.is_active
+              ) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item name="careerlab_access" label="Acceso a Careerlab">
+                    <Select options={CareerlabAccess} />
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
             <Row gutter={20}>
               <hr />
@@ -539,7 +633,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
               <Col lg={8} xs={24} md={12}>
                 <Form.Item name="birth_date" label="Fecha de nacimiento">
                   <DatePicker
-                    locale={ locale }
+                    locale={locale}
                     style={{ width: "100%" }}
                     onChange={onChangeBirthDate}
                     moment={"YYYY-MM-DD"}
@@ -564,12 +658,20 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="curp" label="CURP" rules={[ruleRequired, curpFormat]}>
+                <Form.Item
+                  name="curp"
+                  label="CURP"
+                  rules={[ruleRequired, curpFormat]}
+                >
                   <Input maxLength={18} />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="rfc" label="RFC" rules={[ruleRequired, rfcFormat]}>
+                <Form.Item
+                  name="rfc"
+                  label="RFC"
+                  rules={[ruleRequired, rfcFormat]}
+                >
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
@@ -577,10 +679,18 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="imss"
                   label="IMSS"
-                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+                  rules={[onlyNumeric, minLengthNumber]}
                 >
                   <Input maxLength={11} />
                 </Form.Item>
+              </Col>
+              <Col lg={8} xs={24} md={12}>
+                <SelectPatronalRegistration
+                  name={"patronal_registration"}
+                  value_form={"patronal_registration"}
+                  textLabel={"Registro Patronal"}
+                  currentNode={currentNode}
+                />
               </Col>
             </Row>
           </Col>

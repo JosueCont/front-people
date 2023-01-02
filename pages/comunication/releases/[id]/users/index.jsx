@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { Row, Col, Button, Table, Breadcrumb } from "antd";
-import MainLayout from "../../../../../layout/MainLayout";
+import MainLayout from "../../../../../layout/MainInter";
 import { useRouter } from "next/router";
 import Moment from "moment";
 import { withAuthSync } from "../../../../../libs/auth";
@@ -9,6 +9,7 @@ import Axios from "axios";
 import { API_URL } from "../../../../../config/config";
 import axiosApi from './../../../../../api/axiosApi';
 import { CheckOutlined } from "@ant-design/icons";
+import { verifyMenuNewForTenant } from "../../../../../utils/functions";
 
 const UserNotification = () => {
   const route = useRouter();
@@ -34,7 +35,7 @@ const UserNotification = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["releases"]} defaultOpenKeys={["managementRH","concierge","releases"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -42,7 +43,11 @@ const UserNotification = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/comunication/releases" })}>
           Comunicados

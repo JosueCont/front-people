@@ -49,7 +49,7 @@ const SelectJob = ({
           {options.map((item) => {
             return (
               <>
-                <Option key={item.value} value={item.value}>
+                <Option key={item.key} value={item.value}>
                   {item.label}
                 </Option>
                 ;

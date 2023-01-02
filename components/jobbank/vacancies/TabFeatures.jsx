@@ -6,17 +6,12 @@ import {
   Input,
   Select,
   DatePicker,
-  Button,
   Checkbox,
-  Switch,
   InputNumber
 } from 'antd';
 import {
   ruleRequired,
   ruleWhiteSpace,
-  ruleMinAge,
-  ruleMaxAge,
-  onlyNumeric
 } from '../../../utils/rules';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
 import {
@@ -27,17 +22,20 @@ import {
   optionsStatusVacant
 } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import moment from 'moment';
 
 const TabFeatures = ({
-  disabledClient,
-  formVacancies
+  formVacancies,
+  hasEstrategy,
+  disabledClient
 }) => {
 
   const {
     load_clients_options,
     list_clients_options
   } = useSelector(state => state.jobBankStore);
+  const router = useRouter();
   const rotativeTurn = Form.useWatch('rotative_turn', formVacancies);
 
   const styleDisabled = {
@@ -49,19 +47,26 @@ const TabFeatures = ({
     background: '#ffff'
   }
 
-  const minAge = () => ({
+  const minAge = ({getFieldValue}) => ({
     validator(_, value){
-      let age = parseInt(value);
-      if(age < 18) return Promise.reject('Edad mínima mayor o igual a 18');
+      if(!value) return Promise.resolve();
+      let min_age = parseInt(value);
+      let max_age = getFieldValue('age_max');
+      if(min_age < 18) return Promise.reject('Edad mínima mayor o igual a 18');
+      if(!max_age) return Promise.reject('Edad máxima requerida');
+      if(max_age && min_age > max_age) return Promise.reject('Edad máxima debe ser mayor a edad mínima');
       return Promise.resolve();
     }
   })
 
-  const maxAge = () => ({
+  const maxAge = ({getFieldValue}) => ({
     validator(_, value){
-      if(!value) return Promise.reject('Ingrese un valor numérico');
-      let age = parseInt(value);
-      if(age > 100) return Promise.reject('Edad máxima menor o igual a 100');
+      if(!value) return Promise.resolve();
+      let max_age = parseInt(value);
+      let min_age = getFieldValue('age_min');
+      if(max_age > 90) return Promise.reject('Edad máxima menor o igual a 90');
+      if(!min_age) return Promise.reject('Edad mínima requerida');
+      // if(min_age && min_age == max_age) return Promise.reject('Edades iguales');
       return Promise.resolve();
     }
   })
@@ -82,12 +87,16 @@ const TabFeatures = ({
         <Form.Item
           name='customer_id'
           label='Cliente'
+          tooltip={hasEstrategy
+            ? `Este campo no es posible actualizarlo,
+            ya que la vacante en encuentra asociada a una estrategia.
+            ` : ''}
           rules={[ruleRequired]}
         >
           <Select
             allowClear
             showSearch
-            disabled={disabledClient}
+            disabled={hasEstrategy || disabledClient}
             loading={load_clients_options}
             placeholder='Seleccionar un cliente'
             notFoundContent='No se encontraron resultados'
@@ -147,10 +156,11 @@ const TabFeatures = ({
           <InputNumber
             type='number'
             controls={false}
-            maxLength={10}
+            maxLength={9}
             placeholder='Número de proyecto'
             onKeyDown={validateNum}
             onKeyPress={validateMaxLength}
+            onPaste={validateNum}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -174,6 +184,7 @@ const TabFeatures = ({
         <Form.Item
           name='status'
           label='Estatus de la vacante'
+          rules={[ruleRequired]}
         >
           <Select
             allowClear
@@ -186,15 +197,15 @@ const TabFeatures = ({
         <Form.Item
           name='qty'
           label='Número de posiciones a reclutar'
-          rules={[onlyNumeric]}
         >
           <InputNumber
             type='number'
             controls={false}
-            maxLength={10}
+            maxLength={9}
             placeholder='Número de posiciones a reclutar'
             onKeyDown={validateNum}
             onKeyPress={validateMaxLength}
+            onPaste={validateNum}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -268,7 +279,8 @@ const TabFeatures = ({
             <Form.Item
               name='age_min'
               noStyle
-              rules={[ruleMinAge(18)]}
+              rules={[minAge]}
+              dependencies={['age_max']}
             >
               <InputNumber
                 type='number'
@@ -276,6 +288,7 @@ const TabFeatures = ({
                 controls={false}
                 className='min_age'
                 onKeyDown={validateNum}
+                onPaste={validateNum}
                 onKeyPress={validateMaxLength}
                 placeholder='Edad mínima'
               />
@@ -288,9 +301,8 @@ const TabFeatures = ({
             <Form.Item
               name='age_max'
               noStyle
-              rules={[
-                ruleMaxAge(100)
-              ]}
+              rules={[maxAge]}
+              dependencies={['age_min']}
             >
               <InputNumber
                 type='number'
@@ -298,6 +310,7 @@ const TabFeatures = ({
                 controls={false}
                 className='max_age'
                 onKeyDown={validateNum}
+                onPaste={validateNum}
                 onKeyPress={validateMaxLength}
                 placeholder='Edad máxima'
               />
@@ -353,7 +366,7 @@ const TabFeatures = ({
           name='requires_travel_availability'
         >
           <Select
-            allowClear
+            // allowClear
             placeholder='Seleccionar una opción'
             notFoundContent='No se encontraron resultados'
           >
@@ -378,7 +391,7 @@ const TabFeatures = ({
         <Form.Item
           name='description'
           label='Descripción de la vacante'
-          rules={[ruleWhiteSpace]}
+          // rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
             autoSize={{minRows: 5, maxRows: 5}}

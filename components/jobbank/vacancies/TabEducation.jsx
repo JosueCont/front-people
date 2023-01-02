@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Form,
   Row,
@@ -8,16 +8,14 @@ import {
 } from 'antd';
 import { useSelector } from 'react-redux';
 import {
-  ruleRequired,
-  ruleWhiteSpace
-} from '../../../utils/rules';
-import {
   optionsLevelAcademic,
   optionsStatusAcademic,
-  optionsLangVacant
 } from '../../../utils/constant';
 
-const TabEducation = ({ formVacancies }) => {
+const TabEducation = ({
+  children,
+  formVacancies,
+}) => {
 
   const {
     load_competences,
@@ -161,7 +159,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col xs={24} md={12} xl={8} xxl={6}>
+      {/* <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='languajes'
           label='Idiomas'
@@ -175,6 +173,9 @@ const TabEducation = ({ formVacancies }) => {
             options={optionsLangVacant}
           />
         </Form.Item>
+      </Col> */}
+      <Col span={24}>
+        {children}
       </Col>
       <Col span={24}>
         <Row gutter={[24,0]}>
@@ -182,13 +183,13 @@ const TabEducation = ({ formVacancies }) => {
             <Form.Item
               name='language_activities'
               label='¿Para qué actividades lo utiliza?'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Especificar según los idiomas seleccionados'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -197,13 +198,13 @@ const TabEducation = ({ formVacancies }) => {
             <Form.Item
               name='knowledge'
               label='Conocimientos requeridos'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -212,13 +213,13 @@ const TabEducation = ({ formVacancies }) => {
             <Form.Item
               name='experiences'
               label='Experiencia requerida'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Separar cada experiencia con una coma'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>
@@ -227,13 +228,13 @@ const TabEducation = ({ formVacancies }) => {
             <Form.Item
               name='technical_skills'
               label='Habilidades técnicas'
-              rules={[ruleWhiteSpace]}
+              // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Separar cada habilidad técnica con una coma'
                 autoSize={{
-                  minRows: 5,
-                  maxRows: 5,
+                  minRows: 4,
+                  maxRows: 4,
                 }}
               />
             </Form.Item>

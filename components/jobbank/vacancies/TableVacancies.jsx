@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   Button,
   Menu,
   Dropdown,
   message,
-  Switch,
-  Tooltip,
-  Select
+  Select,
+  Tag,
+  Tooltip
 } from 'antd';
 import {
   EllipsisOutlined,
@@ -17,7 +17,7 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
+import { getVacancies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
@@ -28,34 +28,35 @@ const TableVacancies = ({
     jobbank_page,
     list_vacancies,
     getVacancies,
-    setJobbankPage,
     currentNode,
-    jobbank_filters
+    currentPage,
+    currentFilters
 }) => {
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [viewAsList, setViewAsList] = useState(false);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacancies(currentNode.id)
-            if(ids.length > 1) message.success('Vacantes eliminadas');
-            else message.success('Vacante eliminada');
+            getVacancies(currentNode.id, currentFilters, currentPage);
+            let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
+            message.success(msg)
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Vacantes no eliminadas');
-            else message.error('Vacante no eliminada');
+            let msg = ids.length > 1 ? 'Vacantes no eliminadas' : 'Vacante no eliminada';
+            message.error(msg);
         }
     }
 
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacancies(currentNode.id);
+            getVacancies(currentNode.id, currentFilters, currentPage);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -65,12 +66,12 @@ const TableVacancies = ({
 
     const actionDuplicate = async (item) =>{
         const key = 'updatable';
+        message.loading({content: 'Duplicando vacante...', key});
         try {
-            message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
-                getVacancies(currentNode.id);
+                getVacancies(currentNode.id, currentFilters, currentPage);
             },1000)
         } catch (e) {
             console.log(e)
@@ -81,47 +82,62 @@ const TableVacancies = ({
     }
 
     const openModalManyDelete = () =>{
+        const filter_ = item => item.has_estrategy;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setViewAsList(true)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setViewAsList(false);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos vacantes')
+            return;
         }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos vacantes')
     }
 
     const openModalRemove = (item) =>{
+        setViewAsList(item.has_estrategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        setViewAsList(false)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
-    // const getStatus = (item) =>{
-    //     if(!item.status) return null;
-    //     const status = (record) => record.value === item.status;
-    //     let status_ = optionsStatusVacant.find(status);
-    //     return status_.label;
-    // }
+    const titleDelete = useMemo(()=>{
+        if(viewAsList){
+            return itemsToDelete.length > 1
+            ? `Estas vacantes no se pueden eliminar, ya que
+                se encuentran asociadas a una estrategia.`
+            : `Esta vacante no se puede eliminar, ya que
+                se encuentra asociada a una estrategia`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estas vacantes?'
+            : '¿Estás seguro de eliminar esta vacante?';
+    },[viewAsList, itemsToDelete])
+
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/vacancies',
+        query
+    })
 
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        validateGetVacancies(current)
-    }
-
-    const validateGetVacancies = (current) =>{
-        let page = current ?? jobbank_page;
-        if(page > 1) getVacanciesWithFilters(page);
-        else getVacancies(currentNode?.id, jobbank_filters);
-    }
-
-    const getVacanciesWithFilters = (page) =>{
-        let offset = (page - 1) * 10;
-        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
-        getVacancies(currentNode?.id, query, page);
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -154,7 +170,7 @@ const TableVacancies = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/vacancies/edit`,
-                        query:{ id: item.id }
+                        query: {...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -173,16 +189,18 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                <Menu.Item
-                    key='3'
-                    icon={<SettingOutlined />}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/publications/add',
-                        query: { vacant: item.id }
-                    })}
-                >
-                    Configurar publicación
-                </Menu.Item>
+                {item.status == 1 && (
+                    <Menu.Item
+                        key='4'
+                        icon={<SettingOutlined />}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/publications/add',
+                            query: {...router.query, vacancy: item.id }
+                        })}
+                    >
+                        Configurar publicación
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
@@ -191,7 +209,8 @@ const TableVacancies = ({
     {
         title: 'Vacante',
         dataIndex: 'job_position',
-        key: 'job_position'
+        key: 'job_position',
+        ellipsis: true
     },
     {
         title: 'Cliente',
@@ -202,7 +221,6 @@ const TableVacancies = ({
         title: 'Estatus',
         render: (item) =>{
             return (
-                // <span>{getStatus(item)}</span>
                 <Select
                     size='small'
                     style={{width: 101}}
@@ -213,6 +231,22 @@ const TableVacancies = ({
                     onChange={(e) => actionStatus(e, item)}
                 />
             )
+        }
+    },
+    {
+        title: 'Estrategia',
+        render: (item) =>{
+            return item.has_estrategy ? (
+                <a
+                    style={{color: '#1890ff'}}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/strategies/edit',
+                        query: {id: item.has_estrategy}
+                    })}
+                >
+                    Ver estrategia
+                </a>
+            ) : <></>;
         }
     },
     {
@@ -231,7 +265,7 @@ const TableVacancies = ({
                 </Dropdown>
             )
         },
-        // width: 80, 
+        width: 60, 
         render: (item) =>{
             return (
                 <Dropdown overlay={()=> menuItem(item)}>
@@ -266,16 +300,15 @@ const TableVacancies = ({
             }}
         />
         <DeleteItems
-            title={itemsToDelete.length > 1
-                ? '¿Estás seguro de eliminar estas vacantes?'
-                : '¿Estás seguro de eliminar esta vacante?'
-            }
+            title={titleDelete}
             visible={openModalDelete}
             keyTitle='job_position'
-            keyDescription='description'
+            keyDescription='customer, name'
             close={closeModalDelete}
             itemsToDelete={itemsToDelete}
             actionDelete={actionDelete}
+            textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
+            viewAsList={viewAsList}
         />
     </>
   )
@@ -285,15 +318,11 @@ const mapState = (state) =>{
     return{
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
         jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, {
-        getVacancies,
-        setJobbankPage
-    }
+    mapState, { getVacancies }
 )(TableVacancies);

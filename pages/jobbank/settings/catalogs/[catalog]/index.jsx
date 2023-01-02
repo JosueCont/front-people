@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
-import { withAuthSync } from '../../../../libs/auth';
+import { withAuthSync } from '../../../../../libs/auth';
 import { useRouter } from 'next/router';
-import { catalogsJobbank } from '../../../../utils/constant';
-import GetViewCatalog from '../../../../components/jobbank/catalogs/GetViewCatalog';
+import { catalogsJobbank } from '../../../../../utils/constant';
+import GetViewCatalog from '../../../../../components/jobbank/catalogs/GetViewCatalog';
+import { verifyMenuNewForTenant } from '../../../../../utils/functions';
 
 const catalog = ({
     currentNode
@@ -26,7 +27,7 @@ const catalog = ({
 
 
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -34,6 +35,9 @@ const catalog = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'

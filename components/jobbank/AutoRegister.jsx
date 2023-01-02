@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MainLayout from '../../layout/MainLayout';
+import MainLayout from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ const AutoRegister = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(router.query.uid) getCompay(router.query.uid);
+        if(router.query?.uid) getCompay(router.query.uid);
     },[router])
 
     const getCompay = async (uid) =>{
@@ -31,9 +31,7 @@ const AutoRegister = ({
             hideMenu={true}
             onClickImage={false}
         >
-            <div className='content-center'>
-                {children}
-            </div>
+            {children}
         </MainLayout>
     )
 }

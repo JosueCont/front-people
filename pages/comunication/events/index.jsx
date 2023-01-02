@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import {
   Row,
   Col,
@@ -34,6 +34,7 @@ import { API_URL } from "../../../config/config";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import axiosApi from "../../../api/axiosApi";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const Events = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -155,7 +156,7 @@ const Events = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["events"]} defaultOpenKeys={["comunication"]}>
+    <MainLayout currentKey={["events"]} defaultOpenKeys={["managementRH","concierge","events"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -163,7 +164,13 @@ const Events = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
+        
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

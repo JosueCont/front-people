@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
@@ -11,6 +11,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import TableStrategies from '../../../components/jobbank/strategies/TableStrategies';
 import SearchStrategies from '../../../components/jobbank/strategies/SearchStrategies';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -20,36 +21,46 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
-            getStrategies(currentNode.id);
             getClientsOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
         }
     },[currentNode])
 
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page
+                ? parseInt(router.query.page)
+                : 1;
+            let filters = getFiltersJB(router.query);
+            getStrategies(currentNode.id, filters, page);
+            setCurrentPage(page)
+            setCurrentFilters(filters)
+        }
+    },[currentNode, router.query])
+
     return (
-        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_strategies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Estrategias</Breadcrumb.Item>
             </Breadcrumb>
-            <div
-                className={'container'}
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}>
+            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
                 <SearchStrategies/>
-                <TableStrategies/>
+                <TableStrategies currentPage={currentPage} currentFilters={currentFilters}/>
             </div>
         </MainLayout>
     )

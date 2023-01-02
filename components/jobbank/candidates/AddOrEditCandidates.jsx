@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import React, { useEffect, useState } from 'react';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import DetailsCandidates from './DetailsCandidates';
 import { connect } from 'react-redux';
@@ -9,8 +9,9 @@ import {
     getSubCategories,
     getCompetences,
     getSectors,
-    getSpecializationArea
+    getListStates
 } from '../../../redux/jobBankDuck';
+import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const AddOrEditCandidates = ({
     action = 'add',
@@ -19,10 +20,18 @@ const AddOrEditCandidates = ({
     getSubCategories,
     getCompetences,
     getSectors,
-    getSpecializationArea
+    getListStates
 }) => {
 
     const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id','tab'];
+
+    useEffect(()=>{
+        if(Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    },[router.query])
 
     useEffect(()=>{
         if(currentNode){
@@ -30,30 +39,36 @@ const AddOrEditCandidates = ({
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
             getSectors(currentNode.id);
-            getSpecializationArea(currentNode.id);
+            getListStates(currentNode.id);
         }
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_candidates' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/candidates'})}
+                    className='pointer'
+                    onClick={() => router.push({
+                        pathname: '/jobbank/candidates',
+                        query: newFilters
+                    })}
                 >
                     Candidatos
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
             <div className='container'>
-                <DetailsCandidates action={action}/>
+                <DetailsCandidates action={action} newFilters={newFilters}/>
             </div>
         </MainLayout>
     )
@@ -71,6 +86,6 @@ export default connect(
         getSubCategories,
         getCompetences,
         getSectors,
-        getSpecializationArea
+        getListStates
     }
 )(AddOrEditCandidates);

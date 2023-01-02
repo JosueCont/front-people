@@ -1,65 +1,69 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Row, Col, message, Form, Select } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getAcademics } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 
-const ViewAcademics = () => {
+const ViewAcademics = ({
+    filtersString,
+    currentPage
+}) => {
 
-    const {
-        list_academics,
-        load_academics
-    } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
-    const dispatch = useDispatch();
+    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [mainData, setMainData] = useState({});
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getAcademics(currentNode.id));
-    },[currentNode])
+        getAcademics(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
-    useEffect(()=>{
-        setLoading(load_academics);
-    },[load_academics])
-    
-    useEffect(()=>{
-        setMainData(list_academics);
-    },[list_academics])
+    const getAcademics = async (node, query = '') =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getAcademics(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createAcademic({...values, node: currentNode.id});
-            dispatch(getAcademics(currentNode.id));
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera registrada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no registrada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Carrera no registrada';
+            message.error(msg);
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateAcademic(itemToEdit.id, values);
-            dispatch(getAcademics(currentNode.id));
+            await WebApiJobBank.updateAcademic(id, values);
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no actualizada');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya este' : 'Carrera no actualizada';
+            message.error(msg);
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteAcademic(id);
-            dispatch(getAcademics(currentNode.id));
+            getAcademics(currentNode.id, filtersString);
             message.success('Carrera eliminada')
         } catch (e) {
             console.log(e)
@@ -70,12 +74,7 @@ const ViewAcademics = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_academics}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -87,12 +86,9 @@ const ViewAcademics = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

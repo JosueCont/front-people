@@ -51,7 +51,7 @@ const LegalRepresentative = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="phone" label="Teléfono" rules={[ruleRequired,onlyNumeric, ruleWhiteSpace]}>
+          <Form.Item name="phone" label="Teléfono" rules={[onlyNumeric, ruleWhiteSpace]}>
             <Input maxLength={10}/>
           </Form.Item>
         </Col>

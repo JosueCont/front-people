@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import FormGroup from "../../../components/intranet/FormGroup";
 import { Table, Breadcrumb, Button, Popconfirm, message } from "antd";
 import {
@@ -18,6 +18,7 @@ import { withAuthSync } from "../../../libs/auth";
 import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 import { useSelector } from 'react-redux'
+import { verifyMenuNewForTenant } from "../../../utils/functions";
 
 const GroupView = ({ ...props }) => {
   const router = useRouter();
@@ -126,7 +127,7 @@ const GroupView = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["intranet_groups"]} defaultOpenKeys={["intranet"]}>
+    <MainLayout currentKey={["intranet_groups"]} defaultOpenKeys={["commitment","intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -134,7 +135,10 @@ const GroupView = ({ ...props }) => {
         >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Compromiso</Breadcrumb.Item>
+        }
+          <Breadcrumb.Item>KHOR Connect</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
       { validatePermition ? (

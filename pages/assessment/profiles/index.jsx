@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
 import { connect, useDispatch } from "react-redux";
 import { Breadcrumb, message } from "antd";
@@ -9,6 +9,7 @@ import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
 import ProfilesSearch from "../../../components/assessment/profiles/ProfilesSearch";
 import ProfilesTable from "../../../components/assessment/profiles/ProfilesTable";
 import {FormattedMessage} from "react-intl";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const Index = ({
   currentNode,
@@ -27,7 +28,7 @@ const Index = ({
   },[currentNode])
   
   return (
-    <MainLayout currentKey={["assessment_profiles"]} defaultOpenKeys={["kuiz"]}>
+    <MainLayout currentKey={["assessment_profiles"]}defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -35,6 +36,9 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+        }
         <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de competencias</Breadcrumb.Item>
       </Breadcrumb>

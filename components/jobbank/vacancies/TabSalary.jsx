@@ -34,10 +34,10 @@ const TabSalary = ({ formVacancies }) => {
                 <Form.Item
                     name='gross_salary'
                     label='Sueldo mensual bruto (MXN)'
-                    rules={[numCommaAndDot()]}
+                    rules={[ruleRequired, numCommaAndDot()]}
                 >
                     <Input
-                        maxLength={20}
+                        maxLength={10}
                         placeholder='Ej. 70,500.5999'
                         onKeyPress={e => e.which == 32 && e.preventDefault()}
                     />
@@ -80,12 +80,12 @@ const TabSalary = ({ formVacancies }) => {
                         <Form.Item
                             name='economic_benefits_description'
                             label='Descripción de prestaciones'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 disabled={benefitSelected !== 3}
                                 placeholder='Ej. Vales de despensa, seguro de vida, gastos médicos, etc.'
-                                autoSize={{minRows: 5, maxRows: 5}}
+                                autoSize={{minRows: 4, maxRows: 4}}
                             />
                         </Form.Item>
                     </Col>
@@ -93,11 +93,11 @@ const TabSalary = ({ formVacancies }) => {
                         <Form.Item
                             name='benefits'
                             label='Beneficios'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Transporte, servicio de comedor, etc.'
-                                autoSize={{minRows: 5, maxRows: 5}}
+                                autoSize={{minRows: 4, maxRows: 4}}
                             />
                         </Form.Item>
                     </Col>
@@ -105,11 +105,11 @@ const TabSalary = ({ formVacancies }) => {
                         <Form.Item
                             name='rewards'
                             label='Bonos'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Especificar los bonos a otorgar'
-                                autoSize={{minRows: 5, maxRows: 5}}
+                                autoSize={{minRows: 4, maxRows: 4}}
                             />
                         </Form.Item>
                     </Col>
@@ -117,11 +117,11 @@ const TabSalary = ({ formVacancies }) => {
                         <Form.Item
                             name='work_tools'
                             label='Herramientas de trabajo'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Uniformes, equipos de cómputo, etc.'
-                                autoSize={{minRows: 5, maxRows: 5}}
+                                autoSize={{minRows: 4, maxRows: 4}}
                             />
                         </Form.Item>
                     </Col>

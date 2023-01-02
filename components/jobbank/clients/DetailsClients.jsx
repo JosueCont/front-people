@@ -26,6 +26,8 @@ const DetailsClients = ({
     action,
     user,
     currentNode,
+    newFilters = {},
+    isAutoRegister = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -44,21 +46,24 @@ const DetailsClients = ({
     const [contactList, setContactList] = useState([]);
     const [infoClient, setInfoClient] = useState({});
     const [fetching, setFetching] = useState(false);
+    const [currentKey, setCurrentKey] = useState('1');
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoClient(router.query.id)
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(Object.keys(infoClient).length > 0 && action == 'edit'){
             formClients.resetFields();
             let prev = infoClient.files ?? [];
             let contact = infoClient.contact_list ?? [];
+            let business_name = infoClient.business_name
+                ? infoClient.business_name : null;
             setPrevDocs(prev);
             setContactList(contact);
-            formClients.setFieldsValue(infoClient);
+            formClients.setFieldsValue({...infoClient, business_name});
         }
     },[infoClient])
 
@@ -75,10 +80,15 @@ const DetailsClients = ({
     }
 
     const createData = (obj) =>{
+        let noValid = [undefined, null,""," "];
         let dataClient = new FormData();
-        Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
+        dataClient.append('auto_register', isAutoRegister);
+        Object.entries(obj).map(([key, val])=>{
+            let value = noValid.includes(val) ? "" : val;
+            dataClient.append(key, value);
+        });
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
-        if(contactList.length > 0) dataClient.append('contact_list', JSON.stringify(contactList));
+        dataClient.append('contact_list', JSON.stringify(contactList));
         let toDelete = prevDocs.filter(item => item.is_deleted);
         const saveToDelete = (item, idx) => dataClient.append(`delete_files_id[${idx}]`, item.id);
         if(toDelete.length > 0) toDelete.map(saveToDelete);
@@ -142,10 +152,9 @@ const DetailsClients = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.id) delete router.query.id;
         router.push({
             pathname: '/jobbank/clients',
-            query: router.query
+            query: newFilters
         })
     }
 
@@ -155,10 +164,12 @@ const DetailsClients = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/clients/edit',
-                query: {...router.query, id }
-            })
+                query: {...newFilters, id }
+            }),
+            auto: actionCreate
         }
-        actionFunction[actionType](id);
+        let selected = isAutoRegister ? 'auto' : actionType;
+        actionFunction[selected]();
     }
 
     const getSaveAnd = (type) =>{
@@ -166,6 +177,19 @@ const DetailsClients = ({
         const item = { loading: true, disabled: false };
         setLoading({...fetchingParams, [type]: item });
         btnSave.current.click();
+    }
+
+    const onChangeTab = (tab) =>{
+        if(action == 'add'){
+            setCurrentKey(tab)
+            return;
+        }
+        let querys = {...router.query, tab};
+        if(querys['tab'] == '1') delete querys['tab'];
+        router.replace({
+            pathname: router.asPath.split('?')[0],
+            query: querys
+        }, undefined, {shallow: true})
     }
 
     return (
@@ -178,12 +202,14 @@ const DetailsClients = ({
                             : 'Información del cliente'
                         }
                     </p>
-                    <Button
-                        onClick={()=> actionBack()}
-                        icon={<ArrowLeftOutlined />}
-                    >
-                        Regresar
-                    </Button>
+                    {!isAutoRegister && (
+                        <Button
+                            onClick={()=> actionBack()}
+                            icon={<ArrowLeftOutlined />}
+                        >
+                            Regresar
+                        </Button>
+                    )}
                 </Col>
                 <Col span={24}>
                     <Form
@@ -195,18 +221,26 @@ const DetailsClients = ({
                         onFinishFailed={onFinishFailed}
                         initialValues={{is_active: true}}
                     >
-                        <Tabs type='card'>
+                        <Tabs
+                            type='card'
+                            activeKey={action == 'edit'
+                                ? router.query?.tab ?? '1'
+                                : currentKey
+                            }
+                            onChange={onChangeTab}
+                        >
                             <Tabs.TabPane
                                 tab='Información del cliente'
-                                key='tab_1'
+                                forceRender
+                                key='1'
                             >
                                 <Spin spinning={fetching}>
                                     <TabClient/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab='Información de contacto'
-                                key='tab_2'
+                                tab='Información de contactos'
+                                key='2'
                                 forceRender
                             >
                                 <Spin spinning={fetching}>
@@ -219,7 +253,7 @@ const DetailsClients = ({
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab='Carga de documentos'
-                                key='tab_3'
+                                key='3'
                                 forceRender
                             >
                                 <Spin spinning={fetching}>
@@ -236,7 +270,7 @@ const DetailsClients = ({
                     </Form>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
-                    {action == 'add' ? (
+                    {action == 'add' && !isAutoRegister ? (
                         <>
                             <button
                                 htmlType='submit'
@@ -272,7 +306,7 @@ const DetailsClients = ({
                             htmlType='submit'
                             loading={fetching}
                         >
-                            Actualizar
+                           {isAutoRegister && action == 'add' ? 'Guardar' : 'Actualizar'}
                         </Button>
                     )}
                 </Col>

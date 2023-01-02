@@ -20,27 +20,31 @@ import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
-const TabSchool = ({ sizeCol = 8, action }) => {
+const TabSchool = ({
+    action,
+    setInfoEducation,
+    infoEducation
+}) => {
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoEducation, setInfoEducation] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoEducation(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoEducation = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getCandidateEducation(id);
+            let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             setInfoEducation(response.data);
             setLoading(false);
         } catch (e) {
@@ -82,7 +86,7 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteCandidateEducation(id);
-            message.success('Educación eliminadaa');
+            message.success('Educación eliminada');
             getInfoEducation(router.query.id);
         } catch (e) {
             console.log(e)
@@ -104,7 +108,8 @@ const TabSchool = ({ sizeCol = 8, action }) => {
     }
 
     const openModalRemove = (item) =>{
-        setItemsToDelete([item])
+        let level_academic = getAcademic(item);
+        setItemsToDelete([{...item, level_academic}]);
         setOpenModalDelete(true)
     }
 
@@ -174,6 +179,12 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             }
         },
         {
+            title: 'Institución',
+            dataIndex: 'institution_name',
+            key: 'institution_name',
+            ellipsis: true
+        },
+        {
             title: 'Estatus',
             render: (item) =>{
                 return(
@@ -182,25 +193,30 @@ const TabSchool = ({ sizeCol = 8, action }) => {
             }
         },
         {
-            title: 'Institución',
-            dataIndex: 'institution_name',
-            key: 'institution_name'
-        },
-        {
-            title: 'Finalización',
-            dataIndex: 'end_date',
-            key: 'end_date'
-        },
-        {
-            title: ()=>{
+            title: 'Fecha finalización',
+            render: (item) =>{
                 return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
                 )
-            },
+            }
+        },
+        {
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -221,37 +237,33 @@ const TabSchool = ({ sizeCol = 8, action }) => {
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoEducation.results}
+                dataSource={infoEducation}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoEducation.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
             />
-           {openModal && (
-                <ModalEducation
-                    title={validateAction() ? 'Editar educación' : 'Agregar educación'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta educación?'
-                    visible={openModalDelete}
-                    keyTitle='institution_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalEducation
+                title={validateAction() && openModal ? 'Editar educación' : 'Agregar educación'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar esta educación?'
+                visible={openModalDelete}
+                keyTitle='level_academic'
+                keyDescription='institution_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }

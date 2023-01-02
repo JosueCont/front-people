@@ -5,11 +5,10 @@ import {
     Form,
     Input,
     Select,
-    DatePicker,
-    InputNumber,
     Spin,
     message,
-    Button
+    Button,
+    Checkbox
 } from 'antd';
 import {
     ruleWhiteSpace,
@@ -20,17 +19,25 @@ import {
 } from '../../../utils/rules';
 import { connect } from 'react-redux'; 
 import { useRouter } from 'next/router';
-import { validateNum } from '../../../utils/functions';
+import { getFileExtension } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { ToTopOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { redirectTo } from '../../../utils/constant';
+import ListLangs from './ListLangs';
 
 const TabGeneral = ({
-    sizeCol = 8,
     action,
     currentNode,
     setDisabledTab,
-    isAutoRegister = false
+    isAutoRegister,
+    newFilters = {},
+    setInfoCandidate,
+    infoCandidate,
+    list_states,
+    load_states
 }) => {
 
+    const rule_init = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -39,25 +46,44 @@ const TabGeneral = ({
     };
     const router = useRouter();
     const btnSave = useRef(null);
+    const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
-    const [infoCandidate, setInfoCandidate] = useState({});
+    const state = Form.useWatch('state', formCandidate);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
+    const [fileCV, setFileCV] = useState([]);
+    const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
+    //Idiomas
+    const [currentValue, setCurrentValue] = useState([]);
+    const [listLangDomain, setListLangDomain] = useState([]);
+    const [ruleLanguages, setRuleLanguages] = useState(rule_init);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoCandidate(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         setDisabledTab(true)
         if(Object.keys(infoCandidate).length <= 0) return;
-        setDisabledTab(false)
-        formCandidate.resetFields();
-        formCandidate.setFieldsValue(infoCandidate);
+        setValueForm();
     },[infoCandidate])
+
+    const setValueForm = () =>{
+        setDisabledTab(false)
+        setCurrentValue([])
+        setRuleLanguages(rule_init)
+        formCandidate.resetFields();
+        const getLang = item => ({lang: item.lang, domain: item.domain});
+        let listLanguages = infoCandidate.languages.map(getLang);
+        let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
+        let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        let state = infoCandidate?.state?.id ?? null;
+        setListLangDomain(listLang)
+        formCandidate.setFieldsValue({...infoCandidate, cv_name_read, state});
+    }
 
     const getInfoCandidate = async (id) =>{
         try {
@@ -79,53 +105,82 @@ const TabGeneral = ({
             setFetching(false)
         } catch (e) {
             console.log(e)
-            message.error('Candidato no actualizado');
+            let msgEmail = e.response?.data?.email;
+            let msg = msgEmail ? 'Este correo ya existe' : 'Candidato no actualizado';
+            message.error(msg);
             setFetching(false)
         }
     }
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createCandidate({...values, node: currentNode.id});
+            let response = await WebApiJobBank.createCandidate(values);
             message.success('Candidato registrado');
             actionSaveAnd(response.data.id);
         } catch (e) {
             console.log(e);
             setFetching(false);
-            message.error('Candidato no registrado')
+            setLoading({})
+            let msgEmail = e.response?.data?.email;
+            let msg = msgEmail ? 'Este correo ya existe' : 'Candidato no registrado';
+            message.error(msg);
         }
     }
 
+    const createData = (obj) =>{
+        let noValid = [undefined, null, '', ' '];
+        let dataCandidate = new FormData();
+        dataCandidate.append('node', currentNode.id);
+        Object.entries(obj).map(([key, val])=>{
+            let value = noValid.includes(val) ? "" : val;
+            dataCandidate.append(key, value);
+        });
+        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
+        dataCandidate.append('languages', JSON.stringify(listLangDomain));
+        return dataCandidate;
+    }
+
     const onFinish = (values) =>{
+        const body = createData(values);
         setFetching(true);
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
         };
-        actionFunction[action](values);
+        actionFunction[action](body);
+    }
+
+    const onFailed = (e) =>{
+        setLoading({})
     }
 
     const actionCreate = () =>{
         formCandidate.resetFields();
-        setInfoCandidate({});
         setFetching(false);
         setLoading({});
+        setFileCV([]);
+        setCurrentValue([])
+        setListLangDomain([])
+        setRuleLanguages(rule_init)
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/candidates'),
-            create: actionCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/candidates/edit',
-                query: { id }
+            back: ()=> router.push({
+                pathname: '/jobbank/candidates',
+                query: newFilters
             }),
-            default: () => router.replace({
-                pathname: `/jobbank/${router.query.uid}/candidate/`,
+            create: actionCreate,
+            edit: () => router.replace({
+                pathname: '/jobbank/candidates/edit',
+                query: {...newFilters, id }
+            }),
+            auto: () => router.replace({
+                pathname: `/jobbank/${router.query?.uid}/candidate/`,
                 query: { id }
             }, undefined, { shallow: true })
         }
-        let selected = isAutoRegister ? 'default' : actionType;
+        let selected = isAutoRegister ? 'auto' : actionType;
         actionFunction[selected]();
     }
 
@@ -134,6 +189,34 @@ const TabGeneral = ({
         const item = { loading: true, disabled: false };
         setLoading({...fetchingParams, [type]: item });
         btnSave.current.click();
+    }
+
+    const setFileSelected = ({target : { files }}) =>{
+        if(Object.keys(files).length <= 0){
+            message.error('No se pudo cargar el archivo, intente de nuevo');
+            return;
+        }
+        let extension = getFileExtension(files[0].name);
+        if(!typeFileCV.includes(extension.toLowerCase())){
+            message.error('El archivo seleccionado no es válido');
+            return;
+        }
+        formCandidate.setFieldsValue({cv_name_read: files[0].name});
+        setFileCV([files[0]]);
+    }
+
+    const openFile = () =>{
+        inputFile.current.value = null;
+        inputFile.current.click();
+    }
+
+    const resetCV = () =>{
+        setFileCV([]);
+        formCandidate.setFieldsValue({cv_name_read: null});
+    }
+
+    const onChangeState = (value) =>{
+        if(!value) formCandidate.setFieldsValue({municipality: null});
     }
 
     return (
@@ -145,10 +228,16 @@ const TabGeneral = ({
                         layout='vertical'
                         form={formCandidate}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
+                        onFinishFailed={onFailed}
+                        initialValues={{is_active: true}}
                     >
                         <Row gutter={[24,0]}>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'none'}}>
+                                <Form.Item name='is_active' valuePropName='checked'>
+                                    <Checkbox>¿Está activo?</Checkbox>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='fisrt_name'
                                     label='Nombre'
@@ -157,16 +246,16 @@ const TabGeneral = ({
                                     <Input maxLength={150} placeholder='Nombre del candidato'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='last_name'
                                     label='Apellidos'
-                                    rules={[ruleWhiteSpace]}
+                                    rules={[ruleRequired, ruleWhiteSpace]}
                                 >
                                     <Input maxLength={150} placeholder='Apellidos del candidato'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='email'
                                     label='Correo'
@@ -175,7 +264,7 @@ const TabGeneral = ({
                                     <Input maxLength={150} placeholder='Correo'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='cell_phone'
                                     label='Teléfono celular'
@@ -184,7 +273,7 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Teléfono celular'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='telephone'
                                     label='Teléfono fijo'
@@ -193,16 +282,40 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Teléfono fijo'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
-                                    name='location'
-                                    label='Localidad'
-                                    rules={[ruleWhiteSpace]}
+                                    name='state'
+                                    label='Estado'
+                                    // rules={[rulePhone]}
                                 >
-                                    <Input maxLength={300} placeholder='Localidad'/>
+                                    <Select
+                                        allowClear
+                                        showSearch
+                                        placeholder='Seleccionar un estado'
+                                        notFoundContent='No se encontraron resultados'
+                                        disabled={load_states}
+                                        loading={load_states}
+                                        optionFilterProp='children'
+                                        onChange={onChangeState}
+                                    >
+                                        {list_states?.length > 0 && list_states.map(item => (
+                                            <Select.Option value={item.id} key={item.id}>
+                                                {item.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='municipality'
+                                    label='Municipio'
+                                    rules={[ruleWhiteSpace]}
+                                >
+                                    <Input disabled={!state} maxLength={300} placeholder='Especificar el municipio'/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='street_address'
                                     label='Dirección'
@@ -211,7 +324,7 @@ const TabGeneral = ({
                                     <Input placeholder='Dirección'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='postal_code'
                                     label='Código postal'
@@ -220,7 +333,68 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Código postal'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    label='CV'
+                                    required
+                                    tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                                >
+                                    <Input.Group compact>
+                                        <Form.Item name='cv_name_read' noStyle rules={[ruleRequired]}>
+                                            <Input
+                                                readOnly
+                                                style={{
+                                                    width: `calc(100% - 64px)`,
+                                                    borderTopLeftRadius: 10,
+                                                    borderBottomLeftRadius: 10
+                                                }}
+                                                placeholder='Archivo seleccionado'
+                                            />
+                                        </Form.Item>
+                                        {infoCandidate.cv ? (
+                                            <Button
+                                                className='custom-btn'
+                                                onClick={()=> redirectTo(infoCandidate.cv, true)}
+                                                icon={<EyeOutlined />}
+                                            />
+                                        ): (
+                                            <Button
+                                                className='custom-btn'
+                                                onClick={()=> resetCV()}
+                                                icon={<DeleteOutlined />}
+                                            />
+                                        )}
+                                        <Button
+                                            icon={<ToTopOutlined />}
+                                            onClick={()=> openFile()}
+                                            style={{
+                                                borderTopRightRadius: 10,
+                                                borderBottomRightRadius: 10
+                                            }}
+                                        />
+                                        <input
+                                            type='file'
+                                            style={{display: 'none'}}
+                                            accept={typeFileCV.reduce((acc, item) => acc +=`.${item}, `,'')}
+                                            ref={inputFile}
+                                            onChange={setFileSelected}
+                                        />
+                                    </Input.Group>
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <ListLangs
+                                    listLangDomain={listLangDomain}
+                                    setListLangDomain={setListLangDomain}
+                                    setCurrentValue={setCurrentValue}
+                                    currentValue={currentValue}
+                                    setRuleLanguages={setRuleLanguages}
+                                    ruleLanguages={ruleLanguages}
+                                    rule_languages={rule_init}
+                                    changeColor={true}
+                                />
+                            </Col>
+                            <Col span={24}>
                                 <Form.Item
                                     name='about_me'
                                     label='Acerca de ti'
@@ -235,7 +409,7 @@ const TabGeneral = ({
                                     />
                                 </Form.Item>
                             </Col>
-                            {/* <Col span={sizeCol}>
+                            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='date_birth'
                                     label='Fecha de nacimiento'
@@ -300,7 +474,9 @@ const TabGeneral = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_states: state.jobBankStore.list_states,
+        load_states: state.jobBankStore.load_states
     }
 }
 

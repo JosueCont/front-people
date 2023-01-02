@@ -127,8 +127,6 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
         data
       );
 
-      console.log(response)
-
       getTags(currentNode.id)
         .then((response) => {
           resetForm();
@@ -158,7 +156,6 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
   };
 
   const updateRegister = async (value) => {
-    console.log(value)
     try {
       let response = await WebApiPeople.updateRegisterCatalogs(
         UrlModel+`${id}/`,

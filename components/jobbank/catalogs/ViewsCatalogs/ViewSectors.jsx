@@ -1,65 +1,70 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getSectors } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
+import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewSectors = () => {
+const ViewSectors = ({
+    filtersString,
+    currentPage
+}) => {
 
-    const {
-        list_sectors,
-        load_sectors
-    } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
-    const dispatch = useDispatch();
+    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getSectors(currentNode.id));
-    },[currentNode])
+        getSectors(currentNode.id, filtersString);
+    },[currentNode, filtersString])
 
-    useEffect(()=>{
-        setLoading(load_sectors);
-    },[load_sectors])
-    
-    useEffect(()=>{
-        setMainData(list_sectors);
-    },[list_sectors])
+    const getSectors = async (node, query = '') => {
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getSectors(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSector({...values, node: currentNode.id});
-            dispatch(getSectors(currentNode.id));
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector registrado');
         } catch (e) {
             console.log(e)
-            message.error('Sector no registrado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Sector no registrado';
+            message.error(msg);
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateSector(itemToEdit.id, values);
-            dispatch(getSectors(currentNode.id));
+            await WebApiJobBank.updateSector(id, values);
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector actualizado');
         } catch (e) {
             console.log(e)
-            message.error('Sector no actualizado');
+            let error = e.response?.data?.name?.at(-1);
+            let msg = error ? 'Este nombre ya existe' : 'Sector no actualizado';
+            message.error(msg);
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteSector(id);
-            dispatch(getSectors(currentNode.id));
+            getSectors(currentNode.id, filtersString);;
             message.success('Sector eliminado');
         } catch (e) {
             console.log(e)
@@ -70,12 +75,7 @@ const ViewSectors = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_sectors}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -87,12 +87,9 @@ const ViewSectors = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

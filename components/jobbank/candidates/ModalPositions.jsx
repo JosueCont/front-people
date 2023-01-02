@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
@@ -20,18 +20,23 @@ const ModalPositions = ({
     } = useSelector(state => state.jobBankStore);
     const [formPosition] = Form.useForm();
     const [loading, setLoading] = useState();
+    const startDate = Form.useWatch('start_date', formPosition);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
         if(itemToEdit.start_date) itemToEdit.start_date = moment(itemToEdit.start_date);
-        formPosition.setFieldsValue(itemToEdit);
+        let sector = itemToEdit.sector?.id ?? null;
+        formPosition.setFieldsValue({...itemToEdit, sector});
     },[itemToEdit])
 
     const onCloseModal = () =>{
         close();
         formPosition.resetFields();
     }
+
+    const setValue = (key, val) => formPosition.setFieldsValue({[key]: val});
+    const setEndDate = (val = null) => setValue('end_date', val);
 
     const onFinish = (values) =>{
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
@@ -42,6 +47,20 @@ const ModalPositions = ({
             actionForm(values)
             onCloseModal()
         },2000)
+    }
+    
+    const onChangeStart = (value) =>{
+        setEndDate();
+    }
+
+    const disabledStart = (current) =>{
+        return current && current > moment().endOf("day");
+    }
+
+    const disabledEnd = (current) =>{
+        let valid_start = current < startDate?.startOf("day");
+        let valid_end = current > moment().endOf("day");
+        return current && (valid_start || valid_end);
     }
 
     return (
@@ -73,7 +92,7 @@ const ModalPositions = ({
                             label='Empresa'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Empresa'/>
+                            <Input maxLength={200} placeholder='Nombre la empresa'/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -85,8 +104,10 @@ const ModalPositions = ({
                             <DatePicker
                                 style={{width: '100%'}}
                                 placeholder='Seleccionar una fecha'
+                                disabledDate={disabledStart}
                                 format='DD-MM-YYYY'
                                 inputReadOnly
+                                onChange={onChangeStart}
                             />
                         </Form.Item>
                     </Col>
@@ -97,7 +118,9 @@ const ModalPositions = ({
                         >
                             <DatePicker
                                 style={{width: '100%'}}
+                                disabled={!startDate}
                                 placeholder='Seleccionar una fecha'
+                                disabledDate={disabledEnd}
                                 format='DD-MM-YYYY'
                                 inputReadOnly
                             />
@@ -111,7 +134,7 @@ const ModalPositions = ({
                             <Select
                                 disabled={load_sectors}
                                 loading={load_sectors}
-                                placeholder='Sector'
+                                placeholder='Seleccionar un sector'
                                 notFoundContent='No se encontraron resultados'
                             >
                                 {list_sectors.length > 0 && list_sectors.map(item => (

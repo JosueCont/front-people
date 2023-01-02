@@ -18,7 +18,7 @@ import {
   message,
 } from "antd";
 
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainInter";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
@@ -28,6 +28,7 @@ import TextArea from "antd/lib/input/TextArea";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import axiosApi from "../../../api/axiosApi";
+import { verifyMenuNewForTenant } from "../../../utils/functions"
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -202,7 +203,12 @@ const addEvent = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => router.push({ pathname: "/comunication/events" })}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
@@ -6,19 +6,19 @@ import {
     getSubCategories,
     getCompetences,
     getSectors,
-    getSpecializationArea
 } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
-import RegisterCandidate from '../../../components/jobbank/candidates/RegisterCandidate';
+import DetailsCandidates from '../../../components/jobbank/candidates/DetailsCandidates';
 
 const candidate = ({
     currentNode,
     getSectors,
     getMainCategories,
     getSubCategories,
-    getCompetences,
-    getSpecializationArea
+    getCompetences
 }) => {
+
+    const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
@@ -26,13 +26,16 @@ const candidate = ({
             getMainCategories(currentNode.id);
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
-            getSpecializationArea(currentNode.id);
         }
     },[currentNode])
 
+    const action = useMemo(()=>{
+        return router.query?.id ? 'edit' : 'add';
+    },[router])
+
     return (
         <AutoRegister>
-            <RegisterCandidate/>
+            <DetailsCandidates isAutoRegister={true} action={action}/>
         </AutoRegister>
     )
 }
@@ -48,7 +51,6 @@ export default connect(
         getSectors,
         getMainCategories,
         getSubCategories,
-        getCompetences,
-        getSpecializationArea
+        getCompetences
     }
 )(candidate);

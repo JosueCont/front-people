@@ -13,35 +13,34 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import ModalPositions from './ModalPositions';
 import DeleteItems from '../../../common/DeleteItems';
+import moment from 'moment';
 
-const TabPositions = ({ sizeCol = 8, action }) => {
+const TabPositions = ({
+    action,
+    setInfoPositions,
+    infoPositions
+}) => {
 
-    const {
-        list_sectors,
-        load_sectors
-    } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [infoPositions, setInfoPositions] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoPosition(router.query.id);
         }
-    },[router])
+    },[router.query?.id])
 
     const getInfoPosition = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getCandidateLastJob(id);
+            let response = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0');
             setInfoPositions(response.data);
             setLoading(false);
         } catch (e) {
@@ -55,12 +54,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true);
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.createCandidateLastJob(body);
-            message.success('Posición registrada');
+            message.success('Puesto registrado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no registrada');
+            message.error('Puesto no registrado');
         }
     }
 
@@ -69,12 +68,12 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let body = {...values, candidate: router.query.id};
             await WebApiJobBank.updateCandidateLastJob(itemToEdit.id, body);
-            message.success('Posición actualizada');
+            message.success('Puesto actualizado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Posición no actualizada');
+            message.error('Puesto no actualizado');
         }
     }
 
@@ -83,11 +82,11 @@ const TabPositions = ({ sizeCol = 8, action }) => {
             setLoading(true)
             let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteCandidateLastJob(id);
-            message.success('Posición eliminada');
+            message.success('Puesto eliminado');
             getInfoPosition(router.query.id);
         } catch (e) {
             console.log(e)
-            message.error('Posición no eliminada');
+            message.error('Puesto no eliminado');
             setLoading(false)
         }
     }
@@ -151,25 +150,53 @@ const TabPositions = ({ sizeCol = 8, action }) => {
 
     const columns = [
         {
-            title: 'Posición',
-            dataIndex: 'position_name',
-            key: 'position_name'
-        },
-        {
             title: 'Empresa',
             dataIndex: 'company',
             key: 'company'
         },
         {
-            title: ()=>{
+            title: 'Sector',
+            dataIndex: ['sector', 'name'],
+            key: ['sector', 'name']
+        },
+        {
+            title: 'Puesto',
+            dataIndex: 'position_name',
+            key: 'position_name'
+        },
+        {
+            title: 'Fecha inicio',
+            render: (item) =>{
                 return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
+                    <span>{item.start_date ? moment(item.start_date).format('DD-MM-YYYY') : ''}</span>
                 )
-            },
+            }
+        },
+        {
+            title: 'Fecha finalización',
+            render: (item) =>{
+                return(
+                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                )
+            }
+        },
+        {
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: ()=> (
+                <Button size='small' onClick={()=> setOpenModal(true)}>
+                    Agregar
+                </Button>
+            ),
+            width: 85,
+            align: 'center',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -190,37 +217,33 @@ const TabPositions = ({ sizeCol = 8, action }) => {
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoPositions.results}
+                dataSource={infoPositions}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
                 }}
                 pagination={{
-                    total: infoPositions.count,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
             />
-            {openModal && (
-                <ModalPositions
-                    title={validateAction() ? 'Editar posición' : 'Agregar posición'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta posición?'
-                    visible={openModalDelete}
-                    keyTitle='position_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalPositions
+                title={validateAction() && openModal ? 'Editar puesto' : 'Agregar puesto'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar este puesto?'
+                visible={openModalDelete}
+                keyTitle='company'
+                keyDescription='position_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }

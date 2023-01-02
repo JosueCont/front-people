@@ -5,7 +5,7 @@ import {
   rulePhone,
   ruleRequired,
   ruleWhiteSpace,
-  ruleMaxPhoneNumber
+  ruleMaxPhoneNumber,
 } from "../../../utils/rules";
 import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
@@ -18,13 +18,12 @@ const FormPatronalRegistration = ({
   patronalRegistration = {},
   pushed,
   currentNodeId,
+  imssDelegation = null,
   ...props
 }) => {
-
-  const [ information, setInformation ] = useState(null)
-  const socialReason = Form.useWatch('social_reason', form)
-  
-  
+  const [information, setInformation] = useState(null);
+  const socialReason = Form.useWatch("social_reason", form);
+  const [imssDelegationId, setImssDelegationId] = useState(null);
 
   useEffect(() => {
     currentNodeId && getInformationfiscal();
@@ -36,23 +35,32 @@ const FormPatronalRegistration = ({
         setInformation(response.data);
       })
       .catch((error) => {
-        console.log("Error", error);
+        console.log(error);
       });
   };
 
   useEffect(() => {
-
-    if(socialReason){
+    if (socialReason) {
       form.setFieldsValue({
-        social_reason: socialReason
-      })
+        social_reason: socialReason,
+      });
     } else {
-            
       form.setFieldsValue({
-        social_reason: information?.business_name
-      })
+        social_reason: information?.business_name,
+      });
     }
   }, [information]);
+
+  const changeImssDelegation = (value) => {
+    form.setFieldsValue({ imss_subdelegation: null });
+    setImssDelegationId(value);
+  };
+
+  useEffect(() => {
+    if (imssDelegation) {
+      setImssDelegationId(imssDelegation);
+    }
+  }, [imssDelegation]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -88,7 +96,7 @@ const FormPatronalRegistration = ({
           <Form.Item
             name="subsidy_reimbursement_agreement"
             label="Convenio de reembolso de subsidio"
-            rules={[ruleRequired, ruleWhiteSpace]}
+            rules={[ruleWhiteSpace]}
           >
             <Input />
           </Form.Item>
@@ -99,7 +107,7 @@ const FormPatronalRegistration = ({
             label="Teléfono"
             rules={[rulePhone, onlyNumeric, ruleWhiteSpace]}
           >
-            <Input maxLength={10}/>
+            <Input maxLength={10} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
@@ -111,10 +119,16 @@ const FormPatronalRegistration = ({
           <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation rules={[ruleRequired]} />
+          <SelectImssDelegation
+            rules={[ruleRequired]}
+            changeImssDelegation={changeImssDelegation}
+          />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation rules={[ruleRequired]} />
+          <SelectImssSubdelegation
+            rules={[ruleRequired]}
+            imssDelegationId={imssDelegationId}
+          />
         </Col>
       </Row>
     </Form>

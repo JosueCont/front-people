@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3006"
+    "start": "next start -p 3006",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@emotion/babel-preset-css-prop": "^10.0.27",
@@ -16,6 +17,7 @@
     "@material-ui/icons": "4.2.1",
     "@material-ui/lab": "4.0.0-alpha.39",
     "@material-ui/pickers": "^3.2.10",
+    "@react-pdf/renderer": "^3.0.1",
     "@sentry/react": "^7.5.0",
     "@sentry/tracing": "^7.5.0",
     "antd": "4.21.3",
@@ -36,6 +38,8 @@
     "moment-timezone": "^0.5.33",
     "next": "^10.0.7",
     "next-cookies": "^2.0.3",
+    "patch-package": "^6.5.0",
+    "postinstall-postinstall": "^2.1.0",
     "rc-year-calendar": "^1.0.2",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.0",

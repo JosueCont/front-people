@@ -1,25 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
 import {
   SearchOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import {
-    getVacancies,
-    setJobbankFilters
-} from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import { getFullName } from '../../../utils/functions';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { optionsStatusVacant } from '../../../utils/constant';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchVacancies = ({
     load_clients_options,
     list_clients_options,
     currentNode,
-    getVacancies,
-    setJobbankFilters,
     load_persons,
     persons_company
 }) => {
@@ -27,27 +22,23 @@ const SearchVacancies = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
 
-    const createFilters = (obj) =>{
-        let query = '';
-        if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
-        if(obj.status) query+= `&status=${obj.status}`;
-        if(obj.customer) query += `&customer=${obj.customer}`;
-        if(obj.recruiter) query += `&strategy__recruiter_id=${obj.recruiter}`;
-        return query;
-    }
+    useEffect(()=>{
+        let values = {...router.query};
+        if(values.status) values.status = parseInt(values.status);
+        formSearch.setFieldsValue(values);
+    },[router])
 
     const onFinishSearch = (values) =>{
-        let filters = createFilters(values);
-        if(filters){
-            setJobbankFilters(filters)
-            getVacancies(currentNode.id, filters);
-        }else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/vacancies/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
-        setJobbankFilters("")
         formSearch.resetFields();
-        getVacancies(currentNode.id)
+        router.replace('/jobbank/vacancies', undefined, {shallow: true});
     }
 
     return (
@@ -60,7 +51,7 @@ const SearchVacancies = ({
             <Row gutter={[0,8]} style={{width: '100%'}}>
                 <Col xs={24} sm={12} md={8} xl={7}>
                     <Form.Item
-                        name='job_position'
+                        name='job_position__unaccent__icontains'
                         rules={[ruleWhiteSpace]}
                         style={{marginBottom: 0}}
                     >
@@ -103,7 +94,7 @@ const SearchVacancies = ({
                 </Col>
                 <Col xs={11} sm={12} md={8} xl={4}>
                     <Form.Item
-                        name='recruiter'
+                        name='strategy__recruiter_id'
                         style={{marginBottom: 0}}
                     >
                         <Select
@@ -125,14 +116,23 @@ const SearchVacancies = ({
                 </Col>
                 <Col xs={12} sm={23} md={15} xl={5} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
-                        <Button htmlType='submit'>
-                            <SearchOutlined />
-                        </Button>
-                        <Button onClick={()=> deleteFilter()}>
-                            <SyncOutlined />
-                        </Button>
+                        <Tooltip title='Buscar'>
+                            <Button htmlType='submit'>
+                                <SearchOutlined />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title='Limpiar filtros'>
+                            <Button onClick={()=> deleteFilter()}>
+                                <SyncOutlined />
+                            </Button>
+                        </Tooltip>
                     </div>
-                    <Button onClick={()=> router.push('/jobbank/vacancies/add')}>Agregar</Button>
+                    <Button onClick={()=> router.push({
+                        pathname: '/jobbank/vacancies/add',
+                        query: router.query
+                    })}>
+                        Agregar
+                    </Button>
                 </Col>
             </Row>
         </Form>
@@ -149,9 +149,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(
-    mapState,{
-        getVacancies,
-        setJobbankFilters
-    }
-)(SearchVacancies)
+export default connect(mapState)(SearchVacancies)

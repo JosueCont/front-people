@@ -31,7 +31,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import DocumentModal from "../../components/modal/document";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useEffect, useState } from "react";

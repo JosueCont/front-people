@@ -11,25 +11,26 @@ const SelectGeographicArea = ({
   rules = [],
   ...props
 }) => {
-
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    setOptions([])
-    if(props.cat_geographic_area){
+    setOptions([]);
+    if (props.cat_geographic_area) {
       let options = props.cat_geographic_area.map((op) => {
         return {
           key: op.id,
           value: op.id,
-          label: `${op.area === 1 ? 'Frontera Norte' : 'Resto del país'} ($${op.min_salary})`
-        } 
-      })
+          label: `${op.area === 1 ? "Frontera Norte" : "Resto del país"} ($${
+            op.min_salary
+          })`,
+        };
+      });
 
-      setOptions(options)
+      setOptions(options);
     }
-  },[props.cat_geographic_area])
+  }, [props.cat_geographic_area]);
 
-  return(
+  return (
     <Form.Item
       key="geograp_area"
       name="geograp_area"
@@ -37,30 +38,25 @@ const SelectGeographicArea = ({
       rules={rules}
     >
       <Select
-        key={'selectGeographicarea'}
-        disabled = { disabled }
+        size={props.size ? props.size : "middle"}
+        key={"selectGeographicarea"}
+        disabled={disabled}
         allowClear
         notFoundContent={"No se encontraron resultados."}
         showSearch
         optionFilterProp="children"
+        placeholder="Area geografica"
       >
-        {
-          options.length > 0 && 
+        {options.length > 0 &&
           options.map((op) => (
-            <Option
-              key={op.key}
-              value = { op.value }
-            >
-              { op.label }
+            <Option key={op.key} value={op.value}>
+              {op.label}
             </Option>
-          )) 
-        }
+          ))}
       </Select>
-  </Form.Item>
-  )
-  
-
-}
+    </Form.Item>
+  );
+};
 
 const mapState = (state) => {
   return {

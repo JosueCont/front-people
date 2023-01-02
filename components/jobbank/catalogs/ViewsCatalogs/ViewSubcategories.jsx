@@ -4,18 +4,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ruleRequired } from '../../../../utils/rules';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import {
-    getSubCategories,
-    getMainCategories
-} from '../../../../redux/jobBankDuck';
+import { getMainCategories } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 
-const ViewSubcategories = () => {
+const ViewSubcategories = ({
+    filtersString,
+    currentPage
+ }) => {
 
     const {
-        list_sub_categories,
-        load_sub_categories,
         list_main_categories,
         load_main_categories,
     } = useSelector(state => state.jobBankStore);
@@ -24,51 +22,64 @@ const ViewSubcategories = () => {
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [mainData, setMainData] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [mainData, setMainData] = useState({});
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getSubCategories(currentNode.id));
+        getSubCategories(currentNode.id, filtersString);
+    },[currentNode, filtersString])
+    
+    useEffect(()=>{
+        if(!currentNode) return;
         dispatch(getMainCategories(currentNode.id));
     },[currentNode])
 
-    useEffect(()=>{
-        setLoading(load_sub_categories);
-    },[load_sub_categories])
-    
-    useEffect(()=>{
-        setMainData(list_sub_categories);
-    },[list_sub_categories])
+    const getSubCategories = async (node, query = '') =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getSubCategories(node, query);
+            setMainData(response.data)
+            setLoading(false)
+        } catch (e) {
+            setLoading(false)
+            console.log(e)
+        }
+    }
 
     const actionCreate = async (values) =>{
         try {
             await WebApiJobBank.createSubCategory({...values, node: currentNode.id});
-            dispatch(getSubCategories(currentNode.id));
-            message.success('Subcategorái registrada');
+            getSubCategories(currentNode.id, filtersString);
+            message.success('Subcategoría registrada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no registrada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no registrada';
+            message.error(msg);
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateSubCategory(itemToEdit.id, values);
-            dispatch(getSubCategories(currentNode.id));
-            message.success('Subcategorái actualizada');
+            await WebApiJobBank.updateSubCategory(id, values);
+            getSubCategories(currentNode.id, filtersString);
+            message.success('Subcategoría actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Subcategoría no actualizada');
+            let error = e.response?.data?.message;
+            let msg = error
+                ? 'Este nombre ya existe con la misma categoría'
+                : 'Subcategoría no actualizada';
+            message.error(msg);
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async (id) =>{
         try {
-            let id = itemsToDelete.at(-1).id;
             await WebApiJobBank.deleteSubCategory(id);
-            dispatch(getSubCategories(currentNode.id));
+            getSubCategories(currentNode.id, filtersString);
             message.success('Subcategoría eliminada');
         } catch (e) {
             console.log(e)
@@ -85,6 +96,7 @@ const ViewSubcategories = () => {
             <Select
                 allowClear
                 showSearch
+                disabled={router.query?.category}
                 placeholder='Seleccionar una categoría'
                 notFoundContent='No se encontraron resultados'
                 optionFilterProp='children'
@@ -102,12 +114,7 @@ const ViewSubcategories = () => {
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs
-                    setLoading={setLoading}
-                    setOpenModal={setOpenModal}
-                    listComplete={list_sub_categories}
-                    setItemsFilter={setMainData}
-                />
+                <SearchCatalogs setOpenModal={setOpenModal}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -119,13 +126,10 @@ const ViewSubcategories = () => {
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    itemToEdit={itemToEdit}
-                    setItemToEdit={setItemToEdit}
-                    itemsToDelete={itemsToDelete}
-                    setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     extraFields={<SelectCategory/>}
+                    numPage={currentPage}
                 />
             </Col>
         </Row> 

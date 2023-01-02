@@ -28,12 +28,14 @@ const FormProfiles = ({
     const { formatData } = useProcessInfo();
 
     const onChangeType = (value) =>{
-        if(!value) setDisabledField(false);
+        setDisabledField(false);
         let resetValues = formatData(list_vacancies_fields, false, 'field');
         formProfile.setFieldsValue(resetValues);
         if(value == 'open_fields'){
-            formProfile.setFieldsValue(valuesDefault);
-            setDisabledField(false);
+            formProfile.setFieldsValue({
+                ...valuesDefault,
+                profile_type: value
+            });
             return;
         }
         const type = item => item.id == value;
@@ -46,20 +48,30 @@ const FormProfiles = ({
         formProfile.setFieldsValue(activeFields);
     }
 
+    const onChangeDisabled = () =>{
+        if(!disabledField) return;
+        setDisabledField(false)
+        formProfile.setFieldsValue({
+            profile_type: 'open_fields'
+        })
+    }
+
     return (
         <Row gutter={[24,0]}>
             <Col xs={24} lg={10}>
                 <Form.Item
                     name='name'
+                    label='Nombre del template'
                     style={{marginBottom: 0}}
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input maxLength={100} placeholder='Nombre del perfil'/>
+                    <Input maxLength={100} placeholder='Escriba el nombre'/>
                 </Form.Item>
             </Col>
             <Col xs={24} sm={12} lg={7}>
                 <Form.Item
                     name='customer'
+                    label='Cliente'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
@@ -83,6 +95,7 @@ const FormProfiles = ({
             <Col xs={24} sm={12} lg={7}>
                 <Form.Item
                     name='profile_type'
+                    label='Tipo de template'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
@@ -106,8 +119,11 @@ const FormProfiles = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={24}>
-                <VacantFields disabledField={disabledField}/>
+            <Col span={24} style={{paddingTop: 12}}>
+                <VacantFields
+                    disabledField={disabledField}
+                    onChangeDisabled={onChangeDisabled}
+                />
             </Col>
         </Row>
     )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MainLayout from '../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb } from 'antd';
 import TableClients from '../../../components/jobbank/clients/TableClients';
 import SearchClients from '../../../components/jobbank/clients/SearchClients';
@@ -10,7 +10,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getFiltersJB } from '../../../utils/functions';
+import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -19,17 +19,27 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilters, setCurrentFilters] = useState('');
+
+    useEffect(()=>{
+        if(currentNode) getSectors(currentNode.id);
+    },[currentNode])
 
     useEffect(()=>{
         if(currentNode){
+            let page = router.query.page
+                ? parseInt(router.query.page)
+                : 1;
             let filters = getFiltersJB(router.query);
-            getClients(currentNode.id, filters);
-            getSectors(currentNode.id);
+            getClients(currentNode.id, filters, page)
+            setCurrentPage(page)
+            setCurrentFilters(filters)
         }
-    },[currentNode, router])
+    },[currentNode, router.query])
 
     return (
-        <MainLayout currentKey={'jb_clients'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey={'jb_clients'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -37,18 +47,15 @@ const index = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
+                {verifyMenuNewForTenant() && 
+                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
+                }
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Clientes</Breadcrumb.Item>
             </Breadcrumb>
-            <div
-                className={'container'}
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}>
+            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
                 <SearchClients/>
-                <TableClients/>
+                <TableClients currentPage={currentPage} currentFilters={currentFilters}/>
             </div>
         </MainLayout>
     )

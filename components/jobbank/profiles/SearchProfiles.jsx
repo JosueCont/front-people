@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button, Input, Row, Col, Form, Select } from 'antd';
+import React, { useEffect } from 'react'
+import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
@@ -7,11 +7,10 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { getProfilesList } from '../../../redux/jobBankDuck';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchProfiles = ({
     currentNode,
-    getProfilesList,
     load_clients_options,
     list_clients_options
 }) => {
@@ -19,22 +18,21 @@ const SearchProfiles = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
 
-    const createQuerys = (obj) =>{
-        let query = '';
-        if(obj.name) query += `&name__unaccent__icontains=${obj.name}`;
-        if(obj.customer) query += `&customer=${obj.customer}`;
-        return query;
-    }
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router.query])
 
     const onFinishSearch = (values) =>{
-        const query = createQuerys(values);
-        if(query) getProfilesList(currentNode.id, query);
-        else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/profiles/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        getProfilesList(currentNode.id)
+        router.replace('/jobbank/profiles', undefined, {shallow: true});
     }
 
     return (
@@ -44,7 +42,7 @@ const SearchProfiles = ({
                     <Row style={{width: '100%'}}>
                         <Col span={12}>
                             <Form.Item
-                                name='name'
+                                name='name__unaccent__icontains'
                                 rules={[ruleWhiteSpace]}
                                 style={{marginBottom: 0}}
                             >
@@ -70,18 +68,27 @@ const SearchProfiles = ({
                             </Form.Item>
                         </Col>
                         <Col span={4} style={{display: 'flex', gap: '8px'}}>
-                            <Button htmlType='submit'>
-                                <SearchOutlined />
-                            </Button>
-                            <Button onClick={()=> deleteFilter()}>
-                                <SyncOutlined />
-                            </Button>
+                            <Tooltip title='Buscar'>
+                                <Button htmlType='submit'>
+                                    <SearchOutlined />
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title='Limpiar filtros'>
+                                <Button onClick={()=> deleteFilter()}>
+                                    <SyncOutlined />
+                                </Button>
+                            </Tooltip>
                         </Col>
                     </Row>
                 </Form>
             </Col>
             <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push({pathname: '/jobbank/profiles/add'})}>Agregar</Button>
+                <Button onClick={()=> router.push({
+                    pathname: '/jobbank/profiles/add',
+                    query: router.query
+                })}>
+                    Agregar
+                </Button>
             </Col>
         </Row>
     )
@@ -95,4 +102,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, { getProfilesList })(SearchProfiles)
+export default connect(mapState)(SearchProfiles)

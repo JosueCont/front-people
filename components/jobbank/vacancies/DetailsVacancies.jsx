@@ -23,12 +23,15 @@ import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useProcessInfo } from './hook/useProcessInfo';
+import ListLangs from '../candidates/ListLangs';
 
 const DetailsVacancies = ({
     action,
-    currentNode
+    currentNode,
+    newFilters = {}
 }) => {
 
+    const rule_languages = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -40,36 +43,43 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
-    const { setValuesForm, createData } = useProcessInfo({
-        formVacancies,
-        infoVacant,
-        setListInterviewers,
-        listInterviewers
-    });
+    const [currentKey, setCurrentKey] = useState('1');
+    const { setValuesForm, createData } = useProcessInfo();
+     //Idiomas
+    const [currentValue, setCurrentValue] = useState([]);
+    const [listLangDomain, setListLangDomain] = useState([]);
+    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoVacant(router.query.id)
         }
-    },[router])
+    },[router.query?.id])
 
     useEffect(()=>{
         if(Object.keys(infoVacant).length > 0 && action == 'edit'){
             formVacancies.resetFields()
-            setValuesForm();
+            let allValues = setValuesForm(infoVacant);
+            formVacancies.setFieldsValue(allValues)
+            let inters = allValues?.interviewers?.length > 0
+                ? allValues.interviewers : [];
+            let langs = allValues?.languages?.length > 0
+                ? allValues.languages?.map(item => ({lang: item.lang, domain: item.domain}))
+                : []; 
+            setListInterviewers(inters)
+            setListLangDomain(langs)
         }
     },[infoVacant])
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
+        if(router.query.client && action == 'add'){
             formVacancies.resetFields()
-            keepCustomer()
-        }else setDisabledClient(false)
-    },[router])
+            keepClient()
+        }
+    },[router.query])
 
 
     const getInfoVacant = async (id) =>{
@@ -84,10 +94,9 @@ const DetailsVacancies = ({
         }
     }
 
-    const keepCustomer = () =>{
-        setDisabledClient(true)
+    const keepClient = () =>{
         formVacancies.setFieldsValue({
-            customer_id: router.query.customer
+            customer_id: router.query.client
         })
     }
 
@@ -124,7 +133,9 @@ const DetailsVacancies = ({
 
     const onFinish = (values) => {
         setFetching(true);
-        const bodyData = createData(values);
+        let bodyData = createData(values);
+        bodyData.interviewers = listInterviewers;
+        bodyData.languages = listLangDomain;
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -135,19 +146,29 @@ const DetailsVacancies = ({
     const onFinishFailed = (e) =>{
         setLoading({})
         if(e.errorFields.length <= 0) return false;
-        message.error('Verificar que se han ingresado el Cliente y Nombre de la vacante');
+        message.error(`Verificar que se ha seleccionado el Cliente
+            e ingresado Nombre de la vacante y el Sueldo mensual bruto.`);
     }
 
     const actionCreate = () =>{
         formVacancies.resetFields()
-        if (router.query?.customer) keepCustomer();
+        if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
+        setCurrentValue([])
+        setRuleLanguages(rule_languages)
+        setListLangDomain([])
     }
 
     const actionBack = () =>{
-        if(router.query?.customer) router.push('/jobbank/clients');
-        else router.push('/jobbank/vacancies');
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: newFilters
+        });
+        else router.push({
+            pathname: '/jobbank/vacancies',
+            query: newFilters
+        });
     }
 
     const actionSaveAnd = (id) =>{
@@ -156,10 +177,10 @@ const DetailsVacancies = ({
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/vacancies/edit',
-                query: { id }
+                query: {...newFilters, id }
             })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -167,6 +188,19 @@ const DetailsVacancies = ({
         const item = { loading: true, disabled: false };
         setLoading({...fetchingParams, [type]: item });
         btnSave.current.click();
+    }
+
+    const onChangeTab = (tab) =>{
+        if(action == 'add'){
+            setCurrentKey(tab)
+            return;
+        }
+        let querys = {...router.query, tab};
+        if(querys['tab'] == '1') delete querys['tab'];
+        router.replace({
+            pathname: router.asPath.split('?')[0],
+            query: querys
+        }, undefined, {shallow: true})
     }
 
     return (
@@ -197,34 +231,55 @@ const DetailsVacancies = ({
                         // requiredMark={false}
                         initialValues={{
                             vo_bo: false,
-                            rotative_turn: false
+                            rotative_turn: false,
+                            requires_travel_availability: false
                         }}
                     >
-                        <Tabs type='card'>
+                        <Tabs
+                            type='card'
+                            activeKey={action == 'edit'
+                                ? router.query?.tab ?? '1'
+                                : currentKey
+                            }
+                            onChange={onChangeTab}
+                        >
                             <Tabs.TabPane
                                 tab='Características del puesto'
-                                key='tab_1'
+                                forceRender
+                                key='1'
                             >
                                 <Spin spinning={fetching}>
                                     <TabFeatures
                                         formVacancies={formVacancies}
-                                        disabledClient={disabledClient}
+                                        disabledClient={router.query?.client}
+                                        hasEstrategy={infoVacant?.has_estrategy}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab='Educación, competencias y habilidades'
                                 forceRender
-                                key='tab_2'
+                                key='2'
                             >
                                 <Spin spinning={fetching}>
-                                    <TabEducation formVacancies={formVacancies}/>
+                                    <TabEducation formVacancies={formVacancies}>
+                                        <ListLangs
+                                            changeColor={true}
+                                            listLangDomain={listLangDomain}
+                                            setListLangDomain={setListLangDomain}
+                                            setCurrentValue={setCurrentValue}
+                                            currentValue={currentValue}
+                                            setRuleLanguages={setRuleLanguages}
+                                            ruleLanguages={ruleLanguages}
+                                            rule_languages={rule_languages}
+                                        />
+                                    </TabEducation>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab='Sueldo y prestaciones'
                                 forceRender
-                                key='tab_3'
+                                key='3'
                             >
                                 <Spin spinning={fetching}>
                                     <TabSalary formVacancies={formVacancies}/>
@@ -233,7 +288,7 @@ const DetailsVacancies = ({
                             <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender
-                                key='tab_4'
+                                key='4'
                             >
                                 <Spin spinning={fetching}>
                                     <TabRecruitment

@@ -50,10 +50,12 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         <Form.Item label='Sector' name='sector'>
                             <Select
                                 allowClear
+                                showSearch
                                 disabled={load_sectors}
                                 loading={load_sectors}
                                 placeholder='Seleccionar un sector'
                                 notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
                             >
                                 {list_sectors.length > 0 && list_sectors.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -92,7 +94,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         <Form.Item
                             name='description'
                             label='Descripción del cliente'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Escriba una breve descripción'
@@ -107,7 +109,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         <Form.Item
                             name='comments'
                             label='Comentarios adicionales'
-                            rules={[ruleWhiteSpace]}
+                            // rules={[ruleWhiteSpace]}
                             // style={{marginBottom: 0}}
                         >
                             <Input.TextArea

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import { Spin, Breadcrumb, Button, notification, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import Lendingform from "../../components/forms/LendingForm";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 
 const LendingNew = () => {
   const route = useRouter();
@@ -76,7 +77,7 @@ const LendingNew = () => {
   };
 
   return (
-    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["managementRH","concierge","requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -84,6 +85,12 @@ const LendingNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        {verifyMenuNewForTenant() && 
+          <>
+            <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
+            <Breadcrumb.Item>Concierge</Breadcrumb.Item>
+          </>
+        }
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}
                          onClick={() => route.push({ pathname: "/lending/" })}>Préstamos</Breadcrumb.Item>
