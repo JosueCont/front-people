@@ -5,15 +5,16 @@ import { ruleWhiteSpace } from '../../../utils/rules';
 import { createFiltersJB } from '../../../utils/functions';
 import {
     SearchOutlined,
-    SyncOutlined
+    SyncOutlined,
+    ArrowLeftOutlined
 } from '@ant-design/icons';
 import { useEffect } from 'react';
 
 const SearchCatalogs = ({
-    setOpenModal,
-    actionBtn,
-    textBtn = 'Agregar',
-    iconBtn = <></>
+    actionBtnAdd = ()=>{},
+    keyName = 'name__unaccent__icontains',
+    showBtnAdd = true,
+    backURl = '/jobbank/settings/catalogs'
 }) => {
 
     const router = useRouter();
@@ -47,7 +48,7 @@ const SearchCatalogs = ({
             <Row style={{width: '100%'}}>
                 <Col span={8}>
                     <Form.Item
-                        name='name__unaccent__icontains'
+                        name={keyName}
                         rules={[ruleWhiteSpace]}
                         style={{marginBottom: 0}}
                     >
@@ -66,10 +67,20 @@ const SearchCatalogs = ({
                         </Button>
                     </Tooltip>
                 </Col>
-                <Col span={8} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button icon={iconBtn} onClick={()=> actionBtn ? actionBtn() : setOpenModal(true)}>
-                        {textBtn}
-                    </Button>
+                <Col span={8}>
+                    <div className='content-end' style={{gap: 8}}>
+                        <Button
+                            icon={<ArrowLeftOutlined />}
+                            onClick={()=> router.push(backURl)}
+                        >
+                            Regresar
+                        </Button>
+                        {showBtnAdd && (
+                            <Button onClick={()=> actionBtnAdd()}>
+                                Agregar
+                            </Button>
+                        )}
+                    </div>
                 </Col>
             </Row>
         </Form>

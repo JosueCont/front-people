@@ -337,53 +337,9 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'delete');
     }
 
-    static getSpecializationArea(node, query){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/?node=${node}${query}`, 'get');
-    }
-
-    static createSpecializationArea(data){
-        return WebApi.ApisType('/job-bank/specialization-area-study/', 'post', data);
-    }
-
-    static updateSpecializationArea(id, data){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/${id}/`, 'put', data);
-    }
-
-    static deleteSpecializationArea(id){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/${id}/`, 'delete');
-    }
-
-    static getSpecializationSubArea(node, query){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/?node=${node}${query}`, 'get');
-    }
-
-    static createSpecializationSubArea(data){
-        return WebApi.ApisType('/job-bank/specialization-sub-area/', 'post', data);
-    }
-
-    static updateSpecializationSubArea(id, data){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'put', data);
-    }
-
-    static deleteSpecializationSubArea(id){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'delete');
-    }
-
     static getListStates(node, query){
         return WebApi.ApisType(`/job-bank/states/?node=${node}${query}`, 'get');
     }
-
-    // static createState(data){
-    //     return WebApi.ApisType('/job-bank/states/', 'post', data);
-    // }
-
-    // static updateState(id, data){
-    //     return WebApi.ApisType(`/job-bank/states/${id}/`, 'put', data);
-    // }
-
-    // static deleteState(id){
-    //     return WebApi.ApisType(`/job-bank/states/${id}/`, 'delete');
-    // }
 }
 
 export default WebApiJobBank;

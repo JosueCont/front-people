@@ -1,11 +1,14 @@
 import React, { useMemo } from 'react';
-import { withAuthSync } from '../../../../../libs/auth';
 import { useRouter } from 'next/router';
-import { catalogsJobbank } from '../../../../../utils/constant';
-import GetViewCatalog from '../../../../../components/jobbank/catalogs/GetViewCatalog';
-import MainIndexJB from '../../../../../components/jobbank/MainIndexJB';
+import { connect } from 'react-redux';
+import GetViewAddOrEdit from './GetViewAddOrEdit';
+import MainIndexJB from '../MainIndexJB';
+import { catalogsJobbank } from '../../../utils/constant';
 
-const catalog = () => {
+const AddOrEditCatalog = ({
+    action = 'add',
+    currentNode
+}) => {
 
     const router = useRouter();
 
@@ -21,7 +24,8 @@ const catalog = () => {
         return [
             {name: 'Configuraciones', URL: '/jobbank/settings'},
             {name: 'Catálogos', URL: '/jobbank/settings/catalogs'},
-            {name: nameCatalog}
+            {name: nameCatalog, URL: `/jobbank/settings/catalogs/${router.query?.catalog}`},
+            {name: action == 'add' ? 'Nuevo' : 'Expediente'}
         ];
     },[nameCatalog])
 
@@ -30,9 +34,15 @@ const catalog = () => {
             pageKey='jb_settings'
             extraBread={ExtraBread}
         >
-            <GetViewCatalog/>
+            <GetViewAddOrEdit action={action}/>
         </MainIndexJB>
     )
 }
 
-export default withAuthSync(catalog);
+const mapState = (state) =>{
+    return{
+        currentNode: state.userStore.current_node
+    }
+}
+
+export default connect(mapState)(AddOrEditCatalog);

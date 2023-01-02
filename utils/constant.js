@@ -486,7 +486,7 @@ export const optionsTypeSale = [
 
 export const optionsStatusSelection = [
   { value: 1, key: 1, label: "Filtro telefónico" },
-  { value: 2, key: 2, label: "Entrevista HEX" },
+  { value: 2, key: 2, label: "Entrevista con HEX" },
   { value: 3, key: 3, label: "Enviado a cliente" },
   { value: 4, key: 4, label: "Proceso con cliente" },
   { value: 5, key: 5, label: "Rechazado" },
@@ -594,9 +594,14 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  // { catalog: "areas", name: "Áreas de especialización" },
-  // { catalog: "subareas", name: "Subáreas de especialización" },
+  { catalog: "types", name: "Tipos de notificación" },
+  { catalog: "messages", name: "Mensajes de notificación" }
 ];
+
+export const catalogsNotifyJB = [
+  { catalog: "types", name: "Tipos de notificación" },
+  { catalog: "templates", name: "Template de mensaje"}
+]
 
 export const departureMotive = [
   { value: 1, label: "Termino de contrato" },

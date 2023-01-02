@@ -13,7 +13,7 @@ const FormTemplate = () => {
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
-                   <Input maxLength={50} placeholder='Nombre'/>
+                   <Input maxLength={50} placeholder='Escriba el nombre'/>
                 </Form.Item>
             </Col>
             <Col span={12}>

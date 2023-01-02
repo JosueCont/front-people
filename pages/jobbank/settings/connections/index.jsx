@@ -8,6 +8,7 @@ import { getConnections } from '../../../../redux/jobBankDuck';
 import SearchConnections from '../../../../components/jobbank/connections/SearchConnections';
 import TableConnections from '../../../../components/jobbank/connections/TableConnections';
 import { verifyMenuNewForTenant, getFiltersJB } from '../../../../utils/functions';
+import MainIndexJB from '../../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
@@ -28,32 +29,22 @@ const index = ({
         }
     },[currentNode, router.query])
 
+    const ExtraBread = [
+        {name: 'Configuraciones', URL: '/jobbank/settings'},
+        {name: 'Conexiones'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/jobbank/settings'})}
-                >
-                    Configuraciones
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Conexiones</Breadcrumb.Item>
-            </Breadcrumb>
-            <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
-                <SearchConnections/>
-                <TableConnections currentPage={currentPage} currentFilters={currentFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_settings'
+            extraBread={ExtraBread}
+        >
+            <SearchConnections/>
+            <TableConnections
+                currentPage={currentPage}
+                currentFilters={currentFilters}
+            />
+        </MainIndexJB>
     )
 }
 

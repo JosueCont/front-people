@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
@@ -12,7 +10,8 @@ import {
     getStrategiesOptions
 } from '../../../redux/jobBankDuck';
 import DetailsPublication from './DetailsPublication';
-import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
+import { deleteFiltersJb } from '../../../utils/functions';
+import MainIndexJB from '../MainIndexJB';
 
 const AddOrEditPublication = ({
     action = 'add',
@@ -46,34 +45,22 @@ const AddOrEditPublication = ({
         }
     },[currentNode])
 
+    const ExtraBread = [
+        {name: 'Publicaciones', URL: '/jobbank/publications'},
+        {name: action == 'add' ? 'Nueva' : 'Expediente'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/publications',
-                        query: newFilters
-                    })}
-                >
-                    Publicaciones
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container'>
-               <DetailsPublication action={action} newFilters={newFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_publications'
+            newFilters={newFilters}
+            extraBread={ExtraBread}
+        >
+            <DetailsPublication
+                action={action}
+                newFilters={newFilters}
+            />   
+        </MainIndexJB>
     )
 }
 

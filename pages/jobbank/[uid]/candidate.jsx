@@ -31,7 +31,7 @@ const candidate = ({
 
     const action = useMemo(()=>{
         return router.query?.id ? 'edit' : 'add';
-    },[router])
+    },[router.query?.id])
 
     return (
         <AutoRegister>

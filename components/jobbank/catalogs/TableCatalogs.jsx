@@ -29,7 +29,12 @@ const TableCatalogs = ({
     numPage = 1,
     //No requeridos
     extraFields = <></>,
-    extraOptions = ()=> <></>
+    ExtraOptions = ()=> <></>,
+    extraColumns = [{
+        title: 'Nombre',
+        dataIndex: 'name',
+        key: 'name'
+    }]
 }) => {
 
     const router = useRouter();
@@ -107,17 +112,18 @@ const TableCatalogs = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {extraOptions(item)}
+                <ExtraOptions item={item}/>
             </Menu>
         );
     };
 
     const columns = [
-        {
-            title: 'Nombre',
-            dataIndex: 'name',
-            key: 'name'
-        },
+        // {
+        //     title: 'Nombre',
+        //     dataIndex: 'name',
+        //     key: 'name'
+        // },
+        ...extraColumns,
         {
             title: 'Acciones',
             render: (item) =>{

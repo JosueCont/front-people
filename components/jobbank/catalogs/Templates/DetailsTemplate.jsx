@@ -1,8 +1,7 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
+    useRef
 } from 'react';
 import {
     Card,
@@ -20,11 +19,13 @@ import { useRouter } from 'next/router';
 import FormTemplate from './FormTemplate';
 import { useInfoProfile } from '../../hook/useInfoProfile';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
+import { getVacantFields } from '../../../../redux/jobBankDuck';
 
 const DetailsTemplate = ({
     action,
     currentNode,
-    newFilters = {}
+    newFilters = {},
+    getVacantFields
 }) => {
     
     const fetchingItem = { loading: false, disabled: true };
@@ -41,6 +42,10 @@ const DetailsTemplate = ({
     const [infoTemplate, setInfoTemplate] = useState({});
     const [fetching, setFetching] = useState(false);
     const { createData, formatData } = useInfoProfile();
+
+    useEffect(()=>{
+        if(currentNode) getVacantFields(currentNode.id);
+    },[currentNode])
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -227,4 +232,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState)(DetailsTemplate);
+export default connect(mapState, { getVacantFields })(DetailsTemplate);

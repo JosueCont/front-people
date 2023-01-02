@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import TableHistory from '../../../../components/jobbank/publications/TableHistory';
-import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../../utils/functions';
+import { deleteFiltersJb } from '../../../../utils/functions';
 import { getConnectionsOptions } from '../../../../redux/jobBankDuck';
+import MainIndexJB from '../../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
@@ -27,32 +26,19 @@ const index = ({
         if(currentNode) getConnectionsOptions(currentNode.id);
     },[currentNode])
 
+    const ExtraBread = [
+        {name: 'Publicaciones', URL: '/jobbank/publications'},
+        {name: 'Historial'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_publications' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/publications',
-                        query: newFilters
-                    })}
-                >
-                    Publicaciones
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Historial</Breadcrumb.Item>
-            </Breadcrumb>
+        <MainIndexJB
+            pageKey='jb_publications'
+            newFilters={newFilters}
+            extraBread={ExtraBread}
+        >
             <TableHistory newFilters={newFilters}/>
-        </MainLayout>
+        </MainIndexJB>
     )
 }
 

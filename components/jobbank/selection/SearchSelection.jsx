@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
+import { Button, Row, Col, Form, Card, Tooltip, message } from 'antd';
 import {
   SyncOutlined,
   SettingOutlined,
@@ -10,15 +10,33 @@ import { createFiltersJB } from '../../../utils/functions';
 import ModalFilters from './ModalFilters';
 import TagFilters from '../TagFilters';
 import { useFiltersSelection } from '../hook/useFiltersSelection';
+import ModalSelection from './ModalSelection';
+import { getSelection } from '../../../redux/jobBankDuck';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const SearchSelection = ({
-    currentNode
+    currentNode,
+    currentPage,
+    currentFilters,
+    getSelection
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModalAdd, setOpenModalAdd] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const { listKeys, listGets } = useFiltersSelection();
+
+    const actionCreate = async (values) =>{
+        try {
+            // await WebApiJobBank.createSelection({...values, node: currentNode.id});
+            getSelection(currentNode.id, currentFilters, currentPage)
+            message.success('Proceso registrado')
+        } catch (e) {
+            console.log(e)
+            message.error('Proceso no registrado');
+        }
+    }
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
@@ -64,10 +82,9 @@ const SearchSelection = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push({
-                                    pathname: '/jobbank/candidates/add',
-                                    query: router.query
-                                })}>
+                                <Button
+                                    onClick={()=> setOpenModalAdd(true)}
+                                >
                                     Agregar
                                 </Button>
                             </div>
@@ -87,6 +104,12 @@ const SearchSelection = ({
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
+            <ModalSelection
+                title='Agregar proceso'
+                visible={openModalAdd}
+                actionForm={actionCreate}
+                close={()=> setOpenModalAdd(false)}
+            />
         </>
     )
 }
@@ -97,4 +120,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState)(SearchSelection);
+export default connect(mapState, {getSelection})(SearchSelection);

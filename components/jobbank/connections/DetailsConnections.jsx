@@ -15,7 +15,7 @@ import {
   message,
   Divider
 } from 'antd';
-import { ConnectionProvider } from '../context/ConnectionContext';
+import { CustomProvider } from '../context/CustomContext';
 import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -142,14 +142,14 @@ const DetailsConnections = ({
                             onFinish={onFinish}
                         >
                             <Row gutter={[24,0]}>
-                                <ConnectionProvider
+                                <CustomProvider
                                     infoConnection={infoConnection}
                                     loading={fetching}
                                     formConnection={formConnection}
                                     setFileImg={setFileImg}
                                 >
                                     <GetForm/>
-                                </ConnectionProvider>
+                                </CustomProvider>
                             </Row>
                         </Form>
                     </Spin>
