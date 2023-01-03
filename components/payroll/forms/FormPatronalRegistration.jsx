@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Input, Row, Col, Select } from "antd";
+import { Form, Input, Row, Col, Select,DatePicker } from "antd";
 import {
   onlyNumeric,
   rulePhone,
@@ -11,6 +11,8 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
 import SelectImssSubdelegation from "../../../components/selects/SelectImssSubdelegation";
 import SelectGeographicArea from "../../selects/SelectGeographicArea";
+import moment from 'moment'
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormPatronalRegistration = ({
   node,
@@ -24,6 +26,7 @@ const FormPatronalRegistration = ({
   const [information, setInformation] = useState(null);
   const socialReason = Form.useWatch("social_reason", form);
   const [imssDelegationId, setImssDelegationId] = useState(null);
+  const [yearPeriod, setYearPeriod] = useState(null);
 
   useEffect(() => {
     currentNodeId && getInformationfiscal();
@@ -32,6 +35,7 @@ const FormPatronalRegistration = ({
   const getInformationfiscal = () => {
     WebApiPeople.getfiscalInformationNode(currentNodeId)
       .then((response) => {
+        console.log('fiscal patronal', response.data)
         setInformation(response.data);
       })
       .catch((error) => {
@@ -55,6 +59,14 @@ const FormPatronalRegistration = ({
     form.setFieldsValue({ imss_subdelegation: null });
     setImssDelegationId(value);
   };
+
+
+  const changeYear = (value,yearText) => {
+    setYearPeriod(parseInt(yearText))
+    form.setFieldsValue({ setup_period: moment().year(parseInt(yearText)) });
+    console.log(form.getFieldsValue())
+  };
+
 
   useEffect(() => {
     if (imssDelegation) {
@@ -116,7 +128,20 @@ const FormPatronalRegistration = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <SelectGeographicArea rules={[ruleRequired]} />
+          <Form.Item  name='setup_period' label="Periodo">
+            <DatePicker
+                style={{ width: "100%" }}
+                onChange={changeYear}
+                picker="year"
+                moment={"YYYY"}
+                disabledDate={(currentDate) => currentDate.year() > new Date().getFullYear() }
+                placeholder=""
+                locale={locale}
+            />
+          </Form.Item>
+        </Col>
+        <Col lg={6} xs={22}>
+          <SelectGeographicArea period={yearPeriod} rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
           <SelectImssDelegation
