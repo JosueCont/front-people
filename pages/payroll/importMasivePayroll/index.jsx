@@ -297,7 +297,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     let notSaved = []; // empresas no guardadas
     if (company_list.length > 0) {
       notSaved = company_list.filter((ele) => !ele.saved);
-      console.log(notSaved);
     }
 
     if (notSaved.length > 0) {
@@ -312,7 +311,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     } else {
       let calendars = [];
       company_list.map((comp) => {
-        comp.calendars.map((c) => {
+       comp?.calendars &&  comp.calendars.map((c) => {
           calendars.push({
             company: comp,
             calendar: c,
