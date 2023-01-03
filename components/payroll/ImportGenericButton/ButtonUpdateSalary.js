@@ -143,7 +143,7 @@ const ButtonUpdateSalary=({person,node, payrollPerson, personsList,...props})=>{
 
     return (
         <>
-            <Button onClick={() => openModal(MOVEMENTS_TYPE.UPDATE_SALARY)} style={menuDropDownStyle}>
+            <Button style={{ marginBottom: "10px", paddingTop:0 }} onClick={() => openModal(MOVEMENTS_TYPE.UPDATE_SALARY)} style={menuDropDownStyle}>
                 Actualizar Salario
             </Button>
 

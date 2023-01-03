@@ -1363,90 +1363,86 @@ const homeScreen = ({ ...props }) => {
                     </Form>
                   </Col>
                 </Row>
-                <Row justify={"start"} style={{ padding: "1% 0" }}>
-                  <Col span={24}>
-                    <Space>
-                      {permissions.export_csv_person && (
+
+              </div>
+              <Row justify={"start"}>
+                <Col span={24}>
+                  <Space>
+                    {permissions.export_csv_person && (
                         <Button
-                          type="primary"
-                          icon={<DownloadOutlined />}
-                          size={{ size: "large" }}
-                          onClick={() => exportPersons()}
-                          style={{ marginBottom: "10px" }}
+                            type="primary"
+                            icon={<DownloadOutlined />}
+                            onClick={() => exportPersons()}
                         >
                           Descargar personas
                         </Button>
-                      )}
+                    )}
 
-                      {permissions.import_csv_person && (
+                    {permissions.import_csv_person && (
                         <Upload
-                          {...{
-                            showUploadList: false,
-                            beforeUpload: (file) => {
-                              const isXlsx = file.name.includes(".xlsx");
-                              if (!isXlsx) {
-                                message.error(`${file.name} no es un xlsx.`);
-                              }
-                              return isXlsx || Upload.LIST_IGNORE;
-                            },
-                            onChange(info) {
-                              const { status } = info.file;
-                              if (status !== "uploading") {
-                                if (info.fileList.length > 0) {
-                                  importPersonFileExtend(
-                                    info.fileList[0].originFileObj
-                                  );
-                                  info.file = null;
-                                  info.fileList = [];
+                            {...{
+                              showUploadList: false,
+                              beforeUpload: (file) => {
+                                const isXlsx = file.name.includes(".xlsx");
+                                if (!isXlsx) {
+                                  message.error(`${file.name} no es un xlsx.`);
                                 }
-                              }
-                            },
-                          }}
+                                return isXlsx || Upload.LIST_IGNORE;
+                              },
+                              onChange(info) {
+                                const { status } = info.file;
+                                if (status !== "uploading") {
+                                  if (info.fileList.length > 0) {
+                                    importPersonFileExtend(
+                                        info.fileList[0].originFileObj
+                                    );
+                                    info.file = null;
+                                    info.fileList = [];
+                                  }
+                                }
+                              },
+                            }}
                         >
                           <Button
-                            size="middle"
-                            icon={<UploadOutlined />}
-                            style={{ marginBottom: "10px" }}
+                              size="middle"
+                              icon={<UploadOutlined />}
                           >
                             Importar personas
                           </Button>
                         </Upload>
-                      )}
+                    )}
 
-                      <Button
-                        className={"ml-20"}
+                    <Button
                         icon={<DownloadOutlined />}
-                        style={{ marginBottom: "10px" }}
                         onClick={() =>
-                          downLoadFileBlob(
-                            `${getDomain(
-                              API_URL_TENANT
-                            )}/person/person/generate_template/?type=1`,
-                            "platilla_personas.xlsx",
-                            "GET"
-                          )
+                            downLoadFileBlob(
+                                `${getDomain(
+                                    API_URL_TENANT
+                                )}/person/person/generate_template/?type=1`,
+                                "platilla_personas.xlsx",
+                                "GET"
+                            )
                         }
-                      >
-                        Descargar plantilla
-                      </Button>
-                      {props.config && props.config.nomina_enabled &&
-                          <ButtonDownloadConfronta/>
-                      }
+                    >
+                      Descargar plantilla
+                    </Button>
+                    {props.config && props.config.nomina_enabled &&
+                        <ButtonDownloadConfronta/>
+                    }
 
-                      {/*{props.config && props.config.nomina_enabled &&*/}
-                      {/*    <ButtonMovements node={props.currentNode}/>*/}
-                      {/*}*/}
-                    </Space>
-                  </Col>
+                    {/*{props.config && props.config.nomina_enabled &&*/}
+                    {/*    <ButtonMovements node={props.currentNode}/>*/}
+                    {/*}*/}
 
-                  {props.config && props.config.nomina_enabled &&
-                      <Col>
-                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode}/>
-                      </Col>
-                  }
+                    {props.config && props.config.nomina_enabled &&
+                        <ButtonUpdateSalary  personsList={rowSelectionPerson} node={props.currentNode}/>
+                    }
+                  </Space>
+                </Col>
 
-                </Row>
-              </div>
+
+
+              </Row>
               <Table
                 className={"mainTable table-persons"}
                 rowKey={"id"}
