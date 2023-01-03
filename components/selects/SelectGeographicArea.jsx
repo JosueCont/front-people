@@ -3,15 +3,26 @@ import { Select, Form } from "antd";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
+import {getGeographicArea} from "../../redux/fiscalDuck";
 const { Option } = Select;
 
 const SelectGeographicArea = ({
   disabled,
   viewLabel = true,
   rules = [],
+  period=null,
+  getGeographicArea,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
+
+
+  useEffect(()=>{
+    if(period){
+      console.log('cambia periodo', period)
+      getGeographicArea(period)
+    }
+  },[period])
 
   useEffect(() => {
     setOptions([]);
@@ -64,4 +75,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectGeographicArea);
+export default connect(mapState,{getGeographicArea})(SelectGeographicArea);
