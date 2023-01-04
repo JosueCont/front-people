@@ -14,7 +14,6 @@ const ViewTemplates = ({
 
     const currentNode = useSelector(state => state.userStore.current_node);
     const router = useRouter();
-    const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
 
@@ -46,18 +45,11 @@ const ViewTemplates = ({
         }
     }
 
-    const openModalEdit = (item) =>{
-        router.push({
-            pathname: '/jobbank/settings/catalogs/profiles/edit',
-            query: {...filtersQuery, id: item.id}
-        })
-    }
-
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
                 <SearchCatalogs
-                    actionBtn={()=> router.push({
+                    actionBtnAdd={()=> router.push({
                         pathname: '/jobbank/settings/catalogs/profiles/add',
                         query: filtersQuery
                     })}
@@ -71,10 +63,11 @@ const ViewTemplates = ({
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
-                    openModal={openModal}
-                    setOpenModal={setOpenModal}
-                    actionBtnEdit={openModalEdit}
                     numPage={currentPage}
+                    actionBtnEdit={(item)=> router.push({
+                        pathname: '/jobbank/settings/catalogs/profiles/edit',
+                        query: {...filtersQuery, id: item.id}
+                    })}
                 />
             </Col>
         </Row> 

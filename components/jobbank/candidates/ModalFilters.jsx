@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select, Checkbox } from 'antd';
 import { useSelector } from 'react-redux';
@@ -15,10 +15,14 @@ const ModalFilters = ({
         load_main_categories,
         list_main_categories,
         list_states,
-        load_states
+        load_states,
+        list_sectors,
+        load_sectors,
+        load_sub_categories,
+        list_sub_categories
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
-    const isOther = Form.useWatch('is_other', formSearch);
+    const category = Form.useWatch('main_category', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -29,14 +33,11 @@ const ModalFilters = ({
         },1000)
     }
 
-    const setValue = (key, val) => formSearch.setFieldsValue({[key]: val});
-    const setArea = (val = null) => setValue('area', val);
-    const setOther = (val = null) => setValue('other_area', val);
-
-    const onChangeOther = ({target : { checked }}) =>{
-        if(checked) setArea();
-        else setOther();
-    }
+    const optionsByCategory = useMemo(()=>{
+        if(!category) return [];
+        const options = item => item.category === category;
+        return list_sub_categories.filter(options);
+    },[category])
 
     return (
         <MyModal
@@ -91,15 +92,6 @@ const ModalFilters = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label='Puesto'
-                            name='job'
-                            rules={[ruleWhiteSpace]}
-                        >
-                            <Input maxLength={200} placeholder='Buscar por puesto'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
                             label='Estatus'
                             name='is_active'
                         >
@@ -114,15 +106,43 @@ const ModalFilters = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label='Área de especialización'
-                            name='area'
+                            label='Puesto'
+                            name='last_job'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input maxLength={200} placeholder='Buscar por puesto'/>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='sector'
+                            label='Sector'
+                        >
+                            <Select
+                                disabled={load_sectors}
+                                loading={load_sectors}
+                                placeholder='Seleccionar un opción'
+                                notFoundContent='No se encontraron resultados'
+                            >
+                                {list_sectors.length > 0 && list_sectors.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Categoría'
+                            name='main_category'
                         >
                             <Select
                                 allowClear
                                 showSearch
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
-                                disabled={isOther}
+                                disabled={load_main_categories}
                                 loading={load_main_categories}
                                 optionFilterProp='children'
                             >
@@ -134,25 +154,26 @@ const ModalFilters = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12} className='turn_rotative_content'>
-                        <div className='turn_rotative'>
-                            <label>
-                                ¿Otra área de especialización?
-                            </label>
-                            <Form.Item
-                                name='is_other'
-                                valuePropName='checked'
-                                style={{marginBottom: 0}}
+                    <Col span={12}>
+                        <Form.Item
+                            name='sub_category'
+                            label='Subcategoría'
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una subcategoría'
+                                notFoundContent='No se encontraron resultados'
+                                disabled={optionsByCategory.length <= 0}
+                                loading={load_sub_categories}
+                                optionFilterProp='children'
                             >
-                                <Checkbox onChange={onChangeOther}/>
-                            </Form.Item>
-                        </div>
-                        <Form.Item name='other_area'>
-                             <Input
-                                disabled={!isOther}
-                                maxLength={200}
-                                placeholder='Especifique la especialización'
-                            />
+                                {optionsByCategory.map(item=> (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>

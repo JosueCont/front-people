@@ -12,6 +12,7 @@ import {
   Table,
   Modal,
   Spin,
+  DatePicker
 } from "antd";
 import {
   CheckOutlined,
@@ -36,7 +37,7 @@ import AutomaticMovements from "../business/AutomaticMovements";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
-
+import moment from 'moment'
 const ImssInformationNode = ({
   node_id = null,
   fiscal,
@@ -89,7 +90,10 @@ const ImssInformationNode = ({
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <EditOutlined onClick={() => editRegister(item, "td")} />
+                <EditOutlined onClick={() => {
+                  console.log('patronal',item)
+                  editRegister(item, "td")
+                }} />
               </Col>
 
               <Col className="gutter-row" offset={1}>
@@ -216,6 +220,8 @@ const ImssInformationNode = ({
   const saveForms = () => {
     let jobRiskData = formJobRisk.getFieldValue();
     jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent);
+
+
     const data = {
       node: currentNode.id,
       patronal: formPatronal.getFieldsValue(),
@@ -224,6 +230,12 @@ const ImssInformationNode = ({
       jobRisk: jobRiskData,
     };
 
+    try{
+      if(formPatronal.getFieldValue('setup_period')){
+        let date = formPatronal.getFieldValue('setup_period');
+        data.patronal.setup_period = date.year()
+      }
+    }catch (e){}
     saveRegister(data);
   };
 
@@ -302,6 +314,7 @@ const ImssInformationNode = ({
       subsidy_reimbursement_agreement: item?.subsidy_reimbursement_agreement,
       phone: item?.phone,
       id: item?.id,
+      setup_period:item?.setup_period ?  moment().year(parseInt(item?.setup_period)) : null,
       type_contribution: item?.type_contribution,
       geograp_area: item?.geograp_area,
       imss_delegation: item?.imss_delegation,

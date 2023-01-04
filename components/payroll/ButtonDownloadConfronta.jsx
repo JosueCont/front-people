@@ -66,8 +66,6 @@ const ButtonDownloadConfronta=()=>{
 
       return (
           <Button
-              className={"ml-20"}
-              style={{ marginBottom: "10px" }}
               loading={loading}
               icon={<DownloadOutlined />}
               onClick={()=> downloadConfronta()}

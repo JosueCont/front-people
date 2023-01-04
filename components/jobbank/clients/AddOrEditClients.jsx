@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsClients from './DetailsClients';
 import { connect } from 'react-redux';
 import { getSectors } from '../../../redux/jobBankDuck';
-import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
+import { deleteFiltersJb } from '../../../utils/functions';
+import MainIndexJB from '../MainIndexJB';
 
 const AddOrEditClients = ({
     action = 'add',
@@ -27,34 +26,22 @@ const AddOrEditClients = ({
         if(currentNode) getSectors(currentNode.id);
     },[currentNode])
 
+    const ExtraBread = [
+        {name: 'Clientes', URL: '/jobbank/clients'},
+        {name: action == 'add' ? 'Nuevo' : 'Expediente'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_clients' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/clients',
-                        query: newFilters
-                    })}
-                >
-                    Clientes
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container'>
-                <DetailsClients action={action} newFilters={newFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_clients'
+            extraBread={ExtraBread}
+            newFilters={newFilters}
+        >
+            <DetailsClients
+                action={action}
+                newFilters={newFilters}
+            />
+        </MainIndexJB>
     )
 }
 

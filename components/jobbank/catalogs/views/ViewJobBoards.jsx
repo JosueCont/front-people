@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
+import { Row, Col, message } from 'antd';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 
-const ViewAcademics = ({
+const ViewJobBoards = ({
     filtersString,
     currentPage
 }) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
-    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [mainData, setMainData] = useState({});
+    const [mainData, setMainData] = useState([]);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getAcademics(currentNode.id, filtersString);
+        getJobBoards(currentNode.id, filtersString);
     },[currentNode, filtersString])
 
-    const getAcademics = async (node, query = '') =>{
+    const getJobBoards = async (node, query = '') =>{
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getAcademics(node, query);
+            let response = await WebApiJobBank.getJobBoards(node, query);
             setMainData(response.data)
             setLoading(false)
         } catch (e) {
@@ -36,51 +35,51 @@ const ViewAcademics = ({
 
     const actionCreate = async (values) =>{
         try {
-            await WebApiJobBank.createAcademic({...values, node: currentNode.id});
-            getAcademics(currentNode.id, filtersString);
-            message.success('Carrera registrada');
+            await WebApiJobBank.createJobBoard({...values, node: currentNode.id});
+            getJobBoards(currentNode.id, filtersString);
+            message.success('Bolsa de empleo registrada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Carrera no registrada';
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no registrada';
             message.error(msg);
         }
     }
 
     const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateAcademic(id, values);
-            getAcademics(currentNode.id, filtersString);
-            message.success('Carrera actualizada');
+            await WebApiJobBank.updateJobBoard(id, values);
+            getJobBoards(currentNode.id, filtersString);
+            message.success('Bolsa de empleo actualizada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya este' : 'Carrera no actualizada';
+            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no actualizada';
             message.error(msg);
         }
     }
 
     const actionDelete = async (id) =>{
         try {
-            await WebApiJobBank.deleteAcademic(id);
-            getAcademics(currentNode.id, filtersString);
-            message.success('Carrera eliminada')
+            await WebApiJobBank.deleteJobBoard(id);
+            getJobBoards(currentNode.id, filtersString);
+            message.success('Bolsa de empleo eliminada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no eliminada')
+            message.error('Bolsa de empleo no eliminada');
         }
     }
 
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar carrera'
-                    titleEdit='Editar carrera'
-                    titleDelete='¿Estás seguro de eliminar esta carrera?'
+                    titleCreate='Agregar bolsa de empleo'
+                    titleEdit='Editar bolsa de empleo'
+                    titleDelete='¿Estás seguro de eliminar esta bolsa?'
                     actionCreate={actionCreate}
                     actionUpdate={actionUpdate}
                     actionDelete={actionDelete}
@@ -95,4 +94,4 @@ const ViewAcademics = ({
     )
 }
 
-export default ViewAcademics;
+export default ViewJobBoards;

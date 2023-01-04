@@ -115,7 +115,7 @@ const Permission = ({ permissions, ...props }) => {
           <>
             <div className="top-container-border-radius">
               <Row justify="space-between" style={{ paddingBottom: 20 }}>
-                <Col>
+                <Col span={24}>
                   <Form
                     name="filter"
                     onFinish={filterPermission}
@@ -125,23 +125,21 @@ const Permission = ({ permissions, ...props }) => {
                     form={form}
                   >
                     <Row gutter={[24, 8]}>
-                      <Col>
+                      <Col md={8} xs={12}>
                         <SelectCollaborator
                           name="collaborator"
-                          style={{ width: 150 }}
                         />
                       </Col>
-                      <Col>
+                      <Col md={8} xs={12}>
                         <SelectDepartment companyId={props?.currentNode?.id} />
                       </Col>
-                      <Col>
+                      <Col md={8} xs={12}>
                         <Form.Item
                           key="estatus_filter"
                           name="status"
                           label="Estatus"
                         >
                           <Select
-                            style={{ width: 150 }}
                             key="select"
                             options={optionStatus}
                             allowClear
@@ -149,22 +147,23 @@ const Permission = ({ permissions, ...props }) => {
                           />
                         </Form.Item>
                       </Col>
-                      <Col style={{ display: "flex" }}>
+                      <Col md={4} xs={12}>
                         <Button
                           style={{
                             background: "#fa8c16",
                             fontWeight: "bold",
                             color: "white",
+                            width:'100%',
                             marginTop: "auto",
                           }}
                           key="buttonFilter"
                           htmlType="submit"
                           loading={sending}
                         >
-                          <SearchOutlined />
+                          <SearchOutlined /> Filtrar
                         </Button>
                       </Col>
-                      <Col style={{ display: "flex" }}>
+                      <Col md={4} xs={12}>
                         <Tooltip
                           title="Limpiar filtros"
                           color={"#3d78b9"}
@@ -172,13 +171,13 @@ const Permission = ({ permissions, ...props }) => {
                         >
                           <Button
                             onClick={() => resetFilter()}
-                            style={{ marginTop: "auto", marginLeft: 10 }}
+                            style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
                           >
-                            <SyncOutlined />
+                            <SyncOutlined /> Limpiar filtros
                           </Button>
                         </Tooltip>
                       </Col>
-                      <Col style={{ display: "flex" }}>
+                      <Col md={4} xs={12}>
                         {permissions.create && (
                           <Button
                             style={{
@@ -186,6 +185,7 @@ const Permission = ({ permissions, ...props }) => {
                               fontWeight: "bold",
                               color: "white",
                               marginTop: "auto",
+                              width:'100%'
                             }}
                             onClick={() => route.push("/permission/new")}
                             key="btn_new"

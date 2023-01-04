@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
@@ -10,7 +8,8 @@ import {
     getJobBoards
 } from '../../../redux/jobBankDuck';
 import DetailsStrategies from './DetailsStrategies';
-import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
+import { deleteFiltersJb } from '../../../utils/functions';
+import MainIndexJB from '../MainIndexJB';
 
 const AddOrEditStrategies = ({
     action = 'add',
@@ -40,34 +39,22 @@ const AddOrEditStrategies = ({
         }
     },[currentNode])
 
+    const ExtraBread = [
+        {name: 'Estrategias', URL: '/jobbank/strategies'},
+        {name: action == 'add' ? 'Nueva' : 'Expediente'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_strategies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/strategies',
-                        query: newFilters
-                    })}
-                >
-                    Estrategias
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container'>
-                <DetailsStrategies action={action} newFilters={newFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_strategies'
+            extraBread={ExtraBread}
+            newFilters={newFilters}
+        >
+            <DetailsStrategies
+                action={action}
+                newFilters={newFilters}
+            />
+        </MainIndexJB>
     )
 }
 

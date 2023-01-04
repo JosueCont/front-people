@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Input, Select, Form } from 'antd';
 import { ruleRequired } from '../../../../utils/rules';
-import VacantFields from '../../profiles/VacantFields';
+import VacantFields from '../../VacantFields';
 
 const FormTemplate = () => {
     return (
@@ -13,7 +13,7 @@ const FormTemplate = () => {
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
-                   <Input maxLength={50} placeholder='Nombre'/>
+                   <Input maxLength={50} placeholder='Escriba el nombre'/>
                 </Form.Item>
             </Col>
             <Col span={12}>
