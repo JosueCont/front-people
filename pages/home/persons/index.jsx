@@ -719,7 +719,8 @@ const homeScreen = ({ ...props }) => {
 
   const importPersonFileExtend = async (e) => {
     let formData = new FormData();
-    formData.append("File", e);
+    //formData.append("File", e);
+    formData.append("excel_person_file", e);
     formData.append("node_id", props.currentNode.id);
     formData.append("saved_by", userSession.user_id);
     setLoading(true);
