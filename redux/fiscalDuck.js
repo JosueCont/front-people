@@ -435,14 +435,17 @@ export const FamilyMedicalUnit = () => async (dispatch, getState) => {
     });
 };
 
-export const getGeographicArea = () => async (dispatch, getState) => {
+export const getGeographicArea = (year=null) => async (dispatch, getState) => {
   let currentYear = parseInt(moment().format("YYYY"));
+  if(year){
+     currentYear = year;
+  }
 
   await WebApiFiscal.get_geograp_area(currentYear)
     .then((response) => {
       dispatch({
         type: GEOGRAPHIC_AREA,
-        payload: response.data.results,
+        payload: response.data,
       });
     })
     .catch((error) => {
