@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { deleteFiltersJb } from '../../../utils/functions';
 //Details
-import DetailsTemplate from './templates/DetailsTemplate';
-import DetailsMessages from './messages/DetailsMessages';
+import DetailsTemplate from './Templates/DetailsTemplate';
+import DetailsMessages from './Messages/DetailsMessages';
 
 const GetViewAddOrEdit = ({action}) => {
 

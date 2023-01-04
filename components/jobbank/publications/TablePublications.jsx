@@ -174,7 +174,7 @@ const TablePublications = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
@@ -183,14 +183,14 @@ const TablePublications = ({
                     })}
                 >
                     Editar
-                </Menu.Item>
-                <Menu.Item
+                </Menu.Item> */}
+                {/* <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='3'
                     icon={<ShareAltOutlined />}
@@ -268,15 +268,16 @@ const TablePublications = ({
         //     }
         // },
         {
-            title: ()=> {
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=> {
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>

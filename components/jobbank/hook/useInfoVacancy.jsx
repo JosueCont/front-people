@@ -64,7 +64,7 @@ export const useInfoVacancy = () =>{
         if(sub_category && Object.keys(sub_category).length > 0) details['sub_category'] = sub_category.id;
         if(academics_degree?.length > 0) details['academics_degree'] = academics_degree.at(-1).id;
         if(competences?.length > 0) details['competences'] = competences.map(item=> item.id);
-        if(experiences?.length > 0) details['experiences'] = experiences.join(',\n');
+        if(experiences) details['experiences'] = experiences.split(',').join(',\n');
         if(technical_skills?.length > 0) details['technical_skills'] = technical_skills.join(',\n');
         
         delete details.id;
@@ -113,8 +113,8 @@ export const useInfoVacancy = () =>{
         else info.age_range = [];
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
         else info.academics_degree = [];
-        if(info.experiences) info.experiences = info.experiences.split(',');
-        else info.experiences = [];
+        // if(info.experiences) info.experiences = info.experiences.split(',');
+        // else info.experiences = [];
         if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
         else info.technical_skills = [];
         if(info.gross_salary) info.gross_salary = info.gross_salary.replaceAll(',','');

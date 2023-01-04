@@ -263,13 +263,13 @@ const DetailsPublication = ({
                             >
                                 Guardar y registrar otra
                             </Button>
-                            <Button
+                            {/* <Button
                                 onClick={()=>getSaveAnd('edit')}
                                 disabled={loading['edit']?.disabled}
                                 loading={loading['edit']?.loading}
                             >
                                 Guardar y editar
-                            </Button>
+                            </Button> */}
                         </>
                     ):(
                         <Button

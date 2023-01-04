@@ -1,7 +1,6 @@
 import React, {
     useRef,
     useEffect,
-    useContext,
     useMemo
 } from 'react';
 import {
@@ -11,7 +10,6 @@ import {
     Form,
     Select,
     Checkbox,
-    Divider,
     Button,
     message,
     Alert
@@ -21,91 +19,39 @@ import {
     ruleWhiteSpace,
     ruleURL
 } from '../../../utils/rules';
-import {
-    FacebookFilled,
-    ToTopOutlined,
-    EyeOutlined,
-    DeleteOutlined
-} from '@ant-design/icons';
-import { FacebookLoginClient } from '@greatsumini/react-facebook-login';
-import { redirectTo } from '../../../utils/constant';
-import { getFileExtension } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { CustomContext } from '../context/CustomContext';
 import { useRouter } from 'next/router';
+import FileUpload from '../FileUpload';
+import BtnLoginFB from '../BtnLoginFB';
 
-const FormFBIG = () => {
+const FormFBIG = ({
+    infoConnection,
+    infoConfig,
+    loading,
+    formConnection,
+    setFileImg,
+    existPreConfig
+}) => {
 
-    const config_success = {
-        msg: `La configuración actual se encuentra en funcionamiento,
-        se recomienda no actualizar ningún parámetro en caso de ser necesario.`,
-        type: 'success'
-    };
-    const config_error = {
-        msg: `La configuración actual ha fallado, se recomienda iniciar sesión de nuevo
-            y conceder todos los permisos requeridos.`,
-        type: 'error'
-    };
-    const validate_config = {
-        'true': config_success,
-        'false': config_error
-    };
-    const {
-        infoConnection,
-        loading,
-        formConnection,
-        setFileImg
-    } = useContext(CustomContext);
     const router = useRouter();
     const btnSubmit = useRef(null);
-    const inputFile = useRef(null);
-    const typeFile = ['png','jpg','jpeg'];
-
-    useEffect(()=>{
-        (async ()=>{
-            await FacebookLoginClient.loadSdk('en_US', false);
-        })();
-    },[])
-
-    useEffect(()=>{
-        if(Object.keys(infoConnection).length <= 0) return;
-        initFacebook();
-    },[infoConnection])
-
+    
     const isInstagram = useMemo(()=>{
         return router.query?.code == 'IG'
     },[router.query?.code])
 
-    const initFacebook = async () =>{
-        let app_id = infoConnection.data_config?.app_id;
-        if(!app_id) return;
-        FacebookLoginClient.init({
-            appId: infoConnection.data_config.app_id,
-            version: 'v14.0',
-            localStorage: false,
-            xfbml: true
-        });
-    }
-
-    const setMessage = (type, msg) => message[type]({
-        content: msg,
-        key: 'updatable'
-    });
-    const setMessageSucces = (msg = '') => setMessage('success', msg);
-    const setMessageError = (msg = '') => setMessage('error', msg);
-    const setMessageLoading = (msg = '') => setMessage('loading', msg);
-
     const onSuccess = async (response) =>{
+        const key = 'updatable';
         let msgError = 'Acceso no obtenido';
+        message.loading({content: 'Guardando acceso...', key})
         try {
-            setMessageLoading('Guardando acceso...');
             let resp = await WebApiJobBank.getTokenFB({
                 token: response.accessToken,
                 app_id: infoConnection.data_config?.app_id,
                 secret_key: infoConnection.data_config?.secret_key
             });
             if(!resp.data?.page_token || !resp.data?.user_token){
-                setMessageError(msgError);
+                message.error({content: msgError, key});
                 deletePermissions();
                 return;
             }
@@ -120,48 +66,10 @@ const FormFBIG = () => {
         } catch (e) {
             console.log(e)
             let txtError = e.response?.data?.message;
-            let msgSelected = txtError ?? msgError;
-            setMessageError(msgSelected);
+            let msg = txtError ?? msgError;
+            message.error({content: msg, key})
             deletePermissions();
         }
-    }
-
-    const onFail = (response) =>{
-        let msgError = {
-            'facebookNotLoaded': 'No fue posible cargar la configuración de facebook, actualizar la página',
-            'loginCancelled': 'Inicio de sesión cancelado/fallido'
-        }
-        let txtMsg = msgError[response.status];
-        if(txtMsg) message.error(txtMsg);
-    }
-
-    const onLogout = (response) =>{
-        console.log('logout')
-    }
-
-    const validateResp = (resp) =>{
-        if(!resp.authResponse){
-            onFail({status: 'loginCancelled'});
-            return;
-        }
-        onSuccess(resp.authResponse);
-        FacebookLoginClient.logout(onLogout);
-    }
-
-    const validateLogin = () =>{
-        if (!window.FB){
-            onFail({status: 'facebookNotLoaded'});
-            return;
-        }
-        FacebookLoginClient.login(validateResp, {
-            scope: `email,
-                public_profile,
-                pages_show_list,
-                pages_manage_posts,
-                instagram_basic,
-                instagram_content_publish,
-            `
-        });
     }
 
     const deletePermissions = () =>{
@@ -170,45 +78,38 @@ const FormFBIG = () => {
         })
     }
 
-    const openFile = () =>{
-        inputFile.current.value = null;
-        inputFile.current.click();
-    }
+    const msgConfig = useMemo(()=>{
+        let msgSuccess = `La configuración actual se encuentra en funcionamiento,
+            se recomienda no actualizar ningún parámetro en caso de ser necesario.`
+        let msgError = `La configuración actual ha fallado, se recomienda iniciar sesión de nuevo
+            y conceder todos los permisos requeridos.`
+        let message = infoConnection.is_valid ? msgSuccess : msgError;
+        let type = infoConnection.is_valid ? 'success' : 'error';
+        return { message, type };
+    },[infoConnection.is_valid])
 
-    const setFileSelected = ({target : { files }}) =>{
-        if(Object.keys(files).length <= 0){
-            let msg = 'No se pudo cargar el archivo, intente de nuevo';
-            message.error(msg)
-            return;
-        }
-        let extension = getFileExtension(files[0].name);
-        if(!typeFile.includes(extension.toLowerCase())){
-            let msg = 'El archivo seleccionado no es válido';
-            message.error(msg);
-            return;
-        }
-        let size = files[0].size / 1024 / 1024;
-        if(size > 10){
-            message.error(`Archivo pesado: ${size.toFixed(2)}mb`);
-            return;
-        }
-        setFileImg([files[0]]);
-        formConnection.setFieldsValue({image_read: files[0].name});
-    }
-
-    const resetImg = () =>{
-        setFileImg([]);
-        formConnection.setFieldsValue({image_read: null});
-    }
+    const msgPreConfig = {
+        message: `Se han precargado algunos parámetros de
+            ${isInstagram ? 'Facebook' : 'Instagram'}, ya que la mayoría son similares
+            para esta conexión, para guardarlos es necesario "Actualizar" y posteriormente
+            llenar los datos faltantes para completar la configuración.`,
+        type: 'warning'
+    };
 
     return (
         <>
-            {infoConnection.data_config?.page_access_token && (
+            {infoConnection.data_config?.page_access_token &&
+                infoConnection.data_config?.user_access_token && (
                 <Col span={24}>
                     <Form.Item>
-                        <Alert
-                            message={validate_config[infoConnection.is_valid].msg}
-                            type={validate_config[infoConnection.is_valid].type} showIcon />
+                        <Alert {...msgConfig} showIcon />
+                    </Form.Item>
+                </Col>
+            )}
+            {existPreConfig && (
+                <Col span={24}>
+                    <Form.Item>
+                        <Alert {...msgPreConfig} showIcon/>
                     </Form.Item>
                 </Col>
             )}
@@ -258,58 +159,18 @@ const FormFBIG = () => {
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} lg={8}>
-                <Form.Item
+                <FileUpload
                     label='Imagen predeterminada'
-                    tooltip={`Esta imagen (${typeFile.join(', ')}) será utilizada en caso de que
+                    tooltip={`Esta imagen será utilizada en caso de que
                     no se haya seleccionado ninguna antes de realizar la publicación.`}
-                    required={isInstagram}
-                >
-                    <Input.Group compact>
-                        <Form.Item
-                            noStyle
-                            name='image_read'
-                            rules={[isInstagram ? ruleRequired : {}]}
-                        >
-                            <Input
-                                readOnly
-                                placeholder='Ningún archivo seleccionado'
-                                style={{
-                                    width: 'calc(100% - 64px)',
-                                    borderTopLeftRadius: 10,
-                                    borderBottomLeftRadius: 10
-                                }}
-                            />
-                        </Form.Item>
-                        {infoConnection.default_image ? (
-                            <Button
-                                className='custom-btn'
-                                onClick={()=> redirectTo(infoConnection.default_image, true)}
-                                icon={<EyeOutlined />}
-                            />
-                        ): (
-                            <Button
-                                className='custom-btn'
-                                onClick={()=> resetImg()}
-                                icon={<DeleteOutlined />}
-                            />
-                        )}
-                        <Button
-                            icon={<ToTopOutlined />}
-                            onClick={()=> openFile()}
-                            style={{
-                                borderTopRightRadius: 10,
-                                borderBottomRightRadius: 10
-                            }}
-                        />
-                        <input
-                            type='file'
-                            style={{display: 'none'}}
-                            accept={typeFile.reduce((acc, item) => acc +=`.${item}, `,'')}
-                            ref={inputFile}
-                            onChange={setFileSelected}
-                        />
-                    </Input.Group>
-                </Form.Item>
+                    isRequired={isInstagram}
+                    setFile={setFileImg}
+                    typeFile={['png','jpg','jpeg']}
+                    urlPreview={infoConnection?.default_image}
+                    setNameFile={e=> formConnection.setFieldsValue({
+                        name_file: e
+                    })}
+                />
             </Col>
             <Col xs={24} md={12} lg={8}>
                 <Form.Item
@@ -368,7 +229,6 @@ const FormFBIG = () => {
                             name='data_config|page_access_token'
                             label='Token de acceso (página)'
                             tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
-                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 disabled
@@ -382,7 +242,6 @@ const FormFBIG = () => {
                             name='data_config|user_access_token'
                             label='Token de acceso (usuario)'
                             tooltip='Para obtener el token es necesario iniciar sesión en la red con sus credenciales.'
-                            // rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 disabled
@@ -395,14 +254,11 @@ const FormFBIG = () => {
             </Col>
             <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
                 {!infoConnection.is_valid && (
-                    <Button
-                        className='btn-login-facebook'
-                        onClick={()=> validateLogin()}
-                        disabled={loading}
-                        icon={<FacebookFilled />}
-                    >
-                        Iniciar sesión
-                    </Button>
+                    <BtnLoginFB
+                        loading={loading}
+                        appID={infoConnection.data_config?.app_id}
+                        onSuccess={onSuccess}
+                    />
                 )}
                 <Button
                     loading={loading}

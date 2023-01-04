@@ -598,11 +598,6 @@ export const catalogsJobbank = [
   { catalog: "messages", name: "Mensajes de notificación" }
 ];
 
-export const catalogsNotifyJB = [
-  { catalog: "types", name: "Tipos de notificación" },
-  { catalog: "templates", name: "Template de mensaje"}
-]
-
 export const departureMotive = [
   { value: 1, label: "Termino de contrato" },
   { value: 2, label: "Separación voluntaria" },

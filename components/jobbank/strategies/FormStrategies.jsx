@@ -65,14 +65,25 @@ const FormStrategies = ({
         setProyect();
     }
 
+    const formatSalary = (val) => val.toLocaleString("es-MX", {maximumFractionDigits: 4});
+
     const getSalary = () =>{
         let key = 'salary_and_benefits';
-        if(!vacant) return resetValues();
+        if(!vacant){
+            resetValues();
+            return;
+        }
         const _find = item => item.id == vacant;
         let selected = newListVacant.find(_find);
-        if(!selected) return resetValues();
+        if(!selected){
+            resetValues();
+            return;
+        }
         let salaryNum = selected[key]?.gross_salary;
-        if(salaryNum) setSalary(salaryNum);
+        if(salaryNum){
+            let salary_ = parseFloat(salaryNum.replaceAll(',',''));
+            setSalary(formatSalary(salary_));
+        }
         let numProyect = selected?.num_project;
         if(numProyect) setProyect(numProyect);
         setStatus(selected.status);
@@ -80,11 +91,13 @@ const FormStrategies = ({
 
     const getAmount = () =>{
         let validation = !salary || !percent; 
-        if(validation) return setAmount();
+        if(validation){
+            setAmount();
+            return;
+        }
         let salary_ = parseFloat(salary.replaceAll(',',''));
         let amount = (salary_/100) * percent;
-        let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
-        setAmount(formatAmount);
+        setAmount(formatSalary(amount));
     }
     
     const optionsByClient = useMemo(()=>{
@@ -271,11 +284,13 @@ const FormStrategies = ({
                 <Form.Item
                     name='qty_vacants'
                     label='Número de vacantes'
-                    rules={[ruleRequired]}
+                    rules={[ruleRequired,
+                        {type: 'number', max: 2147483647, message: 'Ingrese un valor menor o igual a 2147483647'}
+                    ]}
                 >
                     <InputNumber
                         type='number'
-                        maxLength={10}
+                        maxLength={9}
                         controls={false}
                         placeholder='Número de vacantes'
                         onKeyDown={validateNum}

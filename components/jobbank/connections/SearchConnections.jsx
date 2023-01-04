@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Button, Input, Row, Col, Form, Select, Tooltip} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Input, Row, Col, Form, Tooltip, message} from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
@@ -9,17 +9,36 @@ import { connect } from 'react-redux';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
+import ModalConnection from './ModalConnection';
+import WebApiJobBank from '../../../api/WebApiJobBank';
+import { getConnections } from '../../../redux/jobBankDuck';
 
 const SearchConnections = ({
-    currentNode
+    currentNode,
+    currentPage,
+    currentFilters,
+    getConnections
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(()=>{
         formSearch.setFieldsValue(router.query);
     },[router.query])
+
+    const actionCreate = async (values) =>{
+        try {
+            values.append('node', currentNode.id);
+            await WebApiJobBank.createConnection(values);
+            getConnections(currentNode.id, currentFilters, currentPage);
+            message.success('Conexión registrada');
+        } catch (e) {
+            console.log(e)
+            message.error('Conexión no registrada');
+        }
+    }
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
@@ -65,17 +84,28 @@ const SearchConnections = ({
                                 </Button>
                             </Tooltip>
                         </div>
-                        <Button
-                            icon={<ArrowLeftOutlined/>}
-                            onClick={()=> router.push({
-                                pathname: '/jobbank/settings',
-                            })}
-                        >
-                            Regresar
-                        </Button>
+                        <div style={{display: 'flex', gap: 8}}>
+                            <Button
+                                icon={<ArrowLeftOutlined/>}
+                                onClick={()=> router.push({
+                                    pathname: '/jobbank/settings',
+                                })}
+                            >
+                                Regresar
+                            </Button>
+                            <Button onClick={()=> setOpenModal(true)}>
+                                Agregar
+                            </Button>
+                        </div>
                     </Col>
                 </Row>
             </Form>
+            <ModalConnection
+                visible={openModal}
+                title='Agregar conexión'
+                actionForm={actionCreate}
+                close={()=> setOpenModal(false)}
+            />
         </>
     )
 }
@@ -86,4 +116,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState)(SearchConnections);
+export default connect(mapState,{getConnections})(SearchConnections);

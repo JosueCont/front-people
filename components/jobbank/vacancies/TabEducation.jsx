@@ -4,13 +4,15 @@ import {
   Row,
   Col,
   Input,
-  Select
+  Select,
+  InputNumber
 } from 'antd';
 import { useSelector } from 'react-redux';
 import {
   optionsLevelAcademic,
   optionsStatusAcademic,
 } from '../../../utils/constant';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 
 const TabEducation = ({
   children,
@@ -159,21 +161,25 @@ const TabEducation = ({
           </Select>
         </Form.Item>
       </Col>
-      {/* <Col xs={24} md={12} xl={8} xxl={6}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
-          name='languajes'
-          label='Idiomas'
+          name='years_experience'
+          label='Años de experiencia'
         >
-          <Select
-            mode='multiple'
-            maxTagCount={2}
-            placeholder='Seleccionar los idiomas'
-            notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsLangVacant}
-          />
+           <InputNumber
+              type='number'
+              maxLength={2}
+              controls={false}
+              placeholder='Años de experiencia'
+              onKeyDown={validateNum}
+              onKeyPress={validateMaxLength}
+              style={{
+                width: '100%',
+                border: '1px solid black'
+              }}
+            />
         </Form.Item>
-      </Col> */}
+      </Col>
       <Col span={24}>
         {children}
       </Col>

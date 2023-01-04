@@ -41,7 +41,7 @@ const AddOrEditPublication = ({
             getVacantFields(currentNode.id);
             getClientsOptions(currentNode.id);
             getStrategiesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&is_active=true');
         }
     },[currentNode])
 

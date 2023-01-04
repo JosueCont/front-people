@@ -7,6 +7,8 @@ import TableCandidates from '../../../components/jobbank/candidates/TableCandida
 import {
     getCandidates,
     getMainCategories,
+    getSubCategories,
+    getSectors,
     getListStates
 } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
@@ -16,7 +18,9 @@ const index = ({
     currentNode,
     getCandidates,
     getListStates,
-    getMainCategories
+    getMainCategories,
+    getSubCategories,
+    getSectors
 }) => {
 
     const router = useRouter();
@@ -27,6 +31,8 @@ const index = ({
         if(currentNode){
             getMainCategories(currentNode.id);
             getListStates(currentNode.id);
+            getSectors(currentNode.id);
+            getSubCategories(currentNode.id);
         }
     },[currentNode])
 
@@ -64,6 +70,8 @@ export default connect(
     mapState,{
         getCandidates,
         getListStates,
-        getMainCategories
+        getMainCategories,
+        getSubCategories,
+        getSectors
     }
 )(withAuthSync(index));
