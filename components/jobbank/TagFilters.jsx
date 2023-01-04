@@ -1,22 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 
 const TagFilters = ({
     listKeys = {},
-    listValues = {},
     listGets = {}
 }) => {
 
     const router = useRouter();
-    const [newFilters, setNewFilters] = useState({});
 
-    useEffect(()=>{
-        setNewFilters({})
-        if(Object.keys(router.query).length <= 0) return;
-        let querys = {...router.query};
-        if(querys['page']) delete querys['page'];
-        setNewFilters(querys);
+    const newFilters = useMemo(()=>{
+        let exist = Object.keys(router.query).length <= 0;
+        if(exist) return [];
+        let filters = {...router.query};
+        if(filters.page) delete filters.page;
+        return Object.entries(filters);
     },[router.query])
 
     const removeFilter = (key) =>{
@@ -28,21 +26,11 @@ const TagFilters = ({
         }, undefined, {shallow:true})
     }
 
-    const validateValue = useCallback((key, val)=>{
-        if(listValues[val]) return listValues[val];
-        if(listGets[key]) return listGets[key](val);
-        return val;
-    },[listGets])
-
     return (
         <div className='body-list-items scroll-bar'>
-            {Object.keys(newFilters).length > 0 ?
-                Object.entries(newFilters).map(([key, val], idx) =>(
+            {newFilters.length > 0 ? newFilters.map(([key, val], idx) =>(
                 <div className='item-list-row' key={idx}>
-                    <p>
-                        {listKeys[key] ?? key}:&nbsp;
-                        {validateValue(key, val)}
-                    </p>
+                    <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
                     <CloseOutlined onClick={()=> removeFilter(key)}/>
                 </div>
             )): (

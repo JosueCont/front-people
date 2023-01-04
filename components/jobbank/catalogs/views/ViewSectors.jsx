@@ -6,27 +6,25 @@ import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 
-const ViewJobBoards = ({
+const ViewSectors = ({
     filtersString,
     currentPage
 }) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
-    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
-        getJobBoards(currentNode.id, filtersString);
+        getSectors(currentNode.id, filtersString);
     },[currentNode, filtersString])
 
-    const getJobBoards = async (node, query = '') =>{
+    const getSectors = async (node, query = '') => {
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getJobBoards(node, query);
+            let response = await WebApiJobBank.getSectors(node, query);
             setMainData(response.data)
             setLoading(false)
         } catch (e) {
@@ -37,51 +35,51 @@ const ViewJobBoards = ({
 
     const actionCreate = async (values) =>{
         try {
-            await WebApiJobBank.createJobBoard({...values, node: currentNode.id});
-            getJobBoards(currentNode.id, filtersString);
-            message.success('Bolsa de empleo registrada');
+            await WebApiJobBank.createSector({...values, node: currentNode.id});
+            getSectors(currentNode.id, filtersString);;
+            message.success('Sector registrado');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no registrada';
+            let msg = error ? 'Este nombre ya existe' : 'Sector no registrado';
             message.error(msg);
         }
     }
 
     const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateJobBoard(id, values);
-            getJobBoards(currentNode.id, filtersString);
-            message.success('Bolsa de empleo actualizada');
+            await WebApiJobBank.updateSector(id, values);
+            getSectors(currentNode.id, filtersString);;
+            message.success('Sector actualizado');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Bolsa de empleo no actualizada';
+            let msg = error ? 'Este nombre ya existe' : 'Sector no actualizado';
             message.error(msg);
         }
     }
 
     const actionDelete = async (id) =>{
         try {
-            await WebApiJobBank.deleteJobBoard(id);
-            getJobBoards(currentNode.id, filtersString);
-            message.success('Bolsa de empleo eliminada');
+            await WebApiJobBank.deleteSector(id);
+            getSectors(currentNode.id, filtersString);;
+            message.success('Sector eliminado');
         } catch (e) {
             console.log(e)
-            message.error('Bolsa de empleo no eliminada');
+            message.error('Sector no eliminado');
         }
     }
 
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar bolsa de empleo'
-                    titleEdit='Editar bolsa de empleo'
-                    titleDelete='¿Estás seguro de eliminar esta bolsa?'
+                    titleCreate='Agregar sector'
+                    titleEdit='Editar sector'
+                    titleDelete='¿Estás seguro de eliminar este sector?'
                     actionCreate={actionCreate}
                     actionUpdate={actionUpdate}
                     actionDelete={actionDelete}
@@ -96,4 +94,4 @@ const ViewJobBoards = ({
     )
 }
 
-export default ViewJobBoards;
+export default ViewSectors;

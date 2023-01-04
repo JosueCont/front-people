@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const useProcessInfo = () =>{
+export const useInfoVacancy = () =>{
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {

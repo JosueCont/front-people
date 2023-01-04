@@ -13,7 +13,6 @@ const ViewCompetences = ({
 }) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
-    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
@@ -75,7 +74,7 @@ const ViewCompetences = ({
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs

@@ -15,13 +15,13 @@ import {
   message,
   Divider
 } from 'antd';
-import { ConnectionProvider } from './context/ConnectionContext';
+import { CustomProvider } from '../context/CustomContext';
 import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import GetForm from './GetForm';
-import { useProcessInfo } from './hook/useProcessInfo';
+import { useInfoConnection } from '../hook/useInfoConnection';
 
 const DetailsConnections = ({
     action,
@@ -34,7 +34,7 @@ const DetailsConnections = ({
     const [fileImg, setFileImg] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoConnection, setInfoConnection] = useState({});
-    const { createData, formatData } = useProcessInfo();
+    const { createData, formatData } = useInfoConnection();
 
     useEffect(()=>{
         if(router.query?.id && action == 'edit'){
@@ -142,14 +142,14 @@ const DetailsConnections = ({
                             onFinish={onFinish}
                         >
                             <Row gutter={[24,0]}>
-                                <ConnectionProvider
+                                <CustomProvider
                                     infoConnection={infoConnection}
                                     loading={fetching}
                                     formConnection={formConnection}
                                     setFileImg={setFileImg}
                                 >
                                     <GetForm/>
-                                </ConnectionProvider>
+                                </CustomProvider>
                             </Row>
                         </Form>
                     </Spin>

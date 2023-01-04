@@ -114,7 +114,7 @@ const ViewSubcategories = ({
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs

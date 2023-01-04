@@ -1,4 +1,4 @@
-export const useProcessInfo = () =>{
+export const useInfoConnection = () =>{
 
     const noValid = [undefined, null, '', ' '];
 

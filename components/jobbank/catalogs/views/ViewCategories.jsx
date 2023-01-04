@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, message, Menu } from 'antd';
 import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { PlusOutlined } from '@ant-design/icons';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
 const ViewCategories = ({
     filtersString,
@@ -18,7 +17,6 @@ const ViewCategories = ({
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState({});
-    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(!currentNode) return;
@@ -74,7 +72,7 @@ const ViewCategories = ({
         }
     }
 
-    const extraOptions = (item) => {
+    const ExtraOptions = ({item}) => {
         return(
             <>
                 <Menu.Item
@@ -94,7 +92,7 @@ const ViewCategories = ({
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
@@ -108,7 +106,7 @@ const ViewCategories = ({
                     catalogLoading={loading}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
-                    extraOptions={extraOptions}
+                    ExtraOptions={ExtraOptions}
                     numPage={currentPage}
                 />
             </Col>

@@ -480,10 +480,7 @@ export const getFiltersJB = (obj = {}) =>{
   }, '');
 }
 
-export const deleteFiltersJb = (
-  obj = {},
-  listDelete = []
-) =>{
+export const deleteFiltersJb = (obj = {}, listDelete = []) =>{
   return Object.entries(obj).reduce((filters, [key, val]) =>{
     if(listDelete.includes(key)) return filters;
     return {...filters, [key]: val};

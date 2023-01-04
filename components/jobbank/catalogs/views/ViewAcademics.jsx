@@ -1,32 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Row, Col, message, Form, Select } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
-import { getFiltersJB, deleteFiltersJb } from '../../../../utils/functions';
 
-const ViewSectors = ({
+const ViewAcademics = ({
     filtersString,
     currentPage
 }) => {
 
     const currentNode = useSelector(state => state.userStore.current_node);
-    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [mainData, setMainData] = useState([]);
+    const [mainData, setMainData] = useState({});
 
     useEffect(()=>{
         if(!currentNode) return;
-        getSectors(currentNode.id, filtersString);
+        getAcademics(currentNode.id, filtersString);
     },[currentNode, filtersString])
 
-    const getSectors = async (node, query = '') => {
+    const getAcademics = async (node, query = '') =>{
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getSectors(node, query);
+            let response = await WebApiJobBank.getAcademics(node, query);
             setMainData(response.data)
             setLoading(false)
         } catch (e) {
@@ -37,51 +35,51 @@ const ViewSectors = ({
 
     const actionCreate = async (values) =>{
         try {
-            await WebApiJobBank.createSector({...values, node: currentNode.id});
-            getSectors(currentNode.id, filtersString);;
-            message.success('Sector registrado');
+            await WebApiJobBank.createAcademic({...values, node: currentNode.id});
+            getAcademics(currentNode.id, filtersString);
+            message.success('Carrera registrada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Sector no registrado';
+            let msg = error ? 'Este nombre ya existe' : 'Carrera no registrada';
             message.error(msg);
         }
     }
 
     const actionUpdate = async (id, values) =>{
         try {
-            await WebApiJobBank.updateSector(id, values);
-            getSectors(currentNode.id, filtersString);;
-            message.success('Sector actualizado');
+            await WebApiJobBank.updateAcademic(id, values);
+            getAcademics(currentNode.id, filtersString);
+            message.success('Carrera actualizada');
         } catch (e) {
             console.log(e)
             let error = e.response?.data?.name?.at(-1);
-            let msg = error ? 'Este nombre ya existe' : 'Sector no actualizado';
+            let msg = error ? 'Este nombre ya este' : 'Carrera no actualizada';
             message.error(msg);
         }
     }
 
     const actionDelete = async (id) =>{
         try {
-            await WebApiJobBank.deleteSector(id);
-            getSectors(currentNode.id, filtersString);;
-            message.success('Sector eliminado');
+            await WebApiJobBank.deleteAcademic(id);
+            getAcademics(currentNode.id, filtersString);
+            message.success('Carrera eliminada')
         } catch (e) {
             console.log(e)
-            message.error('Sector no eliminado');
+            message.error('Carrera no eliminada')
         }
     }
 
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs setOpenModal={setOpenModal}/>
+                <SearchCatalogs actionBtnAdd={()=> setOpenModal(true)}/>
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar sector'
-                    titleEdit='Editar sector'
-                    titleDelete='¿Estás seguro de eliminar este sector?'
+                    titleCreate='Agregar carrera'
+                    titleEdit='Editar carrera'
+                    titleDelete='¿Estás seguro de eliminar esta carrera?'
                     actionCreate={actionCreate}
                     actionUpdate={actionUpdate}
                     actionDelete={actionDelete}
@@ -96,4 +94,4 @@ const ViewSectors = ({
     )
 }
 
-export default ViewSectors;
+export default ViewAcademics;

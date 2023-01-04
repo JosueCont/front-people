@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainLayout';
-import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsConnections from './DetailsConnections';
-import { connect } from 'react-redux';
-import { getSectors } from '../../../redux/jobBankDuck';
 import { deleteFiltersJb } from '../../../utils/functions';
+import MainIndexJB from '../MainIndexJB';
 
 const AddOrEditConnections = ({
     action = 'add',
-    currentNode,
-    getSectors
 }) => {
 
     const router = useRouter();
@@ -23,42 +18,24 @@ const AddOrEditConnections = ({
         setNewFilters(filters);
     },[router.query])
 
+    const ExtraBread = [
+        {name: 'Configuracions', URL: '/jobbank/settings'},
+        {name: 'Conexiones', URL: '/jobbank/settings/connections'},
+        {name: action == 'add' ? 'Nuevo' : 'Expediente'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Configuraciones</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/settings/connections',
-                        query: newFilters
-                    })}
-                >
-                    Conexiones
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container'>
-                <DetailsConnections action={action} newFilters={newFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_settings'
+            extraBread={ExtraBread}
+            newFilters={newFilters}
+        >
+            <DetailsConnections
+                action={action}
+                newFilters={newFilters}
+            />
+        </MainIndexJB>
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node
-    }
-}
-
-export default connect(
-    mapState, { getSectors }
-)(AddOrEditConnections);
+export default AddOrEditConnections;

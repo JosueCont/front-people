@@ -21,8 +21,8 @@ import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
-import WebApiJobBank from '../../../api/WebApiJobBank';
-import { useProcessInfo } from './hook/useProcessInfo';
+import WebApiJobBank from '../../../api/WebApiJobBank';;
+import { useInfoVacancy } from '../hook/useInfoVacancy';
 import ListLangs from '../candidates/ListLangs';
 
 const DetailsVacancies = ({
@@ -47,7 +47,7 @@ const DetailsVacancies = ({
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
-    const { setValuesForm, createData } = useProcessInfo();
+    const { setValuesForm, createData } = useInfoVacancy();
      //Idiomas
     const [currentValue, setCurrentValue] = useState([]);
     const [listLangDomain, setListLangDomain] = useState([]);

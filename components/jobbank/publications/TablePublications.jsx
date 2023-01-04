@@ -21,14 +21,12 @@ import {
   LinkedinOutlined,
   InstagramOutlined
 } from '@ant-design/icons';
-import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import ModalPost from './ModalPost';
-import { getFiltersJB } from '../../../utils/functions';
 import { optionsStatusVacant } from '../../../utils/constant';
 
 const TablePublications = ({

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const useProcessInfo = () => {
+export const useInfoProfile = () => {
 
     const formatData = (values, checked = true, extraKey = '') => {
         return Object.entries(values).reduce((obj, [key, val]) => {
