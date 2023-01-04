@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getFiltersJB, deleteFiltersJb } from '../../../utils/functions';
 //Catálogos
-import ViewCategories from './Views/ViewCategories';
-import ViewSubcategories from './Views/ViewSubcategories';
-import ViewAcademics from './Views/ViewAcademics';
-import ViewCompetences from './Views/ViewCompetences';
-import ViewSectors from './Views/ViewSectors';
-import ViewJobBoards from './Views/ViewJobBoards';
+import ViewCategories from './views/ViewCategories';
+import ViewSubcategories from './views/ViewSubcategories';
+import ViewAcademics from './views/ViewAcademics';
+import ViewCompetences from './views/ViewCompetences';
+import ViewSectors from './views/ViewSectors';
+import ViewJobBoards from './views/ViewJobBoards';
 import ViewTemplates from './Templates/ViewTemplates';
-import ViewMessages from './Messages/ViewMessages';
-import ViewTypes from './Views/ViewTypes';
+import ViewMessages from './messages/ViewMessages';
+import ViewTypes from './views/ViewTypes';
 
 const GetViewCatalog = () =>{
 
