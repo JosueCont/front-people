@@ -463,11 +463,11 @@ export const getConnections = (node, query = '', page = 1) => async (dispatch) =
     }
 }
 
-export const getConnectionsOptions = (node) => async (dispatch) =>{
+export const getConnectionsOptions = (node, query = '') => async (dispatch) =>{
     const typeFunction = { type: GET_CONNECTIONS_OPTIONS, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getConnections(node, '&is_active=true&paginate=0');
+        let response = await WebApiJobBank.getConnections(node, `&paginate=0${query}`);
         dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)

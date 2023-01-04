@@ -179,6 +179,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/sharin-setup/?node=${node}${query}`, 'get');
     }
 
+    static createConnection(data){
+        return WebApi.ApisType('/job-bank/sharin-setup/', 'post', data);
+    }
+
     static getDetailsConnection(id){
         return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'get');
     }

@@ -26,7 +26,7 @@ const MainIndexJB = ({
                 query: newFilters
             })
         } : {};
-    },[])
+    },[newFilters])
 
     return (
         <MainLayout

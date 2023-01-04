@@ -29,7 +29,7 @@ const index = ({
         if(currentNode){
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&is_active=true');
         }
     },[currentNode])
 
