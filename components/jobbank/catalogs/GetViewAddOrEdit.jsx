@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { deleteFiltersJb } from '../../../utils/functions';
 //Details
 import DetailsTemplate from './Templates/DetailsTemplate';
-import DetailsMessages from './Messages/DetailsMessages';
+import DetailsMessages from './messages/DetailsMessages';
 
 const GetViewAddOrEdit = ({action}) => {
 
