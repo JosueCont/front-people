@@ -485,6 +485,7 @@ export const optionsTypeSale = [
 ];
 
 export const optionsStatusSelection = [
+  { value: 0, key: 0, label: "Sin iniciar"},
   { value: 1, key: 1, label: "Filtro telefónico" },
   { value: 2, key: 2, label: "Entrevista con HEX" },
   { value: 3, key: 3, label: "Enviado a cliente" },

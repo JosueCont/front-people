@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
+import { deleteFiltersJb } from '../../utils/functions';
 
 const TagFilters = ({
     listKeys = {},
@@ -8,12 +9,12 @@ const TagFilters = ({
 }) => {
 
     const router = useRouter();
+    const deleteKeys = ['page','match'];
 
     const newFilters = useMemo(()=>{
         let exist = Object.keys(router.query).length <= 0;
         if(exist) return [];
-        let filters = {...router.query};
-        if(filters.page) delete filters.page;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
         return Object.entries(filters);
     },[router.query])
 

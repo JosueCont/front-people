@@ -26,6 +26,7 @@ const initialState = {
     list_states: [],
     list_selection: {},
     list_candidates_options: [],
+    list_preselection: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -51,6 +52,7 @@ const initialState = {
     load_states: false,
     load_selection: false,
     load_candidates_options: false,
+    load_preselection: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
@@ -87,6 +89,8 @@ const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 
 const GET_SELECTION = "GET_SELECTION";
+
+const GET_PRESELECTION = "GET_PRESELECTION";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -216,6 +220,12 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state,
                 list_candidates_options: action.payload,
                 load_candidates_options: action.fetching
+            }
+        case GET_PRESELECTION:
+            return {...state,
+                list_preselection: action.payload,
+                load_preselection: action.fetching,
+                jobbank_page: action.page_num
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -499,17 +509,17 @@ export const getListStates = (node) => async (dispatch) =>{
     }
 }
 
-export const getSelection = (node, query = '', page = 1) => async (dispatch) =>{
+export const getListSelection = (node, query = '', page = 1) => async (dispatch) =>{
     const typeFunction = {type: GET_SELECTION, payload: {}, fetching: false, page_num: page};
     dispatch({...typeFunction, fetching: true})
     try {
-        // let response = await WebApiJobBank.getSelection(node, query);
-        // dispatch({...typeFunction, payload: response.data});
+        // let response = await WebApiJobBank.getListSelection(node, query);
+        // dispatch({...typeFunction, payload: response.data})
         let response = [];
         for (let i = 0; i < 50; i++) {
             response.push({
                 id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
-                status: Math.round(Math.random()*6)+1,
+                status: Math.round(Math.random()*7),
                 vacant: {
                     "id": "88fb24f22bf145ce92ca63a60c222a11",
                     "job_position": "Desarrollador jr "+(i+1)
@@ -529,6 +539,20 @@ export const getSelection = (node, query = '', page = 1) => async (dispatch) =>{
                 count: response.length,
                 results: response
             }})
+        },1000)
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getPreselection = (node, query = '', page = 1) => async (dispatch)=>{
+    const typeFunction = {type: GET_PRESELECTION, payload: {}, fetching: false, page_num: page};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        // let response = await WebApiJobBank.getPreselection(node, query);
+        setTimeout(()=>{
+            dispatch({...typeFunction, payload: {count: 0, results: []}})
         },1000)
     } catch (e) {
         console.log(e)

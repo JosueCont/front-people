@@ -754,4 +754,20 @@ button.custom-btn {
     color: rgba(0, 0, 0, 0.3);
 }
 
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+    color: #fff;
+    background: var(--primaryColor);
+    border-color: var(--primaryColor);
+}
+
+.radio-group-options .ant-radio-button-wrapper:hover {
+    position: relative;
+    color: var(--primaryColor);
+}
+
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+    background-color: var(--primaryColor);
+}
+
 /* Termina diseño bolsa de trabajo */

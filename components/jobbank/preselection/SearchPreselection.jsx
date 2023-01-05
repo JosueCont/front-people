@@ -1,44 +1,58 @@
-import React, { useState } from 'react';
-import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip, Radio } from 'antd';
 import {
   SyncOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
-import FiltersSelection from './FiltersSelection';
 import TagFilters from '../TagFilters';
-import { useFiltersSelection } from '../hook/useFiltersSelection';
+import FiltersPreselection from './FiltersPreselection';
+import { useFiltersPreselection } from '../hook/useFiltersPreselection';
 
-const SearchSelection = () => {
+const SearchPreselection = ({
+    currentNode
+}) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersSelection();
-
-    const onFinishSearch = (values) =>{
-        let filters = createFiltersJB(values);
-        router.replace({
-            pathname: '/jobbank/selection',
-            query: filters
-        }, undefined, {shallow: true});
-    }
-
-    const deleteFilter = () =>{
-        formSearch.resetFields();
-        router.replace('/jobbank/selection', undefined, {shallow: true});
-    }
+    const { listKeys, listGets } = useFiltersPreselection();
 
     const showModal = () =>{
-        let status = router.query?.status ? parseInt(router.query.status) : null;
-        formSearch.setFieldsValue({...router.query, status});
+        let state = router.query?.state ? parseInt(router.query.state) : null;
+        let gender = router.query?.gender ? parseInt(router.query.gender) : null;
+        formSearch.setFieldsValue({...router.query, state, gender});
         setOpenModal(true)
     }
 
     const closeModal = () =>{
         setOpenModal(false)
         formSearch.resetFields()
+    }
+
+    const onFinishSearch = (values) =>{
+        let filters = createFiltersJB(values);
+        let match = router.query?.match;
+        if(match == '0') filters.match = match;
+        router.replace({
+            pathname: '/jobbank/preselection',
+            query: filters
+        }, undefined, {shallow: true});
+    }
+
+    const deleteFilter = () =>{
+        formSearch.resetFields();
+        router.replace('/jobbank/preselection', undefined, {shallow: true});
+    }
+
+    const onChangeType = ({target: { value }}) =>{
+        let filters = {...router.query, match: value};
+        if(value == '1') delete filters.match;
+        router.replace({
+            pathname: '/jobbank/preselection',
+            query: filters
+        }, undefined, {shallow: true})
     }
 
     return (
@@ -48,9 +62,18 @@ const SearchSelection = () => {
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Filtros aplicados
+                                Búsqueda de candidatos
                             </p>
                             <div className='content-end' style={{gap: 8}}>
+                                <Radio.Group
+                                    onChange={onChangeType}
+                                    buttonStyle='solid'
+                                    value={router.query?.match ?? '1'}
+                                    className='radio-group-options'
+                                >
+                                    <Radio.Button value='1'>Compatibles</Radio.Button>
+                                    <Radio.Button value='0'>Todos</Radio.Button>
+                                </Radio.Group>
                                 <Tooltip title='Configurar filtros'>
                                     <Button onClick={()=> showModal()}>
                                         <SettingOutlined />
@@ -72,7 +95,7 @@ const SearchSelection = () => {
                     </Col>  
                 </Row>
             </Card>
-            <FiltersSelection
+            <FiltersPreselection
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -82,4 +105,4 @@ const SearchSelection = () => {
     )
 }
 
-export default SearchSelection;
+export default SearchPreselection

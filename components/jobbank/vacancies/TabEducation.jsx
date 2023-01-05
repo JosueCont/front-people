@@ -193,6 +193,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Especificar según los idiomas seleccionados'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -208,6 +209,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -223,6 +225,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Separar cada experiencia con una coma'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -238,6 +241,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Separar cada habilidad técnica con una coma'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,

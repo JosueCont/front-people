@@ -16,10 +16,6 @@ const DocExpedient = ({
     infoPositions
 }) => {
 
-    // useEffect(()=>{
-    //     console.log('experiencia--->', infoEducation)
-    // },[infoEducation])
-
     const getAcademic = (item) =>{
         if(!item.study_level) return null;
         const find_ = record => record.value == item.study_level;

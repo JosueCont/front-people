@@ -230,7 +230,7 @@ const TableCandidates = ({
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: false
+                    emptyText: load_candidates
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}

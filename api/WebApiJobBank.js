@@ -223,6 +223,26 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/share/`, 'post', data);
     }
 
+    static getListSelection(node){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}`, 'get');
+    }
+
+    static createSelection(data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/`, 'post', data);
+    }
+
+    static updateSelection(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'put', data);
+    }
+
+    static updateSelectionStatus(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
+    }
+
+    static deleteSelection(id){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'delete');
+    }
+
     //LISTADO DE CATÁLOGOS
 
     static getMainCategories(node, query){

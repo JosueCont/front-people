@@ -6,13 +6,13 @@ import { getFiltersJB } from '../../../utils/functions';
 import SearchSelection from '../../../components/jobbank/selection/SearchSelection';
 import TableSelection from '../../../components/jobbank/selection/TableSelection';
 import { getVacanciesOptions, getCandidatesOptions } from '../../../redux/jobBankDuck';
-import { getSelection } from '../../../redux/jobBankDuck';
+import { getListSelection } from '../../../redux/jobBankDuck';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
     getVacanciesOptions,
-    getSelection,
+    getListSelection,
     getCandidatesOptions
 }) => {
 
@@ -31,7 +31,7 @@ const index = ({
         if(currentNode){
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
-            getSelection(currentNode.id, filters, page);
+            getListSelection(currentNode.id, filters, page);
             setCurrentPage(page);
             setCurrentFilters(filters);
         }
@@ -63,7 +63,7 @@ const mapState = (state) => {
 export default connect(
     mapState, {
         getVacanciesOptions,
-        getSelection,
+        getListSelection,
         getCandidatesOptions
     }
 )(withAuthSync(index));
