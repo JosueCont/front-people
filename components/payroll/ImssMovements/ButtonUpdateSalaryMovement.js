@@ -81,17 +81,6 @@ const ButtonUpdateSalaryMovement = ({
     return current && current <= moment().endOf("day");
   };
 
-  //   const changeGenerateMovement = () => {
-  //     console.log("🚀 ~ Antes ~ !generateMovement", !generateMovement);
-  //     if (generateMovement) {
-  //       setGenerateMovement(false);
-  //     } else setGenerateMovement(true);
-  //   };
-
-  //   useEffect(() => {
-
-  //   }, [generateMovement]);
-
   return (
     <>
       <Button
