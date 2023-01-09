@@ -20,6 +20,7 @@ import WebApiJobBank from '../../../../api/WebApiJobBank';
 import CustomDetails from './CustomDetails';
 import FormMessages from './FormMessages';
 import { getTagsNotification } from '../../../../redux/jobBankDuck';
+import { EditorState } from 'draft-js';
 
 const DetailsMessages = ({
     action,
@@ -32,11 +33,19 @@ const DetailsMessages = ({
     const [formMessage] = Form.useForm();
     const [actionType, setActionType] = useState('');
     const [loading, setLoading] = useState({});
+    const [msgHTML, setMsgHTML] = useState('<p></p>');
 
     useEffect(()=>{
         if(!currentNode) return;
         getTagsNotification(currentNode.id);
     },[currentNode])
+
+    const onFinish = (values) =>{
+        if(msgHTML == '<p></p>'){
+            message.error('Mensaje vacío');
+            return;
+        }
+    }
 
     const actionBack = () =>{
         router.push({
@@ -67,9 +76,13 @@ const DetailsMessages = ({
                 form={formMessage}
                 layout='vertical'
                 id='form-messages'
+                onFinish={onFinish}
                 onFinishFailed={()=> setLoading({})}
             >
-                <FormMessages formMessage={formMessage}/>
+                <FormMessages
+                    setMsgHTML={setMsgHTML}
+                    formMessage={formMessage}
+                />
             </Form>
         </CustomDetails>
     )
