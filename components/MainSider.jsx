@@ -91,7 +91,8 @@ const MainSider = ({
       jb_candidates: "/jobbank/candidates",
       jb_settings: "/jobbank/settings",
       jb_publications: "/jobbank/publications",
-      jb_selection: "/jobbank/selection"
+      jb_selection: "/jobbank/selection",
+      jb_preselection: "/jobbank/preselection"
     };
     router.push(pathRoutes[key]);
   };
@@ -295,7 +296,8 @@ const MainSider = ({
             getItem("Template de vacante", "jb_profiles"),
             getItem("Candidatos", "jb_candidates"),
             getItem("Publicaciones", "jb_publications"),
-            // getItem("Proceso de selección", "jb_selection"),
+            // getItem("Preselección", "jb_preselection"),
+            getItem("Proceso de selección", "jb_selection"),
             getItem("Configuraciones", "jb_settings")
           ];
           items.push(

@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
 import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox} from 'antd';
-import { optionsLevelAcademic, optionsStatusAcademic } from '../../../utils/constant';
+import { optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 
 const ModalEducation = ({
@@ -15,6 +15,10 @@ const ModalEducation = ({
     textSave = ''
 }) => {
     
+    const {
+        list_scholarship,
+        load_scholarship
+    } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const status = Form.useWatch('status', formEducation);
@@ -64,7 +68,6 @@ const ModalEducation = ({
                 form={formEducation}
                 onFinish={onFinish}
                 layout='vertical'
-                initialValues={{other_area: false, other_sub_area: false}}
             >
                 <Row gutter={[24,0]}>
                     <Col span={12}>
@@ -75,9 +78,19 @@ const ModalEducation = ({
                         >
                             <Select
                                 allowClear
-                                placeholder='Seleccionar una opción'
-                                options={optionsLevelAcademic}
-                            />
+                                showSearch
+                                disabled={load_scholarship}
+                                loading={load_scholarship}
+                                placeholder='Selecionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                            >
+                                {list_scholarship.length > 0 && list_scholarship.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>

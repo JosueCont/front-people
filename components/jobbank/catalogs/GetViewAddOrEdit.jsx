@@ -15,10 +15,11 @@ const GetViewAddOrEdit = ({action}) => {
     const Components = {
         profiles: DetailsTemplate,
         messages: DetailsMessages,
-        __default__: <></>
+        __default__: ()=> <></>
     }
 
     useEffect(()=>{
+        setNewFilters({})
         if(Object.keys(router.query).length <= 0) return;
         let filters = deleteFiltersJb(router.query, deleteKeys);
         setNewFilters(filters);

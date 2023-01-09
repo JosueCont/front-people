@@ -7,7 +7,7 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
-import ModalFilters from './ModalFilters';
+import FiltersCandidates from './FiltersCandidates';
 import TagFilters from '../TagFilters';
 import { useFiltersCandidate } from '../hook/useFiltersCandidate';
 
@@ -21,7 +21,6 @@ const SearchCandidates = ({
     const { listGets, listKeys } = useFiltersCandidate();
 
     const showModal = () =>{
-        let is_other = router.query?.other_area ? true : false;
         let state = router.query?.state ? parseInt(router.query.state) : null;
         formSearch.setFieldsValue({...router.query, is_other, state});
         setOpenModal(true)
@@ -33,7 +32,6 @@ const SearchCandidates = ({
     }
 
     const onFinishSearch = (values) =>{
-        delete values.is_other;
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/candidates/',
@@ -83,7 +81,7 @@ const SearchCandidates = ({
                     </Col>  
                 </Row>
             </Card>
-            <ModalFilters
+            <FiltersCandidates
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}

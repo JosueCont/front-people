@@ -19,16 +19,24 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import CustomDetails from './CustomDetails';
 import FormMessages from './FormMessages';
+import { getTagsNotification } from '../../../../redux/jobBankDuck';
 
 const DetailsMessages = ({
     action,
-    newFilters = {}
+    currentNode,
+    newFilters = {},
+    getTagsNotification
 }) => {
 
     const router = useRouter();
     const [formMessage] = Form.useForm();
     const [actionType, setActionType] = useState('');
     const [loading, setLoading] = useState({});
+
+    useEffect(()=>{
+        if(!currentNode) return;
+        getTagsNotification(currentNode.id);
+    },[currentNode])
 
     const actionBack = () =>{
         router.push({
@@ -67,4 +75,10 @@ const DetailsMessages = ({
     )
 }
 
-export default DetailsMessages
+const mapState = (state) =>{
+    return{
+        currentNode: state.userStore.current_node
+    }
+}
+
+export default connect(mapState, {getTagsNotification})(DetailsMessages);

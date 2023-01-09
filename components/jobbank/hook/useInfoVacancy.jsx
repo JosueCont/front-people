@@ -56,7 +56,7 @@ export const useInfoVacancy = () =>{
             sub_category,
             academics_degree,
             competences,
-            experiences,
+            experience,
             technical_skills
         } = details;
 
@@ -64,7 +64,7 @@ export const useInfoVacancy = () =>{
         if(sub_category && Object.keys(sub_category).length > 0) details['sub_category'] = sub_category.id;
         if(academics_degree?.length > 0) details['academics_degree'] = academics_degree.at(-1).id;
         if(competences?.length > 0) details['competences'] = competences.map(item=> item.id);
-        if(experiences) details['experiences'] = experiences.split(',').join(',\n');
+        // if(experience) details['experience'] = experience.split(',').join(',\n');
         if(technical_skills?.length > 0) details['technical_skills'] = technical_skills.join(',\n');
         
         delete details.id;

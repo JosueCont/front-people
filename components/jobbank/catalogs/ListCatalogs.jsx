@@ -73,6 +73,7 @@ const ListCatalogs = () => {
             </Col>
             <Col span={24}>
                 <Table
+                    rowKey='catalog'
                     size='small'
                     loading={loading}
                     columns={columns}

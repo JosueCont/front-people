@@ -476,21 +476,6 @@
     transform: none;
 }
 
-/* .section-list-fields .ant-checkbox-wrapper:hover .ant-checkbox-inner,
-.section-list-fields .ant-checkbox:hover .ant-checkbox-inner,
-.section-list-fields .ant-checkbox-input:focus + .ant-checkbox-inner{
-    border-color: #e7b488!important;
-} */
-
-/* .section-list-fields .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #e7b488!important;
-    border-color: #e7b488!important;
-} */
-
-/* .section-list-fields .ant-checkbox-checked::after{
-    border-color: #e7b488
-} */
-
 .section-list-fields .ant-checkbox-wrapper:hover{
     background: #ede5de;
     border-radius: 8px;
@@ -720,8 +705,6 @@ button.custom-btn {
 .item-list-row{
     display: flex;
     gap: 8px;
-    background-color: #f0f0f0;
-    border: 1px solid #cccc;
     align-items: center;
     padding: 5px 10px;
     border-radius: 12px;
@@ -731,6 +714,16 @@ button.custom-btn {
 .item-list-row p{
     margin-bottom: 0px;
     line-height: 1;
+}
+
+.item-list-row.normal{
+    background-color: #f0f0f0;
+    border: 1px solid #cccc;
+}
+
+.item-list-row.default{
+    background-color: #ede5de;
+    border: 1px solid #e7b488;
 }
 
 .title-history{
@@ -752,6 +745,36 @@ button.custom-btn {
 
 .title-history p:nth-child(2){
     color: rgba(0, 0, 0, 0.3);
+}
+
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+    color: #fff;
+    background: var(--primaryColor);
+    border-color: var(--primaryColor);
+}
+
+.radio-group-options .ant-radio-button-wrapper:hover {
+    position: relative;
+    color: var(--primaryColor);
+}
+
+.radio-group-options .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+    background-color: var(--primaryColor);
+}
+
+.btn-tag-copy {
+    width: 100%;
+}
+
+.btn-tag-copy button{
+    width: 100%;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 /* Termina diseño bolsa de trabajo */
