@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Input, Select, Form, Alert } from 'antd';
+import { Row, Col, Input, Select, Form, Alert, message } from 'antd';
 import { ruleRequired } from '../../../../utils/rules';
 import dynamic from 'next/dynamic';
 import TagsNotify from './TagsNotify';
 
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from "draft-js";
+import { ContentState, convertFromHTML, convertToRaw, EditorState, Modifier } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
 
 const FormMessages = ({
-    formMessage
+    formMessage,
+    setMsgHTML
 }) => {
 
     const fields = Form.useWatch('fields_messages', formMessage);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    
 
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
         let msg = draftToHtml(convertToRaw(current));
-        console.log('el msg----->', msg)
+        setMsgHTML(msg)
         setEditorState(value)
+    }
+
+    const copyTag = (tag) =>{
+        try {
+            let text = `<strong>{{${tag}}}</strong>`;
+            let current = editorState.getCurrentContent();
+            let selection = editorState.getSelection();
+            let newContent = Modifier.replaceText(current, selection, text);
+            let newEditor = EditorState.push(editorState, newContent, 'insert-fragment');
+            let newState = EditorState.forceSelection(newEditor, newContent.getSelectionAfter());
+            setEditorState(newState);
+            message.success(`Campo copiado: ${tag}`)
+        } catch (e) {
+            console.log(e)       
+        }
     }
 
     return (
@@ -59,12 +76,13 @@ const FormMessages = ({
                 `}/>
             </Col>
             <Col span={24}>
-                <TagsNotify/>
+                <TagsNotify copyTag={copyTag}/>
             </Col>
             <Col span={24}>
                 <Editor
                     editorState={editorState}
                     onEditorStateChange={onChangeEditor}
+                    placeholder='Escriba el mensaje...'
                     editorStyle={{padding: '0px 12px'}}
                     wrapperStyle={{background: '#f0f0f0'}}
                     toolbarStyle={{

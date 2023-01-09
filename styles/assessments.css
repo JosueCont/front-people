@@ -765,16 +765,15 @@ button.custom-btn {
 
 .btn-tag-copy {
     width: 100%;
-}
-
-.btn-tag-copy button{
-    width: 100%;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 12px;
     max-width: 100%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    cursor: copy;
+    padding: 1px 6px;
+    text-align: center;
 }
 
 /* Termina diseño bolsa de trabajo */

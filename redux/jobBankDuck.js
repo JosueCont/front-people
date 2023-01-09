@@ -582,7 +582,7 @@ export const getScholarship = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getScholarship(node, '&paginate=0');
-        dispatch({...typeFunction, payload: response.data?.results})
+        dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -594,7 +594,6 @@ export const getTagsNotification = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getTagsNotification(node, '&paginate=0');
-        console.log("🚀 ~ file: jobBankDuck.js:597 ~ getTagsNotification ~ response", response)
         dispatch({...typeFunction, payload: response.data?.results});
     } catch (e) {
         console.log(e)
