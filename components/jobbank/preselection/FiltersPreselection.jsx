@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Input, Row, Col, Form, Select, Checkbox } from 'antd';
+import { Button, Input, Row, Col, Form, Select, InputNumber } from 'antd';
 import { useSelector } from 'react-redux';
-import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
-import { optionsStatusSelection } from '../../../utils/constant';
+import { optionsGenders } from '../../../utils/constant';
+import { ruleWhiteSpace } from '../../../utils/rules';
 
-const ModalFilters = ({
+const FiltersPreselection = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -13,10 +13,13 @@ const ModalFilters = ({
 }) => {
 
     const {
-        list_vacancies_options,
-        load_vacancies_options,
+        list_states,
+        load_states,
+        load_main_categories,
+        list_main_categories,
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
+    const category = Form.useWatch('main_category', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -26,8 +29,6 @@ const ModalFilters = ({
             onFinish(values);
         },1000)
     }
-
-    const setValue = (key, val) => formSearch.setFieldsValue({[key]: val});
 
     return (
         <MyModal
@@ -41,7 +42,6 @@ const ModalFilters = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
-                initialValues={{is_other: false}}
             >
                 <Row gutter={[16,0]}>
                     <Col span={12}>
@@ -73,47 +73,73 @@ const ModalFilters = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label='Teléfono'
-                            name='phone'
-                            rules={[onlyNumeric]}
-                        >
-                            <Input placeholder='Buscar por teléfono'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Estatus'
-                            name='status'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                options={optionsStatusSelection}
-                                optionFilterProp='label'
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='vacant'
-                            label='Vacante'
+                            label='Categoría'
+                            name='main_category'
                         >
                             <Select
                                 allowClear
                                 showSearch
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
-                                disabled={load_vacancies_options}
-                                loading={load_vacancies_options}
+                                disabled={load_main_categories}
+                                loading={load_main_categories}
                                 optionFilterProp='children'
                             >
-                                {list_vacancies_options?.length > 0 && list_vacancies_options.map(item => (
+                                {list_main_categories?.length > 0 && list_main_categories.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
-                                        {item.job_position}
+                                        {item.name}
                                     </Select.Option>
                                 ))}
                             </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='gender'
+                            label='Género'
+                        >
+                            <Select
+                                // allowClear
+                                showSearch
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='label'
+                                options={optionsGenders}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='state'
+                            label='Estado'
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                disabled={load_states}
+                                loading={load_states}
+                                optionFilterProp='children'
+                            >
+                                {list_states?.length > 0 && list_states.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Municipio'
+                            name='municipality__unaccent__icontains'
+                            rules={[ruleWhiteSpace]}
+                        >
+                             <Input
+                                maxLength={200}
+                                placeholder='Especifique el municipio'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
@@ -133,4 +159,4 @@ const ModalFilters = ({
     )
 }
 
-export default ModalFilters
+export default FiltersPreselection

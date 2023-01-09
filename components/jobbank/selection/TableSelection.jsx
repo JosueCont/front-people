@@ -17,14 +17,14 @@ import {
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { getSelection } from '../../../redux/jobBankDuck';
+import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
-import ModalSelection from './ModalSelection'; 
+import ModalStatus from './ModalStatus';
 
 const TableSelection = ({
     currentNode,
     jobbank_page,
-    getSelection,
+    getListSelection,
     list_selection,
     load_selection,
     currentPage,
@@ -38,22 +38,11 @@ const TableSelection = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const actionUpdate = async (values) =>{
-        try {
-            // await WebApiJobBank.updateSelection(itemToEdit.id, values);
-            getSelection(currentNode.id, currentFilters, currentPage);
-            message.success('Proceso actualizado')
-        } catch (e) {
-            console.log(e)
-            message.error('Proceso no actualizado')
-        }
-    }
-
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             // await WebApiJobBank.deleteSelection({ids});
-            getSelection(currentNode.id, currentFilters, currentPage);
+            getListSelection(currentNode.id, currentFilters, currentPage);
             let msg = ids.length > 1 ? 'Procesos eliminados' : 'Proceso eliminado';
             message.success(msg);
         } catch (e) {
@@ -63,10 +52,10 @@ const TableSelection = ({
         }
     }
 
-    const actionStatus = async (value, item) =>{
+    const actionUpdate = async (values) =>{
         try {
-            // await WebApiJobBank.updateSelectionStatus(item.id, {status: value});
-            getSelection(currentNode.id, currentFilters, currentPage);
+            await WebApiJobBank.updateSelectionStatus(itemToEdit.id, values);
+            getListSelection(currentNode.id, currentFilters, currentPage);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -83,14 +72,14 @@ const TableSelection = ({
         }
     }
 
-    const closeModal = () =>{
-        setOpenModal(false)
-        setItemToEdit({})
+    const onChangeStatus = (value, item) =>{
+        setOpenModal(true)
+        setItemToEdit({...item, status: value})
     }
 
-    const openModalEdit = (item)=>{
-        setItemToEdit(item)
-        setOpenModal(true)
+    const onCloseModal = () =>{
+        setOpenModal(false)
+        setItemToEdit({})
     }
 
     const openModalRemove = (item) =>{
@@ -144,13 +133,13 @@ const TableSelection = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> openModalEdit(item)} 
                 >
                     Editar
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -203,7 +192,7 @@ const TableSelection = ({
                         value={item.status}
                         placeholder='Estatus'
                         options={optionsStatusSelection}
-                        onChange={(e) => actionStatus(e, item)}
+                        onChange={(e) => onChangeStatus(e, item)}
                     />
                 )
             }
@@ -241,7 +230,7 @@ const TableSelection = ({
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: false
+                    emptyText: load_selection
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
@@ -251,14 +240,6 @@ const TableSelection = ({
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
-            />
-            <ModalSelection
-                visible={openModal}
-                title='Actualizar proceso'
-                actionForm={actionUpdate}
-                itemToEdit={itemToEdit}
-                close={closeModal}
-                textSave='Actualizar'
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
@@ -271,6 +252,13 @@ const TableSelection = ({
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
+            />
+            <ModalStatus
+                title='Actualizar estatus'
+                actionForm={actionUpdate}
+                visible={openModal}
+                close={onCloseModal}
+                itemToEdit={itemToEdit}
             />
         </>
     )
@@ -286,5 +274,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, { getSelection }
+    mapState, { getListSelection }
 )(TableSelection);

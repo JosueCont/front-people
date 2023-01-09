@@ -103,7 +103,7 @@ const ListLangs = ({
                     </div>
                     <div className='body-list-items scroll-bar'>
                         {listLangDomain.length > 0 ? listLangDomain.map((item, idx) =>(
-                            <div className='item-list-row' key={idx}>
+                            <div className='item-list-row normal' key={idx}>
                                 <p>{getNameLang(item)} / {getNameDomain(item)}</p>
                                 <DeleteOutlined onClick={()=> deleteLang(idx)}/>
                             </div>

@@ -4,7 +4,7 @@ import { Button, Input, Row, Col, Form, Select, Checkbox } from 'antd';
 import { useSelector } from 'react-redux';
 import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
 
-const ModalFilters = ({
+const FiltersCandidates = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -51,7 +51,6 @@ const ModalFilters = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
-                initialValues={{is_other: false}}
             >
                 <Row gutter={[16,0]}>
                     <Col span={12}>
@@ -202,6 +201,7 @@ const ModalFilters = ({
                         <Form.Item
                             label='Municipio'
                             name='municipality__unaccent__icontains'
+                            rules={[ruleWhiteSpace]}
                         >
                              <Input
                                 maxLength={200}
@@ -226,4 +226,4 @@ const ModalFilters = ({
     )
 }
 
-export default ModalFilters
+export default FiltersCandidates

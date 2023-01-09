@@ -1,42 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Row, Col, Form, Card, Tooltip, message } from 'antd';
+import React, { useState } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
   SyncOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
-import ModalFilters from './ModalFilters';
+import FiltersSelection from './FiltersSelection';
 import TagFilters from '../TagFilters';
 import { useFiltersSelection } from '../hook/useFiltersSelection';
-import ModalSelection from './ModalSelection';
-import { getSelection } from '../../../redux/jobBankDuck';
-import WebApiJobBank from '../../../api/WebApiJobBank';
 
-const SearchSelection = ({
-    currentNode,
-    currentPage,
-    currentFilters,
-    getSelection
-}) => {
+const SearchSelection = () => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
-    const [openModalAdd, setOpenModalAdd] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const { listKeys, listGets } = useFiltersSelection();
-
-    const actionCreate = async (values) =>{
-        try {
-            // await WebApiJobBank.createSelection({...values, node: currentNode.id});
-            getSelection(currentNode.id, currentFilters, currentPage)
-            message.success('Proceso registrado')
-        } catch (e) {
-            console.log(e)
-            message.error('Proceso no registrado');
-        }
-    }
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
@@ -82,11 +61,6 @@ const SearchSelection = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button
-                                    onClick={()=> setOpenModalAdd(true)}
-                                >
-                                    Agregar
-                                </Button>
                             </div>
                         </div>
                     </Col>
@@ -98,26 +72,14 @@ const SearchSelection = ({
                     </Col>  
                 </Row>
             </Card>
-            <ModalFilters
+            <FiltersSelection
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
-            <ModalSelection
-                title='Agregar proceso'
-                visible={openModalAdd}
-                actionForm={actionCreate}
-                close={()=> setOpenModalAdd(false)}
-            />
         </>
     )
 }
 
-const mapState = (state) => {
-    return{
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(mapState, {getSelection})(SearchSelection);
+export default SearchSelection;

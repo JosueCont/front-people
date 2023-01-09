@@ -42,7 +42,11 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { downLoadFileBlob, getDomain, verifyMenuNewForTenant } from "../../utils/functions";
+import {
+  downLoadFileBlob,
+  getDomain,
+  verifyMenuNewForTenant,
+} from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -1108,9 +1112,9 @@ const CalculatePayroll = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
-            {verifyMenuNewForTenant() && 
+            {verifyMenuNewForTenant() && (
               <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-            }
+            )}
             <Breadcrumb.Item>Nómina</Breadcrumb.Item>
             <Breadcrumb.Item>Cálculo de nómina</Breadcrumb.Item>
           </Breadcrumb>
@@ -1269,7 +1273,12 @@ const CalculatePayroll = ({ ...props }) => {
                                       let data = new FormData();
                                       data.append(
                                         "File",
-                                          info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
+                                        info.file
+                                          ? info.file.originFileObj
+                                          : info.fileList[
+                                              info.fileList.length - 1
+                                            ].originFileObj
+                                        // info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
                                       );
                                       data.append("department", department);
                                       data.append("job", job);
@@ -1280,8 +1289,6 @@ const CalculatePayroll = ({ ...props }) => {
                                       info.file = null;
                                       info.fileList = [];
                                       importPayrollCaculate(data);
-
-
                                     }
                                   }
                                 },

@@ -618,10 +618,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
-          if (movementType === 1) {
+          if (movementType >= 1) {
             let calculateExist = [];
             calculateExist = response.data.payroll.filter(
-              (a) => a.payroll_cfdi_person.status === 1
+              (a) => a.payroll_cfdi_person && a.payroll_cfdi_person.status === 1
             );
 
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
@@ -768,6 +768,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         }, 1000);
       })
       .catch((error) => {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          if (error.response.data.message.includes("concepto interno")) {
+          }
+          setMessageModal(1, error.response.data.message);
+          setGenericModal(true);
+        } else message.error(messageError);
         setLoading(false);
       });
   };
