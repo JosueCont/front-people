@@ -9,7 +9,8 @@ import {
     getMainCategories,
     getListStates,
     getAcademics,
-    getPreselection
+    getPreselection,
+    getVacanciesOptions
 } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 
@@ -18,7 +19,8 @@ const index = ({
     getMainCategories,
     getListStates,
     getAcademics,
-    getPreselection
+    getPreselection,
+    getVacanciesOptions
 }) =>{
 
     const router = useRouter();
@@ -30,6 +32,7 @@ const index = ({
             getMainCategories(currentNode.id)
             getListStates(currentNode.id)
             getAcademics(currentNode.id)
+            getVacanciesOptions(currentNode.id)
         }
     },[currentNode])
 
@@ -66,6 +69,7 @@ export default connect(
         getMainCategories,
         getListStates,
         getAcademics,
-        getPreselection
+        getPreselection,
+        getVacanciesOptions
     }
 )(withAuthSync(index));

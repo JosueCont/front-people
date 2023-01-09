@@ -345,6 +345,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
 
+    //BOLSAS DE EMPLEO
+
     static getJobBoards(node, query){
         return WebApi.ApisType(`/job-bank/job-vacancies/?node=${node}${query}`, 'get');
     }
@@ -361,9 +363,42 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'delete');
     }
 
+    //ESTADOS
+
     static getListStates(node, query){
         return WebApi.ApisType(`/job-bank/states/?node=${node}${query}`, 'get');
     }
+
+    // ESCOLARIDAD
+
+    static getScholarship(node, query){
+        return WebApi.ApisType(`/job-bank/study-level/?node=${node}${query}`, 'get');
+    }
+
+    static createScholarship(data){
+        return WebApi.ApisType('/job-bank/study-level/', 'post', data);
+    }
+
+    static updateScholarship(id, data){
+        return WebApi.ApisType(`/job-bank/study-level/${id}/`, 'put', data);
+    }
+
+    static deleteScholarship(id){
+        return WebApi.ApisType(`/job-bank/study-level/${id}/`, 'delete');
+    }
+
+    //TEMPLATE DE NOTIFICACIONES
+
+    static getTemplateNotification(node, query){
+        return WebApi.ApisType(`/job-bank/template-notification/?node=${node}${query}`, 'get');
+    }
+
+    //TAGS DE NOTIFICACIONES
+
+    static getTagsNotification(node, query){
+        return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
+    }
+    
 }
 
 export default WebApiJobBank;

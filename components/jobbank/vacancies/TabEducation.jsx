@@ -8,10 +8,7 @@ import {
   InputNumber
 } from 'antd';
 import { useSelector } from 'react-redux';
-import {
-  optionsLevelAcademic,
-  optionsStatusAcademic,
-} from '../../../utils/constant';
+import { optionsStatusAcademic } from '../../../utils/constant';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
 
 const TabEducation = ({
@@ -27,7 +24,9 @@ const TabEducation = ({
     load_main_categories,
     list_main_categories,
     load_sub_categories,
-    list_sub_categories
+    list_sub_categories,
+    list_scholarship,
+    load_scholarship
   } = useSelector(state => state.jobBankStore);
   const categorySelected = Form.useWatch('main_category', formVacancies);
 
@@ -98,11 +97,18 @@ const TabEducation = ({
           <Select
             allowClear
             showSearch
-            placeholder='Seleccionar un grado'
+            disabled={load_scholarship}
+            loading={load_scholarship}
+            placeholder='Seleccionar una opción'
             notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsLevelAcademic}
-          />
+            optionFilterProp='children'
+          >
+            {list_scholarship.length > 0 && list_scholarship.map(item => (
+              <Select.Option value={item.id} key={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Col>
       <Col xs={24} md={12} xl={8} xxl={6}>
@@ -219,7 +225,7 @@ const TabEducation = ({
           </Col>
           <Col xs={24} md={12} xl={8} xxl={6}>
             <Form.Item
-              name='experiences'
+              name='experience'
               label='Experiencia requerida'
               // rules={[ruleWhiteSpace]}
             >

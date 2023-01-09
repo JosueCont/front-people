@@ -27,6 +27,8 @@ const initialState = {
     list_selection: {},
     list_candidates_options: [],
     list_preselection: {},
+    list_scholarship: [],
+    list_tags_notification: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -53,6 +55,8 @@ const initialState = {
     load_selection: false,
     load_candidates_options: false,
     load_preselection: false,
+    load_scholarship: false,
+    load_tags_notification: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
@@ -89,8 +93,11 @@ const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 
 const GET_SELECTION = "GET_SELECTION";
-
 const GET_PRESELECTION = "GET_PRESELECTION";
+
+const GET_SCHOLARSHIP = "GET_SCHOLARSHIP";
+
+const GET_TAGS_NOTIFICATION = "GET_TAGS_NOTIFICATION";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -226,6 +233,16 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_preselection: action.payload,
                 load_preselection: action.fetching,
                 jobbank_page: action.page_num
+            }
+        case GET_SCHOLARSHIP:
+            return {...state,
+                list_scholarship: action.payload,
+                load_scholarship: action.fetching
+            }
+        case GET_TAGS_NOTIFICATION:
+            return {...state,
+                list_tags_notification: action.payload,
+                load_tags_notification: action.fetching
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -554,6 +571,31 @@ export const getPreselection = (node, query = '', page = 1) => async (dispatch)=
         setTimeout(()=>{
             dispatch({...typeFunction, payload: {count: 0, results: []}})
         },1000)
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getScholarship = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_SCHOLARSHIP, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getScholarship(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data?.results})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getTagsNotification = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_TAGS_NOTIFICATION, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getTagsNotification(node, '&paginate=0');
+        console.log("🚀 ~ file: jobBankDuck.js:597 ~ getTagsNotification ~ response", response)
+        dispatch({...typeFunction, payload: response.data?.results});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Input, Select, Form, Alert } from 'antd';
 import { ruleRequired } from '../../../../utils/rules';
 import dynamic from 'next/dynamic';
+import TagsNotify from './TagsNotify';
 
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
@@ -18,12 +19,13 @@ const FormMessages = ({
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
         let msg = draftToHtml(convertToRaw(current));
+        console.log('el msg----->', msg)
         setEditorState(value)
     }
 
     return (
         <Row gutter={[24,24]}>
-           <Col span={12}>
+           {/* <Col span={12}>
                 <Form.Item
                     name='name'
                     label='Nombre'
@@ -48,13 +50,16 @@ const FormMessages = ({
                         optionFilterProp='children'
                     ></Select>
                 </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={24}>
                 <Alert type='info' message={`
-                    De la siguiente lista seleccionar o copiar los códigos
-                    de los campos que se desean visualizar en el mensaje,
-                    según la posicón u orden que se quiera.
+                    De la siguiente lista copiar (click sobre el nombre) los campos
+                    que se desean visualizar en el mensaje, según la posicón u
+                    orden que se requiera.
                 `}/>
+            </Col>
+            <Col span={24}>
+                <TagsNotify/>
             </Col>
             <Col span={24}>
                 <Editor

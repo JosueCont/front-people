@@ -1,20 +1,21 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 import { deleteFiltersJb } from '../../utils/functions';
 
 const TagFilters = ({
     listKeys = {},
-    listGets = {}
+    listGets = {},
+    deleteKeys = [],
+    defaultFilters = [],
 }) => {
 
     const router = useRouter();
-    const deleteKeys = ['page','match'];
 
     const newFilters = useMemo(()=>{
         let exist = Object.keys(router.query).length <= 0;
         if(exist) return [];
-        let filters = deleteFiltersJb(router.query, deleteKeys);
+        let filters = deleteFiltersJb(router.query, [...deleteKeys, 'page']);
         return Object.entries(filters);
     },[router.query])
 
@@ -29,12 +30,21 @@ const TagFilters = ({
 
     return (
         <div className='body-list-items scroll-bar'>
-            {newFilters.length > 0 ? newFilters.map(([key, val], idx) =>(
-                <div className='item-list-row' key={idx}>
-                    <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
-                    <CloseOutlined onClick={()=> removeFilter(key)}/>
-                </div>
-            )): (
+            {(newFilters.length > 0 || defaultFilters.length > 0) ? (
+                <>
+                    {defaultFilters.length > 0 && defaultFilters.map(([key, val], idx)=> (
+                        <div className='item-list-row default' key={"record_"+idx}>
+                            <p>{key}: {val}</p>
+                        </div>
+                    ))}
+                    {newFilters.length > 0 && newFilters.map(([key, val], idx) => (
+                        <div className='item-list-row normal' key={"item_"+idx}>
+                            <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
+                            <CloseOutlined onClick={()=> removeFilter(key)}/>
+                        </div>
+                    ))}
+                </>
+            ): (
                 <div className='placeholder-list-items'>
                     <p>Ningún filtro aplicado</p>
                 </div>

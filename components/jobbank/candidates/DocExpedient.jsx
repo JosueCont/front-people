@@ -7,7 +7,6 @@ import {
     Page,
     PDFViewer,
 } from '@react-pdf/renderer';
-import { optionsLevelAcademic } from '../../../utils/constant';
 
 const DocExpedient = ({
     infoCandidate,
@@ -15,14 +14,6 @@ const DocExpedient = ({
     infoExperience,
     infoPositions
 }) => {
-
-    const getAcademic = (item) =>{
-        if(!item.study_level) return null;
-        const find_ = record => record.value == item.study_level;
-        let result = optionsLevelAcademic.find(find_);
-        if(!result) return null;
-        return result.label;
-    }
 
     const SectionEducation = () => (
         <View style={{
@@ -50,7 +41,7 @@ const DocExpedient = ({
                         }}>
                             <Text style={{fontSize: 14, marginBottom: 2}}>{item.institution_name ?? null}</Text>
                             <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>
-                               {getAcademic(item)} - {item.end_date ?? null}
+                               {item.study_level?.name ?? null} - {item.end_date ?? null}
                             </Text>
                         </View>
                     ))}

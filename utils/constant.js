@@ -595,8 +595,9 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  { catalog: "types", name: "Tipos de notificación" },
-  { catalog: "messages", name: "Mensajes de notificación" }
+  // { catalog: "types", name: "Tipos de notificación" },
+  // { catalog: "messages", name: "Mensajes de notificación" },
+  { catalog: "scholarship", name: "Escolaridad" }
 ];
 
 export const departureMotive = [

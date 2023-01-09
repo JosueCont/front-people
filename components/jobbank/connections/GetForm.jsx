@@ -10,7 +10,7 @@ const GetForm = ({...props}) => {
     const Components = {
         FB: FormFBIG,
         IG: FormFBIG,
-        __default__: <></>
+        __default__: ()=> <></>
     }
     
     const Selected = Components[code] ?? Components['__default__'];

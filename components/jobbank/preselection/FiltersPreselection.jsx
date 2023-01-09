@@ -2,11 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select, InputNumber } from 'antd';
 import { useSelector } from 'react-redux';
-import {
-    optionsGenders,
-    optionsLevelAcademic,
-    optionsStatusAcademic
-} from '../../../utils/constant';
+import { optionsGenders } from '../../../utils/constant';
 import { ruleWhiteSpace } from '../../../utils/rules';
 
 const FiltersPreselection = ({

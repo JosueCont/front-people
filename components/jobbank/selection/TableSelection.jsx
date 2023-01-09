@@ -19,6 +19,7 @@ import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
+import ModalStatus from './ModalStatus';
 
 const TableSelection = ({
     currentNode,
@@ -32,6 +33,8 @@ const TableSelection = ({
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
+    const [itemToEdit, setItemToEdit] = useState({});
+    const [openModal, setOpenModal] = useState(false);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
@@ -49,9 +52,9 @@ const TableSelection = ({
         }
     }
 
-    const actionStatus = async (value, item) =>{
+    const actionUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateSelectionStatus(item.id, {status: value});
+            await WebApiJobBank.updateSelectionStatus(itemToEdit.id, values);
             getListSelection(currentNode.id, currentFilters, currentPage);
             message.success('Estatus actualizado');
         } catch (e) {
@@ -67,6 +70,16 @@ const TableSelection = ({
             setOpenModalDelete(false)
             message.error('Selecciona al menos dos procesos')
         }
+    }
+
+    const onChangeStatus = (value, item) =>{
+        setOpenModal(true)
+        setItemToEdit({...item, status: value})
+    }
+
+    const onCloseModal = () =>{
+        setOpenModal(false)
+        setItemToEdit({})
     }
 
     const openModalRemove = (item) =>{
@@ -179,7 +192,7 @@ const TableSelection = ({
                         value={item.status}
                         placeholder='Estatus'
                         options={optionsStatusSelection}
-                        onChange={(e) => actionStatus(e, item)}
+                        onChange={(e) => onChangeStatus(e, item)}
                     />
                 )
             }
@@ -239,6 +252,13 @@ const TableSelection = ({
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
+            />
+            <ModalStatus
+                title='Actualizar estatus'
+                actionForm={actionUpdate}
+                visible={openModal}
+                close={onCloseModal}
+                itemToEdit={itemToEdit}
             />
         </>
     )
