@@ -160,15 +160,16 @@ const TablePreselection = ({
             }
         },
         {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
