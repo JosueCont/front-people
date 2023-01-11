@@ -21,6 +21,7 @@ const CustomDetails = ({
     action = '',
     textTitle = '',
     loading = {},
+    fetching = false,
     actionBack = ()=>{},
     setActionType,
     setLoading,

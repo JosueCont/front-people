@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 import { deleteFiltersJb } from '../../utils/functions';

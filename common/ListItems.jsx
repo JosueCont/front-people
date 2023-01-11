@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import MyModal from './MyModal';
 import { Row, Col, List, Button } from 'antd';
 
-const DeleteItems = ({
+const ListItems = ({
     title = '', //string
     visible = false, //boolean
     keyTitle = '', //string
     keyDescription = '', //string
     close = () => {}, //function,
-    itemsToDelete = [], //array
-    actionDelete = ()=> {},//function
+    itemsToList = [], //array
+    actionConfirm = ()=> {},//function
     textCancel = 'Cancelar', //string
-    textDelete = 'Eliminar', //string
-    viewAsList = false, //boolean,
-    timeLoad = 2000
+    textConfirm = 'Eliminar', //string
+    useWithAction = true, //boolean,
+    timeLoad = 2000, //integer
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const DeleteItems = ({
     const onFinish = () =>{
         setLoading(true)
         setTimeout(()=>{
-            actionDelete()
+            actionConfirm()
             setLoading(false)
             close()
         }, timeLoad)
@@ -51,40 +51,26 @@ const DeleteItems = ({
             visible={visible}
             close={close}
             widthModal={400}
+            closable={!loading}
         >
-            <Row>
-                <Col span={24} className='elements_delete scroll-bar'>
-                    <List
-                        size={'small'}
-                        itemLayout={'horizontal'}
-                        dataSource={itemsToDelete}
-                        renderItem={item => (
-                            <List.Item key={item.id}>
-                                <List.Item.Meta
-                                    title={getTitle(item)}
-                                    description={getDescription(item)}
-                                />
-                            </List.Item>
-                        )}
-                    />
+            <Row gutter={[0,16]}>
+                <Col span={24}>
+                    <div className='items-to-list scroll-bar'>
+                        {itemsToList.length > 0 && itemsToList.map((item, idx) => (
+                            <div key={idx}>
+                                <p>{getTitle(item)}</p>
+                                <p>{getDescription(item)}</p>
+                            </div>
+                        ))}
+                    </div>
                 </Col>
-                <Col
-                    span={24}
-                    style={{
-                        display: 'flex',
-                        gap: '8px',
-                        justifyContent: 'flex-end'
-                    }}
-                >
-                    <Button onClick={()=> close()}>
+                <Col span={24} className='content-end' style={{gap: 8}}>
+                    <Button disabled={loading} onClick={()=> close()}>
                         {textCancel}
                     </Button>
-                    {!viewAsList && (
-                        <Button
-                            loading={loading}
-                            onClick={()=> onFinish()}
-                        >
-                            {textDelete}
+                    {useWithAction && (
+                        <Button loading={loading} onClick={()=> onFinish()}>
+                            {textConfirm}
                         </Button>
                     )}
                 </Col>
@@ -93,4 +79,4 @@ const DeleteItems = ({
     )
 }
 
-export default DeleteItems;
+export default ListItems;

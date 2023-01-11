@@ -21,7 +21,7 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import ListCompetences from './ListCompetences';
 
 const TabExperience = ({
@@ -267,14 +267,14 @@ const TabExperience = ({
                 visible={openModal}
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
-            <DeleteItems
+            <ListItems
                 title='¿Estás seguro de eliminar esta experiencia?'
                 visible={openModalDelete}
                 keyTitle='category, name'
                 keyDescription='sub_category, name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
             <ListCompetences
                 itemSelected={itemSelected}

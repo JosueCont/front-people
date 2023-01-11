@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, message } from 'antd';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
+import { optionsStatusSelection, optionsTypeNotify } from '../../../../utils/constant';
 
 const ViewMessages = ({
     filtersString,
@@ -34,20 +35,46 @@ const ViewMessages = ({
         }
     }
 
+    const actionDelete = async (id) =>{
+        try {
+            await WebApiJobBank.deleteTemplateNotification(id);
+            getTemplateNotification(currentNode.id, filtersString);
+            message.success('Notificación eliminada');
+        } catch (e) {
+            console.log(e)
+            message.error('Notificación no eliminada')
+        }
+    }
+
+    const getStatus = (item) =>{
+        const find_ = record => record.value == item.status_process;
+        let result = optionsStatusSelection.find(find_);
+        if(!result) return null;
+        return result.label;
+    }
+
+    const getType = (item) =>{
+        const find_ = record => record.value == item.type;
+        let result = optionsTypeNotify.find(find_);
+        if(!result) return null;
+        return result.label;
+    }
+
     const extraColumns = [
         {
+            title: 'Asunto',
+            dataIndex: 'subject',
+            key: 'subject'
+        },
+        {
             title: 'Estatus',
-            render: (item) => (
-                <span>algo</span>
-            )
+            render: (item) => getStatus(item)
         },
         {
             title: 'Tipo',
-            render: (item) => (
-                <span>algo</span>
-            )
+            render: (item) => getType(item)
         }
-    ]
+    ];
 
     return (
         <Row gutter={[0,24]}>
@@ -59,11 +86,13 @@ const ViewMessages = ({
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleDelete='¿Estas seguro de eliminar este mensaje?'
+                    keyTitle='subject'
+                    titleDelete='¿Estas seguro de eliminar esta notificación?'
                     catalogResults={mainData}
                     catalogLoading={loading}
                     numPage={currentPage}
                     extraColumns={extraColumns}
+                    actionDelete={actionDelete}
                     actionBtnEdit={(item)=> router.push({
                         pathname: '/jobbank/settings/catalogs/messages/edit',
                         query: {...filtersQuery, id: item.id}

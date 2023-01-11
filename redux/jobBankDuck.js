@@ -530,33 +530,9 @@ export const getListSelection = (node, query = '', page = 1) => async (dispatch)
     const typeFunction = {type: GET_SELECTION, payload: {}, fetching: false, page_num: page};
     dispatch({...typeFunction, fetching: true})
     try {
-        // let response = await WebApiJobBank.getListSelection(node, query);
-        // dispatch({...typeFunction, payload: response.data})
-        let response = [];
-        for (let i = 0; i < 50; i++) {
-            response.push({
-                id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
-                status: Math.round(Math.random()*7),
-                vacant: {
-                    "id": "88fb24f22bf145ce92ca63a60c222a11",
-                    "job_position": "Desarrollador jr "+(i+1)
-                },
-                candidate: {
-                    "id": 78,
-                    "fisrt_name": "Candidato idiomas "+(i+1),
-                    "last_name": "test",
-                    "email": "2@2.COM",
-                    "cell_phone": "2122222222",
-                    "telephone": ""
-                },
-            })    
-        }
-        setTimeout(()=>{
-            dispatch({...typeFunction, payload: {
-                count: response.length,
-                results: response
-            }})
-        },1000)
+        let response = await WebApiJobBank.getListSelection(node, query);
+        console.log("🚀 ~ file: jobBankDuck.js:534 ~ getListSelection ~ response", response)
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -567,10 +543,12 @@ export const getPreselection = (node, query = '', page = 1) => async (dispatch)=
     const typeFunction = {type: GET_PRESELECTION, payload: {}, fetching: false, page_num: page};
     dispatch({...typeFunction, fetching: true})
     try {
-        // let response = await WebApiJobBank.getPreselection(node, query);
-        setTimeout(()=>{
-            dispatch({...typeFunction, payload: {count: 0, results: []}})
-        },1000)
+        if(!query.includes('vacant')){
+            setTimeout(()=>{ dispatch(typeFunction) }, 1000);
+            return;
+        }
+        let response = await WebApiJobBank.getCandidates(node, query);
+        dispatch({...typeFunction, payload: { count: response.data?.length, results: response.data }});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
