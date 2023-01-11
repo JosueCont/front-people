@@ -331,8 +331,8 @@ const AssessmentScreen = ({
           <div
             className={"pointer"}
             key={"name_" + item.id + item.order_position}
-            onClick={() => {
-              router.push({ pathname: `/assessment/surveys/${item.id}` });
+            onClick={() => {item.category === "A" || item.category === "Q" ?
+              router.push({ pathname: `/assessment/surveys/${item.id}` }) : null;
             }}
           >
             {item.name}
@@ -463,7 +463,7 @@ const AssessmentScreen = ({
               </Row>
             </Form>
           </Col>
-          {props.permissions?.create && (
+          {/* {props.permissions?.create && (
             <Col
               span={6}
               style={{ display: "flex", justifyContent: "flex-end" }}
@@ -472,7 +472,7 @@ const AssessmentScreen = ({
                 <PlusOutlined /> Agregar encuesta
               </Button>
             </Col>
-          )}
+          )} */}
         </Row>
         <Row justify="end">
           <Checkbox
