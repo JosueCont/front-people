@@ -1,46 +1,23 @@
 import React, { useEffect } from 'react';
-import MainLayout from '../../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
-import { useRouter } from 'next/router';
 import ListCatalogs from '../../../../components/jobbank/catalogs/ListCatalogs';
-import { verifyMenuNewForTenant } from '../../../../utils/functions';
+import MainIndexJB from '../../../../components/jobbank/MainIndexJB';
 
-const index = ({
-    currentNode
-}) => {
+const index = () => {
 
-    const router = useRouter();
+    const ExtraBread = [
+        {name: 'Configuraciones', URL: '/jobbank/settings'},
+        {name: 'Catálogos'}
+    ]
 
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/jobbank/settings'})}
-                >Configuraciones</Breadcrumb.Item>
-                <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
-            </Breadcrumb>
+        <MainIndexJB
+            pageKey='jb_settings'
+            extraBread={ExtraBread}
+        >
             <ListCatalogs/>
-        </MainLayout>
+        </MainIndexJB>
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(mapState)(withAuthSync(index));
+export default withAuthSync(index);

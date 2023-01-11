@@ -1,0 +1,160 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip, Radio, Select } from 'antd';
+import {
+  SyncOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import { connect } from 'react-redux';
+import { useRouter } from 'next/router';
+import { createFiltersJB } from '../../../utils/functions';
+import TagFilters from '../TagFilters';
+import FiltersPreselection from './FiltersPreselection';
+import { useFiltersPreselection } from '../hook/useFiltersPreselection';
+
+const SearchPreselection = ({
+    currentNode,
+    list_vacancies_options,
+    load_vacancies_options
+}) => {
+
+    const router = useRouter();
+    const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
+    const { listKeys, listGets } = useFiltersPreselection();
+    const idVacant = router.query?.vacant ?? null;
+    const match = router.query?.match ?? null;
+
+    const infoVacant = useMemo(()=>{
+        if(!idVacant) return [];
+        const find_ = item => item.id == idVacant;
+        let result = list_vacancies_options.find(find_);
+        if(!result) return [];
+        return Object.entries({
+            'Vacante': result.job_position,
+            'Género': listGets['gender'](result.gender) ?? 'N/A'
+        });
+    },[idVacant, list_vacancies_options])
+
+    const showModal = () =>{
+        let state = router.query?.state ? parseInt(router.query.state) : null;
+        let gender = router.query?.gender ? parseInt(router.query.gender) : null;
+        formSearch.setFieldsValue({...router.query, state, gender});
+        setOpenModal(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
+    }
+
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/preselection',
+        query: filters
+    }, undefined, {shallow: true});
+
+    const onFinishSearch = (values) =>{
+        let filters = createFiltersJB(values);
+        if(match == '0') filters.match = match;
+        if(idVacant) filters.vacant = idVacant;
+        setFilters(filters)
+    }
+
+    const deleteFilter = () =>{
+        formSearch.resetFields();
+        setFilters()
+    }
+
+    const onChangeType = ({target: { value }}) =>{
+        let filters = {...router.query, match: value};
+        if(value == '1') delete filters.match;
+        setFilters(filters)
+    }
+
+    const onChangeVacant = (value) =>{
+        let filters = {...router.query, vacant: value};
+        if(!value) delete filters.vacant;
+        setFilters(filters)
+    }
+
+    return (
+        <>
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                Búsqueda de candidatos
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    disabled={load_vacancies_options}
+                                    loading={load_vacancies_options}
+                                    value={idVacant}
+                                    placeholder='Vacante'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                    style={{width: 150}}
+                                    onChange={onChangeVacant}
+                                >
+                                    {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.job_position}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                                <Radio.Group
+                                    onChange={onChangeType}
+                                    buttonStyle='solid'
+                                    value={router.query?.match ?? '1'}
+                                    className='radio-group-options'
+                                >
+                                    <Radio.Button value='1'>Compatibles</Radio.Button>
+                                    <Radio.Button value='0'>Todos</Radio.Button>
+                                </Radio.Group>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Limpiar filtros'>
+                                    <Button onClick={()=> deleteFilter()}>
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={listKeys}
+                            listGets={listGets}
+                            deleteKeys={['vacant','match']}
+                            defaultFilters={infoVacant}
+                        />
+                    </Col>  
+                </Row>
+            </Card>
+            <FiltersPreselection
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
+        </>
+    )
+}
+
+const mapState = (state) => {
+    return{
+        currentNode: state.userStore.current_node,
+        load_vacancies_options: state.jobBankStore.load_vacancies_options,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options
+    }
+}
+
+export default connect(mapState)(SearchPreselection);

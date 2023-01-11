@@ -484,14 +484,15 @@ export const optionsTypeSale = [
   { value: 4, key: 4, label: "Sourcing" },
 ];
 
-export const optionsJobBank = [
-  { value: 1, key: 1, label: "Computrabajo" },
-  { value: 2, key: 2, label: "OCC" },
-  { value: 3, key: 3, label: "Universidades" },
-  { value: 4, key: 4, label: "Indeed" },
-  { value: 5, key: 5, label: "Talenteca" },
-  { value: 6, key: 6, label: "HEX" },
-  { value: 7, key: 7, label: "Otros" },
+export const optionsStatusSelection = [
+  { value: 0, key: 0, label: "Sin iniciar"},
+  { value: 1, key: 1, label: "Filtro telefónico" },
+  { value: 2, key: 2, label: "Entrevista con HEX" },
+  { value: 3, key: 3, label: "Enviado a cliente" },
+  { value: 4, key: 4, label: "Proceso con cliente" },
+  { value: 5, key: 5, label: "Rechazado" },
+  { value: 6, key: 6, label: "Aceptado" },
+  { value: 7, key: 7, label: "Contratado" },
 ];
 
 export const optionsEconomicBenefits = [
@@ -594,8 +595,9 @@ export const catalogsJobbank = [
   { catalog: "profiles", name: "Tipos de template" },
   { catalog: "sectors", name: "Sectores" },
   { catalog: "jobboars", name: "Bolsas de empleo" },
-  // { catalog: "areas", name: "Áreas de especialización" },
-  // { catalog: "subareas", name: "Subáreas de especialización" },
+  // { catalog: "types", name: "Tipos de notificación" },
+  { catalog: "messages", name: "Mensajes de notificación" },
+  { catalog: "scholarship", name: "Escolaridad" }
 ];
 
 export const departureMotive = [

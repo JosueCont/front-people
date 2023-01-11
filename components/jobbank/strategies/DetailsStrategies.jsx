@@ -19,7 +19,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
-import { useProcessInfo } from './hook/useProcessInfo';
+import { useInfoStrategy } from '../hook/useInfoStrategy';
 
 const DetailsStrategies = ({
     action,
@@ -41,7 +41,7 @@ const DetailsStrategies = ({
     const [infoStrategy, setInfoStrategy] = useState({});
     const [fetching, setFetching] = useState(false);
     const [optionVacant, setOptionVacant] = useState([]);
-    const { createData, setValuesForm } = useProcessInfo({setOptionVacant});
+    const { createData, setValuesForm } = useInfoStrategy({setOptionVacant});
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){

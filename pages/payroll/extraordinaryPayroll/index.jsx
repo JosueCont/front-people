@@ -307,6 +307,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const renderConceptsTable = (data) => {
     let dataPerceptions = data?.perception;
     let dataDeductions = data?.deduction;
+    let dataOtherPayments = data?.other_payments;
 
     const columnsPerceptions = [
       {
@@ -408,6 +409,34 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       },
     ];
 
+    const columnsOtherPayments = [
+      {
+        title: "CVE",
+        key: "code",
+        dataIndex: "code",
+        className: "cell-concept",
+        width: "5%",
+      },
+      {
+        title: "Descripción",
+        key: "description",
+        dataIndex: "description",
+        className: "cell-concept",
+        width: "70%",
+      },
+      {
+        title: "Importe",
+        key: "amount",
+        dataIndex: "amount",
+        width: "20%",
+        render: (amount) => (
+          <Space size="middle">
+            <NumberFormat prefix={"$"} number={amount} />
+          </Space>
+        ),
+      },
+    ];
+
     return (
       <>
         <Row>
@@ -445,16 +474,32 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             />
           </Col>
           <br />
-          <Col
-            span={12}
-            style={{
-              display: "flex",
-              float: "right",
-              fontSize: 16,
-              fontWeight: "bold",
-              flexDirection: "column-reverse",
-            }}
-          ></Col>
+
+          <Col span={12}>
+            {dataOtherPayments && dataOtherPayments.length > 0 && (
+              <>
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Otros pagos
+                </div>
+                <Table
+                  className="subTable"
+                  columns={columnsOtherPayments}
+                  dataSource={dataOtherPayments}
+                  pagination={false}
+                  size="small"
+                  bordered
+                  locale={{ emptyText: "Aún no hay datos" }}
+                />
+              </>
+            )}
+          </Col>
+
           <Col
             span={12}
             style={{
@@ -573,10 +618,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
-          if (movementType === 1) {
+          if (movementType >= 1) {
             let calculateExist = [];
             calculateExist = response.data.payroll.filter(
-              (a) => a.payroll_cfdi_person.status === 1
+              (a) => a.payroll_cfdi_person && a.payroll_cfdi_person.status === 1
             );
 
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
@@ -723,6 +768,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         }, 1000);
       })
       .catch((error) => {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          if (error.response.data.message.includes("concepto interno")) {
+          }
+          setMessageModal(1, error.response.data.message);
+          setGenericModal(true);
+        } else message.error(messageError);
         setLoading(false);
       });
   };

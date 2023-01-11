@@ -251,10 +251,10 @@ const TableAssessments = ({
 
   const convertResults = (results) =>{
     if(results){
-      if(typeof(results) == 'string'){
-        let obj = JSON.parse(results);
-        return obj.variable_results
-          ? obj.variable_results
+      if(typeof(results.results) == 'string'){
+        let obj = JSON.parse(results.results);
+        return obj.assessment_results
+          ? obj.assessment_results
           : '';
       }else{
         return results.variable_results

@@ -37,7 +37,7 @@ const ModalCatalogs = ({
         formCatalog.setFieldsValue({
             category: router.query.category
         })
-    },[router])
+    },[router.query])
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -78,7 +78,7 @@ const ModalCatalogs = ({
                             label='Nombre'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Input placeholder='Nombre' maxLength={100}/>
+                            <Input placeholder='Escriba el nombre' maxLength={100}/>
                         </Form.Item>
                         {children}
                     </Col>

@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Row, Col } from 'antd';
 import { useRouter } from 'next/router';
-import {
-    SettingOutlined,
-    ArrowLeftOutlined,
-} from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
 import { catalogsJobbank } from '../../../utils/constant';
 import SearchCatalogs from './SearchCatalogs';
 import { valueToFilter } from '../../../utils/functions';
@@ -44,8 +41,16 @@ const ListCatalogs = () => {
     const columns = [
         {
             title: 'Catálogo',
-            dataIndex: 'name',
-            key: 'name'
+            render: (item) =>{
+                return (
+                    <a
+                        style={{color: '#1890ff'}}
+                        onClick={()=> redirect(item)}
+                    >
+                        {item.name}
+                    </a>
+                )
+            }
         },
         {
             title: 'Acciones',
@@ -61,13 +66,14 @@ const ListCatalogs = () => {
         <Row gutter={[0,24]}>
             <Col span={24}>
                 <SearchCatalogs
-                    actionBtn={()=> router.replace('/jobbank/settings')}
-                    textBtn='Regresar'
-                    iconBtn={<ArrowLeftOutlined />}
+                    keyName='name'
+                    showBtnAdd={false}
+                    backURl='/jobbank/settings'
                 />
             </Col>
             <Col span={24}>
                 <Table
+                    rowKey='catalog'
                     size='small'
                     loading={loading}
                     columns={columns}
@@ -75,6 +81,10 @@ const ListCatalogs = () => {
                     pagination={{
                         hideOnSinglePage: true,
                         showSizeChanger: false
+                    }}
+                    locale={{ emptyText: loading
+                        ? 'Cargando...'
+                        : 'No se encontraron resultados'
                     }}
                 />
             </Col>

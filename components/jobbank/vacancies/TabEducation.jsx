@@ -4,13 +4,12 @@ import {
   Row,
   Col,
   Input,
-  Select
+  Select,
+  InputNumber
 } from 'antd';
 import { useSelector } from 'react-redux';
-import {
-  optionsLevelAcademic,
-  optionsStatusAcademic,
-} from '../../../utils/constant';
+import { optionsStatusAcademic } from '../../../utils/constant';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 
 const TabEducation = ({
   children,
@@ -25,7 +24,9 @@ const TabEducation = ({
     load_main_categories,
     list_main_categories,
     load_sub_categories,
-    list_sub_categories
+    list_sub_categories,
+    list_scholarship,
+    load_scholarship
   } = useSelector(state => state.jobBankStore);
   const categorySelected = Form.useWatch('main_category', formVacancies);
 
@@ -96,11 +97,18 @@ const TabEducation = ({
           <Select
             allowClear
             showSearch
-            placeholder='Seleccionar un grado'
+            disabled={load_scholarship}
+            loading={load_scholarship}
+            placeholder='Seleccionar una opción'
             notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsLevelAcademic}
-          />
+            optionFilterProp='children'
+          >
+            {list_scholarship.length > 0 && list_scholarship.map(item => (
+              <Select.Option value={item.id} key={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Col>
       <Col xs={24} md={12} xl={8} xxl={6}>
@@ -159,21 +167,25 @@ const TabEducation = ({
           </Select>
         </Form.Item>
       </Col>
-      {/* <Col xs={24} md={12} xl={8} xxl={6}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
-          name='languajes'
-          label='Idiomas'
+          name='years_experience'
+          label='Años de experiencia'
         >
-          <Select
-            mode='multiple'
-            maxTagCount={2}
-            placeholder='Seleccionar los idiomas'
-            notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsLangVacant}
-          />
+           <InputNumber
+              type='number'
+              maxLength={2}
+              controls={false}
+              placeholder='Años de experiencia'
+              onKeyDown={validateNum}
+              onKeyPress={validateMaxLength}
+              style={{
+                width: '100%',
+                border: '1px solid black'
+              }}
+            />
         </Form.Item>
-      </Col> */}
+      </Col>
       <Col span={24}>
         {children}
       </Col>
@@ -187,6 +199,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Especificar según los idiomas seleccionados'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -202,6 +215,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -211,12 +225,13 @@ const TabEducation = ({
           </Col>
           <Col xs={24} md={12} xl={8} xxl={6}>
             <Form.Item
-              name='experiences'
+              name='experience'
               label='Experiencia requerida'
               // rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
                 placeholder='Separar cada experiencia con una coma'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,
@@ -232,6 +247,7 @@ const TabEducation = ({
             >
               <Input.TextArea
                 placeholder='Separar cada habilidad técnica con una coma'
+                maxLength={500}
                 autoSize={{
                   minRows: 4,
                   maxRows: 4,

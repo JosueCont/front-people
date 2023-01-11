@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { getFiltersJB, deleteFiltersJb } from '../../../utils/functions';
 //Catálogos
-import ViewCategories from './ViewsCatalogs/ViewCategories';
-import ViewSubcategories from './ViewsCatalogs/ViewSubcategories';
-import ViewAcademics from './ViewsCatalogs/ViewAcademics';
-import ViewCompetences from './ViewsCatalogs/ViewCompetences';
-import ViewSectors from './ViewsCatalogs/ViewSectors';
-import ViewJobBoards from './ViewsCatalogs/ViewJobBoards';
-import ViewTemplates from './ViewsCatalogs/ViewTemplates';
+import ViewCategories from './views/ViewCategories';
+import ViewSubcategories from './views/ViewSubcategories';
+import ViewAcademics from './views/ViewAcademics';
+import ViewCompetences from './views/ViewCompetences';
+import ViewSectors from './views/ViewSectors';
+import ViewJobBoards from './views/ViewJobBoards';
+import ViewTemplates from './Templates/ViewTemplates';
+import ViewMessages from './messages/ViewMessages';
+import ViewTypes from './views/ViewTypes';
+import ViewScholarship from './views/ViewScholarship';
 
 const GetViewCatalog = () =>{
 
     const router = useRouter();
     const catalog = router.query?.catalog;
     const deleteKeys = ['catalog'];
-    const [filtersString, setFiltersString] = useState('');
-    const [filtersQuery, setFiltersQuery] = useState({});
-    const [numPage, setNumPage] = useState(1);
 
     const Components = {
         categories: ViewCategories,
@@ -27,27 +27,22 @@ const GetViewCatalog = () =>{
         sectors: ViewSectors,
         jobboars: ViewJobBoards,
         profiles: ViewTemplates,
-        __default__: <></>
+        messages: ViewMessages,
+        // types: ViewTypes,
+        scholarship: ViewScholarship,
+        __default__: ()=> <></>
     }
 
-    useEffect(()=>{
-        let page = router.query.page
-            ? parseInt(router.query.page)
-            : 1;
-        let params = deleteFiltersJb(router.query, deleteKeys);
-        let filters = getFiltersJB(params);
-        setNumPage(page)
-        setFiltersQuery(params)
-        setFiltersString(filters)
+    const selectedProps = useMemo(()=>{
+        let numPage = router.query?.page ? parseInt(router.query.page) : 1;
+        let filtersQuery = deleteFiltersJb(router.query, deleteKeys);
+        let filtersString = getFiltersJB(filtersQuery);
+        return { numPage, filtersQuery, filtersString };
     },[router.query])
 
     const Selected = Components[catalog] ?? Components['__default__'];
 
-    return <Selected
-        filtersQuery={filtersQuery}
-        filtersString={filtersString}
-        currentPage={numPage}
-    />;
+    return <Selected {...selectedProps}/>;
 }
 
 export default GetViewCatalog;

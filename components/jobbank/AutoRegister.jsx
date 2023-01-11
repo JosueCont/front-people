@@ -15,7 +15,7 @@ const AutoRegister = ({
 
     useEffect(()=>{
         if(router.query?.uid) getCompay(router.query.uid);
-    },[router])
+    },[router.query?.uid])
 
     const getCompay = async (uid) =>{
         try {

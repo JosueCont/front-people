@@ -18,7 +18,6 @@ import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
-import { getFiltersJB } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -111,9 +110,9 @@ const TableCandidates = ({
                 <Menu.Item key='1'>
                     <Clipboard
                         text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`}
-                        title='Autoregistro'
+                        title='Autorregistro'
                         border={false}
-                        tooltipTitle='Copiar link de autoregistro'
+                        tooltipTitle='Copiar link de autorregistro'
                     />
                 </Menu.Item>
                 <Menu.Item
@@ -231,7 +230,7 @@ const TableCandidates = ({
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: false
+                    emptyText: load_candidates
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}

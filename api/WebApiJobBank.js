@@ -179,6 +179,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/sharin-setup/?node=${node}${query}`, 'get');
     }
 
+    static createConnection(data){
+        return WebApi.ApisType('/job-bank/sharin-setup/', 'post', data);
+    }
+
     static getDetailsConnection(id){
         return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'get');
     }
@@ -217,6 +221,26 @@ class WebApiJobBank {
      
     static sharePublication(id, data){
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/share/`, 'post', data);
+    }
+
+    static getListSelection(node){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}`, 'get');
+    }
+
+    static createSelection(data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/`, 'post', data);
+    }
+
+    static updateSelection(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'put', data);
+    }
+
+    static updateSelectionStatus(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
+    }
+
+    static deleteSelection(id){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'delete');
     }
 
     //LISTADO DE CATÁLOGOS
@@ -321,6 +345,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
 
+    //BOLSAS DE EMPLEO
+
     static getJobBoards(node, query){
         return WebApi.ApisType(`/job-bank/job-vacancies/?node=${node}${query}`, 'get');
     }
@@ -337,53 +363,42 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'delete');
     }
 
-    static getSpecializationArea(node, query){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/?node=${node}${query}`, 'get');
-    }
-
-    static createSpecializationArea(data){
-        return WebApi.ApisType('/job-bank/specialization-area-study/', 'post', data);
-    }
-
-    static updateSpecializationArea(id, data){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/${id}/`, 'put', data);
-    }
-
-    static deleteSpecializationArea(id){
-        return WebApi.ApisType(`/job-bank/specialization-area-study/${id}/`, 'delete');
-    }
-
-    static getSpecializationSubArea(node, query){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/?node=${node}${query}`, 'get');
-    }
-
-    static createSpecializationSubArea(data){
-        return WebApi.ApisType('/job-bank/specialization-sub-area/', 'post', data);
-    }
-
-    static updateSpecializationSubArea(id, data){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'put', data);
-    }
-
-    static deleteSpecializationSubArea(id){
-        return WebApi.ApisType(`/job-bank/specialization-sub-area/${id}/`, 'delete');
-    }
+    //ESTADOS
 
     static getListStates(node, query){
         return WebApi.ApisType(`/job-bank/states/?node=${node}${query}`, 'get');
     }
 
-    // static createState(data){
-    //     return WebApi.ApisType('/job-bank/states/', 'post', data);
-    // }
+    // ESCOLARIDAD
 
-    // static updateState(id, data){
-    //     return WebApi.ApisType(`/job-bank/states/${id}/`, 'put', data);
-    // }
+    static getScholarship(node, query){
+        return WebApi.ApisType(`/job-bank/study-level/?node=${node}${query}`, 'get');
+    }
 
-    // static deleteState(id){
-    //     return WebApi.ApisType(`/job-bank/states/${id}/`, 'delete');
-    // }
+    static createScholarship(data){
+        return WebApi.ApisType('/job-bank/study-level/', 'post', data);
+    }
+
+    static updateScholarship(id, data){
+        return WebApi.ApisType(`/job-bank/study-level/${id}/`, 'put', data);
+    }
+
+    static deleteScholarship(id){
+        return WebApi.ApisType(`/job-bank/study-level/${id}/`, 'delete');
+    }
+
+    //TEMPLATE DE NOTIFICACIONES
+
+    static getTemplateNotification(node, query){
+        return WebApi.ApisType(`/job-bank/template-notification/?node=${node}${query}`, 'get');
+    }
+
+    //TAGS DE NOTIFICACIONES
+
+    static getTagsNotification(node, query){
+        return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
+    }
+    
 }
 
 export default WebApiJobBank;

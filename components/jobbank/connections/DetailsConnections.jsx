@@ -1,30 +1,25 @@
 import React, {
   useEffect,
   useState,
-  useRef,
-  useLayoutEffect
+  useMemo
 } from 'react';
 import {
   Card,
   Row,
   Col,
   Button,
-  Tabs,
   Form,
   Spin,
   message,
-  Divider
 } from 'antd';
-import { ConnectionProvider } from './context/ConnectionContext';
 import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import GetForm from './GetForm';
-import { useProcessInfo } from './hook/useProcessInfo';
+import { useInfoConnection } from '../hook/useInfoConnection';
 
 const DetailsConnections = ({
-    action,
     currentNode,
     newFilters
 }) => {
@@ -33,27 +28,69 @@ const DetailsConnections = ({
     const [formConnection] = Form.useForm();
     const [fileImg, setFileImg] = useState([]);
     const [fetching, setFetching] = useState(false);
+    const [infoConfig, setInfoConfig] = useState({});
     const [infoConnection, setInfoConnection] = useState({});
-    const { createData, formatData } = useProcessInfo();
+    const { createData, formatData } = useInfoConnection();
 
     useEffect(()=>{
-        if(router.query?.id && action == 'edit'){
+        if(!currentNode) return;
+        let code = router.query?.code;
+        if(!['FB','IG'].includes(code)) return;
+        let param = code == 'IG' ? 'FB' : 'IG';
+        getConfigByCode(currentNode.id, `&code=${param}`)
+    },[currentNode, router.query?.code])
+
+    useEffect(()=>{
+        if(router.query?.id){
             getInfoConnection(router.query.id)
         }
     },[router.query?.id])
 
+    const existPreConfig = useMemo(()=>{
+        let current = infoConnection?.data_config ?? {};
+        let exist = infoConfig?.data_config ?? {};
+        let existKeys = Object.keys(current).length > 0;
+        let othersKeys = Object.keys(exist).length > 0; 
+        if(existKeys || infoConnection.data_config) return false;
+        if(!othersKeys || !infoConfig.data_config) return false;
+        return true;
+    },[infoConnection, infoConfig])
+
     useEffect(()=>{
-        if(Object.keys(infoConnection).length <= 0) return;
+        let code = router.query?.code;
+        if(['FB','IG'].includes(code) && existPreConfig){
+            setConfigExist();
+            return;
+        }
         setValuesForm();
-    },[infoConnection])
+    },[infoConnection, infoConfig, router.query?.code])
+
+    const setConfigExist = () =>{
+        formConnection.resetFields();
+        let values = formatData({...infoConnection, data_config: infoConfig.data_config});
+        let name_file = infoConnection.default_image
+            ? infoConnection.default_image.split('/').at(-1)
+            : null; 
+        formConnection.setFieldsValue({...values, name_file});
+    }
 
     const setValuesForm = () =>{
         formConnection.resetFields();
         let values = formatData(infoConnection);
-        let image_read = infoConnection.default_image
+        let name_file = infoConnection.default_image
             ? infoConnection.default_image.split('/').at(-1)
             : null; 
-        formConnection.setFieldsValue({...values, image_read});
+        formConnection.setFieldsValue({...values, name_file});
+    }
+
+    const getConfigByCode = async (node, query) =>{
+        try {
+            let response = await WebApiJobBank.getConnections(node, query);
+            let config = response.data?.results?.at(-1) ?? {};
+            setInfoConfig(config)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     const getInfoConnection = async (id) =>{
@@ -66,10 +103,6 @@ const DetailsConnections = ({
             console.log(e)
             setFetching(false)
         }
-    }
-
-    const onFinishCreate = async (values) =>{
-
     }
 
     const onFinisUpdate = async (values) =>{
@@ -103,11 +136,7 @@ const DetailsConnections = ({
     const onFinish = (values) =>{
         setFetching(true);
         const bodyData = passFormData(values);
-        const actionFunction = {
-            edit: onFinisUpdate,
-            add: onFinishCreate
-        };
-        actionFunction[action](bodyData);
+        onFinisUpdate(bodyData);
     }
 
     const actionBack = () =>{
@@ -122,10 +151,7 @@ const DetailsConnections = ({
             <Row gutter={[16,16]}>
                 <Col span={24} className='title-action-content title-action-border'>
                     <p className='title-action-text'>
-                        {action == 'add'
-                            ? 'Registrar nueva conexión'
-                            : 'Información de la conexión'
-                        }
+                        Información de la conexión
                     </p>
                     <Button
                         onClick={()=> actionBack()}
@@ -142,14 +168,14 @@ const DetailsConnections = ({
                             onFinish={onFinish}
                         >
                             <Row gutter={[24,0]}>
-                                <ConnectionProvider
+                                <GetForm
                                     infoConnection={infoConnection}
+                                    infoConfig={infoConfig}
                                     loading={fetching}
                                     formConnection={formConnection}
+                                    existPreConfig={existPreConfig}
                                     setFileImg={setFileImg}
-                                >
-                                    <GetForm/>
-                                </ConnectionProvider>
+                                />
                             </Row>
                         </Form>
                     </Spin>

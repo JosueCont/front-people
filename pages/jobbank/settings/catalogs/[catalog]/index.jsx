@@ -1,69 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
+import React, { useMemo } from 'react';
 import { withAuthSync } from '../../../../../libs/auth';
 import { useRouter } from 'next/router';
 import { catalogsJobbank } from '../../../../../utils/constant';
 import GetViewCatalog from '../../../../../components/jobbank/catalogs/GetViewCatalog';
-import { verifyMenuNewForTenant } from '../../../../../utils/functions';
+import MainIndexJB from '../../../../../components/jobbank/MainIndexJB';
 
-const catalog = ({
-    currentNode
-}) => {
+const catalog = () => {
 
     const router = useRouter();
-    const [nameCatalog, setNameCatalog] = useState('');
 
-    const getCatalog = () =>{
-        const _find = item => item.catalog == router.query.catalog;
+    const nameCatalog = useMemo(() =>{
+        if(!router.query?.catalog) return 'Catálogo';
+        const _find = item => item.catalog == router.query?.catalog;
         let result = catalogsJobbank.find(_find);
-        setNameCatalog(result.name);
-    }
+        if(!result) return 'Catálogo';
+        return result.name;
+    }, [router.query?.catalog])
 
-    useEffect(()=>{
-        if(router.query.catalog) getCatalog();
-    },[router])
-
+    const ExtraBread = useMemo(()=>{
+        return [
+            {name: 'Configuraciones', URL: '/jobbank/settings'},
+            {name: 'Catálogos', URL: '/jobbank/settings/catalogs'},
+            {name: nameCatalog}
+        ];
+    },[nameCatalog])
 
     return (
-        <MainLayout currentKey='jb_settings' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.replace('/jobbank/settings')}
-                >
-                    Configuraciones
-                </Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.replace('/jobbank/settings/catalogs')}
-                >
-                    Catálogos
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{nameCatalog}</Breadcrumb.Item>
-            </Breadcrumb>
+        <MainIndexJB
+            pageKey='jb_settings'
+            extraBread={ExtraBread}
+        >
             <GetViewCatalog/>
-        </MainLayout>
+        </MainIndexJB>
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(
-    mapState, {}
-)(withAuthSync(catalog));
+export default withAuthSync(catalog);
