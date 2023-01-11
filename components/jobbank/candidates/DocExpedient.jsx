@@ -15,38 +15,186 @@ const DocExpedient = ({
     infoPositions
 }) => {
 
-    const SectionEducation = () => (
-        <View style={{
-            padding: 6,
-            borderTopLeftRadius: 10,
-            backgroundColor: 'rgb(251 237 224)'
-        }}>
-            <Text style={{
-                fontSize: 14,
-                letterSpacing: 1,
-                paddingBottom: 3,
-                borderBottom: '1px solid rgb(17 24 39)'
-            }}>Educación</Text>
-            {infoEducation.results?.length > 0 && (
+    console.log('infoCandidate', infoCandidate)
+    console.log('infoEducation', infoEducation)
+
+    const SectionHeader = () => (
+        <View
+           style={{
+            marginBottom: 30
+           }}
+        >
+            <View 
+              style={{
+                textAlign: 'right',
+                marginBottom: 12,
+            }}>
+                    {/* <Image 
+                        src={'/images/logo_HEX.png'}
+                        style={{
+                            width: '60px',
+                            height: '25px',
+                            border: '1px red solid'
+                        }}
+                    /> */}
+                    <Text>
+                        IMAGEN
+                    </Text>
+            </View>
+            <View
+                style={{
+                    textAlign: 'center'
+                }}
+            >
+                <Text>Información del candidato</Text>
+            </View>
+        </View>
+    )
+
+    const SectionDetails = () => (
+        <View>
+            <View style={{ marginBottom: 10}}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Datos generales</Text>
+            </View>
+            <View
+                style={{
+                    backgroundColor: '#E9E9E9',
+                    borderRadius: 5
+                }}
+            >
                 <View style={{
-                    marginTop: 12,
-                    display: 'flex',
-                    flexDirection: 'column'
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        padding: '6px 12px',
                 }}>
-                    {infoEducation.results?.map((item, idx) => (
-                         <View key={idx} style={{
-                            marginBottom: 4,
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                            <Text style={{fontSize: 14, marginBottom: 2}}>{item.institution_name ?? null}</Text>
-                            <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>
-                               {item.study_level?.name ?? null} - {item.end_date ?? null}
-                            </Text>
-                        </View>
-                    ))}
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Nombre: {infoCandidate?.fisrt_name}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Apellidos: {infoCandidate?.last_name}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Fecha de nacimiento: {infoCandidate?.birthdate || ""}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Correo electrónico: {infoCandidate?.email}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Celular: {infoCandidate?.cell_phone}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Teléfono fijo: {infoCandidate?.telephone}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Estado: {infoCandidate?.state?.name}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Municipio: {infoCandidate?.municipality}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Dirección: {infoCandidate?.street_address}</Text>
+                    </View>
+                    <View style={{flex: '0 0 50%' }}>
+                        <Text style={{ fontSize: 10 }}>Código postal: {infoCandidate?.postal_code}</Text>
+                    </View>
+                    <View style={{ flex: '0 0 100%', borderBottom: '1px solid rgb(17 24 39)', marginTop: 20, marginBottom: 10 }}></View>
                 </View>
-            )}
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        padding: '6px 12px',
+                        marginBottom: 10
+                }}
+                >
+                    <View style={{
+                        flex: '0 0 100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row', }}>
+                        <Text style={{ fontSize: 10, marginRight: 15 }}>Idiomas: </Text>
+                        {
+                            infoCandidate?.languages.length > 0 &&
+
+                            infoCandidate.languages.map((lang) => (
+                                <Text 
+                                    key={lang.id} 
+                                    style={{
+                                        fontSize: 10,
+                                        padding: '3px 5px',
+                                        backgroundColor: '#FFF',
+                                        marginRight: 5,
+                                        borderRadius: 5
+                                    }}
+                                > 
+                                    { lang.lang } / { lang.domain } 
+                                </Text>
+                            ))
+                        }
+                    </View>
+                </View>
+                <View
+                   style={{
+                       display: 'flex',
+                       flexWrap: 'wrap',
+                       flexDirection: 'row',
+                       padding: '6px 12px',
+                    }}
+                >
+                    <View style={{flex: '0 0 100%', marginBottom: 10 }}>
+                        <Text style={{ fontSize: 10 }}>Acerca de tí:</Text>
+                    </View>
+                    <View style={{flex: '0 0 100%', backgroundColor: '#FFF', padding: '6px 12px', border: '1px solid gray', borderRadius: 5, marginBottom: 10 }}>
+                        <Text style={{ fontSize: 10 }}>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum alias voluptate laudantium quo, 
+                        quia molestiae laboriosam nisi? Quae inventore ut rerum alias unde consequatur dolorem, 
+                        quam architecto ipsum sapiente ab eligendi dolores minus consectetur esse.
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        </View>
+    )
+
+    const SectionEducation = () => (
+        <View style={{ marginTop: 20 }}>
+            <View style={{ marginBottom: 10}}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Educación</Text>
+            </View>
+            <View
+                style={{
+                    backgroundColor: '#E9E9E9',
+                    borderRadius: 5
+                }}
+            >
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        padding: '6px 12px',
+                    }}
+                >
+                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                        <Text style={{ fontSize: 10 }}>Escolaridad</Text>
+                    </View>
+                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Carrera</Text>
+                    </View>
+                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Estatus</Text>
+                    </View>
+                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
+                    </View>
+                    <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Nombre de la institucion</Text>
+                    </View>
+                </View>
+            </View>
         </View>
     )
 
@@ -100,12 +248,11 @@ const DocExpedient = ({
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
                 <Page size='LETTER' style={{padding: 24}}>
-                    <View style={{textAlign: 'center', marginBottom: 12}}>
-                        <Text style={{fontSize: 28, fontWeight: 'bold', lineHeight: 1}}>
-                            {infoCandidate?.fisrt_name} {infoCandidate?.last_name}
-                        </Text>
-                    </View>
-                    <View style={{
+                    <SectionHeader />
+                    <SectionDetails />
+                    <SectionEducation />
+                    
+                    {/* <View style={{
                         display: 'flex',
                         flexDirection: 'row',
                         flexWrap: 'wrap'
@@ -122,7 +269,7 @@ const DocExpedient = ({
                         }}>
                            <SectionExperience/>
                         </View>
-                    </View>
+                    </View> */}
                 </Page>
             </Document>
         // </PDFViewer>
