@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Tooltip, message } from 'antd';
+import { Button, Tooltip, message, Dropdown, Menu } from 'antd';
 import { pdf } from '@react-pdf/renderer';
 import DocExpedient from './DocExpedient';
 import {
@@ -55,6 +55,31 @@ const Expedient = ({
         }
     }
 
+    const menuItems = 
+        <Menu>
+            <Menu.Item key={1}>
+                <a
+
+                    // loading={loading}
+                    // icon={<DownloadOutlined/>}
+                    onClick={()=> generatePDF(true)}
+                >
+                    Expediente completo
+                </a>
+            </Menu.Item>
+            <Menu.Item key={2}>
+                <a
+                    
+                    // loading={loading}
+                    // icon={<DownloadOutlined/>}
+                    onClick={()=> generatePDF(true)}
+                >
+                    Expediente resumido
+                </a>
+            </Menu.Item>
+        </Menu>
+
+
     return (
         <>
             <Tooltip title='Visualizar expediente'>
@@ -66,14 +91,23 @@ const Expedient = ({
                     Expediente
                 </Button>
             </Tooltip>
-            <Tooltip title='Descargar expediente'>
-                <Button
+            <Tooltip title=''>
+                {/* <Button
                     loading={loading}
                     icon={<DownloadOutlined/>}
                     onClick={()=> generatePDF(true)}
                 >
                     Expediente
+                </Button> */}
+                <Dropdown overlay={menuItems}>
+                    <Button
+                    loading={loading}
+                    icon={<DownloadOutlined/>}
+                    // onClick={()=> generatePDF(true)}
+                >
+                    Descargar expediente
                 </Button>
+                </Dropdown>
             </Tooltip>
         </>
     )

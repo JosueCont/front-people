@@ -15,41 +15,111 @@ const DocExpedient = ({
     infoPositions
 }) => {
 
-    console.log('infoCandidate', infoCandidate)
-    console.log('infoEducation', infoEducation)
+    // console.log('infoCandidate', infoCandidate)
+    // console.log('infoEducation', infoEducation)
+    console.log('infoPositions', infoPositions)
 
-    const SectionHeader = () => (
-        <View
-           style={{
-            marginBottom: 30
-           }}
-        >
-            <View 
-              style={{
-                textAlign: 'right',
-                marginBottom: 12,
-            }}>
-                    {/* <Image 
-                        src={'/images/logo_HEX.png'}
-                        style={{
-                            width: '60px',
-                            height: '25px',
-                            border: '1px red solid'
-                        }}
-                    /> */}
-                    <Text>
-                        IMAGEN
-                    </Text>
-            </View>
-            <View
-                style={{
-                    textAlign: 'center'
-                }}
-            >
-                <Text>Información del candidato</Text>
-            </View>
-        </View>
-    )
+    const list_status = [
+        {
+            "value": 1,
+            "key": 1,
+            "label": "En curso"
+        },
+        {
+            "value": 2,
+            "key": 2,
+            "label": "Trunca"
+        },
+        {
+            "value": 3,
+            "key": 3,
+            "label": "Concluida"
+        }
+    ]
+
+    const listLanguages = [
+        {
+            "value": 1,
+            "key": 1,
+            "label": "Inglés",
+            "children": [
+                {
+                    "value": 1,
+                    "key": 1,
+                    "label": "Básico"
+                },
+                {
+                    "value": 2,
+                    "key": 2,
+                    "label": "Intermedio"
+                },
+                {
+                    "value": 3,
+                    "key": 3,
+                    "label": "Avanzado"
+                },
+                {
+                    "value": 4,
+                    "key": 4,
+                    "label": "Experto"
+                }
+            ]
+        },
+        {
+            "value": 2,
+            "key": 2,
+            "label": "Francés",
+            "children": [
+                {
+                    "value": 1,
+                    "key": 1,
+                    "label": "Básico"
+                },
+                {
+                    "value": 2,
+                    "key": 2,
+                    "label": "Intermedio"
+                },
+                {
+                    "value": 3,
+                    "key": 3,
+                    "label": "Avanzado"
+                },
+                {
+                    "value": 4,
+                    "key": 4,
+                    "label": "Experto"
+                }
+            ]
+        },
+        {
+            "value": 3,
+            "key": 3,
+            "label": "Italiano",
+            "children": [
+                {
+                    "value": 1,
+                    "key": 1,
+                    "label": "Básico"
+                },
+                {
+                    "value": 2,
+                    "key": 2,
+                    "label": "Intermedio"
+                },
+                {
+                    "value": 3,
+                    "key": 3,
+                    "label": "Avanzado"
+                },
+                {
+                    "value": 4,
+                    "key": 4,
+                    "label": "Experto"
+                }
+            ]
+        }
+    ]
 
     const SectionDetails = () => (
         <View>
@@ -130,7 +200,9 @@ const DocExpedient = ({
                                         borderRadius: 5
                                     }}
                                 > 
-                                    { lang.lang } / { lang.domain } 
+                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                    / 
+                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
                                 </Text>
                             ))
                         }
@@ -194,63 +266,266 @@ const DocExpedient = ({
                         <Text style={{ fontSize: 10 }}>Nombre de la institucion</Text>
                     </View>
                 </View>
+                <View
+                    style={{
+                        padding: '6px 12px',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                    }}
+                >
+                    {
+                        infoEducation?.length > 0 && infoEducation.map((inst) => (
+
+                        <View 
+                             key={inst.id}
+                            style={{ 
+                                backgroundColor: '#FFF',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                flexDirection: 'row',
+                                borderRadius: 10,
+                                padding: '0px 6px',
+                                marginBottom: 5
+                            }}
+                        >
+                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.study_level?.name } </Text>
+                            </View>
+                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.specialitation_area } </Text>
+                            </View>
+                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst && list_status.find((sch) => sch.value == inst.status).label } </Text>
+                            </View>
+                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.end_date } </Text>
+                            </View>
+                            <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.institution_name } </Text>
+                            </View>
+                        </View>
+                        ))
+                    }
+
+                </View>
             </View>
         </View>
     )
 
     const SectionExperience = () => (
-        <View style={{
-            padding: 6,
-            borderTopRightRadius: 10,
-            backgroundColor: 'rgb(248 243 239)',
-        }}>
-            <Text style={{
-                fontSize: 14,
-                letterSpacing: 1,
-                paddingBottom: 3,
-                borderBottom: '1px solid rgb(17 24 39)'
-            }}>Experiencia</Text>
-            {infoPositions.results?.length > 0 && (
-                <View style={{marginTop: 12}}>
-                    {infoPositions?.results?.map((item, idx) =>(
-                        <View key={idx} style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            marginBottom: 4
-                        }}>
-                            <View style={{
+        <View style={{ marginTop: 20 }}>
+            <View style={{ marginBottom: 10}}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Experiencia y especialización</Text>
+            </View>
+            <View
+                style={{
+                    backgroundColor: '#E9E9E9',
+                    borderRadius: 5
+                }}
+            >
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        padding: '6px 12px',
+                    }}
+                >
+                    <View style={{flex: '0 0 25%', textAlign: 'left' }}>
+                        <Text style={{ fontSize: 10 }}>Categoría</Text>
+                    </View>
+                    <View style={{flex: '0 0 25%', textAlign: 'left' }}>
+                        <Text style={{ fontSize: 10 }}>Subcategoría</Text>
+                    </View>
+                    <View style={{flex: '0 0 20%', textAlign: 'left' }}>
+                        <Text style={{ fontSize: 10 }}>Años de experiencia</Text>
+                    </View>
+                    <View style={{flex: '0 0 30%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Competencias</Text>
+                    </View>
+                </View>
+                <View
+                    style={{
+                        padding: '6px 12px',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                    }}
+                >
+                    {
+                        infoExperience?.length > 0 && infoExperience.map((info) => (
+                            <>
+                           <View 
+                             key={info.id}
+                            style={{ 
+                                backgroundColor: '#FFF',
                                 display: 'flex',
-                                flexDirection: 'column',
-                                paddingRight: 6
-                            }}>
-                                <Text style={{fontSize: 14, marginBottom: 2}}>{item.company}</Text>
-                                <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>
-                                    {item.start_date?.substring(0,4)} - {item.end_date?.substring(0,4)}
-                                </Text>
+                                flexWrap: 'wrap',
+                                flexDirection: 'row',
+                                borderRadius: 10,
+                                padding: '0px 6px',
+                                marginBottom: 5,
+                                flex: '0 0 70%',
+                                maxHeight: 12
+                            }}
+                        >
+                            <View style={{flex: '0 0 35%', textAlign: 'left' }}>
+                                <Text style={{ fontSize: 10 }}> { info?.category?.name } </Text>
                             </View>
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                paddingLeft: 6
-                            }}>
-                                <Text style={{fontSize: 14, marginBottom: 2}}>{item.position_name}</Text>
-                                <Text style={{fontSize: 14, color: 'rgb(107 114 128)'}}>{item.sector?.name ?? null}</Text>
+                            <View style={{flex: '0 0 35%', textAlign: 'left' }}>
+                                <Text style={{ fontSize: 10 }}>{ info?.sub_category?.name }</Text>
+                            </View>
+                            <View style={{flex: '0 0 30%', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { info?.experience_years } </Text>
                             </View>
                         </View>
-                    ))}
+
+                        <View
+                            style={{ 
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                flexDirection: 'row',
+                                padding: '0px 6px',
+                                marginBottom: 5,
+                                flex: '0 0 30%'
+                            }}
+                        >
+                           {
+                                info?.competences?.length > 0 && info.competences.map((comp) => (
+                                    <View key={comp.id} style={{ textAlign: 'center', backgroundColor: '#FFF', borderRadius: 10, marginRight: 3, marginBottom: 3 }}>
+                                        <Text style={{ fontSize: 10 }}> { comp.name } </Text>
+                                    </View>
+                                ))
+                           }
+                        </View>
+                        </>
+                        ))
+
+                    }
                 </View>
-            )}
+            </View>
+        </View>
+    )
+
+    const SectionUltimateJobs = () => (
+        <View style={{ marginTop: 70 }}>
+            <View style={{ marginBottom: 10}}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Últimos puestos</Text>
+            </View>
+            <View
+                style={{
+                    backgroundColor: '#E9E9E9',
+                    borderRadius: 5
+                }}
+            >
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        padding: '6px 12px',
+                    }}
+                >
+                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                        <Text style={{ fontSize: 10 }}>Puesto</Text>
+                    </View>
+                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Empresa</Text>
+                    </View>
+                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Sector</Text>
+                    </View>
+                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Fecha de inicio</Text>
+                    </View>
+                    <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
+                    </View>
+                </View>
+                <View
+                    style={{
+                        padding: '6px 12px',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                    }}
+                >
+                    {
+                        infoPositions?.length > 0 && infoPositions.map((inst) => (
+
+                        <View 
+                            key={inst.id}
+                            style={{ 
+                                backgroundColor: '#FFF',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                flexDirection: 'row',
+                                borderRadius: 10,
+                                padding: '0px 6px',
+                                marginBottom: 5
+                            }}
+                        >
+                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.position_name } </Text>
+                            </View>
+                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.company } </Text>
+                            </View>
+                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
+                            </View>
+                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.start_date } </Text>
+                            </View>
+                            <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                                <Text style={{ fontSize: 10 }}> { inst?.end_date} </Text>
+                            </View>
+                        </View>
+                        ))
+                    }
+
+                </View>
+            </View>
         </View>
     )
 
     return (
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
-                <Page size='LETTER' style={{padding: 24}}>
-                    <SectionHeader />
+                <Page size='LETTER' style={{padding: 24}} wrap={true}>
+                <View
+                    style={{
+                        marginBottom: 30,
+                    }}
+                >
+                    <View 
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginBottom: 12,
+                    }}>
+                            <Image 
+                                src={'/images/logo_HEX.png'}
+                                style={{
+                                    width: '60px',
+                                    height: '25px',
+                                    marginLeft: '90%',
+                                }}
+                            />
+                    </View>
+                    <View
+                        style={{
+                            textAlign: 'center'
+                        }}
+                    >
+                        <Text>Información del candidato</Text>
+                    </View>
+                </View>
                     <SectionDetails />
                     <SectionEducation />
+                    <SectionExperience />
+                    <SectionUltimateJobs />
                     
                     {/* <View style={{
                         display: 'flex',
