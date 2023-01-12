@@ -14,7 +14,7 @@ import {
     EditOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
@@ -241,7 +241,7 @@ const TableCandidates = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos candidatos?'
                     : '¿Estás seguro de eliminar este candidato?'
@@ -250,8 +250,8 @@ const TableCandidates = ({
                 keyTitle='fisrt_name'
                 keyDescription='last_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

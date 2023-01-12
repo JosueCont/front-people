@@ -390,7 +390,23 @@ class WebApiJobBank {
     //TEMPLATE DE NOTIFICACIONES
 
     static getTemplateNotification(node, query){
-        return WebApi.ApisType(`/job-bank/template-notification/?node=${node}${query}`, 'get');
+        return WebApi.ApisType(`/job-bank/notification/?node=${node}${query}`, 'get');
+    }
+
+    static getInfoNotification(id){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'get');
+    }
+
+    static createTemplateNotification(data){
+        return WebApi.ApisType('/job-bank/notification/', 'post', data);
+    }
+
+    static updateTemplateNotification(id, data){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'put', data);
+    }
+
+    static deleteTemplateNotification(id){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'delete');
     }
 
     //TAGS DE NOTIFICACIONES

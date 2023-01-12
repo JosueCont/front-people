@@ -495,6 +495,19 @@ export const optionsStatusSelection = [
   { value: 7, key: 7, label: "Contratado" },
 ];
 
+export const optionsTypeNotify = [
+  {value: 0, key: 0, label: "Informativa"},
+  {value: 1, key: 1, label: "Seguimiento"},
+  {value: 2, key: 2, label: "Recordatorio"},
+  {value: 3, key: 3, label: "Alerta"},
+  {value: 4, key: 4, label: "Error"}
+];
+
+export const optionsSourceJB = [
+  {value: 0, key: 0, label: "Correo"},
+  {value: 1, key: 1, label: "WhatsApp"},
+]
+
 export const optionsEconomicBenefits = [
   { value: 1, key: 1, label: "Sin prestaciones" },
   { value: 2, key: 2, label: "Prestaciones de ley" },
