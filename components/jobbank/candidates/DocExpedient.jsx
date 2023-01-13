@@ -12,12 +12,38 @@ const DocExpedient = ({
     infoCandidate,
     infoEducation,
     infoExperience,
-    infoPositions
+    infoPositions,
 }) => {
 
-    // console.log('infoCandidate', infoCandidate)
-    // console.log('infoEducation', infoEducation)
-    console.log('infoPositions', infoPositions)
+    const [marginTop, setMarginTop ] = useState(80)
+    console.log('infoCandidate', infoCandidate)
+
+    useState(() => {
+        if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
+            if(infoCandidate.about_me.length > 100){
+                setMarginTop(marginTop - 30)
+            } else {
+                setMarginTop(marginTop + 10)
+            }
+        }
+    },[infoCandidate])
+
+    useState(() => {
+        if (infoExperience && infoExperience.length > 0) {
+            if (infoExperience.length > 2) {
+                setMarginTop(marginTop - 25)
+            }
+        }
+    },[infoExperience])
+
+    useState(() => {
+        if(infoEducation && infoEducation.length > 0){
+            if(infoEducation.length <= 3){
+                setMarginTop(marginTop + 25)
+            }
+        }
+    },[infoCandidate])
+
 
     const list_status = [
         {
@@ -221,9 +247,9 @@ const DocExpedient = ({
                     </View>
                     <View style={{flex: '0 0 100%', backgroundColor: '#FFF', padding: '6px 12px', border: '1px solid gray', borderRadius: 5, marginBottom: 10 }}>
                         <Text style={{ fontSize: 10 }}>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum alias voluptate laudantium quo, 
-                        quia molestiae laboriosam nisi? Quae inventore ut rerum alias unde consequatur dolorem, 
-                        quam architecto ipsum sapiente ab eligendi dolores minus consectetur esse.
+                        {
+                            infoCandidate?.about_me
+                        }
                         </Text>
                     </View>
                 </View>
@@ -409,7 +435,7 @@ const DocExpedient = ({
     )
 
     const SectionUltimateJobs = () => (
-        <View style={{ marginTop: 70 }}>
+        <View style={{ marginTop: marginTop }}>
             <View style={{ marginBottom: 10}}>
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Últimos puestos</Text>
             </View>
