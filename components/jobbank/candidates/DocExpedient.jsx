@@ -155,7 +155,7 @@ const DocExpedient = ({
             <View
                 style={{
                     backgroundColor: '#E9E9E9',
-                    borderRadius: 5
+                    borderRadius: 8
                 }}
             >
                 <View style={{
@@ -265,7 +265,7 @@ const DocExpedient = ({
             <View
                 style={{
                     backgroundColor: '#E9E9E9',
-                    borderRadius: 5
+                    borderRadius: 8
                 }}
             >
                 <View
@@ -347,7 +347,7 @@ const DocExpedient = ({
             <View
                 style={{
                     backgroundColor: '#E9E9E9',
-                    borderRadius: 5
+                    borderRadius: 8
                 }}
             >
                 <View
@@ -442,7 +442,7 @@ const DocExpedient = ({
             <View
                 style={{
                     backgroundColor: '#E9E9E9',
-                    borderRadius: 5
+                    borderRadius: 8
                 }}
             >
                 <View
@@ -459,13 +459,13 @@ const DocExpedient = ({
                     <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Empresa</Text>
                     </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                    <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Sector</Text>
                     </View>
                     <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Fecha de inicio</Text>
                     </View>
-                    <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                    <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
                     </View>
                 </View>
@@ -498,13 +498,13 @@ const DocExpedient = ({
                             <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.company } </Text>
                             </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
                             </View>
                             <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.start_date } </Text>
                             </View>
-                            <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.end_date} </Text>
                             </View>
                         </View>
@@ -534,7 +534,7 @@ const DocExpedient = ({
                             <Image 
                                 src={'/images/logo_HEX.png'}
                                 style={{
-                                    width: '80px',
+                                    width: '110px',
                                     height: '25px',
                                     marginLeft: '90%',
                                 }}
