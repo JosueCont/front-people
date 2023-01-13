@@ -534,7 +534,7 @@ const DocExpedient = ({
                             <Image 
                                 src={'/images/logo_HEX.png'}
                                 style={{
-                                    width: '60px',
+                                    width: '80px',
                                     height: '25px',
                                     marginLeft: '90%',
                                 }}
