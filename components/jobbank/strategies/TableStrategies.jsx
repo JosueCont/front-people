@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import { getStrategies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import { optionsStatusVacant } from '../../../utils/constant';
 
 const TableStrategies = ({
@@ -225,7 +225,7 @@ const TableStrategies = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estas estrategias?'
                     : '¿Estás seguro de eliminar esta estrategia?'
@@ -234,8 +234,8 @@ const TableStrategies = ({
                 keyTitle='vacant, job_position'
                 keyDescription='product'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

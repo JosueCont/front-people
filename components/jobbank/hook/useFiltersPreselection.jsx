@@ -1,5 +1,9 @@
 import { useSelector } from "react-redux";
-import { optionsGenders } from "../../../utils/constant";
+import {
+    optionsGenders,
+    optionsStatusAcademic,
+    optionsLangVacant
+} from "../../../utils/constant";
 
 export const useFiltersPreselection = () =>{
 
@@ -8,52 +12,81 @@ export const useFiltersPreselection = () =>{
         list_main_categories,
         list_states,
         load_states,
-        list_sectors,
-        load_sectors,
-        load_sub_categories,
-        list_sub_categories
+        load_scholarship,
+        list_scholarship
     } = useSelector(state => state.jobBankStore);
+    const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
 
     const listKeys = {
-        name: 'Nombre',
-        lastname: 'Apellidos',
-        email: 'Correo',
+        fisrt_name__unaccent__icontains: 'Nombre',
+        last_name__unaccent__icontains: 'Apellidos',
+        email__unaccent__icontains: 'Correo',
         main_category: 'Categoría',
         gender: 'Género',
         state: 'Estado',
-        municipality__unaccent__icontains: 'Municipio'
+        municipality__unaccent__icontains: 'Municipio',
+        study_level: 'Nivel de estudios',
+        status_level_study: 'Estatus académico',
+        last_job: 'Puesto',
+        age: 'Edad',
+        language: 'Idioma'
     }
 
-    const getCategory = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_main_categories.find(find_);
-        if(!result) return id;
-        return result.name;
-    }
-
-    const getState = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_states.find(find_);
-        if(!result) return id;
-        return result.name;
-    }
-
-    const getGender = (value) =>{
+    const getValue = ({
+        value = '',
+        list = [],
+        keyEquals = 'id',
+        keyShow = 'name'
+    }) =>{
         if(!value) return value;
-        const find_ = item => item.value == value;
-        let result = optionsGenders.find(find_);
+        const find_ = item => item[keyEquals] == value;
+        let result = list.find(find_);
         if(!result) return value;
-        return result.label;
+        return result[keyShow];
     }
+
+    const getCategory = (id) => getValue({
+        value: id,
+        list: list_main_categories
+    });
+
+    const getState = (id) => getValue({
+        value: id,
+        list: list_states
+    });
+
+    const getGender = (value) => getValue({
+        value,
+        list: optionsGenders,
+        ...paramsOptions
+    });
+
+    const getStudy = (id) => getValue({
+        value: id,
+        list: list_scholarship
+    });
+
+    const getStatus = (value) => getValue({
+        value,
+        list: optionsStatusAcademic,
+        ...paramsOptions
+    });
+
+    const getLang = (value) => getValue({
+        value,
+        list: optionsLangVacant,
+        ...paramsOptions
+    })
 
     const listGets = {
         main_category: getCategory,
         state: getState,
-        gender: getGender
+        gender: getGender,
+        study_level: getStudy,
+        status_level_study: getStatus,
+        language: getLang
     }
 
-    return { listKeys, listGets }
+    return { listKeys, listGets };
 
 }

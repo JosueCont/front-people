@@ -13,21 +13,22 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    CalendarOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalStatus from './ModalStatus';
 
 const TableSelection = ({
+    currentUser,
     currentNode,
     jobbank_page,
     getListSelection,
     list_selection,
     load_selection,
-    currentPage,
     currentFilters
 }) => {
 
@@ -42,7 +43,7 @@ const TableSelection = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             // await WebApiJobBank.deleteSelection({ids});
-            getListSelection(currentNode.id, currentFilters, currentPage);
+            getListSelection(currentNode.id, currentFilters, jobbank_page);
             let msg = ids.length > 1 ? 'Procesos eliminados' : 'Proceso eliminado';
             message.success(msg);
         } catch (e) {
@@ -54,8 +55,14 @@ const TableSelection = ({
 
     const actionUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateSelectionStatus(itemToEdit.id, values);
-            getListSelection(currentNode.id, currentFilters, currentPage);
+            await WebApiJobBank.updateSelection(itemToEdit.id, {
+                ...values,
+                person: currentUser.id,
+                previus_state: itemToEdit.previus_state,
+                // candidate: itemToEdit.candidate,
+                // vacant: itemToEdit.vacant
+            });
+            getListSelection(currentNode.id, currentFilters, jobbank_page);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -74,7 +81,10 @@ const TableSelection = ({
 
     const onChangeStatus = (value, item) =>{
         setOpenModal(true)
-        setItemToEdit({...item, status: value})
+        setItemToEdit({...item,
+            previus_state: item.status_process,
+            status_process: value
+        })
     }
 
     const onCloseModal = () =>{
@@ -147,6 +157,14 @@ const TableSelection = ({
                 >
                     Eliminar
                 </Menu.Item>
+                {item.status == 2 && (
+                    <Menu.Item
+                        key='3'
+                        icon={<CalendarOutlined />}
+                    >
+                        Agendar entrevista
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
@@ -188,8 +206,8 @@ const TableSelection = ({
                     <Select
                         size='small'
                         style={{width: 150}}
-                        defaultValue={item.status}
-                        value={item.status}
+                        defaultValue={item.status_process}
+                        value={item.status_process}
                         placeholder='Estatus'
                         options={optionsStatusSelection}
                         onChange={(e) => onChangeStatus(e, item)}
@@ -241,7 +259,7 @@ const TableSelection = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos procesos?'
                     : '¿Estás seguro de eliminar este proceso?'
@@ -250,8 +268,8 @@ const TableSelection = ({
                 keyTitle='candidate, fisrt_name'
                 keyDescription='vacant, job_position'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
             <ModalStatus
                 title='Actualizar estatus'
@@ -269,7 +287,8 @@ const mapState = (state) =>{
         list_selection: state.jobBankStore.list_selection,
         load_selection: state.jobBankStore.load_selection,
         jobbank_page: state.jobBankStore.jobbank_page,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        currentUser: state.userStore.user
     }
 }
 

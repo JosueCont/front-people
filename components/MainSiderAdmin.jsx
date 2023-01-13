@@ -214,7 +214,7 @@ const MainSider = ({
           getItem("Candidatos", "jb_candidates"),
           getItem("Publicaciones", "jb_publications"),
           // getItem("Preselección", "jb_preselection"),
-          getItem("Proceso de selección", "jb_selection"),
+          // getItem("Proceso de selección", "jb_selection"),
           getItem("Configuraciones", "jb_settings")
         ]
         let children02 = [

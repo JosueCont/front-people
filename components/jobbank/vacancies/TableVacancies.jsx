@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import { getVacancies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import { optionsStatusVacant } from '../../../utils/constant';
 
 const TableVacancies = ({
@@ -37,7 +37,7 @@ const TableVacancies = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [viewAsList, setViewAsList] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
@@ -82,15 +82,15 @@ const TableVacancies = ({
     }
 
     const openModalManyDelete = () =>{
-        const filter_ = item => item.has_estrategy;
+        const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setViewAsList(true)
+            setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setViewAsList(false);
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -100,20 +100,20 @@ const TableVacancies = ({
     }
 
     const openModalRemove = (item) =>{
-        setViewAsList(item.has_estrategy)
+        setUseToDelete(!item?.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        setViewAsList(false)
+        setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
     const titleDelete = useMemo(()=>{
-        if(viewAsList){
+        if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estas vacantes no se pueden eliminar, ya que
                 se encuentran asociadas a una estrategia.`
@@ -123,7 +123,7 @@ const TableVacancies = ({
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estas vacantes?'
             : '¿Estás seguro de eliminar esta vacante?';
-    },[viewAsList, itemsToDelete])
+    },[useToDelete, itemsToDelete])
 
     const savePage = (query) => router.replace({
         pathname: '/jobbank/vacancies',
@@ -299,16 +299,16 @@ const TableVacancies = ({
                 showSizeChanger: false
             }}
         />
-        <DeleteItems
+        <ListItems
             title={titleDelete}
             visible={openModalDelete}
             keyTitle='job_position'
             keyDescription='customer, name'
             close={closeModalDelete}
-            itemsToDelete={itemsToDelete}
-            actionDelete={actionDelete}
-            textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
-            viewAsList={viewAsList}
+            itemsToList={itemsToDelete}
+            actionConfirm={actionDelete}
+            textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+            useWithAction={useToDelete}
         />
     </>
   )

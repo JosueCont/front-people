@@ -8,7 +8,7 @@ import TablePreselection from '../../../components/jobbank/preselection/TablePre
 import {
     getMainCategories,
     getListStates,
-    getAcademics,
+    getScholarship,
     getPreselection,
     getVacanciesOptions
 } from '../../../redux/jobBankDuck';
@@ -18,20 +18,19 @@ const index = ({
     currentNode,
     getMainCategories,
     getListStates,
-    getAcademics,
+    getScholarship,
     getPreselection,
     getVacanciesOptions
 }) =>{
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
     const [currentFilters, setCurrentFilters] = useState('')
 
     useEffect(()=>{
         if(currentNode){
             getMainCategories(currentNode.id)
             getListStates(currentNode.id)
-            getAcademics(currentNode.id)
+            getScholarship(currentNode.id)
             getVacanciesOptions(currentNode.id)
         }
     },[currentNode])
@@ -39,10 +38,9 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             let page = router.query?.page ? parseInt(router.query?.page) : 1;
-            let match = router.query?.match ?? '1';
-            let filters = getFiltersJB({...router.query, match});
+            let applyMatch = router.query?.applyMatch ?? '1';
+            let filters = getFiltersJB({...router.query, applyMatch});
             getPreselection(currentNode.id, filters, page)
-            setCurrentPage(page)
             setCurrentFilters(filters)
         }
     },[currentNode, router.query])
@@ -53,7 +51,7 @@ const index = ({
             extraBread={[{name: 'Preseleción'}]}
         >
             <SearchPreselection/>
-            <TablePreselection/>
+            <TablePreselection currentFilters={currentFilters}/>
         </MainIndexJB>
     )
 }
@@ -68,7 +66,7 @@ export default connect(
     mapState, {
         getMainCategories,
         getListStates,
-        getAcademics,
+        getScholarship,
         getPreselection,
         getVacanciesOptions
     }

@@ -9,7 +9,7 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 import ModalContact from './ModalContact';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 
 const TabContact = ({
     contactList,
@@ -171,13 +171,13 @@ const TabContact = ({
                 actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
-            <DeleteItems
+            <ListItems
                 title='¿Estás seguro de eliminar este contacto?'
                 visible={openModalDelete}
                 keyTitle='name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
                 timeLoad={1000}
             />
         </>

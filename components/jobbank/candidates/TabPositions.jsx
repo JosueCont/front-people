@@ -15,7 +15,7 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import ModalPositions from './ModalPositions';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 
 const TabPositions = ({
@@ -235,14 +235,14 @@ const TabPositions = ({
                 actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
-           <DeleteItems
+           <ListItems
                 title='¿Estás seguro de eliminar este puesto?'
                 visible={openModalDelete}
                 keyTitle='company'
                 keyDescription='position_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )
