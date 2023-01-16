@@ -18,7 +18,7 @@ const DocExpedient = ({
     const [marginTop, setMarginTop ] = useState(80)
     console.log('infoCandidate', infoCandidate)
 
-    useState(() => {
+    useEffect(() => {
         if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
             if(infoCandidate.about_me.length > 100){
                 setMarginTop(marginTop - 30)
@@ -28,7 +28,7 @@ const DocExpedient = ({
         }
     },[infoCandidate])
 
-    useState(() => {
+    useEffect(() => {
         if (infoExperience && infoExperience.length > 0) {
             if (infoExperience.length > 2) {
                 setMarginTop(marginTop - 25)
@@ -36,7 +36,7 @@ const DocExpedient = ({
         }
     },[infoExperience])
 
-    useState(() => {
+    useEffect(() => {
         if(infoEducation && infoEducation.length > 0){
             if(infoEducation.length <= 3){
                 setMarginTop(marginTop + 25)
