@@ -22,6 +22,7 @@ import {
   typeSalary,
   reduceDays,
   FACTOR_SDI,
+  InfonavitDiscountType,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
@@ -93,11 +94,22 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   useEffect(() => {
     if (updateInfonavit) {
+      console.log(
+        "🚀 ~ file: FormImssInfonavit.jsx:96 ~ useEffect ~ updateInfonavit",
+        updateInfonavit
+      );
       formInfonavitManual.setFieldsValue({
         start_date: moment(updateInfonavit.start_date),
         number: updateInfonavit.number,
         type: updateInfonavit.type,
         status: updateInfonavit.status,
+        discount_type: updateInfonavit.discount_type
+          ? updateInfonavit.discount_type
+          : null,
+        discount_value:
+          updateInfonavit.discount_value > 0
+            ? updateInfonavit.discount_value
+            : null,
       });
       setModalVisible(true);
     }
@@ -127,9 +139,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           // setIsEdit(false);
         })
         .catch((error) => {
-          if (
-              error?.response?.data?.message
-          ) {
+          if (error?.response?.data?.message) {
             message.error(error?.response?.data?.message);
             setLoadingTable(false);
           } else message.error(messageError);
@@ -142,9 +152,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           localUserCredit();
         })
         .catch(async (error) => {
-          if (
-            error?.response?.data?.message
-          ) {
+          if (error?.response?.data?.message) {
             message.error(error?.response?.data?.message);
             setLoadingTable(false);
           } else message.error(messageError);
@@ -410,12 +418,14 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="sbc"
                 label="Salario diario"
                 maxLength={13}
-
                 rules={[fourDecimal, ruleRequired]}
               >
-                <Input disabled={
-                  updateCredit && updateCredit.is_registered ? true : false
-                } maxLength={10} />
+                <Input
+                  disabled={
+                    updateCredit && updateCredit.is_registered ? true : false
+                  }
+                  maxLength={10}
+                />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -572,6 +582,26 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                     Sin crédito
                   </Select.Option>
                 </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11}>
+              <Form.Item
+                label="Tipo de descuento"
+                name="discount_type"
+                rules={[ruleRequired]}
+              >
+                <Select allowClear options={InfonavitDiscountType}></Select>
+              </Form.Item>
+            </Col>
+            <Col span={11} offset={2}>
+              <Form.Item
+                label="Valor de descuento"
+                name="discount_value"
+                rules={[ruleRequired]}
+              >
+                <Input type="number" maxLength={10} />
               </Form.Item>
             </Col>
           </Row>

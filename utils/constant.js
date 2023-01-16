@@ -485,7 +485,7 @@ export const optionsTypeSale = [
 ];
 
 export const optionsStatusSelection = [
-  { value: 0, key: 0, label: "Sin iniciar"},
+  { value: 0, key: 0, label: "Sin iniciar" },
   { value: 1, key: 1, label: "Filtro telefónico" },
   { value: 2, key: 2, label: "Entrevista con HEX" },
   { value: 3, key: 3, label: "Enviado a cliente" },
@@ -496,17 +496,17 @@ export const optionsStatusSelection = [
 ];
 
 export const optionsTypeNotify = [
-  {value: 0, key: 0, label: "Informativa"},
-  {value: 1, key: 1, label: "Seguimiento"},
-  {value: 2, key: 2, label: "Recordatorio"},
-  {value: 3, key: 3, label: "Alerta"},
-  {value: 4, key: 4, label: "Error"}
+  { value: 0, key: 0, label: "Informativa" },
+  { value: 1, key: 1, label: "Seguimiento" },
+  { value: 2, key: 2, label: "Recordatorio" },
+  { value: 3, key: 3, label: "Alerta" },
+  { value: 4, key: 4, label: "Error" },
 ];
 
 export const optionsSourceJB = [
-  {value: 0, key: 0, label: "Correo"},
-  {value: 1, key: 1, label: "WhatsApp"},
-]
+  { value: 0, key: 0, label: "Correo" },
+  { value: 1, key: 1, label: "WhatsApp" },
+];
 
 export const optionsEconomicBenefits = [
   { value: 1, key: 1, label: "Sin prestaciones" },
@@ -570,10 +570,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
     let url = window.location.href;
     if (tenant) {
       let link = url.split(".");
-      if (getTenant){
-        const tenantSolo = link[0].split("://")
+      if (getTenant) {
+        const tenantSolo = link[0].split("://");
         return tenantSolo[1];
-      }else{
+      } else {
         return link[0];
       }
     } else {
@@ -610,7 +610,7 @@ export const catalogsJobbank = [
   { catalog: "jobboars", name: "Bolsas de empleo" },
   // { catalog: "types", name: "Tipos de notificación" },
   { catalog: "messages", name: "Mensajes de notificación" },
-  { catalog: "scholarship", name: "Escolaridad" }
+  { catalog: "scholarship", name: "Escolaridad" },
 ];
 
 export const departureMotive = [
@@ -646,4 +646,10 @@ export const CareerlabAccess = [
     label: "No",
     value: false,
   },
+];
+
+export const InfonavitDiscountType = [
+  { value: 1, label: "Por porcentaje" },
+  { value: 2, label: "Cuota fija (CF)" },
+  { value: 3, label: "Veces de salario mínimo (VSM)" },
 ];
