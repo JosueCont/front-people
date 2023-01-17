@@ -24,6 +24,11 @@ const initialState = {
     list_specialization_sub_area: [],
     list_strategies_options: [],
     list_states: [],
+    list_selection: {},
+    list_candidates_options: [],
+    list_preselection: {},
+    list_scholarship: [],
+    list_tags_notification: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -47,6 +52,11 @@ const initialState = {
     load_strategies_options: false,
     load_connections_options: false,
     load_states: false,
+    load_selection: false,
+    load_candidates_options: false,
+    load_preselection: false,
+    load_scholarship: false,
+    load_tags_notification: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
@@ -62,9 +72,12 @@ const GET_PROFILES = "GET_PROFILES";
 const GET_PROFILES_TYPES = "GET_PROFILES_TYPES";
 const GET_PROFILES_OPTIONS = "GET_PROFILES_OPTIONS";
 
+const GET_CANDIDATES = "GET_CANDIDATES";
+const GET_CANDIDATES_OPTIONS = "GET_CANDIDATES_OPTIONS";
+
 const GET_STRATEGIES = "GET_STRATEGIES";
 const GET_STRATEGIES_OPTIONS = "GET_STRATEGIES_OPTIONS";
-const GET_CANDIDATES = "GET_CANDIDATES";
+
 const GET_PUBLICATIONS = "GET_PUBLICATIONS";
 
 const GET_CONNECTIONS = "GET_CONNECTIONS";
@@ -79,8 +92,12 @@ const GET_STATES = "GET_STATES";
 const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 
-const GET_SPECIALIZATION_AREA = "GET_SPECIALIZATION_AREA";
-const GET_SPECIALIZATION_SUB_AREA = "GET_SPECIALIZATION_SUB_AREA";
+const GET_SELECTION = "GET_SELECTION";
+const GET_PRESELECTION = "GET_PRESELECTION";
+
+const GET_SCHOLARSHIP = "GET_SCHOLARSHIP";
+
+const GET_TAGS_NOTIFICATION = "GET_TAGS_NOTIFICATION";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -190,25 +207,42 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_profiles_options: action.payload,
                 load_profiles_options: action.fetching
             }
-        case GET_SPECIALIZATION_AREA:
-            return{...state,
-                list_specialization_area: action.payload,
-                load_specialization_area: action.fetching
-            }
         case GET_STRATEGIES_OPTIONS:
             return {...state,
                 list_strategies_options: action.payload,
                 load_strategies_options: action.fetching
             }
-        case GET_SPECIALIZATION_SUB_AREA:
-            return{...state,
-                list_specialization_sub_area: action.payload,
-                load_specialization_sub_area: action.fetching
-            }
         case GET_STATES:
             return {...state,
                 list_states: action.payload,
                 load_states: action.fetching
+            }
+        case GET_SELECTION:
+            return {...state,
+                list_selection: action.payload,
+                load_selection: action.fetching,
+                jobbank_page: action.page_num
+            }
+        case GET_CANDIDATES_OPTIONS:
+            return {...state,
+                list_candidates_options: action.payload,
+                load_candidates_options: action.fetching
+            }
+        case GET_PRESELECTION:
+            return {...state,
+                list_preselection: action.payload,
+                load_preselection: action.fetching,
+                jobbank_page: action.page_num
+            }
+        case GET_SCHOLARSHIP:
+            return {...state,
+                list_scholarship: action.payload,
+                load_scholarship: action.fetching
+            }
+        case GET_TAGS_NOTIFICATION:
+            return {...state,
+                list_tags_notification: action.payload,
+                load_tags_notification: action.fetching
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -268,8 +302,7 @@ export const getVacanciesOptions = (node, query = '') => async (dispatch) =>{
     const typeFunction = { type: GET_VACANCIES_OPTIONS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let param = `&paginate=0${query}`;
-        let response = await WebApiJobBank.getVacancies(node, param);
+        let response = await WebApiJobBank.getVacancies(node, `&paginate=0${query}`);
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -361,6 +394,18 @@ export const getCandidates = (node, query = '', page = 1) => async (dispatch) =>
     }
 }
 
+export const getCandidatesOptions = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_CANDIDATES_OPTIONS, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getCandidates(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
 export const getPublications = (node, query = '', page = 1) => async (dispatch) =>{
     const typeFunction = { type: GET_PUBLICATIONS, payload: {}, fetching: false, page_num: page };
     dispatch({...typeFunction, fetching: true})
@@ -445,11 +490,11 @@ export const getConnections = (node, query = '', page = 1) => async (dispatch) =
     }
 }
 
-export const getConnectionsOptions = (node) => async (dispatch) =>{
+export const getConnectionsOptions = (node, query = '') => async (dispatch) =>{
     const typeFunction = { type: GET_CONNECTIONS_OPTIONS, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getConnections(node, '&is_active=true&paginate=0');
+        let response = await WebApiJobBank.getConnections(node, `&paginate=0${query}`);
         dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)
@@ -469,12 +514,24 @@ export const getJobBoards = (node) => async(dispatch) => {
     }
 }
 
-//* Sustituido por getMainCategories, son los mismos registros
-export const getSpecializationArea = (node) => async (dispatch) =>{
-    const typeFunction = { type: GET_SPECIALIZATION_AREA, payload: [], fetching: false };
+export const getListStates = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_STATES, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true});
     try {
-        let response = await WebApiJobBank.getSpecializationArea(node, '&paginate=0');
+        let response = await WebApiJobBank.getListStates(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data.results});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getListSelection = (node, query = '', page = 1) => async (dispatch) =>{
+    const typeFunction = {type: GET_SELECTION, payload: {}, fetching: false, page_num: page};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getListSelection(node, query);
+        console.log("🚀 ~ file: jobBankDuck.js:534 ~ getListSelection ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -482,12 +539,27 @@ export const getSpecializationArea = (node) => async (dispatch) =>{
     }
 }
 
-//* Sustituido por getSubCategories, son los mismos registros.
-export const getSpecializationSubArea = (node) => async (dispatch) =>{
-    const typeFunction = {type: GET_SPECIALIZATION_SUB_AREA, payload: [], fetching: false};
-    dispatch({...typeFunction, fetching: true});
+export const getPreselection = (node, query = '', page = 1) => async (dispatch)=>{
+    const typeFunction = {type: GET_PRESELECTION, payload: {}, fetching: false, page_num: page};
+    dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getSpecializationSubArea(node, '&paginate=0');
+        if(!query.includes('vacant')){
+            setTimeout(()=>{ dispatch(typeFunction) }, 1000);
+            return;
+        }
+        let response = await WebApiJobBank.getCandidates(node, query);
+        dispatch({...typeFunction, payload: { count: response.data?.length, results: response.data }});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getScholarship = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_SCHOLARSHIP, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getScholarship(node, '&paginate=0');
         dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
@@ -495,12 +567,12 @@ export const getSpecializationSubArea = (node) => async (dispatch) =>{
     }
 }
 
-export const getListStates = (node) => async (dispatch) =>{
-    const typeFunction = {type: GET_STATES, payload: [], fetching: false};
-    dispatch({...typeFunction, fetching: true});
+export const getTagsNotification = (node) => async (dispatch) =>{
+    const typeFunction = {type: GET_TAGS_NOTIFICATION, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getListStates(node, '&paginate=0');
-        dispatch({...typeFunction, payload: response.data.results});
+        let response = await WebApiJobBank.getTagsNotification(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data?.results});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

@@ -275,12 +275,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message &&
-          error.response.data.message.includes("Se detectó")
-        )
+        if (error?.response?.data?.message)
           setAlertMessage(error.response.data.message);
         else message.error(messageError);
         // setFiles([]);
@@ -297,7 +292,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     let notSaved = []; // empresas no guardadas
     if (company_list.length > 0) {
       notSaved = company_list.filter((ele) => !ele.saved);
-      console.log(notSaved);
     }
 
     if (notSaved.length > 0) {
@@ -312,7 +306,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     } else {
       let calendars = [];
       company_list.map((comp) => {
-        comp.calendars.map((c) => {
+       comp?.calendars &&  comp.calendars.map((c) => {
           calendars.push({
             company: comp,
             calendar: c,

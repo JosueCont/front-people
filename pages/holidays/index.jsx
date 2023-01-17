@@ -130,7 +130,7 @@ const Holidays = (props) => {
           <>
             <div className="top-container-border-radius">
               <Row justify="space-between" style={{ paddingBottom: 20 }}>
-                <Col>
+                <Col span={24}>
                   <Form
                     name="filter"
                     form={form}
@@ -140,27 +140,26 @@ const Holidays = (props) => {
                     className={"formFilter"}
                   >
                     <Row gutter={[24, 8]}>
-                      <Col>
+                      <Col md={8} xs={12}>
                         <SelectCollaborator
+                            style={{width:'100%'}}
                           name="collaborator"
-                          style={{ width: 150 }}
                         />
                       </Col>
 
-                      <Col>
+                      <Col md={8} xs={12}>
                         <SelectDepartment
                           name="department"
                           companyId={props.currentNode}
                         />
                       </Col>
-                      <Col>
+                      <Col md={8} xs={12}>
                         <Form.Item
                           key="estatus_filter"
                           name="status"
                           label="Estatus"
                         >
                           <Select
-                            style={{ width: 150 }}
                             key="select"
                             options={optionStatus}
                             allowClear
@@ -169,22 +168,29 @@ const Holidays = (props) => {
                           />
                         </Form.Item>
                       </Col>
-                      <Col style={{ display: "flex" }}>
+                      <Col md={4} xs={12} >
+                        <Tooltip
+                            title="Filtrar"
+                            color={"#3d78b9"}
+                            key={"#3d78b9"}
+                        >
                         <Button
                           style={{
                             background: "#fa8c16",
                             fontWeight: "bold",
                             color: "white",
+                            width:'100%',
                             marginTop: "auto",
                           }}
                           key="buttonFilter"
                           htmlType="submit"
                           loading={searching}
                         >
-                          <SearchOutlined />
+                          <SearchOutlined /> Filtrar
                         </Button>
+                        </Tooltip>
                       </Col>
-                      <Col style={{ display: "flex" }}>
+                      <Col md={4} xs={12} style={{ display: "flex" }}>
                         <Tooltip
                           title="Limpiar filtros"
                           color={"#3d78b9"}
@@ -192,11 +198,29 @@ const Holidays = (props) => {
                         >
                           <Button
                             onClick={() => resetFilter()}
-                            style={{ marginTop: "auto" }}
+                            style={{ marginTop: "auto", width:'100%' }}
                           >
-                            <SyncOutlined />
+                            <SyncOutlined /> Limpiar Filtro
                           </Button>
                         </Tooltip>
+                      </Col>
+                      <Col md={4} xs={12}>
+                        {permissions.create && (
+                            <Button
+                                style={{
+                                  background: "#fa8c16",
+                                  fontWeight: "bold",
+                                  color: "white",
+                                  width:'100%',
+                                  marginTop: "auto",
+                                }}
+                                onClick={() => route.push("holidays/new")}
+                                key="btn_new"
+                            >
+                              <PlusOutlined />
+                              Agregar vacaciones
+                            </Button>
+                        )}
                       </Col>
                     </Row>
                     {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
@@ -206,23 +230,7 @@ const Holidays = (props) => {
 
                   {/*  */}
                 </Col>
-                <Col style={{ display: "flex" }}>
-                  {permissions.create && (
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      onClick={() => route.push("holidays/new")}
-                      key="btn_new"
-                    >
-                      <PlusOutlined />
-                      Agregar vacaciones
-                    </Button>
-                  )}
-                </Col>
+
               </Row>
             </div>
             <Row justify="end">

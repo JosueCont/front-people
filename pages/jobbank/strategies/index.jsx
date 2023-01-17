@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
@@ -11,7 +9,8 @@ import {
 } from '../../../redux/jobBankDuck';
 import TableStrategies from '../../../components/jobbank/strategies/TableStrategies';
 import SearchStrategies from '../../../components/jobbank/strategies/SearchStrategies';
-import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
+import { getFiltersJB } from '../../../utils/functions';
+import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
@@ -44,25 +43,16 @@ const index = ({
     },[currentNode, router.query])
 
     return (
-        <MainLayout currentKey='jb_strategies' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Estrategias</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
-                <SearchStrategies/>
-                <TableStrategies currentPage={currentPage} currentFilters={currentFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_strategies'
+            extraBread={[{name: 'Estrategias'}]}
+        >
+            <SearchStrategies/>
+            <TableStrategies
+                currentPage={currentPage}
+                currentFilters={currentFilters}
+            />
+        </MainIndexJB>
     )
 }
 

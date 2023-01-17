@@ -218,7 +218,7 @@ class WebApiPayroll {
     );
   }
 
-  static extraordinaryPayroll(data) {
+  static getExtraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 

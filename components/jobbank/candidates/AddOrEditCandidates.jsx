@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import DetailsCandidates from './DetailsCandidates';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -9,9 +7,11 @@ import {
     getSubCategories,
     getCompetences,
     getSectors,
-    getListStates
+    getListStates,
+    getScholarship
 } from '../../../redux/jobBankDuck';
-import { deleteFiltersJb, verifyMenuNewForTenant } from '../../../utils/functions';
+import { deleteFiltersJb } from '../../../utils/functions';
+import MainIndexJB from '../MainIndexJB';
 
 const AddOrEditCandidates = ({
     action = 'add',
@@ -20,7 +20,8 @@ const AddOrEditCandidates = ({
     getSubCategories,
     getCompetences,
     getSectors,
-    getListStates
+    getListStates,
+    getScholarship
 }) => {
 
     const router = useRouter();
@@ -40,37 +41,26 @@ const AddOrEditCandidates = ({
             getCompetences(currentNode.id);
             getSectors(currentNode.id);
             getListStates(currentNode.id);
+            getScholarship(currentNode.id);
         }
     },[currentNode])
 
+    const ExtraBread = [
+        {name: 'Candidatos', URL: '/jobbank/candidates'},
+        {name: action == 'add' ? 'Nuevo' : 'Expediente'}
+    ]
+
     return (
-        <MainLayout currentKey='jb_candidates' defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item
-                    className='pointer'
-                    onClick={() => router.push({
-                        pathname: '/jobbank/candidates',
-                        query: newFilters
-                    })}
-                >
-                    Candidatos
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container'>
-                <DetailsCandidates action={action} newFilters={newFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_candidates'
+            extraBread={ExtraBread}
+            newFilters={newFilters}
+        >
+            <DetailsCandidates
+                action={action}
+                newFilters={newFilters}
+            />
+        </MainIndexJB>
     )
 }
 
@@ -86,6 +76,7 @@ export default connect(
         getSubCategories,
         getCompetences,
         getSectors,
-        getListStates
+        getListStates,
+        getScholarship
     }
 )(AddOrEditCandidates);

@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import ModalCatalogs from './ModalCatalogs';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 
 const TableCatalogs = ({
     titleEdit = '',
@@ -27,9 +27,14 @@ const TableCatalogs = ({
     openModal,
     setOpenModal,
     numPage = 1,
-    //No requeridos
+    keyTitle = 'name',
     extraFields = <></>,
-    extraOptions = ()=> <></>
+    ExtraOptions = ()=> <></>,
+    extraColumns = [{
+        title: 'Nombre',
+        dataIndex: 'name',
+        key: 'name'
+    }]
 }) => {
 
     const router = useRouter();
@@ -107,17 +112,18 @@ const TableCatalogs = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {extraOptions(item)}
+                <ExtraOptions item={item}/>
             </Menu>
         );
     };
 
     const columns = [
-        {
-            title: 'Nombre',
-            dataIndex: 'name',
-            key: 'name'
-        },
+        // {
+        //     title: 'Nombre',
+        //     dataIndex: 'name',
+        //     key: 'name'
+        // },
+        ...extraColumns,
         {
             title: 'Acciones',
             render: (item) =>{
@@ -160,13 +166,13 @@ const TableCatalogs = ({
                 actionForm={getActionForm}
                 textSave={validateAction ? 'Actualizar' : 'Guardar'}
             >{extraFields}</ModalCatalogs>
-            <DeleteItems
+            <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle='name'
+                keyTitle={keyTitle}
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionRemove}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionRemove}
             />
         </>
     )

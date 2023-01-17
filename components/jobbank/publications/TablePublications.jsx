@@ -21,14 +21,12 @@ import {
   LinkedinOutlined,
   InstagramOutlined
 } from '@ant-design/icons';
-import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import ModalPost from './ModalPost';
-import { getFiltersJB } from '../../../utils/functions';
 import { optionsStatusVacant } from '../../../utils/constant';
 
 const TablePublications = ({
@@ -176,7 +174,7 @@ const TablePublications = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
@@ -185,14 +183,14 @@ const TablePublications = ({
                     })}
                 >
                     Editar
-                </Menu.Item>
-                <Menu.Item
+                </Menu.Item> */}
+                {/* <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='3'
                     icon={<ShareAltOutlined />}
@@ -270,15 +268,16 @@ const TablePublications = ({
         //     }
         // },
         {
-            title: ()=> {
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=> {
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -319,7 +318,7 @@ const TablePublications = ({
                 close={closeModalShare}
                 itemToPublish={itemToPublish}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estas publicaciones?'
                     : '¿Estás seguro de eliminar esta publicación?'
@@ -328,8 +327,8 @@ const TablePublications = ({
                 keyTitle='vacant, job_position'
                 keyDescription='profile, name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

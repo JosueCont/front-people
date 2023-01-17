@@ -8,7 +8,8 @@ import {
     Spin,
     message,
     Button,
-    Checkbox
+    Checkbox,
+    DatePicker
 } from 'antd';
 import {
     ruleWhiteSpace,
@@ -19,11 +20,11 @@ import {
 } from '../../../utils/rules';
 import { connect } from 'react-redux'; 
 import { useRouter } from 'next/router';
-import { getFileExtension } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { ToTopOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
-import { redirectTo } from '../../../utils/constant';
 import ListLangs from './ListLangs';
+import FileUpload from '../FileUpload';
+import { optionsGenders } from '../../../utils/constant';
+import moment from 'moment';
 
 const TabGeneral = ({
     action,
@@ -37,7 +38,7 @@ const TabGeneral = ({
     load_states
 }) => {
 
-    const rule_init = {text:'', status:''};
+    const noValid = [undefined, null, '', ' '];
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -46,18 +47,14 @@ const TabGeneral = ({
     };
     const router = useRouter();
     const btnSave = useRef(null);
-    const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
     const state = Form.useWatch('state', formCandidate);
+    const languages = Form.useWatch('languages', formCandidate);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
     const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
-    //Idiomas
-    const [currentValue, setCurrentValue] = useState([]);
-    const [listLangDomain, setListLangDomain] = useState([]);
-    const [ruleLanguages, setRuleLanguages] = useState(rule_init);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -73,16 +70,14 @@ const TabGeneral = ({
 
     const setValueForm = () =>{
         setDisabledTab(false)
-        setCurrentValue([])
-        setRuleLanguages(rule_init)
         formCandidate.resetFields();
-        const getLang = item => ({lang: item.lang, domain: item.domain});
-        let listLanguages = infoCandidate.languages.map(getLang);
-        let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
+        const getLang = item => `${item.lang}-${item.domain}`;
+        let languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
         let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
         let state = infoCandidate?.state?.id ?? null;
-        setListLangDomain(listLang)
-        formCandidate.setFieldsValue({...infoCandidate, cv_name_read, state});
+        let birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
+        let values = {...infoCandidate, cv_name_read, state, languages, birthdate};
+        formCandidate.setFieldsValue(values);
     }
 
     const getInfoCandidate = async (id) =>{
@@ -128,19 +123,31 @@ const TabGeneral = ({
     }
 
     const createData = (obj) =>{
-        let noValid = [undefined, null, '', ' '];
         let dataCandidate = new FormData();
         dataCandidate.append('node', currentNode.id);
-        Object.entries(obj).map(([key, val])=>{
+        dataCandidate.append('auto_register', isAutoRegister);
+        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
+        
+        const getLang_ = item =>{
+            let value = item.split('-');
+            return {lang: value[0], domain: value[1]};
+        };
+
+        Object.entries(obj).map(([key, val]) => {
+            if(key == "languages"){
+                let languages = Array.isArray(val) ? val.map(getLang_) : [];
+                dataCandidate.append('languages', JSON.stringify(languages));
+                return;
+            }
             let value = noValid.includes(val) ? "" : val;
             dataCandidate.append(key, value);
         });
-        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
-        dataCandidate.append('languages', JSON.stringify(listLangDomain));
+        
         return dataCandidate;
     }
 
     const onFinish = (values) =>{
+        if(values.birthdate) values.birthdate = values.birthdate?.format('YYYY-MM-DD');
         const body = createData(values);
         setFetching(true);
         const actionFunction = {
@@ -159,9 +166,6 @@ const TabGeneral = ({
         setFetching(false);
         setLoading({});
         setFileCV([]);
-        setCurrentValue([])
-        setListLangDomain([])
-        setRuleLanguages(rule_init)
     }
 
     const actionSaveAnd = (id) =>{
@@ -191,33 +195,13 @@ const TabGeneral = ({
         btnSave.current.click();
     }
 
-    const setFileSelected = ({target : { files }}) =>{
-        if(Object.keys(files).length <= 0){
-            message.error('No se pudo cargar el archivo, intente de nuevo');
-            return;
-        }
-        let extension = getFileExtension(files[0].name);
-        if(!typeFileCV.includes(extension.toLowerCase())){
-            message.error('El archivo seleccionado no es válido');
-            return;
-        }
-        formCandidate.setFieldsValue({cv_name_read: files[0].name});
-        setFileCV([files[0]]);
-    }
-
-    const openFile = () =>{
-        inputFile.current.value = null;
-        inputFile.current.click();
-    }
-
-    const resetCV = () =>{
-        setFileCV([]);
-        formCandidate.setFieldsValue({cv_name_read: null});
-    }
-
     const onChangeState = (value) =>{
         if(!value) formCandidate.setFieldsValue({municipality: null});
     }
+
+    const disabledDate = (current) => {
+        return current && current > moment().subtract(18,'years').endOf("day");
+    };
 
     return (
         <Row>
@@ -229,7 +213,11 @@ const TabGeneral = ({
                         form={formCandidate}
                         onFinish={onFinish}
                         onFinishFailed={onFailed}
-                        initialValues={{is_active: true}}
+                        initialValues={{
+                            is_active: true,
+                            availability_to_travel: false,
+                            languages: []
+                        }}
                     >
                         <Row gutter={[24,0]}>
                             <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'none'}}>
@@ -258,7 +246,7 @@ const TabGeneral = ({
                             <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='email'
-                                    label='Correo'
+                                    label='Correo electrónico'
                                     rules={[ruleRequired, ruleEmail]}
                                 >
                                     <Input maxLength={150} placeholder='Correo'/>
@@ -312,7 +300,7 @@ const TabGeneral = ({
                                     label='Municipio'
                                     rules={[ruleWhiteSpace]}
                                 >
-                                    <Input disabled={!state} maxLength={300} placeholder='Especificar el municipio'/>
+                                    <Input disabled={!state} maxLength={100} placeholder='Especificar el municipio'/>
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -334,65 +322,67 @@ const TabGeneral = ({
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
-                                <Form.Item
+                                <FileUpload
                                     label='CV'
-                                    required
+                                    keyName='cv_name_read'
                                     tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                                    isRequired={true}
+                                    urlPreview={infoCandidate?.cv}
+                                    setFile={setFileCV}
+                                    typeFile={typeFileCV}
+                                    setNameFile={e => formCandidate.setFieldsValue({
+                                        cv_name_read: e
+                                    })}
+                                />
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    label='¿Disponibilidad para viajar?'
+                                    name='availability_to_travel'
                                 >
-                                    <Input.Group compact>
-                                        <Form.Item name='cv_name_read' noStyle rules={[ruleRequired]}>
-                                            <Input
-                                                readOnly
-                                                style={{
-                                                    width: `calc(100% - 64px)`,
-                                                    borderTopLeftRadius: 10,
-                                                    borderBottomLeftRadius: 10
-                                                }}
-                                                placeholder='Archivo seleccionado'
-                                            />
-                                        </Form.Item>
-                                        {infoCandidate.cv ? (
-                                            <Button
-                                                className='custom-btn'
-                                                onClick={()=> redirectTo(infoCandidate.cv, true)}
-                                                icon={<EyeOutlined />}
-                                            />
-                                        ): (
-                                            <Button
-                                                className='custom-btn'
-                                                onClick={()=> resetCV()}
-                                                icon={<DeleteOutlined />}
-                                            />
-                                        )}
-                                        <Button
-                                            icon={<ToTopOutlined />}
-                                            onClick={()=> openFile()}
-                                            style={{
-                                                borderTopRightRadius: 10,
-                                                borderBottomRightRadius: 10
-                                            }}
-                                        />
-                                        <input
-                                            type='file'
-                                            style={{display: 'none'}}
-                                            accept={typeFileCV.reduce((acc, item) => acc +=`.${item}, `,'')}
-                                            ref={inputFile}
-                                            onChange={setFileSelected}
-                                        />
-                                    </Input.Group>
+                                    <Select
+                                        placeholder='Seleccionar una opción'
+                                        notFoundContent='No se encontraron resultados'
+                                    >
+                                        <Select.Option value={true} key={true}>Sí</Select.Option>
+                                        <Select.Option value={false} key={false}>No</Select.Option>
+                                    </Select>
                                 </Form.Item>
                             </Col>
-                            <Col span={24}>
-                                <ListLangs
-                                    listLangDomain={listLangDomain}
-                                    setListLangDomain={setListLangDomain}
-                                    setCurrentValue={setCurrentValue}
-                                    currentValue={currentValue}
-                                    setRuleLanguages={setRuleLanguages}
-                                    ruleLanguages={ruleLanguages}
-                                    rule_languages={rule_init}
-                                    changeColor={true}
-                                />
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='gender'
+                                    label='Género'
+                                >
+                                    <Select
+                                        // allowClear
+                                        showSearch
+                                        placeholder='Seleccionar un género'
+                                        notFoundContent='No se encontraron resultados'
+                                        optionFilterProp='label'
+                                        options={optionsGenders}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='birthdate'
+                                    label='Fecha de nacimiento'
+                                    rules={[ruleRequired]}
+                                    tooltip='Edad mínima requerida 18 años'
+                                >
+                                    <DatePicker
+                                        style={{width: '100%'}}
+                                        placeholder='Seleccionar una fecha'
+                                        format='DD-MM-YYYY'
+                                        defaultPickerValue={moment().subtract(18,'years')}
+                                        disabledDate={disabledDate}
+                                        inputReadOnly
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <ListLangs listSelected={languages}/>
                             </Col>
                             <Col span={24}>
                                 <Form.Item
@@ -409,20 +399,6 @@ const TabGeneral = ({
                                     />
                                 </Form.Item>
                             </Col>
-                            {/* <Col xs={24} md={12} xl={8} xxl={6}>
-                                <Form.Item
-                                    name='date_birth'
-                                    label='Fecha de nacimiento'
-                                    rules={[ruleRequired]}
-                                >
-                                    <DatePicker
-                                        style={{width: '100%'}}
-                                        placeholder='Fecha de nacimiento'
-                                        format='YYYY-MM-DD'
-                                        inputReadOnly
-                                    />
-                                </Form.Item>
-                            </Col> */}
                         </Row>
                     </Form>
                 </Spin>

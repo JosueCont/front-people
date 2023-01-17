@@ -27,7 +27,7 @@ import {
 import { connect } from 'react-redux';
 import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import Clipboard from '../../../components/Clipboard';
 import ViewContacts from './ViewContacts';
 import { getFiltersJB } from '../../../utils/functions';
@@ -48,7 +48,7 @@ const TableClients = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const [viewAsList, setViewAsList] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionStatus = async (checked, item) =>{
         try {
@@ -89,18 +89,19 @@ const TableClients = ({
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
+        setUseToDelete(true)
     }
 
     const openModalManyDelete = () =>{
-        const filter_ = item => item.has_estrategy;
+        const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setViewAsList(true)
+            setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setViewAsList(false);
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -110,7 +111,7 @@ const TableClients = ({
     }
 
     const openModalRemove = (item) =>{
-        setViewAsList(item.has_estrategy)
+        setUseToDelete(!item.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -121,7 +122,7 @@ const TableClients = ({
     }
 
     const titleDelete = useMemo(()=>{
-        if(viewAsList){
+        if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estos clientes no se pueden eliminar,
                 ya que se encuentran asociados a una estrategia.`
@@ -132,7 +133,7 @@ const TableClients = ({
             ? '¿Estás seguro de eliminar estos clientes?'
             : '¿Estás seguro de eliminar este cliente?';
         
-    },[viewAsList, itemsToDelete])
+    },[useToDelete, itemsToDelete])
 
     const savePage = (query) => router.replace({
         pathname: '/jobbank/clients',
@@ -343,16 +344,16 @@ const TableClients = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
                 keyTitle='name'
                 keyDescription='rfc'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
-                textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
-                viewAsList={viewAsList}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
+                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useToDelete}
             />
            <ViewContacts
                 visible={openModalList}

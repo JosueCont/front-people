@@ -1,8 +1,7 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
+    useRef
 } from 'react';
 import {
     Card,

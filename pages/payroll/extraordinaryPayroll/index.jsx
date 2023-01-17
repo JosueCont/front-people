@@ -307,6 +307,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const renderConceptsTable = (data) => {
     let dataPerceptions = data?.perception;
     let dataDeductions = data?.deduction;
+    let dataOtherPayments = data?.other_payments;
 
     const columnsPerceptions = [
       {
@@ -408,6 +409,34 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       },
     ];
 
+    const columnsOtherPayments = [
+      {
+        title: "CVE",
+        key: "code",
+        dataIndex: "code",
+        className: "cell-concept",
+        width: "5%",
+      },
+      {
+        title: "Descripción",
+        key: "description",
+        dataIndex: "description",
+        className: "cell-concept",
+        width: "70%",
+      },
+      {
+        title: "Importe",
+        key: "amount",
+        dataIndex: "amount",
+        width: "20%",
+        render: (amount) => (
+          <Space size="middle">
+            <NumberFormat prefix={"$"} number={amount} />
+          </Space>
+        ),
+      },
+    ];
+
     return (
       <>
         <Row>
@@ -445,16 +474,32 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             />
           </Col>
           <br />
-          <Col
-            span={12}
-            style={{
-              display: "flex",
-              float: "right",
-              fontSize: 16,
-              fontWeight: "bold",
-              flexDirection: "column-reverse",
-            }}
-          ></Col>
+
+          <Col span={12}>
+            {dataOtherPayments && dataOtherPayments.length > 0 && (
+              <>
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Otros pagos
+                </div>
+                <Table
+                  className="subTable"
+                  columns={columnsOtherPayments}
+                  dataSource={dataOtherPayments}
+                  pagination={false}
+                  size="small"
+                  bordered
+                  locale={{ emptyText: "Aún no hay datos" }}
+                />
+              </>
+            )}
+          </Col>
+
           <Col
             span={12}
             style={{
@@ -549,7 +594,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const resetStateViews = () => {
-    setExtraOrdinaryPayroll([]);
+    setExtraOrdinaryPayroll(null);
     setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
@@ -563,51 +608,52 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setPersonKeys([]);
     setPersonId(null);
     setListPersons([]);
+    return true;
   };
+
+  const changePeriod = (period_id) => {
+    const result = resetStateViews();
+    if (result) {
+      setPeriodSelcted(calendarSelect.periods.find((p) => p.id == period_id));
+    }
+  };
+
+  useEffect(() => {
+    if (periodSelected) {
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        movement_type: movementType,
+        calendar: calendarSelect.id,
+      });
+    }
+  }, [periodSelected]);
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
     if (!movementType) return;
     data.calendar = calendarSelect.id;
     setLoading(true);
-    // setExtraOrdinaryPayroll([]);
-    await WebApiPayroll.extraordinaryPayroll(data)
+    // setExtraOrdinaryPayroll(null);
+    await WebApiPayroll.getExtraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
-          if (movementType === 1) {
+          if (movementType >= 1) {
             let calculateExist = [];
             calculateExist = response.data.payroll.filter(
-              (a) => a.payroll_cfdi_person.status === 1
+              (a) => a.payroll_cfdi_person && a.payroll_cfdi_person.status === 1
             );
 
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           }
           setConsolidated(response.data.consolidated);
-          setExtraOrdinaryPayroll(response.data.payroll);
+          // setExtraOrdinaryPayroll(response.data.payroll);
+          setExtraOrdinaryPayroll(
+            response.data.payroll.sort((a, b) =>
+              a.person.code.localeCompare(b.person.code)
+            )
+          );
         } else {
           setConsolidatedObj(response.data);
-          if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
-            let calculateExist = extraOrdinaryPayroll;
-            response.data.map((item) => {
-              calculateExist = calculateExist.filter(
-                (a) => item.person.id != a.person.id
-              );
-            });
-            response.data.map((item) => {
-              calculateExist[calculateExist.length] = item;
-            });
-
-            setExtraOrdinaryPayroll(
-              calculateExist.sort((a, b) =>
-                a.person.first_name.localeCompare(b.person.first_name)
-              )
-            );
-          } else {
-            setExtraOrdinaryPayroll(
-              response.data.sort((a, b) =>
-                a.person.first_name.localeCompare(b.person.first_name)
-              )
-            );
-          }
+          recalculate(response);
         }
         validatedStatusPayroll(response.data.consolidated);
         setLoading(false);
@@ -617,6 +663,31 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         console.log(error);
         setLoading(false);
       });
+  };
+
+  const recalculate = (response) => {
+    if (extraOrdinaryPayroll == null) {
+      console.log("Else");
+      setExtraOrdinaryPayroll(
+        response.data.sort((a, b) => a.person.code.localeCompare(b.person.code))
+      );
+    } else {
+      let calculateExist = extraOrdinaryPayroll;
+      response.data.map((item) => {
+        calculateExist = calculateExist.filter(
+          (a) => item.person.id != a.person.id
+        );
+      });
+      response.data.map((item) => {
+        calculateExist[calculateExist.length] = item;
+      });
+
+      setExtraOrdinaryPayroll(
+        calculateExist.sort((a, b) =>
+          a.person.code.localeCompare(b.person.code)
+        )
+      );
+    }
   };
 
   const rowSelectionPerson = {
@@ -723,6 +794,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         }, 1000);
       })
       .catch((error) => {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          if (error.response.data.message.includes("concepto interno")) {
+          }
+          setMessageModal(1, error.response.data.message);
+          setGenericModal(true);
+        } else message.error(messageError);
         setLoading(false);
       });
   };
@@ -1193,19 +1274,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             <Select
                               placeholder="Periodo"
                               size="large"
-                              onChange={(value) => {
-                                resetStateViews(),
-                                  sendCalculateExtraordinaryPayrroll({
-                                    payment_period: value,
-                                    movement_type: movementType,
-                                    calendar: calendarSelect.id,
-                                  });
-                                setPeriodSelcted(
-                                  calendarSelect.periods.find(
-                                    (p) => p.id == value
-                                  )
-                                );
-                              }}
+                              onChange={(value) => changePeriod(value)}
                               options={
                                 calendarSelect
                                   ? calendarSelect.periods

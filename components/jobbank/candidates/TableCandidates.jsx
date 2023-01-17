@@ -14,11 +14,10 @@ import {
     EditOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
-import { getFiltersJB } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -111,9 +110,9 @@ const TableCandidates = ({
                 <Menu.Item key='1'>
                     <Clipboard
                         text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`}
-                        title='Autoregistro'
+                        title='Autorregistro'
                         border={false}
-                        tooltipTitle='Copiar link de autoregistro'
+                        tooltipTitle='Copiar link de autorregistro'
                     />
                 </Menu.Item>
                 <Menu.Item
@@ -231,7 +230,7 @@ const TableCandidates = ({
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: false
+                    emptyText: load_candidates
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
@@ -242,7 +241,7 @@ const TableCandidates = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos candidatos?'
                     : '¿Estás seguro de eliminar este candidato?'
@@ -251,8 +250,8 @@ const TableCandidates = ({
                 keyTitle='fisrt_name'
                 keyDescription='last_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     Table,
     Button,
@@ -6,28 +6,17 @@ import {
     Dropdown,
     message,
     Switch,
-    Space,
     Tag,
-    Tooltip,
-    Modal
 } from 'antd';
 import { useRouter } from 'next/router';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-    FileTextOutlined,
-    PlusOutlined,
-    LinkOutlined,
-    UserOutlined,
-    SettingOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import { getConnections } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import ModalConfig from './ModalConfig';
 
 const TableConnections = ({
     list_connections,
@@ -40,9 +29,6 @@ const TableConnections = ({
 }) => {
 
     const router = useRouter();
-    const [openModal, setOpenModal] = useState(false);
-    const [configCurrent, setConfigCurrent] = useState({});
-    const [configExist, setConfigExist] = useState({});
 
     const actionStatus = async (checked, item) =>{
         try {
@@ -56,67 +42,10 @@ const TableConnections = ({
             message.error(msg);
         }
     }
-
-    const actionUpdate = async () =>{
-        const key = 'updatable';
-        message.loading({content: 'Copiando configuración...', key});
-        try {
-            await WebApiJobBank.updateConnection(configCurrent.id, {
-                node: currentNode.id,
-                name: configCurrent.name,
-                code: configCurrent.code,
-                is_valid: configExist.is_valid,
-                data_config: configExist.data_config
-            });
-            setTimeout(()=>{
-                getConnections(currentNode.id, currentFilters, currentPage);
-                message.success({content: 'Configuración copiada', key})
-            },1000)
-        } catch (e) {
-            console.log(e)
-            setTimeout(()=>{
-                message.error({content: 'Configuración no copiada', key})
-            },1000)
-        }
-    }
-
-    const toEdit = (item) =>{
-        router.push({
-            pathname: '/jobbank/settings/connections/edit',
-            query: {...router.query, id: item.id, code: item.code }
-        })
-    }
     
     const checkConfig = (item) => item.is_valid
     && item.data_config?.page_access_token
     && item.data_config?.user_access_token;
-
-    const validateFBAndIG = (item) =>{
-        if(!['FB','IG'].includes(item.code)){
-            toEdit(item)
-            return;
-        }
-        if(checkConfig(item)){
-            toEdit(item)
-            return;
-        }
-        let code = item.code == 'FB' ? 'IG' : 'FB';
-        const find_ = record => record.code == code;
-        let result = list_connections.results.find(find_);
-        if(!checkConfig(result)){
-            toEdit(item)
-            return;
-        }
-        setConfigExist(result)
-        setConfigCurrent(item)
-        setOpenModal(true)
-    }
-
-    const closeModal = () =>{
-        setConfigCurrent({})
-        setConfigExist({})
-        setOpenModal(false)
-    }
 
     const menuItem = (item) => {
         return (
@@ -125,7 +54,10 @@ const TableConnections = ({
                     key='1'
                     disabled={item.code == 'LK'}
                     icon={<EditOutlined/>}
-                    onClick={()=> validateFBAndIG(item)}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/settings/connections/edit',
+                        query: {...router.query, code: item.code, id: item.id}
+                    })}
                 >
                     Editar
                 </Menu.Item>
@@ -204,8 +136,6 @@ const TableConnections = ({
                 columns={columns}
                 dataSource={list_connections.results}
                 loading={load_connections}
-                // rowSelection={rowSelection}
-                // onChange={onChangePage}
                 locale={{
                     emptyText: load_connections
                         ? 'Cargando...'
@@ -217,13 +147,6 @@ const TableConnections = ({
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
-            />
-            <ModalConfig
-                visible={openModal}
-                configCurrent={configCurrent}
-                configExist={configExist}
-                close={closeModal}
-                actionUpdate={actionUpdate}
             />
         </>
     )

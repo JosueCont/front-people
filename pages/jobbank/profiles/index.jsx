@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
 import { withAuthSync } from '../../../libs/auth';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { Breadcrumb } from 'antd';
 import SearchProfiles from '../../../components/jobbank/profiles/SearchProfiles';
 import TableProfiles from '../../../components/jobbank/profiles/TableProfiles';
 import {
     getProfilesList,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
-import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
+import { getFiltersJB } from '../../../utils/functions';
+import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
@@ -39,32 +38,16 @@ const index = ({
     },[currentNode, router.query])
 
     return (
-        <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Template de vacante</Breadcrumb.Item>
-            </Breadcrumb>
-            <div
-                className='container'
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}
-            >
-                <SearchProfiles/>
-                <TableProfiles currentPage={currentPage} currentFilters={currentFilters}/>  
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_profiles'
+            extraBread={[{name: 'Template de vacante'}]}
+        >
+            <SearchProfiles/>
+            <TableProfiles
+                currentPage={currentPage}
+                currentFilters={currentFilters}
+            />
+        </MainIndexJB>
     )
 }
 

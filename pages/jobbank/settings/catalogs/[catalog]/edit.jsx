@@ -1,10 +1,10 @@
 import React from 'react';
 import { withAuthSync } from '../../../../../libs/auth';
-import AddOrEditTemplate from '../../../../../components/jobbank/catalogs/Templates/AddOrEditTemplate';
+import AddOrEditCatalog from '../../../../../components/jobbank/catalogs/AddOrEditCatalog';
 
 const edit = () => {
     return (
-        <AddOrEditTemplate action='edit'/>
+        <AddOrEditCatalog action='edit'/>
     )
 }
 

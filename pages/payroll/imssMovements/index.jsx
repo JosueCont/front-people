@@ -121,9 +121,9 @@ const ImssMovements = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          {verifyMenuNewForTenant() && 
+          {verifyMenuNewForTenant() && (
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-          }
+          )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
         </Breadcrumb>
@@ -181,7 +181,7 @@ const ImssMovements = ({ ...props }) => {
                         disabled={patronalSelected ? false : true}
                         onClick={() => setModalVisible(true)}
                       >
-                        importar
+                        Importar
                       </Button>
                     </Col>
                     <Col span={7}>

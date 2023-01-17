@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import TableClients from '../../../components/jobbank/clients/TableClients';
 import SearchClients from '../../../components/jobbank/clients/SearchClients';
 import { connect } from 'react-redux';
-import {
-    getClients,
-    getSectors
-} from '../../../redux/jobBankDuck';
+import { getClients, getSectors} from '../../../redux/jobBankDuck';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
+import { getFiltersJB } from '../../../utils/functions';
+import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
@@ -28,9 +24,7 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            let page = router.query.page
-                ? parseInt(router.query.page)
-                : 1;
+            let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getClients(currentNode.id, filters, page)
             setCurrentPage(page)
@@ -39,25 +33,16 @@ const index = ({
     },[currentNode, router.query])
 
     return (
-        <MainLayout currentKey={'jb_clients'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Clientes</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className='container' style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
-                <SearchClients/>
-                <TableClients currentPage={currentPage} currentFilters={currentFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_clients'
+            extraBread={[{name: 'Clientes'}]}
+        >
+            <SearchClients/>
+            <TableClients
+                currentPage={currentPage}
+                currentFilters={currentFilters}
+            />
+        </MainIndexJB>
     )
 }
 

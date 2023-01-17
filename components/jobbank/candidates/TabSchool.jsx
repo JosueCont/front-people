@@ -6,10 +6,7 @@ import {
     Menu, 
     message
 } from 'antd';
-import {
-    optionsLevelAcademic,
-    optionsStatusAcademic
-} from '../../../utils/constant';
+import { optionsStatusAcademic } from '../../../utils/constant';
 import {
     EllipsisOutlined,
     DeleteOutlined,
@@ -19,7 +16,7 @@ import {
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 
 const TabSchool = ({
@@ -108,22 +105,13 @@ const TabSchool = ({
     }
 
     const openModalRemove = (item) =>{
-        let level_academic = getAcademic(item);
-        setItemsToDelete([{...item, level_academic}]);
+        setItemsToDelete([item]);
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
-    }
-
-    const getAcademic = (item) =>{
-        if(!item.study_level) return null;
-        const find_ = record => record.value == item.study_level;
-        let result = optionsLevelAcademic.find(find_);
-        if(!result) return null;
-        return result.label;
     }
 
     const getStatus = (item) =>{
@@ -172,11 +160,8 @@ const TabSchool = ({
     const columns = [
         {
             title: 'Escolaridad',
-            render: (item) =>{
-                return(
-                    <span>{getAcademic(item)}</span>
-                )
-            }
+            dataIndex: ['study_level', 'name'],
+            key: ['study_level', 'name']
         },
         {
             title: 'Institución',
@@ -201,15 +186,6 @@ const TabSchool = ({
             }
         },
         {
-            // title: ()=>{
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size={'small'}>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
             title: ()=> (
                 <Button size='small' onClick={()=> setOpenModal(true)}>
                     Agregar
@@ -255,14 +231,14 @@ const TabSchool = ({
                 actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
-           <DeleteItems
+           <ListItems
                 title='¿Estás seguro de eliminar esta educación?'
                 visible={openModalDelete}
-                keyTitle='level_academic'
+                keyTitle='study_level, name'
                 keyDescription='institution_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

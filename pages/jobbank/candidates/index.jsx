@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../layout/MainInter';
-import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
@@ -9,15 +7,20 @@ import TableCandidates from '../../../components/jobbank/candidates/TableCandida
 import {
     getCandidates,
     getMainCategories,
+    getSubCategories,
+    getSectors,
     getListStates
 } from '../../../redux/jobBankDuck';
-import { getFiltersJB, verifyMenuNewForTenant } from '../../../utils/functions';
+import { getFiltersJB } from '../../../utils/functions';
+import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
     getCandidates,
     getListStates,
-    getMainCategories
+    getMainCategories,
+    getSubCategories,
+    getSectors
 }) => {
 
     const router = useRouter();
@@ -28,6 +31,8 @@ const index = ({
         if(currentNode){
             getMainCategories(currentNode.id);
             getListStates(currentNode.id);
+            getSectors(currentNode.id);
+            getSubCategories(currentNode.id);
         }
     },[currentNode])
 
@@ -42,31 +47,16 @@ const index = ({
     },[currentNode, router.query])
 
     return (
-        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={'pointer'}
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() && 
-                    <Breadcrumb.Item>Reclutamiento y selección</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Candidatos</Breadcrumb.Item>
-            </Breadcrumb>
-            <div
-                className={'container'}
-                style={{
-                    display: 'flex',
-                    gap: 24,
-                    flexDirection: 'column',
-                }}>
-                <SearchCandidates/>
-                <TableCandidates currentPage={currentPage} currentFilters={currentFilters}/>
-            </div>
-        </MainLayout>
+        <MainIndexJB
+            pageKey='jb_candidates'
+            extraBread={[{name: 'Candidatos'}]}
+        >
+            <SearchCandidates/>
+            <TableCandidates
+                currentPage={currentPage}
+                currentFilters={currentFilters}
+            />
+        </MainIndexJB>
     )
 }
 
@@ -80,6 +70,8 @@ export default connect(
     mapState,{
         getCandidates,
         getListStates,
-        getMainCategories
+        getMainCategories,
+        getSubCategories,
+        getSectors
     }
 )(withAuthSync(index));

@@ -7,25 +7,22 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
-import ModalFilters from './ModalFilters';
-import TagFilters from './TagFilters';
+import FiltersCandidates from './FiltersCandidates';
+import TagFilters from '../TagFilters';
+import { useFiltersCandidate } from '../hook/useFiltersCandidate';
 
 const SearchCandidates = ({
-    currentNode,
-    load_main_categories,
-    list_main_categories,
-    list_states,
-    load_states
+    currentNode
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
+    const { listGets, listKeys } = useFiltersCandidate();
 
     const showModal = () =>{
-        let is_other = router.query?.other_area ? true : false;
         let state = router.query?.state ? parseInt(router.query.state) : null;
-        formSearch.setFieldsValue({...router.query, is_other, state});
+        formSearch.setFieldsValue({...router.query, state});
         setOpenModal(true)
     }
 
@@ -35,7 +32,6 @@ const SearchCandidates = ({
     }
 
     const onFinishSearch = (values) =>{
-        delete values.is_other;
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/candidates/',
@@ -46,45 +42,6 @@ const SearchCandidates = ({
     const deleteFilter = () =>{
         formSearch.resetFields();
         router.replace('/jobbank/candidates', undefined, {shallow: true});
-    }
-
-    const getArea = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_main_categories.find(find_);
-        if(!result) return id;
-        return result.name;
-    }
-
-    const getState = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_states.find(find_);
-        if(!result) return id;
-        return result.name;
-    }
-
-    const listKeys = {
-        fisrt_name__unaccent__icontains: 'Nombre',
-        last_name__unaccent__icontains: 'Apellidos',
-        email__unaccent__icontains: 'Correo',
-        cell_phone: 'Teléfono',
-        job: 'Puesto',
-        is_active: 'Estatus',
-        area: 'Especialización',
-        other_area: 'Otra especialización',
-        state: 'Estado',
-        municipality__unaccent__icontains: 'Municipio'
-    }
-
-    const listValues = {
-        true: 'Activo',
-        false: 'Inactivo',
-    }
-
-    const listGets = {
-        area: getArea,
-        state: getState
     }
 
     return (
@@ -119,13 +76,12 @@ const SearchCandidates = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listValues={listValues}
                             listGets={listGets}
                         />
                     </Col>  
                 </Row>
             </Card>
-            <ModalFilters
+            <FiltersCandidates
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -137,11 +93,7 @@ const SearchCandidates = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node,
-        list_main_categories: state.jobBankStore.list_main_categories,
-        load_main_categories: state.jobBankStore.load_main_categories,
-        list_states: state.jobBankStore.list_states,
-        load_states: state.jobBankStore.load_states
+        currentNode: state.userStore.current_node
     }
 }
 

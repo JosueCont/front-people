@@ -18,7 +18,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormPublications from './FormPublications';
-import { useProcessInfo } from '../profiles/hook/useProcessInfo';
+import { useInfoProfile } from '../hook/useInfoProfile';
 
 const DetailsPublication = ({
     action,
@@ -42,7 +42,7 @@ const DetailsPublication = ({
     const [infoPublication, setInfoPublication] = useState({});
     const [valuesDefault, setValuesDefault] = useState({});
     const [fetching, setFetching] = useState(false);
-    const { createData, formatData } = useProcessInfo();
+    const { createData, formatData } = useInfoProfile();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -263,13 +263,13 @@ const DetailsPublication = ({
                             >
                                 Guardar y registrar otra
                             </Button>
-                            <Button
+                            {/* <Button
                                 onClick={()=>getSaveAnd('edit')}
                                 disabled={loading['edit']?.disabled}
                                 loading={loading['edit']?.loading}
                             >
                                 Guardar y editar
-                            </Button>
+                            </Button> */}
                         </>
                     ):(
                         <Button

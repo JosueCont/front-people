@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons';
 import { getProfilesList } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableProfiles = ({
@@ -221,7 +221,7 @@ const TableProfiles = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos templates?'
                     : '¿Estás seguro de eliminar este template?'
@@ -229,8 +229,8 @@ const TableProfiles = ({
                 visible={openModalDelete}
                 keyTitle='name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

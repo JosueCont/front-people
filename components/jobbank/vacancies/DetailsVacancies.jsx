@@ -21,9 +21,8 @@ import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
-import WebApiJobBank from '../../../api/WebApiJobBank';
-import { useProcessInfo } from './hook/useProcessInfo';
-import ListLangs from '../candidates/ListLangs';
+import WebApiJobBank from '../../../api/WebApiJobBank';;
+import { useInfoVacancy } from '../hook/useInfoVacancy';
 
 const DetailsVacancies = ({
     action,
@@ -31,7 +30,6 @@ const DetailsVacancies = ({
     newFilters = {}
 }) => {
 
-    const rule_languages = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -47,11 +45,7 @@ const DetailsVacancies = ({
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
-    const { setValuesForm, createData } = useProcessInfo();
-     //Idiomas
-    const [currentValue, setCurrentValue] = useState([]);
-    const [listLangDomain, setListLangDomain] = useState([]);
-    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
+    const { setValuesForm, createData } = useInfoVacancy();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -64,13 +58,8 @@ const DetailsVacancies = ({
             formVacancies.resetFields()
             let allValues = setValuesForm(infoVacant);
             formVacancies.setFieldsValue(allValues)
-            let inters = allValues?.interviewers?.length > 0
-                ? allValues.interviewers : [];
-            let langs = allValues?.languages?.length > 0
-                ? allValues.languages?.map(item => ({lang: item.lang, domain: item.domain}))
-                : []; 
+            let inters = allValues?.interviewers?.length > 0 ? allValues.interviewers : [];
             setListInterviewers(inters)
-            setListLangDomain(langs)
         }
     },[infoVacant])
 
@@ -135,7 +124,6 @@ const DetailsVacancies = ({
         setFetching(true);
         let bodyData = createData(values);
         bodyData.interviewers = listInterviewers;
-        bodyData.languages = listLangDomain;
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -155,9 +143,6 @@ const DetailsVacancies = ({
         if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
-        setCurrentValue([])
-        setRuleLanguages(rule_languages)
-        setListLangDomain([])
     }
 
     const actionBack = () =>{
@@ -232,7 +217,8 @@ const DetailsVacancies = ({
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
-                            requires_travel_availability: false
+                            requires_travel_availability: false,
+                            languages: []
                         }}
                     >
                         <Tabs
@@ -262,18 +248,7 @@ const DetailsVacancies = ({
                                 key='2'
                             >
                                 <Spin spinning={fetching}>
-                                    <TabEducation formVacancies={formVacancies}>
-                                        <ListLangs
-                                            changeColor={true}
-                                            listLangDomain={listLangDomain}
-                                            setListLangDomain={setListLangDomain}
-                                            setCurrentValue={setCurrentValue}
-                                            currentValue={currentValue}
-                                            setRuleLanguages={setRuleLanguages}
-                                            ruleLanguages={ruleLanguages}
-                                            rule_languages={rule_languages}
-                                        />
-                                    </TabEducation>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -285,7 +260,7 @@ const DetailsVacancies = ({
                                     <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
-                            <Tabs.TabPane
+                            {/* <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender
                                 key='4'
@@ -296,7 +271,7 @@ const DetailsVacancies = ({
                                         listInterviewers={listInterviewers}
                                     />
                                 </Spin>
-                            </Tabs.TabPane>
+                            </Tabs.TabPane> */}
                         </Tabs>
                     </Form>
                 </Col>

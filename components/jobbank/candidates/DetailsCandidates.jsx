@@ -65,12 +65,14 @@ const DetailsCandidates = ({
                     </p>
                     {!isAutoRegister && (
                         <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                            <Expedient
-                                infoCandidate={infoCandidate}
-                                infoEducation={infoEducation}
-                                infoExperience={infoExperience}
-                                infoPositions={infoPositions}
-                            />
+                            {action == 'edit' && (
+                                <Expedient
+                                    infoCandidate={infoCandidate}
+                                    infoEducation={infoEducation}
+                                    infoExperience={infoExperience}
+                                    infoPositions={infoPositions}
+                                />
+                            )}
                             <Button
                                 onClick={()=> actionBack()}
                                 icon={<ArrowLeftOutlined />}
