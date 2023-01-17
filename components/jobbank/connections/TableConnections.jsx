@@ -17,6 +17,7 @@ import {
 import { connect } from 'react-redux';
 import { getConnections } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { optionsTypeConnection } from '../../../utils/constant';
 
 const TableConnections = ({
     list_connections,
@@ -42,10 +43,22 @@ const TableConnections = ({
             message.error(msg);
         }
     }
+
+    const getType = (item) =>{
+        if(!item.conection_type) return null;
+        const find_ = record => record.value == item.conection_type;
+        let result = optionsTypeConnection.find(find_);
+        if(!result) return null;
+        return result.label;
+    }
     
-    const checkConfig = (item) => item.is_valid
-    && item.data_config?.page_access_token
-    && item.data_config?.user_access_token;
+    const checkConfig = (item) => {
+        if(['WP'].includes(item.code)) return item.is_valid
+            && item.data_config?.ACCESS_TOKEN;
+        return item.is_valid
+            && item.data_config?.page_access_token
+            && item.data_config?.user_access_token;
+    }
 
     const menuItem = (item) => {
         return (
@@ -83,6 +96,14 @@ const TableConnections = ({
             title: 'Código',
             dataIndex: 'code',
             key: 'code'
+        },
+        {
+            title: 'Tipo',
+            render: (item) =>{
+                return(
+                    <span>{getType(item)}</span>
+                )
+            }
         },
         {
             title: 'Configuración',

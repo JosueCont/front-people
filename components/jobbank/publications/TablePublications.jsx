@@ -103,17 +103,9 @@ const TablePublications = ({
         setItemsToDelete([])
     }
 
-    const nameAndIcon = (item) =>{
-        const list = {
-            FB: { icon: <FacebookOutlined/>, color: "#3b5999"},
-            IG: { icon: <InstagramOutlined />, color: "#E1306C"}
-        }
-        return list[item.code];
-    }
-
     const getRed = (item) =>{
         if(item.account_to_share?.length <= 0) return [];
-        const red = record => item.account_to_share.includes(record.id);
+        const red = record => item.account_to_share.includes(record.code);
         return list_connections_options.filter(red);
     }
 

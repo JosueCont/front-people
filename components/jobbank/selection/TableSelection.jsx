@@ -59,8 +59,8 @@ const TableSelection = ({
                 ...values,
                 person: currentUser.id,
                 previus_state: itemToEdit.previus_state,
-                // candidate: itemToEdit.candidate,
-                // vacant: itemToEdit.vacant
+                candidate: itemToEdit.candidate?.id,
+                vacant: itemToEdit.vacant?.id
             });
             getListSelection(currentNode.id, currentFilters, jobbank_page);
             message.success('Estatus actualizado');

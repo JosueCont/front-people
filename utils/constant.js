@@ -504,9 +504,21 @@ export const optionsTypeNotify = [
 ];
 
 export const optionsSourceJB = [
-  {value: 0, key: 0, label: "Correo"},
+  {value: 0, key: 0, label: "Correo electrónico"},
   {value: 1, key: 1, label: "WhatsApp"},
-]
+];
+
+export const optionsTypeConnection = [
+  {value: 1, key: 1, label: 'Publicaciones'},
+  {value: 2, key: 2, label: 'Notificaciones'}
+];
+
+export const optionsConnectionsJB = [
+  {label: 'Facebook', value: 'FB', key: 'FB'},
+  {label: 'Instagram', value: 'IG', key: 'IG'},
+  {label: 'Linkedin', value: 'LK', key: 'LK', disabled: true},
+  {label: 'WhatsApp', value: 'WP', key: 'WP'}
+];
 
 export const optionsEconomicBenefits = [
   { value: 1, key: 1, label: "Sin prestaciones" },

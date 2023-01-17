@@ -19,14 +19,15 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import CustomDetails from './CustomDetails';
 import FormMessages from './FormMessages';
-import { getTagsNotification } from '../../../../redux/jobBankDuck';
+import { getTagsNotification, getConnectionsOptions } from '../../../../redux/jobBankDuck';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const DetailsMessages = ({
     action,
     currentNode,
     newFilters = {},
-    getTagsNotification
+    getTagsNotification,
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
@@ -41,6 +42,7 @@ const DetailsMessages = ({
     useEffect(()=>{
         if(!currentNode) return;
         getTagsNotification(currentNode.id);
+        getConnectionsOptions(currentNode.id, '&conection_type=2');
     },[currentNode])
 
     useEffect(()=>{
@@ -52,7 +54,9 @@ const DetailsMessages = ({
     useEffect(()=>{
         if(Object.keys(infoNotification).length <= 0) return;
         formMessage.resetFields();
-        formMessage.setFieldsValue(infoNotification)
+        let notification_source = Array.isArray(infoNotification.notification_source) ?
+            infoNotification.notification_source : [];
+        formMessage.setFieldsValue({...infoNotification, notification_source});
         if(!infoNotification.message) return;
         setMsgHTML(infoNotification.message);
         let convert = convertFromHTML(infoNotification.message);
@@ -184,4 +188,9 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, {getTagsNotification})(DetailsMessages);
+export default connect(
+    mapState, {
+        getTagsNotification,
+        getConnectionsOptions
+    }
+)(DetailsMessages);

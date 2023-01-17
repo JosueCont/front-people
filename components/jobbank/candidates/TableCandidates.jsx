@@ -172,7 +172,7 @@ const TableCandidates = ({
             ellipsis: true
         },
         {
-            title:'Correo',
+            title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true

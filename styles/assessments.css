@@ -497,10 +497,11 @@
 }
 
 .card-access{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
     background: var(--primaryColor);
     padding: 24px;
     border-radius: 12px;
@@ -509,9 +510,16 @@
     cursor: pointer;
 }
 
-.card-access .anticon{
+.card-access .anticon:not(.anticon-info-circle){
     color: #ffff;
     font-size: 2rem;
+}
+
+.card-access .anticon-info-circle{
+    color: #ffff;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .card-access p{
@@ -521,10 +529,10 @@
     color: #ffff;
 }
 
-.card-access:hover{
+/* .card-access:hover{
     transition: all 0.3s ease-in;
     transform: translateY(-5px);
-}
+} */
 
 .tabs-connections > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
     padding-top: 24px;

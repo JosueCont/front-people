@@ -19,7 +19,8 @@ const FileUpload = ({
     setNameFile = ()=>{},
     typeFile = [],
     label = '',
-    keyName = 'name_file'
+    keyName = 'name_file',
+    disabled = false
 }) => {
 
     const inputFile = useRef(null);
@@ -70,6 +71,7 @@ const FileUpload = ({
                 >
                     <Input
                         readOnly
+                        disabled={disabled}
                         placeholder='Ningún archivo seleccionado'
                         style={{
                             width: 'calc(100% - 64px)',
@@ -94,6 +96,7 @@ const FileUpload = ({
                 <Button
                     icon={<ToTopOutlined />}
                     onClick={()=> openFile()}
+                    disabled={disabled}
                     style={{
                         borderTopRightRadius: 10,
                         borderBottomRightRadius: 10

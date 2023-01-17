@@ -35,49 +35,49 @@ export const useFacebook = () =>{
 
 
     const initFB = (idApp) =>{
-        window.FB.init({
+        window.FB?.init({
             appId: idApp,
             localStorage: false,
             version: 'v15.0',
-            xfbml: true,
-            status: false
+            xfbml: true
         })
     }
 
     const onChangeStatusFB = () =>{
         return new Promise((resolve, reject) =>{
-            window.FB.Event.subscribe('auth.statusChange', (response) =>{
-                response.status === 'connected' ? resolve(response) : reject(response);
-            })
+            const change_ = response => response.status == 'connected' ? resolve(response) : reject(response);
+            window.FB?.Event?.subscribe('auth.statusChange', change_);
         })
     }
 
     const getStatus = () =>{
         return new Promise((resolve, reject) => {
-            window.FB.getLoginStatus((response) => {
-                response.status === 'connected' ? resolve(response) : reject(response);
-            });
+            const status_ = response => response.status == 'connected' ? resolve(response) : reject(response);
+            window.FB.getLoginStatus(status_);
         });
     }
 
-    const loginFB = () =>{
+    const loginFB = async ({
+        scope = 'email, public_profile'
+    }) =>{
         return new Promise((resolve, reject) => {
-            window.FB.login((response) => {
-                response.status === 'connected' ? resolve(response) : reject(response);
-            }, {scope: 'public_profile, email', return_scopes: true});
-        });
+            const login_ = response => response.status == 'connected' ? resolve(response) : reject(response);
+            window.FB?.login(login_, {scope, return_scopes: true});
+        })
     }
 
     const logoutFB = () => {
         return new Promise((resolve, reject) => {
-            window.FB.logout(resolve);
+            const logout_ = response => resolve('logout');
+            window.FB?.logout(logout_);
         });
     }
 
     const getProfileFB = () =>{
-        let fields = 'first_name, last_name, email, picture, gender';
+        const fields = 'first_name, last_name, email, picture, gender';
         return new Promise((resolve, reject) => {
-            window.FB.api('/me', {fields}, response => response.error ? reject(response) : resolve(response));
+            const profile = response => response.error ? resolve(response) : reject(response);
+            window.FB?.api('/me', {fields}, profile);
         });
     }
 

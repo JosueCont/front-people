@@ -531,7 +531,6 @@ export const getListSelection = (node, query = '', page = 1) => async (dispatch)
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getListSelection(node, query);
-        console.log("🚀 ~ file: jobBankDuck.js:534 ~ getListSelection ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)

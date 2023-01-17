@@ -47,6 +47,7 @@ const DetailsCandidates = ({
         }
         let querys = {...router.query, tab};
         if(querys['tab'] == '1') delete querys['tab'];
+        if(querys['uid']) delete querys['uid'];
         router.replace({
             pathname: router.asPath.split('?')[0],
             query: querys

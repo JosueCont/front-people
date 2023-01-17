@@ -141,7 +141,7 @@ const TablePreselection = ({
             key: 'municipality'
         },
         {
-            title:'Correo',
+            title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true
