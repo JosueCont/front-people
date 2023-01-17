@@ -8,6 +8,7 @@ import {
   InputNumber
 } from 'antd';
 import { useSelector } from 'react-redux';
+import ListLangs from '../candidates/ListLangs';
 import { optionsStatusAcademic } from '../../../utils/constant';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
 
@@ -29,6 +30,7 @@ const TabEducation = ({
     load_scholarship
   } = useSelector(state => state.jobBankStore);
   const categorySelected = Form.useWatch('main_category', formVacancies);
+  const languages = Form.useWatch('languages', formVacancies);
 
   const onChangeCategory = (value) =>{
     formVacancies.setFieldsValue({
@@ -186,8 +188,8 @@ const TabEducation = ({
             />
         </Form.Item>
       </Col>
-      <Col span={24}>
-        {children}
+      <Col span={24} xs={24} md={12} xl={8} xxl={6}>
+        <ListLangs listSelected={languages}/>
       </Col>
       <Col span={24}>
         <Row gutter={[24,0]}>

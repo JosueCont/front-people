@@ -16,7 +16,7 @@ import {
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 
 const TabSchool = ({
@@ -231,14 +231,14 @@ const TabSchool = ({
                 actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
                 textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
             />
-           <DeleteItems
+           <ListItems
                 title='¿Estás seguro de eliminar esta educación?'
                 visible={openModalDelete}
                 keyTitle='study_level, name'
                 keyDescription='institution_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

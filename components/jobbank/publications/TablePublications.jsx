@@ -25,7 +25,7 @@ import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import ModalPost from './ModalPost';
 import { optionsStatusVacant } from '../../../utils/constant';
 
@@ -318,7 +318,7 @@ const TablePublications = ({
                 close={closeModalShare}
                 itemToPublish={itemToPublish}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estas publicaciones?'
                     : '¿Estás seguro de eliminar esta publicación?'
@@ -327,8 +327,8 @@ const TablePublications = ({
                 keyTitle='vacant, job_position'
                 keyDescription='profile, name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

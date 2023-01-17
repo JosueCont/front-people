@@ -139,23 +139,21 @@ const ButtonUpdateSalaryMovement = ({
             >
               <Input />
             </Form.Item>
-            {generateMovement && (
-              <Form.Item
-                name="date_updated"
-                label="Fecha de actualización"
-                rules={[ruleRequired]}
-              >
-                <DatePicker
-                  // disabledDate={disabledDate}
-                  locale={locale}
-                  defaultValue={moment().add(2, "d")}
-                  style={{ width: "100%" }}
-                  //onChange={onChangeBDFamily}
-                  showNow={true}
-                  format={"DD/MM/YYYY"}
-                />
-              </Form.Item>
-            )}
+            <Form.Item
+              name="date_updated"
+              label="Fecha de actualización"
+              rules={[ruleRequired]}
+            >
+              <DatePicker
+                // disabledDate={disabledDate}
+                locale={locale}
+                defaultValue={moment().add(2, "d")}
+                style={{ width: "100%" }}
+                //onChange={onChangeBDFamily}
+                showNow={true}
+                format={"DD/MM/YYYY"}
+              />
+            </Form.Item>
           </Form>
         </Spin>
         {generateMovement && (

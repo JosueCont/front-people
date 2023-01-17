@@ -155,7 +155,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
       "Provision_Report.xlsx",
       "POST",
       data,
-      "No se encontraron colaboradores"
+      "No se encontraron resultados"
     );
   };
 
