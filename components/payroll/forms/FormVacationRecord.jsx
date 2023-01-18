@@ -6,35 +6,16 @@ import {
   Col,
   Typography,
   Table,
-  Modal,
   Form,
   Input,
-  Select,
-  DatePicker,
   message,
   Divider,
   Tooltip,
-  Space,
 } from "antd";
-import locale from "antd/lib/date-picker/locale/es_ES";
-import {
-  typeEmployee,
-  typeSalary,
-  reduceDays,
-  FACTOR_SDI,
-  InfonavitDiscountType,
-} from "../../../utils/constant";
-import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
+import { messageError } from "../../../utils/constant";
+import { EditOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import moment from "moment";
-import {
-  fourDecimal,
-  minLengthNumber,
-  onlyNumeric,
-  ruleRequired,
-} from "../../../utils/rules";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormVacationRecord = ({ person, person_id = null, node }) => {
   const { Title } = Typography;
@@ -113,16 +94,39 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
     }
   };
 
+  useEffect(() => {
+    if (updateRegister) {
+      formVacationsRecord.setFieldsValue({
+        service_years: updateRegister.service_years,
+        period: updateRegister.period,
+        vacations_days: updateRegister.vacations_days,
+        vacations_taken: updateRegister.vacations_taken,
+        vacations_paid: updateRegister.vacations_paid,
+        vacations_pending: updateRegister.vacations_pending,
+        vacations_premium_days: updateRegister.vacations_premium_days,
+        vacations_premium_pay: updateRegister.vacations_premium_pay,
+        vacations_premium_pending: updateRegister.vacations_premium_pending,
+      });
+    }
+  }, [updateRegister]);
+
+  const resetForm = () => {
+    formVacationsRecord.resetFields();
+    setUpdateRegister(null);
+  };
+
   const saveVacationRecord = (values) => {
     setLoadingTable(true);
+    setLoadingForm(true);
 
     if (updateRegister && updateRegister.id) {
-    } else {
-      WebApiPayroll.saveVacationsRecord(values)
+      WebApiPayroll.updateVacationsRecord(updateRegister.id, values)
         .then((response) => {
           message.success("Guardado exitosamente");
           setLoadingTable(false);
+          setLoadingForm(false);
           getVacationsRecors();
+          resetForm();
         })
         .catch(async (error) => {
           if (error?.response?.data?.message) {
@@ -130,140 +134,141 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
             setLoadingTable(false);
           } else message.error(messageError);
           setLoadingTable(false);
+          setLoadingForm(false);
         });
     }
+    // else {
+    // WebApiPayroll.saveVacationsRecord(values)
+    //   .then((response) => {
+    //     message.success("Guardado exitosamente");
+    //     setLoadingTable(false);
+    //     getVacationsRecors();
+    //   })
+    //   .catch(async (error) => {
+    //     if (error?.response?.data?.message) {
+    //       message.error(error?.response?.data?.message);
+    //       setLoadingTable(false);
+    //     } else message.error(messageError);
+    //     setLoadingTable(false);
+    //   });
+    // }
   };
 
   return (
     <>
       <Spin tip="Cargando..." spinning={loadingForm}>
         <Row>
-          <Title style={{ fontSize: "20px" }}>IMSS</Title>
+          <Title style={{ fontSize: "20px" }}>
+            Vacaciones corresponientes del periodo{" "}
+            {updateRegister ? updateRegister.period : ""}
+          </Title>
         </Row>
-        <Form
-          layout="vertical"
-          form={formVacationsRecord}
-          onFinish={saveVacationRecord}
-        >
-          <Row>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="service_years"
-                label="Años de servicio"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={2} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="period" label="Periodo" rules={[ruleRequired]}>
-                <Input maxLength={4} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_days"
-                label="Vacaciones correspondientes"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={4} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_taken"
-                label="Vacaciones disfrutadas"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={4} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_paid"
-                label="Vacaciones pagadas"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={4} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_pending"
-                label="Vacaciones pendientes"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={11} />
-              </Form.Item>
-            </Col>
+        {updateRegister && (
+          <Form
+            layout="vertical"
+            form={formVacationsRecord}
+            onFinish={saveVacationRecord}
+          >
+            <Row>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="service_years"
+                  label="Años de servicio"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={2} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item name="period" label="Periodo" rules={[ruleRequired]}>
+                  <Input maxLength={4} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_days"
+                  label="Vacaciones correspondientes"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={4} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_taken"
+                  label="Vacaciones disfrutadas"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={4} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_paid"
+                  label="Vacaciones pagadas"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={4} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_pending"
+                  label="Vacaciones pendientes"
+                  rules={[ruleRequired]}
+                >
+                  <Input type="number" maxLength={11} />
+                </Form.Item>
+              </Col>
 
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_premium_days"
-                label="Prima vacacional correspondiente"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={2} />
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_premium_days"
+                  label="Prima vacacional correspondiente"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={2} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_premium_pay"
+                  label="Prima vacacional pagada"
+                  rules={[ruleRequired]}
+                >
+                  <Input maxLength={2} disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item
+                  name="vacations_premium_pending"
+                  label="Prima vacacional pendiente"
+                  rules={[ruleRequired]}
+                >
+                  <Input min={0} type="number" maxLength={2} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row justify={"end"}>
+              <Col>
+                <Button
+                  style={{ marginRight: 20 }}
+                  loading={loadingForm}
+                  onClick={resetForm}
+                >
+                  Cancelar
+                </Button>
+              </Col>
+              <Form.Item>
+                <Button loading={loadingForm} type="primary" htmlType="submit">
+                  Guardar
+                </Button>
               </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_premium_pay"
-                label="Prima vacacional pagada"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={2} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="vacations_premium_pending"
-                label="Prima vacacional pendiente"
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={2} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row justify={"end"}>
-            <Form.Item>
-              <Button
-                loading={loadingForm}
-                style={{ marginRight: 20 }}
-                type="primary"
-                htmlType="submit"
-              >
-                Guardar
-              </Button>
-            </Form.Item>
-          </Row>
-        </Form>
+            </Row>
+          </Form>
+        )}
 
         <Divider />
-
-        {/* <Row justify="space-between">
-          <Title style={{ fontSize: "20px", marginBottom: 20 }}>
-            INFONAVIT
-          </Title>
-          <div>
-            <Space>
-              <Button
-                type="primary"
-                loading={loadingTable}
-                onClick={() => setModalVisible(true)}
-              >
-                Nuevo
-              </Button>
-              {nss && (
-                <Tooltip title="Obtener datos infonavit">
-                  <Button onClick={() => userCredit()} loading={loadingTable}>
-                    <SyncOutlined style={{ fontSize: "20px" }} />
-                  </Button>
-                </Tooltip>
-              )}
-            </Space>
-          </div>
-        </Row> */}
 
         <Spin tip="Cargando..." spinning={loadingTable}>
           <Table
@@ -281,131 +286,6 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
           />
         </Spin>
       </Spin>
-      {/* <Modal
-        title="INFONAVIT manual"
-        visible={modalVisible}
-        onCancel={() => onModalCancel()}
-        footer={[]}
-      >
-        <Form
-          layout="vertical"
-          form={formInfonavitManual}
-          onFinish={newInfonavit}
-        >
-          <Row>
-            <Col span={11}>
-              <Form.Item
-                label="Fecha de inicio"
-                name="start_date"
-                rules={[ruleRequired]}
-              >
-                <DatePicker
-                  locale={locale}
-                  format="DD-MM-YYYY"
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={11} offset={2}>
-              <Form.Item
-                label="Número"
-                name="number"
-                rules={[ruleRequired, onlyNumeric]}
-              >
-                <Input maxLength={10} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={11}>
-              <Form.Item
-                label="Tipo de crédito"
-                name="type"
-                rules={[ruleRequired]}
-              >
-                <Select allowClear>
-                  <Select.Option
-                    value="Crédito Tradicional"
-                    key="Crédito Tradicional"
-                  >
-                    Crédito Tradicional
-                  </Select.Option>
-                  <Select.Option
-                    value="Crédito Apoyo INFONAVIT"
-                    key="Crédito Apoyo INFONAVIT"
-                  >
-                    Crédito Apoyo INFONAVIT
-                  </Select.Option>
-                  <Select.Option
-                    value="Credito Cofinanciado 08"
-                    key="Credito Cofinanciado 08"
-                  >
-                    Credito Cofinanciado 08
-                  </Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={11} offset={2}>
-              <Form.Item label="Estatus" name="status" rules={[ruleRequired]}>
-                <Select allowClear>
-                  <Select.Option value={"Vigente"} key={"Vigente"}>
-                    Vigente
-                  </Select.Option>
-                  <Select.Option value={"Sin crédito"} key={"Sin crédito"}>
-                    Sin crédito
-                  </Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={11}>
-              <Form.Item
-                label="Tipo de descuento"
-                name="discount_type"
-                rules={[ruleRequired]}
-              >
-                <Select allowClear options={InfonavitDiscountType}></Select>
-              </Form.Item>
-            </Col>
-            <Col span={11} offset={2}>
-              <Form.Item
-                label="Valor de descuento"
-                name="discount_value"
-                rules={[ruleRequired]}
-              >
-                <Input type="number" maxLength={10} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row justify="end" style={{ marginTop: 30 }}>
-            <Col>
-              <Button
-                key="back"
-                onClick={() => {
-                  onModalCancel();
-                }}
-                style={{ padding: "0 10px", marginLeft: 15 }}
-              >
-                Cancelar
-              </Button>
-            </Col>
-            <Col>
-              <Form.Item>
-                <Button
-                  key="submit_modal"
-                  type="primary"
-                  htmlType="submit"
-                  style={{ padding: "0 10px", marginLeft: 15 }}
-                  loading={loadingModal}
-                >
-                  {(updateInfonavit && "Editar") || "Registrar"}
-                </Button>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal> */}
     </>
   );
 };

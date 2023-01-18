@@ -309,7 +309,7 @@ class WebApiPayroll {
 
   static updateVacationsRecord(id, data) {
     return WebApi.ApisType(
-      "/payroll/person-vacations-record/${id}/",
+      `/payroll/person-vacations-record/${id}/`,
       "patch",
       data
     );
