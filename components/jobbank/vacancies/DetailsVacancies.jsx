@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
+import TabEvaluations from './TabEvaluations';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';;
 import { useInfoVacancy } from '../hook/useInfoVacancy';
@@ -258,6 +259,15 @@ const DetailsVacancies = ({
                             >
                                 <Spin spinning={fetching}>
                                     <TabSalary formVacancies={formVacancies}/>
+                                </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab='Evaluaciones'
+                                forceRender
+                                key='4'
+                            >
+                                <Spin spinning={fetching}>
+                                    <TabEvaluations evaluationsList={[]}/>
                                 </Spin>
                             </Tabs.TabPane>
                             {/* <Tabs.TabPane
