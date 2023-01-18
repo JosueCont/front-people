@@ -21,6 +21,7 @@ import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
+import FormVacationRecord from "../payroll/forms/FormVacationRecord";
 import { useState } from "react";
 import {
   BankOutlined,
@@ -36,7 +37,8 @@ import {
   UsergroupDeleteOutlined,
   WarningOutlined,
   MedicineBoxOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -89,19 +91,19 @@ const DetailPerson = ({
     if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
 
-  const getNewFilters = () =>{
-    let newFilters = {...router.query};
-    if(newFilters.id) delete newFilters.id;
+  const getNewFilters = () => {
+    let newFilters = { ...router.query };
+    if (newFilters.id) delete newFilters.id;
     return newFilters;
-  }
-  
-  const actionBack = () =>{
+  };
+
+  const actionBack = () => {
     let filters = getNewFilters();
     router.push({
-        pathname: '/home/persons',
-        query: filters
-    })
-  }
+      pathname: "/home/persons",
+      query: filters,
+    });
+  };
 
   return (
     <>
@@ -119,11 +121,11 @@ const DetailPerson = ({
                   person.mlast_name}
             </Title>
           </Col>
-          <Col span={12} style={{display:"flex", justifyContent:"flex-end"}}>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={()=> actionBack()}
-            >
+          <Col
+            span={12}
+            style={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <Button icon={<ArrowLeftOutlined />} onClick={() => actionBack()}>
               Regresar
             </Button>
           </Col>
@@ -177,6 +179,23 @@ const DetailPerson = ({
             key="tab_12"
           >
             <FormImssInfonavit
+              person={person}
+              person_id={person.id}
+              node={person.node}
+            />
+          </TabPane>
+          <TabPane
+            tab={
+              <Tooltip title="vacations">
+                <div className="container-title-tab">
+                  <CalendarOutlined />
+                  <div className="text-title-tab">Vacaciones</div>
+                </div>
+              </Tooltip>
+            }
+            key="tab_13"
+          >
+            <FormVacationRecord
               person={person}
               person_id={person.id}
               node={person.node}
