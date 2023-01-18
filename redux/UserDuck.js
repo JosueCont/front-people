@@ -71,29 +71,31 @@ const webReducer = (state = initialData, action) => {
 export default webReducer;
 
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
-  await WebApiPeople.getGeneralConfig()
-    .then((response) => {
-      sessionStorage.setItem("aid", response.data.client_khonnect_id);
-      sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
-      dispatch({ type: GENERAL_CONFIG, payload: response.data });
-      dispatch(setUser());
-      const apps = {};
-      if (response.data.applications) {
-        response.data.applications.map((item) => {
-          apps[item.app.toLowerCase()] = {
-            active: item.is_active,
-            back: item.url_backend,
-            front: item.url_frontend,
-          };
-        });
-        dispatch({ type: APPLICATIONS, payload: apps });
-        if (apps.payroll && apps.payroll.active) {
-          dispatch(getCfdiVersion());
-        }
+  try{
+    let response = await WebApiPeople.getGeneralConfig()
+    sessionStorage.setItem("aid", response.data.client_khonnect_id);
+    sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
+    dispatch({ type: GENERAL_CONFIG, payload: response.data });
+    dispatch(setUser());
+    const apps = {};
+    if (response.data.applications) {
+      response.data.applications.map((item) => {
+        apps[item.app.toLowerCase()] = {
+          active: item.is_active,
+          back: item.url_backend,
+          front: item.url_frontend,
+        };
+      });
+      dispatch({ type: APPLICATIONS, payload: apps });
+      if (apps.payroll && apps.payroll.active) {
+        dispatch(getCfdiVersion());
       }
-    })
-
-    .catch((error) => {});
+    }
+    return true
+  }catch(e){
+    console.log(e)
+    return false
+  }
 };
 
 export const showScreenError = () => async (dispatch, getState) => {
