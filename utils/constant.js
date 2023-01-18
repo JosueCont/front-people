@@ -648,8 +648,18 @@ export const CareerlabAccess = [
   },
 ];
 
+// INFONAVIT
+
 export const InfonavitDiscountType = [
   { value: 1, label: "Por porcentaje" },
   { value: 2, label: "Cuota fija (CF)" },
   { value: 3, label: "Veces de salario mínimo (VSM)" },
+];
+
+export const InfonavitMovementype = [
+  { value: 1, label: "Inicio Descuento" },
+  { value: 2, label: "Suspensión Descuento" },
+  { value: 3, label: "Modificación Tipo Descuento" },
+  { value: 4, label: "Modificación Valor Descuento" },
+  { value: 5, label: "Modificación de Número de Crédito" },
 ];
