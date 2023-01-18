@@ -373,14 +373,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                   </Tooltip>
                 )}
               </Col>
-              {/* <Col className="gutter-row" offset={1}>
-                <DeleteOutlined
-                  style={{ fontSize: "20px" }}
-                  onClick={() => {
-                    showModalDelete(item.id);
-                  }}
-                />
-              </Col> */}
             </Row>
           </div>
         );
@@ -456,36 +448,10 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
           setDisabledDiscountType(true);
           setIsSuspension(false);
           break;
-
         default:
           break;
       }
     }
-    // if (value && value == 2) {
-    //   // suspensión
-    //   setIsSuspension(true);
-    //   setDisabledNumber(true);
-    //   setDisabledDiscountType(true);
-    //   setDisabledDiscountValue(true);
-    // } else if (value && value == 3) {
-    //   // Modificación de tipo descuento
-    //   setDisabledDiscountType(false);
-    //   setDisabledDiscountValue(false);
-    //   setDisabledNumber(true);
-    //   setIsSuspension(false);
-    // } else if (value && value == 4) {
-    //   // Modificación de valor descuento
-    //   setDisabledDiscountValue(false);
-    //   setDisabledNumber(true);
-    //   setDisabledDiscountType(true);
-    //   setIsSuspension(false);
-    // } else if (value && value == 5) {
-    //   // Modificación de Número de crédito
-    //   setDisabledNumber(false);
-    //   setDisabledDiscountValue(true);
-    //   setDisabledDiscountType(true);
-    //   setIsSuspension(false);
-    // }
   };
 
   return (
@@ -592,7 +558,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
             </Col>
           </Row>
           <Row justify={"end"}>
-            {/* {updateCredit && updateCredit.id ? null : ( */}
             <Form.Item>
               <Button
                 loading={loadingIMSS}
@@ -603,18 +568,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                 Guardar
               </Button>
             </Form.Item>
-            {/* )} */}
-
-            {/* <Form.Item>
-              <Button 
-                loading={loadingIMSS} 
-                type="primary" 
-                onClick={ () => userCredit() }
-                // disabled = { updateCredit && updateCredit.is_registered? true : false }
-              >
-                sincronizar
-              </Button>
-            </Form.Item> */}
           </Row>
         </Form>
 
