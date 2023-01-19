@@ -37,30 +37,27 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
     const [personInfo, setPersonInfo] = useState();
+    const [statusConfig, setStatusConfig] = useState(false);
 
     useEffect(()=>{
-        // doGetGeneralConfig()
-        if(router.query.token){
-            config_init()
-        }
-    },[router.query])
+        doGetGeneralConfig()
+    },[])
 
-    const config_init = async () =>{
-        let status = await doGetGeneralConfig()
-        if(status && general_config && router.query.token){
-            await validateToken(router.query.token)
-        }else{
-            accessDenied()
+    useEffect(()=>{
+        if(statusConfig){
+            if(router.query.token){
+                validateToken(router.query.token)
+            }
         }
-    }
+    },[statusConfig, router.query])
 
-    // useEffect(()=>{
-    //     if(general_config && Object.keys(general_config).length > 0){
-    //         if(router.query.token){
-    //             validateToken(router.query.token)
-    //         }
-    //     }
-    // },[general_config])
+    useEffect(()=>{
+        if(general_config && Object.keys(general_config).length > 0){
+            if(!statusConfig){
+                setStatusConfig(true)
+            }
+        }
+    },[general_config])
 
     const accessDenied = () =>{
         setLoading(false)
@@ -71,7 +68,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     }
 
     const accessSuccess = (jwt) =>{
-        if(jwt.perms) delete jwt.perms;
+        // if(jwt.perms) delete jwt.perms;
         Cookies.remove("token")
         Cookies.set("token", jwt)
         setLoading(false)
@@ -96,7 +93,6 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
     const validateToken = async (token) =>{
         try {
-            console.log(general_config)
             let response = await validateTokenKhonnect(general_config, {token: token});
             // let jwt = jwtDecode(response.data.data.token);
             // setStorage("token", response.data.data.token);
