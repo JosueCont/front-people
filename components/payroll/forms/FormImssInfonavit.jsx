@@ -23,6 +23,7 @@ import {
   reduceDays,
   FACTOR_SDI,
   InfonavitDiscountType,
+  messageError,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
@@ -60,7 +61,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
   const [disabledDiscountValue, setDisabledDiscountValue] = useState(false);
   const [isSuspension, setIsSuspension] = useState(false);
 
-  const daily_salary = Form.useWatch("sbc", formImssInfonavit);
+  // const daily_salary = Form.useWatch("sd", formImssInfonavit);
   let errorExceptionOne = "La persona cuenta con crédito infonavit";
   let errorExceptionTwo = "La persona no cuenta con crédito";
 
@@ -79,36 +80,41 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
 
   useEffect(() => {
     if (updateCredit) {
-      setIsEdit(true);
-      formImssInfonavit.setFieldsValue({
-        employee_type: updateCredit.employee_type,
-        salary_type: updateCredit.salary_type,
-        reduce_days: updateCredit.reduce_days,
-        movement_date: moment(updateCredit.movement_date),
-        family_medical_unit: updateCredit.family_medical_unit.id,
-        nss: updateCredit.nss,
-        sbc: updateCredit.sbc,
-      });
-      setNSS(updateCredit.nss);
-    } else {
-      formImssInfonavit.setFieldsValue({
-        nss: person.imss,
-      });
-      setNSS(person.imss);
+      if (updateCredit.id) {
+        console.log("Update", updateCredit);
+        setIsEdit(true);
+        formImssInfonavit.setFieldsValue({
+          employee_type: updateCredit.employee_type,
+          salary_type: updateCredit.salary_type,
+          reduce_days: updateCredit.reduce_days,
+          movement_date: moment(updateCredit.movement_date),
+          family_medical_unit: updateCredit.family_medical_unit.id,
+          nss: updateCredit.nss,
+          sd: updateCredit.sd,
+        });
+        setNSS(updateCredit.nss);
+      } else {
+        console.log("Save", updateCredit);
+        formImssInfonavit.setFieldsValue({
+          nss: person.imss,
+          sd: updateCredit.sd,
+        });
+        setNSS(person.imss);
+      }
     }
   }, [updateCredit]);
 
-  useEffect(() => {
-    if (daily_salary) {
-      formImssInfonavit.setFieldsValue({
-        integrated_daily_salary: (daily_salary * FACTOR_SDI).toFixed(2),
-      });
-    } else {
-      formImssInfonavit.setFieldsValue({
-        integrated_daily_salary: 0,
-      });
-    }
-  }, [daily_salary]);
+  // useEffect(() => {
+  //   if (daily_salary) {
+  //     formImssInfonavit.setFieldsValue({
+  //       integrated_daily_salary: (daily_salary * FACTOR_SDI).toFixed(2),
+  //     });
+  //   } else {
+  //     formImssInfonavit.setFieldsValue({
+  //       integrated_daily_salary: 0,
+  //     });
+  //   }
+  // }, [daily_salary]);
 
   useEffect(() => {
     if (updateInfonavit) {
@@ -262,6 +268,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     setLodingIMSS(true);
     try {
       let response = await WebApiPayroll.getPersonalCredits(person_id);
+      console.log("Response", response.data);
       setUpdateCredit(response.data);
     } catch (error) {
       console.log(error);
@@ -533,7 +540,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
 
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
-                name="sbc"
+                name="sd"
                 label="Salario diario"
                 maxLength={13}
                 rules={[fourDecimal, ruleRequired]}
@@ -546,7 +553,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            {/* <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="integrated_daily_salary"
                 label="Salario diario integrado"
@@ -555,7 +562,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
               >
                 <Input disabled />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row justify={"end"}>
             <Form.Item>

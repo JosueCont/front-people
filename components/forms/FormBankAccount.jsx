@@ -178,7 +178,7 @@ const FormBanckAccount = ({ person_id = null }) => {
     {
       title: "Banco",
       render: (item) => {
-        return <>{item.bank.name}</>;
+        return <>{item?.bank?.name}</>;
       },
       key: "id",
     },
