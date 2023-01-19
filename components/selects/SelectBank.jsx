@@ -5,7 +5,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 const { Option } = Select;
 
-const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
+const SelectBank = ({ rules = [], bankSelected = null, withDescription=false, ...props }) => {
   const [options, setOptions] = useState([]);
   const route = useRouter();
 
@@ -16,7 +16,7 @@ const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
       let data = props.banks.map((item) => {
         return {
           value: item.id,
-          label: item.name,
+          label: `${item.name} ${withDescription? `/ ${item?.description}`:''} `,
           key: item.name + item.id,
         };
       });
