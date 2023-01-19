@@ -11,18 +11,36 @@ import {
 import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { typeStreet } from "../../utils/functions";
+import { typeStreet } from "../../utils/constant";
+import WebApiFiscal from "../../api/WebApiFiscal";
 import WebApi from "../../api/webApi";
+import {ruleRequired, ruleWhiteSpace} from "../../utils/rules";
+import {connect} from "react-redux";
+const { Option } = Select;
 
-const FormAddress = ({ person_id }) => {
+const FormAddress = ({ person_id, ...props }) => {
   const { Title } = Typography;
   const [formAddress] = Form.useForm();
   const [idAddress, setIdAddress] = useState("");
+  const [postalCode, setPostalCode] = useState([]);
+  const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getAddress();
   }, []);
+
+
+  const getPostalCode = (value) => {
+    if (props.versionCfdi)
+      WebApiFiscal.getPostalCode(value, props.versionCfdi)
+          .then((response) => {
+            setPostalCode(response.data.results);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+  };
 
   /*functions CRUD */
   const getAddress = async () => {
@@ -123,15 +141,41 @@ const FormAddress = ({ person_id }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-              name="postalCode"
-              label="Código postal"
-              rules={[ruleRequired]}
+                rules={[ruleRequired, ruleWhiteSpace]}
+                name="postalCode"
+                label="Código postal"
             >
-              <Input />
+              <Select
+                  showSearch
+                  showArrow={false}
+                  notFoundContent={"No se encontraron resultados."}
+                  onSearch={getPostalCode}
+                  filterOption={false}
+                  filterSort={false}
+              >
+                {postalCode.length > 0 &&
+                    postalCode.map((item) => {
+                      return (
+                          <>
+                            (
+                            <Option key={item.id} value={item.code}>
+                              {item.code}
+                            </Option>
+                            ; )
+                          </>
+                      );
+                    })}
+              </Select>
             </Form.Item>
+            {/*<Form.Item*/}
+            {/*  name="postalCode2"*/}
+            {/*  label="Código postal"*/}
+            {/*>*/}
+            {/*  <Input />*/}
+            {/*</Form.Item>*/}
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="suburb" label="Suburbio" rules={[ruleRequired]}>
+            <Form.Item name="suburb" label="Colonia" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
@@ -158,4 +202,11 @@ const FormAddress = ({ person_id }) => {
   );
 };
 
-export default FormAddress;
+
+const mapState = (state) => {
+  return {
+    versionCfdi: state.fiscalStore.version_cfdi,
+  };
+};
+
+export default connect(mapState)(FormAddress);
