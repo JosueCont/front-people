@@ -26,7 +26,6 @@ import {
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
 import {
@@ -36,7 +35,7 @@ import {
   ruleRequired,
 } from "../../../utils/rules";
 
-const FormImssInfonavit = ({ person, person_id, node }) => {
+const FormImssInfonavit = ({ person, person_id = null, node }) => {
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [formInfonavitManual] = Form.useForm();
@@ -49,12 +48,32 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [nss, setNSS] = useState(null);
   const [loadingModal, setLoadingModal] = useState(false);
+  const [isNewRegister, setIsNewRegister] = useState(false);
+  const [existCredit, setExistCredit] = useState(null);
+  const [movementTypes, setMovementTypes] = useState([]);
+  const [disabledStartDate, setDisabledStartDate] = useState(false);
+  const [disabledNumber, setDisabledNumber] = useState(false);
+  const [disabledCreditType, setDisabledCreditType] = useState(false);
+  const [disabledStatus, setDisabledStatus] = useState(false);
+  const [disabledMovementType, setDisabledMovementType] = useState(false);
+  const [disabledDiscountType, setDisabledDiscountType] = useState(false);
+  const [disabledDiscountValue, setDisabledDiscountValue] = useState(false);
+  const [isSuspension, setIsSuspension] = useState(false);
+
   const daily_salary = Form.useWatch("sbc", formImssInfonavit);
   let errorExceptionOne = "La persona cuenta con crédito infonavit";
   let errorExceptionTwo = "La persona no cuenta con crédito";
-  //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
+
+  const InfonavitMovementype = [
+    { value: 1, label: "Inicio Descuento" },
+    { value: 2, label: "Suspensión Descuento" },
+    { value: 3, label: "Modificación Tipo Descuento" },
+    { value: 4, label: "Modificación Valor Descuento" },
+    { value: 5, label: "Modificación de Número de Crédito" },
+  ];
 
   useEffect(() => {
+    setMovementTypes(InfonavitMovementype);
     person_id && localUserCredit() && getInfo();
   }, [person_id]);
 
@@ -80,7 +99,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   }, [updateCredit]);
 
   useEffect(() => {
-    console.log(daily_salary);
     if (daily_salary) {
       formImssInfonavit.setFieldsValue({
         integrated_daily_salary: (daily_salary * FACTOR_SDI).toFixed(2),
@@ -94,12 +112,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   useEffect(() => {
     if (updateInfonavit) {
-      console.log(
-        "🚀 ~ file: FormImssInfonavit.jsx:96 ~ useEffect ~ updateInfonavit",
-        updateInfonavit
-      );
       formInfonavitManual.setFieldsValue({
         start_date: moment(updateInfonavit.start_date),
+        start_date_movement: moment(updateInfonavit.start_date_movement),
         number: updateInfonavit.number,
         type: updateInfonavit.type,
         status: updateInfonavit.status,
@@ -110,15 +125,47 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           updateInfonavit.discount_value > 0
             ? updateInfonavit.discount_value
             : null,
+        discount_suspension_date: updateInfonavit.discount_suspension_date
+          ? moment(updateInfonavit.discount_suspension_date)
+          : null,
+        movement: updateInfonavit.movement != 1 ? updateInfonavit.movement : "",
       });
+      if (updateInfonavit.movement == 1) {
+        setIsNewRegister(true);
+        setMovementTypes(InfonavitMovementype);
+
+        // Campos bloqueados
+        setDisabledStartDate(false);
+        setDisabledNumber(false);
+        setDisabledCreditType(false);
+        setDisabledStatus(false);
+        setDisabledMovementType(true);
+        setDisabledDiscountType(false);
+        setDisabledDiscountValue(false);
+      } else {
+        let choises_type = InfonavitMovementype.filter(
+          (item) => item.value > 1
+        );
+        setMovementTypes(choises_type);
+        setDisabledStartDate(true);
+        setDisabledNumber(true);
+        setDisabledCreditType(true);
+        setDisabledStatus(false);
+        setDisabledMovementType(true);
+        setDisabledDiscountType(true);
+        setDisabledDiscountValue(true);
+      }
       setModalVisible(true);
     }
   }, [updateInfonavit]);
 
-  const compareError = (msg) => {
-    if (msg === errorExceptionOne || msg === errorExceptionTwo) return true;
-    return false;
-  };
+  useEffect(() => {
+    if (isNewRegister) {
+      formInfonavitManual.setFieldsValue({
+        movement: 1,
+      });
+    }
+  }, [isNewRegister]);
 
   const formImmssInfonavitAct = (values) => {
     setLoadingTable(true);
@@ -199,8 +246,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     setLoadingTable(true);
     try {
       let response = await WebApiPayroll.getUserCredits(person_id);
+      let credit_config = response.data.find((elem) => elem.is_active);
+      setExistCredit(credit_config);
+      setIsNewRegister(false);
       setInfonavitCredit(response.data);
     } catch (error) {
+      setIsNewRegister(true);
       console.log(error);
     } finally {
       setLoadingTable(false);
@@ -221,7 +272,21 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   const newInfonavit = async (values) => {
     values.person_id = person_id;
+
     values.start_date = moment(values.start_date).format("YYYY-MM-DD");
+
+    if (values.movement != 2) {
+      values.start_date_movement = moment(values.start_date_movement).format(
+        "YYYY-MM-DD"
+      );
+    } else {
+      values.start_date_movement = moment(
+        values.discount_suspension_date
+      ).format("YYYY-MM-DD");
+    }
+    values.discount_suspension_date = values.discount_suspension_date
+      ? moment(values.discount_suspension_date).format("YYYY-MM-DD")
+      : null;
 
     setLoadingModal(true);
 
@@ -234,11 +299,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         message.success("Editado Exitosamente")) ||
         message.success("Agregado Exitosamente");
     } catch (error) {
-      message.error("Error al editar");
+      message.error("Error al guardar");
     } finally {
       setLoadingModal(false);
       onModalCancel();
       getInfo();
+      setIsSuspension(false);
     }
   };
 
@@ -262,44 +328,34 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       // width: 100,
     },
     {
+      title: "Movimiento",
+      dataIndex: "movement",
+      // key: "movement",
+      render: (item) => {
+        return (
+          <div>
+            {item == 1
+              ? "Inicio Descuento"
+              : item == 2
+              ? "Suspensión Descuento"
+              : item == 3
+              ? "Modificación Tipo Descuento"
+              : item == 3
+              ? "Modificación Valor Descuento"
+              : "Modificación de Número de Crédito"}
+          </div>
+        );
+      },
+    },
+    {
       title: "Estatus",
       dataIndex: "status",
       key: "status",
       // width: 100,
     },
-    // {
-    //   title: "Monto",
-    //   dataIndex: "amount_payment",
-    //   key: "amount_payment",
-    //   width: 100,
-    // },
-    // {
-    //   title: "Monto actual",
-    //   dataIndex: "current_payment",
-    //   key: "current_payment",
-    //   width: 100,
-    // },
-    // {
-    //   title: "Numero de pago",
-    //   dataIndex: "number_payment",
-    //   key: "number_payment",
-    //   width: 100,
-    // },
-    // {
-    //   title: "Ultima fecha de pago",
-    //   dataIndex: "date_last_payment",
-    //   key: "date_last_payment",
-    //   width: 100,
-    // },
-    // {
-    //   title: "Monto total",
-    //   dataIndex: "total_amount",
-    //   key: "total_amount",
-    //   width: 100,
-    // },
     {
       title: "Opciones",
-      render: (item) => {
+      render: (item, record) => {
         return (
           <div>
             <Row gutter={16}>
@@ -308,21 +364,15 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 offset={1}
                 style={{ padding: "0px 20px" }}
               >
-                <Tooltip title="Editar">
-                  <EditOutlined
-                    style={{ fontSize: "20px" }}
-                    onClick={() => setUpdateInfonavit(item)}
-                  />
-                </Tooltip>
+                {record.is_active && (
+                  <Tooltip title="Editar">
+                    <EditOutlined
+                      style={{ fontSize: "20px" }}
+                      onClick={() => setUpdateInfonavit(item)}
+                    />
+                  </Tooltip>
+                )}
               </Col>
-              {/* <Col className="gutter-row" offset={1}>
-                <DeleteOutlined
-                  style={{ fontSize: "20px" }}
-                  onClick={() => {
-                    showModalDelete(item.id);
-                  }}
-                />
-              </Col> */}
             </Row>
           </div>
         );
@@ -330,10 +380,78 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     },
   ];
 
+  const openModalInfonavit = () => {
+    if (existCredit) {
+      formInfonavitManual.setFieldsValue({
+        start_date: moment(existCredit.start_date),
+        number: existCredit.number,
+        type: existCredit.type,
+        status: existCredit.status,
+        discount_type: existCredit.discount_type,
+        discount_value: existCredit.discount_value,
+      });
+      let choises_type = InfonavitMovementype.filter((item) => item.value > 1);
+      setMovementTypes(choises_type);
+
+      //Campos bloqueados
+      setDisabledStartDate(true);
+      setDisabledNumber(true);
+      setDisabledCreditType(true);
+      setDisabledStatus(true);
+      setDisabledMovementType(false);
+      setDisabledDiscountType(true);
+      setDisabledDiscountValue(true);
+    } else {
+      setMovementTypes(InfonavitMovementype);
+    }
+    setIsSuspension(false);
+    setModalVisible(true);
+  };
+
   const onModalCancel = () => {
     setUpdateInfonavit(null);
     setModalVisible(false);
     formInfonavitManual.resetFields();
+    setIsNewRegister(false);
+    setIsSuspension(false);
+  };
+
+  const changeMovement = (value) => {
+    if (value) {
+      console.log("Value", value);
+      switch (value) {
+        case 2:
+          // suspensión
+          setIsSuspension(true);
+          setDisabledNumber(true);
+          setDisabledDiscountType(true);
+          setDisabledDiscountValue(true);
+          break;
+        case 3:
+          // Modificación de tipo descuento
+          setDisabledDiscountType(false);
+          setDisabledDiscountValue(false);
+          setDisabledNumber(true);
+          setIsSuspension(false);
+          break;
+        case 4:
+          // Modificación de valor descuento
+          setDisabledNumber(true);
+          setDisabledDiscountType(true);
+          setDisabledDiscountValue(false);
+          setIsSuspension(false);
+          break;
+        case 5:
+          // Modificación de Número de crédito
+          setDisabledNumber(false);
+          setDisabledDiscountValue(true);
+          setDisabledDiscountType(true);
+          setIsSuspension(false);
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   return (
@@ -440,7 +558,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Col>
           </Row>
           <Row justify={"end"}>
-            {/* {updateCredit && updateCredit.id ? null : ( */}
             <Form.Item>
               <Button
                 loading={loadingIMSS}
@@ -451,18 +568,6 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 Guardar
               </Button>
             </Form.Item>
-            {/* )} */}
-
-            {/* <Form.Item>
-              <Button 
-                loading={loadingIMSS} 
-                type="primary" 
-                onClick={ () => userCredit() }
-                // disabled = { updateCredit && updateCredit.is_registered? true : false }
-              >
-                sincronizar
-              </Button>
-            </Form.Item> */}
           </Row>
         </Form>
 
@@ -477,7 +582,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
               <Button
                 type="primary"
                 loading={loadingTable}
-                onClick={() => setModalVisible(true)}
+                onClick={openModalInfonavit}
               >
                 Nuevo
               </Button>
@@ -530,6 +635,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                   locale={locale}
                   format="DD-MM-YYYY"
                   style={{ width: "100%" }}
+                  disabled={disabledStartDate}
                 />
               </Form.Item>
             </Col>
@@ -539,7 +645,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="number"
                 rules={[ruleRequired, onlyNumeric]}
               >
-                <Input maxLength={10} />
+                <Input maxLength={10} disabled={disabledNumber} />
               </Form.Item>
             </Col>
           </Row>
@@ -550,7 +656,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="type"
                 rules={[ruleRequired]}
               >
-                <Select allowClear>
+                <Select allowClear disabled={disabledCreditType}>
                   <Select.Option
                     value="Crédito Tradicional"
                     key="Crédito Tradicional"
@@ -574,7 +680,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Col>
             <Col span={11} offset={2}>
               <Form.Item label="Estatus" name="status" rules={[ruleRequired]}>
-                <Select allowClear>
+                <Select allowClear disabled={disabledStatus}>
                   <Select.Option value={"Vigente"} key={"Vigente"}>
                     Vigente
                   </Select.Option>
@@ -588,11 +694,60 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           <Row>
             <Col span={11}>
               <Form.Item
+                label="Tipo de movimiento"
+                name="movement"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  allowClear
+                  disabled={disabledMovementType}
+                  options={movementTypes}
+                  onChange={changeMovement}
+                ></Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={11} offset={2}>
+              {isSuspension && (
+                <Form.Item
+                  label="Fecha de suspensión de descuento"
+                  name="discount_suspension_date"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
+                    locale={locale}
+                    format="DD-MM-YYYY"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              )}
+              {!isSuspension && (
+                <Form.Item
+                  label="Fecha de inicio de movimiento"
+                  name="start_date_movement"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
+                    locale={locale}
+                    format="DD-MM-YYYY"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              )}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11}>
+              <Form.Item
                 label="Tipo de descuento"
                 name="discount_type"
                 rules={[ruleRequired]}
               >
-                <Select allowClear options={InfonavitDiscountType}></Select>
+                <Select
+                  allowClear
+                  options={InfonavitDiscountType}
+                  disabled={disabledDiscountType}
+                ></Select>
               </Form.Item>
             </Col>
             <Col span={11} offset={2}>
@@ -601,7 +756,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
                 name="discount_value"
                 rules={[ruleRequired]}
               >
-                <Input type="number" maxLength={10} />
+                <Input
+                  type="number"
+                  disabled={disabledDiscountValue}
+                  maxLength={10}
+                />
               </Form.Item>
             </Col>
           </Row>

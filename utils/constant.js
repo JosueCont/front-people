@@ -648,6 +648,8 @@ export const CareerlabAccess = [
   },
 ];
 
+// INFONAVIT
+
 export const InfonavitDiscountType = [
   { value: 1, label: "Por porcentaje" },
   { value: 2, label: "Cuota fija (CF)" },

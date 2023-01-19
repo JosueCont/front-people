@@ -275,12 +275,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message &&
-          error.response.data.message.includes("Se detectó")
-        )
+        if (error?.response?.data?.message)
           setAlertMessage(error.response.data.message);
         else message.error(messageError);
         // setFiles([]);

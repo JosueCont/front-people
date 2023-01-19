@@ -46,7 +46,7 @@ const FormCaledanrXml = ({
             <ul>
               {periods.map((item, i) => {
                 return (
-                    <li>
+                    <li key={i}>
                       {item.payment_start_date} - {item.payment_end_date}
                     </li>
                 );
