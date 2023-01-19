@@ -152,7 +152,7 @@ const DetailPerson = ({
           >
             <FormGeneralData person_id={person.id} />
           </TabPane>
-          {config.nomina_enabled && (
+          {config?.nomina_enabled && (
             <TabPane
               tab={
                 <Tooltip title="Nómina">
