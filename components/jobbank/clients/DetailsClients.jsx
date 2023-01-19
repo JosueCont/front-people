@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import Expedient from './Expedient';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
@@ -202,12 +203,21 @@ const DetailsClients = ({
                         }
                     </p>
                     {!isAutoRegister && (
-                        <Button
-                            onClick={()=> actionBack()}
-                            icon={<ArrowLeftOutlined />}
-                        >
-                            Regresar
-                        </Button>
+
+                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                            {action == 'edit' && (
+                                <Expedient
+                                    infoClient = { infoClient }
+                                    contactList = { contactList }
+                                />
+                            )}
+                            <Button
+                                onClick={()=> actionBack()}
+                                icon={<ArrowLeftOutlined />}
+                            >
+                                Regresar
+                            </Button>
+                        </div>
                     )}
                 </Col>
                 <Col span={24}>

@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
+import TabEvaluations from './TabEvaluations';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';;
 import { useInfoVacancy } from '../hook/useInfoVacancy';
@@ -45,6 +46,7 @@ const DetailsVacancies = ({
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
+    const [evaluationList, setEvaluationList] = useState([]);
     const { setValuesForm, createData } = useInfoVacancy();
 
     useEffect(()=>{
@@ -70,6 +72,8 @@ const DetailsVacancies = ({
         }
     },[router.query])
 
+    console.log('evaluaciones', evaluationList)
+
 
     const getInfoVacant = async (id) =>{
         try {
@@ -82,6 +86,8 @@ const DetailsVacancies = ({
             setFetching(false)
         }
     }
+
+    console.log('infovacant', infoVacant)
 
     const keepClient = () =>{
         formVacancies.setFieldsValue({
@@ -258,6 +264,18 @@ const DetailsVacancies = ({
                             >
                                 <Spin spinning={fetching}>
                                     <TabSalary formVacancies={formVacancies}/>
+                                </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab='Evaluaciones'
+                                forceRender
+                                key='4'
+                            >
+                                <Spin spinning={fetching}>
+                                    <TabEvaluations 
+                                        evaluationList={evaluationList}
+                                        setEvaluationList={setEvaluationList}
+                                    />
                                 </Spin>
                             </Tabs.TabPane>
                             {/* <Tabs.TabPane
