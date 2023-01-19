@@ -218,7 +218,7 @@ class WebApiPayroll {
     );
   }
 
-  static extraordinaryPayroll(data) {
+  static getExtraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 
@@ -294,6 +294,25 @@ class WebApiPayroll {
 
   static downLoadReceipt(data) {
     return WebApi.ApisType("/payroll/payroll-receipt", "post", data);
+  }
+
+  static getVacationsRecord(person_id) {
+    return WebApi.ApisType(
+      `/payroll/person-vacations-record/?person=${person_id}`,
+      "get"
+    );
+  }
+
+  static saveVacationsRecord(data) {
+    return WebApi.ApisType("/payroll/person-vacations-record", "post", data);
+  }
+
+  static updateVacationsRecord(id, data) {
+    return WebApi.ApisType(
+      `/payroll/person-vacations-record/${id}/`,
+      "patch",
+      data
+    );
   }
 }
 

@@ -97,7 +97,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
     values.bonus_days = toInteger(values.bonus_days);
     values.vacation_percent = toInteger(values.vacation_percent);
     values.vacations_days = toInteger(values.vacations_days);
-    WebApiFiscal.updateIntegratorFactor(values, factor.id)
+    await WebApiFiscal.updateIntegratorFactor(values, factor.id)
       .then((response) => {
         if (response.data.message && response.data.message == "success") {
           setLoading(false);
@@ -107,11 +107,20 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          message.error("Configuración existente");
-          setLoading(false);
-        }, 3000);
+        console.log("Error=>", error.response);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          message.error(error.response.data.message);
+        } else message.error(messageError);
+
+        // console.log(error);
+        // setTimeout(() => {
+        //   message.error("Configuración existente");
+        //   setLoading(false);
+        // }, 3000);
       });
   };
 
@@ -147,11 +156,17 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
         }
       })
       .catch((e) => {
-        let dataError = e.response.data || null;
-        if (dataError && dataError.message == "Excepcion 'File'") {
-          message.error("suba un archivo");
+        console.log("Error=>", e.response);
+        if (e.response && e.response.data && e.response.data.message) {
+          message.error(e.response.data.message);
+          setLoading(false);
+        } else {
+          let dataError = e.response.data || null;
+          if (dataError && dataError.message == "Excepcion 'File'") {
+            message.error("suba un archivo");
+          }
+          setLoading(false);
         }
-        setLoading(false);
       });
   };
 
