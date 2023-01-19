@@ -173,7 +173,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
           salary_days: item.salary_days,
-          belongs_to: item.belongs_to,
+          belongs_to: BelongTo[0].value,
           vacation_bonus_payment: item.vacation_bonus_payment,
           benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
@@ -310,24 +310,27 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   const RenderChecks = ({ data }) => {
     return data.map((item, i) => {
-      return (
-        <Col lg={6} xs={22} md={12}>
-          <Form.Item
-            initialValue={item.value}
-            valuePropName="checked"
-            name={item.name}
-            label={" "}
-          >
-            <Checkbox
-              id={item.name}
-              key={item.value + i}
-              className="CheckGroup"
+      if(item.name != 'import_issues'){
+        return (
+          <Col lg={6} xs={22} md={12}>
+            <Form.Item
+              initialValue={item.value}
+              valuePropName="checked"
+              name={item.name}
+              label={" "}
             >
-              <span style={{ color: "black" }}>{item.label}</span>
-            </Checkbox>
-          </Form.Item>
-        </Col>
-      );
+              <Checkbox
+                id={item.name}
+                key={item.value + i}
+                className="CheckGroup"
+              >
+                <span style={{ color: "black" }}>{item.label}</span>
+              </Checkbox>
+            </Form.Item>
+          </Col>
+        );
+
+      }
     });
   };
 
@@ -672,7 +675,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                     label="Pertenece a "
                     rules={[ruleRequired]}
                   >
-                    <Select maxLength={100} options={BelongTo} />
+                    <Select maxLength={100} options={BelongTo}  disabled/>
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22}>
