@@ -116,7 +116,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (props.catBanks) {
       let data = props.catBanks.map((item) => {
         return {
-          label: item.name,
+          label:`${item.name} / ${item?.description}` ,
           value: item.id,
         };
       });
@@ -482,7 +482,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 {!bankDisabled && (
-                  <Col lg={8} xs={22} md={12}>
+                  <Col lg={12} xs={22} md={12}>
                     <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
                       <Select
                         options={banks}
