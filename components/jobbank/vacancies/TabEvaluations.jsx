@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Input, Select, Form, Table, Button, Dropdown, Alert } from 'antd'
+import { Menu, Table, Button, Dropdown, Alert } from 'antd'
 import {
   EllipsisOutlined,
   DeleteOutlined,
@@ -10,14 +10,35 @@ import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import ModalVacancies from './ModalVacancies';
 
-const TabEvaluations = ({ evaluationsList }) => {
+const TabEvaluations = ({ evaluationList, setEvaluationList }) => {
 
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemToEdit, setItemToEdit] = useState({});
   const [itemsToDelete, setItemsToDelete] = useState([]);
+
+  const actionCreate = (values) => {
+    console.log('Values', values)
+    let newList = [...evaluationList, values]
+    console.log('newList', newList)
+    setEvaluationList(newList)
+  }
+
+  const actionUpdate = (values) =>{
+    const updItem = (item, idx) =>
+        itemToEdit.index == idx
+            ? {...item, ...values}
+            : item;
+    let newList = evaluationsList.map(updItem);
+    setContactList(newList);
+}
+
+const actionDelete = () =>{
+  let index = itemsToDelete?.at(-1)?.index;
+  let newList = [...evaluationList];
+  newList.splice(index, 1);
+  setEvaluationList(newList);
+}
 
   const openModalRemove = (item) =>{
     setItemsToDelete([item])
@@ -111,12 +132,13 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
         size='small'
         rowKey={(item, idx)=> idx}
         columns={listColumns}
-        locale={{ emptyText: evaluationsList.length > 0
+        dataSource={evaluationList}
+        locale={{ emptyText: evaluationList.length > 0
           ? 'Cargando...'
           : 'No se encontraron resultados'
         }}
         pagination={{
-            total: evaluationsList.length,
+            total: evaluationList.length,
             hideOnSinglePage: true,
             showSizeChanger: false
         }}
@@ -126,8 +148,17 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
         visible={openModal}
         close={closeModal}
         itemToEdit={itemToEdit}
-        // actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+        actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
         textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+      />
+      <ListItems
+        title='¿Estás seguro de eliminar esta evaluación?'
+        visible={openModalDelete}
+        keyTitle='name'
+        close={closeModalDelete}
+        itemsToList={itemsToDelete}
+        actionConfirm={actionDelete}
+        timeLoad={1000}
       />
     </>
   )
