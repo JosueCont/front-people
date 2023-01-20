@@ -299,7 +299,7 @@ const MainSider = ({
             getItem("Publicaciones", "jb_publications"),
             getItem("Preselección", "jb_preselection"),
             getItem("Proceso de selección", "jb_selection"),
-            getItem("Entrevistas", "jb_interviews"),
+            // getItem("Entrevistas", "jb_interviews"),
             getItem("Configuraciones", "jb_settings")
           ];
           items.push(
