@@ -155,7 +155,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         idPaymentCalendar
       );
       if (response.data) {
-        console.log('data',response.data)
         setPaymentCalendar(response.data);
         let item = response.data;
         formPaymentCalendar.setFieldsValue({

@@ -42,19 +42,17 @@ const SelectIntegrationFactors = ({
       label="Beneficios"
       rules={rules}
     >
-      
-        <Select
-          placeholder="Seleccionar beneficio"
-          allowClear
-          onChange={onChange}
-
-        >
-          {
-            options && options.map((option) => (
-              <Option key={option.id}> { option.description } </Option>
-            ))
-          }
-        </Select>
+      <Select
+        placeholder="Seleccionar beneficio"
+        allowClear
+        onChange={onChange}
+      >
+        {
+          options && options.map((option) => (
+            <Option key={option.id}> { option.description } </Option>
+          ))
+        }
+      </Select>
 
     </Form.Item>
   )
