@@ -59,6 +59,30 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/vacant/massive_delete/', 'post', data);
     }
 
+    // Evaluaciones de las vacantes
+
+    static getEvaluationsVacant(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/?vacant=${id}`, 'get')
+    }
+
+    static addEvaluationVacant(data){
+        return WebApi.ApisType('/job-bank/vacant-assessment/', 'post', data)
+    }
+
+    static updateEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'put', data)
+    }
+
+    static updateStatusEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'patch', data)
+    }
+
+    static deleteEvaluation(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'delete')
+    }
+
+    //////////////////////////////
+
     static getStrategies(node, query){
         return WebApi.ApisType(`/job-bank/strategy/?node=${node}${query}`, 'get')
     }

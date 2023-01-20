@@ -1,12 +1,18 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
+import { Row, Col, Form, Select, Input, Button, DatePicker, Switch } from 'antd';
 import MyModal from '../../../common/MyModal';
 import {
     ruleWhiteSpace,
     ruleEmail,
     rulePhone,
-    ruleRequired
+    ruleRequired,
+    ruleURL
 } from '../../../utils/rules';
+import { convertToRaw, EditorState, Modifier } from "draft-js";
+import dynamic from 'next/dynamic';
+import draftToHtml from "draftjs-to-html";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
 import { validateNum, validateMaxLength } from '../../../utils/functions';
 
 const ModalVacancies = ({
@@ -15,16 +21,27 @@ const ModalVacancies = ({
     itemToEdit = {},
     visible = false,
     textSave = '',
-    actionForm = () =>{}
+    actionForm = () =>{},
+    setMsgHTML,
+    setEditorState,
+    editorState
+
 }) => {
 
     const [formEvaluations] = Form.useForm();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading ] = useState(false);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         formEvaluations.setFieldsValue(itemToEdit);
     },[itemToEdit])
+
+    const onChangeEditor = (value) =>{
+        let current = value.getCurrentContent();
+        let msg = draftToHtml(convertToRaw(current));
+        setMsgHTML(msg)
+        setEditorState(value)
+    }
 
     const onCloseModal = () =>{
         close();
@@ -52,43 +69,34 @@ const ModalVacancies = ({
                 form={formEvaluations}
                 layout='vertical'
                 onFinish={onFinish}
+                initialValues ={{
+                    is_active: true
+                }}
             >
                 <Row gutter={[24,0]}>
                     <Col span={12}>
                         <Form.Item
-                            name='user'
-                            label='Usuario'
+                            name='name'
+                            label='Nombre de la evaluación'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
                             <Input
                                 maxLength={50}
-                                placeholder='Nombre del usuario'
+                                placeholder='Nombre de la evaluación'
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='password'
-                            label='Contraseña'
-                            rules={[ruleWhiteSpace, ruleRequired]}
-                        >
-                            <Input.Password
-                                maxLength={100}
-                                placeholder='Contraseña'
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='type'
+                            name='source'
                             label='Tipo'
                             rules={[ruleRequired]}
                         >
                           <Select placeholder='selecciona el tipo'>
-                            <Select.Option key={1}>
+                            <Select.Option key={1} value={1}>
                               Khor
                             </Select.Option>
-                            <Select.Option key={2}>
+                            <Select.Option key={2} value={2}>
                               Cliente
                             </Select.Option>
                           </Select>
@@ -98,25 +106,51 @@ const ModalVacancies = ({
                         <Form.Item
                             name='url'
                             label='URL'
-                            rules={[ruleRequired]}
+                            rules={[ruleRequired, ruleURL]}
                         >
                             <Input
                                 placeholder='Url del sitio'
-                                maxLength={10}
+                                // maxLength={10}
                                 // onKeyPress={validateMaxLength}
                             />
                         </Form.Item>
                     </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='is_active'
+                            label='¿Activo?'
+                            rules={[ruleRequired]}
+                            valuePropName="checked"
+                        >
+                            <Switch 
+                                checkedChildren="Activo" 
+                                unCheckedChildren="Inactivo"
+                            />
+                        </Form.Item>
+                    </Col>
                     <Col span={24}>
-                    <Form.Item
+                    {/* <Form.Item
                             name='instructions'
                             label='Instrucciones'
                         >
                             <Input.TextArea
                                 placeholder='intrucciones'
-                                // onKeyPress={validateMaxLength}
+                                style={{
+                                    height: 100
+                                }}
                             />
-                        </Form.Item>
+                        </Form.Item> */}
+                                       <Editor
+                    editorState={editorState}
+                    onEditorStateChange={onChangeEditor}
+                    placeholder='Escriba el mensaje...'
+                    editorStyle={{padding: '0px 12px'}}
+                    wrapperStyle={{background: '#f0f0f0'}}
+                    toolbarStyle={{
+                        background: '#f0f0f0',
+                        borderBottom: '1px solid rgba(0,0,0,0.06)'
+                    }}
+                />
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Menu, Table, Button, Dropdown, Alert } from 'antd'
+import { Menu, Table, Button, Dropdown, Switch, Alert } from 'antd'
 import {
   EllipsisOutlined,
   DeleteOutlined,
@@ -9,55 +9,70 @@ import {
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import ModalVacancies from './ModalVacancies';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
-const TabEvaluations = ({ evaluationList, setEvaluationList }) => {
+const TabEvaluations = ({ 
+  evaluationList, 
+  setEvaluationList, 
+  idVacant, 
+  addEvaluationVacant,
+  updateEvaluation,
+  deleteEvaluation,
+  changeEvaluationstatus
+}) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemToEdit, setItemToEdit] = useState({});
-  const [itemsToDelete, setItemsToDelete] = useState([]);
+  const [itemToDelete, setItemToDelete] = useState({});
+  const [msgHTML, setMsgHTML] = useState("<p></p>");
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-  const actionCreate = (values) => {
-    console.log('Values', values)
-    let newList = [...evaluationList, values]
-    console.log('newList', newList)
-    setEvaluationList(newList)
+  const actionCreate = async (values) => {
+    values.instructions = msgHTML
+    addEvaluationVacant(values)
   }
 
   const actionUpdate = (values) =>{
-    const updItem = (item, idx) =>
-        itemToEdit.index == idx
-            ? {...item, ...values}
-            : item;
-    let newList = evaluationsList.map(updItem);
-    setContactList(newList);
+    if(Object.keys(itemToEdit).length > 0){
+      values.instructions = msgHTML
+      updateEvaluation(itemToEdit.id, values)
+    }
 }
 
 const actionDelete = () =>{
-  let index = itemsToDelete?.at(-1)?.index;
-  let newList = [...evaluationList];
-  newList.splice(index, 1);
-  setEvaluationList(newList);
+  if(Object.keys(itemToDelete).length > 0){
+    deleteEvaluation(itemToDelete.id)
+  }
 }
 
-  const openModalRemove = (item) =>{
-    setItemsToDelete([item])
+
+const openModalRemove = (item) =>{
+    setItemToDelete(item)
     setOpenModalDelete(true)
 }
 
 const openModalEdit = (item)=>{
     setItemToEdit(item)
+    if(!item.instructions) return;
+    setMsgHTML(item.instructions);
+    let convert = convertFromHTML(item.instructions);
+    let htmlMsg = ContentState.createFromBlockArray(convert);
+    let template = EditorState.createWithContent(htmlMsg);
+    setEditorState(template);
     setOpenModal(true)
 }
 
 const closeModal = () =>{
     setOpenModal(false)
+    setMsgHTML('<p></p>');
     setItemToEdit({})
+    setEditorState(EditorState.createEmpty())
 }
 
 const closeModalDelete = () =>{
     setOpenModalDelete(false)
-    setItemsToDelete([])
+    setItemToDelete({})
 }
 
 const validateAction = () => Object.keys(itemToEdit).length > 0;
@@ -85,23 +100,35 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
 
   const listColumns = [
     {
-      title: 'Usuario',
-      dataIndex: 'user',
-      key: 'user'
+      title: 'Nombre',
+      dataIndex: 'name',
+      key: 'name'
     },
     {
       title: 'Tipo',
-      dataIndex: 'type',
-      key: 'type'
+      dataIndex: 'source',
+      key: 'source',
+      render: (source) => source === 1? 'Khor' : 'Cliente'
     },
     {
-      title: 'Url',
+      title: 'URL',
       dataIndex: 'url',
       key: 'url'
     },
     {
+      title: 'Estatus',
+      render: (record) => (
+        <Switch 
+          checked = { record.is_active? true : false }
+          checkedChildren="Activo" 
+          unCheckedChildren="Inactivo"
+          onChange={(e) => changeEvaluationstatus(record.id, e)}
+        />
+      )
+    },
+    {
       title: ()=> (
-          <Button size='small' onClick={()=> setOpenModal(true)}>
+          <Button disabled={ idVacant? false : true } size='small' onClick={()=> setOpenModal(true)}>
               Agregar
           </Button>
       ),
@@ -119,14 +146,16 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
 
   return (
     <>
-      <Alert
-        message={`Al modificar, eliminar o agregar una nueva evaluación
-                es necesario "Guardar/Actualizar" para almacenar los cambios realizados, de lo
-                contrario estos se perderán.`}
+      {
+        !idVacant && 
+
+        <Alert
+        message={`Para agregar evaluaciones, primero deberás guardar la vacante`}
         type="warning"
         showIcon
         style={{marginBottom: 16}}
-      />
+    />
+      }
       <Table
         className='table-custom'
         size='small'
@@ -150,13 +179,16 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
         itemToEdit={itemToEdit}
         actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
         textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+        setMsgHTML = { setMsgHTML }
+        setEditorState = {setEditorState}
+        editorState = { editorState }
       />
       <ListItems
         title='¿Estás seguro de eliminar esta evaluación?'
         visible={openModalDelete}
         keyTitle='name'
         close={closeModalDelete}
-        itemsToList={itemsToDelete}
+        itemsToList={[itemToDelete]}
         actionConfirm={actionDelete}
         timeLoad={1000}
       />
