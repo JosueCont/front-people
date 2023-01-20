@@ -9,14 +9,15 @@ import {
     DatePicker,
     TimePicker,
     Input,
-    Space
+    Space,
+    Drawer
 } from 'antd';
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
-import { EventDrawer } from './StyledInterview';
 import locale from 'antd/lib/date-picker/locale/es_ES';
-import { ruleRequired } from '../../../utils/rules';
-import { CloseOutlined } from '@ant-design/icons';
+import { ruleEmail, ruleRequired, ruleURL } from '../../../utils/rules';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import SelectDropdown from './SelectDropdown';
 
 import { convertToRaw, EditorState, Modifierv, convertFromHTML, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
@@ -55,7 +56,7 @@ const EventForm = ({
     }
 
     return (
-        <EventDrawer
+        <Drawer
             title={isEdit ? 'Actualiar evento' : 'Agregar evento'}
             width={600}
             visible={visible}
@@ -203,16 +204,10 @@ const EventForm = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={24} style={{marginBottom: 24}}>
-                        <label style={{display: 'block', padding: '0px 0px 8px'}}>Invitados</label>
-                        <div className='content-list-items'>
-                            <div className='body-list-items scroll-bar'>
-                                <div className='item-list-row normal'>
-                                    <p>uncorreo@gmail.com</p>
-                                    <CloseOutlined/>
-                                </div>
-                            </div>
-                        </div>
+                    <Col span={24} >
+                        <Form.Item label='Invitados'>
+                            <SelectDropdown/>
+                        </Form.Item>
                     </Col>
                     <Col span={24}>
                         <label style={{display: 'block', padding: '0px 0px 8px'}}>Descripción</label>
@@ -231,7 +226,7 @@ const EventForm = ({
                     </Col>
                 </Row>
             </Form>
-        </EventDrawer>
+        </Drawer>
     )
 }
 

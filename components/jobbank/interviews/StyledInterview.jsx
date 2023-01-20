@@ -87,9 +87,3 @@ export const StatusGuest = styled.span`
         color: ${({status}) => status == 'accepted' ? '#188038' : '#d93025'};
     }
 `;
-
-export const EventDrawer = styled(Drawer)`
-    /* * {
-       all: initial;
-    } */
-`;

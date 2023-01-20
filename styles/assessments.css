@@ -672,8 +672,13 @@ button.custom-btn {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid #d9d9d9;
     border-radius: 12px;
+    /* border-left: 1px solid #d9d9d9; */
+    /* border-bottom: 1px solid #d9d9d9; */
+    /* border-right: 1px solid #d9d9d9; */
+    /* border-bottom-left-radius: 12px; */
+    /* border-bottom-right-radius: 12px; */
     padding: 12px;
 }
 
@@ -929,4 +934,18 @@ div.drop-picker-jb{
     border: 1px solid #d9d9d9!important;
     box-shadow: none!important;
 }
+
+input.input-jb,
+div.input-jb,
+input.input-jb:hover,
+input.input-jb.ant-input-focused,
+input.input-jb:focus {
+  border: 1px solid #d9d9d9!important;
+  box-shadow: none!important;
+}
+
+div.select-jb-remove .ant-select-selection-item-remove{
+    display: none;
+}
+
 /* Termina diseño bolsa de trabajo */
