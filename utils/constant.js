@@ -485,7 +485,7 @@ export const optionsTypeSale = [
 ];
 
 export const optionsStatusSelection = [
-  { value: 0, key: 0, label: "Sin iniciar"},
+  { value: 0, key: 0, label: "Sin iniciar" },
   { value: 1, key: 1, label: "Filtro telefónico" },
   { value: 2, key: 2, label: "Entrevista con HEX" },
   { value: 3, key: 3, label: "Enviado a cliente" },
@@ -496,28 +496,16 @@ export const optionsStatusSelection = [
 ];
 
 export const optionsTypeNotify = [
-  {value: 0, key: 0, label: "Informativa"},
-  {value: 1, key: 1, label: "Seguimiento"},
-  {value: 2, key: 2, label: "Recordatorio"},
-  {value: 3, key: 3, label: "Alerta"},
-  {value: 4, key: 4, label: "Error"}
+  { value: 0, key: 0, label: "Informativa" },
+  { value: 1, key: 1, label: "Seguimiento" },
+  { value: 2, key: 2, label: "Recordatorio" },
+  { value: 3, key: 3, label: "Alerta" },
+  { value: 4, key: 4, label: "Error" },
 ];
 
 export const optionsSourceJB = [
-  {value: 0, key: 0, label: "Correo electrónico"},
-  {value: 1, key: 1, label: "WhatsApp"},
-];
-
-export const optionsTypeConnection = [
-  {value: 1, key: 1, label: 'Publicaciones'},
-  {value: 2, key: 2, label: 'Notificaciones'}
-];
-
-export const optionsConnectionsJB = [
-  {label: 'Facebook', value: 'FB', key: 'FB'},
-  {label: 'Instagram', value: 'IG', key: 'IG'},
-  {label: 'Linkedin', value: 'LK', key: 'LK', disabled: true},
-  {label: 'WhatsApp', value: 'WP', key: 'WP'}
+  { value: 0, key: 0, label: "Correo" },
+  { value: 1, key: 1, label: "WhatsApp" },
 ];
 
 export const optionsEconomicBenefits = [
@@ -541,12 +529,6 @@ export const optionsDomainLang = [
   { value: 2, key: 2, label: "Intermedio" },
   { value: 3, key: 3, label: "Avanzado" },
   { value: 4, key: 4, label: "Experto" },
-];
-
-export const optionsStatusInterviews = [
-  {value: 0, key: 0, label: "Por confirmar"},
-  {value: 1, key: 1, label: "Confirmado"},
-  {value: 2, key: 2, label: "Rechazado"}
 ];
 
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
@@ -588,10 +570,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
     let url = window.location.href;
     if (tenant) {
       let link = url.split(".");
-      if (getTenant){
-        const tenantSolo = link[0].split("://")
+      if (getTenant) {
+        const tenantSolo = link[0].split("://");
         return tenantSolo[1];
-      }else{
+      } else {
         return link[0];
       }
     } else {
@@ -628,7 +610,7 @@ export const catalogsJobbank = [
   { catalog: "jobboars", name: "Bolsas de empleo" },
   // { catalog: "types", name: "Tipos de notificación" },
   { catalog: "messages", name: "Mensajes de notificación" },
-  { catalog: "scholarship", name: "Escolaridad" }
+  { catalog: "scholarship", name: "Escolaridad" },
 ];
 
 export const departureMotive = [
@@ -664,4 +646,12 @@ export const CareerlabAccess = [
     label: "No",
     value: false,
   },
+];
+
+// INFONAVIT
+
+export const InfonavitDiscountType = [
+  { value: 1, label: "Por porcentaje" },
+  { value: 2, label: "Cuota fija (CF)" },
+  { value: 3, label: "Veces de salario mínimo (VSM)" },
 ];

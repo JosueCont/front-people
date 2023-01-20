@@ -37,15 +37,24 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
     const [personInfo, setPersonInfo] = useState();
+    const [statusConfig, setStatusConfig] = useState(false);
 
     useEffect(()=>{
         doGetGeneralConfig()
     },[])
 
     useEffect(()=>{
-        if(general_config && Object.keys(general_config).length > 0){
+        if(statusConfig){
             if(router.query.token){
                 validateToken(router.query.token)
+            }
+        }
+    },[statusConfig, router.query])
+
+    useEffect(()=>{
+        if(general_config && Object.keys(general_config).length > 0){
+            if(!statusConfig){
+                setStatusConfig(true)
             }
         }
     },[general_config])
@@ -59,7 +68,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     }
 
     const accessSuccess = (jwt) =>{
-        if(jwt.perms) delete jwt.perms;
+        // if(jwt.perms) delete jwt.perms;
         Cookies.remove("token")
         Cookies.set("token", jwt)
         setLoading(false)
@@ -91,7 +100,6 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
             // validateIntranet(jwt.user_id)
             validateJWT(response.data.data.token)
         } catch (e) {
-            console.log(e)
             accessDenied()
         }
     }
@@ -99,7 +107,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     const validateJWT = async (token) =>{
         try {
             let jwt = jwtDecode(token);
-            setStorage("jwt", JSON.stringify(jwt));
+            await setStorage("jwt", JSON.stringify(jwt));
             let response = await WebApiPeople.saveJwt({
                 khonnect_id: jwt.user_id,
                 jwt: {...jwt, metadata: [{token: token}]}
@@ -143,27 +151,31 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
     const validatePermissionsFromKhor = (personData) => {
         if (personData.khor_perms != null) {
-            switch (router.query.app) {
-                case 'ynl':
-                    let ynlPermission = personData.khor_perms.filter(item => item === "Khor Plus YNL")
-                    if (ynlPermission.length > 0) {
-                        validatePermissions()
-                    } else {
+            if (router.query.app){
+                switch (router.query.app) {
+                    case 'ynl':
+                        let ynlPermission = personData.khor_perms.filter(item => item === "Khor Plus YNL")
+                        if (ynlPermission.length > 0) {
+                            validatePermissions()
+                        } else {
+                            accessDenied()
+                        }
+                        break
+    
+                    case 'khorconnect':
+                        let khorconnectPermission = personData.khor_perms.filter(item => item === "Khor Plus Red Social")
+                        if (khorconnectPermission.length > 0) {
+                            validatePermissions()
+                        } else {
+                            accessDenied()
+                        }
+                        break
+    
+                    default:
                         accessDenied()
-                    }
-                    break
-
-                case 'khorconnect':
-                    let khorconnectPermission = personData.khor_perms.filter(item => item === "Khor Plus Red Social")
-                    if (khorconnectPermission.length > 0) {
-                        validatePermissions()
-                    } else {
-                        accessDenied()
-                    }
-                    break
-
-                default:
-                    accessDenied()
+                }
+            }else{
+                validatePermissions()
             }
         } else {
             accessDenied()
@@ -185,7 +197,11 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
     const validatePermissions = async () =>{
         let jwt = JSON.parse(getStorage("jwt"))
-           accessSuccess(jwt)
+        if(jwt){
+            accessSuccess(jwt)
+        }else{
+            accessDenied()
+        }
 
         // let resp = await setUserPermissions(jwt.perms);
         // if(resp){

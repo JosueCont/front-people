@@ -153,10 +153,19 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
-      dispatch({
-        type: BANKS,
-        payload: response.data.results,
-      });
+        if(response?.data?.results){
+            let _banks =  response?.data?.results.filter(bank => bank.version_cfdi.length > 0); //GDZUL -- para evitar duplicados , revisar con peter
+            dispatch({
+                type: BANKS,
+                payload: _banks,
+            });
+        }else{
+            dispatch({
+                type: BANKS,
+                payload: [],
+            });
+        }
+
     })
     .catch((error) => {
       console.log(error);
