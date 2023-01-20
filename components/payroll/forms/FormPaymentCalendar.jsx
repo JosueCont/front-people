@@ -190,6 +190,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
+        setBenefits(item.benefits)
         setSelectPeriodicity(item.periodicity.id);
         if (item.belongs_to) {
           setPolitics(true);
@@ -368,7 +369,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const selectBenefit = (value) => {
-    formPaymentCalendar.setFieldsValue({ benefits: null });
+    //formPaymentCalendar.setFieldsValue({ benefits: value });
     setBenefits(value);
   };
   return (
@@ -713,8 +714,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                  <SelectIntegrationFactors benefit={benefits} chengeBenefit={selectBenefit}
-/>
+                  <SelectIntegrationFactors 
+                    benefit='benefits' 
+                    chengeBenefit={selectBenefit}
+                  />
                 </Col>
                 {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />

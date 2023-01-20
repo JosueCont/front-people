@@ -38,27 +38,22 @@ const SelectIntegrationFactors = ({
  
   return (
     <Form.Item
-      name={props.benefit}
+      name='benefits'
       label="Beneficios"
       rules={rules}
     >
-      <Tooltip 
-        placement="topLeft" 
-        title="Si no se elige alguna opción, el sistema tomará las prestaciones de ley">
-        <Select
-          placeholder="Seleccionar beneficio"
-          allowClear
-          onChange={onChange}
+      <Select
+        placeholder="Seleccionar beneficio"
+        allowClear
+        onChange={onChange}
+      >
+        {
+          options && options.map((option) => (
+            <Option key={option.id}> { option.description } </Option>
+          ))
+        }
+      </Select>
 
-        >
-          {
-            options && options.map((option) => (
-              <Option key={option.id}> { option.description } </Option>
-            ))
-          }
-        </Select>
-
-      </Tooltip>
     </Form.Item>
   )
    
