@@ -178,7 +178,7 @@ const FormBanckAccount = ({ person_id = null }) => {
     {
       title: "Banco",
       render: (item) => {
-        return <>{item.bank.name}</>;
+        return <>{item?.bank?.name}</>;
       },
       key: "id",
     },
@@ -298,16 +298,17 @@ const FormBanckAccount = ({ person_id = null }) => {
         onFinish={formBankAcc}
         className="inputs_form_responsive"
       >
-        <Row>
-          <Col lg={8} xs={22} md={12}>
+        <Row gutter={16}>
+          <Col lg={22} xs={22} md={12} >
             <SelectBank
+              withDescription={true}
               rules={[ruleRequired]}
               name="bank"
               bankSelected={selectedBank}
               style={{ width: "100%" }}
             />
           </Col>
-          <Col lg={8} xs={22} md={12} offset={1}>
+          <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="account_number"
               label="Número de cuenta"
@@ -316,7 +317,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input  maxLength={11} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
@@ -325,7 +326,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12} offset={1}>
+          <Col lg={11} xs={22} md={12} >
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
@@ -334,7 +335,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={16} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
@@ -344,7 +345,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLengyh={2} maxLength={2} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12} offset={1}>
+          <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"

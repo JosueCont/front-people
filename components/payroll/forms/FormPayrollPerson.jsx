@@ -31,6 +31,7 @@ import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
+import _ from "lodash";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -116,7 +117,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (props.catBanks) {
       let data = props.catBanks.map((item) => {
         return {
-          label: item.description,
+          label:`${item.name} / ${item?.description}` ,
           value: item.id,
         };
       });
@@ -379,7 +380,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
               className="inputs_form_responsive"
             >
               <Row gutter={20}>
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     name="daily_salary"
                     label="Salario diario"
@@ -390,7 +391,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 {
-                  <Col lg={8} xs={22} md={12}>
+                  <Col lg={6} xs={22} md={12}>
                     <Form.Item
                       name="integrated_daily_salary"
                       label="Salario diario integrado"
@@ -401,16 +402,18 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     </Form.Item>
                   </Col>
                 }
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={12} xs={22} md={12}>
                   <Form.Item
                     name="contract_type"
-                    label="Tipo de contrato"
+                    label="Tipo de contratoss"
                     rules={[ruleRequired]}
                   >
                     <Select
-                      dropdownStyle={{ wordBreak: "break-word" }}
                       options={contrctsType}
-                      notFoundContent={"No se encontraron resultados."}
+                      showSearch
+                      filterOption={(input, option) =>                        
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
                       allowClear
                     />
                   </Form.Item>
@@ -423,6 +426,10 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   >
                     <Select
                       options={hiringRegimeType}
+                      showSearch
+                      filterOption={(input, option) =>
+                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
                       notFoundContent={"No se encontraron resultados."}
                       allowClear
                     />
@@ -436,6 +443,10 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   >
                     <Select
                       options={typeworkingday}
+                      showSearch
+                      filterOption={(input, option) =>
+                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
                       notFoundContent={"No se encontraron resultados."}
                       allowClear
                     />
@@ -460,7 +471,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     rules={[ruleRequired]}
                   >
                     <Select
-                      options={PaymentTypes}
+                      options={_.orderBy(PaymentTypes, ['label'],['asc'])}
+                      showSearch
+                      filterOption={(input, option) =>
+                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
                       notFoundContent={"No se encontraron resultados."}
                       onChange={changePaymentType}
                       allowClear
@@ -468,10 +483,14 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 {!bankDisabled && (
-                  <Col lg={8} xs={22} md={12}>
+                  <Col lg={12} xs={22} md={12}>
                     <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
                       <Select
                         options={banks}
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
                         notFoundContent={"No se encontraron resultados."}
                         allowClear
                       />
@@ -537,7 +556,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                         label="Calendario de pago"
                       >
                         <Select
-                          options={paymentCalendars}
+                          options={_.orderBy(paymentCalendars, ['label'],['asc'])}
                           notFoundContent={"No se encontraron resultados."}
                           onChange={selectCalendar}
                           disabled={disabledCalendar}
