@@ -90,7 +90,7 @@ const SelectDropdown = ({
             value={optionsSelected}
         >
             {items.map((item, index) => (
-                <Option value={item} key={item}>
+                <Select.Option value={item} key={item}>
                     <ContentBetween>
                         {item}
                         <RiCloseLine
@@ -98,7 +98,7 @@ const SelectDropdown = ({
                             onClick={e => deleteItem(e, index)}
                         />
                     </ContentBetween>
-                </Option>
+                </Select.Option>
             ))}
         </Select>
     )
