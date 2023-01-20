@@ -25,8 +25,7 @@ const TableCandidates = ({
     getCandidates,
     list_candidates,
     load_candidates,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -38,7 +37,7 @@ const TableCandidates = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
         } catch (e) {
@@ -51,7 +50,7 @@ const TableCandidates = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
         } catch (e) {
@@ -262,6 +261,7 @@ const mapState = (state) =>{
         list_candidates: state.jobBankStore.list_candidates,
         load_candidates: state.jobBankStore.load_candidates,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

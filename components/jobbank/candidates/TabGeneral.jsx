@@ -73,14 +73,14 @@ const TabGeneral = ({
     const setValueForm = () =>{
         setDisabledTab(false)
         formCandidate.resetFields();
+        let values = {...infoCandidate};
         const getLang = item => `${item.lang}-${item.domain}`;
-        let languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
-        let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
-        let state = infoCandidate?.state?.id ?? null;
-        let birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
-        let notification_source = Array.isArray(infoCandidate.notification_source)
+        values.languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
+        values.cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        values.state = infoCandidate?.state?.id ?? null;
+        values.birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
+        values.notification_source = Array.isArray(infoCandidate.notification_source)
             ? infoCandidate.notification_source : [];
-        let values = {...infoCandidate, cv_name_read, state, languages, birthdate, notification_source};
         formCandidate.setFieldsValue(values);
     }
 

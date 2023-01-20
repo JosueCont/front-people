@@ -15,8 +15,6 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode) getSectors(currentNode.id);
@@ -27,8 +25,6 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getClients(currentNode.id, filters, page)
-            setCurrentPage(page)
-            setCurrentFilters(filters)
         }
     },[currentNode, router.query])
 
@@ -38,10 +34,7 @@ const index = ({
             extraBread={[{name: 'Clientes'}]}
         >
             <SearchClients/>
-            <TableClients
-                currentPage={currentPage}
-                currentFilters={currentFilters}
-            />
+            <TableClients/>
         </MainIndexJB>
     )
 }

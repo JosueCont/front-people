@@ -415,28 +415,6 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
     }
     
-    //CUENTAS PARA NOTIFICAR
-
-    static getAccountsNotify(node, query){
-        return WebApi.ApisType(`/job-bank/notification/?node=${node}${query}`, 'get');
-    }
-
-    static getInfoAcoountNotify(id){
-        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'get');
-    }
-
-    static createAccountNotify(data){
-        return WebApi.ApisType('/job-bank/notification/', 'post', data);
-    }
-
-    static updateAccountNotify(id, data){
-        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'put', data);
-    }
-
-    static deleteAccountNotify(id){
-        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'delete');
-    }
-    
 }
 
 export default WebApiJobBank;

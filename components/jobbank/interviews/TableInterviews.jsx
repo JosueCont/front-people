@@ -1,95 +1,45 @@
 import React, { useState } from 'react';
-import {
-    Table,
-    Button,
-    Menu,
-    Dropdown,
-    message,
-    Switch,
-    Select
-} from 'antd';
+import { Table, Select, Dropdown, Button, Menu, message } from 'antd';
+import { useRouter } from 'next/router';
+import moment from 'moment';
 import { connect } from 'react-redux';
+import { getInterviews } from '../../../redux/jobBankDuck';
+import { getFullName } from '../../../utils/functions';
+import { optionsStatusInterviews } from '../../../utils/constant';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    CalendarOutlined
+    CalendarOutlined,
+    UserAddOutlined
 } from '@ant-design/icons';
-import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
-import WebApiJobBank from '../../../api/WebApiJobBank';
-import { getListSelection } from '../../../redux/jobBankDuck';
-import { optionsStatusSelection } from '../../../utils/constant';
-import ModalStatus from './ModalStatus';
 
-const TableSelection = ({
-    currentUser,
+const TableInterviews = ({
     currentNode,
+    list_interviews,
+    load_interviews,
     jobbank_page,
-    getListSelection,
-    list_selection,
-    load_selection,
-    jobbank_filters
+    jobbank_filters,
+    getInterviews
 }) => {
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [openModal, setOpenModal] = useState(false);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
-            // await WebApiJobBank.deleteSelection({ids});
-            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
-            let msg = ids.length > 1 ? 'Procesos eliminados' : 'Proceso eliminado';
+            getInterviews(currentNode.id, jobbank_filters, jobbank_page);
+            let msg = ids.length > 1 ? 'Entrevistas eliminadas' : 'Entrevista eliminada';
             message.success(msg);
         } catch (e) {
             console.log(e)
-            let msg = ids.length > 1 ? 'Procesos no eliminados' : 'Proceso no eliminado';
+            let msg = ids.length > 1 ? 'Entrevistas no eliminadas' : 'Entrevista no eliminada';
             message.error(msg);
         }
-    }
-
-    const actionUpdate = async (values) =>{
-        try {
-            await WebApiJobBank.updateSelection(itemToEdit.id, {
-                ...values,
-                person: currentUser.id,
-                previus_state: itemToEdit.previus_state,
-                candidate: itemToEdit.candidate?.id,
-                vacant: itemToEdit.vacant?.id
-            });
-            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
-            message.success('Estatus actualizado');
-        } catch (e) {
-            console.log(e)
-            message.error('Estatus no actualizado');
-        }
-    }
-
-    const openModalManyDelete = () =>{
-        if(itemsToDelete.length > 1){
-            setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos procesos')
-        }
-    }
-
-    const onChangeStatus = (value, item) =>{
-        setOpenModal(true)
-        setItemToEdit({...item,
-            previus_state: item.status_process,
-            status_process: value
-        })
-    }
-
-    const onCloseModal = () =>{
-        setOpenModal(false)
-        setItemToEdit({})
     }
 
     const openModalRemove = (item) =>{
@@ -103,8 +53,17 @@ const TableSelection = ({
         setItemsToDelete([])
     }
 
+    const openModalManyDelete = () =>{
+        if(itemsToDelete.length > 1){
+            setOpenModalDelete(true)
+        }else{
+            setOpenModalDelete(false)
+            message.error('Selecciona al menos dos entrevistas')
+        }
+    }
+
     const savePage = (query) => router.replace({
-        pathname: '/jobbank/selection',
+        pathname: '/jobbank/interviews',
         query
     })
 
@@ -143,13 +102,16 @@ const TableSelection = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
+                <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)} 
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/interviews/edit`,
+                        query: {...router.query, id: item.id }
+                    })}
                 >
                     Editar
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -157,47 +119,47 @@ const TableSelection = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {item.status == 2 && (
-                    <Menu.Item
-                        key='3'
-                        icon={<CalendarOutlined />}
-                    >
-                        Agendar entrevista
-                    </Menu.Item>
-                )}
             </Menu>
         );
     };
 
     const columns = [
         {
-            title: 'Nombre',
-            dataIndex: ['candidate', 'fisrt_name'],
-            key: ['candidate', 'fisrt_name'],
-            ellipsis: true
+            title: 'Reclutador',
+            ellipsis: true,
+            render: (item) =>{
+                return(
+                    <>{getFullName(item.recruiter)}</>
+                )
+            }
         },
         {
-            title: 'Apellidos',
-            dataIndex: ['candidate', 'last_name'],
-            key: ['candidate', 'last_name'],
-            ellipsis: true
-        },
-        {
-            title:'Correo',
-            dataIndex: ['candidate', 'email'],
-            key: ['candidate', 'email'],
-            ellipsis: true
-        },
-        {
-            title: 'Teléfono',
-            dataIndex: ['candidate', 'cell_phone'],
-            key: ['candidate', 'cell_phone']
+            title: 'Candidato',
+            ellipsis: true,
+            render: (item) =>{
+                return(
+                    <>{item.candidate?.fisrt_name} {item.candidate?.last_name}</>
+                )
+            }
         },
         {
             title: 'Vacante',
-            dataIndex: ['vacant', 'job_position'],
-            key: ['vacant', 'job_position'],
             ellipsis: true,
+            dataIndex: ['vacant','job_position'],
+            key: ['vacant', 'job_position']
+        },
+        {
+            title: 'Fecha',
+            dataIndex: 'date',
+            key: 'date'
+        },
+        {
+            title: 'Hora',
+            render: (item) =>{
+                return(
+                    <>{item.date ? moment().format('hh:mm a') : null}</>
+                )
+            }
         },
         {
             title: 'Estatus',
@@ -206,11 +168,11 @@ const TableSelection = ({
                     <Select
                         size='small'
                         style={{width: 150}}
-                        defaultValue={item.status_process}
-                        value={item.status_process}
+                        defaultValue={item.status}
+                        value={item.status}
                         placeholder='Estatus'
-                        options={optionsStatusSelection}
-                        onChange={(e) => onChangeStatus(e, item)}
+                        options={optionsStatusInterviews}
+                        // onChange={(e) => onChangeStatus(e, item)}
                     />
                 )
             }
@@ -225,8 +187,8 @@ const TableSelection = ({
                     </Dropdown>
                 )
             },
-            render: (item) =>{
-                return (
+            render:(item) =>{
+                return(
                     <Dropdown overlay={()=> menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
@@ -243,17 +205,17 @@ const TableSelection = ({
                 size='small'
                 rowKey='id'
                 columns={columns}
-                dataSource={list_selection?.results}
-                loading={load_selection}
-                rowSelection={rowSelection}
+                loading={load_interviews}
+                dataSource={list_interviews.results}
                 onChange={onChangePage}
+                rowSelection={rowSelection}
                 locale={{
-                    emptyText: load_selection
+                    emptyText: load_interviews
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
                 pagination={{
-                    total: list_selection.count,
+                    total: list_interviews.count,
                     current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
@@ -261,8 +223,8 @@ const TableSelection = ({
             />
             <ListItems
                 title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos procesos?'
-                    : '¿Estás seguro de eliminar este proceso?'
+                    ? '¿Estás seguro de eliminar estas entrevistas?'
+                    : '¿Estás seguro de eliminar esta entrevista?'
                 }
                 visible={openModalDelete}
                 keyTitle='candidate, fisrt_name'
@@ -271,28 +233,20 @@ const TableSelection = ({
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
             />
-            <ModalStatus
-                title='Actualizar estatus'
-                actionForm={actionUpdate}
-                visible={openModal}
-                close={onCloseModal}
-                itemToEdit={itemToEdit}
-            />
         </>
     )
 }
 
 const mapState = (state) =>{
     return {
-        list_selection: state.jobBankStore.list_selection,
-        load_selection: state.jobBankStore.load_selection,
+        list_interviews: state.jobBankStore.list_interviews,
+        load_interviews: state.jobBankStore.load_interviews,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        currentNode: state.userStore.current_node,
-        currentUser: state.userStore.user
+        currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
-    mapState, { getListSelection }
-)(TableSelection);
+    mapState, { getInterviews }
+)(TableInterviews);

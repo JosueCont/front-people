@@ -17,7 +17,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 const TablePreselection = ({
     currentUser,
     currentNode,
-    currentFilters,
+    jobbank_filters,
     jobbank_page,
     list_preselection,
     load_preselection,
@@ -37,7 +37,7 @@ const TablePreselection = ({
                 candidate: itemsSelected?.at(-1)?.id,
                 vacant: router.query?.vacant
             });
-            getPreselection(currentNode.id, currentFilters, jobbank_page)
+            getPreselection(currentNode.id, jobbank_filters, jobbank_page)
             message.success('Proceso iniciado')
         } catch (e) {
             console.log(e)
@@ -222,6 +222,7 @@ const mapState = (state) =>{
         list_preselection: state.jobBankStore.list_preselection,
         load_preselection: state.jobBankStore.load_preselection,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user,
     }

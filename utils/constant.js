@@ -543,6 +543,12 @@ export const optionsDomainLang = [
   { value: 4, key: 4, label: "Experto" },
 ];
 
+export const optionsStatusInterviews = [
+  {value: 0, key: 0, label: "Por confirmar"},
+  {value: 1, key: 1, label: "Confirmado"},
+  {value: 2, key: 2, label: "Rechazado"}
+];
+
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
 

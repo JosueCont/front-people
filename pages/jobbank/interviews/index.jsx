@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
-import { useRouter } from 'next/router';
-import {
-    getPublications,
-    getProfilesOptions,
-    getVacanciesOptions,
-    getConnectionsOptions
-} from '../../../redux/jobBankDuck';
-import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
-import TablePublications from '../../../components/jobbank/publications/TablePublications';
-import { getFiltersJB } from '../../../utils/functions';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
+import SearchInterviews from '../../../components/jobbank/interviews/SearchInterviews';
+import TableInterviews from '../../../components/jobbank/interviews/TableInterviews';
+import {
+    getCandidatesOptions,
+    getVacanciesOptions,
+    getInterviews
+} from '../../../redux/jobBankDuck';
+import { getPersonsCompany } from '../../../redux/UserDuck';
+import { useRouter } from 'next/router';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
-    getPublications,
-    getProfilesOptions,
+    getCandidatesOptions,
     getVacanciesOptions,
-    getConnectionsOptions
+    getPersonsCompany,
+    getInterviews
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
-            getProfilesOptions(currentNode.id);
+            getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id, '&is_active=true');
+            getPersonsCompany(currentNode.id);
+            getInterviews(currentNode.id);
         }
     },[currentNode])
 
@@ -35,32 +36,32 @@ const index = ({
         if(currentNode){
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
-            getPublications(currentNode.id, filters, page);
+            getInterviews(currentNode.id, filters, page)
         }
     },[currentNode, router.query])
 
     return (
         <MainIndexJB
-            pageKey='jb_publications'
-            extraBread={[{name: 'Publicaciones'}]}
+            pageKey='jb_interviews'
+            extraBread={[{name: 'Entrevistas'}]}
         >
-            <SearchPublications/>
-            <TablePublications/>
+            <SearchInterviews/>
+            <TableInterviews/>
         </MainIndexJB>
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return{
         currentNode: state.userStore.current_node,
     }
 }
 
 export default connect(
-    mapState,{
-        getPublications,
-        getProfilesOptions,
+    mapState, {
+        getCandidatesOptions,
         getVacanciesOptions,
-        getConnectionsOptions
+        getPersonsCompany,
+        getInterviews
     }
 )(withAuthSync(index));

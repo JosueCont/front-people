@@ -25,8 +25,7 @@ const TableConnections = ({
     jobbank_page,
     currentNode,
     getConnections,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -34,7 +33,7 @@ const TableConnections = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateConnectionStatus(item.id, {is_active: checked});
-            getConnections(currentNode.id, currentFilters, currentPage);
+            getConnections(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Conexión activada' : 'Conexión desactivada';
             message.success(msg);
         } catch (e) {
@@ -178,6 +177,7 @@ const mapState = (state) =>{
         list_connections: state.jobBankStore.list_connections,
         load_connections: state.jobBankStore.load_connections,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }
