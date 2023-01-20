@@ -38,13 +38,11 @@ const SelectIntegrationFactors = ({
  
   return (
     <Form.Item
-      name={props.benefit}
+      name='benefits'
       label="Beneficios"
       rules={rules}
     >
-      <Tooltip 
-        placement="topLeft" 
-        title="Si no se elige alguna opción, el sistema tomará las prestaciones de ley">
+      
         <Select
           placeholder="Seleccionar beneficio"
           allowClear
@@ -58,7 +56,6 @@ const SelectIntegrationFactors = ({
           }
         </Select>
 
-      </Tooltip>
     </Form.Item>
   )
    
