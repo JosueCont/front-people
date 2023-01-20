@@ -56,6 +56,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
+  const [benefits, setBenefits] = useState(null);
+
   const checks =
     selectPeriodicity &&
     selectPeriodicity !== "95efb4e793974e318e6cb49ab30a1269"
@@ -258,6 +260,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setPeriod(dateString);
   };
   const formFinish = (value) => {
+    if(benefits == null) value.benefits = 'ley'
+    else value.benefits = benefits;
+    
     value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
@@ -362,6 +367,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setSelectPeriodicity(value);
   };
 
+  const selectBenefit = (value) => {
+    formPaymentCalendar.setFieldsValue({ benefits: null });
+    setBenefits(value);
+  };
   return (
     <>
       <Global
@@ -704,7 +713,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                  <SelectIntegrationFactors />
+                  <SelectIntegrationFactors benefit={benefits} chengeBenefit={selectBenefit}
+/>
                 </Col>
                 {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Form, Select } from "antd";
+import { Form, Select, Tooltip } from "antd";
 import WebApiFiscal from "../../api/WebApiFiscal";
 const { Option } = Select;
 
 const SelectIntegrationFactors = ({
   viewLabel= true,
   rules= [],
+  chengeBenefit,
   ...props
 }) => {
 
@@ -29,24 +30,35 @@ const SelectIntegrationFactors = ({
     })
   }
 
+  const onChange = (value) => {
+    chengeBenefit(value);
+  };
+
   console.log('Options', options)
  
   return (
     <Form.Item
-      name="benefits"
+      name={props.benefit}
       label="Beneficios"
       rules={rules}
     >
-      <Select
-        placeholder="Seleccionar beneficio"
-      >
-        <Option key={'ley'} value={'ley'}>Utilizar prestaciones de ley</Option>
-        {
-          options && options.map((option) => (
-            <Option key={option.id}> { option.description } </Option>
-          ))
-        }
-      </Select>
+      <Tooltip 
+        placement="topLeft" 
+        title="Si no se elige alguna opción, el sistema tomará las prestaciones de ley">
+        <Select
+          placeholder="Seleccionar beneficio"
+          allowClear
+          onChange={onChange}
+
+        >
+          {
+            options && options.map((option) => (
+              <Option key={option.id}> { option.description } </Option>
+            ))
+          }
+        </Select>
+
+      </Tooltip>
     </Form.Item>
   )
    
