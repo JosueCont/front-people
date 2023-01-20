@@ -11,6 +11,7 @@ import {
   Input,
   message,
   Modal,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -27,6 +28,7 @@ import {
   messageUpdateSuccess,
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
+import esES from "antd/lib/locale/es_ES";
 
 const Departaments = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -274,10 +276,12 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
         </Form>
       )}
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           // pagination="bottom"
           pagination={{
             position: ["bottomCenter"],
+            showSizeChanger:true
           }}
           columns={columns}
           dataSource={props.cat_departments}
@@ -287,6 +291,7 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );
