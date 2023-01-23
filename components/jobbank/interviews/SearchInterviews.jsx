@@ -1,23 +1,45 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Row, Col, Form, Card, Tooltip, Radio, Select } from 'antd';
+import React, { useState } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip, message } from 'antd';
 import {
   SyncOutlined,
   SettingOutlined,
-  CalendarOutlined
+  CalendarOutlined,
+  ArrowLeftOutlined
 } from '@ant-design/icons';
+import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
 import TagFilters from '../TagFilters';
 import FiltersInterviews from './FiltersInterviews';
 import { useFiltersInterviews } from '../hook/useFiltersInterviews';
 import moment from 'moment';
+import EventForm from './EventForm';
+import { getInterviews } from '../../../redux/jobBankDuck';
 
-const SearchInterviews = () => {
+const SearchInterviews = ({
+    isCalendar = false,
+    currentNode,
+    getInterviews,
+    jobbank_filters,
+    jobbank_page
+}) => {
 
+    const urlDefault = '/jobbank/interviews';
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
+    const [openModalForm, setOpenModalForm] = useState(false);
     const { listKeys, listGets } = useFiltersInterviews();
+
+    const actionCreate = async (values) =>{
+        try {
+            getInterviews(currentNode.id, jobbank_filters, jobbank_page);
+            message.success('Evento registrado');
+        } catch (e) {
+            console.log(e)
+            message.error('Evento no registrado')
+        }
+    }
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -34,7 +56,7 @@ const SearchInterviews = () => {
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/jobbank/interviews',
+        pathname: isCalendar ? `${urlDefault}/calendar` : urlDefault,
         query: filters
     }, undefined, {shallow: true});
 
@@ -68,15 +90,26 @@ const SearchInterviews = () => {
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Tooltip title='Ver calendario'>
-                                    <Button onClick={()=> router.push({
-                                        pathname: '/jobbank/interviews/calendar',
-                                        query: router.query
-                                    })}>
-                                        <CalendarOutlined />
-                                    </Button>
-                                </Tooltip>
-                                <Button>
+                                {!isCalendar ? (
+                                    <Tooltip title='Ver calendario'>
+                                        <Button onClick={()=> router.push({
+                                            pathname: `${urlDefault}/calendar`,
+                                            query: router.query
+                                        })}>
+                                            <CalendarOutlined />
+                                        </Button>
+                                    </Tooltip>
+                                ) :(
+                                    <Tooltip title='Regresar'>
+                                        <Button onClick={()=> router.push({
+                                            pathname: urlDefault,
+                                            query: router.query
+                                        })}>
+                                            <ArrowLeftOutlined/>
+                                        </Button>
+                                    </Tooltip>
+                                )}
+                                <Button onClick={()=> setOpenModalForm(true)}>
                                     Agregar
                                 </Button>
                             </div>
@@ -96,8 +129,21 @@ const SearchInterviews = () => {
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
+            <EventForm
+                visible={openModalForm}
+                close={()=> setOpenModalForm(false)}
+                actionForm={actionCreate}
+            />
         </>
     )
 }
 
-export default SearchInterviews;
+const mapState = (state) =>{
+    return{
+        currentNode: state.userStore.current_node,
+        jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+    }
+}
+
+export default connect(mapState, {getInterviews})(SearchInterviews);

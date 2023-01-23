@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
-import { eventsJb } from '../../../utils/events';
 import styled from '@emotion/styled';
 import { css} from "@emotion/core";
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const Event = styled.div`
     width: 100%;
@@ -24,26 +24,30 @@ const Event = styled.div`
 
 const CalendarMonthCell = (date) => {
 
+    const {
+        list_interviews,
+        load_interviews
+    } = useSelector(state => state.jobBankStore);
     const format = 'YYYY-MM';
     const current = moment(date)?.format(format);
 
     const formatDate = value => moment(value).format(format);
 
     const eventsMonth = useMemo(()=>{
-        if(!current) return [];
-        const validate = item => formatDate(item.start.dateTime) == current;
-        let exist = eventsJb.some(validate);
+        if(!current || list_interviews.results?.length <=0) return [];
+        const validate = item => formatDate(item.event?.start?.dateTime) == current;
+        let exist = list_interviews.results?.some(validate);
         if(!exist) return [];
-        return eventsJb.filter(validate);
+        return list_interviews.results?.filter(validate);
         // return results.reduce((acc, record) => {
         //     let prev = acc[record.status] ?? [];
         //     let item = [...prev, record];
         //     return {...acc, [record.status]: item};
         // }, {});
-    },[current])
+    },[current, list_interviews])
 
     return eventsMonth.length > 0 ? (
-        <Event><p>Eventos del mes {eventsJb.length}</p></Event>
+        <Event><p>Eventos del mes {eventsMonth.length}</p></Event>
     ) : null;
 }
 

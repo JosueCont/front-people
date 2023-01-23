@@ -604,9 +604,66 @@ export const getInterviews = (node, query = '', page = 1) => async (dispatch) =>
     dispatch({...typeFunction, fetching: true})
     try {
         let results = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 200; i++) {
+            let day = Math.round(Math.random()*7)+1;
+            let month = Math.round(Math.random()*11);
+            let date = new Date(`${day < 10 ? '0'+day : day}/${month < 10 ? '0'+month : month}/2023`);
             results.push({
                 id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
+                event: {
+                    "status": "confirmed",
+                    "summary": "Daily Bolsa de trabajo",
+                    "creator": {
+                        "email": "georgina.tun@hiumanlab.com",
+                        "displayName": "Gina Tun"
+                    },
+                    "organizer": {
+                        "email": "georgina.tun@hiumanlab.com",
+                        "displayName": "Gina Tun"
+                    },
+                    "start": {
+                        "dateTime": date,
+                        "timeZone": "America/Mexico_City"
+                    },
+                    "end": {
+                        "dateTime": date,
+                        "timeZone": "America/Mexico_City"
+                    },
+                    "attendees": [
+                        {
+                            "email": "luis.lopez@hiumanlab.com",
+                            "displayName": "Lucks López",
+                            "responseStatus": "accepted"
+                        },
+                        {
+                            "email": "gabriel.braga@hiumanlab.com",
+                            "displayName": "Gabriel Braga",
+                            "responseStatus": "needsAction"
+                        },
+                        {
+                            "email": "georgina.tun@hiumanlab.com",
+                            "displayName": "Gina Tun",
+                            "organizer": true,
+                            "responseStatus": "accepted"
+                        },
+                        {
+                            "email": "antonio.hau@hiumanlab.com",
+                            "self": true,
+                            "responseStatus": "declined"
+                        },
+                        {
+                            "email": "luis.martinez@hiumanlab.com",
+                            "optional": true,
+                            "responseStatus": "declined"
+                        },
+                        {
+                            "email": "irvin.albornoz@hiumanlab.com",
+                            "displayName": "Irvin Albornoz",
+                            "responseStatus": "declined"
+                        }
+                    ],
+                    "hangoutLink": "https://meet.google.com/zfn-cjjp-rsw"
+                },
                 status: Math.round(Math.random()*2),
                 date: new Date().toLocaleDateString(),
                 recruiter: {

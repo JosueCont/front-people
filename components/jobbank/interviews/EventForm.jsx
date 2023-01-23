@@ -14,19 +14,21 @@ import {
 } from 'antd';
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
-import locale from 'antd/lib/date-picker/locale/es_ES';
-import { ruleEmail, ruleRequired, ruleURL } from '../../../utils/rules';
+import { ruleEmail, ruleRequired, ruleURL, ruleWhiteSpace } from '../../../utils/rules';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import SelectDropdown from './SelectDropdown';
 
 import { convertToRaw, EditorState, Modifierv, convertFromHTML, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import moment from 'moment';
 const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
 
 const EventForm = ({
     visible = false,
-    itemToDetail = {}
+    itemToEdit = {},
+    close = ()=>{},
+    actionForm = ()=>{}
 }) => {
 
     const {
@@ -42,11 +44,14 @@ const EventForm = ({
     } = useSelector(state => state.jobBankStore);
     const [formEvent] = Form.useForm();
     const [msgHTML, setMsgHTML] = useState("<p></p>");
+    const [loading, setLoading] = useState(false);
+    const [attendees, setAttendees] = useState([]);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const startDate = Form.useWatch('start_date', formEvent);
 
     const isEdit = useMemo(()=>{
-        return Object.keys(itemToDetail).length > 0;
-    },[itemToDetail])
+        return Object.keys(itemToEdit).length > 0;
+    },[itemToEdit])
 
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
@@ -55,34 +60,88 @@ const EventForm = ({
         setEditorState(value)
     }
 
+    const onFinish = (values) =>{
+        let guests = attendees.map(item => ({email:item}));
+        values.attendees_list = guests;
+        values.description = msgHTML;
+        // setLoading(false)
+        // setTimeout(()=>{
+            // setLoading(false)
+            // actionForm(values)
+            // close()
+        // },2000)
+    }
+
+    const disabledEnd = (current) =>{
+        let valid_start = current < startDate?.startOf("day");
+        let valid_end = current > startDate?.endOf("day");
+        return current && (valid_start || valid_end);
+    }
+
+    const ruleStart = () =>({
+        validator(_, value){
+            if(!value) return Promise.reject('Este campo es requerido');
+        }
+    })
+
+    const getTime = (m) =>{
+        return  m.minutes() + m.hours() * 60;
+    }
+
+    const ruleEnd = ({getFieldValue}) => ({
+        validator(_, value){
+            let start = getFieldValue('start_date');
+            if(start && !value) return Promise.reject('Este campo es requerido');
+            if(!value) return Promise.reject('Este campo es requerido');
+            // let validation = getTime(value) < getTime(start);
+            // if(validation) return Promise.reject(`Hora mayor o igual a ${start.format('hh:mm a')}`);
+            return Promise.resolve();
+        }
+    })
+
     return (
         <Drawer
-            title={isEdit ? 'Actualiar evento' : 'Agregar evento'}
+            title={isEdit ? 'Actualizar evento' : 'Agregar evento'}
             width={600}
             visible={visible}
             placement='right'
             maskClosable={false}
             keyboard={false}
+            onClose={()=> close()}
             extra={
                 <Space>
-                    <Button>Cancelar</Button>
-                    <Button type="primary">
+                    <Button onClick={()=> close()}>Cancelar</Button>
+                    <Button form='form-event' htmlType='submit'>
                         {isEdit ? 'Actualizar' : 'Guardar'}
                     </Button>
                 </Space>
-              }
+            }
         >
             <Form
                 form={formEvent}
                 layout='vertical'
-                // onFinish={onFinish}
+                onFinish={onFinish}
+                id='form-event'
             >
                 <Row gutter={[24,0]}>
                     <Col span={12}>
                         <Form.Item
+                            name='name_event'
+                            label='Nombre del evento'
+                            rules={[ruleRequired, ruleWhiteSpace]}
+                        >
+                            <Input
+                                allowClear
+                                maxLength={50}
+                                placeholder='Nombre del evento'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
                             name='process'
                             label='Proceso de selección'
-                            rules={[ruleRequired]}
+                            // rules={[ruleRequired]}
                         >
                             <Select
                                 allowClear
@@ -173,40 +232,42 @@ const EventForm = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='date'
                             label='Fecha'
+                            name='date'
                             rules={[ruleRequired]}
                         >
                             <DatePicker
-                                style={{width: '100%'}}
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 inputReadOnly
                                 className='picker-jb'
+                                style={{width:'100%'}}
                                 dropdownClassName='drop-picker-jb'
-                                locale={locale}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
+                            label='Horario'
                             name='hour'
-                            label='Hora'
-                            rules={[ruleRequired]}
+                            required
+                            // dependencies={['start_date']}
+                            // rules={[ruleEnd]}
                         >
-                            <TimePicker
-                                inputReadOnly
+                            <TimePicker.RangePicker
                                 className='picker-jb'
-                                popupClassName='drop-picker-jb'
-                                placeholder='Seleccionar una hora'
+                                popupClassName='drop-time-picker-jb'
+                                use12Hours={true}
                                 format='hh:mm a'
-                                style={{width: '100%'}}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={24} >
                         <Form.Item label='Invitados'>
-                            <SelectDropdown/>
+                            <SelectDropdown
+                                items={attendees}
+                                setItems={setAttendees}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24}>
