@@ -1,26 +1,21 @@
 import React, {
     useEffect,
-    useState,
-    useRef
+    useState
 } from 'react';
 import {
-    Card,
-    Row,
-    Col,
-    Button,
     Tabs,
     Form,
     Spin,
     message
 } from 'antd';
 import { connect } from 'react-redux';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import Expedient from './Expedient';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
+import DetailsCustom from '../DetailsCustom';
 
 const DetailsClients = ({
     action,
@@ -30,14 +25,7 @@ const DetailsClients = ({
     isAutoRegister = false
 }) => {
 
-    const fetchingItem = { loading: false, disabled: true };
-    const fetchingParams = {
-        back: fetchingItem,
-        create: fetchingItem,
-        edit: fetchingItem
-    };
     const router = useRouter();
-    const btnSave = useRef(null);
     const [formClients] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [prevDocs, setPrevDocs] = useState([]);
@@ -107,8 +95,8 @@ const DetailsClients = ({
             console.log(e)
             setFetching(false)
             setLoading({})
-            if(e.response?.data['rfc']) message.error('RFC ya registrado');
-            else message.error('Cliente no registrado');
+            let msg = e.response?.data?.rfc ? 'RFC ya registrado' : 'Cliente no registrado'; 
+            message.error(msg);
         }
     }
 
@@ -172,13 +160,6 @@ const DetailsClients = ({
         actionFunction[selected]();
     }
 
-    const getSaveAnd = (type) =>{
-        setActionType(type)
-        const item = { loading: true, disabled: false };
-        setLoading({...fetchingParams, [type]: item });
-        btnSave.current.click();
-    }
-
     const onChangeTab = (tab) =>{
         if(action == 'add'){
             setCurrentKey(tab)
@@ -192,135 +173,75 @@ const DetailsClients = ({
         }, undefined, {shallow: true})
     }
 
-    return (
-        <Card>
-            <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content'>
-                    <p className='title-action-text'>
-                        {action == 'add'
-                            ? 'Registrar nuevo cliente'
-                            : 'Información del cliente'
-                        }
-                    </p>
-                    {!isAutoRegister && (
+    const propsCustom = {
+        action,
+        loading,
+        fetching,
+        setLoading,
+        actionBack,
+        setActionType,
+        isAutoRegister,
+        idForm: 'form-clients',
+        titleCard: action == 'add'
+            ? 'Registrar nuevo cliente'
+            : 'Información del cliente',
+    }
 
-                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                            {action == 'edit' && (
-                                <Expedient
-                                    infoClient = { infoClient }
-                                    contactList = { contactList }
-                                />
-                            )}
-                            <Button
-                                onClick={()=> actionBack()}
-                                icon={<ArrowLeftOutlined />}
-                            >
-                                Regresar
-                            </Button>
-                        </div>
-                    )}
-                </Col>
-                <Col span={24}>
-                    <Form
-                        className='tabs-vacancies'
-                        form={formClients}
-                        id='form-clients'
-                        layout='vertical'
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        initialValues={{is_active: true}}
+    return (
+        <DetailsCustom {...propsCustom}>
+            <Form
+                className='tabs-vacancies'
+                form={formClients}
+                id='form-clients'
+                layout='vertical'
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                initialValues={{is_active: true}}
+            >
+                <Tabs
+                    type='card'
+                    activeKey={action == 'edit' ? router.query?.tab ?? '1' : currentKey}
+                    onChange={onChangeTab}
+                >
+                    <Tabs.TabPane
+                        tab='Información del cliente'
+                        forceRender
+                        key='1'
                     >
-                        <Tabs
-                            type='card'
-                            activeKey={action == 'edit'
-                                ? router.query?.tab ?? '1'
-                                : currentKey
-                            }
-                            onChange={onChangeTab}
-                        >
-                            <Tabs.TabPane
-                                tab='Información del cliente'
-                                forceRender
-                                key='1'
-                            >
-                                <Spin spinning={fetching}>
-                                    <TabClient/>
-                                </Spin>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane
-                                tab='Información de contactos'
-                                key='2'
-                                forceRender
-                            >
-                                <Spin spinning={fetching}>
-                                    <TabContact
-                                        formClients={formClients}
-                                        contactList={contactList}
-                                        setContactList={setContactList}
-                                    />
-                                </Spin>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane
-                                tab='Carga de documentos'
-                                key='3'
-                                forceRender
-                            >
-                                <Spin spinning={fetching}>
-                                    <TabDocuments
-                                        newDocs={newDocs}
-                                        prevDocs={prevDocs}
-                                        setNewDocs={setNewDocs}
-                                        setPrevDocs={setPrevDocs}
-                                        showPrevDocs={action == 'edit'}
-                                    />
-                                </Spin>
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Form>
-                </Col>
-                <Col span={24} className='tab-vacancies-btns'>
-                    {action == 'add' && !isAutoRegister ? (
-                        <>
-                            <button
-                                htmlType='submit'
-                                form='form-clients'
-                                ref={btnSave}
-                                style={{display:'none'}}
+                        <Spin spinning={fetching}>
+                            <TabClient/>
+                        </Spin>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane
+                        tab='Información de contactos'
+                        key='2'
+                        forceRender
+                    >
+                        <Spin spinning={fetching}>
+                            <TabContact
+                                formClients={formClients}
+                                contactList={contactList}
+                                setContactList={setContactList}
                             />
-                            <Button
-                                onClick={()=>getSaveAnd('back')}
-                                disabled={loading['back']?.disabled}
-                                loading={loading['back']?.loading}
-                            >
-                                Guardar y regresar
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('create')}
-                                disabled={loading['create']?.disabled}
-                                loading={loading['create']?.loading}
-                            >
-                                Guardar y registrar otro
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('edit')}
-                                disabled={loading['edit']?.disabled}
-                                loading={loading['edit']?.loading}
-                            >
-                                Guardar y editar
-                            </Button>
-                        </>
-                    ):(
-                        <Button
-                            form='form-clients'
-                            htmlType='submit'
-                            loading={fetching}
-                        >
-                           {isAutoRegister && action == 'add' ? 'Guardar' : 'Actualizar'}
-                        </Button>
-                    )}
-                </Col>
-            </Row>
-        </Card>
+                        </Spin>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane
+                        tab='Carga de documentos'
+                        key='3'
+                        forceRender
+                    >
+                        <Spin spinning={fetching}>
+                            <TabDocuments
+                                newDocs={newDocs}
+                                prevDocs={prevDocs}
+                                setNewDocs={setNewDocs}
+                                setPrevDocs={setPrevDocs}
+                            />
+                        </Spin>
+                    </Tabs.TabPane>
+                </Tabs>
+            </Form>
+        </DetailsCustom>
     )
 }
 

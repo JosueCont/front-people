@@ -51,15 +51,20 @@ const BtnLoginFB = ({
             onFail({status: 'facebookNotLoaded'});
             return;
         }
-        FacebookLoginClient.login(validateResp, {
-            scope: `email,
-                public_profile,
-                pages_show_list,
-                pages_manage_posts,
-                instagram_basic,
-                instagram_content_publish,
-            `
-        });
+        try {
+            FacebookLoginClient.login(validateResp, {
+                scope: `email,
+                    public_profile,
+                    pages_show_list,
+                    pages_manage_posts,
+                    instagram_basic,
+                    instagram_content_publish,
+                `
+            });
+        } catch (e) {
+            console.log(e)
+            onFail({status: 'facebookNotLoaded'});
+        }
     }
 
     return (

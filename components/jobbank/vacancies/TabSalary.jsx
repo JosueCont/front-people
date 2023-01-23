@@ -37,6 +37,8 @@ const TabSalary = ({ formVacancies }) => {
                     rules={[ruleRequired, numCommaAndDot()]}
                 >
                     <Input
+                        prefix='$'
+                        style={{border: '1px solid black'}}
                         maxLength={10}
                         placeholder='Ej. 70,500.5999'
                         onKeyPress={e => e.which == 32 && e.preventDefault()}
