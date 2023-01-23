@@ -11,6 +11,7 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import Expedient from './Expedient';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
