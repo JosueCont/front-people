@@ -12,12 +12,15 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    DownloadOutlined
+    
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
+import { pdf } from '@react-pdf/renderer';
 
 const TableCandidates = ({
     currentNode,
@@ -33,6 +36,10 @@ const TableCandidates = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [infoCandidate, setInfoCandidate] = useState(null)
+    const [infoEducation, setInfoEducation] = useState(null)
+    const [infoExperience, setInfoExperience] = useState(null)
+    const [infoPositions, setInfoPositions] = useState(null)
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
@@ -61,6 +68,70 @@ const TableCandidates = ({
         }
     }
 
+    const getInfoCandidate = async (id) =>{
+        if(!id) return
+        try {
+            // setFetching(true);
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0');
+            setInfoCandidate(responseInfo.data);
+            setInfoEducation(responseEdu.data)
+            setInfoExperience(responseExp.data)
+            setInfoPositions(responsePos.data)
+            // setFetching(false);
+        } catch (e) {
+            console.log(e)
+            // setFetching(false);
+        }
+    }
+
+    infoCandidate && console.log('InfoCandidate', infoCandidate)
+    // infoExperience && console.log('InfoExperience', infoExperience)
+    // infoEducation && console.log('infoEducation', infoEducation)
+    // infoPositions && console.log('onfoPositions', infoPositions)
+
+    // const MyDoc = 
+    //     <DocExpedient
+    //         infoCandidate={infoCandidate}
+    //         infoEducation={ partialEducation?.length > 0 ? partialEducation : infoEducation }
+    //         infoExperience={infoExperience}
+    //         infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+    //     />
+    
+
+    // const linkTo = (url, download = false ) =>{
+    //     let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
+    //     const link = document.createElement("a");
+    //     link.href = url;
+    //     link.target = "_black";
+    //     if(download) link.download = nameFile;
+    //     link.click();
+    // }
+
+    // const generatePDF = async (download) =>{
+    //     const key = 'updatable';
+    //     message.loading({content: 'Generando PDF...', key});
+    //     try {
+    //         setLoading(true)
+    //         let resp = await pdf(<MyDoc partial/>).toBlob();
+    //         let url = URL.createObjectURL(resp);
+    //         setTimeout(()=>{
+    //             setLoading(false);
+    //             message.success({content: 'PDF generado', key})
+    //         }, 1000)
+    //         setTimeout(()=>{  
+    //             linkTo(url+'#toolbar=0', download);
+    //         },2000)
+    //     } catch (e) {
+    //         console.log(e)
+    //         setTimeout(()=>{
+    //             setLoading(false)
+    //             message.error({content: 'PDF no generado', key});
+    //         },2000)
+    //     }
+    // }
     const openModalManyDelete = () =>{
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
@@ -153,6 +224,13 @@ const TableCandidates = ({
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='4'
+                    icon={<DownloadOutlined />}
+                    onClick={() => { getInfoCandidate(item.id) }}
+                >
+                    Descargar reporte alta dirección
                 </Menu.Item>
             </Menu>
         );
