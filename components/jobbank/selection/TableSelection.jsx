@@ -29,7 +29,7 @@ const TableSelection = ({
     getListSelection,
     list_selection,
     load_selection,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -43,7 +43,7 @@ const TableSelection = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             // await WebApiJobBank.deleteSelection({ids});
-            getListSelection(currentNode.id, currentFilters, jobbank_page);
+            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Procesos eliminados' : 'Proceso eliminado';
             message.success(msg);
         } catch (e) {
@@ -59,10 +59,10 @@ const TableSelection = ({
                 ...values,
                 person: currentUser.id,
                 previus_state: itemToEdit.previus_state,
-                // candidate: itemToEdit.candidate,
-                // vacant: itemToEdit.vacant
+                candidate: itemToEdit.candidate?.id,
+                vacant: itemToEdit.vacant?.id
             });
-            getListSelection(currentNode.id, currentFilters, jobbank_page);
+            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -287,6 +287,7 @@ const mapState = (state) =>{
         list_selection: state.jobBankStore.list_selection,
         load_selection: state.jobBankStore.load_selection,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user
     }

@@ -12,12 +12,15 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    DownloadOutlined
+    
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
+import { pdf } from '@react-pdf/renderer';
 
 const TableCandidates = ({
     currentNode,
@@ -25,20 +28,23 @@ const TableCandidates = ({
     getCandidates,
     list_candidates,
     load_candidates,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [infoCandidate, setInfoCandidate] = useState(null)
+    const [infoEducation, setInfoEducation] = useState(null)
+    const [infoExperience, setInfoExperience] = useState(null)
+    const [infoPositions, setInfoPositions] = useState(null)
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
         } catch (e) {
@@ -51,7 +57,7 @@ const TableCandidates = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
         } catch (e) {
@@ -61,6 +67,70 @@ const TableCandidates = ({
         }
     }
 
+    const getInfoCandidate = async (id) =>{
+        if(!id) return
+        try {
+            // setFetching(true);
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0');
+            setInfoCandidate(responseInfo.data);
+            setInfoEducation(responseEdu.data)
+            setInfoExperience(responseExp.data)
+            setInfoPositions(responsePos.data)
+            // setFetching(false);
+        } catch (e) {
+            console.log(e)
+            // setFetching(false);
+        }
+    }
+
+    infoCandidate && console.log('InfoCandidate', infoCandidate)
+    // infoExperience && console.log('InfoExperience', infoExperience)
+    // infoEducation && console.log('infoEducation', infoEducation)
+    // infoPositions && console.log('onfoPositions', infoPositions)
+
+    // const MyDoc = 
+    //     <DocExpedient
+    //         infoCandidate={infoCandidate}
+    //         infoEducation={ partialEducation?.length > 0 ? partialEducation : infoEducation }
+    //         infoExperience={infoExperience}
+    //         infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+    //     />
+    
+
+    // const linkTo = (url, download = false ) =>{
+    //     let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
+    //     const link = document.createElement("a");
+    //     link.href = url;
+    //     link.target = "_black";
+    //     if(download) link.download = nameFile;
+    //     link.click();
+    // }
+
+    // const generatePDF = async (download) =>{
+    //     const key = 'updatable';
+    //     message.loading({content: 'Generando PDF...', key});
+    //     try {
+    //         setLoading(true)
+    //         let resp = await pdf(<MyDoc partial/>).toBlob();
+    //         let url = URL.createObjectURL(resp);
+    //         setTimeout(()=>{
+    //             setLoading(false);
+    //             message.success({content: 'PDF generado', key})
+    //         }, 1000)
+    //         setTimeout(()=>{  
+    //             linkTo(url+'#toolbar=0', download);
+    //         },2000)
+    //     } catch (e) {
+    //         console.log(e)
+    //         setTimeout(()=>{
+    //             setLoading(false)
+    //             message.error({content: 'PDF no generado', key});
+    //         },2000)
+    //     }
+    // }
     const openModalManyDelete = () =>{
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
@@ -154,6 +224,13 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
+                <Menu.Item
+                    key='4'
+                    icon={<DownloadOutlined />}
+                    onClick={() => { getInfoCandidate(item.id) }}
+                >
+                    Descargar reporte alta dirección
+                </Menu.Item>
             </Menu>
         );
     };
@@ -172,7 +249,7 @@ const TableCandidates = ({
             ellipsis: true
         },
         {
-            title:'Correo',
+            title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true
@@ -262,6 +339,7 @@ const mapState = (state) =>{
         list_candidates: state.jobBankStore.list_candidates,
         load_candidates: state.jobBankStore.load_candidates,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

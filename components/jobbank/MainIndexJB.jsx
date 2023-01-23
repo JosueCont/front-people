@@ -4,8 +4,9 @@ import React, {
     useMemo,
     useCallback
 } from 'react';
+import esES from 'antd/lib/locale/es_ES';
 import MainLayout from '../../layout/MainInter';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
 import { verifyMenuNewForTenant } from '../../utils/functions';
 
@@ -50,11 +51,10 @@ const MainIndexJB = ({
                     </Breadcrumb.Item>
                 ))}
             </Breadcrumb>
-            <div
-                className='container'
-                style={{display: 'flex', gap: 24, flexDirection: 'column'}}
-            >
-                {children}
+            <div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
+                <ConfigProvider locale={esES}>
+                    {children}
+                </ConfigProvider>
             </div>
         </MainLayout>
     )

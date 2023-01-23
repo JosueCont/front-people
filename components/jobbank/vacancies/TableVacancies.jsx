@@ -29,8 +29,7 @@ const TableVacancies = ({
     list_vacancies,
     getVacancies,
     currentNode,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -43,7 +42,7 @@ const TableVacancies = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacancies(currentNode.id, currentFilters, currentPage);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
             message.success(msg)
         } catch (e) {
@@ -56,7 +55,7 @@ const TableVacancies = ({
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacancies(currentNode.id, currentFilters, currentPage);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -71,7 +70,7 @@ const TableVacancies = ({
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
-                getVacancies(currentNode.id, currentFilters, currentPage);
+                getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             },1000)
         } catch (e) {
             console.log(e)
@@ -319,6 +318,7 @@ const mapState = (state) =>{
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

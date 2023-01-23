@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, message } from 'antd';
+import { Row, Col, message, Tag } from 'antd';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { optionsStatusSelection, optionsTypeNotify } from '../../../../utils/constant';
+import { getConnectionsOptions } from '../../../../redux/jobBankDuck';
 
 const ViewMessages = ({
     filtersString,
@@ -13,10 +14,22 @@ const ViewMessages = ({
     currentPage
 }) => {
 
-    const currentNode = useSelector(state => state.userStore.current_node);
+    const {
+        list_connections_options,
+        load_connections_options
+    } = useSelector(state => state.jobBankStore);
+    const getNode = state => state.userStore.current_node;
+    const currentNode = useSelector(getNode);
     const router = useRouter();
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [mainData, setMainData] = useState([]);
+    const optionEmail = {code: 'EM', name: 'Correo electrónico'};
+
+    useEffect(()=>{
+        if(!currentNode) return;
+        dispatch(getConnectionsOptions(currentNode.id));
+    },[currentNode])
 
     useEffect(()=>{
         if(!currentNode) return;
@@ -60,6 +73,12 @@ const ViewMessages = ({
         return result.label;
     }
 
+    const getRed = (item) =>{
+        if(item.notification_source?.length <= 0) return [];
+        const red = record => item.notification_source.includes(record.code);
+        return [...list_connections_options, optionEmail].filter(red);
+    }
+
     const extraColumns = [
         {
             title: 'Asunto',
@@ -73,15 +92,29 @@ const ViewMessages = ({
         {
             title: 'Tipo',
             render: (item) => getType(item)
+        },
+        {
+            title: 'Medio de notificación',
+            render: (item)=>{
+                return(
+                    <div style={{display: 'flex', flexFlow: 'row wrap'}}>
+                        {getRed(item).map(record => (
+                            <Tag>{record.name}</Tag>
+                        ))}
+                    </div>
+                )
+            }
         }
     ];
 
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
-                <SearchCatalogs actionBtnAdd={()=> router.push({
-                    pathname: '/jobbank/settings/catalogs/messages/add',
-                    query: filtersQuery
+                <SearchCatalogs
+                    keyName='subject__unaccent__icontains'
+                    actionBtnAdd={()=> router.push({
+                        pathname: '/jobbank/settings/catalogs/messages/add',
+                        query: filtersQuery
                 })}/>
             </Col>
             <Col span={24}>

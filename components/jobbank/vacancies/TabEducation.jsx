@@ -176,6 +176,8 @@ const TabEducation = ({
         >
            <InputNumber
               type='number'
+              min={1}
+              max={99}
               maxLength={2}
               controls={false}
               placeholder='Años de experiencia'

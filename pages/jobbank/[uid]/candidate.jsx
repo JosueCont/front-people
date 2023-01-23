@@ -6,7 +6,9 @@ import {
     getSubCategories,
     getCompetences,
     getSectors,
-    getListStates
+    getListStates,
+    getConnectionsOptions,
+    getScholarship
 } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
 import DetailsCandidates from '../../../components/jobbank/candidates/DetailsCandidates';
@@ -17,7 +19,9 @@ const candidate = ({
     getMainCategories,
     getSubCategories,
     getCompetences,
-    getListStates
+    getListStates,
+    getConnectionsOptions,
+    getScholarship
 }) => {
 
     const router = useRouter();
@@ -29,6 +33,8 @@ const candidate = ({
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
             getListStates(currentNode.id);
+            getConnectionsOptions(currentNode.id);
+            getScholarship(currentNode.id);
         }
     },[currentNode])
 
@@ -55,6 +61,8 @@ export default connect(
         getMainCategories,
         getSubCategories,
         getCompetences,
-        getListStates
+        getListStates,
+        getConnectionsOptions,
+        getScholarship
     }
 )(candidate);

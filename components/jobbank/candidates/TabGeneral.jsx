@@ -35,7 +35,9 @@ const TabGeneral = ({
     setInfoCandidate,
     infoCandidate,
     list_states,
-    load_states
+    load_states,
+    list_connections_options,
+    load_connections_options
 }) => {
 
     const noValid = [undefined, null, '', ' '];
@@ -71,12 +73,14 @@ const TabGeneral = ({
     const setValueForm = () =>{
         setDisabledTab(false)
         formCandidate.resetFields();
+        let values = {...infoCandidate};
         const getLang = item => `${item.lang}-${item.domain}`;
-        let languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
-        let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
-        let state = infoCandidate?.state?.id ?? null;
-        let birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
-        let values = {...infoCandidate, cv_name_read, state, languages, birthdate};
+        values.languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
+        values.cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        values.state = infoCandidate?.state?.id ?? null;
+        values.birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
+        values.notification_source = Array.isArray(infoCandidate.notification_source)
+            ? infoCandidate.notification_source : [];
         formCandidate.setFieldsValue(values);
     }
 
@@ -137,6 +141,11 @@ const TabGeneral = ({
             if(key == "languages"){
                 let languages = Array.isArray(val) ? val.map(getLang_) : [];
                 dataCandidate.append('languages', JSON.stringify(languages));
+                return;
+            }
+            if(key == "notification_source"){
+                let codes = Array.isArray(val) ? val : [];
+                dataCandidate.append('notification_source', JSON.stringify(codes));
                 return;
             }
             let value = noValid.includes(val) ? "" : val;
@@ -216,7 +225,8 @@ const TabGeneral = ({
                         initialValues={{
                             is_active: true,
                             availability_to_travel: false,
-                            languages: []
+                            languages: [],
+                            notification_source: []
                         }}
                     >
                         <Row gutter={[24,0]}>
@@ -259,6 +269,38 @@ const TabGeneral = ({
                                     rules={[rulePhone, ruleRequired]}
                                 >
                                     <Input maxLength={10} placeholder='Teléfono celular'/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='birthdate'
+                                    label='Fecha de nacimiento'
+                                    rules={[ruleRequired]}
+                                    tooltip='Edad mínima requerida 18 años'
+                                >
+                                    <DatePicker
+                                        style={{width: '100%'}}
+                                        placeholder='Seleccionar una fecha'
+                                        format='DD-MM-YYYY'
+                                        defaultPickerValue={moment().subtract(18,'years')}
+                                        disabledDate={disabledDate}
+                                        inputReadOnly
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='gender'
+                                    label='Género'
+                                >
+                                    <Select
+                                        // allowClear
+                                        showSearch
+                                        placeholder='Seleccionar un género'
+                                        notFoundContent='No se encontraron resultados'
+                                        optionFilterProp='label'
+                                        options={optionsGenders}
+                                    />
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -350,39 +392,31 @@ const TabGeneral = ({
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
+                                <ListLangs listSelected={languages}/>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
-                                    name='gender'
-                                    label='Género'
+                                    name='notification_source'
+                                    label='Recibir notificaciones por'
                                 >
                                     <Select
-                                        // allowClear
-                                        showSearch
-                                        placeholder='Seleccionar un género'
+                                        mode='multiple'
+                                        maxTagCount={1}
+                                        disabled={load_connections_options}
+                                        loading={load_connections_options}
+                                        placeholder='Seleccionar las opciones'
                                         notFoundContent='No se encontraron resultados'
-                                        optionFilterProp='label'
-                                        options={optionsGenders}
-                                    />
+                                        optionFilterProp='children'
+                                    >
+                                        <Select.Option value='EM' key='EM'>Correo electrónico</Select.Option>
+                                        {list_connections_options.length > 0 &&
+                                            list_connections_options.map(item=> (
+                                            <Select.Option value={item.code} key={item.code}>
+                                                {item.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
                                 </Form.Item>
-                            </Col>
-                            <Col xs={24} md={12} xl={8} xxl={6}>
-                                <Form.Item
-                                    name='birthdate'
-                                    label='Fecha de nacimiento'
-                                    rules={[ruleRequired]}
-                                    tooltip='Edad mínima requerida 18 años'
-                                >
-                                    <DatePicker
-                                        style={{width: '100%'}}
-                                        placeholder='Seleccionar una fecha'
-                                        format='DD-MM-YYYY'
-                                        defaultPickerValue={moment().subtract(18,'years')}
-                                        disabledDate={disabledDate}
-                                        inputReadOnly
-                                    />
-                                </Form.Item>
-                            </Col>
-                            <Col xs={24} md={12} xl={8} xxl={6}>
-                                <ListLangs listSelected={languages}/>
                             </Col>
                             <Col span={24}>
                                 <Form.Item
@@ -452,7 +486,9 @@ const mapState = (state) =>{
     return{
         currentNode: state.userStore.current_node,
         list_states: state.jobBankStore.list_states,
-        load_states: state.jobBankStore.load_states
+        load_states: state.jobBankStore.load_states,
+        load_connections_options: state.jobBankStore.load_connections_options,
+        list_connections_options: state.jobBankStore.list_connections_options
     }
 }
 
