@@ -129,28 +129,26 @@ const ModalVacancies = ({
                         </Form.Item>
                     </Col>
                     <Col span={24}>
-                    {/* <Form.Item
-                            name='instructions'
-                            label='Instrucciones'
-                        >
-                            <Input.TextArea
-                                placeholder='intrucciones'
-                                style={{
-                                    height: 100
+                        <label>Instrucciones</label>
+                            <Editor
+                                editorState={editorState}
+                                onEditorStateChange={onChangeEditor}
+                                placeholder='Escriba el mensaje...'
+                                editorStyle={{
+                                    padding: '0px 12px', 
+                                    border: '1px solid', 
+                                    backgroundColor: '#FFFFFF',
+                                    boxSizing: 'border-box',
+                                    marginBottom: 20,
+                                    borderRadius: 10,
+                                    height: 95
+                                }}
+                                wrapperStyle={{background: '#f0f0f0'}}
+                                toolbarStyle={{
+                                    background: '#f0f0f0',
+                                    borderBottom: '1px solid rgba(0,0,0,0.06)'
                                 }}
                             />
-                        </Form.Item> */}
-                                       <Editor
-                    editorState={editorState}
-                    onEditorStateChange={onChangeEditor}
-                    placeholder='Escriba el mensaje...'
-                    editorStyle={{padding: '0px 12px'}}
-                    wrapperStyle={{background: '#f0f0f0'}}
-                    toolbarStyle={{
-                        background: '#f0f0f0',
-                        borderBottom: '1px solid rgba(0,0,0,0.06)'
-                    }}
-                />
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
