@@ -102,7 +102,8 @@ const MainSider = ({
       jb_settings: "/jobbank/settings",
       jb_publications: "/jobbank/publications",
       jb_selection: "/jobbank/selection",
-      jb_preselection: "/jobbank/preselection"
+      jb_preselection: "/jobbank/preselection",
+      jb_interviews: "/jobbank/interviews"
     };
     switch (key){
       case "sukha":
@@ -213,8 +214,9 @@ const MainSider = ({
           getItem("Template de vacante", "jb_profiles"),
           getItem("Candidatos", "jb_candidates"),
           getItem("Publicaciones", "jb_publications"),
-          // getItem("Preselección", "jb_preselection"),
-          // getItem("Proceso de selección", "jb_selection"),
+          getItem("Preselección", "jb_preselection"),
+          getItem("Proceso de selección", "jb_selection"),
+          // getItem("Entrevistas","jb_interviews"),
           getItem("Configuraciones", "jb_settings")
         ]
         let children02 = [

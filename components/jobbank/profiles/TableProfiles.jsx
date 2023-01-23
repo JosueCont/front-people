@@ -27,8 +27,7 @@ const TableProfiles = ({
     load_clients_options,
     list_clients_options,
     getProfilesList,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -40,7 +39,7 @@ const TableProfiles = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteProfile({ids});
-            getProfilesList(currentNode.id, currentFilters, currentPage);
+            getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Templates eliminados' : 'Template eliminado';
             message.success(msg);
         } catch (e) {
@@ -57,7 +56,7 @@ const TableProfiles = ({
             await WebApiJobBank.duplicateProfile(item.id);
             setTimeout(()=>{
                 message.success({content: 'Template duplicado', key});
-                getProfilesList(currentNode.id, currentFilters, currentPage);
+                getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
             },1000);
         } catch (e) {
             console.log(e);
@@ -243,6 +242,7 @@ const mapState = (state) =>{
         list_clients_options: state.jobBankStore.list_clients_options,
         load_clients_options: state.jobBankStore.load_clients_options,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

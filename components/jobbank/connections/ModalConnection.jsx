@@ -4,6 +4,7 @@ import MyModal from '../../../common/MyModal';
 import { ruleRequired } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
+import { optionsTypeConnection, optionsConnectionsJB } from '../../../utils/constant';
 
 const ModalConnection = ({
     actionForm = ()=>{},
@@ -13,19 +14,14 @@ const ModalConnection = ({
 }) => {
 
     const {
-        list_connections_options,
-        load_connections_options
+        list_connections,
+        load_connections
     } = useSelector(state => state.jobBankStore);
     const noValid = [undefined, null, '', ' '];
     const [formConnection] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [fileImg, setFileImg] = useState([]);
     const code = Form.useWatch('code', formConnection);
-    const options = [
-        {label: 'Facebook', value: 'FB', key: 'FB'},
-        {label: 'Instagram', value: 'IG', key: 'IG'},
-        {label: 'Linkedin', value: 'LK', key: 'LK', disabled: true}
-    ]
 
     const onClose = () =>{
         close()
@@ -44,7 +40,7 @@ const ModalConnection = ({
 
     const onFinish = (values) =>{
         setLoading(true)
-        if(values.code == 'LK') values.is_active = false; 
+        values.is_active = !(values.code == 'LK');
         let body = createData(values);
         setTimeout(()=>{
             setLoading(false)
@@ -54,28 +50,34 @@ const ModalConnection = ({
     }
 
     const optionsReds = useMemo(()=>{
-        let codes = list_connections_options.map(item => item.code);
-        return options.filter(record => !codes.includes(record.value));
-    },[list_connections_options])
+        let validate = !list_connections.results || list_connections.results?.length <=0;
+        if(validate) return optionsConnectionsJB;
+        let codes = list_connections?.results?.map(item => item.code);
+        return optionsConnectionsJB.filter(record => !codes.includes(record.value));
+    },[list_connections])
 
     const onChangeName = (value) =>{
+        let obj = {name: null, conection_type: null};
         if(!value){
-            formConnection.setFieldsValue({
-                name: null
-            })
+            formConnection.setFieldsValue(obj);
             return;
+        };
+        if(value == 'WP'){
+            formConnection.setFieldsValue({
+                name_file: null
+            });
+            setFileImg([])
         }
         const find_ = item => item.value == value;
-        let result = optionsReds.find(find_);
+        let result = optionsConnectionsJB.find(find_);
         if(!result){
-            formConnection.setFieldsValue({
-                name: null
-            })
+            formConnection.setFieldsValue(obj);
             return;
-        }
-        formConnection.setFieldsValue({
-            name: result.label
-        })
+        };
+        let type = ['FB','IG','LK'].includes(value);
+        obj['name'] = result.label;
+        obj['conection_type'] = type ? 1 : 2;
+        formConnection.setFieldsValue(obj);
     }
 
     return (
@@ -91,7 +93,9 @@ const ModalConnection = ({
                 onFinish={onFinish}
                 initialValues={{
                     is_valid: true,
-                    is_active: true
+                    is_active: true,
+                    name: null,
+                    conection_type: null
                 }}
             >
                 <Row gutter={[24,0]}>
@@ -139,11 +143,29 @@ const ModalConnection = ({
                         </Form.Item>
                     </Col>
                     <Col span={24}>
+                        <Form.Item
+                            name='conection_type'
+                            label='Tipo de conexión'
+                            rules={[ruleRequired]}
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                disabled
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='label'
+                                options={optionsTypeConnection}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
                         <FileUpload
                             label='Imagen predeterminada'
                             tooltip={`Esta imagen será utilizada en caso de que
                             no se haya seleccionado ninguna antes de realizar la publicación.`}
                             isRequired={code == 'IG'}
+                            disabled={code == 'WP'}
                             dependencies={['code']}
                             setFile={setFileImg}
                             typeFile={['png','jpg','jpeg']}

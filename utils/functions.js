@@ -454,10 +454,7 @@ export const validateNum = (e) =>{
 
 export const validateMaxLength = (e) =>{
   if(e.which == 32) e.preventDefault();
-  if(e.target.maxLength
-    && e.target.maxLength
-    == e.target.value.length
-  ) e.preventDefault();
+  if(e.target.value.length >= e.target?.maxLength) e.preventDefault();
 }
 
 export const createFiltersJB = (obj = {}) =>{

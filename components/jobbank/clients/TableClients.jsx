@@ -30,7 +30,6 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
 import Clipboard from '../../../components/Clipboard';
 import ViewContacts from './ViewContacts';
-import { getFiltersJB } from '../../../utils/functions';
 
 const TableClients = ({
     list_clients,
@@ -38,8 +37,7 @@ const TableClients = ({
     jobbank_page,
     currentNode,
     getClients,
-    currentFilters,
-    currentPage
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -53,7 +51,7 @@ const TableClients = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            getClients(currentNode.id, currentFilters, currentPage);
+            getClients(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Cliente activado' : 'Cliente desactivado';
             message.success(msg)
         } catch (e) {
@@ -67,7 +65,7 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClients(currentNode.id, currentFilters, currentPage);
+            getClients(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Clientes eliminados' : 'Cliente eliminado';
             message.success(msg);
         } catch (e) {
@@ -369,6 +367,7 @@ const mapState = (state) =>{
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

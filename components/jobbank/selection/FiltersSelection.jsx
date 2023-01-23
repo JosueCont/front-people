@@ -15,6 +15,8 @@ const FiltersSelection = ({
     const {
         list_vacancies_options,
         load_vacancies_options,
+        load_candidates_options,
+        list_candidates_options,
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
 
@@ -26,8 +28,6 @@ const FiltersSelection = ({
             onFinish(values);
         },1000)
     }
-
-    const setValue = (key, val) => formSearch.setFieldsValue({[key]: val});
 
     return (
         <MyModal
@@ -41,49 +41,34 @@ const FiltersSelection = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
-                initialValues={{is_other: false}}
             >
                 <Row gutter={[16,0]}>
                     <Col span={12}>
                         <Form.Item
-                            label='Nombre'
-                            name='name'
-                            rules={[ruleWhiteSpace]}
+                            name='candidate'
+                            label='Candidato'
                         >
-                            <Input placeholder='Buscar por nombre'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Apellidos'
-                            name='lastname'
-                            rules={[ruleWhiteSpace]}
-                        >
-                            <Input placeholder='Buscar por apellidos'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Correo'
-                            name='email'
-                            rules={[ruleWhiteSpace]}
-                        >
-                            <Input placeholder='Buscar por correo'/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Teléfono'
-                            name='phone'
-                            rules={[onlyNumeric]}
-                        >
-                            <Input placeholder='Buscar por teléfono'/>
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                disabled={load_candidates_options}
+                                loading={load_candidates_options}
+                                optionFilterProp='children'
+                            >
+                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.fisrt_name} {item.last_name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             label='Estatus'
-                            name='status'
+                            name='status_process'
                         >
                             <Select
                                 allowClear

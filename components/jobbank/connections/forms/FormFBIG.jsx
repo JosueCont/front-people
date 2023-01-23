@@ -1,7 +1,8 @@
 import React, {
     useRef,
     useEffect,
-    useMemo
+    useMemo,
+    useState
 } from 'react';
 import {
     Row,
@@ -18,27 +19,72 @@ import {
     ruleRequired,
     ruleWhiteSpace,
     ruleURL
-} from '../../../utils/rules';
-import WebApiJobBank from '../../../api/WebApiJobBank';
+} from '../../../../utils/rules';
+import { useSelector } from 'react-redux';
+import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import FileUpload from '../FileUpload';
-import BtnLoginFB from '../BtnLoginFB';
+import FileUpload from '../../FileUpload';
+import BtnLoginFB from '../../BtnLoginFB';
+import FormConnection from '../FormConnection';
+import { useInfoConnection } from '../../hook/useInfoConnection';
 
 const FormFBIG = ({
     infoConnection,
-    infoConfig,
     loading,
     formConnection,
-    setFileImg,
-    existPreConfig
+    setFileImg
 }) => {
 
+    const getNode = state => state.userStore.current_node;
+    const currentNode = useSelector(getNode);
     const router = useRouter();
     const btnSubmit = useRef(null);
-    
+    const [infoConfig, setInfoConfig] = useState({});
+    const { formatData } = useInfoConnection();
+
     const isInstagram = useMemo(()=>{
         return router.query?.code == 'IG'
     },[router.query?.code])
+
+    const existPreConfig = useMemo(()=>{
+        let current = infoConnection?.data_config ?? {};
+        let exist = infoConfig?.data_config ?? {};
+        let existKeys = Object.keys(current).length > 0;
+        let othersKeys = Object.keys(exist).length > 0; 
+        if(existKeys || infoConnection.data_config) return false;
+        if(!othersKeys || !infoConfig.data_config) return false;
+        return true;
+    },[infoConnection, infoConfig])
+
+    useEffect(()=>{
+        if(!currentNode) return;
+        let code = router.query?.code == 'IG' ? 'FB' : 'IG';
+        getExistConfig(currentNode.id, `&code=${code}`);
+    },[currentNode, router.query?.code])
+
+    useEffect(()=>{
+        if(Object.keys(infoConnection).length <= 0) return;
+        setValuesForm()
+    },[infoConnection, infoConfig])
+
+    const setValuesForm = () =>{
+        formConnection.resetFields();
+        let details = existPreConfig ? {...infoConnection, data_config: infoConfig.data_config} : infoConnection;
+        let values = formatData(details);
+        let name_file = infoConnection.default_image
+            ? infoConnection.default_image.split('/').at(-1)
+            : null; 
+        formConnection.setFieldsValue({...values, name_file});
+    }
+
+    const getExistConfig = async (node, query) =>{
+        try {
+            let response = await WebApiJobBank.getConnections(node, query);
+            setInfoConfig(response.data?.results?.at(-1))
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const onSuccess = async (response) =>{
         const key = 'updatable';
@@ -113,52 +159,8 @@ const FormFBIG = ({
                     </Form.Item>
                 </Col>
             )}
-            <Col xs={24} md={12} lg={8} style={{display: 'none'}}>
-                <Form.Item name='is_valid' label='¿Es válido?' valuePropName='checked'>
-                    <Checkbox/>
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                    name='is_active'
-                    label='¿Activar aplicación?'
-                    rules={[ruleRequired]}
-                >
-                    <Select
-                        allowClear
-                        placeholder='Seleccionar una opción'
-                    >
-                        <Select.Option value={true} key={true}>Sí</Select.Option>
-                        <Select.Option value={false} key={false}>No</Select.Option>
-                    </Select>
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                    name='name'
-                    label='Nombre'
-                    rules={[ruleRequired, ruleWhiteSpace]}
-                >
-                    <Input
-                        maxLength={20}
-                        placeholder='Nombre de la conexión'
-                    />
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                    name='code'
-                    label='Código'
-                    rules={[ruleRequired, ruleWhiteSpace]}
-                >
-                    <Input
-                        disabled
-                        maxLength={10}
-                        placeholder='Código de la conexión'
-                    />
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} lg={8}>
+            <FormConnection/>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <FileUpload
                     label='Imagen predeterminada'
                     tooltip={`Esta imagen será utilizada en caso de que
@@ -172,7 +174,7 @@ const FormFBIG = ({
                     })}
                 />
             </Col>
-            <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|app_url'
                     label='URL de la conexión'
@@ -185,7 +187,7 @@ const FormFBIG = ({
                     <Input placeholder='Ej. https://graph.facebook.com/'/>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|app_id'
                     label='Identificador (App ID)'
@@ -194,7 +196,7 @@ const FormFBIG = ({
                     <Input placeholder='ID de la aplicación'/>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|page_id'
                     label='Identificador (Page ID)'
@@ -203,7 +205,7 @@ const FormFBIG = ({
                     <Input placeholder='ID de la página'/>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|ig_user_id'
                     label='Identificador (User ID)'
@@ -213,7 +215,7 @@ const FormFBIG = ({
                     <Input placeholder='ID del usuario'/>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|secret_key'
                     label='Llave secreta'
@@ -258,7 +260,7 @@ const FormFBIG = ({
                         loading={loading}
                         appID={infoConnection.data_config?.app_id}
                         onSuccess={onSuccess}
-                    />
+                    />  
                 )}
                 <Button
                     loading={loading}
