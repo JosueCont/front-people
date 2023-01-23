@@ -56,6 +56,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
+  const [benefits, setBenefits] = useState(null);
+
   const checks =
     selectPeriodicity &&
     selectPeriodicity !== "95efb4e793974e318e6cb49ab30a1269"
@@ -173,7 +175,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
           salary_days: item.salary_days,
-          belongs_to: item.belongs_to,
+          belongs_to: BelongTo[0].value,
           vacation_bonus_payment: item.vacation_bonus_payment,
           benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
@@ -188,6 +190,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
+        setBenefits(item.benefits)
         setSelectPeriodicity(item.periodicity.id);
         if (item.belongs_to) {
           setPolitics(true);
@@ -258,6 +261,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setPeriod(dateString);
   };
   const formFinish = (value) => {
+    if(benefits == null) value.benefits = 'ley'
+    else value.benefits = benefits;
+    
     value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
@@ -310,24 +316,27 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   const RenderChecks = ({ data }) => {
     return data.map((item, i) => {
-      return (
-        <Col lg={6} xs={22} md={12}>
-          <Form.Item
-            initialValue={item.value}
-            valuePropName="checked"
-            name={item.name}
-            label={" "}
-          >
-            <Checkbox
-              id={item.name}
-              key={item.value + i}
-              className="CheckGroup"
+      if(item.name != 'import_issues'){
+        return (
+          <Col lg={6} xs={22} md={12}>
+            <Form.Item
+              initialValue={item.value}
+              valuePropName="checked"
+              name={item.name}
+              label={" "}
             >
-              <span style={{ color: "black" }}>{item.label}</span>
-            </Checkbox>
-          </Form.Item>
-        </Col>
-      );
+              <Checkbox
+                id={item.name}
+                key={item.value + i}
+                className="CheckGroup"
+              >
+                <span style={{ color: "black" }}>{item.label}</span>
+              </Checkbox>
+            </Form.Item>
+          </Col>
+        );
+
+      }
     });
   };
 
@@ -359,6 +368,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setSelectPeriodicity(value);
   };
 
+  const selectBenefit = (value) => {
+    //formPaymentCalendar.setFieldsValue({ benefits: value });
+    setBenefits(value);
+  };
   return (
     <>
       <Global
@@ -672,7 +685,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                     label="Pertenece a "
                     rules={[ruleRequired]}
                   >
-                    <Select maxLength={100} options={BelongTo} />
+                    <Select maxLength={100} options={BelongTo}  disabled/>
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22}>
@@ -701,7 +714,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                  <SelectIntegrationFactors />
+                  <SelectIntegrationFactors 
+                    benefit='benefits' 
+                    chengeBenefit={selectBenefit}
+                  />
                 </Col>
                 {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />

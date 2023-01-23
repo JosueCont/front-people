@@ -31,6 +31,7 @@ import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
+import _ from "lodash";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -410,7 +411,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Select
                       options={contrctsType}
                       showSearch
-                      filterOption={(input, option) =>
+                      filterOption={(input, option) =>                        
                         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                       }
                       allowClear
@@ -470,7 +471,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     rules={[ruleRequired]}
                   >
                     <Select
-                      options={PaymentTypes}
+                      options={_.orderBy(PaymentTypes, ['label'],['asc'])}
                       showSearch
                       filterOption={(input, option) =>
                           (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -555,7 +556,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                         label="Calendario de pago"
                       >
                         <Select
-                          options={paymentCalendars}
+                          options={_.orderBy(paymentCalendars, ['label'],['asc'])}
                           notFoundContent={"No se encontraron resultados."}
                           onChange={selectCalendar}
                           disabled={disabledCalendar}
