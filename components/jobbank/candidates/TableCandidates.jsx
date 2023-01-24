@@ -21,6 +21,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
+import HighDirectionReport from './HighDirectionReport';
 
 const TableCandidates = ({
     currentNode,
@@ -39,6 +40,7 @@ const TableCandidates = ({
     const [infoEducation, setInfoEducation] = useState(null)
     const [infoExperience, setInfoExperience] = useState(null)
     const [infoPositions, setInfoPositions] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
@@ -86,51 +88,53 @@ const TableCandidates = ({
         }
     }
 
-    infoCandidate && console.log('InfoCandidate', infoCandidate)
-    // infoExperience && console.log('InfoExperience', infoExperience)
-    // infoEducation && console.log('infoEducation', infoEducation)
-    // infoPositions && console.log('onfoPositions', infoPositions)
-
-    // const MyDoc = 
-    //     <DocExpedient
-    //         infoCandidate={infoCandidate}
-    //         infoEducation={ partialEducation?.length > 0 ? partialEducation : infoEducation }
-    //         infoExperience={infoExperience}
-    //         infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
-    //     />
+    const MyDoc = ({ infoCandidate, infoEducation }) =>
+        <HighDirectionReport
+            infoCandidate={infoCandidate? infoCandidate : {}}
+            infoEducation={ infoEducation? infoEducation : []}
+            // infoExperience={infoExperience}
+            // infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+        />
     
 
-    // const linkTo = (url, download = false ) =>{
-    //     let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-    //     const link = document.createElement("a");
-    //     link.href = url;
-    //     link.target = "_black";
-    //     if(download) link.download = nameFile;
-    //     link.click();
-    // }
+    const linkTo = (url, download = false ) =>{
+        // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
+        let nameFile = 'demo'
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_black";
+        if(download) link.download = nameFile;
+        link.click();
+    }
 
-    // const generatePDF = async (download) =>{
-    //     const key = 'updatable';
-    //     message.loading({content: 'Generando PDF...', key});
-    //     try {
-    //         setLoading(true)
-    //         let resp = await pdf(<MyDoc partial/>).toBlob();
-    //         let url = URL.createObjectURL(resp);
-    //         setTimeout(()=>{
-    //             setLoading(false);
-    //             message.success({content: 'PDF generado', key})
-    //         }, 1000)
-    //         setTimeout(()=>{  
-    //             linkTo(url+'#toolbar=0', download);
-    //         },2000)
-    //     } catch (e) {
-    //         console.log(e)
-    //         setTimeout(()=>{
-    //             setLoading(false)
-    //             message.error({content: 'PDF no generado', key});
-    //         },2000)
-    //     }
-    // }
+    const generatePDF = async (id, download) =>{
+        if(!id) return
+        const key = 'updatable';
+        message.loading({content: 'Generando PDF...', key});
+        try {
+            setLoading(true)
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let infoCan = responseInfo.data || {}
+            let infoEducation = responseEdu.data || {}
+            let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation}/>).toBlob();
+            let url = URL.createObjectURL(resp);
+            setTimeout(()=>{
+                setLoading(false);
+                message.success({content: 'PDF generado', key})
+            }, 1000)
+            setTimeout(()=>{  
+                linkTo(url+'#toolbar=0', download);
+            },2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                setLoading(false)
+                message.error({content: 'PDF no generado', key});
+            },2000)
+        }
+    }
+
     const openModalManyDelete = () =>{
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
@@ -224,13 +228,13 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Item
+                {/* <Menu.Item
                     key='4'
                     icon={<DownloadOutlined />}
-                    onClick={() => { getInfoCandidate(item.id) }}
+                    onClick={() => { generatePDF(item.id, true) }}
                 >
                     Descargar reporte alta dirección
-                </Menu.Item>
+                </Menu.Item> */}
             </Menu>
         );
     };
