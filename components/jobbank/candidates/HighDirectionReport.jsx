@@ -15,7 +15,7 @@ const HighDirectionReport = ({
     // infoPositions,
 }) => {
 
-    const [marginTop, setMarginTop ] = useState(80)
+    // const [marginTop, setMarginTop ] = useState(80)
 
     // useEffect(() => {
     //     if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
@@ -146,6 +146,14 @@ const HighDirectionReport = ({
                 }
             ]
         }
+    ]
+
+    const listCap = [
+        'Kerio Control Training Level 100',
+        'Tanaza Profesional Certificado',
+        'Tanaza Profesional del marketing',
+        'Bitdefender Bussines Portfolio Certification Sales',
+        'Bitdefender Bussines Portfolio Certification Technical'
     ]
 
     const SectionDetails = () => (
@@ -358,74 +366,44 @@ const HighDirectionReport = ({
                     </View>
                   </View>
                 ))
-              }
-                {/* <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
-                        <Text style={{ fontSize: 10 }}>Escolaridad</Text>
-                    </View>
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Carrera</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Estatus</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
-                    </View>
-                    <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Nombre de la institucion</Text>
-                    </View>
-                </View> */}
-                {/* <View
-                    style={{
-                        padding: '6px 12px',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                    }}
-                >
-                    {
-                        infoEducation?.length > 0 && infoEducation.map((inst) => (
+               }
 
-                        <View 
-                             key={inst.id}
-                            style={{ 
-                                backgroundColor: '#FFF',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                flexDirection: 'row',
-                                borderRadius: 10,
-                                padding: '0px 6px',
-                                marginBottom: 5
-                            }}
-                        >
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.study_level?.name } </Text>
+               <View style={{ width: '100%' }}>
+                    <View style={{ marginBottom: 10}}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Cursos de capacitación</Text>
+                    </View>
+                    {
+                        listCap?.length > 0 && listCap.map((cap, index) => (
+                            <View>
+                                <Text style={{fontSize: 10}}>{index + 1}. {cap}</Text>
                             </View>
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.specialitation_area } </Text>
-                            </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst && list_status.find((sch) => sch.value == inst.status).label } </Text>
-                            </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.end_date } </Text>
-                            </View>
-                            <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.institution_name } </Text>
-                            </View>
-                        </View>
                         ))
                     }
+               </View>
 
-                </View> */}
+               <View>
+                    <View style={{ marginTop: 10}}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Idiomas:</Text>
+                    </View>
+                    {
+                            infoCandidate?.languages.length > 0 &&
+
+                            infoCandidate.languages.map((lang) => (
+                                <Text 
+                                    key={lang.id} 
+                                    style={{
+                                        fontSize: 10,
+                                        borderRadius: 5
+                                    }}
+                                > 
+                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                    
+                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
+                                </Text>
+                            ))
+                        }
+               </View>
+
             </View>
         </View>
     )

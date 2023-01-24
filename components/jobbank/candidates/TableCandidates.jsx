@@ -228,13 +228,13 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Item
+                {/* <Menu.Item
                     key='4'
                     icon={<DownloadOutlined />}
                     onClick={() => { generatePDF(item.id, true) }}
                 >
                     Descargar reporte alta dirección
-                </Menu.Item>
+                </Menu.Item> */}
             </Menu>
         );
     };
