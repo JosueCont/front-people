@@ -9,6 +9,7 @@ import {
   message,
   Modal,
   Spin,
+  ConfigProvider
 } from "antd";
 import {
   EditOutlined,
@@ -26,6 +27,7 @@ import {
 } from "../../utils/constant";
 import { ruleRequired, ruleWhiteSpace } from "../../utils/rules";
 import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
+import esES from "antd/lib/locale/es_ES";
 
 const BranchCatalog = ({
   getBranches,
@@ -223,7 +225,9 @@ const BranchCatalog = ({
         </Row>
       </Form>
       <Spin tip="Cargando..." spinning={loading}>
-        <Table columns={columns} dataSource={cat_branches} />
+        <ConfigProvider locale={esES}>
+        <Table columns={columns} dataSource={cat_branches} pagination={{showSizeChanger:true}} />
+        </ConfigProvider>
       </Spin>
     </>
   );

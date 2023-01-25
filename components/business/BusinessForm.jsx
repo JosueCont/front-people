@@ -13,6 +13,7 @@ import {
   message,
   Tooltip,
   Alert,
+  ConfigProvider
 } from "antd";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +41,7 @@ import {
   messageUpdateSuccess
 } from "../../utils/constant";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -462,19 +464,24 @@ const businessForm = ({ currentNode, ...props }) => {
         <Row>
           <Col span={24}>
             {treeTable ? (
-              <Table
-                className={"mainTable"}
-                scroll={{ x: 300 }}
-                size="small"
-                columns={columns}
-                dataSource={business}
-                loading={loading}
-                locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : "No se encontraron resultados.",
-                }}
-              />
+              <ConfigProvider locale={esES}>
+                <Table
+                  className={"mainTable"}
+                  scroll={{ x: 300 }}
+                  size="small"
+                  columns={columns}
+                  dataSource={business}
+                  loading={loading}
+                  pagination={{
+                    showSizeChanger:true,
+                  }}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
+                />
+              </ConfigProvider>
             ) : (
               <NodeTreeView />
             )}

@@ -110,6 +110,8 @@ const TablePreselection = ({
         );
     };
 
+    console.log('list preselection', list_preselection, jobbank_page)
+
     const menuItem = (item) => {
         return (
             <Menu>
@@ -214,7 +216,7 @@ const TablePreselection = ({
                 }}
                 pagination={{
                     total: list_preselection.count,
-                    current: jobbank_page,
+                    // current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}

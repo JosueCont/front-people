@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainInter";
-import { Row, Col, Table, Breadcrumb, message } from "antd";
+import { Row, Col, Table, Breadcrumb, message, ConfigProvider } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { EyeOutlined } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import { verifyMenuNewForTenant } from "../../utils/functions"
+import esES from "antd/lib/locale/es_ES";
 
 const ListBulkUpload = ({ ...props }) => {
   const route = useRouter();
@@ -88,17 +89,20 @@ const ListBulkUpload = ({ ...props }) => {
       <div className="container" style={{ width: "100%" }}>
         <Row>
           <Col span={24}>
+            <ConfigProvider locale={esES}>
             <Table
               dataSource={dataBulkUpload}
               key="tableLog"
               loading={loading}
               columns={columns}
+              pagination={{showSizeChanger:true}}
               locale={{
                 emptyText: loading
                   ? "Cargando..."
                   : "No se encontraron resultados.",
               }}
             ></Table>
+            </ConfigProvider>
           </Col>
         </Row>
       </div>
