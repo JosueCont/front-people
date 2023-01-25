@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const useInfoStrategy = ({ setOptionVacant }) => {
+export const useInfoStrategy = () => {
 
     const checkValues = (values) => {
         return Object.entries(values).reduce((obj, [key, val]) => {
@@ -11,16 +11,13 @@ export const useInfoStrategy = ({ setOptionVacant }) => {
 
     const setValuesForm = (values) =>{
         let info = checkValues(values);
+        info.recruiter = info.recruiter?.id ?? null;
         if(info.customer?.id) info.customer = info.customer?.id;
         if(info.assignment_date) info.assignment_date = moment(info.assignment_date);
         if(info.candidates_date_send) info.candidates_date_send = moment(info.candidates_date_send);
         if(info.candidate_acceptance_date) info.candidate_acceptance_date = moment(info.candidate_acceptance_date);
         if(info.hiring_rejection_date) info.hiring_rejection_date = moment(info.hiring_rejection_date);
         if(info.job_vacancies?.length > 0) info.job_vacancies = info.job_vacancies.map(item => item.id);
-        if(Object.keys(info.vacant).length > 0){
-            setOptionVacant([info.vacant])
-            info.vacant = info.vacant.id;
-        }
         return info;
     }
 

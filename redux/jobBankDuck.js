@@ -30,6 +30,7 @@ const initialState = {
     list_scholarship: [],
     list_tags_notification: [],
     list_interviews: {},
+    list_selection_options: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -59,6 +60,7 @@ const initialState = {
     load_scholarship: false,
     load_tags_notification: false,
     load_interviews: false,
+    load_selection_options: false,
     jobbank_page: 1,
     jobbank_filters: "",
     jobbank_load: false
@@ -96,6 +98,7 @@ const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 
 const GET_SELECTION = "GET_SELECTION";
+const GET_SELECTION_OPTIONS = "GET_SELECTION_OPTIONS";
 const GET_PRESELECTION = "GET_PRESELECTION";
 
 const GET_SCHOLARSHIP = "GET_SCHOLARSHIP";
@@ -264,6 +267,11 @@ const jobBankReducer = (state = initialState, action) =>{
                 load_interviews: action.fetching,
                 jobbank_page: action.page,
                 jobbank_filters: action.query
+            }
+        case GET_SELECTION_OPTIONS:
+            return {...state,
+                list_selection_options: action.payload,
+                load_selection_options: action.fetching
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -559,6 +567,18 @@ export const getListSelection = (node, query = '', page = 1) => async (dispatch)
     }
 }
 
+export const getSelectionOpions = (node, query = '') => async (dispatch) =>{
+    const typeFunction = {type: GET_SELECTION_OPTIONS, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getListSelection(node, `&paginate=0${query}`);
+        dispatch({...typeFunction, payload: response.data});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
 export const getPreselection = (node, query = '', page = 1) => async (dispatch)=>{
     const typeFunction = {type: GET_PRESELECTION, payload: {}, fetching: false, query, page};
     dispatch({...typeFunction, fetching: true})
@@ -603,43 +623,11 @@ export const getInterviews = (node, query = '', page = 1) => async (dispatch) =>
     const typeFunction = {type: GET_INTERVIEWS, payload: [], fetching: false, query, page};
     dispatch({...typeFunction, fetching: true})
     try {
-        let results = [];
-        for (let i = 0; i < 30; i++) {
-            results.push({
-                id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
-                status: Math.round(Math.random()*2),
-                date: new Date().toLocaleDateString(),
-                recruiter: {
-                    "id": "db54a671c6ac46e1ab78c4aecc8e2e91",
-                    "khonnect_id": "634dde4ca7c4dc5bc91d63d5",
-                    "first_name": "Demo",
-                    "flast_name": "Bolsa",
-                    "mlast_name": "Trabajo",
-                    "gender": 3,
-                    "email": "demobolsatrabajo@hiumanlab.com",
-                    "birth_date": null,
-                    "curp": null,
-                    "rfc": null
-                },
-                vacant: {
-                    "id": "88fb24f22bf145ce92ca63a60c222a11",
-                    "job_position": "Desarrollador jr "+(i+1)
-                },
-                candidate: {
-                    "id": 78,
-                    "fisrt_name": "Candidato idiomas "+(i+1),
-                    "last_name": "test",
-                    "email": "2@2.COM",
-                    "cell_phone": "2122222222",
-                    "telephone": ""
-                },
-            })            
-        }
-        setTimeout(()=>{
-            dispatch({...typeFunction, payload: {count: results.length, results}})
-        },1000)
+        let response = await WebApiJobBank.getInterviews(node, query);
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
+        dispatch(typeFunction)
     }
 }
 

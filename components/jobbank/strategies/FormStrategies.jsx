@@ -105,7 +105,7 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
-        const options = item => item.customer?.id == clientSelected;
+        const options = item => (item.customer?.id || item.customer) == clientSelected;
         return newListVacant.filter(options);
     }, [clientSelected, newListVacant])
 
