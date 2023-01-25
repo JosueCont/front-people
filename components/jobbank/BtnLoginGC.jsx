@@ -1,18 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { Button, notification, Tooltip } from 'antd';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import cookies from 'js-cookie';
+import { InterviewContext } from './context/InterviewContext';
 
 const BtnToLogin = () =>{
     const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
     const SCOPES = 'https://www.googleapis.com/auth/calendar';
+    const { setToken } = useContext(InterviewContext);
 
     const onLogin = (e) =>{
         cookies.remove('token_gc');
         cookies.set('token_gc',JSON.stringify(e));
+        setToken(e)
         notification.success({
             message: 'Sesión iniciada',
             description: 'Por razones de seguridad la sesión expirará aproximadamente en 1 hora',
