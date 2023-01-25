@@ -41,7 +41,6 @@ const index = ({
             let applyMatch = router.query?.applyMatch ?? '1';
             let filters = getFiltersJB({...router.query, applyMatch});
             getPreselection(currentNode.id, filters, page)
-            setCurrentFilters(filters)
         }
     },[currentNode, router.query])
 

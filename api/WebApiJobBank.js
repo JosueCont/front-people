@@ -247,8 +247,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/share/`, 'post', data);
     }
 
-    static getListSelection(node){
-        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}`, 'get');
+    static getListSelection(node, query){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}${query}`, 'get');
     }
 
     static createSelection(data){

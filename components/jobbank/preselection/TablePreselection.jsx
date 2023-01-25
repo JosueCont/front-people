@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Dropdown, Button, Menu, message } from 'antd';
 import { connect } from 'react-redux';
 import { getPreselection } from '../../../redux/jobBankDuck';
@@ -81,6 +81,21 @@ const TablePreselection = ({
         }
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/preselection',
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
+    }
+
     const menuTable = () => {
         return (
             <Menu>
@@ -95,7 +110,10 @@ const TablePreselection = ({
         );
     };
 
-    console.log('list preselection', list_preselection, jobbank_page)
+    const startSelection = (item) => {
+        console.log('item', item)
+    }
+
 
     const menuItem = (item) => {
         return (
@@ -106,6 +124,16 @@ const TablePreselection = ({
                     onClick={()=> openModalOne(item)} 
                 >
                     Proceso selección
+                </Menu.Item>
+                <Menu.Item
+                    key='2'
+                    icon={<EditOutlined/>}
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/preselection/details`,
+                        query:{...router.query, id: item.id }
+                    })} 
+                >
+                    Iniciar proceso de selección
                 </Menu.Item>
             </Menu>
         );
@@ -193,6 +221,7 @@ const TablePreselection = ({
                 rowSelection={rowSelection}
                 loading={load_preselection}
                 dataSource={list_preselection.results}
+                onChange={onChangePage}
                 locale={{
                     emptyText: load_preselection
                         ? 'Cargando...'
@@ -200,7 +229,7 @@ const TablePreselection = ({
                 }}
                 pagination={{
                     total: list_preselection.count,
-                    // current: jobbank_page,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
