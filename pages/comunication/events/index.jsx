@@ -15,6 +15,7 @@ import {
   Spin,
   Input,
   DatePicker,
+  ConfigProvider
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { useRouter } from "next/router";
@@ -35,6 +36,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import axiosApi from "../../../api/axiosApi";
 import { verifyMenuNewForTenant } from "../../../utils/functions"
+import esES from "antd/lib/locale/es_ES";
 
 const Events = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -255,11 +257,13 @@ const Events = ({ permissions, ...props }) => {
             </div>
             <Row>
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   className={"mainTable"}
                   dataSource={evenstList}
                   key="table_events"
                   loading={loading}
+                  pagination={{showSizeChanger:true}}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
@@ -300,6 +304,7 @@ const Events = ({ permissions, ...props }) => {
                     )}
                   ></Column>
                 </Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </Spin>

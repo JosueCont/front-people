@@ -13,6 +13,7 @@ import {
   Select,
   Checkbox,
   Tabs,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -30,6 +31,7 @@ import {
   messageUpdateSuccess,
 } from "../../utils/constant";
 import WebApiPayroll from "../../api/WebApiPayroll";
+import esES from "antd/lib/locale/es_ES";
 
 const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -685,15 +687,18 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       </Tabs>
 
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={columns}
           dataSource={catalog}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

@@ -9,6 +9,7 @@ import {
   Input,
   message,
   Modal,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -27,6 +28,7 @@ import {
   messageUpdateSuccess,
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
+import esES from "antd/lib/locale/es_ES";
 
 const Levels = ({ currentNode, ...props }) => {
   const [edit, setEdit] = useState(false);
@@ -253,15 +255,18 @@ const Levels = ({ currentNode, ...props }) => {
         </Row>
       </Form>
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={columns}
           dataSource={props.cat_levels}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

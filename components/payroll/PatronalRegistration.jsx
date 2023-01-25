@@ -12,7 +12,8 @@ import {
   Table,
   Modal,
   Spin,
-  DatePicker
+  DatePicker,
+  ConfigProvider
 } from "antd";
 import {
   CheckOutlined,
@@ -38,6 +39,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
 import moment from 'moment'
+import esES from "antd/lib/locale/es_ES";
 const ImssInformationNode = ({
   node_id = null,
   fiscal,
@@ -342,15 +344,20 @@ const ImssInformationNode = ({
       </Row>
       {visibleTable && (
         <Spin spinning={loadingData}>
-          <Table
-            dataSource={dataPatronalRegistration}
-            columns={columns}
-            locale={{
-              emptyText: loading
-                ? "Cargando..."
-                : "No se encontraron resultados.",
-            }}
-          />
+          <ConfigProvider locale={esES}>
+            <Table
+              dataSource={dataPatronalRegistration}
+              columns={columns}
+              pagination={{
+                showSizeChanger:true
+              }}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+            />
+          </ConfigProvider>
         </Spin>
       )}
       {!visibleTable && (

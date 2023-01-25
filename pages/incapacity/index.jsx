@@ -9,6 +9,7 @@ import {
   Form,
   Select,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
@@ -17,6 +18,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 import {
   EditOutlined,
@@ -151,7 +153,7 @@ const Incapacity = ({ ...props }) => {
                         />
                       </Col>
                       <Col>
-                        <SelectDepartment companyId={props.currentNode.id} />
+                        <SelectDepartment companyId={props?.currentNode?.id} />
                       </Col>
                       <Col>
                         <Form.Item
@@ -221,9 +223,11 @@ const Incapacity = ({ ...props }) => {
             </div>
             <Row justify="end">
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   dataSource={incapacityList}
                   key="tableHolidays"
+                  pagination={{showSizeChanger:true}}
                   scroll={{ x: 350 }}
                   loading={loading}
                   locale={{
@@ -306,6 +310,7 @@ const Incapacity = ({ ...props }) => {
                     )}
                   />
                 </Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </>
