@@ -132,6 +132,7 @@ export const InterviewProvider = ({children}) =>{
 
     return(
         <InterviewContext.Provider value={{
+            setToken,
             fetchAction,
             actionCreate,
             actionUpdate,
