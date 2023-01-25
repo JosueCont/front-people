@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import MainLayout from "../../../layout/MainInter";
 import FormGroup from "../../../components/intranet/FormGroup";
-import { Table, Breadcrumb, Button, Popconfirm, message } from "antd";
+import { Table, Breadcrumb, Button, Popconfirm, message, ConfigProvider } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
@@ -19,6 +19,7 @@ import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 import { useSelector } from 'react-redux'
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const GroupView = ({ ...props }) => {
   const router = useRouter();
@@ -169,9 +170,10 @@ const GroupView = ({ ...props }) => {
               setVisible={handleCancelAddUpdatePerson}
             />
           )}
-
+          <ConfigProvider locale={esES}>
           <Table
             dataSource={groups}
+            pagination={{showSizeChanger:true}}
             key="table_groups"
             loading={loading}
             locale={{
@@ -227,6 +229,7 @@ const GroupView = ({ ...props }) => {
               )}
             />
           </Table>
+          </ConfigProvider>
         </div>
       ) : (
         <div className="notAllowed" />

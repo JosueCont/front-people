@@ -9,6 +9,7 @@ import {
   Form,
   Select,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import {
   EditOutlined,
@@ -24,6 +25,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const Lending = ({ ...props }) => {
   const { Column } = Table;
@@ -231,10 +233,12 @@ const Lending = ({ ...props }) => {
                 </div>
                 <Row justify={"end"}>
                   <Col span={24}>
+                    <ConfigProvider locale={esES}>
                     <Table
                       dataSource={lendingList}
                       key="table_holidays"
                       loading={loading}
+                      pagination={{showSizeChanger:true}}
                       scroll={{ x: 350 }}
                       locale={{
                         emptyText: loading
@@ -329,6 +333,7 @@ const Lending = ({ ...props }) => {
                         )}
                       ></Column>
                     </Table>
+                    </ConfigProvider>
                   </Col>
                 </Row>
               </>

@@ -11,6 +11,7 @@ import {
   message,
   Modal,
   Switch,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -27,6 +28,7 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import esES from "antd/lib/locale/es_ES";
 
 const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -273,15 +275,18 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
         </Form>
       )}
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={colTypeDocument}
           dataSource={props.cat_document_type}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );
