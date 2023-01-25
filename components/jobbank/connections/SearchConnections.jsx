@@ -15,8 +15,8 @@ import { getConnections } from '../../../redux/jobBankDuck';
 
 const SearchConnections = ({
     currentNode,
-    currentPage,
-    currentFilters,
+    jobbank_page,
+    jobbank_filters,
     getConnections
 }) => {
 
@@ -32,7 +32,7 @@ const SearchConnections = ({
         try {
             values.append('node', currentNode.id);
             await WebApiJobBank.createConnection(values);
-            getConnections(currentNode.id, currentFilters, currentPage);
+            getConnections(currentNode.id, jobbank_filters, jobbank_page);
             message.success('Conexión registrada');
         } catch (e) {
             console.log(e)
@@ -113,6 +113,8 @@ const SearchConnections = ({
 const mapState = (state) => {
     return{
         currentNode: state.userStore.current_node,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page: state.jobBankStore.jobbank_page
     }
 }
 

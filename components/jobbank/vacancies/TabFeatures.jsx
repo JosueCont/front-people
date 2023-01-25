@@ -157,6 +157,7 @@ const TabFeatures = ({
             type='number'
             controls={false}
             maxLength={9}
+            max={2147483647}
             placeholder='Número de proyecto'
             onKeyDown={validateNum}
             onKeyPress={validateMaxLength}
@@ -197,11 +198,17 @@ const TabFeatures = ({
         <Form.Item
           name='qty'
           label='Número de posiciones a reclutar'
+          rules={[
+            {type: 'number', min: 1, message: 'Ingrese un valor mayor o igual a 1'},
+            {type: 'number', max: 2147483647, message: 'Ingrese un valor menor o igual a 2147483647'}
+          ]}
         >
           <InputNumber
             type='number'
             controls={false}
-            maxLength={9}
+            maxLength={10}
+            // min={1}
+            // max={2147483647}
             placeholder='Número de posiciones a reclutar'
             onKeyDown={validateNum}
             onKeyPress={validateMaxLength}

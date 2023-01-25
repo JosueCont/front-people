@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
+import { Tooltip } from 'antd';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import {
     LinkOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    BellOutlined,
+    InfoCircleOutlined
 } from '@ant-design/icons';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
@@ -21,7 +24,7 @@ const index = () => {
             name: 'Conexiones',
             icon: <LinkOutlined/>,
             redirect: ()=> router.push('/jobbank/settings/connections')
-        }
+        },
     ]
 
     return (
@@ -32,6 +35,7 @@ const index = () => {
             <div className='list-access'>
                 {listAccess.map((item, idx) => (
                     <div key={idx} className='card-access' onClick={()=> item.redirect()}>
+                        {item.help && <Tooltip title={item.help}><InfoCircleOutlined /></Tooltip>}
                         {item.icon}<p>{item.name}</p>
                     </div>
                 ))}

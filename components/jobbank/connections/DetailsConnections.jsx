@@ -28,17 +28,8 @@ const DetailsConnections = ({
     const [formConnection] = Form.useForm();
     const [fileImg, setFileImg] = useState([]);
     const [fetching, setFetching] = useState(false);
-    const [infoConfig, setInfoConfig] = useState({});
     const [infoConnection, setInfoConnection] = useState({});
     const { createData, formatData } = useInfoConnection();
-
-    useEffect(()=>{
-        if(!currentNode) return;
-        let code = router.query?.code;
-        if(!['FB','IG'].includes(code)) return;
-        let param = code == 'IG' ? 'FB' : 'IG';
-        getConfigByCode(currentNode.id, `&code=${param}`)
-    },[currentNode, router.query?.code])
 
     useEffect(()=>{
         if(router.query?.id){
@@ -46,33 +37,12 @@ const DetailsConnections = ({
         }
     },[router.query?.id])
 
-    const existPreConfig = useMemo(()=>{
-        let current = infoConnection?.data_config ?? {};
-        let exist = infoConfig?.data_config ?? {};
-        let existKeys = Object.keys(current).length > 0;
-        let othersKeys = Object.keys(exist).length > 0; 
-        if(existKeys || infoConnection.data_config) return false;
-        if(!othersKeys || !infoConfig.data_config) return false;
-        return true;
-    },[infoConnection, infoConfig])
-
     useEffect(()=>{
         let code = router.query?.code;
-        if(['FB','IG'].includes(code) && existPreConfig){
-            setConfigExist();
-            return;
-        }
+        if(['FB','IG'].includes(code)) return;
+        if(Object.keys(infoConnection).length <= 0) return;
         setValuesForm();
-    },[infoConnection, infoConfig, router.query?.code])
-
-    const setConfigExist = () =>{
-        formConnection.resetFields();
-        let values = formatData({...infoConnection, data_config: infoConfig.data_config});
-        let name_file = infoConnection.default_image
-            ? infoConnection.default_image.split('/').at(-1)
-            : null; 
-        formConnection.setFieldsValue({...values, name_file});
-    }
+    },[infoConnection, router.query?.code])
 
     const setValuesForm = () =>{
         formConnection.resetFields();
@@ -81,16 +51,6 @@ const DetailsConnections = ({
             ? infoConnection.default_image.split('/').at(-1)
             : null; 
         formConnection.setFieldsValue({...values, name_file});
-    }
-
-    const getConfigByCode = async (node, query) =>{
-        try {
-            let response = await WebApiJobBank.getConnections(node, query);
-            let config = response.data?.results?.at(-1) ?? {};
-            setInfoConfig(config)
-        } catch (e) {
-            console.log(e)
-        }
     }
 
     const getInfoConnection = async (id) =>{
@@ -170,10 +130,8 @@ const DetailsConnections = ({
                             <Row gutter={[24,0]}>
                                 <GetForm
                                     infoConnection={infoConnection}
-                                    infoConfig={infoConfig}
                                     loading={fetching}
                                     formConnection={formConnection}
-                                    existPreConfig={existPreConfig}
                                     setFileImg={setFileImg}
                                 />
                             </Row>

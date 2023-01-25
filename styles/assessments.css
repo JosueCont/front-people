@@ -497,10 +497,11 @@
 }
 
 .card-access{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
     background: var(--primaryColor);
     padding: 24px;
     border-radius: 12px;
@@ -509,9 +510,16 @@
     cursor: pointer;
 }
 
-.card-access .anticon{
+.card-access .anticon:not(.anticon-info-circle){
     color: #ffff;
     font-size: 2rem;
+}
+
+.card-access .anticon-info-circle{
+    color: #ffff;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .card-access p{
@@ -521,10 +529,10 @@
     color: #ffff;
 }
 
-.card-access:hover{
+/* .card-access:hover{
     transition: all 0.3s ease-in;
     transform: translateY(-5px);
-}
+} */
 
 .tabs-connections > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
     padding-top: 24px;
@@ -664,8 +672,13 @@ button.custom-btn {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid #d9d9d9;
     border-radius: 12px;
+    /* border-left: 1px solid #d9d9d9; */
+    /* border-bottom: 1px solid #d9d9d9; */
+    /* border-right: 1px solid #d9d9d9; */
+    /* border-bottom-left-radius: 12px; */
+    /* border-bottom-right-radius: 12px; */
     padding: 12px;
 }
 
@@ -815,6 +828,124 @@ button.custom-btn {
 .btn-jb-disabled button.ant-btn[disabled]:focus > span,
 .btn-jb-disabled button.ant-btn[disabled]:active > span {
     color: inherit!important;
+}
+
+div.calendar-interviews{
+    background: transparent;
+}
+
+div.calendar-interviews .ant-picker-panel{
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+div.calendar-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+    background-color: #ffff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+div.calendar-header.border-card{
+    border-bottom: 2px solid #f0f0f0;
+}
+
+div.calendar-interviews .ant-picker-panel .ant-picker-body th {
+    height: inherit;
+    line-height: inherit;
+    padding: 8px;
+    text-align: center;
+}
+
+div.calendar-interviews .ant-picker-date-panel .ant-picker-body{
+    padding: 8px 12px;
+}
+
+/* div.calendar-interviews .ant-picker-panel .ant-picker-calendar-date-content {
+    
+} */
+
+div.calendar-interviews .ant-picker-panel .ant-picker-calendar-date-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+div.calendar-interviews .ant-picker-panel .ant-picker-calendar-date-content::-webkit-scrollbar-track {
+    background: none;
+    border: none;
+}
+
+div.calendar-interviews .ant-picker-panel .ant-picker-calendar-date-content::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    border-radius: 10px;
+    box-shadow: none;
+    min-height: 50px;
+}
+
+div.calendar-header .calendar-title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+div.calendar-header .calendar-title button{
+    background-color: transparent;
+    border: 1px solid #f0f0f0;
+    padding: 6px 12px;
+    color: rgb(60,64,67);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+div.calendar-header .calendar-title p{
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+div.calendar-header .calendar-title button[role='prev'],
+div.calendar-header .calendar-title button[role='next']{
+    border-radius: 50%;
+}
+
+div.calendar-header .calendar-title button:hover,
+div.calendar-header .calendar-title button:focus,
+div.calendar-header .calendar-title button:active{
+    box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+div.select-jb .ant-select-selector{
+    border: 1px solid #d9d9d9!important;
+}
+
+div.select-jb .ant-select-selector:hover,
+div.select-jb .ant-select-selector:focus-within {
+    border: 1px solid #d9d9d9!important;
+    box-shadow: none!important;
+}
+
+div.picker-jb,
+div.picker-jb:hover,
+div.drop-picker-jb{
+    border: 1px solid #d9d9d9!important;
+    box-shadow: none!important;
+}
+
+input.input-jb,
+div.input-jb,
+input.input-jb:hover,
+input.input-jb.ant-input-focused,
+input.input-jb:focus {
+  border: 1px solid #d9d9d9!important;
+  box-shadow: none!important;
+}
+
+div.select-jb-remove .ant-select-selection-item-remove{
+    display: none;
 }
 
 /* Termina diseño bolsa de trabajo */

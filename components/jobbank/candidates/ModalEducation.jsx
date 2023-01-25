@@ -26,6 +26,7 @@ const ModalEducation = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
+        itemToEdit.study_level = itemToEdit.study_level?.id ?? null;
         formEducation.setFieldsValue(itemToEdit);
     },[itemToEdit])
 
@@ -34,6 +35,8 @@ const ModalEducation = ({
         close()
         formEducation.resetFields();
     }
+
+    console.log('Escolar', list_scholarship)
 
     const setValue = (key, val) => formEducation.setFieldsValue({[key]: val});
     const setEndDate = (val = null) => setValue('end_date', val);

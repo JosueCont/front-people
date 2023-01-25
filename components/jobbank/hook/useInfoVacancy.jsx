@@ -125,8 +125,8 @@ export const useInfoVacancy = () =>{
             let value = item.split('-');
             return {lang: value[0], domain: value[1]};
         };
-        let formatLang = values.languages.map(getLang_);
-        info.languages = Array.isArray(values.languages) ? formatLang : [];
+        let formatLang = info.languages?.map(getLang_);
+        info.languages = info.languages?.length > 0 ? formatLang : [];
 
         return info;
     }

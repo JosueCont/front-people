@@ -31,8 +31,9 @@ const SearchSelection = () => {
     }
 
     const showModal = () =>{
-        let status = router.query?.status ? parseInt(router.query.status) : null;
-        formSearch.setFieldsValue({...router.query, status});
+        let status_process = router.query?.status_process ? parseInt(router.query.status_process) : null;
+        let candidate = router.query?.candidate ? parseInt(router.query.candidate) : null;
+        formSearch.setFieldsValue({...router.query, status_process, candidate});
         setOpenModal(true)
     }
 

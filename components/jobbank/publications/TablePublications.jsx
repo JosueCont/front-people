@@ -38,8 +38,7 @@ const TablePublications = ({
     list_connections_options,
     load_connections_options,
     getPublications,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -55,7 +54,7 @@ const TablePublications = ({
         try {
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
             setTimeout(()=>{
-                getPublications(currentNode.id, currentFilters, currentPage);
+                getPublications(currentNode.id, jobbank_filters, jobbank_page);
                 message.success({content: 'Vacante publicada', key});
             }, 1000)
         } catch (e) {
@@ -73,7 +72,7 @@ const TablePublications = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deletePublication({ids});
-            getPublications(currentNode.id, currentFilters, currentPage);
+            getPublications(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Publicaciones eliminadas' : 'Publicación eliminada';
             message.success(msg);
         } catch (e) {
@@ -103,17 +102,9 @@ const TablePublications = ({
         setItemsToDelete([])
     }
 
-    const nameAndIcon = (item) =>{
-        const list = {
-            FB: { icon: <FacebookOutlined/>, color: "#3b5999"},
-            IG: { icon: <InstagramOutlined />, color: "#E1306C"}
-        }
-        return list[item.code];
-    }
-
     const getRed = (item) =>{
         if(item.account_to_share?.length <= 0) return [];
-        const red = record => item.account_to_share.includes(record.id);
+        const red = record => item.account_to_share.includes(record.code);
         return list_connections_options.filter(red);
     }
 
@@ -338,6 +329,7 @@ const TablePublications = ({
 const mapState = (state) =>{
     return{
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
         list_connections_options: state.jobBankStore.list_connections_options,
