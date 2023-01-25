@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Row, Col, Form, Card, Tooltip, message } from 'antd';
 import {
   SyncOutlined,
@@ -15,6 +15,9 @@ import { useFiltersInterviews } from '../hook/useFiltersInterviews';
 import moment from 'moment';
 import EventForm from './EventForm';
 import { getInterviews } from '../../../redux/jobBankDuck';
+import WebApiJobBank from '../../../api/WebApiJobBank';
+import { InterviewContext } from '../context/InterviewContext';
+import BtnLoginGC from '../BtnLoginGC';
 
 const SearchInterviews = ({
     isCalendar = false,
@@ -30,16 +33,7 @@ const SearchInterviews = ({
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const { listKeys, listGets } = useFiltersInterviews();
-
-    const actionCreate = async (values) =>{
-        try {
-            getInterviews(currentNode.id, jobbank_filters, jobbank_page);
-            message.success('Evento registrado');
-        } catch (e) {
-            console.log(e)
-            message.error('Evento no registrado')
-        }
-    }
+    const { fetchAction, actionCreate } = useContext(InterviewContext);
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -109,7 +103,8 @@ const SearchInterviews = ({
                                         </Button>
                                     </Tooltip>
                                 )}
-                                <Button onClick={()=> setOpenModalForm(true)}>
+                                <BtnLoginGC/>
+                                <Button onClick={()=> fetchAction(()=> setOpenModalForm(true))}>
                                     Agregar
                                 </Button>
                             </div>

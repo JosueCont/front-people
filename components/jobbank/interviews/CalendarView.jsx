@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Calendar, Spin, message } from 'antd';
 import CalendarHeader from './CalendarHeader';
@@ -6,8 +6,10 @@ import CalendarDateCell from './CalendarDateCell';
 import CalendarMonthCell from './CalendarMonthCell';
 import EventDetails from './EventDetails';
 import EventForm from './EventForm';
+import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 import { getInterviews } from '../../../redux/jobBankDuck';
+import { InterviewContext } from '../context/InterviewContext';
 
 //Formato para la semana
 const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
@@ -25,18 +27,11 @@ const CalendarView = ({
 
     const [openModalDetail, setOpenModalDetail] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToDetail, setItemToDetail] = useState({});
     const [itemToEdit, setItemToEdit] = useState({});
-
-    const actionUpdate = async (values) =>{
-        try {
-            getInterviews(currentNode.id, jobbank_filters, jobbank_page);
-            message.success('Evento actualizado');
-        } catch (e) {
-            console.log(e)
-            message.error('Evento no actualizado');
-        }
-    }
+    const [itemToDelete, setItemToDelete] = useState([]);
+    const { actionUpdate, actionDelete, fetchAction } = useContext(InterviewContext);
 
     const closeModalDetail = () =>{
         setOpenModalDetail(false)
@@ -46,6 +41,17 @@ const CalendarView = ({
     const closeModalForm = () =>{
         setOpenModalForm(false)
         setItemToEdit({});
+    }
+
+    const closeModalDelete = () =>{
+        setItemToDelete([]);
+        setOpenModalDelete(false)
+    }
+
+    const showModalDelete = () =>{
+        setItemToDelete([itemToDetail])
+        setOpenModalDelete(true)
+        closeModalDetail()
     }
 
     const showModalForm = () =>{
@@ -70,19 +76,27 @@ const CalendarView = ({
                 headerRender={getHeader}
                 dateCellRender={getCell}
                 monthCellRender={getMonth}
-                onSelect={e => console.log('on select---->', e)}
             />
             <EventDetails
                 itemToDetail={itemToDetail}
                 close={closeModalDetail}
                 visible={openModalDetail}
-                showModalForm={showModalForm}
+                showModalForm={()=> fetchAction(showModalForm)}
+                showModalDelete={()=> fetchAction(showModalDelete)}
             />
             <EventForm
                 visible={openModalForm}
                 close={closeModalForm}
                 itemToEdit={itemToEdit}
-                actionForm={actionUpdate}
+                actionForm={e => actionUpdate(itemToEdit.id, e)}
+            />
+            <ListItems
+                title='¿Estas seguro de eliminar este evento?'
+                visible={openModalDelete}
+                itemsToList={itemToDelete}
+                close={closeModalDelete}
+                keyTitle='all_data_response, summary'
+                actionConfirm={()=> actionDelete(itemToDelete?.at(-1).id)}
             />
         </>
     )

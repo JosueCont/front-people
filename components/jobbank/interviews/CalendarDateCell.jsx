@@ -20,7 +20,7 @@ const CalendarDateCell = ({
 
     const eventsDay = useMemo(()=>{
         if(!current || list_interviews.results?.length <= 0) return [];
-        const validate = item => formatDate(item.event?.start?.dateTime) == current;
+        const validate = item => formatDate(item?.all_data_response?.start?.dateTime) == current;
         let exist = list_interviews.results?.some(validate);
         if(!exist) return [];
         return list_interviews.results?.filter(validate);
@@ -34,8 +34,8 @@ const CalendarDateCell = ({
                         key={idx}
                         onClick={()=> showModalDetails(item)}
                     >
-                        <p>{item.event?.summary}</p>
-                        <span>{moment(item.event?.start?.dateTime).format('hh:mm a')}</span>
+                        <p>{item?.all_data_response?.summary}</p>
+                        <span>{moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')}</span>
                     </EventInfo>
                 // </EventSkeleton>
             ))}

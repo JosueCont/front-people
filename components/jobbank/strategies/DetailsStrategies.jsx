@@ -41,7 +41,7 @@ const DetailsStrategies = ({
     const [infoStrategy, setInfoStrategy] = useState({});
     const [fetching, setFetching] = useState(false);
     const [optionVacant, setOptionVacant] = useState([]);
-    const { createData, setValuesForm } = useInfoStrategy({setOptionVacant});
+    const { createData, setValuesForm } = useInfoStrategy();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -60,6 +60,10 @@ const DetailsStrategies = ({
         if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
             formStrategies.resetFields();
             let allValues = setValuesForm(infoStrategy);
+            if(Object.keys(allValues.vacant).length > 0){
+                setOptionVacant([allValues.vacant])
+                allValues.vacant = allValues.vacant.id;
+            }
             formStrategies.setFieldsValue(allValues);
         }
     },[infoStrategy])

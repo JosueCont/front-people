@@ -21,7 +21,8 @@ const EventDetails = ({
     visible = false,
     itemToDetail = {},
     close = () =>{},
-    showModalForm = ()=>{}
+    showModalForm = ()=>{},
+    showModalDelete = ()=>{}
 }) => {
 
     const format = 'dddd, DD MMMM ⋅ hh:mm';
@@ -29,8 +30,8 @@ const EventDetails = ({
     const getDescription = () =>{
         let size = Object.keys(itemToDetail).length;
         if(size <=0) return null;
-        let start = itemToDetail.event?.start?.dateTime;
-        let end = itemToDetail.event?.end?.dateTime;
+        let start = itemToDetail?.all_data_response?.start?.dateTime;
+        let end = itemToDetail?.all_data_response?.end?.dateTime;
         if(!start || !end) return null;
         let init = moment(start).locale('es-mx').format(format);
         let finish = moment(end).format('hh:mm a');
@@ -38,7 +39,7 @@ const EventDetails = ({
     }
 
     const getGuests = () =>{
-        let persons = itemToDetail.event?.attendees ?? [];
+        let persons = itemToDetail?.all_data_response?.attendees ?? [];
         return persons?.reduce((acc, row) =>{
             if(!row.organizer) return [...acc, row];
             return [row, ...acc];
@@ -46,12 +47,15 @@ const EventDetails = ({
     }
 
     const getStatistics = () =>{
-        let persons = itemToDetail.event?.attendees ?? [];
+        let persons = itemToDetail?.all_data_response?.attendees ?? [];
         let results = persons.reduce((acc, row) => {
             let status = acc[row.responseStatus] ?? 0;
             return {...acc, [row.responseStatus]: status + 1};
         }, { accepted: 0, declined: 0, needsAction: 0});
-        return `${results['accepted']} sí, ${results['declined']} no, ${results['needsAction']} pendiente(s)`;
+        let accepted = results['accepted'] > 0 ? results['accepted'] + ' sí, ' : '';
+        let declined = results['declined'] > 0 ? results['declined'] + ' no, ' : '';
+        let needs = results['needsAction'] > 0 ? results['needsAction'] + ' pendiente(s)' : '';
+        return `${accepted}${declined}${needs}`;
     }
 
     const {
@@ -68,7 +72,7 @@ const EventDetails = ({
 
     const copyLink = () =>{
         copyContent({
-            text: itemToDetail.event?.hangoutLink,
+            text: itemToDetail?.all_data_response?.hangoutLink,
             onSucces: ()=> message.success('Link copiado'),
             onError: ()=> message.error('Link no copiado')
         })
@@ -99,10 +103,10 @@ const EventDetails = ({
             <ContentVertical gap={16}>
                 <ContentVertical>
                     <ContentBetween>
-                        <EvenTitle>{itemToDetail.event?.summary}</EvenTitle>
+                        <EvenTitle>{itemToDetail.all_data_response?.summary}</EvenTitle>
                         <ContentNormal gap={8}>
                             <BtnOption onClick={()=> showModalForm()}><MdOutlineEdit/></BtnOption>
-                            <BtnOption><VscTrash/></BtnOption>
+                            <BtnOption onClick={()=> showModalDelete()}><VscTrash/></BtnOption>
                             <BtnOption onClick={()=> close()}><MdOutlineClear/></BtnOption>
                         </ContentNormal>
                     </ContentBetween>
@@ -110,17 +114,17 @@ const EventDetails = ({
                 </ContentVertical>
                 <ContentVertical>
                     <ContentBetween>
-                        <BtnLink target='_blank' href={itemToDetail.event?.hangoutLink}>
+                        <BtnLink target='_blank' href={itemToDetail?.all_data_response?.hangoutLink}>
                             Unirse con Google Meet
                         </BtnLink>
                         <BtnOption onClick={()=> copyLink()}><VscCopy/></BtnOption>
                     </ContentBetween>
-                    <TextDescripcion>{itemToDetail.event?.hangoutLink}</TextDescripcion>
+                    <TextDescripcion>{itemToDetail?.all_data_response?.hangoutLink}</TextDescripcion>
                 </ContentVertical>
                 <ContentBetween>
                     <ContentVertical>
                         <TextDescripcion isTitle>
-                            Invitados ({itemToDetail.event?.attendees?.length ?? 0})
+                            Invitados ({itemToDetail?.all_data_response?.attendees?.length ?? 0})
                         </TextDescripcion>
                         <TextDescripcion>{statistics}</TextDescripcion>
                     </ContentVertical>

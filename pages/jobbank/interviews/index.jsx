@@ -7,18 +7,25 @@ import TableInterviews from '../../../components/jobbank/interviews/TableIntervi
 import {
     getCandidatesOptions,
     getVacanciesOptions,
-    getInterviews
+    getInterviews,
+    getSelectionOpions,
+    getClientsOptions,
+    getConnectionsOptions
 } from '../../../redux/jobBankDuck';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
+import { InterviewProvider } from '../../../components/jobbank/context/InterviewContext';
 
 const index = ({
     currentNode,
     getCandidatesOptions,
     getVacanciesOptions,
     getPersonsCompany,
-    getInterviews
+    getInterviews,
+    getSelectionOpions,
+    getClientsOptions,
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
@@ -28,7 +35,9 @@ const index = ({
             getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
-            getInterviews(currentNode.id);
+            getSelectionOpions(currentNode.id);
+            getClientsOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&code=GC');
         }
     },[currentNode])
 
@@ -45,8 +54,10 @@ const index = ({
             pageKey='jb_interviews'
             extraBread={[{name: 'Entrevistas'}]}
         >
-            <SearchInterviews/>
-            <TableInterviews/>
+            <InterviewProvider>
+                <SearchInterviews/>
+                <TableInterviews/>
+            </InterviewProvider>
         </MainIndexJB>
     )
 }
@@ -62,6 +73,9 @@ export default connect(
         getCandidatesOptions,
         getVacanciesOptions,
         getPersonsCompany,
-        getInterviews
+        getInterviews,
+        getSelectionOpions,
+        getClientsOptions,
+        getConnectionsOptions
     }
 )(withAuthSync(index));

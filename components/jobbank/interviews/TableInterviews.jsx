@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, Select, Dropdown, Button, Menu, message } from 'antd';
 import { useRouter } from 'next/router';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { getInterviews } from '../../../redux/jobBankDuck';
 import { getFullName } from '../../../utils/functions';
-import { optionsStatusInterviews } from '../../../utils/constant';
+// import { optionsStatusInterviews } from '../../../utils/constant';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
     CalendarOutlined,
-    UserAddOutlined
+    UserAddOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
 import ListItems from '../../../common/ListItems';
+import EventDetails from './EventDetails';
+import EventForm from './EventForm';
+import { InterviewContext } from '../context/InterviewContext';
 
 const TableInterviews = ({
     currentNode,
@@ -27,30 +31,46 @@ const TableInterviews = ({
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [itemToDetail, setItemToDetail] = useState({});
+    const [itemToEdit, setItemToEdit] = useState({});
     const [openModalDelete, setOpenModalDelete] = useState(false);
-
-    const actionDelete = async () =>{
-        let ids = itemsToDelete.map(item => item.id);
-        try {
-            getInterviews(currentNode.id, jobbank_filters, jobbank_page);
-            let msg = ids.length > 1 ? 'Entrevistas eliminadas' : 'Entrevista eliminada';
-            message.success(msg);
-        } catch (e) {
-            console.log(e)
-            let msg = ids.length > 1 ? 'Entrevistas no eliminadas' : 'Entrevista no eliminada';
-            message.error(msg);
-        }
-    }
+    const [openModalDetail, setOpenModalDetail] = useState(false);
+    const [openModalEdit, setOpenModalEdit] = useState(false);
+    const { actionDelete, actionUpdate, fetchAction } = useContext(InterviewContext);
 
     const openModalRemove = (item) =>{
-        setItemsToDelete([item])
+        let selected = item ?? itemToDetail;
+        setItemsToDelete([selected])
         setOpenModalDelete(true)
+        closeModalDetail()
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
+    }
+
+    const showModalDetail = (item) =>{
+        setOpenModalDetail(true)
+        setItemToDetail(item)
+    }
+
+    const closeModalDetail = () =>{
+        setOpenModalDetail(false)
+        setItemToDetail({})
+    }
+
+    const showModalEdit = (item) =>{
+        let selected = item ?? itemToDetail;
+        setOpenModalEdit(true)
+        setItemToEdit(selected)
+        closeModalDetail()
+    }
+
+    const closeModalEdit = () =>{
+        setOpenModalEdit(false)
+        setItemToEdit({})
     }
 
     const openModalManyDelete = () =>{
@@ -105,17 +125,14 @@ const TableInterviews = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/interviews/edit`,
-                        query: {...router.query, id: item.id }
-                    })}
+                    onClick={()=> fetchAction(()=> showModalEdit(item))}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    onClick={()=> fetchAction(()=> openModalRemove(item))}
                 >
                     Eliminar
                 </Menu.Item>
@@ -127,66 +144,79 @@ const TableInterviews = ({
         {
             title: 'Reclutador',
             ellipsis: true,
-            render: (item) =>{
-                return(
-                    <>{getFullName(item.recruiter)}</>
-                )
-            }
+            dataIndex: ['process_selection','vacant','strategy','recruiter','full_name'],
+            key: ['process_selection','vacant','strategy','recruiter','full_name']
+        },
+        {
+            title: 'Cliente',
+            ellipsis: true,
+            dataIndex: ['process_selection','vacant','customer','name'],
+            key: ['process_selection','vacant','customer','name']
+        },
+        {
+            title: 'Vacante',
+            ellipsis: true,
+            dataIndex: ['process_selection','vacant','job_position'],
+            key: ['process_selection','vacant', 'job_position']
         },
         {
             title: 'Candidato',
             ellipsis: true,
             render: (item) =>{
+                let obj = item?.process_selection?.candidate;
                 return(
-                    <>{item.candidate?.fisrt_name} {item.candidate?.last_name}</>
+                    <>{obj?.fisrt_name} {obj?.last_name}</>
                 )
             }
         },
+        // {
+        //     title: 'Fecha',
+        //     dataIndex: 'date',
+        //     key: 'date'
+        // },
+        // {
+        //     title: 'Hora',
+        //     render: (item) =>{
+        //         return(
+        //             <>{item.date ? moment().format('hh:mm a') : null}</>
+        //         )
+        //     }
+        // },
         {
-            title: 'Vacante',
-            ellipsis: true,
-            dataIndex: ['vacant','job_position'],
-            key: ['vacant', 'job_position']
-        },
-        {
-            title: 'Fecha',
-            dataIndex: 'date',
-            key: 'date'
-        },
-        {
-            title: 'Hora',
+            title: 'Detalle',
             render: (item) =>{
                 return(
-                    <>{item.date ? moment().format('hh:mm a') : null}</>
+                    <EyeOutlined onClick={()=> showModalDetail(item)}/>
                 )
             }
         },
+        // {
+        //     title: 'Estatus',
+        //     render: (item) =>{
+        //         return(
+        //             <Select
+        //                 size='small'
+        //                 style={{width: 150}}
+        //                 defaultValue={item.status}
+        //                 value={item.status}
+        //                 placeholder='Estatus'
+        //                 options={optionsStatusInterviews}
+        //                 // onChange={(e) => onChangeStatus(e, item)}
+        //             />
+        //         )
+        //     }
+        // },
         {
-            title: 'Estatus',
-            render: (item) =>{
-                return(
-                    <Select
-                        size='small'
-                        style={{width: 150}}
-                        defaultValue={item.status}
-                        value={item.status}
-                        placeholder='Estatus'
-                        options={optionsStatusInterviews}
-                        // onChange={(e) => onChangeStatus(e, item)}
-                    />
-                )
-            }
-        },
-        {
-            title: ()=>{
-                return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            // title: ()=>{
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render:(item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -208,7 +238,7 @@ const TableInterviews = ({
                 loading={load_interviews}
                 dataSource={list_interviews.results}
                 onChange={onChangePage}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 locale={{
                     emptyText: load_interviews
                         ? 'Cargando...'
@@ -223,15 +253,28 @@ const TableInterviews = ({
             />
             <ListItems
                 title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estas entrevistas?'
-                    : '¿Estás seguro de eliminar esta entrevista?'
+                    ? '¿Estás seguro de eliminar estos eventos?'
+                    : '¿Estás seguro de eliminar este evento?'
                 }
                 visible={openModalDelete}
-                keyTitle='candidate, fisrt_name'
-                keyDescription='vacant, job_position'
+                keyTitle='process_selection, candidate, fisrt_name'
+                keyDescription='process_selection, vacant, job_position'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
-                actionConfirm={actionDelete}
+                actionConfirm={()=> actionDelete(itemsToDelete.at(-1).id)}
+            />
+            <EventDetails
+                visible={openModalDetail}
+                close={closeModalDetail}
+                itemToDetail={itemToDetail}
+                showModalForm={()=> fetchAction(showModalEdit)}
+                showModalDelete={()=> fetchAction(openModalRemove)}
+            />
+            <EventForm
+                visible={openModalEdit}
+                itemToEdit={itemToEdit}
+                close={closeModalEdit}
+                actionForm={e=> actionUpdate(itemToEdit.id, e)}
             />
         </>
     )

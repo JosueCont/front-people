@@ -5,20 +5,27 @@ import SearchInterviews from '../../../components/jobbank/interviews/SearchInter
 import {
     getCandidatesOptions,
     getVacanciesOptions,
-    getInterviews
+    getInterviews,
+    getSelectionOpions,
+    getClientsOptions,
+    getConnectionsOptions
 } from '../../../redux/jobBankDuck';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
+import { InterviewProvider } from '../../../components/jobbank/context/InterviewContext';
 
 const calendar = ({
     currentNode,
     getCandidatesOptions,
     getVacanciesOptions,
     getPersonsCompany,
-    getInterviews
+    getInterviews,
+    getSelectionOpions,
+    getClientsOptions,
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
@@ -28,7 +35,9 @@ const calendar = ({
             getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
-            getInterviews(currentNode.id);
+            getSelectionOpions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&code=GC');
+            getClientsOptions(currentNode.id)
         }
     },[currentNode])
 
@@ -48,8 +57,10 @@ const calendar = ({
                 {name: 'Calendario'}
             ]}
         >
-            <SearchInterviews isCalendar={true}/>
-            <CalendarView/>
+            <InterviewProvider>
+                <SearchInterviews isCalendar={true}/>
+                <CalendarView/>
+            </InterviewProvider>
         </MainIndexJB>
     )
 }
@@ -65,6 +76,9 @@ export default connect(
         getCandidatesOptions,
         getVacanciesOptions,
         getPersonsCompany,
-        getInterviews
+        getInterviews,
+        getSelectionOpions,
+        getClientsOptions,
+        getConnectionsOptions
     }
 )(withAuthSync(calendar));

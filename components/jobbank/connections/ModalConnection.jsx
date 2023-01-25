@@ -62,7 +62,7 @@ const ModalConnection = ({
             formConnection.setFieldsValue(obj);
             return;
         };
-        if(value == 'WP'){
+        if(['WP','GC'].includes(value)){
             formConnection.setFieldsValue({
                 name_file: null
             });
@@ -74,9 +74,8 @@ const ModalConnection = ({
             formConnection.setFieldsValue(obj);
             return;
         };
-        let type = ['FB','IG','LK'].includes(value);
         obj['name'] = result.label;
-        obj['conection_type'] = type ? 1 : 2;
+        obj['conection_type'] = result.type;
         formConnection.setFieldsValue(obj);
     }
 
@@ -165,7 +164,7 @@ const ModalConnection = ({
                             tooltip={`Esta imagen será utilizada en caso de que
                             no se haya seleccionado ninguna antes de realizar la publicación.`}
                             isRequired={code == 'IG'}
-                            disabled={code == 'WP'}
+                            disabled={['WP','GC'].includes(code)}
                             dependencies={['code']}
                             setFile={setFileImg}
                             typeFile={['png','jpg','jpeg']}

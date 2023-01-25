@@ -133,9 +133,6 @@ const SearchPreselection = ({
                         </div>
                     </Col>
                     <Col span={24}>
-
-                    </Col>
-                    <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
