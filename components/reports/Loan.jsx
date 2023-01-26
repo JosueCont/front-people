@@ -10,6 +10,7 @@ import {
   Button,
   Typography,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
@@ -19,6 +20,7 @@ import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import esES from "antd/lib/locale/es_ES";
 
 const LoanReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -438,18 +440,21 @@ const LoanReport = ({ permissions, ...props }) => {
       </Row>
       <Row style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
+          <ConfigProvider locale={esES}>
           <Table
             scroll={{ x: 1300 }}
             loading={loading}
             dataSource={lendingList}
             key="tableHolidays"
             columns={columns}
+            pagination={{showSizeChanger:true}}
             locale={{
               emptyText: loading
                 ? "Cargando..."
                 : "No se encontraron resultados.",
             }}
           ></Table>
+          </ConfigProvider>
         </Col>
       </Row>
     </>

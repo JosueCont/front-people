@@ -9,6 +9,7 @@ import {
   DatePicker,
   Button,
   Typography,
+  ConfigProvider
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
@@ -22,6 +23,7 @@ import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import esES from "antd/lib/locale/es_ES";
 
 const CollaboratorsReport = ({ permissions, ...props }) => {
   const route = useRouter();
@@ -312,18 +314,21 @@ const CollaboratorsReport = ({ permissions, ...props }) => {
       </Row>
       <Row style={{ paddingRight: 20 }}>
         <Col span={24} style={{ marginTop: 20 }}>
+          <ConfigProvider locale={esES}>
           <Table
             dataSource={collaboratorList}
             key="tableHolidays"
             columns={columns}
             loading={loading}
             scroll={{ x: 400 }}
+            pagination={{showSizeChanger:true}}
             locale={{
               emptyText: loading
                 ? "Cargando..."
                 : "No se encontraron resultados.",
             }}
           ></Table>
+          </ConfigProvider>
         </Col>
       </Row>
     </>

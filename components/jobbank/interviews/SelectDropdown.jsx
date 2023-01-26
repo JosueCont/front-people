@@ -8,12 +8,13 @@ import { ContentBetween } from './StyledInterview';
 import { RiCloseLine } from 'react-icons/ri';
 
 const SelectDropdown = ({
-    keyName = 'email_read'
+    keyName = 'email_read',
+    items = [],
+    setItems
 }) => {
 
     const inputRef = useRef(null);
     const [formSelectDropdown] = Form.useForm();
-    const [items, setItems] = useState([]);
 
     const onFinish = (values) =>{
         let newList = [...items, values[keyName]];

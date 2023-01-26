@@ -10,6 +10,7 @@ import {
   Form,
   Select,
   DatePicker,
+  ConfigProvider
 } from "antd";
 import { SearchOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
@@ -27,6 +28,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const Releases = ({ permissions, ...props }) => {
   /* React */
@@ -279,11 +281,13 @@ const Releases = ({ permissions, ...props }) => {
 
             <Row key="row2">
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   dataSource={list}
                   key="releases_table"
                   className={"mainTable"}
                   loading={loading}
+                  pagination={{showSizeChanger:true}}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
@@ -336,6 +340,7 @@ const Releases = ({ permissions, ...props }) => {
                     )}
                   />
                 </Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </>

@@ -44,7 +44,7 @@ const AddOrEditCandidates = ({
             getSectors(currentNode.id);
             getListStates(currentNode.id);
             getScholarship(currentNode.id);
-            getConnectionsOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&conection_type=2');
         }
     },[currentNode])
 

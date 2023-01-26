@@ -10,6 +10,7 @@ import {
   Input,
   message,
   Modal,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -26,6 +27,7 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import esES from "antd/lib/locale/es_ES";
 
 const Relationship = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -253,15 +255,18 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
         </Form>
       )}
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={colRelationShip}
           dataSource={props.cat_relationship}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

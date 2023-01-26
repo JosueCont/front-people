@@ -9,6 +9,7 @@ import {
   Form,
   Select,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import {
   EditOutlined,
@@ -24,6 +25,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const Holidays = (props) => {
   const { Column } = Table;
@@ -235,10 +237,12 @@ const Holidays = (props) => {
             </div>
             <Row justify="end">
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   dataSource={holidayList}
                   key="tableHolidays"
                   loading={loading}
+                  pagination={{showSizeChanger:true}}
                   scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
@@ -316,6 +320,7 @@ const Holidays = (props) => {
                     )}
                   />
                 </Table>
+                </ConfigProvider> 
               </Col>
             </Row>
           </>

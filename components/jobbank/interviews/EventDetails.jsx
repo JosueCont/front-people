@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Modal, Avatar } from 'antd';
+import { Modal, Avatar, Tooltip, message } from 'antd';
 import { MdOutlineEdit, MdOutlineClear } from 'react-icons/md';
 import { VscTrash, VscCopy } from 'react-icons/vsc';
 import { BiCheck } from 'react-icons/bi';
@@ -15,35 +15,80 @@ import {
     TextDescripcion,
     StatusGuest
 } from './StyledInterview';
+import { copyContent } from '../../../utils/functions';
 
 const EventDetails = ({
     visible = false,
     itemToDetail = {},
-    close = () =>{}
+    close = () =>{},
+    showModalForm = ()=>{},
+    showModalDelete = ()=>{}
 }) => {
 
     const format = 'dddd, DD MMMM ⋅ hh:mm';
 
-    const description = useMemo(()=>{
+    const getDescription = () =>{
         let size = Object.keys(itemToDetail).length;
         if(size <=0) return null;
-        let start = itemToDetail.start?.dateTime;
-        let end = itemToDetail.end?.dateTime;
+        let start = itemToDetail?.all_data_response?.start?.dateTime;
+        let end = itemToDetail?.all_data_response?.end?.dateTime;
         if(!start || !end) return null;
         let init = moment(start).locale('es-mx').format(format);
         let finish = moment(end).format('hh:mm a');
         return `${init} - ${finish}`;
-    },[itemToDetail])
+    }
 
-    const guests = useMemo(()=>{
-        let persons = itemToDetail.attendees ?? [];
+    const getGuests = () =>{
+        let persons = itemToDetail?.all_data_response?.attendees ?? [];
         return persons?.reduce((acc, row) =>{
             if(!row.organizer) return [...acc, row];
-            let list = [...acc];
-            list.unshift(row);
-            return list;
-        },[])
+            return [row, ...acc];
+        }, [])
+    }
+
+    const getStatistics = () =>{
+        let persons = itemToDetail?.all_data_response?.attendees ?? [];
+        let results = persons.reduce((acc, row) => {
+            let status = acc[row.responseStatus] ?? 0;
+            return {...acc, [row.responseStatus]: status + 1};
+        }, { accepted: 0, declined: 0, needsAction: 0});
+        let accepted = results['accepted'] > 0 ? results['accepted'] + ' sí, ' : '';
+        let declined = results['declined'] > 0 ? results['declined'] + ' no, ' : '';
+        let needs = results['needsAction'] > 0 ? results['needsAction'] + ' pendiente(s)' : '';
+        return `${accepted}${declined}${needs}`;
+    }
+
+    const {
+        guests,
+        description,
+        statistics
+     } = useMemo(()=>{
+        return {
+            guests: getGuests(),
+            description: getDescription(),
+            statistics: getStatistics(),
+        }
     },[itemToDetail])
+
+    const copyLink = () =>{
+        copyContent({
+            text: itemToDetail?.all_data_response?.hangoutLink,
+            onSucces: ()=> message.success('Link copiado'),
+            onError: ()=> message.error('Link no copiado')
+        })
+    }
+
+    const copyEmails = () =>{
+        let results = guests.reduce((acc, row) =>{
+            if(!row.displayName) return acc;
+            return acc += ` ${row.displayName} <${row.email}>,`;
+        }, '');
+        copyContent({
+            text: results,
+            onSucces: ()=> message.success('Correos copiados'),
+            onError: ()=> message.error('Correos no copiados')
+        })
+    }
 
     return (
         <Modal
@@ -58,10 +103,10 @@ const EventDetails = ({
             <ContentVertical gap={16}>
                 <ContentVertical>
                     <ContentBetween>
-                        <EvenTitle>{itemToDetail.summary}</EvenTitle>
+                        <EvenTitle>{itemToDetail.all_data_response?.summary}</EvenTitle>
                         <ContentNormal gap={8}>
-                            <BtnOption><MdOutlineEdit/></BtnOption>
-                            <BtnOption><VscTrash/></BtnOption>
+                            <BtnOption onClick={()=> showModalForm()}><MdOutlineEdit/></BtnOption>
+                            <BtnOption onClick={()=> showModalDelete()}><VscTrash/></BtnOption>
                             <BtnOption onClick={()=> close()}><MdOutlineClear/></BtnOption>
                         </ContentNormal>
                     </ContentBetween>
@@ -69,38 +114,48 @@ const EventDetails = ({
                 </ContentVertical>
                 <ContentVertical>
                     <ContentBetween>
-                        <BtnLink target='_blank' href={itemToDetail.hangoutLink}>
+                        <BtnLink target='_blank' href={itemToDetail?.all_data_response?.hangoutLink}>
                             Unirse con Google Meet
                         </BtnLink>
-                        <BtnOption><VscCopy/></BtnOption>
+                        <BtnOption onClick={()=> copyLink()}><VscCopy/></BtnOption>
                     </ContentBetween>
-                    <TextDescripcion>{itemToDetail.hangoutLink}</TextDescripcion>
+                    <TextDescripcion>{itemToDetail?.all_data_response?.hangoutLink}</TextDescripcion>
                 </ContentVertical>
-                <TextDescripcion isTitle>Invitados ({itemToDetail.attendees?.length ?? 0})</TextDescripcion>
-                <ContentVertical gap={8} style={{maxHeight: '300px', overflow: 'auto'}} className='scroll-bar'>
-                    {guests.map((record, idx) => (
-                        <ContentNormal gap={16} key={idx}>
-                            <div style={{position: 'relative'}}>
-                                <Avatar>
-                                    {record.displayName
-                                        ? record.displayName[0].toUpperCase()
-                                        : record.email[0].toUpperCase()
-                                    }
-                                </Avatar>
-                                {['accepted','needsAction'].includes(record.responseStatus) ? (
-                                    <StatusGuest status={record.responseStatus}>
-                                        {record.responseStatus == 'accepted' && (<BiCheck/>)}
-                                        {record.responseStatus == 'needsAction' && (<RiCloseLine/>)}
-                                    </StatusGuest>
-                                ) : null}
-                            </div>
-                            <ContentVertical>
-                                <TextDescripcion isTitle>{record.displayName ?? record.email}</TextDescripcion>
-                                <TextDescripcion>{record.organizer ? 'Organizador': record.optional ? 'Opcional' : 'Pendiente'}</TextDescripcion>
-                            </ContentVertical>
-                        </ContentNormal>
-                    ))}
-                </ContentVertical>
+                <ContentBetween>
+                    <ContentVertical>
+                        <TextDescripcion isTitle>
+                            Invitados ({itemToDetail?.all_data_response?.attendees?.length ?? 0})
+                        </TextDescripcion>
+                        <TextDescripcion>{statistics}</TextDescripcion>
+                    </ContentVertical>
+                    <BtnOption onClick={()=> copyEmails()}><VscCopy/></BtnOption>
+                </ContentBetween>
+                {guests.length > 0 && (
+                    <ContentVertical gap={8} style={{maxHeight: '300px', overflow: 'auto'}} className='scroll-bar'>
+                        {guests.map((record, idx) => (
+                            <ContentNormal gap={16} key={idx}>
+                                <div style={{position: 'relative'}}>
+                                    <Avatar style={{backgroundColor: '#455a64'}}>
+                                        {record.displayName
+                                            ? record.displayName[0].toUpperCase()
+                                            : record.email[0].toUpperCase()
+                                        }
+                                    </Avatar>
+                                    {['accepted','declined'].includes(record.responseStatus) ? (
+                                        <StatusGuest status={record.responseStatus}>
+                                            {record.responseStatus == 'accepted' && (<BiCheck/>)}
+                                            {record.responseStatus == 'declined' && (<RiCloseLine/>)}
+                                        </StatusGuest>
+                                    ) : null}
+                                </div>
+                                <ContentVertical>
+                                    <TextDescripcion isTitle>{record.displayName ?? record.email}</TextDescripcion>
+                                    <TextDescripcion>{record.organizer ? 'Organizador': record.optional ? 'Opcional' : null}</TextDescripcion>
+                                </ContentVertical>
+                            </ContentNormal>
+                        ))}
+                    </ContentVertical>
+                )}
             </ContentVertical>
         </Modal>
     )

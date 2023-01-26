@@ -235,12 +235,12 @@ const TableVacancies = ({
     {
         title: 'Estrategia',
         render: (item) =>{
-            return item.has_estrategy ? (
+            return item.has_strategy ? (
                 <a
                     style={{color: '#1890ff'}}
                     onClick={()=> router.push({
                         pathname: '/jobbank/strategies/edit',
-                        query: {id: item.has_estrategy}
+                        query: {id: item.has_strategy}
                     })}
                 >
                     Ver estrategia

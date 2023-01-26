@@ -382,7 +382,7 @@ const TabFeatures = ({
           </Select>
         </Form.Item>
       </Col>
-      <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'flex'}}>
+      {/* <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'flex'}}>
         <div className='turn_rotative'>
           <Form.Item
             name='vo_bo'
@@ -393,7 +393,7 @@ const TabFeatures = ({
           </Form.Item>
           <label>Visto bueno</label>
         </div>
-      </Col>
+      </Col> */}
       <Col span={24}>
         <Form.Item
           name='description'

@@ -3,7 +3,7 @@ import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
-import { optionsStatusInterviews } from '../../../utils/constant';
+// import { optionsStatusInterviews } from '../../../utils/constant';
 
 const FiltersInterviews = ({
     visible,
@@ -127,7 +127,7 @@ const FiltersInterviews = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             name='status'
                             label='Estatus'
@@ -141,7 +141,7 @@ const FiltersInterviews = ({
                                 options={optionsStatusInterviews}
                             />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

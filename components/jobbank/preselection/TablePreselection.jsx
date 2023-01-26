@@ -73,6 +73,21 @@ const TablePreselection = ({
         setItemsSelected([])
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/preselection',
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
+    }
+
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -175,7 +190,7 @@ const TablePreselection = ({
             title: 'Compatibilidad',
             render: (item) => {
                 return(
-                    <span>{item.compatibility ?  `${item.compatibility} %` : null}</span>
+                    <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
                 )
             }
         },
@@ -208,7 +223,7 @@ const TablePreselection = ({
                 rowKey='id'
                 size='small'
                 columns={columns}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 loading={load_preselection}
                 dataSource={list_preselection.results}
                 onChange={onChangePage}

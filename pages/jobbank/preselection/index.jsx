@@ -24,14 +24,13 @@ const index = ({
 }) =>{
 
     const router = useRouter();
-    const [currentFilters, setCurrentFilters] = useState('')
 
     useEffect(()=>{
         if(currentNode){
             getMainCategories(currentNode.id)
             getListStates(currentNode.id)
             getScholarship(currentNode.id)
-            getVacanciesOptions(currentNode.id)
+            getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
         }
     },[currentNode])
 
@@ -50,7 +49,7 @@ const index = ({
             extraBread={[{name: 'Preseleción'}]}
         >
             <SearchPreselection/>
-            <TablePreselection currentFilters={currentFilters}/>
+            <TablePreselection/>
         </MainIndexJB>
     )
 }
