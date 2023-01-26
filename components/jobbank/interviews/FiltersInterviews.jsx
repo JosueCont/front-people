@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
+import { Button, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
-// import { optionsStatusInterviews } from '../../../utils/constant';
 
 const FiltersInterviews = ({
     visible,
@@ -25,7 +24,6 @@ const FiltersInterviews = ({
     const [loading, setLoading] = useState(false);
 
     const onFinishSearch = (values) =>{
-        if(values.date) values.date = values.date?.format('DD-MM-YYYY');
         setLoading(true)
         setTimeout(()=>{
             close()
@@ -114,34 +112,6 @@ const FiltersInterviews = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='date'
-                            label='Fecha'
-                        >
-                            <DatePicker
-                                style={{width: '100%'}}
-                                placeholder='Seleccionar una fecha'
-                                format='DD-MM-YYYY'
-                                inputReadOnly
-                            />
-                        </Form.Item>
-                    </Col>
-                    {/* <Col span={12}>
-                        <Form.Item
-                            name='status'
-                            label='Estatus'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='label'
-                                options={optionsStatusInterviews}
-                            />
-                        </Form.Item>
-                    </Col> */}
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

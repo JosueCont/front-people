@@ -77,8 +77,9 @@ const EventForm = ({
         setMsgHTML(itemToEdit.description);
         formEvent.setFieldsValue(values);
         setEditorState(template);
-        let recruiter = itemToEdit?.process_selection?.vacant?.strategy?.recruiter;
-        let exist = recruiter ? [recruiter.email] : [];
+        // let recruiter = itemToEdit?.process_selection?.vacant?.strategy?.recruiter;
+        let candidate = itemToEdit.process_selection?.candidate?.email;
+        let exist = candidate ? [candidate] : [];
         const filter_ = item => !exist.some(record => valueToFilter(record) == valueToFilter(item.email));
         let emails = itemToEdit.attendees_list?.filter(filter_).map(item => item.email);
         setEmailsDefault(exist)
@@ -99,8 +100,9 @@ const EventForm = ({
             return;
         }
         let client = result.vacant?.customer?.id;
-        let recruiter = result?.process_selection?.vacant?.strategy?.recruiter;
-        let email = recruiter ? [recruiter.email] : [];
+        // let recruiter = result?.vacant?.strategy?.recruiter;
+        let candidate = result?.candidate?.email;
+        let email = candidate ? [candidate] : [];
         formEvent.setFieldsValue({client})
         setEmailsDefault(email)
     },[process])
@@ -116,23 +118,20 @@ const EventForm = ({
         setEditorState(value)
     }
 
-    // const getDefaultEmails = (id) =>{
-    //     let emails = [];
-    //     const find_ = item => item.id == id;
-    //     let result = list_selection_options.find(find_);
-    //     let candidate = result?.candidate?.email ?? null;
-    //     let emailsClient = result?.vacant?.customer?.contact_list;
-    //     let valid = Array.isArray(emailsClient) && emailsClient.length > 0;
-    //     let selected = emailsClient?.at(-1)?.email;
-    //     if(valid) emails.push(selected);
-    //     if(candidate) emails.push(candidate);
-    //     return emails;
-    // }
+    const getDefaultEmails = (id) =>{
+        const find_ = item => item.id == id;
+        let result = list_selection_options.find(find_);
+        if(!result) return '';
+        let recruiter = result?.vacant?.strategy?.recruiter;
+        return recruiter ? recruiter.email : '';
+    }
 
     const createData = (values) =>{
         let obj = Object.assign({}, values);
         const map_ = item => ({email:item});
-        obj.attendees_list = attendees.concat(emailsDefault).map(map_);;
+        let recruiter = getDefaultEmails(values.process);
+        let list = [...attendees, ...emailsDefault, recruiter];
+        obj.attendees_list = list.map(map_);;
         obj.description = msgHTML;
         if(obj.date && obj.hour){
             let day = obj.date?.format(formatDate);
@@ -332,8 +331,10 @@ const EventForm = ({
                     <Col span={24} >
                         <Form.Item label='Invitados'>
                             <SelectDropdown
-                                items={attendees.concat(emailsDefault)}
-                                setItems={setAttendees}
+                                newList={attendees}
+                                defaultList={emailsDefault}
+                                setNewList={setAttendees}
+                                setDefaultList={setEmailsDefault}
                             />
                         </Form.Item>
                     </Col>
