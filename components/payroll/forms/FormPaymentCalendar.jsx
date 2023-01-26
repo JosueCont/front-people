@@ -122,6 +122,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     if (idPaymentCalendar) {
       getPaymentCalendar();
       setLocked(true);
+    }else{
+      formPaymentCalendar.setFieldsValue({
+        belongs_to: BelongTo[0].value,
+      });
     }
   }, [idPaymentCalendar]);
 

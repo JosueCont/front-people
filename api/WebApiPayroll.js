@@ -314,6 +314,22 @@ class WebApiPayroll {
       data
     );
   }
+
+  static getPeople({id,search}){
+    return WebApi.ApisType(
+      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search :''}`,
+      'get'
+    );
+  }
+
+  static addMassiveCalendar(data){
+    console.log(data)
+    return WebApi.ApisType(
+      "/payroll/assign-calendar-employees",
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPayroll;
