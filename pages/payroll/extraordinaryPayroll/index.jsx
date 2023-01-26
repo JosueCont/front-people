@@ -291,10 +291,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     })
       .then((response) => {
         message.success(messageDeleteSuccess);
-        sendCalculateExtraordinaryPayrroll({
-          payment_period: periodSelected.id,
-          movement_type: movementType,
-        });
+        setTimeout(() => {
+          sendCalculateExtraordinaryPayrroll({
+            payment_period: periodSelected.id,
+            movement_type: movementType,
+          });
+        }, 2000);
       })
       .catch((error) => {
         setLoading(false);
@@ -589,8 +591,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getPaymentCalendars = async (value) => {
     await WebApiPayroll.getPaymentCalendar(value)
       .then((response) => {
-        setPaymentCalendars(response.data.results);
-        let calendars = response.data.results.map((item, index) => {
+        const calendarFilter = response.data.results.filter(
+          (item) => item.perception_type.code != "046"
+        );
+        setPaymentCalendars(calendarFilter);
+        let calendars = calendarFilter.map((item, index) => {
           return { key: item.id, label: item.name, value: item.id };
         });
         setOptionsPaymentCalendars(calendars);
@@ -897,7 +902,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           else setNextStep(false);
         return;
       }
-      if (step == 1) {
+      if (step == 1 && consolidated) {
         setStep(step + 1);
         if (!isOpen) setPreviuosStep(false);
         return;
@@ -1559,7 +1564,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       )} */}
                     </Row>
                   </div>
-                  {previousStep && (
+                  {previousStep && step > 0 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(false)}
