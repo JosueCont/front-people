@@ -290,13 +290,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       person_id: item.person.id,
     })
       .then((response) => {
-        message.success(messageDeleteSuccess);
-        setTimeout(() => {
-          sendCalculateExtraordinaryPayrroll({
-            payment_period: periodSelected.id,
-            movement_type: movementType,
-          });
-        }, 2000);
+        const result = resetStateViews();
+        if (result) {
+          message.success(messageDeleteSuccess);
+          setTimeout(() => {
+            sendCalculateExtraordinaryPayrroll({
+              payment_period: periodSelected.id,
+              movement_type: movementType,
+            });
+          }, 2000);
+        }
       })
       .catch((error) => {
         setLoading(false);
