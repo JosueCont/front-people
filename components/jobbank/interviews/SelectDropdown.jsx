@@ -4,20 +4,23 @@ import { Button, Divider, Input, Select, Space, Form } from 'antd';
 import { useRef, useState } from 'react';
 import { ruleEmail, ruleRequired } from '../../../utils/rules';
 import { valueToFilter } from '../../../utils/functions';
-import { ContentBetween } from './StyledInterview';
+import { OptionJB, ContentBetween } from './StyledInterview';
 import { RiCloseLine } from 'react-icons/ri';
 
 const SelectDropdown = ({
-    keyName = 'email_read'
+    keyName = 'email_read',
+    newList = [],
+    defaultList = [],
+    setNewList,
+    setDefaultList
 }) => {
 
     const inputRef = useRef(null);
     const [formSelectDropdown] = Form.useForm();
-    const [items, setItems] = useState([]);
 
     const onFinish = (values) =>{
-        let newList = [...items, values[keyName]];
-        setItems(newList);
+        let list = [...newList, values[keyName]];
+        setNewList(list);
         formSelectDropdown.resetFields();
     }
 
@@ -30,24 +33,27 @@ const SelectDropdown = ({
         }
     })
 
-    const deleteItem = (e, index) => {
+    const deleteNew = (e, index) => {
         e.stopPropagation();
         e.preventDefault();
-        let newList = [...items];
-        newList.splice(index, 1);
-        setItems(newList);
+        let list = [...newList];
+        list.splice(index, 1);
+        setNewList(list);
+    };
+
+    const deleteDefault = (e, index) => {
+        e.stopPropagation();
+        e.preventDefault();
+        let list = [...defaultList];
+        list.splice(index, 1);
+        setDefaultList(list);
     };
 
     const optionsSelected = useMemo(()=>{
-        if(!Array.isArray(items) || items.length <=0) return [];
-        return items.map(row => ({value: row, key: row, label: row}));
-    },[items])
-
-    // const onDeselect = (value) =>{
-    //     const filter_ = row => valueToFilter(row) !== valueToFilter(value);
-    //     let newList = [...items].filter(filter_);
-    //     setItems(newList);
-    // }
+        let list = [...newList, ...defaultList];
+        if(!Array.isArray(list) || list.length <=0) return [];
+        return list.map(row => ({value: row, key: row, label: row}));
+    },[newList, defaultList])
 
     const dropdownRender = (menu) =>(
         <>
@@ -89,16 +95,27 @@ const SelectDropdown = ({
             dropdownRender={dropdownRender}
             value={optionsSelected}
         >
-            {items.map((item, index) => (
-                <Select.Option value={item} key={item}>
+            {defaultList.map((item, index) => (
+                <OptionJB value={item} key={item}>
                     <ContentBetween>
-                        {item}
+                        <span>{item}</span>
                         <RiCloseLine
                             style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
-                            onClick={e => deleteItem(e, index)}
+                            onClick={e => deleteDefault(e, index)}
                         />
                     </ContentBetween>
-                </Select.Option>
+                </OptionJB>
+            ))}
+            {newList.map((item, index) => (
+                <OptionJB value={item} key={item}>
+                    <ContentBetween>
+                        <span>{item}</span>
+                        <RiCloseLine
+                            style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
+                            onClick={e => deleteNew(e, index)}
+                        />
+                    </ContentBetween>
+                </OptionJB>
             ))}
         </Select>
     )

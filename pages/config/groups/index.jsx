@@ -9,6 +9,7 @@ import {
   Modal,
   Tooltip,
   message,
+  ConfigProvider
 } from "antd";
 import {
   SearchOutlined,
@@ -30,6 +31,7 @@ import { getProfileGroups } from "../../../redux/catalogCompany";
 import {FormattedMessage} from "react-intl";
 import { getFiltersJB } from "../../../utils/functions";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
@@ -235,11 +237,12 @@ useEffect(()=>{
             </Col>
           </Row>
         </div>
-
+        <ConfigProvider locale={esES}>
         <Table
           className={"mainTable"}
           columns={columns}
           dataSource={groups}
+          pagination={{showSizeChanger:true}}
           loading={loading}
           locale={{
             emptyText: loading
@@ -247,6 +250,7 @@ useEffect(()=>{
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </div>
     </MainLayout>
   );

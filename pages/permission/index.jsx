@@ -9,6 +9,7 @@ import {
   Form,
   Tooltip,
   Select,
+  ConfigProvider
 } from "antd";
 import {
   EditOutlined,
@@ -24,6 +25,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const Permission = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -202,9 +204,11 @@ const Permission = ({ permissions, ...props }) => {
             </div>
             <Row justify="end">
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   dataSource={permissionsList}
                   key="tableHolidays"
+                  pagination={{showSizeChanger:true}}
                   loading={loading}
                   scroll={{ x: 350 }}
                   locale={{
@@ -273,6 +277,7 @@ const Permission = ({ permissions, ...props }) => {
                     )}
                   />
                 </Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </>

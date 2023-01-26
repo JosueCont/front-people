@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Dropdown, Button, Menu, message } from 'antd';
 import { connect } from 'react-redux';
-import { getPreselection } from '../../../redux/jobBankDuck';
+import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
 import {
     EllipsisOutlined,
@@ -21,7 +21,8 @@ const TablePreselection = ({
     jobbank_page,
     list_preselection,
     load_preselection,
-    getPreselection
+    getPreselection,
+    getVacanciesOptions
 }) => {
 
     const router = useRouter();
@@ -38,6 +39,7 @@ const TablePreselection = ({
                 vacant: router.query?.vacant
             });
             getPreselection(currentNode.id, jobbank_filters, jobbank_page)
+            getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
             console.log(e)
@@ -71,6 +73,21 @@ const TablePreselection = ({
         setOpenModal(false)
         setItemsKeys([])
         setItemsSelected([])
+    }
+
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/preselection',
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
     }
 
     const rowSelection = {
@@ -157,7 +174,7 @@ const TablePreselection = ({
             title: 'Compatibilidad',
             render: (item) => {
                 return(
-                    <span>{item.compatibility ?  `${item.compatibility} %` : null}</span>
+                    <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
                 )
             }
         },
@@ -190,9 +207,10 @@ const TablePreselection = ({
                 rowKey='id'
                 size='small'
                 columns={columns}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 loading={load_preselection}
                 dataSource={list_preselection.results}
+                onChange={onChangePage}
                 locale={{
                     emptyText: load_preselection
                         ? 'Cargando...'
@@ -230,4 +248,9 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, { getPreselection })(TablePreselection);
+export default connect(
+    mapState, {
+        getPreselection,
+        getVacanciesOptions
+    }
+)(TablePreselection);

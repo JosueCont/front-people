@@ -334,7 +334,7 @@ const DetailsVacancies = ({
                                     <TabFeatures
                                         formVacancies={formVacancies}
                                         disabledClient={router.query?.client}
-                                        hasEstrategy={infoVacant?.has_estrategy}
+                                        hasEstrategy={infoVacant?.has_strategy}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -356,7 +356,7 @@ const DetailsVacancies = ({
                                     <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
-                            <Tabs.TabPane
+                            {/* <Tabs.TabPane
                                 tab='Evaluaciones'
                                 forceRender
                                 key='4'
@@ -372,7 +372,7 @@ const DetailsVacancies = ({
                                         changeEvaluationstatus = {changeEvaluationstatus}
                                     />
                                 </Spin>
-                            </Tabs.TabPane>
+                            </Tabs.TabPane> */}
                             {/* <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender

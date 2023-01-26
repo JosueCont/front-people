@@ -11,6 +11,7 @@ import {
   Input,
   message,
   Modal,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -27,6 +28,7 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import esES from "antd/lib/locale/es_ES";
 
 const PersonTypes = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -253,15 +255,18 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
         </Form>
       )}
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={colTypePerson}
           dataSource={props.cat_person_type}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

@@ -531,6 +531,20 @@ export const optionsDomainLang = [
   { value: 4, key: 4, label: "Experto" },
 ];
 
+export const optionsTypeConnection = [
+  {value: 1, key: 1, label: 'Publicaciones'},
+  {value: 2, key: 2, label: 'Notificaciones'},
+  {value: 3, key: 3, label: 'Agenda'}
+];
+
+export const optionsConnectionsJB = [
+  {label: 'Facebook', value: 'FB', key: 'FB', type: 1},
+  {label: 'Instagram', value: 'IG', key: 'IG', type: 1},
+  {label: 'Linkedin', value: 'LK', key: 'LK', type: 1, disabled: true},
+  {label: 'WhatsApp', value: 'WP', key: 'WP', type: 2},
+  {label: 'Google Calendar', value: 'GC', key: 'GC', type: 3}
+];
+
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
 
