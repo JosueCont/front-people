@@ -935,6 +935,10 @@ div.drop-picker-jb{
     box-shadow: none!important;
 }
 
+div.drop-time-picker-jb{
+    border: none!important;
+}
+
 input.input-jb,
 div.input-jb,
 input.input-jb:hover,

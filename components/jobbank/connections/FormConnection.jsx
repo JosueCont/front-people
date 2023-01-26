@@ -44,7 +44,7 @@ const FormConnection = () => {
                     <Select
                         allowClear
                         showSearch
-                        // disabled
+                        disabled
                         placeholder='Seleccionar una opción'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='label'
