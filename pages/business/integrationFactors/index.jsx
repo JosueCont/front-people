@@ -98,7 +98,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
 
   const integrationFactorsColumns = [
     {
-      title: "Descripción",
+      title: "Nombre",
       key: "description",
       dataIndex: 'description',
       render: (description) => description || ""

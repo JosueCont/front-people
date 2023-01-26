@@ -84,7 +84,7 @@ const SearchInterviews = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                {!isCalendar ? (
+                                {/* {!isCalendar ? (
                                     <Tooltip title='Ver calendario'>
                                         <Button onClick={()=> router.push({
                                             pathname: `${urlDefault}/calendar`,
@@ -102,7 +102,7 @@ const SearchInterviews = ({
                                             <ArrowLeftOutlined/>
                                         </Button>
                                     </Tooltip>
-                                )}
+                                )} */}
                                 <BtnLoginGC/>
                                 <Button onClick={()=> fetchAction(()=> setOpenModalForm(true))}>
                                     Agregar
@@ -114,6 +114,7 @@ const SearchInterviews = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            deleteKeys={['month','year']}
                         />
                     </Col>  
                 </Row>

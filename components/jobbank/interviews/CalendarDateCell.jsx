@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import moment from 'moment';
 import { Skeleton } from 'antd';
 import { useSelector } from 'react-redux';
-import { ContentVertical, EventInfo, EventSkeleton } from './StyledInterview';
+import { ContentVertical, EventInfo } from './StyledInterview';
 
 const CalendarDateCell = ({
     date,
@@ -29,15 +29,12 @@ const CalendarDateCell = ({
     return eventsDay.length > 0 ? (
         <ContentVertical gap={4}>
             {eventsDay.map((item, idx) => (
-                // <EventSkeleton key={idx+"_"}>
-                    <EventInfo
-                        key={idx}
-                        onClick={()=> showModalDetails(item)}
-                    >
-                        <p>{item?.all_data_response?.summary}</p>
-                        <span>{moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')}</span>
-                    </EventInfo>
-                // </EventSkeleton>
+                <EventInfo
+                    key={idx}
+                    onClick={()=> showModalDetails(item)}
+                >
+                    <p>{moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')} {item?.all_data_response?.summary}</p>
+                </EventInfo>
             ))}
         </ContentVertical>
     ) : null;

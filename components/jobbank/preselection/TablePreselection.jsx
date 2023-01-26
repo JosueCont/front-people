@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Dropdown, Button, Menu, message } from 'antd';
 import { connect } from 'react-redux';
-import { getPreselection } from '../../../redux/jobBankDuck';
+import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
 import {
     EllipsisOutlined,
@@ -21,7 +21,8 @@ const TablePreselection = ({
     jobbank_page,
     list_preselection,
     load_preselection,
-    getPreselection
+    getPreselection,
+    getVacanciesOptions
 }) => {
 
     const router = useRouter();
@@ -38,6 +39,7 @@ const TablePreselection = ({
                 vacant: router.query?.vacant
             });
             getPreselection(currentNode.id, jobbank_filters, jobbank_page)
+            getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
             console.log(e)
@@ -246,4 +248,9 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, { getPreselection })(TablePreselection);
+export default connect(
+    mapState, {
+        getPreselection,
+        getVacanciesOptions
+    }
+)(TablePreselection);
