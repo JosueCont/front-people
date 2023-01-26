@@ -382,16 +382,19 @@ const ModalConceptsPayroll = ({
       footer={
         <Col>
           <Space>
-            <Button
-                size="large"
-                htmlType="button"
-                onClick={() => {
-                  resetperceptionsDeductions()
-                }}
-                style={{ paddingLeft: 50, paddingRight: 50 }}
-            >
-              Reiniciar conceptos
-            </Button>
+            {
+              !extraOrdinary && <Button
+                    size="large"
+                    htmlType="button"
+                    onClick={() => {
+                      resetperceptionsDeductions()
+                    }}
+                    style={{ paddingLeft: 50, paddingRight: 50 }}
+                >
+                  Reiniciar conceptos
+                </Button>
+            }
+
             <Button
               size="large"
               htmlType="button"
