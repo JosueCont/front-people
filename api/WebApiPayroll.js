@@ -178,6 +178,14 @@ class WebApiPayroll {
     );
   }
 
+  static deleteCfdiCalculated(data) {
+    return WebApi.ApisType(
+      `payroll/consolidated_payroll/delete_cfdi_calculated/`,
+      "post",
+      data
+    );
+  }
+
   static cancelCfdi(data) {
     return WebApi.ApisType(
       `payroll/cfdi_multi_emitter_facturama/cancel_cfdi/`,
