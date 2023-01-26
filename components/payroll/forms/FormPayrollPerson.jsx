@@ -54,7 +54,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const [payrollPerson, setPayrollPerson] = useState(null);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
   const [confirm, setConfirm] = useState(false);
-  const [calendar,setCalendar] = useState(null);
+  const [calendar, setCalendar] = useState(null);
 
   useEffect(() => {
     if (props.catPerception) {
@@ -120,7 +120,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (props.catBanks) {
       let data = props.catBanks.map((item) => {
         return {
-          label:`${item.name} / ${item?.description}` ,
+          label: `${item.name} / ${item?.description}`,
           value: item.id,
         };
       });
@@ -140,7 +140,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       .then((response) => {
         if (response.data) {
           let item = response.data;
-          setPayrollPerson(item)
+          setPayrollPerson(item);
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type ? item.contract_type.id : null,
@@ -160,7 +160,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
               : null,
             payment_period: item.payment_period,
             perception_type: item.perception_type,
-            last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : null,
+            last_day_paid: item.last_day_paid
+              ? moment(item.last_day_paid)
+              : null,
             integrated_daily_salary: item.integrated_daily_salary,
             apply_monthly_adjustment: item.apply_monthly_adjustment,
             tag: item?.tag,
@@ -172,8 +174,8 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
-            if(item.daily_salary){
-              setDailySalaryDisabled(true)
+            if (item.daily_salary) {
+              setDailySalaryDisabled(true);
             }
           }
         }
@@ -190,15 +192,19 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       let response = await WebApiPayroll.getPaymentCalendar(node);
       setCalendars(response.data.results);
       let payment_calendar;
-      if(fil){
-        payment_calendar = response.data.results.reduce((acc,{id,name,perception_type}) => {
-          perception_type.description.includes('Asimilados'.toLowerCase()) && acc.push({value:id,label:name});
-          return acc;
-        },[]);
-      }else{
-        payment_calendar= response.data.results.map((a) => {
+      if (fil) {
+        payment_calendar = response.data.results.reduce(
+          (acc, { id, name, perception_type }) => {
+            perception_type.description.includes("Asimilados".toLowerCase()) &&
+              acc.push({ value: id, label: name });
+            return acc;
+          },
+          []
+        );
+      } else {
+        payment_calendar = response.data.results.map((a) => {
           return { value: a.id, label: a.name };
-        }); 
+        });
       }
       setPaymentCalendars(payment_calendar);
     } catch (error) {
@@ -286,30 +292,29 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   useEffect(() => {}, [bankDisabled]);
 
   const formFinish = (value) => {
-    if(calendar != formPayrollPerson.getFieldsValue(true).payment_calendar){
+    if (calendar != formPayrollPerson.getFieldsValue(true).payment_calendar) {
       setConfirm(true);
-    }else{
-      confirmDataForm()
+    } else {
+      confirmDataForm();
     }
   };
-  
+
   const confirmDataForm = () => {
     let value = formPayrollPerson.getFieldsValue();
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
-      value.last_day_paid = moment(lastDayPaid).format('YYYY-MM-DD');
+      value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);
     } else {
       value.person = person.id;
-      value.last_day_paid = moment(lastDayPaid).format('YYYY-MM-DD');
+      value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
       value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
     }
-
-  }
+  };
 
   const columns = [
     {
@@ -386,13 +391,15 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   };
 
   const handleValuesChange = (changedValues) => {
-    if(changedValues.hiring_regime_type){
-      const type = props.catHiringRegime.filter(item => item.id === changedValues.hiring_regime_type);
-      const asimilado = type[0].description.includes('Asimilados');
-      formPayrollPerson.setFieldsValue({payment_calendar:null})
+    if (changedValues.hiring_regime_type) {
+      const type = props.catHiringRegime.filter(
+        (item) => item.id === changedValues.hiring_regime_type
+      );
+      const asimilado = type[0].description.includes("Asimilados");
+      formPayrollPerson.setFieldsValue({ payment_calendar: null });
       getPaymentCalendar(asimilado);
     }
-  }
+  };
 
   return (
     <>
@@ -441,8 +448,10 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Select
                       options={contrctsType}
                       showSearch
-                      filterOption={(input, option) =>                        
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
                       }
                       allowClear
                     />
@@ -458,7 +467,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       options={hiringRegimeType}
                       showSearch
                       filterOption={(input, option) =>
-                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
                       }
                       notFoundContent={"No se encontraron resultados."}
                       allowClear
@@ -475,7 +486,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       options={typeworkingday}
                       showSearch
                       filterOption={(input, option) =>
-                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
                       }
                       notFoundContent={"No se encontraron resultados."}
                       allowClear
@@ -501,10 +514,12 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     rules={[ruleRequired]}
                   >
                     <Select
-                      options={_.orderBy(PaymentTypes, ['label'],['asc'])}
+                      options={_.orderBy(PaymentTypes, ["label"], ["asc"])}
                       showSearch
                       filterOption={(input, option) =>
-                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
                       }
                       notFoundContent={"No se encontraron resultados."}
                       onChange={changePaymentType}
@@ -519,7 +534,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                         options={banks}
                         showSearch
                         filterOption={(input, option) =>
-                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
                         }
                         notFoundContent={"No se encontraron resultados."}
                         allowClear
@@ -556,8 +573,8 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChangeLastDayPaid}
-                      format={"YYYY-MM-DD"}                      
-                      locale = { locale }
+                      format={"YYYY-MM-DD"}
+                      locale={locale}
                     />
                   </Form.Item>
                 </Col>
@@ -586,7 +603,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                         label="Calendario de pago"
                       >
                         <Select
-                          options={_.orderBy(paymentCalendars, ['description'],['asc'])}
+                          options={_.orderBy(
+                            paymentCalendars,
+                            ["description"],
+                            ["asc"]
+                          )}
                           notFoundContent={"No se encontraron resultados."}
                           onChange={selectCalendar}
                           disabled={disabledCalendar}
@@ -622,11 +643,16 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
               </Row>
               <Row justify={"end"}>
                 <Form.Item>
-                  <ButtonUpdateSalaryMovement onRefresh={()=>{
-                    getPayrollPerson();
-                    getPaymentCalendar();
-                    PayrollList();
-                  }} person={person} node={person.node} payrollPerson={payrollPerson} />
+                  <ButtonUpdateSalaryMovement
+                    onRefresh={() => {
+                      getPayrollPerson();
+                      getPaymentCalendar();
+                      PayrollList();
+                    }}
+                    person={person}
+                    node={person.node}
+                    payrollPerson={payrollPerson}
+                  />
                 </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
@@ -648,18 +674,18 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
           />
         )}
       </Spin>
-        <GenericModal
-          visible={confirm}
-          setVisible={(value) => setConfirm(value)}
-          title="Confirmación"
-          titleActionButton="Aceptar"
-          width="50%"
-          children='Estas punto de hacer un cambio de calendario de la nómina de esta persona'
-          actionButton={() => {
-            confirmDataForm();
-            setConfirm(false)
-          }}
-        ></GenericModal>
+      <GenericModal
+        visible={confirm}
+        setVisible={(value) => setConfirm(value)}
+        title="Confirmación"
+        titleActionButton="Aceptar"
+        width="50%"
+        children="Estas punto de hacer un cambio de calendario de la nómina de esta persona"
+        actionButton={() => {
+          confirmDataForm();
+          setConfirm(false);
+        }}
+      ></GenericModal>
     </>
   );
 };
