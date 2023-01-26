@@ -71,12 +71,14 @@ const CalendarView = ({
 
     return (
         <>
-            <Calendar
-                className='calendar-interviews'
-                headerRender={getHeader}
-                dateCellRender={getCell}
-                monthCellRender={getMonth}
-            />
+            <Spin spinning={load_interviews}>
+                <Calendar
+                    className='calendar-interviews'
+                    headerRender={getHeader}
+                    dateCellRender={getCell}
+                    monthCellRender={getMonth}
+                />
+            </Spin>
             <EventDetails
                 itemToDetail={itemToDetail}
                 close={closeModalDetail}

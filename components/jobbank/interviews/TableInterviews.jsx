@@ -5,7 +5,6 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { getInterviews } from '../../../redux/jobBankDuck';
 import { getFullName } from '../../../utils/functions';
-// import { optionsStatusInterviews } from '../../../utils/constant';
 import {
     EllipsisOutlined,
     DeleteOutlined,
@@ -169,19 +168,6 @@ const TableInterviews = ({
                 )
             }
         },
-        // {
-        //     title: 'Fecha',
-        //     dataIndex: 'date',
-        //     key: 'date'
-        // },
-        // {
-        //     title: 'Hora',
-        //     render: (item) =>{
-        //         return(
-        //             <>{item.date ? moment().format('hh:mm a') : null}</>
-        //         )
-        //     }
-        // },
         {
             title: 'Detalle',
             render: (item) =>{
@@ -190,32 +176,7 @@ const TableInterviews = ({
                 )
             }
         },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <Select
-        //                 size='small'
-        //                 style={{width: 150}}
-        //                 defaultValue={item.status}
-        //                 value={item.status}
-        //                 placeholder='Estatus'
-        //                 options={optionsStatusInterviews}
-        //                 // onChange={(e) => onChangeStatus(e, item)}
-        //             />
-        //         )
-        //     }
-        // },
         {
-            // title: ()=>{
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size='small'>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
             title: 'Acciones',
             render:(item) =>{
                 return(

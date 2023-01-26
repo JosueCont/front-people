@@ -1,14 +1,8 @@
 import styled from '@emotion/styled';
-import { Drawer } from 'antd';
+import { Drawer, Select } from 'antd';
 import { keyframes, css } from '@emotion/core';
 
-const skeletonbg1 = 'rgba(130, 130, 130, 0.2)';
-const skeletonbg2 = 'linear-gradient(to right, rgba(130, 130, 130, 0.2) 8%, rgba(130, 130, 130, 0.3) 18%, rgba(130, 130, 130, 0.2) 33%)';
-
-const slowEvent = keyframes`
-    0% {background-position: -468px 0 }
-    100% { background-position: 468px 0 }
-`;
+const { Option } = Select;
 
 export const ContentVertical = styled.div`
     display: flex;
@@ -97,14 +91,6 @@ export const StatusGuest = styled.span`
     }
 `;
 
-export const EventSkeleton = styled.div`
-    background-color: red;
-    /* border-radius: 2px;
-    background: rgba(130, 130, 130, 0.2);
-    background: -webkit-gradient(linear, left top, right top, color-stop(8%, rgba(130, 130, 130, 0.2)), color-stop(18%, rgba(130, 130, 130, 0.3)), color-stop(33%, rgba(130, 130, 130, 0.2)));
-    background: linear-gradient(to right, rgba(130, 130, 130, 0.2) 8%, rgba(130, 130, 130, 0.3) 18%, rgba(130, 130, 130, 0.2) 33%);
-    animation: ${slowEvent} 2s alternate ease-out; */
-`;
 
 export const EventInfo = styled(ContentBetween)`
     width: 100%;
@@ -115,17 +101,13 @@ export const EventInfo = styled(ContentBetween)`
     border: 1px solid rgb(3, 155, 229);
     transition: 0.5s background-color ease;
     & p {
-        color: #ffff;
-        width: 65%;
-        max-width: 65%;
+        font-size: 12px;
+        width: 100%;
+        max-width: 100%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
         margin-bottom: 0px;
-        color:rgb(3, 155, 229);
-        transition: 0.5s color ease;
-    }
-    & span{
         color:rgb(3, 155, 229);
         transition: 0.5s color ease;
     }
@@ -134,5 +116,14 @@ export const EventInfo = styled(ContentBetween)`
         & p, span{
             color: #ffff;
         }
+    }
+`;
+
+export const OptionJB = styled(Option)`
+    background-color: red;
+    & .ant-select-item-option-content{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 `;
