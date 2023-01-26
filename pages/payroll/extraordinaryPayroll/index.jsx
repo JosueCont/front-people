@@ -33,6 +33,7 @@ import {
   CheckCircleOutlined,
   StopOutlined,
   FileExcelOutlined,
+  ClearOutlined,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -43,6 +44,7 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
 import {
+  messageDeleteSuccess,
   messageError,
   messageSaveSuccess,
   messageSendSuccess,
@@ -202,7 +204,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadResignationLetter(item.person.id);
+                    downloadResignationLetter({
+                      person_id: item.person.id,
+                      payment_period_id: periodSelected.id,
+                      receipt_type: "Extraordinaria",
+                    });
                   }}
                 >
                   <FileExcelOutlined />
@@ -243,24 +249,58 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
-              <Button
-                size="small"
-                onClick={() => {
-                  setPersonId(item?.person?.id),
-                    console.log(
-                      "🚀 ~ file: index.jsx:175 ~ ExtraordinaryPayroll ~ listPersons",
-                      item.person.id
-                    ),
-                    setModalVisible(true);
-                }}
-              >
-                <PlusOutlined />
-              </Button>
+              <Tooltip placement="top" title="Agrrgar conceptos">
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setPersonId(item?.person?.id), setModalVisible(true);
+                  }}
+                >
+                  <PlusOutlined />
+                </Button>
+              </Tooltip>
             )}
           </>
         ),
     },
+    {
+      title: "",
+      className: "cursor_pointer",
+      render: (item) => (
+        <>
+          {consolidated && item.payroll_cfdi_person && (
+            <div>
+              <Tooltip placement="top" title="Limpiar cálculo">
+                <Button size="small" onClick={() => removeCfdiPerson(item)}>
+                  <ClearOutlined style={{ color: "white" }} />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ),
+    },
   ];
+
+  const removeCfdiPerson = (item) => {
+    setLoading(true);
+    WebApiPayroll.deleteCfdiCalculated({
+      consolidated: item.payroll_cfdi_person.consolidated_payroll,
+      payroll_cfdi: item.payroll_cfdi_person.id,
+      person_id: item.person.id,
+    })
+      .then((response) => {
+        message.success(messageDeleteSuccess);
+        sendCalculateExtraordinaryPayrroll({
+          payment_period: periodSelected.id,
+          movement_type: movementType,
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error(messageError);
+      });
+  };
 
   const downloadResignationLetter = async (id) => {
     try {
@@ -809,17 +849,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    console.log("🚀 ~ file: index.jsx:623 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
   };
 
   const validatedStatusPayroll = (data) => {
-    console.log(
-      "🚀 ~ file: index.jsx:625 ~ validatedStatusPayroll ~ data",
-      data
-    );
-
     if (data === null || data === undefined) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
@@ -1134,7 +1168,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
-  const openPayroll = (type) => {
+  const openPayroll = () => {
     let data = {
       payment_period: periodSelected.id,
       movement_type: movementType,
@@ -1384,7 +1418,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                 description:
                                   "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
                                 type_alert: "warning",
-                                action: () => openPayroll(1),
+                                action: () => openPayroll(),
                                 title_action_button: "Abrir nómina",
                                 components: (
                                   <>

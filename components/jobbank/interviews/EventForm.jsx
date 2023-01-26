@@ -14,19 +14,22 @@ import {
 } from 'antd';
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
-import locale from 'antd/lib/date-picker/locale/es_ES';
-import { ruleEmail, ruleRequired, ruleURL } from '../../../utils/rules';
+import { ruleEmail, ruleRequired, ruleURL, ruleWhiteSpace } from '../../../utils/rules';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import SelectDropdown from './SelectDropdown';
 
 import { convertToRaw, EditorState, Modifierv, convertFromHTML, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import moment from 'moment-timezone';
+import { valueToFilter } from '../../../utils/functions';
 const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
 
 const EventForm = ({
     visible = false,
-    itemToDetail = {}
+    itemToEdit = {},
+    close = ()=>{},
+    actionForm = ()=>{}
 }) => {
 
     const {
@@ -38,15 +41,75 @@ const EventForm = ({
         load_vacancies_options,
         list_vacancies_options,
         load_candidates_options,
-        list_candidates_options
+        list_candidates_options,
+        list_selection_options,
+        load_selection_options
     } = useSelector(state => state.jobBankStore);
     const [formEvent] = Form.useForm();
     const [msgHTML, setMsgHTML] = useState("<p></p>");
+    const [loading, setLoading] = useState(false);
+    const [attendees, setAttendees] = useState([]);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [emailsDefault, setEmailsDefault] = useState([]);
+    const process = Form.useWatch('process', formEvent);
+    const formatDate = 'DD-MM-YYYY';
+    const formatTime = 'hh:mm a';
+    const formatTz = `${formatDate} ${formatTime}`;
+    const conferentData ={
+        "createRequest": {
+            "requestId": "demobolsa",
+            "conferenceSolutionKey": {
+                "type": "hangoutsMeet"
+            }
+        }
+    };
+
+    useEffect(()=>{
+        let size = Object.keys(itemToEdit).length;
+        if(size <= 0) return;
+        let values = {name_event: itemToEdit.name_event};
+        values.process = itemToEdit.process;
+        values.date = moment(itemToEdit.start);
+        values.hour = [moment(itemToEdit.start),moment(itemToEdit.end)];
+        let convert = convertFromHTML(itemToEdit.description);
+        let htmlMsg = ContentState.createFromBlockArray(convert);
+        let template = EditorState.createWithContent(htmlMsg);
+        setMsgHTML(itemToEdit.description);
+        formEvent.setFieldsValue(values);
+        setEditorState(template);
+        // let recruiter = itemToEdit?.process_selection?.vacant?.strategy?.recruiter;
+        let candidate = itemToEdit.process_selection?.candidate?.email;
+        let exist = candidate ? [candidate] : [];
+        const filter_ = item => !exist.some(record => valueToFilter(record) == valueToFilter(item.email));
+        let emails = itemToEdit.attendees_list?.filter(filter_).map(item => item.email);
+        setEmailsDefault(exist)
+        setAttendees(emails)
+    },[itemToEdit])
+
+    useEffect(()=>{
+        if(!process){
+            formEvent.setFieldsValue({client: null});
+            setEmailsDefault([])
+            return;
+        }
+        const find_ = item => item.id == process;
+        let result = list_selection_options.find(find_);
+        if(!result){
+            formEvent.setFieldsValue({client: null});
+            setEmailsDefault([])
+            return;
+        }
+        let client = result.vacant?.customer?.id;
+        // let recruiter = result?.vacant?.strategy?.recruiter;
+        let candidate = result?.candidate?.email;
+        let email = candidate ? [candidate] : [];
+        formEvent.setFieldsValue({client})
+        setEmailsDefault(email)
+    },[process])
 
     const isEdit = useMemo(()=>{
-        return Object.keys(itemToDetail).length > 0;
-    },[itemToDetail])
+        return Object.keys(itemToEdit).length > 0;
+    },[itemToEdit])
 
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
@@ -55,30 +118,80 @@ const EventForm = ({
         setEditorState(value)
     }
 
+    const getDefaultEmails = (id) =>{
+        const find_ = item => item.id == id;
+        let result = list_selection_options.find(find_);
+        if(!result) return '';
+        let recruiter = result?.vacant?.strategy?.recruiter;
+        return recruiter ? recruiter.email : '';
+    }
+
+    const createData = (values) =>{
+        let obj = Object.assign({}, values);
+        const map_ = item => ({email:item});
+        let recruiter = getDefaultEmails(values.process);
+        let list = [...attendees, ...emailsDefault, recruiter];
+        obj.attendees_list = list.map(map_);;
+        obj.description = msgHTML;
+        if(obj.date && obj.hour){
+            let day = obj.date?.format(formatDate);
+            let start = obj.hour[0]?.format(formatTime);
+            let end = obj.hour[1]?.format(formatTime);
+            obj.start = moment(`${day} ${start}`, formatTz).tz('America/Merida').format();
+            obj.end = moment(`${day} ${end}`, formatTz).tz('America/Merida').format();
+            delete obj.date;
+            delete obj.hour;
+        }
+        if(obj.client) delete obj.client;
+        return obj;
+    }
+
+    const onFinish = (values) =>{
+        let body = createData(values);
+        body.conferentData = conferentData;
+        setLoading(true)
+        setTimeout(()=>{
+            setLoading(false)
+            actionForm(body)
+            onClose()
+        },2000)
+    }
+
+    const onClose = () =>{
+        formEvent.resetFields()
+        setAttendees([])
+        setEditorState(EditorState.createEmpty())
+        setMsgHTML('<p></p>')
+        close()
+    }
+
     return (
         <Drawer
-            title={isEdit ? 'Actualiar evento' : 'Agregar evento'}
+            title={isEdit ? 'Actualizar evento' : 'Agregar evento'}
             width={600}
             visible={visible}
             placement='right'
             maskClosable={false}
             keyboard={false}
+            closable={!loading}
+            onClose={()=> onClose()}
             extra={
                 <Space>
-                    <Button>Cancelar</Button>
-                    <Button type="primary">
+                    <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
+                    <Button loading={loading} form='form-event' htmlType='submit'>
                         {isEdit ? 'Actualizar' : 'Guardar'}
                     </Button>
                 </Space>
-              }
+            }
         >
             <Form
                 form={formEvent}
                 layout='vertical'
-                // onFinish={onFinish}
+                onFinish={onFinish}
+                id='form-event'
             >
                 <Row gutter={[24,0]}>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Form.Item
                             name='process'
                             label='Proceso de selección'
@@ -88,18 +201,31 @@ const EventForm = ({
                                 allowClear
                                 showSearch
                                 className='select-jb'
-                                disabled={load_clients_options}
-                                loading={load_clients_options}
-                                placeholder='Seleccionar un cliente'
+                                disabled={load_selection_options}
+                                loading={load_selection_options}
+                                placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item => (
-                                    <Select.Option value={item.email} key={item.email}>
-                                        {item.name}
+                                {list_selection_options.length > 0 && list_selection_options.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.vacant?.job_position} / {item.candidate?.fisrt_name} {item.candidate?.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='name_event'
+                            label='Nombre'
+                            rules={[ruleRequired, ruleWhiteSpace]}
+                        >
+                            <Input
+                                allowClear
+                                maxLength={50}
+                                placeholder='Escriba un nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -118,14 +244,14 @@ const EventForm = ({
                                 optionFilterProp='children'
                             >
                                 {list_clients_options.length > 0 && list_clients_options.map(item => (
-                                    <Select.Option value={item.email} key={item.email}>
+                                    <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             name='vacant'
                             label='Vacante'
@@ -147,8 +273,8 @@ const EventForm = ({
                                 ))}
                             </Select>
                         </Form.Item>
-                    </Col>
-                    <Col span={12}>
+                    </Col> */}
+                    {/* <Col span={12}>
                         <Form.Item
                             name='candidate'
                             label='Candidato'
@@ -164,49 +290,52 @@ const EventForm = ({
                                 optionFilterProp='children'
                             >
                                 {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.email} key={item.email}>
                                         {item.fisrt_name} {item.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item
-                            name='date'
                             label='Fecha'
+                            name='date'
                             rules={[ruleRequired]}
                         >
                             <DatePicker
-                                style={{width: '100%'}}
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 inputReadOnly
                                 className='picker-jb'
+                                style={{width:'100%'}}
                                 dropdownClassName='drop-picker-jb'
-                                locale={locale}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
+                            label='Horario'
                             name='hour'
-                            label='Hora'
                             rules={[ruleRequired]}
                         >
-                            <TimePicker
-                                inputReadOnly
+                            <TimePicker.RangePicker
                                 className='picker-jb'
-                                popupClassName='drop-picker-jb'
-                                placeholder='Seleccionar una hora'
+                                popupClassName='drop-time-picker-jb'
+                                placeholder={['Empieza','Termina']}
+                                use12Hours={true}
                                 format='hh:mm a'
-                                style={{width: '100%'}}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={24} >
                         <Form.Item label='Invitados'>
-                            <SelectDropdown/>
+                            <SelectDropdown
+                                newList={attendees}
+                                defaultList={emailsDefault}
+                                setNewList={setAttendees}
+                                setDefaultList={setEmailsDefault}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24}>

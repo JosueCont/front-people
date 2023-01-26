@@ -150,8 +150,8 @@ const TableStrategies = ({
     const columns = [
         {
             title: 'Cliente',
-            dataIndex: ['vacant','customer','name'],
-            key: ['vacant','customer','name'],
+            dataIndex: ['customer','name'],
+            key: ['customer','name'],
             ellipsis: true
         },
         {

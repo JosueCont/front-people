@@ -905,6 +905,11 @@ div.calendar-header .calendar-title p{
     font-size: 1.25rem;
     font-weight: 500;
     margin-bottom: 0px;
+    transition: all 0.5s ease-out;
+}
+
+div.calendar-header .calendar-title p[role='stop']{
+    color: #dc3545;
 }
 
 div.calendar-header .calendar-title button[role='prev'],
@@ -933,6 +938,10 @@ div.picker-jb:hover,
 div.drop-picker-jb{
     border: 1px solid #d9d9d9!important;
     box-shadow: none!important;
+}
+
+div.drop-time-picker-jb{
+    border: none!important;
 }
 
 input.input-jb,

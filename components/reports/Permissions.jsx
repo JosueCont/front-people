@@ -9,6 +9,7 @@ import {
   Tooltip,
   Button,
   Typography,
+  ConfigProvider
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
@@ -20,6 +21,7 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
+import esES from "antd/lib/locale/es_ES";
 
 const PermissionsReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -314,18 +316,22 @@ const PermissionsReport = ({ permissions, ...props }) => {
       </Row>
       <Row style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
+          <ConfigProvider locale={esES}>
           <Table
             dataSource={permissionsList}
             key="tableHolidays"
             columns={columns}
             loading={loading}
             scroll={{ x: 350 }}
+            pagination={{showSizeChanger:true}}
             locale={{
               emptyText: loading
                 ? "Cargando..."
                 : "No se encontraron resultados.",
             }}
           ></Table>
+          </ConfigProvider>
+          
         </Col>
       </Row>
     </>

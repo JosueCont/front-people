@@ -122,6 +122,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     if (idPaymentCalendar) {
       getPaymentCalendar();
       setLocked(true);
+    }else{
+      formPaymentCalendar.setFieldsValue({
+        belongs_to: BelongTo[0].value,
+      });
     }
   }, [idPaymentCalendar]);
 
@@ -271,6 +275,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = paymentSaturday;
     value.payment_sunday = paymentSunday;
+    if(!value.group_fixed_concept){
+      value.group_fixed_concept=null;
+    }
 
     if (startDate) {
       value.start_date = startDate;

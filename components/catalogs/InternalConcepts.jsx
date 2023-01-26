@@ -13,6 +13,7 @@ import {
   Select,
   Tabs,
   Switch,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -30,6 +31,7 @@ import {
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import {showHideMessage} from "../../redux/NotificationDuck";
+import esES from "antd/lib/locale/es_ES";
 
 const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
   const { TabPane } = Tabs;
@@ -563,15 +565,18 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       </Tabs>
 
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={columns}
           dataSource={catalog}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

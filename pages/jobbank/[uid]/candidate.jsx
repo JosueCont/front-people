@@ -33,7 +33,7 @@ const candidate = ({
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
             getListStates(currentNode.id);
-            getConnectionsOptions(currentNode.id);
+            getConnectionsOptions(currentNode.id, '&conection_type=2');
             getScholarship(currentNode.id);
         }
     },[currentNode])

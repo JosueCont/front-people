@@ -12,6 +12,7 @@ import {
   Spin,
   Divider,
   message,
+  ConfigProvider
 } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -24,6 +25,7 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import { messageError, messageSaveSuccess } from "../../../utils/constant";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -194,12 +196,15 @@ const SelectCompany = ({ ...props }) => {
                     Guardar
                   </Button>
                 </Col>
-                <Col xs={23} md={15}>
+                <Col xs={23} md={15}> 
+                  <ConfigProvider locale={esES}>
                   <Table
                     columns={columns}
+                    pagination={{showSizeChanger:true}}
                     dataSource={dataList}
                     locale={{ emptyText: "No se encontraron resultados." }}
                   />
+                  </ConfigProvider>
                 </Col>
               </Row>
             </Col>

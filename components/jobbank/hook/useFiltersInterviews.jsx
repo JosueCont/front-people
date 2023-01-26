@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { getFullName } from "../../../utils/functions";
-import { optionsStatusInterviews } from "../../../utils/constant";
 
 export const useFiltersInterviews = () =>{
 
@@ -56,17 +55,10 @@ export const useFiltersInterviews = () =>{
         keyShow: 'job_position'
     })
 
-    const getStatus = (value) => getValue({
-        value,
-        list: optionsStatusInterviews,
-        ...paramsOptions
-    })
-
     const listGets = {
         recruiter: getRecruiter,
         candidate: getCandidate,
-        vacant: getVacant,
-        status: getStatus
+        vacant: getVacant
     }
 
     return { listKeys, listGets };
