@@ -182,6 +182,15 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
           <Row gutter={30} style={{ marginBottom: 20 }}>
             <Col lg={8} xs={12}>
               <Form.Item
+                  label="Nombre"
+                  name="description"
+                  rules={[ruleRequired]}
+              >
+                <Input maxLength={150} showCount={true} />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={12}>
+              <Form.Item
                 label="Número de días de vacaciones"
                 name="vacations_days"
                 rules={[ruleRequired]}
@@ -222,15 +231,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={12}>
-              <Form.Item
-                label="Descripción"
-                name="description"
-                rules={[ruleRequired]}
-              >
-                <Input.TextArea maxLength={150} showCount={true} />
-              </Form.Item>
-            </Col>
+
           </Row>
           <Row justify={"end"}>
             <Col>
