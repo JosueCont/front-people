@@ -120,12 +120,12 @@ const Incapacity = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        {verifyMenuNewForTenant() && 
+        {verifyMenuNewForTenant() && (
           <>
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
             <Breadcrumb.Item>Concierge</Breadcrumb.Item>
           </>
-        }
+        )}
         <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Incapacidad</Breadcrumb.Item>
       </Breadcrumb>
@@ -151,7 +151,9 @@ const Incapacity = ({ ...props }) => {
                         />
                       </Col>
                       <Col>
-                        <SelectDepartment companyId={props.currentNode.id} />
+                        <SelectDepartment
+                          companyId={props.currentNode && props.currentNode.id}
+                        />
                       </Col>
                       <Col>
                         <Form.Item
