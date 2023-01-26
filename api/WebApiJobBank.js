@@ -259,12 +259,20 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'put', data);
     }
 
+    static updateDetailSelection(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
+    }
+
     static updateSelectionStatus(id, data){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
     }
 
     static deleteSelection(id){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'delete');
+    }
+
+    static getInfoSelection(id){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'get');
     }
 
     //LISTADO DE CATÁLOGOS

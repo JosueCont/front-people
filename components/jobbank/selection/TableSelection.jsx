@@ -165,6 +165,16 @@ const TableSelection = ({
                         Agendar entrevista
                     </Menu.Item>
                 )}
+                                <Menu.Item
+                    key='2'
+                    icon={<EditOutlined/>}
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/selection/details`,
+                        query:{...router.query, id: item.id }
+                    })} 
+                >
+                    Iniciar proceso de selección
+                </Menu.Item>
             </Menu>
         );
     };

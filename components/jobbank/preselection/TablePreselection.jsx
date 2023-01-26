@@ -125,16 +125,6 @@ const TablePreselection = ({
                 >
                     Proceso selección
                 </Menu.Item>
-                <Menu.Item
-                    key='2'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/preselection/details`,
-                        query:{...router.query, id: item.id }
-                    })} 
-                >
-                    Iniciar proceso de selección
-                </Menu.Item>
             </Menu>
         );
     };

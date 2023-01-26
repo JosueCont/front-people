@@ -6,7 +6,7 @@ import { getSectors } from '../../../redux/jobBankDuck';
 import { deleteFiltersJb } from '../../../utils/functions';
 import DetailsPreselection from './DetailsPreselection';
 
-const ViewEditPreSelection = ({
+const ViewEditSelection = ({
   action = 'edit',
   currentNode,
   getSectors
@@ -27,13 +27,13 @@ useEffect(()=>{
 },[currentNode])
 
   const ExtraBread = [
-    {name: 'Preselección', URL: '/jobbank/preselection'},
-    {name: action == 'add' ? 'Nuevo' : 'Detalle de preselección'}
+    {name: 'Selección', URL: '/jobbank/selection'},
+    {name: action == 'add' ? 'Nuevo' : 'Detalle de proceso de selección'}
 ]
 
   return (
     <MainIndexJB
-        pageKey='jb_preselection'
+        pageKey='jb_selection'
         extraBread={ExtraBread}
         newFilters={newFilters}
     >
@@ -54,5 +54,5 @@ const mapState = (state) =>{
 
 export default connect(
   mapState, { getSectors }
-)(ViewEditPreSelection);
+)(ViewEditSelection);
 

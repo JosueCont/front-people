@@ -1,10 +1,10 @@
 import React from 'react';
 import { withAuthSync } from '../../../libs/auth';
-import ViewEditPreSelection from '../../../components/jobbank/preselection/ViewEditPreSelection';
+import ViewEditSelection from '../../../components/jobbank/selection/ViewEditSelection';
 
 const Details = () => {
   return (
-    <ViewEditPreSelection action='edit'/>
+    <ViewEditSelection action='edit'/>
   )
 }
 
