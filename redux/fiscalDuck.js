@@ -1,6 +1,7 @@
 import WebApiFiscal from "../api/WebApiFiscal";
 import moment from "moment";
 import { getStorage, setStorage } from "../libs/auth";
+import _ from "lodash";
 
 const initialData = {
   banks: [],
@@ -155,9 +156,10 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
       // });
         if(response?.data?.results){
             let _banks =  response?.data?.results.filter(bank => bank.version_cfdi.length > 0); //GDZUL -- para evitar duplicados , revisar con peter
+            let newBanks = _.orderBy(_banks, ['name'],['asc']);
             dispatch({
                 type: BANKS,
-                payload: _banks,
+                payload: newBanks,
             });
         }else{
             dispatch({
@@ -205,9 +207,11 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
         return 0;
       });
 
+      let perseptions = _.orderBy(orderedPerseptions, ['description'],['asc']);
+
       dispatch({
         type: PERCEPTIONS,
-        payload: orderedPerseptions,
+        payload: perseptions,
       });
     })
     .catch((error) => {
@@ -311,9 +315,10 @@ export const getInternalOtherPayments =
 export const getTypeTax = () => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
     .then((response) => {
+      let taxes = _.orderBy(response.data.results, ['description'],['asc']);
       dispatch({
         type: TYPE_TAX,
-        payload: response.data.results,
+        payload: taxes,
       });
     })
     .catch((error) => {
@@ -349,9 +354,10 @@ export const getContractType = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
+      let contracts = _.orderBy(response.data.results, ['description'],['asc']);
       dispatch({
         type: CONTRACT_TYPE,
-        payload: response.data.results,
+        payload: contracts,
       });
     })
     .catch((error) => {
@@ -368,9 +374,10 @@ export const getJourneyType = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
+      let journeys = _.orderBy(response.data.results, ['description'],['asc']);
       dispatch({
         type: JOURNEY_TYPE,
-        payload: response.data.results,
+        payload: journeys,
       });
     })
     .catch((error) => {
@@ -387,9 +394,10 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
+      let regimens = _.orderBy(response.data.results, ['description'],['asc']);
       dispatch({
         type: HIRING_REGIME,
-        payload: response.data.results,
+        payload: regimens,
       });
     })
     .catch((error) => {

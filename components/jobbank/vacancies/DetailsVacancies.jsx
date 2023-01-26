@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
+import TabEvaluations from './TabEvaluations';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';;
 import { useInfoVacancy } from '../hook/useInfoVacancy';
@@ -39,17 +40,21 @@ const DetailsVacancies = ({
     const router = useRouter();
     const btnSave = useRef(null);
     const [formVacancies] = Form.useForm();
+    const [idVacant, setIdVacant ] = useState(null)
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
+    const [evaluationList, setEvaluationList] = useState([]);
     const { setValuesForm, createData } = useInfoVacancy();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoVacant(router.query.id)
+            getEvaluationsVacant(router.query.id)
+            setIdVacant(router.query.id)
         }
     },[router.query?.id])
 
@@ -82,6 +87,95 @@ const DetailsVacancies = ({
             setFetching(false)
         }
     }
+
+    const getEvaluationsVacant = async (id) => {
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getEvaluationsVacant(id)
+            setEvaluationList(response.data.results)
+        } catch (e) {
+            console.log(e)
+        } finally {
+            setFetching(false)
+        }
+    }
+
+    const addEvaluations = async (values) => {
+        let data = new FormData()
+        data.append('vacant', router.query.id)
+        data.append('name', values.name)
+        data.append('source', values.source)
+        data.append('url', values.url)
+        data.append('instructions', values.instructions)
+        data.append('is_active', values.is_active)
+
+        try {
+            let response = await WebApiJobBank.addEvaluationVacant(data)
+            if (response) {
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluación agregada')
+        } catch (error) {
+            console.log('Error', error)
+            message.error('Error al agregar evaluación')
+        }
+    }
+
+    const updateEvaluation = async (id, values) => {
+
+        console.log('Values', values)
+
+        let data = new FormData()
+        data.append('vacant', router.query.id)
+        data.append('name', values.name)
+        data.append('source', values.source)
+        data.append('url', values.url)
+        data.append('instructions', values.instructions)
+        data.append('is_active', values.is_active)
+
+        try {
+            let response = await WebApiJobBank.updateEvaluation(id, data)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluación editada')
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al editar evaluación')
+        }
+    }
+
+    const deleteEvaluation = async (id) => {
+        try {
+            let response = await WebApiJobBank.deleteEvaluation(id)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluacion eliminada')
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al eliminar evaluación')
+        }
+    }
+
+    const changeEvaluationstatus = async (id, status) => {
+        
+        let data = new FormData()
+        data.append('is_active', status)
+
+        try {
+            let response = await WebApiJobBank.updateStatusEvaluation(id, data)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Estatus de evaluación editada')
+
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al editar estatus de la evaluación')
+        }
+    }
+
 
     const keepClient = () =>{
         formVacancies.setFieldsValue({
@@ -119,6 +213,8 @@ const DetailsVacancies = ({
             message.error('Vacante no registrada')
         }
     }
+
+
 
     const onFinish = (values) => {
         setFetching(true);
@@ -238,7 +334,7 @@ const DetailsVacancies = ({
                                     <TabFeatures
                                         formVacancies={formVacancies}
                                         disabledClient={router.query?.client}
-                                        hasEstrategy={infoVacant?.has_estrategy}
+                                        hasEstrategy={infoVacant?.has_strategy}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -260,6 +356,23 @@ const DetailsVacancies = ({
                                     <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
+                            {/* <Tabs.TabPane
+                                tab='Evaluaciones'
+                                forceRender
+                                key='4'
+                            >
+                                <Spin spinning={fetching}>
+                                    <TabEvaluations 
+                                        evaluationList={evaluationList}
+                                        setEvaluationList={setEvaluationList}
+                                        idVacant = { idVacant? idVacant : null }
+                                        addEvaluationVacant = { addEvaluations }
+                                        updateEvaluation = { updateEvaluation }
+                                        deleteEvaluation = {deleteEvaluation}
+                                        changeEvaluationstatus = {changeEvaluationstatus}
+                                    />
+                                </Spin>
+                            </Tabs.TabPane> */}
                             {/* <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender

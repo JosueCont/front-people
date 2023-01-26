@@ -40,7 +40,6 @@ const FormStrategies = ({
     const clientSelected = Form.useWatch('customer', formStrategies);
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
     const vacant = Form.useWatch('vacant', formStrategies);
-    //Campos de lectura, se toma de la vacante.
     const salary = Form.useWatch('salary', formStrategies);
 
     useEffect(()=>{
@@ -54,15 +53,19 @@ const FormStrategies = ({
     const setValue = (key, val) => formStrategies.setFieldsValue({[key]: val});
     const setAmount = (val = null) => setValue('amount_to_collect', val);
     const setVacant = (val = null) => setValue('vacant', val);
-    //Campos de lectura, se toma de la vacante.
-    const setSalary = (val = null) => setValue('salary', val);
-    const setStatus = (val = null) => setValue('vacant_status_read', val);
-    const setProyect = (val = null) => setValue('num_project_read', val);
 
-    const resetValues = () =>{
-        setSalary();
-        setStatus();
-        setProyect();
+    const resetValues = ({
+        salary = null,
+        vacant_status_read = null,
+        num_project_read = null,
+        qty_vacants = null
+    }) =>{
+        formStrategies.setFieldsValue({
+            salary,
+            vacant_status_read,
+            num_project_read,
+            qty_vacants
+        });
     }
 
     const formatSalary = (val) => val.toLocaleString("es-MX", {maximumFractionDigits: 4});
@@ -70,23 +73,23 @@ const FormStrategies = ({
     const getSalary = () =>{
         let key = 'salary_and_benefits';
         if(!vacant){
-            resetValues();
+            resetValues({});
             return;
         }
         const _find = item => item.id == vacant;
         let selected = newListVacant.find(_find);
         if(!selected){
-            resetValues();
+            resetValues({});
             return;
         }
         let salaryNum = selected[key]?.gross_salary;
-        if(salaryNum){
-            let salary_ = parseFloat(salaryNum.replaceAll(',',''));
-            setSalary(formatSalary(salary_));
-        }
-        let numProyect = selected?.num_project;
-        if(numProyect) setProyect(numProyect);
-        setStatus(selected.status);
+        let salary = salaryNum ? formatSalary(parseFloat(salaryNum.replaceAll(',',''))) : null;
+        resetValues({
+            salary,
+            num_project_read: selected?.num_project ?? null,
+            vacant_status_read: selected.status,
+            qty_vacants: selected.qty
+        })
     }
 
     const getAmount = () =>{
@@ -102,13 +105,26 @@ const FormStrategies = ({
     
     const optionsByClient = useMemo(()=>{
         if(!clientSelected) return [];
-        const options = item => item.customer?.id == clientSelected;
+        const options = item => (item.customer?.id || item.customer) == clientSelected;
         return newListVacant.filter(options);
     }, [clientSelected, newListVacant])
 
     const disabledDate = (current) => {
         return current && current < moment().startOf("day");
     };
+
+    const validateDecimal = (e) =>{
+        if(![8,190].includes(e.which)
+        && isNaN(String.fromCharCode(e.which))) e.preventDefault();
+    }
+
+    const validateMin = () =>({
+        validator(_, value){
+            if([undefined,null].includes(value)) return Promise.resolve();
+            if(value <= 0) return Promise.reject('Porcentaje mínimo mayor a 0');
+            return Promise.resolve();
+        }
+    })
 
     return (
         <Row gutter={[24,0]}>
@@ -211,28 +227,6 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    // name='num_project'
-                    name='num_project_read'
-                    label='Número de proyecto'
-                    tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
-                >
-                    <InputNumber
-                        type='number'
-                        disabled
-                        maxLength={10}
-                        controls={false}
-                        placeholder='Número de proyecto'
-                        onKeyDown={validateNum}
-                        onKeyPress={validateMaxLength}
-                        style={{
-                            width: '100%',
-                            border: '1px solid black'
-                        }}
-                    />
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
                     name='customer'
                     label='Cliente'
                     rules={[ruleRequired]}
@@ -282,17 +276,45 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
+                    // name='num_project'
+                    name='num_project_read'
+                    label='Número de proyecto'
+                    tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
+                >
+                    <InputNumber
+                        type='number'
+                        disabled
+                        maxLength={10}
+                        controls={false}
+                        placeholder='Número de proyecto'
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
+                        style={{
+                            width: '100%',
+                            border: '1px solid black'
+                        }}
+                    />
+                </Form.Item>
+            </Col>
+            <Col xs={24} md={12} xl={8} xxl={6}>
+                <Form.Item
                     name='qty_vacants'
                     label='Número de vacantes'
+                    tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                     rules={[ruleRequired,
+                        {type: 'number', min: 1, message: 'Ingrese un valor mayor o igual a 1'},
                         {type: 'number', max: 2147483647, message: 'Ingrese un valor menor o igual a 2147483647'}
                     ]}
                 >
                     <InputNumber
+                        disabled
                         type='number'
-                        maxLength={9}
+                        maxLength={10}
                         controls={false}
+                        min={1}
+                        max={2147483647}
                         placeholder='Número de vacantes'
+                        onPaste={validateNum}
                         onKeyDown={validateNum}
                         onKeyPress={validateMaxLength}
                         style={{
@@ -334,7 +356,12 @@ const FormStrategies = ({
                         // numCommaAndDot()
                     ]}
                 >
-                    <Input disabled placeholder='Ej. 70,500.5999'/>
+                    <Input
+                        prefix='$'
+                        disabled
+                        placeholder='Ej. 70,500.5999'
+                        style={{border: '1px solid black'}}
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -343,17 +370,20 @@ const FormStrategies = ({
                     label='Porcentaje a cobrar'
                     rules={[
                         ruleRequired,
-                        {type: 'number', min: 1, message: 'Porcentaje mínimo mayor o igual a 1'},
+                        validateMin,
                         {type: 'number', max: 100, message: 'Porcentaje máximo menor o igual a 100'}
                     ]}
                 >
                     <InputNumber
                         type='number'
-                        maxLength={3}
+                        maxLength={10}
+                        // min={1}
+                        // max={100}
+                        step={0.1}
                         controls={false}
                         placeholder='Porcentaje a cobrar'
-                        onKeyDown={validateNum}
-                        onPaste={validateNum}
+                        onPaste={validateDecimal}
+                        onKeyDown={validateDecimal}
                         onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
@@ -365,26 +395,43 @@ const FormStrategies = ({
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='amount_to_collect'
-                    label='Monto a cobrar'
+                    label='Monto a cobrar (MXN)'
                     tooltip='El valor será calculado de manera automática según el sueldo y porcentaje a cobrar.'
                 >
-                    <Input disabled placeholder='Monto a cobrar'/>
+                    <Input
+                        prefix='$'
+                        disabled
+                        placeholder='Monto a cobrar'
+                        style={{border: '1px solid black'}}
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='estimated_billing'
-                    label='Estimado de facturación'
+                    label='Estimado de facturación (MXN)'
+                    rules={[
+                        ({
+                            validator(_, value){
+                                if([undefined,null,''].includes(value)) return Promise.resolve();
+                                if(value <= 0) return Promise.reject('Ingrese un valor mayor a 0');
+                                return Promise.resolve();
+                            }
+                        })
+                    ]}
                 >
                     <InputNumber
-                        maxLength={20}
+                        maxLength={10}
+                        step={0.1}
+                        prefix='$'
                         controls={false}
                         placeholder='Estimado de facturación'
-                        onKeyDown={validateNum}
+                        onKeyDown={validateDecimal}
                         onKeyPress={validateMaxLength}
-                        onPaste={validateNum}
+                        onPaste={validateDecimal}
                         style={{
                             width: '100%',
+                            borderRadius: '10px',
                             border: '1px solid black'
                         }}
                     />

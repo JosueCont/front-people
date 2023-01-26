@@ -11,6 +11,7 @@ import {
   message,
   Modal,
   Tag,
+  ConfigProvider
 } from "antd";
 import {
   DeleteOutlined,
@@ -31,6 +32,7 @@ import {
 import { getWorkTitle } from "../../redux/catalogCompany";
 import WebApiPeople from "../../api/WebApiPeople";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
+import esES from "antd/lib/locale/es_ES";
 
 const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
@@ -300,15 +302,18 @@ const WorkTitle = ({ currentNode, ...props }) => {
         </Row>
       </Form>
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={columns}
           dataSource={props.cat_work_title}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

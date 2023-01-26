@@ -26,8 +26,7 @@ const TableStrategies = ({
     currentNode,
     jobbank_page,
     getStrategies,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -39,7 +38,7 @@ const TableStrategies = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteStrategy({ids});
-            getStrategies(currentNode.id, currentFilters, currentPage);
+            getStrategies(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Estrategias eliminadas' : 'Estrategia eliminada';
             message.success(msg);
         } catch (e) {
@@ -151,8 +150,8 @@ const TableStrategies = ({
     const columns = [
         {
             title: 'Cliente',
-            dataIndex: ['vacant','customer','name'],
-            key: ['vacant','customer','name'],
+            dataIndex: ['customer','name'],
+            key: ['customer','name'],
             ellipsis: true
         },
         {
@@ -246,6 +245,7 @@ const mapState = (state) =>{
         list_strategies: state.jobBankStore.list_strategies,
         load_strategies: state.jobBankStore.load_strategies,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

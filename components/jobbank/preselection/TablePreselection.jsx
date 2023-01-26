@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Dropdown, Button, Menu, message } from 'antd';
 import { connect } from 'react-redux';
-import { getPreselection } from '../../../redux/jobBankDuck';
+import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
 import {
     EllipsisOutlined,
@@ -17,11 +17,12 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 const TablePreselection = ({
     currentUser,
     currentNode,
-    currentFilters,
+    jobbank_filters,
     jobbank_page,
     list_preselection,
     load_preselection,
-    getPreselection
+    getPreselection,
+    getVacanciesOptions
 }) => {
 
     const router = useRouter();
@@ -37,7 +38,8 @@ const TablePreselection = ({
                 candidate: itemsSelected?.at(-1)?.id,
                 vacant: router.query?.vacant
             });
-            getPreselection(currentNode.id, currentFilters, jobbank_page)
+            getPreselection(currentNode.id, jobbank_filters, jobbank_page)
+            getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
             console.log(e)
@@ -73,6 +75,21 @@ const TablePreselection = ({
         setItemsSelected([])
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/preselection',
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        let newQuery = {...router.query, page: current};
+        if(current > 1){
+            savePage(newQuery);
+            return;
+        }
+        if(newQuery.page) delete newQuery.page;
+        savePage(newQuery)
+    }
+
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -94,6 +111,8 @@ const TablePreselection = ({
             </Menu>
         );
     };
+
+    console.log('list preselection', list_preselection, jobbank_page)
 
     const menuItem = (item) => {
         return (
@@ -141,7 +160,7 @@ const TablePreselection = ({
             key: 'municipality'
         },
         {
-            title:'Correo',
+            title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true
@@ -155,7 +174,7 @@ const TablePreselection = ({
             title: 'Compatibilidad',
             render: (item) => {
                 return(
-                    <span>{item.compatibility ?  `${item.compatibility} %` : null}</span>
+                    <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
                 )
             }
         },
@@ -188,9 +207,10 @@ const TablePreselection = ({
                 rowKey='id'
                 size='small'
                 columns={columns}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 loading={load_preselection}
                 dataSource={list_preselection.results}
+                onChange={onChangePage}
                 locale={{
                     emptyText: load_preselection
                         ? 'Cargando...'
@@ -198,7 +218,7 @@ const TablePreselection = ({
                 }}
                 pagination={{
                     total: list_preselection.count,
-                    current: jobbank_page,
+                    // current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -222,9 +242,15 @@ const mapState = (state) =>{
         list_preselection: state.jobBankStore.list_preselection,
         load_preselection: state.jobBankStore.load_preselection,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user,
     }
 }
 
-export default connect(mapState, { getPreselection })(TablePreselection);
+export default connect(
+    mapState, {
+        getPreselection,
+        getVacanciesOptions
+    }
+)(TablePreselection);

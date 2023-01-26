@@ -1,32 +1,26 @@
 import React, {
   useEffect,
-  useState,
-  useRef
+  useState
 } from 'react';
 import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Tabs,
   Form,
   Spin,
   message
 } from 'antd';
 import { connect } from 'react-redux';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import CustomDetails from './CustomDetails';
+import DetailsCustom from '../../DetailsCustom';
 import FormMessages from './FormMessages';
-import { getTagsNotification } from '../../../../redux/jobBankDuck';
+import { getTagsNotification, getConnectionsOptions } from '../../../../redux/jobBankDuck';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const DetailsMessages = ({
     action,
     currentNode,
     newFilters = {},
-    getTagsNotification
+    getTagsNotification,
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
@@ -41,6 +35,7 @@ const DetailsMessages = ({
     useEffect(()=>{
         if(!currentNode) return;
         getTagsNotification(currentNode.id);
+        getConnectionsOptions(currentNode.id, '&is_active=true&conection_type=2');
     },[currentNode])
 
     useEffect(()=>{
@@ -52,7 +47,9 @@ const DetailsMessages = ({
     useEffect(()=>{
         if(Object.keys(infoNotification).length <= 0) return;
         formMessage.resetFields();
-        formMessage.setFieldsValue(infoNotification)
+        let notification_source = Array.isArray(infoNotification.notification_source) ?
+            infoNotification.notification_source : [];
+        formMessage.setFieldsValue({...infoNotification, notification_source});
         if(!infoNotification.message) return;
         setMsgHTML(infoNotification.message);
         let convert = convertFromHTML(infoNotification.message);
@@ -133,10 +130,7 @@ const DetailsMessages = ({
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: ()=> router.push({
-                pathname: '/jobbank/settings/catalogs/messages',
-                query: newFilters
-            }),
+            back: actionBack,
             create: actionCreate,
             edit: () => router.replace({
                 pathname: '/jobbank/settings/catalogs/messages/edit',
@@ -146,17 +140,21 @@ const DetailsMessages = ({
         actionFunction[actionType]();
     }
 
+    const propsCustom = {
+        action,
+        loading,
+        fetching,
+        setLoading,
+        actionBack,
+        setActionType,
+        idForm: 'form-messages',
+        titleCard: action == 'add'
+            ? 'Registrar nuevo mensaje'
+            : 'Información del mensaje',
+    }
+
     return (
-        <CustomDetails
-            idForm='form-messages'
-            action={action}
-            textTitle={action == 'add' ? 'Registrar nuevo mensaje' : 'Información del mensaje'}
-            actionBack={actionBack}
-            setActionType={setActionType}
-            setLoading={setLoading}
-            loading={loading}
-            fetching={fetching}
-        >
+        <DetailsCustom {...propsCustom}>
             <Spin spinning={fetching}>
                 <Form
                     form={formMessage}
@@ -174,7 +172,7 @@ const DetailsMessages = ({
                     />
                 </Form>
             </Spin>
-        </CustomDetails>
+        </DetailsCustom>
     )
 }
 
@@ -184,4 +182,9 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, {getTagsNotification})(DetailsMessages);
+export default connect(
+    mapState, {
+        getTagsNotification,
+        getConnectionsOptions
+    }
+)(DetailsMessages);

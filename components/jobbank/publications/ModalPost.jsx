@@ -114,7 +114,7 @@ const ModalPost = ({
                                 optionFilterProp='children'
                             >
                                 {list_connections_options.length > 0 && list_connections_options.map(item=> (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.code} key={item.code}>
                                         {item.name}
                                     </Select.Option>
                                 ))}

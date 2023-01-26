@@ -9,6 +9,7 @@ import {
   Form,
   Select,
   Tooltip,
+  ConfigProvider,
 } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
@@ -17,6 +18,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 import {
   EditOutlined,
@@ -151,9 +153,7 @@ const Incapacity = ({ ...props }) => {
                         />
                       </Col>
                       <Col>
-                        <SelectDepartment
-                          companyId={props.currentNode && props.currentNode.id}
-                        />
+                        <SelectDepartment companyId={props?.currentNode?.id} />
                       </Col>
                       <Col>
                         <Form.Item
@@ -223,91 +223,96 @@ const Incapacity = ({ ...props }) => {
             </div>
             <Row justify="end">
               <Col span={24}>
-                <Table
-                  dataSource={incapacityList}
-                  key="tableHolidays"
-                  scroll={{ x: 350 }}
-                  loading={loading}
-                  locale={{
-                    emptyText: loading
-                      ? "Cargando..."
-                      : "No se encontraron resultados.",
-                  }}
-                >
-                  <Column
-                    title="Colaborador"
-                    dataIndex="person"
-                    key="id"
-                    render={(person, record) => (
-                      <>
-                        {person && person.first_name
-                          ? person.first_name + " "
-                          : null}
-                        {person && person.flast_name ? person.flast_name : null}
-                      </>
-                    )}
-                  />
-                  <Column
-                    title="Departamento"
-                    dataIndex="department"
-                    key="department"
-                    render={(department) => (
-                      <>{department ? department.name : null}</>
-                    )}
-                  />
-                  <Column
-                    title="Fecha inicio de incapacidad"
-                    dataIndex="departure_date"
-                    key="date"
-                    render={(departure_date) =>
-                      moment(departure_date).format("DD/MMM/YYYY")
-                    }
-                  />
-                  <Column
-                    title="Documentación"
-                    dataIndex="document"
-                    key="docs"
-                    render={(document, render) => (
-                      <a href={document} target="_blank" download>
-                        <FileDoneOutlined /> <small>Ver documento</small>
-                      </a>
-                    )}
-                  />
-                  <Column
-                    title="Estatus"
-                    key="docs"
-                    dataIndex="status"
-                    render={(status) =>
-                      status === 1
-                        ? "Pendiente"
-                        : status === 2
-                        ? "Aprobado"
-                        : "Rechazado"
-                    }
-                  />
-                  <Column
-                    title="Acciones"
-                    key="actions"
-                    render={(text, record) => (
-                      <>
-                        <EyeOutlined
-                          className="icon_actions"
-                          key={"goDetails_" + record.id}
-                          onClick={() => GotoDetails(record)}
-                        />
-                        {permissions.edit && record.status == 1 ? (
-                          <EditOutlined
+                <ConfigProvider locale={esES}>
+                  <Table
+                    dataSource={incapacityList}
+                    key="tableHolidays"
+                    pagination={{ showSizeChanger: true }}
+                    scroll={{ x: 350 }}
+                    loading={loading}
+                    locale={{
+                      emptyText: loading
+                        ? "Cargando..."
+                        : "No se encontraron resultados.",
+                    }}
+                  >
+                    <Column
+                      title="Colaborador"
+                      dataIndex="person"
+                      key="id"
+                      render={(person, record) => (
+                        <>
+                          {person && person.first_name
+                            ? person.first_name + " "
+                            : null}
+                          {person && person.flast_name
+                            ? person.flast_name
+                            : null}
+                        </>
+                      )}
+                    />
+                    <Column
+                      title="Departamento"
+                      dataIndex="department"
+                      key="department"
+                      render={(department) => (
+                        <>{department ? department.name : null}</>
+                      )}
+                    />
+                    <Column
+                      title="Fecha inicio de incapacidad"
+                      dataIndex="departure_date"
+                      key="date"
+                      render={(departure_date) =>
+                        moment(departure_date).format("DD/MMM/YYYY")
+                      }
+                    />
+                    <Column
+                      title="Documentación"
+                      dataIndex="document"
+                      key="docs"
+                      render={(document, render) => (
+                        <a href={document} target="_blank" download>
+                          <FileDoneOutlined /> <small>Ver documento</small>
+                        </a>
+                      )}
+                    />
+                    <Column
+                      title="Estatus"
+                      key="docs"
+                      dataIndex="status"
+                      render={(status) =>
+                        status === 1
+                          ? "Pendiente"
+                          : status === 2
+                          ? "Aprobado"
+                          : "Rechazado"
+                      }
+                    />
+                    <Column
+                      title="Acciones"
+                      key="actions"
+                      render={(text, record) => (
+                        <>
+                          <EyeOutlined
                             className="icon_actions"
-                            key={"edit_" + record.id}
-                            onClick={() =>
-                              route.push("incapacity/" + record.id + "/edit")
-                            }
+                            key={"goDetails_" + record.id}
+                            onClick={() => GotoDetails(record)}
                           />
-                        ) : null}
-                      </>
-                    )}
-                  />
-                </Table>
+                          {permissions.edit && record.status == 1 ? (
+                            <EditOutlined
+                              className="icon_actions"
+                              key={"edit_" + record.id}
+                              onClick={() =>
+                                route.push("incapacity/" + record.id + "/edit")
+                              }
+                            />
+                          ) : null}
+                        </>
+                      )}
+                    />
+                  </Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </>

@@ -454,10 +454,7 @@ export const validateNum = (e) =>{
 
 export const validateMaxLength = (e) =>{
   if(e.which == 32) e.preventDefault();
-  if(e.target.maxLength
-    && e.target.maxLength
-    == e.target.value.length
-  ) e.preventDefault();
+  if(e.target.value.length >= e.target?.maxLength) e.preventDefault();
 }
 
 export const createFiltersJB = (obj = {}) =>{
@@ -490,3 +487,17 @@ export const deleteFiltersJb = (obj = {}, listDelete = []) =>{
 export const getFileExtension = (filename) => {
   return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
 };
+
+export const copyContent = async ({
+  text = '',
+  onSucces =()=>{},
+  onError =()=>{}
+}) => {
+  try {
+    await navigator?.clipboard?.writeText(text);
+    onSucces()
+  } catch (e) {
+    console.log(e)
+    onError()
+  }
+}

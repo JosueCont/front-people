@@ -24,8 +24,6 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
@@ -41,8 +39,6 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getCandidates(currentNode.id, filters, page);
-            setCurrentPage(page)
-            setCurrentFilters(filters)
         }
     },[currentNode, router.query])
 
@@ -52,10 +48,7 @@ const index = ({
             extraBread={[{name: 'Candidatos'}]}
         >
             <SearchCandidates/>
-            <TableCandidates
-                currentPage={currentPage}
-                currentFilters={currentFilters}
-            />
+            <TableCandidates/>
         </MainIndexJB>
     )
 }

@@ -8,6 +8,8 @@ import {
     optionsTypeNotify,
     optionsSourceJB
 } from '../../../../utils/constant';
+import { useSelector } from 'react-redux';
+//
 import { convertToRaw, EditorState, Modifier } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -18,7 +20,12 @@ const FormMessages = ({
     setMsgHTML,
     setEditorState,
     editorState
-}) => {    
+}) => {
+    
+    const {
+        list_connections_options,
+        load_connections_options
+    } = useSelector(state => state.jobBankStore);
 
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
@@ -56,19 +63,28 @@ const FormMessages = ({
             </Col>
             <Col span={5}>
                 <Form.Item
-                    name='source'
+                    name='notification_source'
                     label='Enviar notificación por'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                    <Select
-                        allowClear
-                        showSearch
-                        placeholder='Seleccionar una opción'
+                        mode='multiple'
+                        maxTagCount={1}
+                        disabled={load_connections_options}
+                        loading={load_connections_options}
+                        placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
-                        optionFilterProp='label'
-                        options={optionsSourceJB}
-                    />
+                        optionFilterProp='children'
+                    >
+                        <Select.Option value='EM' key='EM'>Correo electrónico</Select.Option>
+                        {list_connections_options.length > 0 &&
+                            list_connections_options.map(item=> (
+                            <Select.Option value={item.code} key={item.code}>
+                                {item.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
             <Col span={5}>
@@ -122,7 +138,7 @@ const FormMessages = ({
                 </Form.Item>
             </Col>
             <Col span={24}>
-                <div style={{width: '100%', color: '#f0f0f0)'}}>
+                <div style={{width: '100%', color: 'rgba(0,0,0,0.5)'}}>
                     De la siguiente lista copiar (click sobre el nombre) los campos
                     que se desean visualizar en el mensaje, según la posicón u
                     orden que se requiera.
@@ -146,4 +162,4 @@ const FormMessages = ({
     )
 }
 
-export default FormMessages
+export default FormMessages;

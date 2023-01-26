@@ -158,6 +158,14 @@ const ModalConceptsPayroll = ({
     );
   };
 
+  const resetperceptionsDeductions=()=>{
+    setConcepts([]);
+    setPerceptions([]);
+    setDeductions([]);
+    setOtherPayments([]);
+    createObjectSend()
+  }
+
   const RenderConcept = ({ data = [], type }) => {
     return (
       <>
@@ -374,6 +382,19 @@ const ModalConceptsPayroll = ({
       footer={
         <Col>
           <Space>
+            {
+              !extraOrdinary && <Button
+                    size="large"
+                    htmlType="button"
+                    onClick={() => {
+                      resetperceptionsDeductions()
+                    }}
+                    style={{ paddingLeft: 50, paddingRight: 50 }}
+                >
+                  Reiniciar conceptos
+                </Button>
+            }
+
             <Button
               size="large"
               htmlType="button"

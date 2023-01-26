@@ -1,6 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import FormFBIG from './FormFBIG';
+//FORMS
+import FormFBIG from './forms/FormFBIG';
+import FormWP from './forms/FormWP';
+import FormGC from './forms/FormGC';
 
 const GetForm = ({...props}) => {
 
@@ -10,6 +13,8 @@ const GetForm = ({...props}) => {
     const Components = {
         FB: FormFBIG,
         IG: FormFBIG,
+        WP: FormWP,
+        GC: FormGC,
         __default__: ()=> <></>
     }
     

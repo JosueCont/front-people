@@ -9,6 +9,7 @@ import {
   Button,
   Typography,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectCollaborator from "../selects/SelectCollaborator";
@@ -20,6 +21,7 @@ import moment from "moment";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import esES from "antd/lib/locale/es_ES";
 
 const InabilityReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -357,9 +359,11 @@ const InabilityReport = ({ permissions, ...props }) => {
       </Row>
       <Row style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
+          <ConfigProvider locale={esES}>
           <Table
             dataSource={incapacityList}
             key="tableHolidays"
+            pagination={{showSizeChanger:true}}
             loading={loading}
             columns={columns}
             scroll={{ x: 350 }}
@@ -369,6 +373,7 @@ const InabilityReport = ({ permissions, ...props }) => {
                 : "No se encontraron resultados.",
             }}
           ></Table>
+          </ConfigProvider>
         </Col>
       </Row>
     </>

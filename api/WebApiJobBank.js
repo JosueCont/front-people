@@ -59,6 +59,30 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/vacant/massive_delete/', 'post', data);
     }
 
+    // Evaluaciones de las vacantes
+
+    static getEvaluationsVacant(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/?vacant=${id}`, 'get')
+    }
+
+    static addEvaluationVacant(data){
+        return WebApi.ApisType('/job-bank/vacant-assessment/', 'post', data)
+    }
+
+    static updateEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'put', data)
+    }
+
+    static updateStatusEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'patch', data)
+    }
+
+    static deleteEvaluation(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'delete')
+    }
+
+    //////////////////////////////
+
     static getStrategies(node, query){
         return WebApi.ApisType(`/job-bank/strategy/?node=${node}${query}`, 'get')
     }
@@ -223,8 +247,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/share/`, 'post', data);
     }
 
-    static getListSelection(node){
-        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}`, 'get');
+    static getListSelection(node, query){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}${query}`, 'get');
     }
 
     static createSelection(data){
@@ -413,6 +437,24 @@ class WebApiJobBank {
 
     static getTagsNotification(node, query){
         return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
+    }
+
+    //AGENGAS - ENTREVISTAS
+
+    static getInterviews(node, query){
+        return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
+    }
+
+    static createInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
+    }
+
+    static updateInterview(id, data){
+        return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
+    }
+
+    static deleteInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
     }
     
 }

@@ -5,37 +5,55 @@ export const useFiltersSelection = () =>{
 
     const {
         list_vacancies_options,
-        load_vacancies_options
+        load_vacancies_options,
+        load_candidates_options,
+        list_candidates_options,
     } = useSelector(state => state.jobBankStore);
+    const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
 
     const listKeys = {
-        name: 'Nombre',
-        lastname: 'Apellidos',
-        email: 'Correo',
-        phone: 'Teléfono',
-        status: 'Estatus',
-        vacant: 'Vacante'
+        status_process: 'Estatus',
+        vacant: 'Vacante',
+        candidate: 'Candidato'
     }
 
-    const getStatus = (value) => {
+    const getValue = ({
+        value = '',
+        list = [],
+        keyEquals = 'id',
+        keyShow = 'name'
+    }) =>{
         if(!value) return value;
-        const find_ = item => item.value == value;
-        let result = optionsStatusSelection.find(find_);
+        const find_ = item => item[keyEquals] == value;
+        let result = list.find(find_);
         if(!result) return value;
-        return result.label;
+        return result[keyShow];
     }
 
-    const getVacant = (id) =>{
+    const getStatus = (value) => getValue({
+        value,
+        list: optionsStatusSelection,
+        ...paramsOptions
+    })
+
+    const getVacant = (id) => getValue({
+        value: id,
+        list: list_vacancies_options,
+        keyShow: 'job_position'
+    })
+
+    const getCandidate = (id) =>{
         if(!id) return id;
         const find_ = item => item.id == id;
-        let result = list_vacancies_options.find(find_);
+        let result = list_candidates_options.find(find_);
         if(!result) return id;
-        return result.job_position;
+        return `${result?.fisrt_name} ${result.last_name}`;
     }
 
     const listGets = {
-        status: getStatus,
-        vacant: getVacant
+        status_process: getStatus,
+        vacant: getVacant,
+        candidate: getCandidate
     }
 
     return { listKeys, listGets };
