@@ -204,7 +204,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadResignationLetter(item.person.id);
+                    downloadResignationLetter({
+                      person_id: item.person.id,
+                      payment_period_id: periodSelected.id,
+                      receipt_type: "Extraordinaria",
+                    });
                   }}
                 >
                   <FileExcelOutlined />
@@ -245,14 +249,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
-              <Button
-                size="small"
-                onClick={() => {
-                  setPersonId(item?.person?.id), setModalVisible(true);
-                }}
-              >
-                <PlusOutlined />
-              </Button>
+              <Tooltip placement="top" title="Agrrgar conceptos">
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setPersonId(item?.person?.id), setModalVisible(true);
+                  }}
+                >
+                  <PlusOutlined />
+                </Button>
+              </Tooltip>
             )}
           </>
         ),
