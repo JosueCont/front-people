@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Typography,
   Form,
@@ -32,6 +32,7 @@ import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import {showHideMessage} from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
+import _ from "lodash";
 
 const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
   const { TabPane } = Tabs;
@@ -44,6 +45,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
+  const [search, setSearch] = useState('');
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
@@ -103,6 +105,12 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       },
     },
   ];
+
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
 
   useEffect(() => {
     resetForm();
@@ -517,6 +525,26 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       );
   }, [intConcept]);
 
+  const debouncedResults = useMemo(() => {
+    return _.debounce((e) => handleChange(e), 1000);
+  }, []);
+
+  const handleChange = (e) =>  {
+    const { value } = e.target;
+    setSearch(value);
+  }
+
+  let newCatalog = catalog;
+
+  if(search !== ''){
+     newCatalog = !!catalog && catalog.filter(cat => (
+      cat.description.toLowerCase().includes(search.toLowerCase()) 
+      || cat.code.toLowerCase().includes(search.toLowerCase())
+      || cat.perception_type.code.toLowerCase().includes(search.toLowerCase())
+   ));
+  }
+  
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -566,9 +594,15 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
 
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
+          <Row style={{marginBottom:'15px'}}>
+            <Col>
+              <Input placeholder="Buscar" allowClear onChange={debouncedResults} />
+            </Col>
+          </Row>
         <Table
           columns={columns}
-          dataSource={catalog}
+          dataSource={newCatalog}
+          //dataSource={filterData()}
           pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
