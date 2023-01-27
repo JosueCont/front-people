@@ -30,11 +30,6 @@ const ModalComments = ({
     const [formComments] = Form.useForm();
     const [loading, setLoading ] = useState(false);
 
-    useEffect(()=>{
-        if(Object.keys(itemToEdit).length <= 0) return;
-        formEvaluations.setFieldsValue(itemToEdit);
-    },[itemToEdit])
-
     const onChangeEditor = (value) =>{
         let current = value.getCurrentContent();
         let msg = draftToHtml(convertToRaw(current));

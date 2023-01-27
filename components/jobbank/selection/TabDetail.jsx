@@ -6,11 +6,11 @@ import {
     ruleEmail,
     rulePhone
 } from '../../../utils/rules';
-import { DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EllipsisOutlined, EditOutlined } from '@ant-design/icons';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalComments from './ModalComment';
-import { EditorState } from 'draft-js';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 import ListItems from '../../../common/ListItems';
 
 
@@ -22,6 +22,8 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
     const [itemsToDelete, setItemsToDelete] = useState({});
     const [itemToEdit, setItemToEdit] = useState({})
     const [openModalDelete, setOpenModalDelete] = useState(false);
+
+    const validateAction = Object.keys(itemToEdit).length > 0 
 
     const closeModal = () =>{
         setOpenModal(false)
@@ -49,10 +51,36 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
         }
     }
 
+    const actionUpdate = async (values) => {
+        values.comments = msgHTML
+
+        try {
+            await WebApiJobBank.updateProcessSelection(id, values)
+            getInfoVacant(id)
+            message.success('Comentario Editado')
+
+        } catch (error) {
+            console.log('Error', error)
+            message.error('Error al editar coemtario')
+
+        }
+    }
+
     const openModalRemove = (item) =>{
         item.comments = item.comments?.replace(/<[^>]*>?/g, '') || ''
         setItemsToDelete(item)
         setOpenModalDelete(true)
+    }
+
+    const openModalEdit = (item)=>{
+        setItemToEdit(item)
+        if(!item.comments) return;
+        setMsgHTML(item.comments);
+        let convert = convertFromHTML(item.comments);
+        let htmlMsg = ContentState.createFromBlockArray(convert);
+        let template = EditorState.createWithContent(htmlMsg);
+        setEditorState(template);
+        setOpenModal(true)
     }
 
     const closeModalDelete = () =>{
@@ -75,15 +103,15 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
+                <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> openModalEdit(item)} 
                 >
                     Editar
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
-                    key='1'
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
@@ -214,8 +242,9 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
                 title='Agregar comentario'
                 visible={openModal}
                 close={closeModal}
-                actionForm={actionCreate}
-                textSave={'Guardar'}
+                actionForm={ validateAction? actionUpdate : actionCreate}
+                itemToEdit={itemToEdit}
+                textSave={ validateAction? 'Actualizar' : 'Guardar'}
                 setMsgHTML = { setMsgHTML }
                 setEditorState = {setEditorState}
                 editorState = { editorState }
