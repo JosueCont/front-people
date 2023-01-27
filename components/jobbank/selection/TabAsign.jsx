@@ -20,7 +20,8 @@ import {
 } from '../../../utils/rules';
 import { SearchOutlined } from '@ant-design/icons';
 import ModalAsignament from './ModalAsignment';
-
+import ListItems from '../../../common/ListItems';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TabAsign = ({ loading }) => {
 
@@ -29,7 +30,18 @@ const TabAsign = ({ loading }) => {
 
   const closeModal = () =>{
     setOpenModal(false)
-}
+  }
+
+  // const actionDelete = async (id) =>{
+  //   try {
+  //     await WebApiJobBank.deleteVacancyAssesmentCandidateVacancy(id);
+  //     getAssesmets();
+  //     message.success('Evaluación eliminada');
+  //   } catch (e) {
+  //     console.log(e)
+  //     message.error('Evaluación no eliminada');
+  //   }
+  // }
 
   const columns = [
     {
