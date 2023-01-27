@@ -165,6 +165,16 @@ const TableSelection = ({
                         Agendar entrevista
                     </Menu.Item>
                 )}
+                                <Menu.Item
+                    key='4'
+                    icon={<EditOutlined/>}
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/selection/details`,
+                        query:{...router.query, id: item.id }
+                    })} 
+                >
+                    Editar
+                </Menu.Item>
             </Menu>
         );
     };
@@ -201,6 +211,7 @@ const TableSelection = ({
         },
         {
             title: 'Estatus',
+            width: 170,
             render: (item) =>{
                 return(
                     <Select

@@ -86,6 +86,14 @@ const TablePreselection = ({
         setItemsSelected([])
     }
 
+    const rowSelection = {
+        selectedRowKeys: itemsKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+            setItemsKeys(selectedRowKeys)
+            setItemsSelected(selectedRows)
+        }
+    }
+
     const savePage = (query) => router.replace({
         pathname: '/jobbank/preselection',
         query
@@ -99,14 +107,6 @@ const TablePreselection = ({
         }
         if(newQuery.page) delete newQuery.page;
         savePage(newQuery)
-    }
-
-    const rowSelection = {
-        selectedRowKeys: itemsKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-            setItemsKeys(selectedRowKeys)
-            setItemsSelected(selectedRows)
-        }
     }
 
     const menuTable = () => {

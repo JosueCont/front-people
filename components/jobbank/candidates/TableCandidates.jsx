@@ -36,10 +36,6 @@ const TableCandidates = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [infoCandidate, setInfoCandidate] = useState(null)
-    const [infoEducation, setInfoEducation] = useState(null)
-    const [infoExperience, setInfoExperience] = useState(null)
-    const [infoPositions, setInfoPositions] = useState(null)
     const [loading, setLoading] = useState(false)
 
     const actionDelete = async () =>{
@@ -69,31 +65,12 @@ const TableCandidates = ({
         }
     }
 
-    const getInfoCandidate = async (id) =>{
-        if(!id) return
-        try {
-            // setFetching(true);
-            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
-            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
-            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0');
-            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0');
-            setInfoCandidate(responseInfo.data);
-            setInfoEducation(responseEdu.data)
-            setInfoExperience(responseExp.data)
-            setInfoPositions(responsePos.data)
-            // setFetching(false);
-        } catch (e) {
-            console.log(e)
-            // setFetching(false);
-        }
-    }
-
-    const MyDoc = ({ infoCandidate, infoEducation }) =>
+    const MyDoc = ({ infoCandidate, infoEducation, infoPositions }) =>
         <HighDirectionReport
-            infoCandidate={infoCandidate? infoCandidate : {}}
-            infoEducation={ infoEducation? infoEducation : []}
+            infoCandidate={infoCandidate}
+            infoEducation={ infoEducation}
             // infoExperience={infoExperience}
-            // infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+            infoPositions={ infoPositions}
         />
     
 
@@ -115,9 +92,11 @@ const TableCandidates = ({
             setLoading(true)
             let responseInfo = await WebApiJobBank.getInfoCandidate(id);
             let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
             let infoCan = responseInfo.data || {}
-            let infoEducation = responseEdu.data || {}
-            let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation}/>).toBlob();
+            let infoEducation = responseEdu.data || []
+            let infoPositions = responsePos.data || []
+            let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
                 setLoading(false);
@@ -228,13 +207,13 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {/* <Menu.Item
+                <Menu.Item
                     key='4'
                     icon={<DownloadOutlined />}
                     onClick={() => { generatePDF(item.id, true) }}
                 >
                     Descargar reporte alta dirección
-                </Menu.Item> */}
+                </Menu.Item>
             </Menu>
         );
     };
