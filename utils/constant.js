@@ -374,12 +374,12 @@ export const movementType = [
 
 export const salaryDays = [
   {
-    label: "Dias naturales",
+    label: "Días naturales",
     value: 1,
     key: 1,
   },
   {
-    label: "30 dias",
+    label: "30 días",
     value: 2,
     key: 2,
   },
