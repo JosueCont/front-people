@@ -199,6 +199,7 @@ const TabFeatures = ({
           name='qty'
           label='Número de posiciones a reclutar'
           rules={[
+            ruleRequired,
             {type: 'number', min: 1, message: 'Ingrese un valor mayor o igual a 1'},
             {type: 'number', max: 2147483647, message: 'Ingrese un valor menor o igual a 2147483647'}
           ]}

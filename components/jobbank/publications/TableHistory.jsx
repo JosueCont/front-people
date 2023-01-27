@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { Table, Button, Row, Col } from 'antd';
+import { Table, Button, Row, Col, Tag } from 'antd';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { redirectTo } from '../../../utils/constant';
 import moment from 'moment';
@@ -93,6 +93,16 @@ const TableHistory = ({ newFilters = {} }) => {
                 let format = 'DD-MM-YYYY hh:mm a';
                 return(
                     <span>{moment(item.timestamp).format(format)}</span>
+                )
+            }
+        },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Tag color={item.status_code == '200' ? '#87d068' : '#f50'}>
+                        {item.status_code == '200' ? 'Exitoso' : 'Fallido'}
+                    </Tag>
                 )
             }
         },

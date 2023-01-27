@@ -79,10 +79,8 @@ const EventDetails = ({
     }
 
     const copyEmails = () =>{
-        let results = guests.reduce((acc, row) =>{
-            if(!row.displayName) return acc;
-            return acc += ` ${row.displayName} <${row.email}>,`;
-        }, '');
+        const copy_ = (acc, row) => acc += `${row.displayName ?? ''} <${row.email}>, `;
+        let results = guests.reduce(copy_, '');
         copyContent({
             text: results,
             onSucces: ()=> message.success('Correos copiados'),

@@ -110,7 +110,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_states?.length > 0 && list_states.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -144,7 +144,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_scholarship.length > 0 && list_scholarship.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -179,6 +179,9 @@ const FiltersPreselection = ({
                         >
                             <InputNumber
                                 type='number'
+                                max={99}
+                                min={1}
+                                allowClear
                                 maxLength={2}
                                 controls={false}
                                 placeholder='Buscar por edad'

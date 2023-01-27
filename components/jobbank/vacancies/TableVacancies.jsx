@@ -188,7 +188,7 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                {item.status == 1 && (
+                {/* {item.status == 1 && (
                     <Menu.Item
                         key='4'
                         icon={<SettingOutlined />}
@@ -199,7 +199,7 @@ const TableVacancies = ({
                     >
                         Configurar publicación
                     </Menu.Item>
-                )}
+                )} */}
             </Menu>
         );
     };

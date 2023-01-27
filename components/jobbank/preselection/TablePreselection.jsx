@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Table, Dropdown, Button, Menu, message } from 'antd';
+=======
+import React, { useState, useMemo } from 'react';
+import { Table, Dropdown, Button, Menu, message, Alert } from 'antd';
+>>>>>>> 01d077a0ade02610dff4b1b897b8f9bdf65b66de
 import { connect } from 'react-redux';
 import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
@@ -22,13 +27,23 @@ const TablePreselection = ({
     list_preselection,
     load_preselection,
     getPreselection,
-    getVacanciesOptions
+    getVacanciesOptions,
+    list_vacancies_options,
+    load_vacancies_options
 }) => {
 
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [itemsSelected, setItemsSelected] = useState([]);
     const [itemsKeys, setItemsKeys] = useState([]);
+
+    const availableVacante = useMemo(()=>{
+        if(list_vacancies_options.length <=0) return false;
+        const find_ = item => item.id == router.query?.vacant;
+        let result = list_vacancies_options.find(find_);
+        if(!result) return false;
+        return result.available > 0;
+    },[router.query?.vacant, list_vacancies_options])
 
     const createSelection = async () =>{
         try {
@@ -42,8 +57,9 @@ const TablePreselection = ({
             getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
-            console.log(e)
-            message.error('Proceso no iniciado')
+            let error = e.response?.data?.message;
+            let msg = error ?? 'Proceso no iniciado';
+            message.error(msg)
         }
     }
 
@@ -112,18 +128,22 @@ const TablePreselection = ({
         );
     };
 
+<<<<<<< HEAD
     const startSelection = (item) => {
         console.log('item', item)
     }
 
 
+=======
+>>>>>>> 01d077a0ade02610dff4b1b897b8f9bdf65b66de
     const menuItem = (item) => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
                     icon={<UserAddOutlined />}
-                    onClick={()=> openModalOne(item)} 
+                    onClick={()=> openModalOne(item)}
+                    disabled={!availableVacante}
                 >
                     Proceso selección
                 </Menu.Item>
@@ -206,26 +226,37 @@ const TablePreselection = ({
 
     return (
         <>
-            <Table
-                rowKey='id'
-                size='small'
-                columns={columns}
-                // rowSelection={rowSelection}
-                loading={load_preselection}
-                dataSource={list_preselection.results}
-                onChange={onChangePage}
-                locale={{
-                    emptyText: load_preselection
-                        ? 'Cargando...'
-                        : 'No se encontraron resultados.',
-                }}
-                pagination={{
-                    total: list_preselection.count,
-                    current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
-                }}
-            />
+            <div>
+                {!availableVacante
+                    && list_preselection?.results?.length > 0
+                    && router.query?.vacant && (
+                    <Alert
+                        type='warning'
+                        message={`No se puede iniciar un nuevo proceso
+                            de selección para esta vacante.`}
+                    />
+                )}
+                <Table
+                    rowKey='id'
+                    size='small'
+                    columns={columns}
+                    // rowSelection={rowSelection}
+                    loading={load_preselection}
+                    dataSource={list_preselection.results}
+                    onChange={onChangePage}
+                    locale={{
+                        emptyText: load_preselection
+                            ? 'Cargando...'
+                            : 'No se encontraron resultados.',
+                    }}
+                    pagination={{
+                        total: list_preselection.count,
+                        current: jobbank_page,
+                        hideOnSinglePage: true,
+                        showSizeChanger: false
+                    }}
+                />
+            </div>
             <ListItems
                 title='¿Iniciar proceso de selección?'
                 visible={openModal}
@@ -248,6 +279,8 @@ const mapState = (state) =>{
         jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        load_vacancies_options: state.jobBankStore.load_vacancies_options
     }
 }
 
