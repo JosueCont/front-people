@@ -17,7 +17,7 @@ export const useFiltersInterviews = () =>{
 
     const listKeys = {
         recruiter: 'Reclutador',
-        candidate: 'Candidate',
+        candidate: 'Candidato',
         vacant: 'Vacante',
         date: 'Fecha',
         status: 'Estatus'
