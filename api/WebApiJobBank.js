@@ -365,6 +365,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'put', data);
     }
 
+    static updateProfileTypeForm(id, data){
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'patch', data);
+    }
+
     static deleteProfileType(id){
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }

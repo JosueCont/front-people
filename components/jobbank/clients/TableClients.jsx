@@ -252,7 +252,7 @@ const TableClients = ({
                         >
                             Registrar estrategia
                         </Menu.Item>
-                        <Menu.Item
+                        {/* <Menu.Item
                             key='3'
                             icon={<SettingOutlined />}
                             onClick={()=> router.push({
@@ -261,7 +261,7 @@ const TableClients = ({
                             })}
                         >
                             Configurar publicación
-                        </Menu.Item>
+                        </Menu.Item> */}
                     </>
                 )}
             </Menu>

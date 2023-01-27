@@ -118,10 +118,13 @@ const FiltersCandidates = ({
                             label='Sector'
                         >
                             <Select
+                                allowClear
+                                showSearch
                                 disabled={load_sectors}
                                 loading={load_sectors}
                                 placeholder='Seleccionar un opción'
                                 notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
                             >
                                 {list_sectors.length > 0 && list_sectors.map(item => (
                                     <Select.Option value={item.id} key={item.id}>

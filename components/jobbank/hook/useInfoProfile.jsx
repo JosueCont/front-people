@@ -2,6 +2,8 @@ import React from 'react';
 
 export const useInfoProfile = () => {
 
+    const noValid = [undefined, null, '', ' '];
+
     const formatData = (values, checked = true, extraKey = '') => {
         return Object.entries(values).reduce((obj, [key, val]) => {
             if(!Array.isArray(val)) return obj;

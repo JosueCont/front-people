@@ -60,12 +60,12 @@ const FormStrategies = ({
         num_project_read = null,
         qty_vacants = null
     }) =>{
-        formStrategies.setFieldsValue({
-            salary,
-            vacant_status_read,
-            num_project_read,
-            qty_vacants
-        });
+        // formStrategies.setFieldsValue({
+        //     salary,
+        //     vacant_status_read,
+        //     num_project_read,
+        //     qty_vacants
+        // });
     }
 
     const formatSalary = (val) => val.toLocaleString("es-MX", {maximumFractionDigits: 4});
@@ -358,7 +358,7 @@ const FormStrategies = ({
                 >
                     <Input
                         prefix='$'
-                        disabled
+                        // disabled
                         placeholder='Ej. 70,500.5999'
                         style={{border: '1px solid black'}}
                     />

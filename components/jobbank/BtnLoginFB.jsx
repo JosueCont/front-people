@@ -63,7 +63,9 @@ const BtnLoginFB = ({
             });
         } catch (e) {
             console.log(e)
-            onFail({status: 'facebookNotLoaded'});
+            message.error(`No fue posible iniciar facebook,
+                verificar que se han ingresado los datos correctos, o
+                actualizar la página.`);
         }
     }
 
