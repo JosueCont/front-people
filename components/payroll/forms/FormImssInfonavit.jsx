@@ -73,6 +73,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     { value: 5, label: "Modificación de Número de Crédito" },
   ];
 
+  const CreditType = [
+    { value: 1, label: "Crédito Tradicional" },
+    { value: 2, label: "Crédito Apoyo INFONAVIT" },
+    { value: 3, label: "Credito Cofinanciado 08" },
+  ];
+
   useEffect(() => {
     setMovementTypes(InfonavitMovementype);
     person_id && localUserCredit() && getInfo();
@@ -103,18 +109,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
       }
     }
   }, [updateCredit]);
-
-  // useEffect(() => {
-  //   if (daily_salary) {
-  //     formImssInfonavit.setFieldsValue({
-  //       integrated_daily_salary: (daily_salary * FACTOR_SDI).toFixed(2),
-  //     });
-  //   } else {
-  //     formImssInfonavit.setFieldsValue({
-  //       integrated_daily_salary: 0,
-  //     });
-  //   }
-  // }, [daily_salary]);
 
   useEffect(() => {
     if (updateInfonavit) {
@@ -169,6 +163,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     if (isNewRegister) {
       formInfonavitManual.setFieldsValue({
         movement: 1,
+        type: 1,
       });
     }
   }, [isNewRegister]);
@@ -183,6 +178,8 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     values.modify_by = "System";
     // values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    :  ""
     // funcion WEB API
+
+    console.log("Values-->", values);
 
     if (isEdit) {
       WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
@@ -331,8 +328,20 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     {
       title: "Tipo de crédito",
       dataIndex: "type",
-      key: "type",
       // width: 100,
+      render: (item) => {
+        return (
+          <div>
+            {item == 1
+              ? "Crédito Tradicional"
+              : item == 2
+              ? "Crédito Apoyo INFONAVIT"
+              : item == 3
+              ? "Credito Cofinanciado 08"
+              : ""}
+          </div>
+        );
+      },
     },
     {
       title: "Movimiento",
@@ -663,26 +672,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                 name="type"
                 rules={[ruleRequired]}
               >
-                <Select allowClear disabled={disabledCreditType}>
-                  <Select.Option
-                    value="Crédito Tradicional"
-                    key="Crédito Tradicional"
-                  >
-                    Crédito Tradicional
-                  </Select.Option>
-                  <Select.Option
-                    value="Crédito Apoyo INFONAVIT"
-                    key="Crédito Apoyo INFONAVIT"
-                  >
-                    Crédito Apoyo INFONAVIT
-                  </Select.Option>
-                  <Select.Option
-                    value="Credito Cofinanciado 08"
-                    key="Credito Cofinanciado 08"
-                  >
-                    Credito Cofinanciado 08
-                  </Select.Option>
-                </Select>
+                <Select
+                  allowClear
+                  disabled={disabledCreditType}
+                  options={CreditType}
+                  initialValue={1}
+                ></Select>
               </Form.Item>
             </Col>
             <Col span={11} offset={2}>
