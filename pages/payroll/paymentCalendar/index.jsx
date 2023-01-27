@@ -350,7 +350,7 @@ const PaymentCalendars = ({ ...props }) => {
         maskClosable={false}
         confirmLoading={loading}
         centered
-        okText="Si, eliminar"
+        okText="Sí, eliminar"
         cancelText="Cancelar"
       >
         <Row justify="center" align="middle">
@@ -361,7 +361,7 @@ const PaymentCalendars = ({ ...props }) => {
               message="¿Está seguro de eliminar este calendario?"
               description={
                 <p style={{ textAlign: "justify", paddingLeft: 15 }}>
-                  Al eliminar este calendario no se podra recuperar
+                  Al eliminar este calendario no se podrá recuperar
                 </p>
               }
             />
