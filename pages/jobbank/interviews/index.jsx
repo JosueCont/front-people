@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { withAuthSync } from '../../../libs/auth';
+import React, { useEffect } from 'react';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
+import CalendarView from '../../../components/jobbank/interviews/CalendarView';
 import SearchInterviews from '../../../components/jobbank/interviews/SearchInterviews';
-import TableInterviews from '../../../components/jobbank/interviews/TableInterviews';
 import {
     getCandidatesOptions,
     getVacanciesOptions,
@@ -12,12 +10,15 @@ import {
     getClientsOptions,
     getConnectionsOptions
 } from '../../../redux/jobBankDuck';
+import { connect } from 'react-redux';
+import { withAuthSync } from '../../../libs/auth';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
 import { InterviewProvider } from '../../../components/jobbank/context/InterviewContext';
+import moment from 'moment';
 
-const index = ({
+const calendar = ({
     currentNode,
     getCandidatesOptions,
     getVacanciesOptions,
@@ -36,15 +37,16 @@ const index = ({
             getVacanciesOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
             getSelectionOpions(currentNode.id);
-            getClientsOptions(currentNode.id);
             getConnectionsOptions(currentNode.id, '&code=GC');
+            getClientsOptions(currentNode.id)
         }
     },[currentNode])
 
     useEffect(()=>{
         if(currentNode){
             let page = router.query.page ? parseInt(router.query.page) : 1;
-            let filters = getFiltersJB(router.query);
+            let year = router.query?.year ? parseInt(router.query.year) : moment().year();
+            let filters = getFiltersJB({...router.query, year});
             getInterviews(currentNode.id, filters, page)
         }
     },[currentNode, router.query])
@@ -52,11 +54,13 @@ const index = ({
     return (
         <MainIndexJB
             pageKey='jb_interviews'
-            extraBread={[{name: 'Entrevistas'}]}
+            extraBread={[
+                {name: 'Entrevistas'},
+            ]}
         >
             <InterviewProvider>
-                <SearchInterviews/>
-                <TableInterviews/>
+                <SearchInterviews isCalendar={true}/>
+                <CalendarView/>
             </InterviewProvider>
         </MainIndexJB>
     )
@@ -78,4 +82,86 @@ export default connect(
         getClientsOptions,
         getConnectionsOptions
     }
-)(withAuthSync(index));
+)(withAuthSync(calendar));
+
+// import React, { useEffect, useState } from 'react';
+// import { connect } from 'react-redux';
+// import { withAuthSync } from '../../../libs/auth';
+// import MainIndexJB from '../../../components/jobbank/MainIndexJB';
+// import SearchInterviews from '../../../components/jobbank/interviews/SearchInterviews';
+// import TableInterviews from '../../../components/jobbank/interviews/TableInterviews';
+// import {
+//     getCandidatesOptions,
+//     getVacanciesOptions,
+//     getInterviews,
+//     getSelectionOpions,
+//     getClientsOptions,
+//     getConnectionsOptions
+// } from '../../../redux/jobBankDuck';
+// import { getPersonsCompany } from '../../../redux/UserDuck';
+// import { useRouter } from 'next/router';
+// import { getFiltersJB } from '../../../utils/functions';
+// import { InterviewProvider } from '../../../components/jobbank/context/InterviewContext';
+
+// const index = ({
+//     currentNode,
+//     getCandidatesOptions,
+//     getVacanciesOptions,
+//     getPersonsCompany,
+//     getInterviews,
+//     getSelectionOpions,
+//     getClientsOptions,
+//     getConnectionsOptions
+// }) => {
+
+//     const router = useRouter();
+
+//     useEffect(()=>{
+//         if(currentNode){
+//             getCandidatesOptions(currentNode.id);
+//             getVacanciesOptions(currentNode.id);
+//             getPersonsCompany(currentNode.id);
+//             getSelectionOpions(currentNode.id);
+//             getClientsOptions(currentNode.id);
+//             getConnectionsOptions(currentNode.id, '&code=GC');
+//         }
+//     },[currentNode])
+
+//     useEffect(()=>{
+//         if(currentNode){
+//             let page = router.query.page ? parseInt(router.query.page) : 1;
+//             let filters = getFiltersJB(router.query);
+//             getInterviews(currentNode.id, filters, page)
+//         }
+//     },[currentNode, router.query])
+
+//     return (
+//         <MainIndexJB
+//             pageKey='jb_interviews'
+//             extraBread={[{name: 'Entrevistas'}]}
+//         >
+//             <InterviewProvider>
+//                 <SearchInterviews/>
+//                 <TableInterviews/>
+//             </InterviewProvider>
+//         </MainIndexJB>
+//     )
+// }
+
+// const mapState = (state) => {
+//     return{
+//         currentNode: state.userStore.current_node,
+//     }
+// }
+
+// export default connect(
+//     mapState, {
+//         getCandidatesOptions,
+//         getVacanciesOptions,
+//         getPersonsCompany,
+//         getInterviews,
+//         getSelectionOpions,
+//         getClientsOptions,
+//         getConnectionsOptions
+//     }
+// )(withAuthSync(index));
