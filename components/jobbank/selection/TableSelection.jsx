@@ -166,7 +166,7 @@ const TableSelection = ({
                     </Menu.Item>
                 )}
                                 <Menu.Item
-                    key='2'
+                    key='4'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/selection/details`,
@@ -211,6 +211,7 @@ const TableSelection = ({
         },
         {
             title: 'Estatus',
+            width: 170,
             render: (item) =>{
                 return(
                     <Select

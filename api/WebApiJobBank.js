@@ -464,6 +464,14 @@ class WebApiJobBank {
     static deleteInterview(data){
         return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
     }
+
+    static deleteProcessSelection(id){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'delete')
+    }
+
+    static updateProcessSelection(id, values){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
+    }
     
 }
 
