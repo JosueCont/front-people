@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router';
 import { 
   Row, 
   Col , 
@@ -23,6 +24,7 @@ import ModalAsignament from './ModalAsignment';
 
 const TabAsign = ({ loading }) => {
 
+  const router = useRouter()
   const [openModal, setOpenModal] = useState(false);
 
   const closeModal = () =>{

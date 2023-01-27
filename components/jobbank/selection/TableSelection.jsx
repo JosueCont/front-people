@@ -141,6 +141,7 @@ const TableSelection = ({
     };
 
     const menuItem = (item) => {
+        console.log('item', item)
         return (
             <Menu>
                 {/* <Menu.Item
@@ -170,7 +171,7 @@ const TableSelection = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id }
+                        query:{...router.query, id: item.id, vacant: item.vacant.id }
                     })} 
                 >
                     Editar

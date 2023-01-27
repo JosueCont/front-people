@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import MyModal from "../../../common/MyModal";
 import { Col, Form, Input, Row, Select, DatePicker, Button } from "antd";
 import { optionsStatusSelection } from "../../../utils/constant";
+import WebApiJobBank from "../../../api/WebApiJobBank";
 import moment from "moment";
+import router from "next/router";
+import { useEffect } from "react";
 
 const ModalAsignament = ({
   title = '',
@@ -14,7 +17,7 @@ const ModalAsignament = ({
 
   const [ formAsignament ] = Form.useForm()
   const [loading, setLoading ] = useState(false);
-
+  
   const onCloseModal = () =>{
     close();
     formAsignament.resetFields();

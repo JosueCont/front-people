@@ -41,9 +41,21 @@ const DetailsPreselection = ({
     }
 },[router.query?.id])
 
+
   useEffect(() => {
-    getAssesmets()
-  },[])
+    if(router.query?.vacant){
+      getEvaluationVacant(router.query?.vacant)
+    }
+  },[router.query?.vacant])
+
+  const getEvaluationVacant = async (id) => {
+    try {
+      let response = await WebApiJobBank.getEvaluationsVacant(id)
+      console.log('Response Evaluation Vacant', response)
+    } catch (error) {
+      console.log('Error', error)
+    }
+  } 
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
@@ -62,10 +74,6 @@ const DetailsPreselection = ({
     }
   }, [infoSelection])
 
-  console.log('Assesment', assessmentStore)
-  
-
-
   const getInfoVacant = async (id) => {
     try {
       setFetching(true)
@@ -80,23 +88,22 @@ const DetailsPreselection = ({
     }
   }
 
-  const getAssesmets = async () => {
-    try {
-      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
-      if(response && response.data?.results?.lenght > 0){
-        setAssesments(response.data)
-      }
-      console.log('Response', response)
-    } catch (error) {
-      console.log('Error', error)
-    }
-  }
+  // const getAssesmets = async () => {
+  //   try {
+  //     let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
+  //     if(response && response.data?.results?.lenght > 0){
+  //       setAssesments(response.data)
+  //     }
+  //     console.log('Response', response)
+  //   } catch (error) {
+  //     console.log('Error', error)
+  //   }
+  // }
   
 
   const actionBack = () =>{
       router.push({
           pathname: '/jobbank/selection',
-          query: newFilters
       })
   }
 
@@ -218,7 +225,6 @@ const mapState = (state) =>{
   return{
       currentNode: state.userStore.current_node,
       user: state.userStore.user,
-      assessmentStore: state.assessmentStore,
   }
 }
 
