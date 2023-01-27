@@ -92,13 +92,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
           {
             name: "seventh_day_breakdown",
-            label: "¿Desgloce del septimo día?",
+            label: "¿Desglose del séptimo día?",
             value: false,
           },
 
           {
             name: "seventh_day_discount",
-            label: "¿Descuento proporción septimo dia?",
+            label: "¿Descuento proporción séptimo día?",
             value: false,
           },
           {
@@ -217,6 +217,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const savePaymentCalendar = async (data) => {
+    setLoading(true)
     await WebApiPayroll.createPaymentCalendar(data)
       .then((response) => {
         setLoading(false);
@@ -235,8 +236,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const updatePaymentCalendar = async (data) => {
+    setLoading(true)
     WebApiPayroll.updatePaymentCalendar(data)
       .then((response) => {
+        setLoading(false)
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
@@ -406,7 +409,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           <Title style={{ fontSize: "20px" }}>
             {paymentCalendar && paymentCalendar.locked
               ? `Calendario: ${paymentCalendar.name}`
-              : "Nuevo calendario"}
+              : idPaymentCalendar ? 'Editar calendario' :"Nuevo calendario"}
           </Title>
         </Row>
         <Form
