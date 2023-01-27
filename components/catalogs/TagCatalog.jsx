@@ -44,7 +44,7 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
 
   const colsData = [
     {
-      title: "name",
+      title: "Nombre",
       dataIndex: "name",
     },
     {
