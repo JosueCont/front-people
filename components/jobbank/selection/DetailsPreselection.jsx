@@ -18,6 +18,7 @@ import TabAsign from './TabAsign';
 const DetailsPreselection = ({
   action,
   user,
+  assessmentStore,
   currentNode,
   newFilters = {},
   isAutoRegister = false
@@ -60,6 +61,8 @@ const DetailsPreselection = ({
       }
     }
   }, [infoSelection])
+
+  console.log('Assesment', assessmentStore)
   
 
 
@@ -191,7 +194,7 @@ const DetailsPreselection = ({
                 />
               </Spin>
             </Tabs.TabPane>
-            {/* <Tabs.TabPane
+            <Tabs.TabPane
               tab='Asignar evaluación'
               forceRender
               key='2'
@@ -202,7 +205,7 @@ const DetailsPreselection = ({
                   assesments = { assesments }
                 />
               </Spin>
-            </Tabs.TabPane> */}
+            </Tabs.TabPane>
           </Tabs>
         </Form>
       </DetailsCustom>
@@ -214,7 +217,8 @@ const DetailsPreselection = ({
 const mapState = (state) =>{
   return{
       currentNode: state.userStore.current_node,
-      user: state.userStore.user
+      user: state.userStore.user,
+      assessmentStore: state.assessmentStore,
   }
 }
 
