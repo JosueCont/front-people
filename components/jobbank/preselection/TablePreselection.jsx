@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { Table, Dropdown, Button, Menu, message } from 'antd';
-=======
 import React, { useState, useMemo } from 'react';
 import { Table, Dropdown, Button, Menu, message, Alert } from 'antd';
->>>>>>> 01d077a0ade02610dff4b1b897b8f9bdf65b66de
 import { connect } from 'react-redux';
 import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
@@ -128,14 +123,6 @@ const TablePreselection = ({
         );
     };
 
-<<<<<<< HEAD
-    const startSelection = (item) => {
-        console.log('item', item)
-    }
-
-
-=======
->>>>>>> 01d077a0ade02610dff4b1b897b8f9bdf65b66de
     const menuItem = (item) => {
         return (
             <Menu>
