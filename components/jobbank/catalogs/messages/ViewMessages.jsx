@@ -28,7 +28,7 @@ const ViewMessages = ({
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getConnectionsOptions(currentNode.id));
+        dispatch(getConnectionsOptions(currentNode.id,'&conection_type=2'));
     },[currentNode])
 
     useEffect(()=>{

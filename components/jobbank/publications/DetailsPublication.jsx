@@ -24,7 +24,9 @@ const DetailsPublication = ({
     action,
     currentNode,
     currentUser,
-    newFilters = {}
+    newFilters = {},
+    list_connections_options,
+    load_connections_options
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -51,18 +53,11 @@ const DetailsPublication = ({
     },[router.query?.id])
 
     useEffect(()=>{
-        if(Object.keys(router.query).length > 0 && action == 'add'){
-            formPublications.resetFields();
-            keepValues();
-        }
-    },[router.query])
-
-    useEffect(()=>{
         if(Object.keys(infoPublication).length > 0 && action == 'edit'){
             formPublications.resetFields();
             setValuesForm();
         }
-    },[infoPublication])
+    },[infoPublication, list_connections_options])
 
     const getInfoPublication = async (id) =>{
         try {
@@ -76,37 +71,24 @@ const DetailsPublication = ({
         }
     }
 
-    const keepValues = () =>{
-        if(router.query?.client) keepClient();
-        if(router.query?.vacancy) keepVacancy();
-    }
-
-    const keepClient = () =>{
-        formPublications.setFieldsValue({
-            customer: router.query.client
-        })
-    }
-
-    const keepVacancy = () =>{
-        formPublications.setFieldsValue({
-            vacant: router.query.vacancy
-        })
-    }
-
     const setValuesForm = () =>{
+        let selected = infoPublication.account_to_share?.length > 0 ? infoPublication.account_to_share : [];
+        const filter_ = item => selected.includes(item.code) && item.is_active;
+        let account_to_share = list_connections_options.filter(filter_).map(item => item.code);
         let existFields = Object.keys(infoPublication.fields).length > 0;
         let existFieldsName = infoPublication.profile && Object.keys(infoPublication.profile?.fields_name).length > 0;
         let results = existFields && !existFieldsName
             ? formatData(infoPublication.fields)
             : existFieldsName && !existFields
             ? formatData(infoPublication.profile.fields_name)
-            : {}; 
+            : {};
+            
         let all_info = {
             ...results,
+            account_to_share,
             customer: infoPublication?.vacant?.customer?.id,
             vacant: infoPublication?.vacant?.id,
             profile: infoPublication.profile?.id ?? 'open_fields',
-            account_to_share: infoPublication.account_to_share
         }
         setValuesDefault(all_info)
         formPublications.setFieldsValue(all_info);
@@ -160,19 +142,7 @@ const DetailsPublication = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.client) router.push({
-            pathname: '/jobbank/clients',
-            query: newFilters
-        })
-        else if(router.query?.vacancy) router.push({
-            pathname: '/jobbank/vacancies',
-            query: newFilters
-        })
-        else if(router.query?.strategy) router.push({
-            pathname: '/jobbank/strategies',
-            query: newFilters
-        })
-        else router.push({
+        router.push({
             pathname: '/jobbank/publications',
             query: newFilters
         });
@@ -263,13 +233,13 @@ const DetailsPublication = ({
                             >
                                 Guardar y registrar otra
                             </Button>
-                            {/* <Button
+                            <Button
                                 onClick={()=>getSaveAnd('edit')}
                                 disabled={loading['edit']?.disabled}
                                 loading={loading['edit']?.loading}
                             >
                                 Guardar y editar
-                            </Button> */}
+                            </Button>
                         </>
                     ):(
                         <Button
@@ -289,7 +259,9 @@ const DetailsPublication = ({
 const mapState = (state) =>{
   return{
         currentUser: state.userStore.user,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_connections_options: state.jobBankStore.list_connections_options,
+        load_connections_options: state.jobBankStore.load_connections_options,
     }
 }
 

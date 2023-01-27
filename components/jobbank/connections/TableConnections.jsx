@@ -54,6 +54,9 @@ const TableConnections = ({
     const checkConfig = (item) => {
         if(['WP'].includes(item.code)) return item.is_valid
             && item.data_config?.ACCESS_TOKEN;
+        if(['GC'].includes(item.code)) return item.is_valid
+            && item.data_config?.API_KEY
+            && item.data_config?.CLIENT_ID;
         return item.is_valid
             && item.data_config?.page_access_token
             && item.data_config?.user_access_token;

@@ -47,16 +47,18 @@ const CalendarHeader = ({
         // if(type == 'month' && month == 11 && year >= maxYear) return;
         if(type == 'month' && month >= 11) return;
         if(type == 'year' && year >= maxYear) return;
-        let next = type == 'year' ? current?.year(year+1) : current?.year(year).month(month+1);
-        onChange(next);
+        let next = current?.year(year).month(month+1);
+        if(type == 'year') onChangeYear(year+1);
+        else onChange(next);
     }
 
     const prevMonth = () =>{
         // if(type == 'month' && month == 0 && year <= minYear) return;
         if(type == 'month' && month <= 0) return;
         if(type == 'year' && year <= minYear) return;
-        let prev = type == 'year' ? current?.year(year-1) : current?.year(year).month(month-1);
-        onChange(prev);
+        let prev = current?.year(year).month(month-1);
+        if(type == 'year') onChangeYear(year-1);
+        else onChange(prev);
     }
 
     const onChangeYear = (newYear) =>{

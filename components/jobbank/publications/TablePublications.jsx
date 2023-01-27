@@ -104,7 +104,7 @@ const TablePublications = ({
 
     const getRed = (item) =>{
         if(item.account_to_share?.length <= 0) return [];
-        const red = record => item.account_to_share.includes(record.code);
+        const red = record => item.account_to_share?.includes(record.code);
         return list_connections_options.filter(red);
     }
 
@@ -165,16 +165,18 @@ const TablePublications = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
-                    key='1'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/publications/edit`,
-                        query:{...router.query, id: item.id }
-                    })}
-                >
-                    Editar
-                </Menu.Item> */}
+                {!item.is_published && (
+                    <Menu.Item
+                        key='1'
+                        icon={<EditOutlined/>}
+                        onClick={()=> router.push({
+                            pathname: `/jobbank/publications/edit`,
+                            query:{...router.query, id: item.id }
+                        })}
+                    >
+                        Editar
+                    </Menu.Item>
+                )}
                 {/* <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -250,14 +252,14 @@ const TablePublications = ({
         //         )
         //     }
         // },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
-        //         )
-        //     }
-        // },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
+                )
+            }
+        },
         {
             // title: ()=> {
             //     return(
@@ -272,7 +274,7 @@ const TablePublications = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -288,7 +290,7 @@ const TablePublications = ({
                 rowKey='id'
                 columns={columns}
                 loading={load_publications}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 onChange={onChangePage}
                 dataSource={list_publications.results}
                 locale={{ emptyText: load_publications
@@ -333,7 +335,7 @@ const mapState = (state) =>{
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
         list_connections_options: state.jobBankStore.list_connections_options,
-        list_connections_options: state.jobBankStore.list_connections_options,
+        load_connections_options: state.jobBankStore.load_connections_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }
