@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DetailsCustom from '../DetailsCustom';
 import TabDetail from './TabDetail';
-import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const DetailsPreselection = ({
   action,
@@ -30,8 +29,8 @@ const DetailsPreselection = ({
   const [currentKey, setCurrentKey] = useState('1');
   const [disableTab, setDisabledTab] = useState(true);
   const [infoSelection, setInfoSelection] = useState({})
-  const [msgHTML, setMsgHTML] = useState("");
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [comments, setComments] = useState([])
+
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
@@ -41,7 +40,6 @@ const DetailsPreselection = ({
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
-      console.log('Info selection', infoSelection)
       formPreselection.setFieldsValue(({
         candidate: infoSelection?.candidate?.fisrt_name + infoSelection?.candidate?.last_name,
         vacant: infoSelection?.vacant?.job_position,
@@ -49,12 +47,15 @@ const DetailsPreselection = ({
         telephone: infoSelection?.candidate?.telephone || infoSelection?.candidate?.cell_phone,
         status_process: infoSelection?.status_process
       }))
-      if (!infoSelection.main_comments) return
-      setMsgHTML(infoSelection.main_comments);
-      let convert = convertFromHTML(infoSelection.main_comments);
-      let htmlMsg = ContentState.createFromBlockArray(convert);
-      let template = EditorState.createWithContent(htmlMsg);
-      setEditorState(template);
+      if (infoSelection.comments && infoSelection.comments.length > 0){
+        setComments(infoSelection.comments)
+      }
+      // if (!infoSelection.main_comments) return
+      // setMsgHTML(infoSelection.main_comments);
+      // let convert = convertFromHTML(infoSelection.main_comments);
+      // let htmlMsg = ContentState.createFromBlockArray(convert);
+      // let template = EditorState.createWithContent(htmlMsg);
+      // setEditorState(template);
     }
   }, [infoSelection])
   
@@ -113,14 +114,12 @@ const DetailsPreselection = ({
       console.log('object', obj)
       let noValid = [undefined, null,""," "];
       let dataClient = new FormData();
-      dataClient.append('auto_register', isAutoRegister);
-      dataClient.append('comments', msgHTML)
+      dataClient.append('person', user.id)
       dataClient.append('status_process', obj.status_process)
       // Object.entries(obj).map(([key, val])=>{
       //     let value = noValid.includes(val) ? "" : val;
       //     dataClient.append(key, value);
       // });
-      console.log('DATA', dataClient)
       return dataClient;
   }
 
@@ -177,9 +176,12 @@ const DetailsPreselection = ({
             >
               <Spin spinning={fetching}>
                 <TabDetail 
-                  setMsgHTML = { setMsgHTML }
-                  setEditorState = {setEditorState}
-                  editorState = { editorState }
+                  listComments = { comments }
+                  loading = { fetching }
+                  setLoading = { setFetching }
+                  id = { router?.query.id }
+                  person = { user?.id }
+                  getInfoVacant = { getInfoVacant }
                 />
               </Spin>
             </Tabs.TabPane>
