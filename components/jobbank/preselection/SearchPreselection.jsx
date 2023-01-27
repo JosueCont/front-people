@@ -34,7 +34,11 @@ const SearchPreselection = ({
         if(!result) return [];
         return Object.entries({
             'Vacante': result.job_position,
-            'Género': listGets['gender'](result.gender) ?? 'N/A'
+            'Género': listGets['gender'](result.gender) ?? 'N/A',
+            'Puestos': result.qty,
+            'Aceptados': result.candidates_accepted,
+            'En proceso': result.candidates_in_process,
+            'Disponibles': result.available
         });
     },[idVacant, list_vacancies_options])
 

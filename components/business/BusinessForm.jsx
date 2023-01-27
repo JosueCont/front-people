@@ -136,16 +136,20 @@ const businessForm = ({ currentNode, ...props }) => {
     data.append("name", name);
     data.append("description", description);
     fNode && data.append("parent", fNode);
+    data.append("active", true);
     setAddB(true);
 
-    data.append("image", logo);
+
     data.append("person", personId);
     setLoading(true);
-    if (logo == null || logo == undefined) {
-      message.error("Agregue una imagen");
-      setAddB(false);
-      return;
+    if(logo){
+      data.append("image", logo);
     }
+    // if (logo == null || logo == undefined) {
+    //   message.error("Agregue una imagen");
+    //   setAddB(false);
+    //   return;
+    // }
     WebApiPeople.createNode(data)
       .then(function (response) {
         if (response.status === 200) {
