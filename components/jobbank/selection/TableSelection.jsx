@@ -173,7 +173,7 @@ const TableSelection = ({
                         query:{...router.query, id: item.id }
                     })} 
                 >
-                    Iniciar proceso de selección
+                    Editar
                 </Menu.Item>
             </Menu>
         );

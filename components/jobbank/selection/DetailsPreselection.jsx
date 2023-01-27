@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DetailsCustom from '../DetailsCustom';
 import TabDetail from './TabDetail';
+import TabAsign from './TabAsign';
 
 const DetailsPreselection = ({
   action,
@@ -30,6 +31,7 @@ const DetailsPreselection = ({
   const [disableTab, setDisabledTab] = useState(true);
   const [infoSelection, setInfoSelection] = useState({})
   const [comments, setComments] = useState([])
+  const [ assesments, setAssesments ] = useState([])
 
 
   useEffect(()=>{
@@ -37,6 +39,10 @@ const DetailsPreselection = ({
       getInfoVacant(router.query.id)
     }
 },[router.query?.id])
+
+  useEffect(() => {
+    getAssesmets()
+  },[])
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
@@ -48,14 +54,10 @@ const DetailsPreselection = ({
         status_process: infoSelection?.status_process
       }))
       if (infoSelection.comments && infoSelection.comments.length > 0){
-        setComments(infoSelection.comments)
+        let noValid = [undefined, null,""," "]
+        let cleanComments = infoSelection.comments.filter((comment) => !noValid.includes(comment.comments))
+        setComments(cleanComments)
       }
-      // if (!infoSelection.main_comments) return
-      // setMsgHTML(infoSelection.main_comments);
-      // let convert = convertFromHTML(infoSelection.main_comments);
-      // let htmlMsg = ContentState.createFromBlockArray(convert);
-      // let template = EditorState.createWithContent(htmlMsg);
-      // setEditorState(template);
     }
   }, [infoSelection])
   
@@ -72,6 +74,18 @@ const DetailsPreselection = ({
       console.log('Error', error)
     } finally {
       setFetching(false)
+    }
+  }
+
+  const getAssesmets = async () => {
+    try {
+      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
+      if(response && response.data?.results?.lenght > 0){
+        setAssesments(response.data)
+      }
+      console.log('Response', response)
+    } catch (error) {
+      console.log('Error', error)
     }
   }
   
@@ -116,10 +130,6 @@ const DetailsPreselection = ({
       let dataClient = new FormData();
       dataClient.append('person', user.id)
       dataClient.append('status_process', obj.status_process)
-      // Object.entries(obj).map(([key, val])=>{
-      //     let value = noValid.includes(val) ? "" : val;
-      //     dataClient.append(key, value);
-      // });
       return dataClient;
   }
 
@@ -142,11 +152,6 @@ const DetailsPreselection = ({
     setFetching(true);
     const bodyData = createData(values);
     onFinisUpdate(bodyData)
-    // const actionFunction = {
-    //     edit: onFinisUpdate,
-    //     add: onFinishCreate
-    // };
-    // actionFunction[action](bodyData);
   }
 
   const onFinishFailed = () =>{
@@ -182,9 +187,22 @@ const DetailsPreselection = ({
                   id = { router?.query.id }
                   person = { user?.id }
                   getInfoVacant = { getInfoVacant }
+                  statusProcess = { infoSelection?.status_process }
                 />
               </Spin>
             </Tabs.TabPane>
+            {/* <Tabs.TabPane
+              tab='Asignar evaluación'
+              forceRender
+              key='2'
+            >
+              <Spin spinning={fetching}>
+                <TabAsign 
+                  loading={ fetching }
+                  assesments = { assesments }
+                />
+              </Spin>
+            </Tabs.TabPane> */}
           </Tabs>
         </Form>
       </DetailsCustom>

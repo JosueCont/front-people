@@ -12,9 +12,10 @@ import { optionsStatusSelection } from '../../../utils/constant';
 import ModalComments from './ModalComment';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 import ListItems from '../../../common/ListItems';
+const { Option } = Select
 
 
-const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacant }) => {
+const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacant, statusProcess }) => {
 
     const [openModal, setOpenModal] = useState(false);
     const [msgHTML, setMsgHTML] = useState("<p></p>");
@@ -27,6 +28,7 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
 
     const closeModal = () =>{
         setOpenModal(false)
+        setItemToEdit({})
         setMsgHTML('<p></p>');
         setEditorState(EditorState.createEmpty())
     }
@@ -51,11 +53,13 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
         }
     }
 
-    const actionUpdate = async (values) => {
-        values.comments = msgHTML
+    const actionUpdate = async () => {
+
+        let data = itemToEdit
+        data.comments = msgHTML
 
         try {
-            await WebApiJobBank.updateProcessSelection(id, values)
+            await WebApiJobBank.updateProcessSelection(data.id, data)
             getInfoVacant(id)
             message.success('Comentario Editado')
 
@@ -85,6 +89,7 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        setItemToEdit({})
         setItemsToDelete({})
     }
 
@@ -201,14 +206,13 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
                                 <Select
                                     allowClear
                                     showSearch
-                                    placeholder='Seleccionar un sector'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
                                 >
                                     {optionsStatusSelection.length > 0 && optionsStatusSelection.map(item => (
-                                        <Select.Option value={item.value} key={item.key}>
+                                        <Option disabled={item.value < statusProcess} value={item.value} key={item.key}>
                                             {item.label}
-                                        </Select.Option>
+                                        </Option>
                                     ))}
                                 </Select>
                             </Form.Item>

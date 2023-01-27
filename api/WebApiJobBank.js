@@ -472,6 +472,10 @@ class WebApiJobBank {
     static updateProcessSelection(id, values){
         return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
     }
+
+    static getVacancyAssesmentCandidateVacancy(){
+        return WebApi.ApisType('/job-bank/vacant-assessment-candidate-vacancy/', 'get')
+    }
     
 }
 

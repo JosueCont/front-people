@@ -75,21 +75,6 @@ const TablePreselection = ({
         setItemsSelected([])
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/preselection',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
-    }
-
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
