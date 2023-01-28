@@ -5,7 +5,6 @@ import {
     Select,
     Form,
     Button,
-    Tabs,
     DatePicker,
     TimePicker,
     Input,
@@ -14,16 +13,14 @@ import {
 } from 'antd';
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
-import { ruleEmail, ruleRequired, ruleURL, ruleWhiteSpace } from '../../../utils/rules';
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import SelectDropdown from './SelectDropdown';
-
-import { convertToRaw, EditorState, Modifierv, convertFromHTML, ContentState } from "draft-js";
+import { convertToRaw, EditorState, convertFromHTML, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import moment from 'moment-timezone';
 import { valueToFilter } from '../../../utils/functions';
-const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
+const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false });
 
 const EventForm = ({
     visible = false,
@@ -126,12 +123,17 @@ const EventForm = ({
         return recruiter ? recruiter.email : '';
     }
 
+    const getAttendes = (process) =>{
+        const map_ = item => ({email:item});
+        let default_ = getDefaultEmails(process);
+        const some_ = item => valueToFilter(item) == valueToFilter(default_);
+        let list = [...attendees, ...emailsDefault];
+        return list.some(some_) ? list.map(map_) : [...list, default_].map(map_);
+    }
+
     const createData = (values) =>{
         let obj = Object.assign({}, values);
-        const map_ = item => ({email:item});
-        let recruiter = getDefaultEmails(values.process);
-        let list = [...attendees, ...emailsDefault, recruiter];
-        obj.attendees_list = list.map(map_);;
+        obj.attendees_list = getAttendes(values.process);
         obj.description = msgHTML;
         if(obj.date && obj.hour){
             let day = obj.date?.format(formatDate);
@@ -164,6 +166,11 @@ const EventForm = ({
         setMsgHTML('<p></p>')
         close()
     }
+
+    const disabledDate = (current) => {
+        let date = itemToEdit?.start ? moment(itemToEdit.start) : moment();
+        return current && current < date.startOf("day");
+    };
 
     return (
         <Drawer
@@ -310,6 +317,7 @@ const EventForm = ({
                                 className='picker-jb'
                                 style={{width:'100%'}}
                                 dropdownClassName='drop-picker-jb'
+                                disabledDate={disabledDate}
                             />
                         </Form.Item>
                     </Col>
