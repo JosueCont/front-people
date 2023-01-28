@@ -26,8 +26,9 @@ const SelectDropdown = ({
 
     const ruleExist = () => ({
         validator(_, value){
+            let list = [...newList, ...defaultList];
             const some_ = row => valueToFilter(row) == valueToFilter(value);
-            let exist = items.some(some_);
+            let exist = list.some(some_);
             if(exist) return Promise.reject('Este correo ya existe');
             return Promise.resolve();
         }
