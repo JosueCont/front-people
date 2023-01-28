@@ -18,7 +18,6 @@ import TabAsign from './TabAsign';
 const DetailsPreselection = ({
   action,
   user,
-  assessmentStore,
   currentNode,
   newFilters = {},
   isAutoRegister = false
@@ -33,11 +32,13 @@ const DetailsPreselection = ({
   const [infoSelection, setInfoSelection] = useState({})
   const [comments, setComments] = useState([])
   const [ assesments, setAssesments ] = useState([])
+  const [asignaments, setAsignaments ] = useState([])
 
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
       getInfoVacant(router.query.id)
+      getAssesmets(router.query.id)
     }
 },[router.query?.id])
 
@@ -51,7 +52,9 @@ const DetailsPreselection = ({
   const getEvaluationVacant = async (id) => {
     try {
       let response = await WebApiJobBank.getEvaluationsVacant(id)
-      console.log('Response Evaluation Vacant', response)
+      if(response && response.data?.results?.length > 0){
+        setAssesments(response.data.results)
+      }
     } catch (error) {
       console.log('Error', error)
     }
@@ -88,17 +91,19 @@ const DetailsPreselection = ({
     }
   }
 
-  // const getAssesmets = async () => {
-  //   try {
-  //     let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
-  //     if(response && response.data?.results?.lenght > 0){
-  //       setAssesments(response.data)
-  //     }
-  //     console.log('Response', response)
-  //   } catch (error) {
-  //     console.log('Error', error)
-  //   }
-  // }
+  const getAssesmets = async (id) => {
+    try {
+      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id)
+      console.log('dededed', response)
+      if(response){
+        setAsignaments(response.data.results)
+      }
+    } catch (error) {
+      console.log('Error', error)
+    }
+  }
+
+  
   
 
   const actionBack = () =>{
@@ -158,7 +163,6 @@ const DetailsPreselection = ({
 }
 
   const onFinish = (values) => {
-    console.log('values', values)
     setFetching(true);
     const bodyData = createData(values);
     onFinisUpdate(bodyData)
@@ -210,6 +214,8 @@ const DetailsPreselection = ({
                 <TabAsign 
                   loading={ fetching }
                   assesments = { assesments }
+                  processSelection = { infoSelection?.id }
+                  asignaments = { asignaments }
                 />
               </Spin>
             </Tabs.TabPane>

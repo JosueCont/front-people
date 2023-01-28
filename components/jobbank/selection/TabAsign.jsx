@@ -23,13 +23,25 @@ import ModalAsignament from './ModalAsignment';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
-const TabAsign = ({ loading }) => {
+const TabAsign = ({ loading, assesments, processSelection, asignaments }) => {
 
   const router = useRouter()
   const [openModal, setOpenModal] = useState(false);
 
   const closeModal = () =>{
     setOpenModal(false)
+  }
+
+  const actionCreate = async(values) => {
+    values.candidate_vacancy = processSelection
+    try {
+      let response = await WebApiJobBank.addVacancyAssesmentCandidateVacancy(values)
+      message.success('Evaluación Asignada')
+      console.log('Response', response)
+    } catch (error) {
+      console.log('Error', error)
+      message.error('Error al asignar evaluación')
+    }
   }
 
   // const actionDelete = async (id) =>{
@@ -87,6 +99,7 @@ const TabAsign = ({ loading }) => {
             key='id'
             columns={ columns }
             loading = { loading }
+            dataSource = { asignaments }
           />
         </Col>
       </Row>
@@ -95,6 +108,8 @@ const TabAsign = ({ loading }) => {
         visible = { openModal }
         close = { closeModal }
         textSave = 'Asignar'
+        assesments = { assesments }
+        actionForm = {actionCreate}
       />
     </>
   )

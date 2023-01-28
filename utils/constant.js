@@ -495,6 +495,13 @@ export const optionsStatusSelection = [
   { value: 7, key: 7, label: "Contratado" },
 ];
 
+export const optionsStatusAsignament = [
+  { value: 1, key: 1, label: 'Asignada' },
+  { value: 2, key: 2, label: 'Enviada' },
+  { value: 3, key: 3, label: 'Finalizada' },
+  { value: 4, key: 4, label: 'No finalizada'}
+]
+
 export const optionsTypeNotify = [
   { value: 0, key: 0, label: "Informativa" },
   { value: 1, key: 1, label: "Seguimiento" },

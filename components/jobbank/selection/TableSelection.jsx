@@ -152,6 +152,16 @@ const TableSelection = ({
                     Editar
                 </Menu.Item> */}
                 <Menu.Item
+                    key='4'
+                    icon={<EditOutlined/>}
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/selection/details`,
+                        query:{...router.query, id: item.id, vacant: item.vacant.id }
+                    })} 
+                >
+                    Editar
+                </Menu.Item>
+                <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
@@ -166,16 +176,6 @@ const TableSelection = ({
                         Agendar entrevista
                     </Menu.Item>
                 )}
-                                <Menu.Item
-                    key='4'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id, vacant: item.vacant.id }
-                    })} 
-                >
-                    Editar
-                </Menu.Item>
             </Menu>
         );
     };
