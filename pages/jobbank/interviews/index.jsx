@@ -59,7 +59,7 @@ const calendar = ({
             ]}
         >
             <InterviewProvider>
-                <SearchInterviews isCalendar={true}/>
+                <SearchInterviews/>
                 <CalendarView/>
             </InterviewProvider>
         </MainIndexJB>

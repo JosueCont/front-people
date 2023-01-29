@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { Radio, Select, Tooltip, Button } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -14,12 +14,18 @@ const CalendarHeader = ({
     const router = useRouter();
     const nowDate = new Date();
     const current = value?.locale('es-Mx')?.clone();
-    const year = router.query?.year ? parseInt(router.query.year) : current?.year();
+    const year = current?.year();
     const month = current?.month();
     const months = current?.localeData()?.months();
     const days =  current?.localeData().weekdays();
     const minYear = nowDate.getFullYear() - rangeYear;
     const maxYear = nowDate.getFullYear() + rangeYear;
+
+    useEffect(()=>{
+        if(!router.query?.year) return;
+        let num = parseInt(router.query.year);
+        onChange(value.year(num))
+    },[router.query?.year])
 
     const getLabel = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
@@ -29,14 +35,14 @@ const CalendarHeader = ({
             let result = idx > rangeYear ? year + (idx - rangeYear) : year - (rangeYear - idx);
             return {value: result, key: result, label: `${result}`};
         })
-    },[])
+    },[year])
 
     const today = useMemo(()=>{
         let day = days[nowDate.getDay()];
         let month = months[nowDate.getMonth()];
         let title = `${day}, ${nowDate.getDate()} ${month}`;
         return getLabel(title);
-    },[])
+    },[days, months])
 
     const currentMonth = useMemo(()=>{
         let title = `${months[month]} ${year}`;
