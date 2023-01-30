@@ -588,7 +588,7 @@ export const getPreselection = (node, query = '', page = 1) => async (dispatch)=
             return;
         }
         let response = await WebApiJobBank.getCandidates(node, query);
-        dispatch({...typeFunction, payload: { count: response.data?.length, results: response.data }});
+        dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

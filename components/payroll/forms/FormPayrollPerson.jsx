@@ -169,7 +169,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
             cost_center: item?.cost_center,
             fixed_concept: item.fixed_concept,
           });
-          setCalendar(item.payment_calendar.id);
+          setCalendar(item.payment_calendar ? item.payment_calendar.id : null);
           changePaymentType(item.payment_type);
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
@@ -288,8 +288,6 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       });
     }
   };
-
-  useEffect(() => {}, [bankDisabled]);
 
   const formFinish = (value) => {
     if (calendar != formPayrollPerson.getFieldsValue(true).payment_calendar) {

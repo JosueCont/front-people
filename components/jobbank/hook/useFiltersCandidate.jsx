@@ -24,7 +24,9 @@ export const useFiltersCandidate = () =>{
         sector: 'Sector',
         state: 'Estado',
         municipality__unaccent__icontains: 'Municipio',
-        sub_category: 'Subcategoría'
+        sub_category: 'Subcategoría',
+        age_start: 'Edad mínima',
+        age_end: 'Edad máxima'
     }
 
     const getCategory = (id) =>{

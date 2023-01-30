@@ -5,25 +5,23 @@ import {
     Select,
     Form,
     Button,
-    Tabs,
     DatePicker,
     TimePicker,
     Input,
     Space,
     Drawer
 } from 'antd';
+import { CloseOutlined } from "@ant-design/icons";
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
-import { ruleEmail, ruleRequired, ruleURL, ruleWhiteSpace } from '../../../utils/rules';
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import SelectDropdown from './SelectDropdown';
-
-import { convertToRaw, EditorState, Modifierv, convertFromHTML, ContentState } from "draft-js";
+import { convertToRaw, EditorState, convertFromHTML, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import moment from 'moment-timezone';
 import { valueToFilter } from '../../../utils/functions';
-const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false })
+const Editor = dynamic(() => import('react-draft-wysiwyg').then(mod => mod.Editor),{ ssr: false });
 
 const EventForm = ({
     visible = false,
@@ -67,6 +65,7 @@ const EventForm = ({
     useEffect(()=>{
         let size = Object.keys(itemToEdit).length;
         if(size <= 0) return;
+        formEvent.resetFields();
         let values = {name_event: itemToEdit.name_event};
         values.process = itemToEdit.process;
         values.date = moment(itemToEdit.start);
@@ -126,12 +125,17 @@ const EventForm = ({
         return recruiter ? recruiter.email : '';
     }
 
+    const getAttendes = (process) =>{
+        const map_ = item => ({email:item});
+        let default_ = getDefaultEmails(process);
+        const some_ = item => valueToFilter(item) == valueToFilter(default_);
+        let list = [...attendees, ...emailsDefault];
+        return list.some(some_) ? list.map(map_) : [...list, default_].map(map_);
+    }
+
     const createData = (values) =>{
         let obj = Object.assign({}, values);
-        const map_ = item => ({email:item});
-        let recruiter = getDefaultEmails(values.process);
-        let list = [...attendees, ...emailsDefault, recruiter];
-        obj.attendees_list = list.map(map_);;
+        obj.attendees_list = getAttendes(values.process);
         obj.description = msgHTML;
         if(obj.date && obj.hour){
             let day = obj.date?.format(formatDate);
@@ -160,37 +164,48 @@ const EventForm = ({
     const onClose = () =>{
         formEvent.resetFields()
         setAttendees([])
+        setEmailsDefault([])
         setEditorState(EditorState.createEmpty())
         setMsgHTML('<p></p>')
         close()
     }
 
+    const disabledDate = (current) => {
+        let date = itemToEdit?.start ? moment(itemToEdit.start) : moment();
+        return current && current < date.startOf("day");
+    };
+
     return (
         <Drawer
-            title={isEdit ? 'Actualizar evento' : 'Agregar evento'}
+            title={null}
             width={600}
             visible={visible}
             placement='right'
             maskClosable={false}
             keyboard={false}
-            closable={!loading}
+            closable={false}
             onClose={()=> onClose()}
-            extra={
-                <Space>
-                    <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
-                    <Button loading={loading} form='form-event' htmlType='submit'>
-                        {isEdit ? 'Actualizar' : 'Guardar'}
-                    </Button>
-                </Space>
-            }
         >
             <Form
                 form={formEvent}
                 layout='vertical'
                 onFinish={onFinish}
-                id='form-event'
             >
                 <Row gutter={[24,0]}>
+                    <Col span={24}>
+                        <div className='header-event-form'>
+                            <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                                <CloseOutlined onClick={()=> onClose()}/>
+                                <p>{isEdit ? 'Actualizar evento' : 'Agregar evento'}</p>
+                            </div>
+                            <Space>
+                                <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
+                                <Button loading={loading} htmlType='submit'>
+                                    {isEdit ? 'Actualizar' : 'Guardar'}
+                                </Button>
+                            </Space>
+                        </div>
+                    </Col>
                     <Col span={24}>
                         <Form.Item
                             name='process'
@@ -310,6 +325,7 @@ const EventForm = ({
                                 className='picker-jb'
                                 style={{width:'100%'}}
                                 dropdownClassName='drop-picker-jb'
+                                disabledDate={disabledDate}
                             />
                         </Form.Item>
                     </Col>
@@ -345,8 +361,14 @@ const EventForm = ({
                             onEditorStateChange={onChangeEditor}
                             toolbar={{options: ['inline','textAlign']}}
                             placeholder='Escriba una descripción...'
-                            editorStyle={{padding: '0px 12px'}}
+                            editorClassName='scroll-bar'
                             wrapperStyle={{background: '#f0f0f0'}}
+                            editorStyle={{
+                                padding: '0px 12px',
+                                minHeight: '150px',
+                                maxHeight: '150px',
+                                overflow: 'auto'
+                            }}
                             toolbarStyle={{
                                 background: '#f0f0f0',
                                 borderBottom: '1px solid rgba(0,0,0,0.06)'

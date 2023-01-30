@@ -356,7 +356,7 @@ const DetailsVacancies = ({
                                     <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
-                            {/* <Tabs.TabPane
+                            <Tabs.TabPane
                                 tab='Evaluaciones'
                                 forceRender
                                 key='4'
@@ -372,7 +372,7 @@ const DetailsVacancies = ({
                                         changeEvaluationstatus = {changeEvaluationstatus}
                                     />
                                 </Spin>
-                            </Tabs.TabPane> */}
+                            </Tabs.TabPane>
                             {/* <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender

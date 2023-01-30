@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { optionsStatusAcademic, optionsLangVacant } from '../../../utils/constant';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
+import RangeAge from '../RangeAge';
 
 const FiltersPreselection = ({
     visible,
@@ -110,7 +111,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_states?.length > 0 && list_states.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -144,7 +145,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_scholarship.length > 0 && list_scholarship.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -179,6 +180,9 @@ const FiltersPreselection = ({
                         >
                             <InputNumber
                                 type='number'
+                                max={99}
+                                min={1}
+                                allowClear
                                 maxLength={2}
                                 controls={false}
                                 placeholder='Buscar por edad'
@@ -203,6 +207,13 @@ const FiltersPreselection = ({
                             />
                         </Form.Item>
                     </Col>
+                    <RangeAge
+                        minAgeKey='age_start'
+                        maxAgeKey='age_end'
+                        maxAgeRequired={false}
+                        minAgeRequired={false}
+                        sizeCol={{span: 12}}
+                    />
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

@@ -12,7 +12,7 @@ const HighDirectionReport = ({
     infoCandidate,
     infoEducation,
     // infoExperience,
-    // infoPositions,
+    infoPositions,
 }) => {
 
     // const [marginTop, setMarginTop ] = useState(80)
@@ -352,8 +352,6 @@ const HighDirectionReport = ({
               {
                 infoEducation?.length > 0 && infoEducation.map((inst) => (
 
-                  inst?.study_level && inst?.study_level?.id >= 6 &&
-
                   <View key={inst.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
                     <View>
                       <Text style={{fontSize: 10}}>Titulo obtenido: { inst?.specialitation_area } </Text>
@@ -368,7 +366,7 @@ const HighDirectionReport = ({
                 ))
                }
 
-               <View style={{ width: '100%' }}>
+               {/* <View style={{ width: '100%' }}>
                     <View style={{ marginBottom: 10}}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Cursos de capacitación</Text>
                     </View>
@@ -379,10 +377,10 @@ const HighDirectionReport = ({
                             </View>
                         ))
                     }
-               </View>
+               </View> */}
 
                <View>
-                    <View style={{ marginTop: 10}}>
+                    <View style={{ marginTop: 10, marginBottom: 5}}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Idiomas:</Text>
                     </View>
                     {
@@ -397,7 +395,7 @@ const HighDirectionReport = ({
                                     }}
                                 > 
                                     { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                    
+                                    nivel
                                     { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
                                 </Text>
                             ))
@@ -503,87 +501,46 @@ const HighDirectionReport = ({
     //     </View>
     // )
 
-    // const SectionUltimateJobs = () => (
-    //     <View style={{ marginTop: marginTop }}>
-    //         <View style={{ marginBottom: 10}}>
-    //             <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Últimos puestos</Text>
-    //         </View>
-    //         <View
-    //             style={{
-    //                 backgroundColor: '#E9E9E9',
-    //                 borderRadius: 8
-    //             }}
-    //         >
-    //             <View
-    //                 style={{
-    //                     display: 'flex',
-    //                     flexWrap: 'wrap',
-    //                     flexDirection: 'row',
-    //                     padding: '6px 12px',
-    //                 }}
-    //             >
-    //                 <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
-    //                     <Text style={{ fontSize: 10 }}>Puesto</Text>
-    //                 </View>
-    //                 <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-    //                     <Text style={{ fontSize: 10 }}>Empresa</Text>
-    //                 </View>
-    //                 <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-    //                     <Text style={{ fontSize: 10 }}>Sector</Text>
-    //                 </View>
-    //                 <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-    //                     <Text style={{ fontSize: 10 }}>Fecha de inicio</Text>
-    //                 </View>
-    //                 <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-    //                     <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
-    //                 </View>
-    //             </View>
-    //             <View
-    //                 style={{
-    //                     padding: '6px 12px',
-    //                     display: 'flex',
-    //                     flexWrap: 'wrap',
-    //                     flexDirection: 'row',
-    //                 }}
-    //             >
-    //                 {
-    //                     infoPositions?.length > 0 && infoPositions.map((inst) => (
+    console.log('xdxdxd', infoPositions)
 
-    //                     <View 
-    //                         key={inst.id}
-    //                         style={{ 
-    //                             backgroundColor: '#FFF',
-    //                             display: 'flex',
-    //                             flexWrap: 'wrap',
-    //                             flexDirection: 'row',
-    //                             borderRadius: 10,
-    //                             padding: '0px 6px',
-    //                             marginBottom: 5
-    //                         }}
-    //                     >
-    //                         <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
-    //                             <Text style={{ fontSize: 10 }}> { inst?.position_name } </Text>
-    //                         </View>
-    //                         <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-    //                             <Text style={{ fontSize: 10 }}> { inst?.company } </Text>
-    //                         </View>
-    //                         <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-    //                             <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
-    //                         </View>
-    //                         <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-    //                             <Text style={{ fontSize: 10 }}> { inst?.start_date } </Text>
-    //                         </View>
-    //                         <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-    //                             <Text style={{ fontSize: 10 }}> { inst?.end_date} </Text>
-    //                         </View>
-    //                     </View>
-    //                     ))
-    //                 }
+    const SectionUltimateJobs = () => (
+        <View style={{ width: '80%', margin: 'auto' }}>
+            <View style={{ marginBottom: 10}}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >III EXPERIENCIA PROFESIONAL</Text>
+            </View>
+            <View
+            >
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                    }}
+                >
+                    {
+                        infoPositions?.length > 0 && infoPositions.map((pos) => (
 
-    //             </View>
-    //         </View>
-    //     </View>
-    // )
+                            <View key={pos.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
+                            <View>
+                              <Text style={{fontSize: 10}}>Nombre de la compañia: { pos?.company } </Text>
+                            </View>
+                            <View>
+                              <Text style={{fontSize: 10}}>Fechas: { pos?.start_date} - { pos?.end_date } </Text>
+                            </View>
+                            <View>
+                              <Text style={{fontSize: 10}}>Giro: { pos?.sector?.name} </Text>
+                            </View>
+                            <View>
+                              <Text style={{fontSize: 10}}>Puesto: { pos?.position_name} </Text>
+                            </View>
+                          </View>
+                        ))
+                    }
+
+                </View>
+            </View>
+        </View>
+    )
 
     return (
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
@@ -598,8 +555,14 @@ const HighDirectionReport = ({
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        marginBottom: 12,
-                    }}>
+                        marginBottom: 20,
+                        // position: 'absolute',
+                        // top: 0,
+                        // left: 0,
+                        // right: 0,
+                    }}
+                    fixed
+                    >
                             <Image 
                                 src={'/images/logo_HEX.png'}
                                 style={{
@@ -656,9 +619,18 @@ const HighDirectionReport = ({
                   style={{
                     display: 'flex',
                     justifyContent: 'center',
+                    marginBottom: 20
                   }}
                 >
                   <SectionEducation />
+                </View>
+                <View
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <SectionUltimateJobs />
                 </View>
                     {/* <SectionDetails />
                     <SectionEducation />

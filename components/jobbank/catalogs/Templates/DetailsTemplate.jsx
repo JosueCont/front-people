@@ -110,7 +110,8 @@ const DetailsTemplate = ({
 
     const onFinish = (values) => {
         setFetching(true);
-        const bodyData = createData(values, 'config');
+        values.form_enable = values.form_enable+"";
+        let bodyData = createData(values, 'config');
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
