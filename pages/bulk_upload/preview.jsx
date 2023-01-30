@@ -9,6 +9,7 @@ import {
   message,
   Modal,
   Alert,
+  Result
 } from "antd";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -33,6 +34,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [arrColumns, setArrColumns] = useState([]);
   const [messageSave, setMessageSave] = useState(null);
   const [templateType, setTemplateType] = useState(null);
+  const [errorImportar, setErrorImportar] = useState(null);
 
   /* Columns */
   const columns = [
@@ -53,7 +55,7 @@ const PreviewBulkUpload = ({ ...props }) => {
       title: "Guardado",
       key: "id",
       render: (item) => {
-        return item.status && item.status != "Exists" ? (
+        return item.status && item.status !== "Exists" ? (
           <CheckCircleTwoTone twoToneColor="#52c41a" />
         ) : (
           <CloseCircleTwoTone twoToneColor="#eb2f96" />
@@ -94,8 +96,9 @@ const PreviewBulkUpload = ({ ...props }) => {
         })
         .catch((e) => {
           setLoading(false);
+          setErrorImportar(true)
           message.error("Error al importar.");
-          console.log(e);
+          console.log('errors a l importar',e);
         });
     }
   }, [props.formData]);
@@ -110,7 +113,7 @@ const PreviewBulkUpload = ({ ...props }) => {
       content:
         "Los datos importados correctos se guardarán, los que contengan errores serán omitidos ",
       icon: <ExclamationCircleOutlined />,
-      okText: "Síguardar",
+      okText: "Sí,guardar",
       okButtonProps: {
         danger: true,
       },
@@ -190,20 +193,38 @@ const PreviewBulkUpload = ({ ...props }) => {
         <Row justify="center">
           <Col span={10}>
             {messageSave && <Alert message={messageSave} type="info" />}
+
             <br />
           </Col>
           <Col span={24}>
-            <Table
-              dataSource={dataUpload}
-              key="tableLog"
-              loading={loading}
-              columns={arrColumns}
-              locale={{
+
+            {
+                errorImportar ? <Result
+                    status="warning"
+                    title="No se pudo leer correctamente el archivo seleccionado, por favor revisa tu información y vuelve a intentar"
+                    extra={
+
+                      <Button
+                          onClick={() => router.push("/home/persons")}
+                          type="primary" key="console">
+                        Regresar
+                      </Button>
+                    }
+                /> :
+              <Table
+                dataSource={dataUpload}
+                key="tableLog"
+                loading={loading}
+                columns={arrColumns}
+                locale={{
                 emptyText: loading
-                  ? "Cargando..."
-                  : "No se encontraron resultados.",
+                ? "Cargando..."
+                : "No se encontraron resultados.",
               }}
-            ></Table>
+                ></Table>
+            }
+
+
           </Col>
         </Row>
       </div>
