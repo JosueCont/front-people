@@ -552,6 +552,11 @@ export const optionsConnectionsJB = [
   {label: 'Google Calendar', value: 'GC', key: 'GC', type: 3}
 ];
 
+export const optionsSourceType = [
+  {label: 'Khor', value: 1, key: 1},
+  {label: 'Cliente', value: 2, key: 2},
+]
+
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
 

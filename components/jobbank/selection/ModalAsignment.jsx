@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MyModal from "../../../common/MyModal";
 import { Col, Form, Input, Row, Select, DatePicker, Button } from "antd";
-import { optionsStatusAsignament } from "../../../utils/constant";
+import { optionsStatusAsignament,  } from "../../../utils/constant";
 import WebApiJobBank from "../../../api/WebApiJobBank";
 import moment from "moment";
 import router from "next/router";
@@ -107,9 +107,25 @@ const ModalAsignament = ({
               <DatePicker style={{ width: '100%' }}/>
             </Form.Item>
           </Col>
+          {/* <Col span={24}>
+            <Form.Item
+              name='sent_timestamp'
+              label='Fecha de envio'
+            >
+              <DatePicker style={{ width: '100%' }}/>
+            </Form.Item>
+          </Col>
           <Col span={24}>
             <Form.Item
-              name='aditionalcomment'
+              name='finished_timestamp'
+              label='Fecha de finalización'
+            >
+              <DatePicker style={{ width: '100%' }}/>
+            </Form.Item>
+          </Col> */}
+          <Col span={24}>
+            <Form.Item
+              name='additional_information'
               label='Información Adicional'
             >
               <Input.TextArea style={{ height: 100 }} />

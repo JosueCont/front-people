@@ -213,9 +213,11 @@ const DetailsPreselection = ({
               <Spin spinning={fetching}>
                 <TabAsign 
                   loading={ fetching }
+                  setLoading = { setFetching }
                   assesments = { assesments }
                   processSelection = { infoSelection?.id }
                   asignaments = { asignaments }
+                  getAssesmets = { getAssesmets }
                 />
               </Spin>
             </Tabs.TabPane>
