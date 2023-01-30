@@ -11,6 +11,7 @@ import {
     Space,
     Drawer
 } from 'antd';
+import { CloseOutlined } from "@ant-design/icons";
 import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
@@ -64,6 +65,7 @@ const EventForm = ({
     useEffect(()=>{
         let size = Object.keys(itemToEdit).length;
         if(size <= 0) return;
+        formEvent.resetFields();
         let values = {name_event: itemToEdit.name_event};
         values.process = itemToEdit.process;
         values.date = moment(itemToEdit.start);
@@ -162,6 +164,7 @@ const EventForm = ({
     const onClose = () =>{
         formEvent.resetFields()
         setAttendees([])
+        setEmailsDefault([])
         setEditorState(EditorState.createEmpty())
         setMsgHTML('<p></p>')
         close()
@@ -174,30 +177,35 @@ const EventForm = ({
 
     return (
         <Drawer
-            title={isEdit ? 'Actualizar evento' : 'Agregar evento'}
+            title={null}
             width={600}
             visible={visible}
             placement='right'
             maskClosable={false}
             keyboard={false}
-            closable={!loading}
+            closable={false}
             onClose={()=> onClose()}
-            extra={
-                <Space>
-                    <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
-                    <Button loading={loading} form='form-event' htmlType='submit'>
-                        {isEdit ? 'Actualizar' : 'Guardar'}
-                    </Button>
-                </Space>
-            }
         >
             <Form
                 form={formEvent}
                 layout='vertical'
                 onFinish={onFinish}
-                id='form-event'
             >
                 <Row gutter={[24,0]}>
+                    <Col span={24}>
+                        <div className='header-event-form'>
+                            <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                                <CloseOutlined onClick={()=> onClose()}/>
+                                <p>{isEdit ? 'Actualizar evento' : 'Agregar evento'}</p>
+                            </div>
+                            <Space>
+                                <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
+                                <Button loading={loading} htmlType='submit'>
+                                    {isEdit ? 'Actualizar' : 'Guardar'}
+                                </Button>
+                            </Space>
+                        </div>
+                    </Col>
                     <Col span={24}>
                         <Form.Item
                             name='process'
@@ -353,8 +361,14 @@ const EventForm = ({
                             onEditorStateChange={onChangeEditor}
                             toolbar={{options: ['inline','textAlign']}}
                             placeholder='Escriba una descripción...'
-                            editorStyle={{padding: '0px 12px'}}
+                            editorClassName='scroll-bar'
                             wrapperStyle={{background: '#f0f0f0'}}
+                            editorStyle={{
+                                padding: '0px 12px',
+                                minHeight: '150px',
+                                maxHeight: '150px',
+                                overflow: 'auto'
+                            }}
                             toolbarStyle={{
                                 background: '#f0f0f0',
                                 borderBottom: '1px solid rgba(0,0,0,0.06)'

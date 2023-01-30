@@ -307,8 +307,8 @@ const TableCandidates = ({
                     : '¿Estás seguro de eliminar este candidato?'
                 }
                 visible={openModalDelete}
-                keyTitle='fisrt_name'
-                keyDescription='last_name'
+                keyTitle={['fisrt_name','last_name']}
+                keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
