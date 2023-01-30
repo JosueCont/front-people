@@ -32,7 +32,7 @@ const CalendarDateCell = ({
         <ContentVertical gap={4}>
             {eventsDay.map((item, idx) => (
                 <EventInfo
-                    key={idx}
+                    key={item.id}
                     onClick={()=> showModalDetails(item)}
                 >
                     <p>{moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')} {item?.all_data_response?.summary}</p>

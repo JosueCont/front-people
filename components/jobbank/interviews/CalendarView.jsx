@@ -49,19 +49,19 @@ const CalendarView = ({
     }
 
     const showModalDelete = () =>{
-        setItemToDelete([itemToDetail])
         setOpenModalDelete(true)
         closeModalDetail()
     }
 
     const showModalForm = () =>{
-        setItemToEdit(itemToDetail)
         setOpenModalForm(true)
-        closeModalDetail();
+        closeModalDetail()
     }
 
     const showModalDetails = (item) =>{
         setItemToDetail(item)
+        setItemToEdit(item)
+        setItemToDelete([item])
         setOpenModalDetail(true)
     }
 

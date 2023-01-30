@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { optionsStatusAcademic, optionsLangVacant } from '../../../utils/constant';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
+import RangeAge from '../RangeAge';
 
 const FiltersPreselection = ({
     visible,
@@ -206,6 +207,13 @@ const FiltersPreselection = ({
                             />
                         </Form.Item>
                     </Col>
+                    <RangeAge
+                        minAgeKey='age_start'
+                        maxAgeKey='age_end'
+                        maxAgeRequired={false}
+                        minAgeRequired={false}
+                        sizeCol={{span: 12}}
+                    />
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar
