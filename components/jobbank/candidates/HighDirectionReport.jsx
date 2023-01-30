@@ -7,6 +7,7 @@ import {
     Page,
     PDFViewer,
 } from '@react-pdf/renderer';
+import moment from 'moment';
 
 const HighDirectionReport = ({
     infoCandidate,
@@ -207,7 +208,7 @@ const HighDirectionReport = ({
                       borderBottom: '2px solid black',
                       padding: '6px 12px'
                     }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.birthdate || ""} {infoCandidate?.municipality} {infoCandidate?.state?.name}</Text>
+                        <Text style={{ fontSize: 10 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""} {infoCandidate?.municipality} {infoCandidate?.state?.name}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 50%',
@@ -360,7 +361,7 @@ const HighDirectionReport = ({
                       <Text style={{fontSize: 10}}>Institución: { inst?.institution_name} </Text>
                     </View>
                     <View>
-                      <Text style={{fontSize: 10}}>Periodo: { inst?.end_date} </Text>
+                      <Text style={{fontSize: 10}}>Periodo: { inst?.end_date && moment(inst?.end_date).format('DD-MM-YYYY')} </Text>
                     </View>
                   </View>
                 ))
@@ -525,7 +526,7 @@ const HighDirectionReport = ({
                               <Text style={{fontSize: 10}}>Nombre de la compañia: { pos?.company } </Text>
                             </View>
                             <View>
-                              <Text style={{fontSize: 10}}>Fechas: { pos?.start_date} - { pos?.end_date } </Text>
+                              <Text style={{fontSize: 10}}>Fechas: { pos?.start_date && moment(pos?.start_date).format('DD-MM-YYYY')} - { pos?.end_date && moment(pos?.end_date).format('DD-MM-YYYY') } </Text>
                             </View>
                             <View>
                               <Text style={{fontSize: 10}}>Giro: { pos?.sector?.name} </Text>

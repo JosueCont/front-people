@@ -20,27 +20,34 @@ import {
 } from '../../../utils/rules';
 import { SearchOutlined, EllipsisOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import ModalAsignament from './ModalAsignment';
-import ListItems from '../../../common/ListItems';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { optionsStatusAsignament, optionsSourceType } from "../../../utils/constant";
+import ListItems from '../../../common/ListItems';
 
 const TabAsign = ({ loading, setLoading, assesments, processSelection, asignaments, getAssesmets }) => {
 
-  const router = useRouter()
   const [openModal, setOpenModal] = useState(false);
+  const [visibleDeleteModal, setVisibleDeleteModal ] = useState(false)
   const [itemToEdit, setItemToEdit] = useState({})
-  const [search, setSearch] = useState('')
+  const [itemsToDelete, setItemsToDelete ] = useState ({})
+  const [msgHTML, setMsgHTML] = useState("<p></p>");
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [ searchAsignaments, setSearchAsignaments ] = useState([])
 
   let dataSource = searchAsignaments.length > 0? searchAsignaments : asignaments
+  let validateAction = Object.keys(itemToEdit).length > 0
 
   const closeModal = () =>{
     setOpenModal(false)
+    setItemToEdit({})
+    setMsgHTML("<p></p>")
   }
 
   const actionCreate = async(values) => {
     setLoading(true)
     values.candidate_vacancy = processSelection
+    values.additional_information = msgHTML
     try {
       let response = await WebApiJobBank.addVacancyAssesmentCandidateVacancy(values)
       message.success('Evaluación Asignada')
@@ -54,23 +61,62 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
     }
   }
 
+  const actionEdit = async (values) => {
+    setLoading(true)
+    let id = itemToEdit.id
+    values.additional_information = msgHTML
+    try {
+      let response = await WebApiJobBank.editVacancyAssesmentCandidateVacancy(id, values)
+      message.success('Evaluación Actualizada')
+      console.log('Response', response)
+      getAssesmets(processSelection)
+    } catch (error) {
+      console.log('Error', error)
+      message.error('Error al actualizar evaluación')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const openEditModal = (item) => {
+    setOpenModal(true)
+    setItemToEdit(item)
+    if(!item.additional_information) return;
+    setMsgHTML(item.additional_information);
+    let convert = convertFromHTML(item.additional_information);
+    let htmlMsg = ContentState.createFromBlockArray(convert);
+    let template = EditorState.createWithContent(htmlMsg);
+    setEditorState(template);
+  }
+
+  const openDeleteModal = (item) => {
+    setVisibleDeleteModal(true)
+    setItemsToDelete(item)
+  }
+
+  
+  const closeModalDelete = () => {
+    setVisibleDeleteModal(false)
+    setItemsToDelete({})
+    setMsgHTML("<p></p>")
+  }
+
+
+
   const menuItem = (item) => {
     return (
             <Menu>
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    // onClick={()=> router.push({
-                    //     pathname: `/jobbank/vacancies/edit`,
-                    //     query: {...router.query, id: item.id }
-                    // })}
+                    onClick={()=> openEditModal(item)}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
-                    // onClick={()=> openModalRemove(item)}
+                    onClick={()=> openDeleteModal(item)}
                 >
                     Eliminar
                 </Menu.Item>
@@ -78,16 +124,19 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
     )
   }
 
-  // const actionDelete = async (id) =>{
-  //   try {
-  //     await WebApiJobBank.deleteVacancyAssesmentCandidateVacancy(id);
-  //     getAssesmets();
-  //     message.success('Evaluación eliminada');
-  //   } catch (e) {
-  //     console.log(e)
-  //     message.error('Evaluación no eliminada');
-  //   }
-  // }
+  const actionDelete = async () =>{
+    setLoading(true)
+    try {
+      await WebApiJobBank.deleteVacancyAssesmentCandidateVacancy(itemsToDelete.id);
+      message.success('Evaluación eliminada');
+      getAssesmets(processSelection);
+    } catch (e) {
+      console.log(e)
+      message.error('Evaluación no eliminada');
+    } finally{
+      setLoading(false)
+    }
+  }
 
   const columns = [
     {
@@ -97,10 +146,6 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
     {
       title: 'Usuario',
       dataIndex: 'user'
-    },
-    {
-      title: 'Contraseña',
-      dataIndex: 'password'
     },
     {
       title: 'Estatus',
@@ -168,12 +213,25 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
         </Col>
       </Row>
       <ModalAsignament 
-        title='Asignar evaluación'
+        title= { validateAction? 'Editar evaluación' : 'Asignar evaluación' }
         visible = { openModal }
         close = { closeModal }
-        textSave = 'Asignar'
+        textSave = { validateAction? 'Actualizar' : 'Asignar' }
         assesments = { assesments }
-        actionForm = {actionCreate}
+        actionForm = { validateAction? actionEdit : actionCreate }
+        itemToEdit = { itemToEdit }
+        setMsgHTML = { setMsgHTML }
+        setEditorState = {setEditorState}
+        editorState = { editorState }
+      />
+      <ListItems
+        title={'¿Estás seguro de eliminar este asignación?'}
+        visible={visibleDeleteModal}
+        keyTitle='vacant_assessment.name'
+        close={closeModalDelete}
+        itemsToList={[itemsToDelete]}
+        actionConfirm={actionDelete}
+        disableList = { true }
       />
     </>
   )
