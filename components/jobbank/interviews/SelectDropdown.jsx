@@ -4,7 +4,6 @@ import { Button, Divider, Input, Select, Space, Form } from 'antd';
 import { useRef, useState } from 'react';
 import { ruleEmail, ruleRequired } from '../../../utils/rules';
 import { valueToFilter } from '../../../utils/functions';
-import { OptionJB, ContentBetween } from './StyledInterview';
 import { RiCloseLine } from 'react-icons/ri';
 
 const SelectDropdown = ({
@@ -53,7 +52,7 @@ const SelectDropdown = ({
     const optionsSelected = useMemo(()=>{
         let list = [...newList, ...defaultList];
         if(!Array.isArray(list) || list.length <=0) return [];
-        return list.map(row => ({value: row, key: row, label: row}));
+        return list;
     },[newList, defaultList])
 
     const dropdownRender = (menu) =>(
@@ -95,28 +94,25 @@ const SelectDropdown = ({
             placeholder='Correos seleccionados'
             dropdownRender={dropdownRender}
             value={optionsSelected}
+            dropdownClassName='select-options-jb'
         >
             {defaultList.map((item, index) => (
-                <OptionJB value={item} key={item}>
-                    <ContentBetween>
-                        <span>{item}</span>
-                        <RiCloseLine
-                            style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
-                            onClick={e => deleteDefault(e, index)}
-                        />
-                    </ContentBetween>
-                </OptionJB>
+                <Select.Option value={item} key={item}>
+                    <>{item}</>
+                    <RiCloseLine
+                        style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
+                        onClick={e => deleteDefault(e, index)}
+                    />
+                </Select.Option>
             ))}
             {newList.map((item, index) => (
-                <OptionJB value={item} key={item}>
-                    <ContentBetween>
-                        <span>{item}</span>
-                        <RiCloseLine
-                            style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
-                            onClick={e => deleteNew(e, index)}
-                        />
-                    </ContentBetween>
-                </OptionJB>
+                <Select.Option value={item} key={item}>
+                    <>{item}</>
+                    <RiCloseLine
+                        style={{marginRight: 8, color: '#1890ff', fontSize: '1.25em'}}
+                        onClick={e => deleteNew(e, index)}
+                    />
+                </Select.Option>
             ))}
         </Select>
     )
