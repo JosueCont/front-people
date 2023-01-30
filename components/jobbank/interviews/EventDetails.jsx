@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext, useEffect } from 'react';
 import { Modal, Avatar, Tooltip, message } from 'antd';
 import { MdOutlineEdit, MdOutlineClear } from 'react-icons/md';
 import { VscTrash, VscCopy } from 'react-icons/vsc';
@@ -16,6 +16,7 @@ import {
     StatusGuest
 } from './StyledInterview';
 import { copyContent } from '../../../utils/functions';
+import { InterviewContext } from '../context/InterviewContext';
 
 const EventDetails = ({
     visible = false,
@@ -26,6 +27,7 @@ const EventDetails = ({
 }) => {
 
     const format = 'dddd, DD MMMM ⋅ hh:mm';
+    const { googleCalendar } = useContext(InterviewContext);
 
     const getDescription = () =>{
         let size = Object.keys(itemToDetail).length;
@@ -79,10 +81,8 @@ const EventDetails = ({
     }
 
     const copyEmails = () =>{
-        let results = guests.reduce((acc, row) =>{
-            if(!row.displayName) return acc;
-            return acc += ` ${row.displayName} <${row.email}>,`;
-        }, '');
+        const copy_ = (acc, row) => acc += `${row.displayName ?? ''} <${row.email}>, `;
+        let results = guests.reduce(copy_, '');
         copyContent({
             text: results,
             onSucces: ()=> message.success('Correos copiados'),
@@ -105,8 +105,22 @@ const EventDetails = ({
                     <ContentBetween>
                         <EvenTitle>{itemToDetail.all_data_response?.summary}</EvenTitle>
                         <ContentNormal gap={8}>
-                            <BtnOption onClick={()=> showModalForm()}><MdOutlineEdit/></BtnOption>
-                            <BtnOption onClick={()=> showModalDelete()}><VscTrash/></BtnOption>
+                            <Tooltip title={googleCalendar.msg}>
+                                <BtnOption
+                                    canClick={googleCalendar.valid}
+                                    onClick={()=> googleCalendar.valid ? showModalForm() : {}}
+                                >
+                                    <MdOutlineEdit/>
+                                </BtnOption>
+                            </Tooltip>
+                            <Tooltip title={googleCalendar.msg}>
+                                <BtnOption
+                                    canClick={googleCalendar.valid}
+                                    onClick={()=> googleCalendar.valid ? showModalDelete() : {}}
+                                >
+                                    <VscTrash/>
+                                </BtnOption>
+                            </Tooltip>
                             <BtnOption onClick={()=> close()}><MdOutlineClear/></BtnOption>
                         </ContentNormal>
                     </ContentBetween>
@@ -121,12 +135,22 @@ const EventDetails = ({
                     </ContentBetween>
                     <TextDescripcion>{itemToDetail?.all_data_response?.hangoutLink}</TextDescripcion>
                 </ContentVertical>
+                {/* <ContentVertical>
+                    <TextDescripcion>{itemToDetail?.process_selection?.vacant?.job_position}</TextDescripcion>
+                    <TextDescripcion>
+                        {itemToDetail?.process_selection?.candidate?.fisrt_name}&nbsp;
+                        {itemToDetail?.process_selection?.candidate?.last_name}
+                    </TextDescripcion>
+                </ContentVertical> */}
                 <ContentBetween>
                     <ContentVertical>
                         <TextDescripcion isTitle>
+                            {itemToDetail?.process_selection?.vacant?.job_position}
+                        </TextDescripcion>
+                        <TextDescripcion>
                             Invitados ({itemToDetail?.all_data_response?.attendees?.length ?? 0})
                         </TextDescripcion>
-                        <TextDescripcion>{statistics}</TextDescripcion>
+                        {/* <TextDescripcion>{statistics}</TextDescripcion> */}
                     </ContentVertical>
                     <BtnOption onClick={()=> copyEmails()}><VscCopy/></BtnOption>
                 </ContentBetween>
@@ -135,11 +159,8 @@ const EventDetails = ({
                         {guests.map((record, idx) => (
                             <ContentNormal gap={16} key={idx}>
                                 <div style={{position: 'relative'}}>
-                                    <Avatar style={{backgroundColor: '#455a64'}}>
-                                        {record.displayName
-                                            ? record.displayName[0].toUpperCase()
-                                            : record.email[0].toUpperCase()
-                                        }
+                                    <Avatar style={{backgroundColor: idx % 2 == 0 ? '#5d4037' : '#455a64'}}>
+                                        {record.displayName ? record.displayName[0].toUpperCase() : record.email[0].toUpperCase()}
                                     </Avatar>
                                     {['accepted','declined'].includes(record.responseStatus) ? (
                                         <StatusGuest status={record.responseStatus}>
