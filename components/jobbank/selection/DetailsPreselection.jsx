@@ -34,7 +34,6 @@ const DetailsPreselection = ({
   const [ assesments, setAssesments ] = useState([])
   const [asignaments, setAsignaments ] = useState([])
 
-
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
       getInfoVacant(router.query.id)

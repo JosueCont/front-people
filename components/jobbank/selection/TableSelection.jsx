@@ -144,13 +144,6 @@ const TableSelection = ({
         console.log('item', item)
         return (
             <Menu>
-                {/* <Menu.Item
-                    key='1'
-                    icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)} 
-                >
-                    Editar
-                </Menu.Item> */}
                 <Menu.Item
                     key='4'
                     icon={<EditOutlined/>}
