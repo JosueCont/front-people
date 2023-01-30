@@ -138,6 +138,7 @@ const businessForm = ({ currentNode, ...props }) => {
     fNode && data.append("parent", fNode);
     data.append("active", true);
     setAddB(true);
+    setLoading(true)
 
 
     data.append("person", personId);
@@ -160,12 +161,12 @@ const businessForm = ({ currentNode, ...props }) => {
         setAddB(false);
         getCopaniesList();
         message.success(messageSaveSuccess);
+        setLoading(false)
       })
       .catch(function (error) {
         setAddB(false);
         message.error(messageError);
         setLoading(false);
-        console.log(error);
       });
   };
 
@@ -505,6 +506,7 @@ const businessForm = ({ currentNode, ...props }) => {
             form="addBusinessForm"
             type="primary"
             key="submit"
+            loading={loading}
             htmlType="submit"
             disabled={addB}
           >

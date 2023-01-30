@@ -18,7 +18,6 @@ import TabAsign from './TabAsign';
 const DetailsPreselection = ({
   action,
   user,
-  assessmentStore,
   currentNode,
   newFilters = {},
   isAutoRegister = false
@@ -33,17 +32,32 @@ const DetailsPreselection = ({
   const [infoSelection, setInfoSelection] = useState({})
   const [comments, setComments] = useState([])
   const [ assesments, setAssesments ] = useState([])
-
+  const [asignaments, setAsignaments ] = useState([])
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
       getInfoVacant(router.query.id)
+      getAssesmets(router.query.id)
     }
 },[router.query?.id])
 
+
   useEffect(() => {
-    getAssesmets()
-  },[])
+    if(router.query?.vacant){
+      getEvaluationVacant(router.query?.vacant)
+    }
+  },[router.query?.vacant])
+
+  const getEvaluationVacant = async (id) => {
+    try {
+      let response = await WebApiJobBank.getEvaluationsVacant(id)
+      if(response && response.data?.results?.length > 0){
+        setAssesments(response.data.results)
+      }
+    } catch (error) {
+      console.log('Error', error)
+    }
+  } 
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
@@ -62,10 +76,6 @@ const DetailsPreselection = ({
     }
   }, [infoSelection])
 
-  console.log('Assesment', assessmentStore)
-  
-
-
   const getInfoVacant = async (id) => {
     try {
       setFetching(true)
@@ -80,23 +90,24 @@ const DetailsPreselection = ({
     }
   }
 
-  const getAssesmets = async () => {
+  const getAssesmets = async (id) => {
     try {
-      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
-      if(response && response.data?.results?.lenght > 0){
-        setAssesments(response.data)
+      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id)
+      console.log('dededed', response)
+      if(response){
+        setAsignaments(response.data.results)
       }
-      console.log('Response', response)
     } catch (error) {
       console.log('Error', error)
     }
   }
+
+  
   
 
   const actionBack = () =>{
       router.push({
           pathname: '/jobbank/selection',
-          query: newFilters
       })
   }
 
@@ -151,7 +162,6 @@ const DetailsPreselection = ({
 }
 
   const onFinish = (values) => {
-    console.log('values', values)
     setFetching(true);
     const bodyData = createData(values);
     onFinisUpdate(bodyData)
@@ -202,7 +212,11 @@ const DetailsPreselection = ({
               <Spin spinning={fetching}>
                 <TabAsign 
                   loading={ fetching }
+                  setLoading = { setFetching }
                   assesments = { assesments }
+                  processSelection = { infoSelection?.id }
+                  asignaments = { asignaments }
+                  getAssesmets = { getAssesmets }
                 />
               </Spin>
             </Tabs.TabPane>
@@ -218,7 +232,6 @@ const mapState = (state) =>{
   return{
       currentNode: state.userStore.current_node,
       user: state.userStore.user,
-      assessmentStore: state.assessmentStore,
   }
 }
 

@@ -141,15 +141,19 @@ const TableSelection = ({
     };
 
     const menuItem = (item) => {
+        console.log('item', item)
         return (
             <Menu>
-                {/* <Menu.Item
-                    key='1'
+                <Menu.Item
+                    key='4'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)} 
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/selection/details`,
+                        query:{...router.query, id: item.id, vacant: item.vacant.id }
+                    })} 
                 >
                     Editar
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -165,16 +169,6 @@ const TableSelection = ({
                         Agendar entrevista
                     </Menu.Item>
                 )}
-                                <Menu.Item
-                    key='4'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id }
-                    })} 
-                >
-                    Editar
-                </Menu.Item>
             </Menu>
         );
     };
