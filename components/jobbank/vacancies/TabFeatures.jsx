@@ -24,6 +24,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import moment from 'moment';
+import RangeAge from '../RangeAge';
 
 const TabFeatures = ({
   formVacancies,
@@ -37,39 +38,6 @@ const TabFeatures = ({
   } = useSelector(state => state.jobBankStore);
   const router = useRouter();
   const rotativeTurn = Form.useWatch('rotative_turn', formVacancies);
-
-  const styleDisabled = {
-    width: 32,
-    borderRight: 0,
-    borderLeft: 0,
-    pointerEvents: 'none',
-    textAlign: 'center',
-    background: '#ffff'
-  }
-
-  const minAge = ({getFieldValue}) => ({
-    validator(_, value){
-      if(!value) return Promise.resolve();
-      let min_age = parseInt(value);
-      let max_age = getFieldValue('age_max');
-      if(min_age < 18) return Promise.reject('Edad mínima mayor o igual a 18');
-      if(!max_age) return Promise.reject('Edad máxima requerida');
-      if(max_age && min_age > max_age) return Promise.reject('Edad máxima debe ser mayor a edad mínima');
-      return Promise.resolve();
-    }
-  })
-
-  const maxAge = ({getFieldValue}) => ({
-    validator(_, value){
-      if(!value) return Promise.resolve();
-      let max_age = parseInt(value);
-      let min_age = getFieldValue('age_min');
-      if(max_age > 90) return Promise.reject('Edad máxima menor o igual a 90');
-      if(!min_age) return Promise.reject('Edad mínima requerida');
-      // if(min_age && min_age == max_age) return Promise.reject('Edades iguales');
-      return Promise.resolve();
-    }
-  })
 
   const onChangeTurn = ({ target: { checked } }) =>{
     formVacancies.setFieldsValue({
@@ -278,54 +246,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col> */}
-      <Col xs={24} md={12} xl={8} xxl={6} className='range_age_content'>
-        <Form.Item
-          name='age_range'
-          label='Rango de edad'
-        >
-          <Input.Group compact>
-            <Form.Item
-              name='age_min'
-              noStyle
-              rules={[minAge]}
-              dependencies={['age_max']}
-            >
-              <InputNumber
-                type='number'
-                maxLength={2}
-                controls={false}
-                className='min_age'
-                onKeyDown={validateNum}
-                onPaste={validateNum}
-                onKeyPress={validateMaxLength}
-                placeholder='Edad mínima'
-              />
-            </Form.Item>
-            <Input
-              style={styleDisabled}
-              placeholder='-'
-              disabled
-            />
-            <Form.Item
-              name='age_max'
-              noStyle
-              rules={[maxAge]}
-              dependencies={['age_min']}
-            >
-              <InputNumber
-                type='number'
-                maxLength={2}
-                controls={false}
-                className='max_age'
-                onKeyDown={validateNum}
-                onPaste={validateNum}
-                onKeyPress={validateMaxLength}
-                placeholder='Edad máxima'
-              />
-            </Form.Item>
-          </Input.Group>
-        </Form.Item>
-      </Col>
+      <RangeAge/>
       <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='gender'
