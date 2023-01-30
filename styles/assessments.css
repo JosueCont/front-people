@@ -953,8 +953,15 @@ input.input-jb:focus {
   box-shadow: none!important;
 }
 
-div.select-jb-remove .ant-select-selection-item-remove{
+div.select-jb-remove .ant-select-selection-item-remove,
+div.select-jb-remove .ant-select-selection-item-content svg{
     display: none;
+}
+
+div.select-options-jb .ant-select-item-option-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Termina diseño bolsa de trabajo */
