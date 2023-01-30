@@ -15,7 +15,7 @@ const TagFilters = ({
     const newFilters = useMemo(()=>{
         let exist = Object.keys(router.query).length <= 0;
         if(exist) return [];
-        let filters = deleteFiltersJb(router.query, [...deleteKeys, 'page']);
+        let filters = deleteFiltersJb(router.query, [...deleteKeys, 'page','size']);
         return Object.entries(filters);
     },[router.query])
 

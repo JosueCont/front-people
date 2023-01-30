@@ -23,6 +23,7 @@ const CustomModal = styled(Modal)`
             margin-bottom: 0px;
             line-height: 1.2;
             width: calc(100% - 20px);
+            letter-spacing: -0.3px;
         }
     }
 `;

@@ -23,6 +23,7 @@ const FiltersPreselection = ({
         load_scholarship
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
+    const level = Form.useWatch('study_level', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -31,6 +32,11 @@ const FiltersPreselection = ({
             setLoading(false)
             onFinish(values);
         },1000)
+    }
+
+    const onChangeLevel = (value) =>{
+        if(value) return;
+        formSearch.setFieldsValue({status_level_study: null});
     }
 
     return (
@@ -143,6 +149,7 @@ const FiltersPreselection = ({
                                 placeholder='Selecionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeLevel}
                             >
                                 {list_scholarship.length > 0 && list_scholarship.map(item => (
                                     <Select.Option value={item.id+""} key={item.id+""}>
@@ -159,6 +166,7 @@ const FiltersPreselection = ({
                         >
                             <Select
                                 allowClear
+                                disabled={!level}
                                 placeholder='Seleccionar una opción'
                                 options={optionsStatusAcademic}
                             />
