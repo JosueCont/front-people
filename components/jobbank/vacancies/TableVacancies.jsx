@@ -29,7 +29,8 @@ const TableVacancies = ({
     list_vacancies,
     getVacancies,
     currentNode,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -115,7 +116,7 @@ const TableVacancies = ({
         if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estas vacantes no se pueden eliminar, ya que
-                se encuentran asociadas a una estrategia.`
+                se encuentran asociadas a una estrategia`
             : `Esta vacante no se puede eliminar, ya que
                 se encuentra asociada a una estrategia`;
         }
@@ -123,20 +124,12 @@ const TableVacancies = ({
             ? '¿Estás seguro de eliminar estas vacantes?'
             : '¿Estás seguro de eliminar esta vacante?';
     },[useToDelete, itemsToDelete])
-
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/vacancies',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    
+    const onChangePage = ({current, pageSize}) =>{
+        router.replace({
+            pathname: '/jobbank/vacancies',
+            query: {...router.query, page: current, size: pageSize}
+        })
     }
 
     const rowSelection = {
@@ -293,9 +286,10 @@ const TableVacancies = ({
             }}
             pagination={{
                 total: list_vacancies.count,
+                pageSize: jobbank_page_size,
                 current: jobbank_page,
-                hideOnSinglePage: true,
-                showSizeChanger: false
+                showSizeChanger: list_vacancies.count > jobbank_page_size,
+                hideOnSinglePage: list_vacancies.count <= jobbank_page_size
             }}
         />
         <ListItems
@@ -319,7 +313,8 @@ const mapState = (state) =>{
         load_vacancies: state.jobBankStore.load_vacancies,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size
     }
 }
 

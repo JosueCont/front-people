@@ -469,11 +469,14 @@ export const createFiltersJB = (obj = {}) =>{
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
     if(key == "page"){
-      let offset = (parseInt(val) - 1) * 10;
-      return query +=`&limit=10&offset=${offset}`;
+      const find_ = item => item[0] == "size";
+      let result = Object.entries(obj).find(find_);
+      let limit = result ? parseInt(result[1]) : 10;
+      let offset = (parseInt(val) - 1) * limit;
+      return `${query}&limit=${limit}&offset=${offset}`;
     }
     let value = val == "open_fields" ? "" : val;
-    return query += `&${key}=${value}`;
+    return `${query}&${key}=${value}`;
   }, '');
 }
 

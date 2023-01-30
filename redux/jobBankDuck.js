@@ -63,7 +63,8 @@ const initialState = {
     load_selection_options: false,
     jobbank_page: 1,
     jobbank_filters: "",
-    jobbank_load: false
+    jobbank_load: false,
+    jobbank_page_size: 10
 }
 
 const GET_CLIENTS = "GET_CLIENTS";
@@ -125,7 +126,8 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_vacancies: action.payload,
                 load_vacancies: action.fetching,
                 jobbank_page: action.page,
-                jobbank_filters: action.query
+                jobbank_filters: action.query,
+                jobbank_page_size: action.size
             }
         case GET_STRATEGIES:
             return {...state,
@@ -315,8 +317,8 @@ export const getClientsOptions = (node) => async (dispatch) =>{
     }
 }
 
-export const getVacancies = (node, query = '', page = 1) => async (dispatch) =>{
-    const typeFunction = { type: GET_VACANCIES, payload: {}, fetching: false, query, page };
+export const getVacancies = (node, query = '', page = 1, size = 10) => async (dispatch) =>{
+    const typeFunction = { type: GET_VACANCIES, payload: {}, fetching: false, query, page, size };
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getVacancies(node, query);

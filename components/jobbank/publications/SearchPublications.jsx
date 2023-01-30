@@ -30,9 +30,8 @@ const SearchPublications = ({
     },[router])
 
     const onFinishSearch = (values) =>{
-        let check = values.account_to_share?.length > 0;
-        if(check) values.account_to_share = JSON.stringify(values.account_to_share);
-        else values.account_to_share = null;
+        values.account_to_share = values.account_to_share?.length > 0
+            ? JSON.stringify(values.account_to_share) : null;
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/publications/',
@@ -69,8 +68,8 @@ const SearchPublications = ({
                             optionFilterProp='children'
                         >
                             {list_connections_options.length > 0 && list_connections_options.map(item=> (
-                                <Select.Option value={item.id} key={item.id}>
-                                    {item.name}
+                                <Select.Option disabled={!item.is_active} value={item.code} key={item.code}>
+                                    {item.name} {item.is_active ? '':' / No disponible'}
                                 </Select.Option>
                             ))}
                         </Select>

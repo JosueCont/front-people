@@ -143,16 +143,19 @@ const TablePreselection = ({
             title: 'Nombre',
             dataIndex: 'fisrt_name',
             key: 'fisrt_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Apellidos',
             dataIndex: 'last_name',
             key: 'last_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Género',
+            show: true,
             render: (item) =>{
                 return(
                     <span>{getGender(item)}</span>
@@ -162,18 +165,21 @@ const TablePreselection = ({
         {
             title: 'Estado',
             dataIndex: ['state', 'name'],
-            key: ['state','name']
+            key: ['state','name'],
+            show: true,
         },
         {
             title: 'Municipio',
             dataIndex: 'municipality',
-            key: 'municipality'
+            key: 'municipality',
+            show: true,
         },
         {
             title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
-            ellipsis: true
+            show: true,
+            ellipsis: true,
         },
         // {
         //     title: 'Teléfono',
@@ -182,6 +188,7 @@ const TablePreselection = ({
         // },
         {
             title: 'Compatibilidad',
+            show: !router.query?.applyMatch,
             render: (item) => {
                 return(
                     <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
@@ -199,6 +206,7 @@ const TablePreselection = ({
             //     )
             // },
             title: 'Acciones',
+            show: true,
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -226,7 +234,7 @@ const TablePreselection = ({
                 <Table
                     rowKey='id'
                     size='small'
-                    columns={columns}
+                    columns={columns.filter(item => item.show)}
                     // rowSelection={rowSelection}
                     loading={load_preselection}
                     dataSource={list_preselection.results}
