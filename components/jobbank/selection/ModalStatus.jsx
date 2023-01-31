@@ -58,6 +58,7 @@ const ModalStatus = ({
                             <Select
                                 allowClear
                                 showSearch
+                                disabled
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 options={optionsStatusSelection}

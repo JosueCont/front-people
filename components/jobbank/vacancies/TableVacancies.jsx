@@ -22,6 +22,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import { optionsStatusVacant } from '../../../utils/constant';
+import { validPaginationJB } from '../../../utils/functions';
 
 const TableVacancies = ({
     load_vacancies,
@@ -126,9 +127,10 @@ const TableVacancies = ({
     },[useToDelete, itemsToDelete])
     
     const onChangePage = ({current, pageSize}) =>{
+        let filters = validPaginationJB({...router.query, page: current, size: pageSize});
         router.replace({
             pathname: '/jobbank/vacancies',
-            query: {...router.query, page: current, size: pageSize}
+            query: filters
         })
     }
 
