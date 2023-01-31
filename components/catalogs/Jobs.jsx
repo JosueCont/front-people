@@ -281,7 +281,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
             </Col>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-                <Input />
+                <Input maxLength={150}/>
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} md={12}>

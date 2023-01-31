@@ -378,7 +378,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50}/>
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} md={12}>
