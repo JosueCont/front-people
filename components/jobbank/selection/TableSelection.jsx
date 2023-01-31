@@ -103,6 +103,11 @@ const TableSelection = ({
         setItemsToDelete([])
     }
 
+    const optionsStatus = (status) =>{
+        const map_ = item => ({...item, disabled: item.value < status});
+        return optionsStatusSelection.map(map_)
+    }
+
     const savePage = (query) => router.replace({
         pathname: '/jobbank/selection',
         query
@@ -214,7 +219,7 @@ const TableSelection = ({
                         defaultValue={item.status_process}
                         value={item.status_process}
                         placeholder='Estatus'
-                        options={optionsStatusSelection}
+                        options={optionsStatus(item.status_process)}
                         onChange={(e) => onChangeStatus(e, item)}
                     />
                 )

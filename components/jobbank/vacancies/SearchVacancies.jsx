@@ -52,11 +52,8 @@ const SearchVacancies = ({
 
     const showAll = () =>{
         if(list_vacancies.results.length <= 0) return;
-        let filters = {...router.query, page: 1, size: list_vacancies.count};
-        if(list_vacancies.count <= 10){
-            delete filters.page;
-            delete filters.size;
-        }
+        let filters = {...router.query, size: list_vacancies.count};
+        if(list_vacancies.count <= 10) delete filters.size;
         setFilters(filters)
     }
 
@@ -80,11 +77,11 @@ const SearchVacancies = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Tooltip title='Ver toda la lista'>
+                                {/* <Tooltip title='Ver toda la lista'>
                                     <Button onClick={()=> showAll()} >
                                         <TableOutlined />
                                     </Button>
-                                </Tooltip>
+                                </Tooltip> */}
                                 <Button onClick={()=> router.push({
                                     pathname: '/jobbank/vacancies/add',
                                     query: router.query
