@@ -150,6 +150,7 @@ const FormMessages = ({
                     editorState={editorState}
                     onEditorStateChange={onChangeEditor}
                     placeholder='Escriba el mensaje...'
+                    toolbar={{options: ['inline','textAlign']}}
                     editorStyle={{padding: '0px 12px'}}
                     wrapperStyle={{background: '#f0f0f0'}}
                     toolbarStyle={{
