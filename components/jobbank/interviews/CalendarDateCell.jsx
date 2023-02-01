@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import moment from 'moment';
-import { Skeleton } from 'antd';
 import { useSelector } from 'react-redux';
 import { ContentVertical, EventInfo } from './StyledInterview';
 import { useRouter } from 'next/router';
@@ -35,7 +34,9 @@ const CalendarDateCell = ({
                     key={item.id}
                     onClick={()=> showModalDetails(item)}
                 >
-                    <p>{moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')} {item?.all_data_response?.summary}</p>
+                    <p title={item?.all_data_response?.summary}>
+                        {moment(item?.all_data_response?.start?.dateTime).format('hh:mm a')} {item?.all_data_response?.summary}
+                    </p>
                 </EventInfo>
             ))}
         </ContentVertical>
