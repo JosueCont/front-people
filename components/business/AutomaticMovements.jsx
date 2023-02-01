@@ -217,7 +217,8 @@ const AutomaticMovements = ({patronalData}) => {
     } catch (error) {
 
       console.log('Error', error)
-      message.error('Error al guardar credenciales.')
+      if(error?.response?.data?.message) message.error(error?.response?.data?.message)
+      else message.error('Error al guardar credenciales')
 
     } finally {
 

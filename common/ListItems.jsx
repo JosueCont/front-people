@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MyModal from './MyModal';
 import { Row, Col, List, Button } from 'antd';
 
@@ -14,6 +14,7 @@ const ListItems = ({
     textConfirm = 'Eliminar', //string
     useWithAction = true, //boolean,
     timeLoad = 2000, //integer
+    showList = true //boolean
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -27,22 +28,42 @@ const ListItems = ({
         }, timeLoad)
     }
 
-    const getTitle = (item) =>{
-        if(!keyTitle.trim()) return null;
-        let access_title = keyTitle?.replaceAll(' ','')?.split(',');
-        return access_title.reduce((acc, current) =>{
+    const cleanKey = (key = '') =>{
+        let withoutSpace = key.includes(' ') ? key?.replace(/\s/g,'') : key;
+        return withoutSpace.includes(',') ? withoutSpace.split(',') : [withoutSpace];
+    }
+
+    const getValue = (keys = [], item) =>{
+        return keys.reduce((acc, current) =>{
+            let value = item[current] ?? '';
+            return `${acc} ${value}`;
+        }, '')
+    }
+
+    const accessValue = (key = '', item) =>{
+        let keysArray = cleanKey(key);
+        return keysArray.reduce((acc, current) =>{
             if(!acc) return null;
             return acc[current] ?? null;
         }, item)
     }
 
+    const getTitle = (item) =>{
+        if(Array.isArray(keyTitle)){
+            if(keyTitle.length <=0) return null;
+            return getValue(keyTitle, item);
+        }
+        if(!keyTitle.trim()) return null;
+        return accessValue(keyTitle, item);
+    }
+
     const getDescription = (item) =>{
+        if(Array.isArray(keyDescription)){
+            if(keyDescription.length <=0) return null;
+            return getValue(keyDescription, item);
+        }
         if(!keyDescription.trim()) return null;
-        let access_description = keyDescription?.replaceAll(' ','')?.split(',');
-        return access_description.reduce((acc, current) =>{
-            if(!acc) return null;
-            return acc[current] ?? null;
-        }, item)
+        return accessValue(keyDescription, item)
     }
 
     return(
@@ -54,16 +75,18 @@ const ListItems = ({
             closable={!loading}
         >
             <Row gutter={[0,16]}>
-                <Col span={24}>
-                    <div className='items-to-list scroll-bar'>
-                        {itemsToList.length > 0 && itemsToList.map((item, idx) => (
-                            <div key={idx}>
-                                <p>{getTitle(item)}</p>
-                                <p>{getDescription(item)}</p>
-                            </div>
-                        ))}
-                    </div>
-                </Col>
+                {showList && (
+                    <Col span={24}>
+                        <div className='items-to-list scroll-bar'>
+                            {itemsToList.length > 0 && itemsToList.map((item, idx) => (
+                                <div key={idx}>
+                                    <p>{getTitle(item)}</p>
+                                    <p>{getDescription(item)}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </Col>
+                )}
                 <Col span={24} className='content-end' style={{gap: 8}}>
                     <Button disabled={loading} onClick={()=> close()}>
                         {textCancel}

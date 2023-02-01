@@ -7,6 +7,7 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
+import { setJobbankPage } from '../../../redux/jobBankDuck';
 import TagFilters from '../TagFilters';
 import FiltersPreselection from './FiltersPreselection';
 import { useFiltersPreselection } from '../hook/useFiltersPreselection';
@@ -14,7 +15,8 @@ import { useFiltersPreselection } from '../hook/useFiltersPreselection';
 const SearchPreselection = ({
     currentNode,
     list_vacancies_options,
-    load_vacancies_options
+    load_vacancies_options,
+    setJobbankPage
 }) => {
 
     const router = useRouter();
@@ -33,7 +35,7 @@ const SearchPreselection = ({
         return Object.entries({
             'Vacante': result.job_position,
             'Género': listGets['gender'](result.gender) ?? 'N/A',
-            'Puestos': result.qty,
+            'Puestos': result.qty ?? 0,
             'Aceptados': result.candidates_accepted,
             'En proceso': result.candidates_in_process,
             'Disponibles': result.available
@@ -41,8 +43,10 @@ const SearchPreselection = ({
     },[idVacant, list_vacancies_options])
 
     const showModal = () =>{
-        let state = router.query?.state ? parseInt(router.query.state) : null;
-        formSearch.setFieldsValue({...router.query, state});
+        let filters = {...router.query};
+        filters.language = router.query?.language ? parseInt(router.query.language) : null;
+        filters.status_level_study = router.query?.status_level_study ? parseInt(router.query.status_level_study) : null;
+        formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
 
@@ -75,6 +79,7 @@ const SearchPreselection = ({
     }
 
     const onChangeVacant = (value) =>{
+        setJobbankPage(1)
         let filters = value ? {...router.query, vacant: value} : {};
         setFilters(filters)
     }
@@ -164,4 +169,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState)(SearchPreselection);
+export default connect(mapState, { setJobbankPage })(SearchPreselection);

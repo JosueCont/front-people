@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, Dropdown, Button, Menu, message } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Table, Dropdown, Button, Menu, message, Alert } from 'antd';
 import { connect } from 'react-redux';
 import { getPreselection, getVacanciesOptions } from '../../../redux/jobBankDuck';
 import { optionsGenders } from '../../../utils/constant';
@@ -22,13 +22,23 @@ const TablePreselection = ({
     list_preselection,
     load_preselection,
     getPreselection,
-    getVacanciesOptions
+    getVacanciesOptions,
+    list_vacancies_options,
+    load_vacancies_options
 }) => {
 
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [itemsSelected, setItemsSelected] = useState([]);
     const [itemsKeys, setItemsKeys] = useState([]);
+
+    const availableVacant = useMemo(()=>{
+        if(list_vacancies_options.length <=0) return false;
+        const find_ = item => item.id == router.query?.vacant;
+        let result = list_vacancies_options.find(find_);
+        if(!result) return false;
+        return result.available > 0;
+    },[router.query?.vacant, list_vacancies_options])
 
     const createSelection = async () =>{
         try {
@@ -42,8 +52,9 @@ const TablePreselection = ({
             getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
-            console.log(e)
-            message.error('Proceso no iniciado')
+            let error = e.response?.data?.message;
+            let msg = error ?? 'Proceso no iniciado';
+            message.error(msg)
         }
     }
 
@@ -75,6 +86,14 @@ const TablePreselection = ({
         setItemsSelected([])
     }
 
+    const rowSelection = {
+        selectedRowKeys: itemsKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+            setItemsKeys(selectedRowKeys)
+            setItemsSelected(selectedRows)
+        }
+    }
+
     const savePage = (query) => router.replace({
         pathname: '/jobbank/preselection',
         query
@@ -88,14 +107,6 @@ const TablePreselection = ({
         }
         if(newQuery.page) delete newQuery.page;
         savePage(newQuery)
-    }
-
-    const rowSelection = {
-        selectedRowKeys: itemsKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-            setItemsKeys(selectedRowKeys)
-            setItemsSelected(selectedRows)
-        }
     }
 
     const menuTable = () => {
@@ -112,15 +123,13 @@ const TablePreselection = ({
         );
     };
 
-    console.log('list preselection', list_preselection, jobbank_page)
-
     const menuItem = (item) => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
                     icon={<UserAddOutlined />}
-                    onClick={()=> openModalOne(item)} 
+                    onClick={()=> openModalOne(item)}
                 >
                     Proceso selección
                 </Menu.Item>
@@ -133,16 +142,19 @@ const TablePreselection = ({
             title: 'Nombre',
             dataIndex: 'fisrt_name',
             key: 'fisrt_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Apellidos',
             dataIndex: 'last_name',
             key: 'last_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Género',
+            show: true,
             render: (item) =>{
                 return(
                     <span>{getGender(item)}</span>
@@ -152,18 +164,21 @@ const TablePreselection = ({
         {
             title: 'Estado',
             dataIndex: ['state', 'name'],
-            key: ['state','name']
+            key: ['state','name'],
+            show: true,
         },
         {
             title: 'Municipio',
             dataIndex: 'municipality',
-            key: 'municipality'
+            key: 'municipality',
+            show: true,
         },
         {
             title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
-            ellipsis: true
+            show: true,
+            ellipsis: true,
         },
         // {
         //     title: 'Teléfono',
@@ -172,6 +187,7 @@ const TablePreselection = ({
         // },
         {
             title: 'Compatibilidad',
+            show: !router.query?.applyMatch,
             render: (item) => {
                 return(
                     <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
@@ -189,6 +205,7 @@ const TablePreselection = ({
             //     )
             // },
             title: 'Acciones',
+            show: true,
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -206,7 +223,7 @@ const TablePreselection = ({
             <Table
                 rowKey='id'
                 size='small'
-                columns={columns}
+                columns={columns.filter(item => item.show)}
                 // rowSelection={rowSelection}
                 loading={load_preselection}
                 dataSource={list_preselection.results}
@@ -218,20 +235,25 @@ const TablePreselection = ({
                 }}
                 pagination={{
                     total: list_preselection.count,
-                    // current: jobbank_page,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
             />
             <ListItems
-                title='¿Iniciar proceso de selección?'
+                title={availableVacant
+                    ? '¿Iniciar proceso de selección?'
+                    : 'No se puede iniciar un nuevo proceso selección para esta vacante'
+                }
                 visible={openModal}
-                keyTitle='fisrt_name'
-                keyDescription='last_name'
+                keyTitle={['fisrt_name','last_name']}
+                keyDescription='email'
                 close={closeModal}
                 itemsToList={itemsSelected}
                 textConfirm='Iniciar'
                 actionConfirm={createSelection}
+                useWithAction={availableVacant}
+                textCancel={availableVacant ? 'Cancelar' : 'Cerrar'}
             />
         </>
     )
@@ -245,6 +267,8 @@ const mapState = (state) =>{
         jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        load_vacancies_options: state.jobBankStore.load_vacancies_options
     }
 }
 

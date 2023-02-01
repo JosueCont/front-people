@@ -6,7 +6,6 @@ import {
   CalendarOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
 import TagFilters from '../TagFilters';
@@ -14,17 +13,11 @@ import FiltersInterviews from './FiltersInterviews';
 import { useFiltersInterviews } from '../hook/useFiltersInterviews';
 import moment from 'moment';
 import EventForm from './EventForm';
-import { getInterviews } from '../../../redux/jobBankDuck';
-import WebApiJobBank from '../../../api/WebApiJobBank';
 import { InterviewContext } from '../context/InterviewContext';
 import BtnLoginGC from '../BtnLoginGC';
 
 const SearchInterviews = ({
-    isCalendar = false,
-    currentNode,
-    getInterviews,
-    jobbank_filters,
-    jobbank_page
+    isCalendar = false
 }) => {
 
     const urlDefault = '/jobbank/interviews';
@@ -33,7 +26,7 @@ const SearchInterviews = ({
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const { listKeys, listGets } = useFiltersInterviews();
-    const { fetchAction, actionCreate } = useContext(InterviewContext);
+    const { fetchAction, actionCreate, googleCalendar } = useContext(InterviewContext);
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -71,7 +64,7 @@ const SearchInterviews = ({
                     <Col span={24}>
                         <div className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Listado de entrevistas
+                                Listado de eventos
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>
@@ -104,9 +97,14 @@ const SearchInterviews = ({
                                     </Tooltip>
                                 )} */}
                                 <BtnLoginGC/>
-                                <Button onClick={()=> fetchAction(()=> setOpenModalForm(true))}>
-                                    Agregar
-                                </Button>
+                                <Tooltip title={googleCalendar.msg}>
+                                    <Button
+                                        disabled={!googleCalendar.valid}
+                                        onClick={()=> fetchAction(()=> setOpenModalForm(true))}
+                                    >
+                                        Agregar
+                                    </Button>
+                                </Tooltip>
                             </div>
                         </div>
                     </Col>
@@ -134,12 +132,4 @@ const SearchInterviews = ({
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node,
-        jobbank_page: state.jobBankStore.jobbank_page,
-        jobbank_filters: state.jobBankStore.jobbank_filters,
-    }
-}
-
-export default connect(mapState, {getInterviews})(SearchInterviews);
+export default SearchInterviews;

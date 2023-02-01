@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { optionsStatusAcademic, optionsLangVacant } from '../../../utils/constant';
 import { validateNum, validateMaxLength } from '../../../utils/functions';
+import RangeAge from '../RangeAge';
 
 const FiltersPreselection = ({
     visible,
@@ -22,6 +23,7 @@ const FiltersPreselection = ({
         load_scholarship
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
+    const level = Form.useWatch('study_level', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -30,6 +32,11 @@ const FiltersPreselection = ({
             setLoading(false)
             onFinish(values);
         },1000)
+    }
+
+    const onChangeLevel = (value) =>{
+        if(value) return;
+        formSearch.setFieldsValue({status_level_study: null});
     }
 
     return (
@@ -110,7 +117,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_states?.length > 0 && list_states.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -142,9 +149,10 @@ const FiltersPreselection = ({
                                 placeholder='Selecionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeLevel}
                             >
                                 {list_scholarship.length > 0 && list_scholarship.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -158,6 +166,7 @@ const FiltersPreselection = ({
                         >
                             <Select
                                 allowClear
+                                disabled={!level}
                                 placeholder='Seleccionar una opción'
                                 options={optionsStatusAcademic}
                             />
@@ -179,6 +188,9 @@ const FiltersPreselection = ({
                         >
                             <InputNumber
                                 type='number'
+                                max={99}
+                                min={1}
+                                allowClear
                                 maxLength={2}
                                 controls={false}
                                 placeholder='Buscar por edad'
@@ -203,6 +215,13 @@ const FiltersPreselection = ({
                             />
                         </Form.Item>
                     </Col>
+                    <RangeAge
+                        minAgeKey='age_start'
+                        maxAgeKey='age_end'
+                        maxAgeRequired={false}
+                        minAgeRequired={false}
+                        sizeCol={{span: 12}}
+                    />
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

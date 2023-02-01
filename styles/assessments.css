@@ -812,7 +812,7 @@ button.custom-btn {
 }
 
 .items-to-list > div p:nth-child(2){
-    color: #cccc;
+    color: rgba(0, 0, 0, 0.4);
 }
 
 .btn-jb-disabled button.ant-btn[disabled],
@@ -953,8 +953,39 @@ input.input-jb:focus {
   box-shadow: none!important;
 }
 
-div.select-jb-remove .ant-select-selection-item-remove{
+div.select-jb-remove .ant-select-selection-item-remove,
+div.select-jb-remove .ant-select-selection-item-content svg{
     display: none;
+}
+
+div.select-options-jb .ant-select-item{
+    cursor: default;
+}
+
+div.select-options-jb .ant-select-item-option-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div.select-options-jb .ant-select-item-option-content svg {
+    cursor: pointer;
+}
+
+div.header-event-form{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px 16px 0px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 16px;
+}
+
+div.header-event-form p{
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    margin-bottom: 0px;
 }
 
 /* Termina diseño bolsa de trabajo */

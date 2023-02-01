@@ -21,7 +21,8 @@ import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rul
 const FormStrategies = ({
     formStrategies,
     disabledClient,
-    optionVacant = []
+    optionVacant = [],
+    infoStrategy = {}
 }) => {
 
     const {
@@ -110,7 +111,8 @@ const FormStrategies = ({
     }, [clientSelected, newListVacant])
 
     const disabledDate = (current) => {
-        return current && current < moment().startOf("day");
+        let date = infoStrategy?.assignment_date ? moment(infoStrategy?.assignment_date) : moment();
+        return current && current < date.startOf("day");
     };
 
     const validateDecimal = (e) =>{
@@ -120,8 +122,10 @@ const FormStrategies = ({
 
     const validateMin = () =>({
         validator(_, value){
-            if([undefined,null].includes(value)) return Promise.resolve();
-            if(value <= 0) return Promise.reject('Porcentaje mínimo mayor a 0');
+            if([undefined,null,'',].includes(value)) return Promise.resolve();
+            let percent = parseFloat(value);
+            if(percent <= 0) return Promise.reject('Ingrese un valor mayor a 0');
+            if(percent > 100) return Promise.reject('Ingrese un valor menor o igual a 100');
             return Promise.resolve();
         }
     })
@@ -370,8 +374,7 @@ const FormStrategies = ({
                     label='Porcentaje a cobrar'
                     rules={[
                         ruleRequired,
-                        validateMin,
-                        {type: 'number', max: 100, message: 'Porcentaje máximo menor o igual a 100'}
+                        validateMin
                     ]}
                 >
                     <InputNumber

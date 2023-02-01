@@ -8,6 +8,8 @@ export const useFiltersInterviews = () =>{
         list_candidates_options,
         list_vacancies_options,
         load_vacancies_options,
+        list_clients_options,
+        load_clients_options
     } = useSelector(state => state.jobBankStore);
     const {
         load_persons,
@@ -17,10 +19,9 @@ export const useFiltersInterviews = () =>{
 
     const listKeys = {
         recruiter: 'Reclutador',
-        candidate: 'Candidate',
+        candidate: 'Candidato',
         vacant: 'Vacante',
-        date: 'Fecha',
-        status: 'Estatus'
+        customer: 'Cliente'
     }
 
     const getValue = ({
@@ -55,10 +56,16 @@ export const useFiltersInterviews = () =>{
         keyShow: 'job_position'
     })
 
+    const getCustomer = (id) => getValue({
+        value: id,
+        list: list_clients_options
+    })
+
     const listGets = {
         recruiter: getRecruiter,
         candidate: getCandidate,
-        vacant: getVacant
+        vacant: getVacant,
+        customer: getCustomer
     }
 
     return { listKeys, listGets };

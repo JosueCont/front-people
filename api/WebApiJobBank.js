@@ -259,12 +259,20 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'put', data);
     }
 
+    static updateDetailSelection(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
+    }
+
     static updateSelectionStatus(id, data){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
     }
 
     static deleteSelection(id){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'delete');
+    }
+
+    static getInfoSelection(id){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'get');
     }
 
     //LISTADO DE CATÁLOGOS
@@ -365,6 +373,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'put', data);
     }
 
+    static updateProfileTypeForm(id, data){
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'patch', data);
+    }
+
     static deleteProfileType(id){
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
@@ -456,7 +468,30 @@ class WebApiJobBank {
     static deleteInterview(data){
         return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
     }
+
+    static deleteProcessSelection(id){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'delete')
+    }
+
+    static updateProcessSelection(id, values){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
+    }
+
+    static getVacancyAssesmentCandidateVacancy(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/?candidate_vacancy=${id}`, 'get')
+    }
+
+    static addVacancyAssesmentCandidateVacancy(values){
+        return WebApi.ApisType('/job-bank/vacant-assessment-candidate-vacancy/', 'post', values)
+    }
+
+    static deleteVacancyAssesmentCandidateVacancy(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'delete')
+    }
     
+    static editVacancyAssesmentCandidateVacancy(id, values){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'patch', values)
+    }
 }
 
 export default WebApiJobBank;

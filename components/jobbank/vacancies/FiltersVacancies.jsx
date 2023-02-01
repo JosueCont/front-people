@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Row, Col, Form, Select } from 'antd';
+import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
+import { ruleWhiteSpace } from '../../../utils/rules';
+import { optionsStatusVacant } from '../../../utils/constant';
 import { getFullName } from '../../../utils/functions';
 
-const FiltersInterviews = ({
+const FiltersVacancies = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -12,10 +14,6 @@ const FiltersInterviews = ({
 }) => {
 
     const {
-        load_candidates_options,
-        list_candidates_options,
-        list_vacancies_options,
-        load_vacancies_options,
         list_clients_options,
         load_clients_options
     } = useSelector(state => state.jobBankStore);
@@ -24,7 +22,6 @@ const FiltersInterviews = ({
         persons_company
     } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
-    const customer = Form.useWatch('customer', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -33,16 +30,6 @@ const FiltersInterviews = ({
             setLoading(false)
             onFinish(values);
         },1000)
-    }
-
-    const optionsVacant = useMemo(()=>{
-        if(!customer) return list_vacancies_options;
-        const filter_ = item => item.customer?.id == customer;
-        return list_vacancies_options.filter(filter_);
-    },[customer, list_vacancies_options])
-
-    const onChangeCustomer = (value) =>{
-        formSearch.setFieldsValue({vacant: null})
     }
 
     return (
@@ -61,6 +48,27 @@ const FiltersInterviews = ({
                 <Row gutter={[16,0]}>
                     <Col span={12}>
                         <Form.Item
+                            name='job_position__unaccent__icontains'
+                            label='Nombre'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input placeholder='Buscar por nombre'/>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='status'
+                            label='Estatus'
+                        >
+                            <Select
+                                allowClear
+                                placeholder='Estatus'
+                                options={optionsStatusVacant}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
                             name='customer'
                             label='Cliente'
                         >
@@ -72,9 +80,8 @@ const FiltersInterviews = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
-                                onChange={onChangeCustomer}
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item => (
+                                {list_clients_options.length > 0 && list_clients_options.map(item=> (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -84,29 +91,7 @@ const FiltersInterviews = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='vacant'
-                            label='Vacante'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={optionsVacant.length <= 0}
-                                loading={load_vacancies_options}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {optionsVacant.length > 0 && optionsVacant.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.job_position}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='recruiter'
+                            name='strategy__recruiter_id'
                             label='Reclutador'
                         >
                             <Select
@@ -121,28 +106,6 @@ const FiltersInterviews = ({
                                 {persons_company.length > 0 && persons_company.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='candidate'
-                            label='Candidato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                disabled={load_candidates_options}
-                                loading={load_candidates_options}
-                                optionFilterProp='children'
-                            >
-                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.fisrt_name} {item.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -165,4 +128,4 @@ const FiltersInterviews = ({
     )
 }
 
-export default FiltersInterviews
+export default FiltersVacancies

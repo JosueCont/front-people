@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { Radio, Select, Tooltip, Button } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -14,19 +14,26 @@ const CalendarHeader = ({
     const router = useRouter();
     const nowDate = new Date();
     const current = value?.locale('es-Mx')?.clone();
-    const year = router.query?.year ? parseInt(router.query.year) : current?.year();
+    const year = current?.year();
     const month = current?.month();
     const months = current?.localeData()?.months();
     const days =  current?.localeData().weekdays();
     const minYear = nowDate.getFullYear() - rangeYear;
     const maxYear = nowDate.getFullYear() + rangeYear;
 
+    useEffect(()=>{
+        if(!router.query?.year) return;
+        let num = parseInt(router.query.year);
+        onChange(value.year(num))
+    },[router.query?.year])
+
     const getLabel = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
     const yearsOptions = useMemo(()=>{
-        let range = (year + rangeYear) - (year - rangeYear);
+        let num = nowDate.getFullYear();
+        let range = ((num + rangeYear) - (num - rangeYear)) + 1;
         return Array(range).fill(null).map((_, idx) =>{
-            let result = idx > rangeYear ? year + (idx - rangeYear) : year - (rangeYear - idx);
+            let result = idx > rangeYear ? num + (idx - rangeYear) : num - (rangeYear - idx);
             return {value: result, key: result, label: `${result}`};
         })
     },[])
@@ -36,7 +43,7 @@ const CalendarHeader = ({
         let month = months[nowDate.getMonth()];
         let title = `${day}, ${nowDate.getDate()} ${month}`;
         return getLabel(title);
-    },[])
+    },[days, months])
 
     const currentMonth = useMemo(()=>{
         let title = `${months[month]} ${year}`;
@@ -47,16 +54,18 @@ const CalendarHeader = ({
         // if(type == 'month' && month == 11 && year >= maxYear) return;
         if(type == 'month' && month >= 11) return;
         if(type == 'year' && year >= maxYear) return;
-        let next = type == 'year' ? current?.year(year+1) : current?.year(year).month(month+1);
-        onChange(next);
+        let next = current?.year(year).month(month+1);
+        if(type == 'year') onChangeYear(year+1);
+        else onChange(next);
     }
 
     const prevMonth = () =>{
         // if(type == 'month' && month == 0 && year <= minYear) return;
         if(type == 'month' && month <= 0) return;
         if(type == 'year' && year <= minYear) return;
-        let prev = type == 'year' ? current?.year(year-1) : current?.year(year).month(month-1);
-        onChange(prev);
+        let prev = current?.year(year).month(month-1);
+        if(type == 'year') onChangeYear(year-1);
+        else onChange(prev);
     }
 
     const onChangeYear = (newYear) =>{
@@ -99,7 +108,7 @@ const CalendarHeader = ({
                         </button>
                     </Tooltip>
                 </div>
-                <p role={(!titlePrev || !titleNext) ? 'stop' : 'month'}>{currentMonth}</p>
+                <p role='month'>{currentMonth}</p>
             </div>
             <div className='content-end' style={{gap: 8}}>
                 <Select

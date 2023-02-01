@@ -191,6 +191,7 @@ const DetailsStrategies = ({
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormStrategies
+                                infoStrategy={infoStrategy}
                                 optionVacant={optionVacant}
                                 formStrategies={formStrategies}
                                 disabledClient={router.query?.client}

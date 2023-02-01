@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo, useContext, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Calendar, Spin, message } from 'antd';
 import CalendarHeader from './CalendarHeader';
@@ -49,24 +49,24 @@ const CalendarView = ({
     }
 
     const showModalDelete = () =>{
-        setItemToDelete([itemToDetail])
         setOpenModalDelete(true)
         closeModalDetail()
     }
 
     const showModalForm = () =>{
-        setItemToEdit(itemToDetail)
         setOpenModalForm(true)
-        closeModalDetail();
+        closeModalDetail()
     }
 
     const showModalDetails = (item) =>{
         setItemToDetail(item)
+        setItemToEdit(item)
+        setItemToDelete([item])
         setOpenModalDetail(true)
     }
 
     const getHeader = e => <CalendarHeader {...e}/>;
-    const getCell = e => <CalendarDateCell {...{showModalDetails, date: e}}/>;
+    const getCell = e => <CalendarDateCell {...{showModalDetails, value: e}}/>;
     const getMonth = e => <CalendarMonthCell {...e}/>;
 
     return (
@@ -98,6 +98,7 @@ const CalendarView = ({
                 itemsToList={itemToDelete}
                 close={closeModalDelete}
                 keyTitle='all_data_response, summary'
+                keyDescription='process_selection, vacant, job_position'
                 actionConfirm={()=> actionDelete(itemToDelete?.at(-1).id)}
             />
         </>

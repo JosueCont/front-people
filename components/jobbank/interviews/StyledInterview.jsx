@@ -23,7 +23,7 @@ export const ContentNormal = styled.div`
 `;
 
 export const EvenTitle = styled.p`
-    font-size: 22px;
+    font-size: ${({size}) => size ? `${size}px` : '22px'};
     color: rgb(60,64,67);
     margin-bottom: 0px;
     font-weight: 400;
@@ -41,7 +41,7 @@ export const BtnOption = styled.button`
     border: 1px solid #f0f0f0;
     border-radius: 50%;
     transition: 0.5s all ease-out;
-    cursor: pointer;
+    cursor: ${({canClick = true}) => canClick ? 'pointer' : 'not-allowed'};
     :hover,
     :focus,
     :active{
@@ -116,14 +116,5 @@ export const EventInfo = styled(ContentBetween)`
         & p, span{
             color: #ffff;
         }
-    }
-`;
-
-export const OptionJB = styled(Option)`
-    background-color: red;
-    & .ant-select-item-option-content{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
     }
 `;

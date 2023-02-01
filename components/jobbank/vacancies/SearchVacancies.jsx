@@ -1,151 +1,119 @@
-import React, { useEffect } from 'react';
-import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { Button, Row, Col, Form, Tooltip, Card } from 'antd';
 import {
-  SearchOutlined,
-  SyncOutlined,
+    SyncOutlined,
+    SettingOutlined,
+    TableOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { getFullName } from '../../../utils/functions';
-import { ruleWhiteSpace } from '../../../utils/rules';
-import { optionsStatusVacant } from '../../../utils/constant';
 import { createFiltersJB } from '../../../utils/functions';
+import TagFilters from '../TagFilters';
+import FiltersVacancies from './FiltersVacancies';
+import { useFiltersVacancies } from '../hook/useFiltersVacancies';
 
 const SearchVacancies = ({
-    load_clients_options,
-    list_clients_options,
+    list_vacancies,
+    load_vacancies,
     currentNode,
-    load_persons,
-    persons_company
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
+    const { listKeys, listGets } = useFiltersVacancies();
 
-    useEffect(()=>{
-        let values = {...router.query};
-        if(values.status) values.status = parseInt(values.status);
-        formSearch.setFieldsValue(values);
-    },[router])
+    const showModal = () =>{
+        let filters = {...router.query};
+        filters.status = router.query?.status ? parseInt(router.query.status) : null;
+        formSearch.setFieldsValue({...router.query});
+        setOpenModal(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
+    }
+
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/vacancies/',
+        query: filters
+    }, undefined, {shallow: true});
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        router.replace({
-            pathname: '/jobbank/vacancies/',
-            query: filters
-        }, undefined, {shallow: true});
+        setFilters(filters)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace('/jobbank/vacancies', undefined, {shallow: true});
+        setFilters()
+    }
+
+    const showAll = () =>{
+        if(list_vacancies.results.length <= 0) return;
+        let filters = {...router.query, size: list_vacancies.count};
+        if(list_vacancies.count <= 10) delete filters.size;
+        setFilters(filters)
     }
 
     return (
-        <Form
-            layout='inline'
-            onFinish={onFinishSearch}
-            form={formSearch}
-            style={{width: '100%'}}
-        >
-            <Row gutter={[0,8]} style={{width: '100%'}}>
-                <Col xs={24} sm={12} md={8} xl={7}>
-                    <Form.Item
-                        name='job_position__unaccent__icontains'
-                        rules={[ruleWhiteSpace]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por vacante'/>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='status'
-                        style={{marginBottom: 0}}
-                    >
-                        <Select
-                            allowClear
-                            placeholder='Estatus'
-                            options={optionsStatusVacant}
+       <>
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div span={24} className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                Filtros aplicados
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Limpiar filtros'>
+                                    <Button onClick={()=> deleteFilter()}>
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
+                                {/* <Tooltip title='Ver toda la lista'>
+                                    <Button onClick={()=> showAll()} >
+                                        <TableOutlined />
+                                    </Button>
+                                </Tooltip> */}
+                                <Button onClick={()=> router.push({
+                                    pathname: '/jobbank/vacancies/add',
+                                    query: router.query
+                                })}>
+                                    Agregar
+                                </Button>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={listKeys}
+                            listGets={listGets}
                         />
-                    </Form.Item>
-                </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='customer'
-                        style={{marginBottom: 0}}
-                    >
-                        <Select
-                            allowClear
-                            showSearch
-                            disabled={load_clients_options}
-                            loading={load_clients_options}
-                            placeholder='Cliente'
-                            notFoundContent='No se encontraron resultados'
-                            optionFilterProp='children'
-                        >
-                            {list_clients_options.length > 0 && list_clients_options.map(item=> (
-                                <Select.Option value={item.id} key={item.id}>
-                                    {item.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
-                <Col xs={11} sm={12} md={8} xl={4}>
-                    <Form.Item
-                        name='strategy__recruiter_id'
-                        style={{marginBottom: 0}}
-                    >
-                        <Select
-                            allowClear
-                            showSearch
-                            disabled={load_persons}
-                            loading={load_persons}
-                            placeholder='Reclutador'
-                            notFoundContent='No se encontraron resultados'
-                            optionFilterProp='children'
-                        >
-                            {persons_company.length > 0 && persons_company.map(item => (
-                                <Select.Option value={item.id} key={item.id}>
-                                    {getFullName(item)}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
-                <Col xs={12} sm={23} md={15} xl={5} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
-                    <div style={{display: 'flex', gap: 8}}>
-                        <Tooltip title='Buscar'>
-                            <Button htmlType='submit'>
-                                <SearchOutlined />
-                            </Button>
-                        </Tooltip>
-                        <Tooltip title='Limpiar filtros'>
-                            <Button onClick={()=> deleteFilter()}>
-                                <SyncOutlined />
-                            </Button>
-                        </Tooltip>
-                    </div>
-                    <Button onClick={()=> router.push({
-                        pathname: '/jobbank/vacancies/add',
-                        query: router.query
-                    })}>
-                        Agregar
-                    </Button>
-                </Col>
-            </Row>
-        </Form>
+                    </Col>  
+                </Row>
+            </Card>
+            <FiltersVacancies
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
+       </>
     )
 }
 
 const mapState = (state) =>{
     return{
         currentNode: state.userStore.current_node,
-        load_clients_options: state.jobBankStore.load_clients_options,
-        list_clients_options: state.jobBankStore.list_clients_options,
-        load_persons: state.userStore.load_persons,
-        persons_company: state.userStore.persons_company
+        list_vacancies: state.jobBankStore.list_vacancies,
+        load_vacancies: state.jobBankStore.load_vacancies,
     }
 }
 

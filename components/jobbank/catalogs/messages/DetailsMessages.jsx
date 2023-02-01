@@ -35,7 +35,7 @@ const DetailsMessages = ({
     useEffect(()=>{
         if(!currentNode) return;
         getTagsNotification(currentNode.id);
-        getConnectionsOptions(currentNode.id, '&is_active=true&conection_type=2');
+        getConnectionsOptions(currentNode.id, '&conection_type=2');
     },[currentNode])
 
     useEffect(()=>{

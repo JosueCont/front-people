@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Input, Row, Col, Form, Tooltip, message} from 'antd';
 import {
     SearchOutlined,
@@ -12,12 +12,15 @@ import { createFiltersJB } from '../../../utils/functions';
 import ModalConnection from './ModalConnection';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getConnections } from '../../../redux/jobBankDuck';
+import { optionsConnectionsJB } from '../../../utils/constant';
 
 const SearchConnections = ({
     currentNode,
     jobbank_page,
     jobbank_filters,
-    getConnections
+    getConnections,
+    list_connections,
+    load_connections
 }) => {
 
     const router = useRouter();
@@ -52,6 +55,13 @@ const SearchConnections = ({
         formSearch.resetFields();
         router.replace('/jobbank/settings/connections', undefined, {shallow: true});
     }
+
+    const optionsReds = useMemo(()=>{
+        let validate = !list_connections.results || list_connections.results?.length <=0;
+        if(validate) return optionsConnectionsJB;
+        let codes = list_connections?.results?.map(item => item.code);
+        return optionsConnectionsJB.filter(record => !codes.includes(record.value));
+    },[list_connections])
 
     return (
         <>
@@ -93,9 +103,15 @@ const SearchConnections = ({
                             >
                                 Regresar
                             </Button>
-                            <Button onClick={()=> setOpenModal(true)}>
-                                Agregar
-                            </Button>
+                            <Tooltip title={optionsReds.length <= 0
+                                    ? 'Ninguna conexión disponible para registrar' : ''}>
+                                <Button
+                                    onClick={()=> setOpenModal(true)}
+                                    disabled={optionsReds.length <=0}
+                                >
+                                    Agregar
+                                </Button>
+                            </Tooltip>
                         </div>
                     </Col>
                 </Row>
@@ -105,6 +121,7 @@ const SearchConnections = ({
                 title='Agregar conexión'
                 actionForm={actionCreate}
                 close={()=> setOpenModal(false)}
+                optionsReds={optionsReds}
             />
         </>
     )
@@ -114,7 +131,9 @@ const mapState = (state) => {
     return{
         currentNode: state.userStore.current_node,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        jobbank_page: state.jobBankStore.jobbank_page
+        jobbank_page: state.jobBankStore.jobbank_page,
+        list_connections: state.jobBankStore.list_connections,
+        load_connections: state.jobBankStore.load_connections
     }
 }
 

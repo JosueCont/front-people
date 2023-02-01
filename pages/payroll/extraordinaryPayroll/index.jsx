@@ -204,11 +204,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadResignationLetter({
-                      person_id: item.person.id,
-                      payment_period_id: periodSelected.id,
-                      receipt_type: "Extraordinaria",
-                    });
+                    downloadResignationLetter(item.person.id);
                   }}
                 >
                   <FileExcelOutlined />
@@ -230,7 +226,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadReceipt(item);
+                    downloadReceipt({
+                      person_id: item.person.id,
+                      payment_period_id: periodSelected.id,
+                      receipt_type: "Extraordinaria",
+                    });
                   }}
                 >
                   <FileExcelOutlined />
