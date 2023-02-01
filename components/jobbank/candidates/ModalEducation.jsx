@@ -139,7 +139,7 @@ const ModalEducation = ({
                     <Col span={24}>
                         <Form.Item
                             name='specialitation_area'
-                            label='Carrera / Especialización'
+                            label='Carrera / especialización'
                         >
                             <Input maxLength={500} placeholder='Escriba el nombre de la carrera o especialzación'/>
                         </Form.Item>
