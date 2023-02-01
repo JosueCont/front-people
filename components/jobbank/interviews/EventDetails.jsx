@@ -26,7 +26,7 @@ const EventDetails = ({
     showModalDelete = ()=>{}
 }) => {
 
-    const format = 'dddd, DD MMMM ⋅ hh:mm';
+    const format = 'dddd, DD MMMM • hh:mm a';
     const { googleCalendar } = useContext(InterviewContext);
 
     const getDescription = () =>{
@@ -63,12 +63,12 @@ const EventDetails = ({
     const {
         guests,
         description,
-        statistics
+        // statistics
      } = useMemo(()=>{
         return {
             guests: getGuests(),
             description: getDescription(),
-            statistics: getStatistics(),
+            // statistics: getStatistics(),
         }
     },[itemToDetail])
 

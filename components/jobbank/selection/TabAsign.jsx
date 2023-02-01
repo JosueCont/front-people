@@ -227,11 +227,10 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
       <ListItems
         title={'¿Estás seguro de eliminar este asignación?'}
         visible={visibleDeleteModal}
-        keyTitle='vacant_assessment.name'
+        keyTitle='vacant_assessment, name'
         close={closeModalDelete}
         itemsToList={[itemsToDelete]}
         actionConfirm={actionDelete}
-        disableList = { true }
       />
     </>
   )

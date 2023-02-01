@@ -23,7 +23,7 @@ export const ContentNormal = styled.div`
 `;
 
 export const EvenTitle = styled.p`
-    font-size: 22px;
+    font-size: ${({size}) => size ? `${size}px` : '22px'};
     color: rgb(60,64,67);
     margin-bottom: 0px;
     font-weight: 400;
