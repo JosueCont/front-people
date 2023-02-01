@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -36,7 +36,8 @@ const TableCandidates = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
@@ -115,21 +116,45 @@ const TableCandidates = ({
     }
 
     const openModalManyDelete = () =>{
+        const filter_ = item => item.in_selection_process;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setUseToDelete(false)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos candidatos')
+            return;
         }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos candidatos')
     }
 
+    const titleDelete = useMemo(()=>{
+        if(!useToDelete){
+            return itemsToDelete.length > 1
+            ? `Estos candidatos no se pueden eliminar, ya que
+                se encuentran en un proceso de selección`
+            : `Este candidato no se puede eliminar, ya que
+                se encuentra en un proceso de selección`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estos candidatos?'
+            : '¿Estás seguro de eliminar este candidato?';
+    },[useToDelete, itemsToDelete])
+
     const openModalRemove = (item) =>{
+        setUseToDelete(!item?.in_selection_process)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -302,16 +327,15 @@ const TableCandidates = ({
                 }}
             />
             <ListItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos candidatos?'
-                    : '¿Estás seguro de eliminar este candidato?'
-                }
+                title={titleDelete}
                 visible={openModalDelete}
                 keyTitle={['fisrt_name','last_name']}
                 keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
+                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useToDelete}
             />
         </>
     )

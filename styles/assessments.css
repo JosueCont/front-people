@@ -812,7 +812,7 @@ button.custom-btn {
 }
 
 .items-to-list > div p:nth-child(2){
-    color: #cccc;
+    color: rgba(0, 0, 0, 0.4);
 }
 
 .btn-jb-disabled button.ant-btn[disabled],

@@ -489,6 +489,9 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'delete')
     }
     
+    static editVacancyAssesmentCandidateVacancy(id, values){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'patch', values)
+    }
 }
 
 export default WebApiJobBank;

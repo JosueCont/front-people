@@ -1,8 +1,7 @@
-import React, {  useState, useEffect, useMemo } from 'react';
+import React, {  useState } from 'react';
 import { Row, Col, Form, Checkbox, Input, Select, Button } from 'antd';
 import MyModal from '../../../common/MyModal';
 import { ruleRequired } from '../../../utils/rules';
-import { useSelector } from 'react-redux';
 import FileUpload from '../FileUpload';
 import { optionsTypeConnection, optionsConnectionsJB } from '../../../utils/constant';
 
@@ -10,13 +9,10 @@ const ModalConnection = ({
     actionForm = ()=>{},
     visible = false, 
     close = ()=>{},
-    title = ''
+    title = '',
+    optionsReds = []
 }) => {
 
-    const {
-        list_connections,
-        load_connections
-    } = useSelector(state => state.jobBankStore);
     const noValid = [undefined, null, '', ' '];
     const [formConnection] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -48,13 +44,6 @@ const ModalConnection = ({
             onClose()
         },2000)
     }
-
-    const optionsReds = useMemo(()=>{
-        let validate = !list_connections.results || list_connections.results?.length <=0;
-        if(validate) return optionsConnectionsJB;
-        let codes = list_connections?.results?.map(item => item.code);
-        return optionsConnectionsJB.filter(record => !codes.includes(record.value));
-    },[list_connections])
 
     const onChangeName = (value) =>{
         let obj = {name: null, conection_type: null};

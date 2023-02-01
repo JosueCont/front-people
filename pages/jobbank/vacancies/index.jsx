@@ -30,11 +30,10 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            let page = router.query.page
-                ? parseInt(router.query.page)
-                : 1;
-            let filters = getFiltersJB(router.query);
-            getVacancies(currentNode.id, filters, page);
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
+            let filters = getFiltersJB({...router.query, page, size});
+            getVacancies(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])
 

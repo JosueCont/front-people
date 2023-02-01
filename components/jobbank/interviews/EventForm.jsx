@@ -190,6 +190,9 @@ const EventForm = ({
                 form={formEvent}
                 layout='vertical'
                 onFinish={onFinish}
+                initialValues={{
+                    name_event: 'Entrevista con candidato'
+                }}
             >
                 <Row gutter={[24,0]}>
                     <Col span={24}>
@@ -201,7 +204,7 @@ const EventForm = ({
                             <Space>
                                 <Button  disabled={loading} onClick={()=> onClose()}>Cancelar</Button>
                                 <Button loading={loading} htmlType='submit'>
-                                    {isEdit ? 'Actualizar' : 'Guardar'}
+                                    {isEdit ? 'Actualizar' : 'Enviar'}
                                 </Button>
                             </Space>
                         </div>
@@ -233,7 +236,7 @@ const EventForm = ({
                     <Col span={12}>
                         <Form.Item
                             name='name_event'
-                            label='Nombre'
+                            label='Nombre del evento'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
                             <Input
@@ -362,7 +365,7 @@ const EventForm = ({
                             toolbar={{options: ['inline','textAlign']}}
                             placeholder='Escriba una descripción...'
                             editorClassName='scroll-bar'
-                            wrapperStyle={{background: '#f0f0f0'}}
+                            wrapperStyle={{border: '1px solid rgba(0,0,0,0.06)'}}
                             editorStyle={{
                                 padding: '0px 12px',
                                 minHeight: '150px',
@@ -371,7 +374,7 @@ const EventForm = ({
                             }}
                             toolbarStyle={{
                                 background: '#f0f0f0',
-                                borderBottom: '1px solid rgba(0,0,0,0.06)'
+                                // borderBottom: '1px solid rgba(0,0,0,0.06)'
                             }}
                         />
                     </Col>
