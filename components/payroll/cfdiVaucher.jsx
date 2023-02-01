@@ -57,13 +57,27 @@ const CfdiVaucher = ({
   const [lenData, setLenData] = useState(0);
   const [page, setPage] = useState(1);
 
+  const getVoucherTypeStr=(type)=>{
+   // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
+     switch (type){
+       case 1:
+         return 'Aguinaldo';
+       case 2:
+         return 'Finiquito';
+       case 3:
+         return 'Liquidacion';
+       default:
+         return 'Ordinaria'
+     }
+  }
 
   const downloadReceipt = async (data) => {
-
+    console.log(data)
     let req = {
       person_id: data?.payroll_person?.person?.id,
       payment_period_id: data?.payment_period?.id,
-      receipt_type: "Ordinaria"
+      receipt_type: getVoucherTypeStr(data.movement_type)
+
     }
 
     try {
@@ -304,6 +318,7 @@ const CfdiVaucher = ({
           item.key = item.id;
           return item;
         });
+        console.log('setCfdis', cfdi_data)
         setCfdis(cfdi_data);
         setLoading(false);
       })
