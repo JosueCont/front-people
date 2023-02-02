@@ -338,6 +338,14 @@ const ModalConceptsPayroll = ({
 
     clearConcept();
     calendar.payroll = data;
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:341 ~ createObjectSend ~ data",
+      data
+    );
+    if (!extraOrdinary) {
+      calendar.status = true;
+      calendar.persona_edit = person_id;
+    }
     sendCalculatePayroll(calendar);
   };
 

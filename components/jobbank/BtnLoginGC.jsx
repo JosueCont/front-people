@@ -40,9 +40,11 @@ const BtnToLogin = () =>{
     })
 
     return  (
-        <Button onClick={()=> login()}>
-            <FcGoogle/>
-        </Button>
+       <Tooltip title='Iniciar sesión'>
+            <Button onClick={()=> login()}>
+                <FcGoogle/>
+            </Button>
+       </Tooltip>
     )
 }
 
