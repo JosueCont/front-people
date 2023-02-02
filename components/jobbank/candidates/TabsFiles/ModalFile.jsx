@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
-import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
+import { ruleRequired, ruleWhiteSpace } from '../../../../utils/rules';
 import { useSelector } from 'react-redux';
-import MyModal from '../../../common/MyModal';
-import FileUpload from '../FileUpload';
+import MyModal from '../../../../common/MyModal';
+import FileUpload from '../../FileUpload';
 
-const ModalReferences = ({
+const ModalFile = ({
     title = '',
     close = () =>{},
     itemToEdit = {},
@@ -17,7 +17,7 @@ const ModalReferences = ({
     const [formReference] = Form.useForm();
     const [loading, setLoading] = useState();
     const [file, setFile] = useState([]);
-    const typeFile = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
+    const typeFile = ['pdf'];
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -75,7 +75,7 @@ const ModalReferences = ({
                         <FileUpload
                             label='Archivo'
                             keyName='file_read'
-                            tooltip={`Archivos permitidos: ${typeFile.join(', ')}.`}
+                            tooltip={`Archivos permitidos: ${typeFile.join(', ')}`}
                             isRequired={true}
                             setFile={setFile}
                             typeFile={typeFile}
@@ -96,4 +96,4 @@ const ModalReferences = ({
     )
 }
 
-export default ModalReferences
+export default ModalFile

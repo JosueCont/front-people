@@ -6,12 +6,14 @@ import {
 import { ruleRequired } from "../../utils/rules";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import WebApiPeople from "../../api/WebApiPeople";
+import Router from "next/router";
+
 const { Dragger } = Upload;
 
 
 const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
     useEffect(() => {
-        setFile(null)
+        setFile(null);
     },[visible])
 
     const [file,setFile] = useState(null);
@@ -58,6 +60,10 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
 
             if(addPerson?.data?.id){
                 message.success('Se agregó correctamente a ' + addPerson?.data?.first_name + addPerson?.data?.flast_name);
+                setVisible(false);
+                setTimeout(() => {
+                    Router.push(`/home/persons/${addPerson?.data?.id}`)
+                },200)
             }
         } catch (e) {
             console.log(e)
@@ -87,7 +93,7 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
                         size="large"
                         htmlType="button"
                         onClick={() => sendClose()}
-                        //disabled={check.length < 1}
+                        disabled={file == null}
                         style={{ paddingLeft: 30, paddingRight: 30 }}
                       >
                         Enviar
@@ -96,7 +102,7 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
                   </Space>
                 </Col>
               }
-            width={"70%"}>
+            width={"50%"}>
                 <Spin tip="Cargando..." spinning={loading}> 
                     <Dragger {...props}>
                         <p className="ant-upload-drag-icon">

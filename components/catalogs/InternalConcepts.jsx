@@ -540,7 +540,9 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
      newCatalog = !!catalog && catalog.filter(cat => (
       cat.description.toLowerCase().includes(search.toLowerCase()) 
       || cat.code.toLowerCase().includes(search.toLowerCase())
-      || cat.perception_type.code.toLowerCase().includes(search.toLowerCase())
+      || cat.perception_type?.code.includes(search)
+      || cat.other_type_payment?.code.includes(search)
+      || cat.deduction_type?.code.includes(search)
    ));
   }
   
