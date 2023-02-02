@@ -33,6 +33,7 @@ import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 import {FormattedMessage} from "react-intl";
 import React from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;

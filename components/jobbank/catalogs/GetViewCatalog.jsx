@@ -34,10 +34,10 @@ const GetViewCatalog = () =>{
     }
 
     const selectedProps = useMemo(()=>{
-        let numPage = router.query?.page ? parseInt(router.query.page) : 1;
+        let currentPage = router.query?.page ? parseInt(router.query.page) : 1;
         let filtersQuery = deleteFiltersJb(router.query, deleteKeys);
         let filtersString = getFiltersJB(filtersQuery);
-        return { numPage, filtersQuery, filtersString };
+        return { currentPage, filtersQuery, filtersString };
     },[router.query])
 
     const Selected = Components[catalog] ?? Components['__default__'];

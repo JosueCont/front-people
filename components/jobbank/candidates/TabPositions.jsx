@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Dropdown,
@@ -91,7 +91,7 @@ const TabPositions = ({
         }
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
     
     const closeModal = () =>{
         setOpenModal(false)
@@ -228,12 +228,12 @@ const TabPositions = ({
                 }}
             />
             <ModalPositions
-                title={validateAction() && openModal ? 'Editar puesto' : 'Agregar puesto'}
+                title={isEdit ? 'Editar puesto' : 'Agregar puesto'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
            <ListItems
                 title='¿Estás seguro de eliminar este puesto?'

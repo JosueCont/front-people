@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
-    Button,
     Dropdown,
-    Menu, 
-    message
+    Menu,
+    message,
+    Button,
+    Space
 } from 'antd';
-import { optionsStatusAcademic } from '../../../utils/constant';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    PlusOutlined
+    PlusOutlined,
+    SelectOutlined,
+    DownloadOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
-import ModalEducation from './ModalEducation';
-import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import moment from 'moment';
+import ModalReferences from './ModalReferences';
+import { redirectTo } from '../../../utils/constant';
 
-const TabSchool = ({
+const TabReferences = ({
     action,
-    setInfoEducation,
-    infoEducation
+    setInfoReferences,
+    infoReferences
 }) => {
 
     const router = useRouter();
@@ -32,71 +36,66 @@ const TabSchool = ({
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
+    const fakeData = useMemo(()=>{
+        return Array(20).fill(null).map((_, idx) =>{
+            return {
+                id: idx,
+                name: 'Un archivo ' + idx,
+                file: 'https://khorplus.s3.amazonaws.com/grupohuman/people/job_bank/customers/documents/3012023224739/diseno_info_cliente.pdf',
+                fecha: '01/02/2023'
+            }
+        })
+    },[])
+
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
-            getInfoEducation(router.query.id);
+            getInfoReference(router.query.id);
         }
     },[router.query?.id])
 
-    const getInfoEducation = async (id) =>{
+    const getInfoReference = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
-            setInfoEducation(response.data);
-            setLoading(false);
+            setTimeout(()=>{
+                setInfoReferences(fakeData);
+                setLoading(false);
+            },1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
-        }
-    }
-
-    const actionCreate = async (values) =>{
-        try {
-            setLoading(true);
-            let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.createCandidateEducation(body);
-            message.success('Educación registrada');
-            getInfoEducation(router.query.id);
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            message.error('Educación no registrada');
         }
     }
 
     const actionUpdate = async (values) =>{
         try {
-            setLoading(true)
-            let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.updateCandidateEducation(itemToEdit.id, body);
-            message.success('Educación actualizada');
-            getInfoEducation(router.query.id);
+            message.success('Referencia actualizada')
+            getInfoReference(router.query.id);
         } catch (e) {
             console.log(e)
-            setLoading(false)
-            message.error('Educación no actualizada');
+            message.error('Referencia no actualizada')
+        }
+    }
+
+    const actionCreate = async (values) =>{
+        try {
+            values.append('candidate', router.query?.id)
+            message.success('Referencia registrada')
+            getInfoReference(router.query.id);
+        } catch (e) {
+            console.log(e)
+            message.error('Referencia no registrada')
         }
     }
 
     const actionDelete = async () =>{
         try {
-            setLoading(true)
             let id = itemsToDelete.at(-1).id;
-            await WebApiJobBank.deleteCandidateEducation(id);
-            message.success('Educación eliminada');
-            getInfoEducation(router.query.id);
+            message.success('Referencia eliminada')
+            getInfoReference(router.query.id);
         } catch (e) {
             console.log(e)
-            message.error('Educación no eliminada');
-            setLoading(false)
+            message.error('Referencia no eliminada')
         }
-    }
-
-    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
-    
-    const closeModal = () =>{
-        setOpenModal(false)
-        setItemToEdit({})
     }
 
     const openModalEdit = (item)=>{
@@ -105,8 +104,13 @@ const TabSchool = ({
     }
 
     const openModalRemove = (item) =>{
-        setItemsToDelete([item]);
+        setItemsToDelete([item])
         setOpenModalDelete(true)
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        setItemToEdit({})
     }
 
     const closeModalDelete = () =>{
@@ -114,27 +118,7 @@ const TabSchool = ({
         setItemsToDelete([])
     }
 
-    const getStatus = (item) =>{
-        if(!item.status) return null;
-        const find_ = record => record.value == item.status;
-        let result = optionsStatusAcademic.find(find_);
-        if(!result) return null;
-        return result.label;
-    }
-
-    const menuTable = () => {
-        return (
-            <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<PlusOutlined/>}
-                    onClick={()=> setOpenModal(true)}
-                >
-                    Agregar
-                </Menu.Item>
-            </Menu>
-        );
-    };
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
 
     const menuItem = (item) => {
         return (
@@ -149,39 +133,48 @@ const TabSchool = ({
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    onClick={() => openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
+                <Menu.Divider/>
+                <Menu.Item
+                    key='3'
+                    icon={<EyeOutlined/>}
+                    onClick={()=> redirectTo(`${item.file}#toolbar=0`, true)}
+                >
+                    Visualizar
+                </Menu.Item>
+                {/* <Menu.Item
+                    key='4'
+                    icon={<DownloadOutlined/>}
+                    onClick={()=> downloadCustomFile(item.file)}
+                >
+                    Descargar
+                </Menu.Item> */}
             </Menu>
         );
     };
 
     const columns = [
         {
-            title: 'Escolaridad',
-            dataIndex: ['study_level', 'name'],
-            key: ['study_level', 'name']
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
         },
         {
-            title: 'Institución',
-            dataIndex: 'institution_name',
-            key: 'institution_name',
-            ellipsis: true
-        },
-        {
-            title: 'Estatus',
+            title: 'Archivo',
             render: (item) =>{
                 return(
-                    <span>{getStatus(item)}</span>
+                    <>{item.file ? item.file?.split('/')?.at(-1) : null}</>
                 )
             }
         },
         {
-            title: 'Fecha finalización',
+            title: 'Fecha de carga',
             render: (item) =>{
                 return(
-                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                    <>{moment().format('DD-MM-YYYY')}</>
                 )
             }
         },
@@ -203,7 +196,7 @@ const TabSchool = ({
                 )
             }
         }
-    ] 
+    ]
 
     return (
         <>
@@ -213,7 +206,7 @@ const TabSchool = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoEducation}
+                dataSource={infoReferences}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'
@@ -223,19 +216,18 @@ const TabSchool = ({
                     showSizeChanger: false
                 }}
             />
-            <ModalEducation
-                title={isEdit ? 'Editar educación' : 'Agregar educación'}
+            <ModalReferences
+                title={isEdit ? 'Actualizar referencia' : 'Agregar referencia'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
                 actionForm={isEdit ? actionUpdate : actionCreate}
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
-           <ListItems
-                title='¿Estás seguro de eliminar esta educación?'
+            <ListItems
+                title='¿Estás seguro de eliminar esta referencia?'
                 visible={openModalDelete}
-                keyTitle='study_level, name'
-                keyDescription='institution_name'
+                keyTitle='name'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
@@ -244,4 +236,4 @@ const TabSchool = ({
     )
 }
 
-export default TabSchool
+export default TabReferences

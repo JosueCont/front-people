@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { optionsStatusVacant } from "../../../utils/constant";
 import { getFullName } from "../../../utils/functions";
+import { getValueFilter } from "../../../utils/functions";
 
 export const useFiltersVacancies = () =>{
     const {
@@ -20,35 +21,21 @@ export const useFiltersVacancies = () =>{
         strategy__recruiter_id: 'Reclutador'
     }
 
-    const getValue = ({
-        value = '',
-        list = [],
-        keyEquals = 'id',
-        keyShow = 'name'
-    }) =>{
-        if(!value) return value;
-        const find_ = item => item[keyEquals] == value;
-        let result = list.find(find_);
-        if(!result) return value;
-        return typeof keyShow == 'function'
-            ? keyShow(result) : result[keyShow];
-    }
-
-    const getStatus = (value) => getValue({
+    const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusVacant,
         ...paramsOptions
     })
 
-    const getCustomer = (id) => getValue({
+    const getCustomer = (id) => getValueFilter({
         value: id,
         list: list_clients_options
     })
 
-    const getRecruiter = (id) => getValue({
+    const getRecruiter = (id) => getValueFilter({
         value: id,
         list: persons_company,
-        keyShow: e => getFullName(e)
+        keyShow: getFullName
     })
 
     const listGets = {
