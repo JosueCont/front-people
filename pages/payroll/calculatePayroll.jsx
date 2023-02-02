@@ -123,7 +123,7 @@ const CalculatePayroll = ({ ...props }) => {
       render: (item) => (
         <div>
           <Space>
-            {item.payroll_cfdi_person && consolidated.status != 6 && (
+            {item.payroll_cfdi_person && (
               <Tag
                 color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
               >
@@ -595,8 +595,8 @@ const CalculatePayroll = ({ ...props }) => {
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
         setPersonsStamp([]);
-        if (dataToSend.status)
-          sendClosePayroll(6, response.data.payroll, dataToSend.person_edit);
+        // if (dataToSend.status)
+        //   sendClosePayroll(6, response.data.payroll, dataToSend.person_edit);
       })
       .catch((error) => {
         setPersonsStamp([]);
@@ -1359,6 +1359,7 @@ const CalculatePayroll = ({ ...props }) => {
                     <Col md={4} style={{ minWidth: "200px" }}>
                       <Button
                         size="large"
+                        style={{ minWidth: "200px" }}
                         block
                         htmlType="button"
                         icon={<FileExcelOutlined />}
@@ -1399,9 +1400,14 @@ const CalculatePayroll = ({ ...props }) => {
                       <>
                         {consolidated && (
                           <>
-                            <Col md={5} offset={1}>
+                            <Col
+                              md={4}
+                              offset={1}
+                              style={{ minWidth: "200px" }}
+                            >
                               <Button
                                 size="large"
+                                style={{ minWidth: "210px" }}
                                 block
                                 icon={<FileExcelOutlined />}
                                 htmlType="button"
@@ -1424,9 +1430,10 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
 
                         {step == 0 && calculate && (
-                          <Col md={5} offset={1}>
+                          <Col md={4} offset={1} style={{ minWidth: "200px" }}>
                             <Button
                               size="large"
+                              style={{ minWidth: "200px" }}
                               block
                               htmlType="button"
                               onClick={() => reCalculatePayroll([...payroll])}
@@ -1438,9 +1445,14 @@ const CalculatePayroll = ({ ...props }) => {
                         {step == 2 &&
                           consolidated &&
                           consolidated.status <= 2 && (
-                            <Col md={5} offset={1}>
+                            <Col
+                              md={4}
+                              offset={1}
+                              style={{ minWidth: "200px" }}
+                            >
                               <Button
                                 size="large"
+                                style={{ minWidth: "200px" }}
                                 block
                                 icon={<UnlockOutlined />}
                                 htmlType="button"
@@ -1482,9 +1494,10 @@ const CalculatePayroll = ({ ...props }) => {
                               (consolidated.status <= 2 ||
                                 consolidated.status == 6)) ||
                               (isOpen && !consolidated)) && (
-                              <Col md={5} offset={1}>
+                              <Col md={4} offset={1}>
                                 <Button
                                   size="large"
+                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<LockOutlined />}
                                   htmlType="button"
@@ -1497,9 +1510,14 @@ const CalculatePayroll = ({ ...props }) => {
                             {step == 2 &&
                               consolidated &&
                               consolidated.status < 3 && (
-                                <Col md={5} offset={1}>
+                                <Col
+                                  md={4}
+                                  offset={1}
+                                  style={{ minWidth: "200px" }}
+                                >
                                   <Button
                                     size="large"
+                                    style={{ minWidth: "200px" }}
                                     block
                                     icon={<FileDoneOutlined />}
                                     htmlType="button"
@@ -1510,9 +1528,14 @@ const CalculatePayroll = ({ ...props }) => {
                                 </Col>
                               )}
                             {step == 3 && (
-                              <Col md={5} offset={1}>
+                              <Col
+                                md={4}
+                                offset={1}
+                                style={{ minWidth: "200px" }}
+                              >
                                 <Button
                                   size="large"
+                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<StopOutlined />}
                                   htmlType="button"
