@@ -529,6 +529,14 @@ class WebApiPeople {
     );
   }
 
+  static sendFilesToAddPerson(data){
+    return WebApi.ApisType(
+      '/business/add-person-from-cif/',
+      'post',
+      data
+    );
+  }
+
 }
 
 export default WebApiPeople;
