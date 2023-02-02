@@ -31,6 +31,7 @@ import {
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
+  UserAddOutlined
 } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
@@ -65,6 +66,7 @@ import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMov
 import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 import WebApiPayroll from "../../../api/WebApiPayroll";
+import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -110,6 +112,7 @@ const homeScreen = ({ ...props }) => {
   const [loadAssign, setLoadAssign] = useState(false);
   const [depSelect, setDepSelect] = useState(null);
   const [wtSelct, setWtSelct] = useState(null);
+  const [addPersonCfi, setPersonCfi] = useState(false)
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -1341,7 +1344,6 @@ const homeScreen = ({ ...props }) => {
                             >
                               {permissions.create && (
                                   <Button
-                                      style={{width:'100%'}}
                                       className="btn-add-person"
                                       onClick={() => getModalPerson(true)}
                                       style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
@@ -1366,10 +1368,9 @@ const homeScreen = ({ ...props }) => {
                 </Row>
 
               </div>
-              <Row justify={"start"}>
-                <Col span={24}>
-                  <Space>
+              <Row span={22} gutter={[5,10]}>
                     {permissions.export_csv_person && (
+                      <Col lg={6} sm={12} xl={5} xxl={3} >
                         <Button
                             type="primary"
                             icon={<DownloadOutlined />}
@@ -1377,9 +1378,11 @@ const homeScreen = ({ ...props }) => {
                         >
                           Descargar personas
                         </Button>
+                      </Col>
                     )}
 
                     {permissions.import_csv_person && (
+                      <Col  lg={6} sm={12} xl={5} xxl={3} >
                         <Upload
                             {...{
                               showUploadList: false,
@@ -1405,30 +1408,37 @@ const homeScreen = ({ ...props }) => {
                             }}
                         >
                           <Button
-                              size="middle"
+                              //size="middle"
                               icon={<UploadOutlined />}
                           >
                             Importar personas
                           </Button>
                         </Upload>
+
+                      </Col>
                     )}
 
-                    <Button
-                        icon={<DownloadOutlined />}
-                        onClick={() =>
-                            downLoadFileBlob(
-                                `${getDomain(
-                                    API_URL_TENANT
-                                )}/person/person/generate_template/?type=1`,
-                                "platilla_personas.xlsx",
-                                "GET"
-                            )
-                        }
-                    >
-                      Descargar plantilla
-                    </Button>
+                    <Col  lg={6} sm={12} xl={5} xxl={3}>
+                      <Button
+                          icon={<DownloadOutlined />}
+                          onClick={() =>
+                              downLoadFileBlob(
+                                  `${getDomain(
+                                      API_URL_TENANT
+                                  )}/person/person/generate_template/?type=1`,
+                                  "platilla_personas.xlsx",
+                                  "GET"
+                              )
+                          }
+                      >
+                        Descargar plantilla
+                      </Button>
+                    
+                    </Col>
                     {props.config && props.config.nomina_enabled &&
+                      <Col  lg={6} sm={12} xl={5} xxl={3}>
                         <ButtonDownloadConfronta/>
+                      </Col>
                     }
 
                     {/*{props.config && props.config.nomina_enabled &&*/}
@@ -1436,14 +1446,25 @@ const homeScreen = ({ ...props }) => {
                     {/*}*/}
 
                     {props.config && props.config.nomina_enabled &&
+                      <Col  lg={6} sm={12} xl={4} xxl={3}>
                         <ButtonUpdateSalary  personsList={rowSelectionPerson} node={props.currentNode}/>
+                      </Col>
                     }
-                  </Space>
-                </Col>
+                    <Col  lg={6} sm={12} xl={5} xxl={3}>
+                      <Button
+                          //size="middle"
+                          icon={<UserAddOutlined />}
+                          onClick={() =>setPersonCfi(true)}
+                      >
+                        Agregar persona usando CFI
+                      </Button>
+                    
+                    </Col>
 
 
 
               </Row>
+              
               <Table
                 className={"mainTable table-persons"}
                 rowKey={"id"}
@@ -1504,6 +1525,11 @@ const homeScreen = ({ ...props }) => {
             actionDelete={deleteAssigns}
           />
         )}
+        <ModalAddPersonCFI 
+          visible={addPersonCfi}
+          setVisible={()=>setPersonCfi(false)}
+          node_id={props.currentNode?.id}
+        />
       </MainLayout>
     </>
   );
