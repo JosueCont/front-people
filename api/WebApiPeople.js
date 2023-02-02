@@ -537,6 +537,10 @@ class WebApiPeople {
     );
   }
 
+  static validateKhor(data){
+    return WebApi.ApisType(`/external-services/khor/sso/`,"post",data)
+  }  
+
 }
 
 export default WebApiPeople;
