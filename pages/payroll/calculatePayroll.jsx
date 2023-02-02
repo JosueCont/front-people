@@ -123,7 +123,7 @@ const CalculatePayroll = ({ ...props }) => {
       render: (item) => (
         <div>
           <Space>
-            {item.payroll_cfdi_person && consolidated.status != 6 && (
+            {item.payroll_cfdi_person && (
               <Tag
                 color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
               >
@@ -595,8 +595,8 @@ const CalculatePayroll = ({ ...props }) => {
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
         setPersonsStamp([]);
-        if (dataToSend.status)
-          sendClosePayroll(6, response.data.payroll, dataToSend.person_edit);
+        // if (dataToSend.status)
+        //   sendClosePayroll(6, response.data.payroll, dataToSend.person_edit);
       })
       .catch((error) => {
         setPersonsStamp([]);
