@@ -51,6 +51,8 @@ const WithHoldingNotice = ({patronalData}) => {
             else setData(notices?.data)
         } catch (e) {
             console.log(e)
+        }finally {
+            setLoading(false);
         }
     }
 
