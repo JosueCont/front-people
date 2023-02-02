@@ -41,9 +41,11 @@ const AfilliateMovements = ({dataAffiliateMovements}) => {
             let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}&period=${setup_period != null ? setup_period : ''}`;
             const movements = await WebApiPeople.afilliateMovements(url);
             setLoading(false)
-            setData(movements.data.results)
+            setData(movements?.data?.results)
         } catch (e) {
             console.log('error',e)
+        }finally {
+            setLoading(false)
         }
     }
 
