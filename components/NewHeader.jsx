@@ -30,6 +30,7 @@ import { setVersionCfdi } from "../redux/fiscalDuck";
 import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
 import { getCurrentURL } from "../utils/constant";
+import ButtonWizardLight from "./payroll/ButtonWizardLight";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -151,16 +152,32 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               props.config.applications.find(
                 (item) => item.app === "PAYROLL" && item.is_active
               ) && (
-                <p
-                  className="text-menu"
-                  onClick={() => setModalCfdiVersion(true)}
-                >
-                  <Text>Cambiar version de CDFI</Text>
-                </p>
+                  <>
+                    <p
+                        className="text-menu"
+                        onClick={() => setModalCfdiVersion(true)}
+                    >
+                      <Text>Cambiar version de CDFI</Text>
+                    </p>
+                  </>
+
+
               )}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
+            <hr/>
+            {props.config &&
+                props.config.applications &&
+                props.config.applications.find(
+                    (item) => item.app === "PAYROLL" && item.is_active
+                ) && (
+                    <>
+                      <ButtonWizardLight/>
+                    </>
+
+
+                )}
           </Col>
         </Row>
       </Card>
