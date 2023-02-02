@@ -7,7 +7,6 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
-import { setJobbankPage } from '../../../redux/jobBankDuck';
 import TagFilters from '../TagFilters';
 import FiltersPreselection from './FiltersPreselection';
 import { useFiltersPreselection } from '../hook/useFiltersPreselection';
@@ -15,8 +14,7 @@ import { useFiltersPreselection } from '../hook/useFiltersPreselection';
 const SearchPreselection = ({
     currentNode,
     list_vacancies_options,
-    load_vacancies_options,
-    setJobbankPage
+    load_vacancies_options
 }) => {
 
     const router = useRouter();
@@ -33,6 +31,7 @@ const SearchPreselection = ({
         let result = list_vacancies_options.find(find_);
         if(!result) return [];
         return Object.entries({
+            'Cliente': result?.customer?.name,
             'Vacante': result.job_position,
             'Género': listGets['gender'](result.gender) ?? 'N/A',
             'Puestos': result.qty ?? 0,
@@ -62,14 +61,17 @@ const SearchPreselection = ({
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        if(match == '0') filters.applyMatch = match;
         if(idVacant) filters.vacant = idVacant;
+        if(match == '0') filters.applyMatch = match;
         setFilters(filters)
     }
 
     const deleteFilter = () =>{
+        let filters = {};
+        if(idVacant) filters.vacant = idVacant;
+        if(match == '0') filters.applyMatch = match;
         formSearch.resetFields();
-        setFilters()
+        setFilters(filters)
     }
 
     const onChangeType = ({target: { value }}) =>{
@@ -79,7 +81,6 @@ const SearchPreselection = ({
     }
 
     const onChangeVacant = (value) =>{
-        setJobbankPage(1)
         let filters = value ? {...router.query, vacant: value} : {};
         setFilters(filters)
     }
@@ -100,6 +101,7 @@ const SearchPreselection = ({
                                     disabled={load_vacancies_options}
                                     loading={load_vacancies_options}
                                     value={idVacant}
+                                    className='select-jb'
                                     placeholder='Vacante'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
@@ -169,4 +171,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState, { setJobbankPage })(SearchPreselection);
+export default connect(mapState)(SearchPreselection);

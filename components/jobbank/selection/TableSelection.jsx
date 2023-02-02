@@ -146,7 +146,6 @@ const TableSelection = ({
     };
 
     const menuItem = (item) => {
-        console.log('item', item)
         return (
             <Menu>
                 <Menu.Item
@@ -166,14 +165,14 @@ const TableSelection = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {item.status == 2 && (
+                {/* {item.status_process == 2 && (
                     <Menu.Item
                         key='3'
                         icon={<CalendarOutlined />}
                     >
                         Agendar entrevista
                     </Menu.Item>
-                )}
+                )} */}
             </Menu>
         );
     };
