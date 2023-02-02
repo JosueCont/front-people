@@ -382,7 +382,7 @@ const InternalConcepts = ({
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} md={12}>
@@ -543,7 +543,9 @@ const InternalConcepts = ({
         (cat) =>
           cat.description.toLowerCase().includes(search.toLowerCase()) ||
           cat.code.toLowerCase().includes(search.toLowerCase()) ||
-          cat.perception_type.code.toLowerCase().includes(search.toLowerCase())
+          cat.perception_type?.code.includes(search) ||
+          cat.other_type_payment?.code.includes(search) ||
+          cat.deduction_type?.code.includes(search)
       );
   }
 

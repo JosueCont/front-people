@@ -103,6 +103,11 @@ const TableSelection = ({
         setItemsToDelete([])
     }
 
+    const optionsStatus = (status) =>{
+        const map_ = item => ({...item, disabled: item.value < status});
+        return optionsStatusSelection.map(map_)
+    }
+
     const savePage = (query) => router.replace({
         pathname: '/jobbank/selection',
         query
@@ -143,13 +148,16 @@ const TableSelection = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
-                    key='1'
+                <Menu.Item
+                    key='4'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)} 
+                    onClick={()=> router.push({
+                        pathname: `/jobbank/selection/details`,
+                        query:{...router.query, id: item.id, vacant: item.vacant.id }
+                    })} 
                 >
                     Editar
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -157,24 +165,14 @@ const TableSelection = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {item.status == 2 && (
+                {/* {item.status_process == 2 && (
                     <Menu.Item
                         key='3'
                         icon={<CalendarOutlined />}
                     >
                         Agendar entrevista
                     </Menu.Item>
-                )}
-                                <Menu.Item
-                    key='4'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id }
-                    })} 
-                >
-                    Editar
-                </Menu.Item>
+                )} */}
             </Menu>
         );
     };
@@ -220,7 +218,7 @@ const TableSelection = ({
                         defaultValue={item.status_process}
                         value={item.status_process}
                         placeholder='Estatus'
-                        options={optionsStatusSelection}
+                        options={optionsStatus(item.status_process)}
                         onChange={(e) => onChangeStatus(e, item)}
                     />
                 )

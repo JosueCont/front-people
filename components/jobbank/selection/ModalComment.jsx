@@ -45,9 +45,9 @@ const ModalComments = ({
     const onFinish = (values) =>{
         setLoading(true)
         setTimeout(()=>{
-            setLoading(false)
             actionForm(values)
             onCloseModal()
+            setLoading(false)
         },1000)
     }
 
@@ -87,7 +87,7 @@ const ModalComments = ({
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
-                        <Button htmlType='submit' loading={loading}>{textSave}</Button>
+                        <Button htmlType='submit' loading={loading} disabled={loading}>{textSave}</Button>
                     </Col>
                 </Row>
             </Form>

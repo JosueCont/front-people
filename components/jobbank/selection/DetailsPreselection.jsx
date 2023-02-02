@@ -1,6 +1,7 @@
 import React, {
   useEffect,
-  useState
+  useState,
+  useMemo
 } from 'react';
 import {
   Tabs,
@@ -18,7 +19,6 @@ import TabAsign from './TabAsign';
 const DetailsPreselection = ({
   action,
   user,
-  assessmentStore,
   currentNode,
   newFilters = {},
   isAutoRegister = false
@@ -33,17 +33,32 @@ const DetailsPreselection = ({
   const [infoSelection, setInfoSelection] = useState({})
   const [comments, setComments] = useState([])
   const [ assesments, setAssesments ] = useState([])
-
+  const [asignaments, setAsignaments ] = useState([])
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
       getInfoVacant(router.query.id)
+      getAssesmets(router.query.id)
     }
 },[router.query?.id])
 
+
   useEffect(() => {
-    getAssesmets()
-  },[])
+    if(router.query?.vacant){
+      getEvaluationVacant(router.query?.vacant)
+    }
+  },[router.query?.vacant])
+
+  const getEvaluationVacant = async (id) => {
+    try {
+      let response = await WebApiJobBank.getEvaluationsVacant(id)
+      if(response && response.data?.results?.length > 0){
+        setAssesments(response.data.results)
+      }
+    } catch (error) {
+      console.log('Error', error)
+    }
+  } 
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
@@ -62,10 +77,6 @@ const DetailsPreselection = ({
     }
   }, [infoSelection])
 
-  console.log('Assesment', assessmentStore)
-  
-
-
   const getInfoVacant = async (id) => {
     try {
       setFetching(true)
@@ -80,23 +91,24 @@ const DetailsPreselection = ({
     }
   }
 
-  const getAssesmets = async () => {
+  const getAssesmets = async (id) => {
     try {
-      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy()
-      if(response && response.data?.results?.lenght > 0){
-        setAssesments(response.data)
+      let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id)
+      console.log('dededed', response)
+      if(response){
+        setAsignaments(response.data.results)
       }
-      console.log('Response', response)
     } catch (error) {
       console.log('Error', error)
     }
   }
+
+  
   
 
   const actionBack = () =>{
       router.push({
           pathname: '/jobbank/selection',
-          query: newFilters
       })
   }
 
@@ -106,12 +118,19 @@ const DetailsPreselection = ({
         return;
     }
     let querys = {...router.query, tab};
-    if(querys['tab'] == '1') delete querys['tab'];
+    if(querys.tab == '1') delete querys.tab;
     router.replace({
-        pathname: router.asPath.split('?')[0],
+        pathname: '/jobbank/selection/details',
         query: querys
     }, undefined, {shallow: true})
 }
+
+  const activeKey = useMemo(()=>{
+    let tab = router.query?.tab;
+    return action == 'edit'
+      ? tab ? tab : '1'
+      : currentKey;
+  },[router.query, currentKey, action])
 
   const propsCustom = {
     action,
@@ -151,7 +170,6 @@ const DetailsPreselection = ({
 }
 
   const onFinish = (values) => {
-    console.log('values', values)
     setFetching(true);
     const bodyData = createData(values);
     onFinisUpdate(bodyData)
@@ -174,7 +192,7 @@ const DetailsPreselection = ({
         >
           <Tabs
             type='card'
-            activeKey={action == 'edit' ? router.query?.tab ?? '1' : currentKey}
+            activeKey={activeKey}
             onChange={onChangeTab}
           >
             <Tabs.TabPane
@@ -202,7 +220,11 @@ const DetailsPreselection = ({
               <Spin spinning={fetching}>
                 <TabAsign 
                   loading={ fetching }
+                  setLoading = { setFetching }
                   assesments = { assesments }
+                  processSelection = { infoSelection?.id }
+                  asignaments = { asignaments }
+                  getAssesmets = { getAssesmets }
                 />
               </Spin>
             </Tabs.TabPane>
@@ -218,7 +240,6 @@ const mapState = (state) =>{
   return{
       currentNode: state.userStore.current_node,
       user: state.userStore.user,
-      assessmentStore: state.assessmentStore,
   }
 }
 

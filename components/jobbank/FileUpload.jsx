@@ -105,7 +105,7 @@ const FileUpload = ({
                 <input
                     type='file'
                     style={{display: 'none'}}
-                    accept={typeFile.reduce((acc, item) => acc +=`.${item}, `,'')}
+                    accept={typeFile.reduce((acc, item) => `${acc}.${item}, `,'')}
                     ref={inputFile}
                     onChange={onChangeFile}
                 />

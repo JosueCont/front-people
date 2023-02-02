@@ -32,7 +32,7 @@ const TablePreselection = ({
     const [itemsSelected, setItemsSelected] = useState([]);
     const [itemsKeys, setItemsKeys] = useState([]);
 
-    const availableVacante = useMemo(()=>{
+    const availableVacant = useMemo(()=>{
         if(list_vacancies_options.length <=0) return false;
         const find_ = item => item.id == router.query?.vacant;
         let result = list_vacancies_options.find(find_);
@@ -130,7 +130,6 @@ const TablePreselection = ({
                     key='1'
                     icon={<UserAddOutlined />}
                     onClick={()=> openModalOne(item)}
-                    disabled={!availableVacante}
                 >
                     Proceso selección
                 </Menu.Item>
@@ -143,16 +142,19 @@ const TablePreselection = ({
             title: 'Nombre',
             dataIndex: 'fisrt_name',
             key: 'fisrt_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Apellidos',
             dataIndex: 'last_name',
             key: 'last_name',
+            show: true,
             ellipsis: true
         },
         {
             title: 'Género',
+            show: true,
             render: (item) =>{
                 return(
                     <span>{getGender(item)}</span>
@@ -162,18 +164,21 @@ const TablePreselection = ({
         {
             title: 'Estado',
             dataIndex: ['state', 'name'],
-            key: ['state','name']
+            key: ['state','name'],
+            show: true,
         },
         {
             title: 'Municipio',
             dataIndex: 'municipality',
-            key: 'municipality'
+            key: 'municipality',
+            show: true,
         },
         {
             title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
-            ellipsis: true
+            show: true,
+            ellipsis: true,
         },
         // {
         //     title: 'Teléfono',
@@ -182,6 +187,7 @@ const TablePreselection = ({
         // },
         {
             title: 'Compatibilidad',
+            show: !router.query?.applyMatch,
             render: (item) => {
                 return(
                     <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
@@ -199,6 +205,8 @@ const TablePreselection = ({
             //     )
             // },
             title: 'Acciones',
+            show: true,
+            width: 80,
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -213,46 +221,40 @@ const TablePreselection = ({
 
     return (
         <>
-            <div>
-                {!availableVacante
-                    && list_preselection?.results?.length > 0
-                    && router.query?.vacant && (
-                    <Alert
-                        type='warning'
-                        message={`No se puede iniciar un nuevo proceso
-                            de selección para esta vacante.`}
-                    />
-                )}
-                <Table
-                    rowKey='id'
-                    size='small'
-                    columns={columns}
-                    // rowSelection={rowSelection}
-                    loading={load_preselection}
-                    dataSource={list_preselection.results}
-                    onChange={onChangePage}
-                    locale={{
-                        emptyText: load_preselection
-                            ? 'Cargando...'
-                            : 'No se encontraron resultados.',
-                    }}
-                    pagination={{
-                        total: list_preselection.count,
-                        current: jobbank_page,
-                        hideOnSinglePage: true,
-                        showSizeChanger: false
-                    }}
-                />
-            </div>
+            <Table
+                rowKey='id'
+                size='small'
+                columns={columns.filter(item => item.show)}
+                // rowSelection={rowSelection}
+                loading={load_preselection}
+                dataSource={list_preselection.results}
+                onChange={onChangePage}
+                locale={{
+                    emptyText: load_preselection
+                        ? 'Cargando...'
+                        : 'No se encontraron resultados.',
+                }}
+                pagination={{
+                    total: list_preselection.count,
+                    current: jobbank_page,
+                    hideOnSinglePage: true,
+                    showSizeChanger: false
+                }}
+            />
             <ListItems
-                title='¿Iniciar proceso de selección?'
+                title={availableVacant
+                    ? '¿Iniciar proceso de selección?'
+                    : 'No se puede iniciar un nuevo proceso de selección para esta vacante'
+                }
                 visible={openModal}
-                keyTitle='fisrt_name'
-                keyDescription='last_name'
+                keyTitle={['fisrt_name','last_name']}
+                keyDescription='email'
                 close={closeModal}
                 itemsToList={itemsSelected}
                 textConfirm='Iniciar'
                 actionConfirm={createSelection}
+                useWithAction={availableVacant}
+                textCancel={availableVacant ? 'Cancelar' : 'Cerrar'}
             />
         </>
     )

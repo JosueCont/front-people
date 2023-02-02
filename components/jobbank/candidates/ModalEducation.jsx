@@ -36,8 +36,6 @@ const ModalEducation = ({
         formEducation.resetFields();
     }
 
-    console.log('Escolar', list_scholarship)
-
     const setValue = (key, val) => formEducation.setFieldsValue({[key]: val});
     const setEndDate = (val = null) => setValue('end_date', val);
 

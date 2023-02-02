@@ -32,6 +32,7 @@ import {
   ExclamationCircleOutlined,
   CheckCircleOutlined,
   StopOutlined,
+  FilePdfOutlined,
   FileExcelOutlined,
   ClearOutlined,
 } from "@ant-design/icons";
@@ -100,6 +101,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   const [infoGenericModal, setInfoGenericModal] = useState(null);
+
+  const getVoucherTypeStr=(type)=>{
+    // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
+    switch (type){
+      case 1:
+        return 'Aguinaldo';
+      case 2:
+        return 'Finiquito';
+      case 3:
+        return 'Liquidacion';
+      default:
+        return 'Ordinaria'
+    }
+  }
 
   const persons = [
     {
@@ -204,11 +219,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadResignationLetter({
-                      person_id: item.person.id,
-                      payment_period_id: periodSelected.id,
-                      receipt_type: "Extraordinaria",
-                    });
+                    downloadResignationLetter(item.person.id);
                   }}
                 >
                   <FileExcelOutlined />
@@ -230,10 +241,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadReceipt(item);
+                    console.log(item)
+                    downloadReceipt({
+                      person_id: item.person.id,
+                      payment_period_id: periodSelected.id,
+                      receipt_type: getVoucherTypeStr(item?.payroll_cfdi_person?.movement_type),
+                    });
                   }}
                 >
-                  <FileExcelOutlined />
+                  <FilePdfOutlined />
                 </Button>
               </Tooltip>
             </div>
@@ -338,7 +354,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = "Carta de renuncia.pdf";
+      link.download = "comprobante.pdf";
       link.click();
     } catch (error) {
       error &&

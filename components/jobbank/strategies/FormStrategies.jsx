@@ -125,7 +125,7 @@ const FormStrategies = ({
             if([undefined,null,'',].includes(value)) return Promise.resolve();
             let percent = parseFloat(value);
             if(percent <= 0) return Promise.reject('Ingrese un valor mayor a 0');
-            if(percent >= 100) return Promise.reject('Ingrese un valor menor o igual a 100');
+            if(percent > 100) return Promise.reject('Ingrese un valor menor o igual a 100');
             return Promise.resolve();
         }
     })

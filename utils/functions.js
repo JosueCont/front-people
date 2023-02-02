@@ -466,14 +466,27 @@ export const createFiltersJB = (obj = {}) =>{
   }, {});
 }
 
+export const validPaginationJB = (obj = {}) =>{
+  if(obj.page > 1 && obj.size <= 10) delete obj.size;
+  if(obj.page <= 1 && obj.size > 10) delete obj.page;
+  if(obj.page == 1 && obj.size == 10){
+    delete obj.page;
+    delete obj.size;
+  }
+  return obj;
+}
+
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
     if(key == "page"){
-      let offset = (parseInt(val) - 1) * 10;
-      return query +=`&limit=10&offset=${offset}`;
+      const find_ = item => item[0] == "size";
+      let result = Object.entries(obj).find(find_);
+      let limit = result ? parseInt(result[1]) : 10;
+      let offset = (parseInt(val) - 1) * limit;
+      return `${query}&limit=${limit}&offset=${offset}`;
     }
     let value = val == "open_fields" ? "" : val;
-    return query += `&${key}=${value}`;
+    return `${query}&${key}=${value}`;
   }, '');
 }
 
@@ -499,5 +512,39 @@ export const copyContent = async ({
   } catch (e) {
     console.log(e)
     onError()
+  }
+}
+
+export const getValueFilter = ({
+  value = '',
+  list = [],
+  keyEquals = 'id',
+  keyShow = 'name'
+}) =>{
+  if(!value) return value;
+  const find_ = item => item[keyEquals] == value;
+  let result = list.find(find_);
+  if(!result) return value;
+  return typeof keyShow == 'function'
+    ? keyShow(result) : result[keyShow];
+}
+
+export const downloadCustomFile = async ({
+  url = '',
+  name = ''
+}) =>{
+  try {
+    let config = {url, method: 'GET', responseType: 'blob', headers:{'Access-Control-Allow-Origin':'*'}};
+    let response = await axios(config);
+    console.log('response pdf-------->', response)
+    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = name;
+    link.target = "_blank";
+    link.click();
+  } catch (e) {
+    console.log('error pdf',e)
+    console.log('erorr response pdf', e.response)
   }
 }

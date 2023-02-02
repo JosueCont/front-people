@@ -477,8 +477,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
     }
 
-    static getVacancyAssesmentCandidateVacancy(){
-        return WebApi.ApisType('/job-bank/vacant-assessment-candidate-vacancy/', 'get')
+    static getVacancyAssesmentCandidateVacancy(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/?candidate_vacancy=${id}`, 'get')
     }
 
     static addVacancyAssesmentCandidateVacancy(values){
@@ -489,6 +489,9 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'delete')
     }
     
+    static editVacancyAssesmentCandidateVacancy(id, values){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'patch', values)
+    }
 }
 
 export default WebApiJobBank;

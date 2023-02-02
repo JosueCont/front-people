@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Menu,
@@ -99,7 +99,7 @@ const TabExperience = ({
         }
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
     const showModalAdd = () =>{
         setItemToEdit({})
@@ -260,12 +260,12 @@ const TabExperience = ({
                 }}
             />
             <ModalExperience
-                title={validateAction() && openModal ? 'Editar experiencia' : 'Agregar experiencia'}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                title={isEdit ? 'Editar experiencia' : 'Agregar experiencia'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
                 close={closeModal}
                 itemToEdit={itemToEdit}
                 visible={openModal}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
             <ListItems
                 title='¿Estás seguro de eliminar esta experiencia?'
