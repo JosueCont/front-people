@@ -353,7 +353,16 @@ const HighDirectionReport = ({
               {
                 infoEducation?.length > 0 && infoEducation.map((inst) => (
 
-                  <View key={inst.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
+                  <View 
+                    key={inst.id} 
+                    style={{ 
+                        marginBottom: 10, 
+                        flex: '0 0 100%', 
+                        borderRadius: 10, 
+                        backgroundColor: '#E9E9E9',
+                        padding: '6px 12px',
+                    }}
+                    >
                     <View>
                       <Text style={{fontSize: 10}}>Titulo obtenido: { inst?.specialitation_area } </Text>
                     </View>
@@ -384,23 +393,44 @@ const HighDirectionReport = ({
                     <View style={{ marginTop: 10, marginBottom: 5}}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Idiomas:</Text>
                     </View>
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                        }}
+                    >
+
                     {
                             infoCandidate?.languages.length > 0 &&
 
                             infoCandidate.languages.map((lang) => (
-                                <Text 
+
+                                <View 
                                     key={lang.id} 
                                     style={{
-                                        fontSize: 10,
-                                        borderRadius: 5
+                                        borderRadius: 10, 
+                                        backgroundColor: '#E9E9E9',
+                                        padding: '6px 12px',
                                     }}
-                                > 
-                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                    nivel
-                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
-                                </Text>
+                                >
+
+                                    <Text 
+                                        style={{
+                                            fontSize: 10,
+                                            borderRadius: 5
+                                        }}
+                                    > 
+                                        { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                        nivel
+                                        { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
+                                    </Text>
+
+                                </View>
+                                
                             ))
                         }
+                    </View>
                </View>
 
             </View>
@@ -521,7 +551,16 @@ const HighDirectionReport = ({
                     {
                         infoPositions?.length > 0 && infoPositions.map((pos) => (
 
-                            <View key={pos.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
+                            <View 
+                                key={pos.id} 
+                                style={{ 
+                                    marginBottom: 10, 
+                                    flex: '0 0 100%',
+                                    borderRadius: 10, 
+                                    backgroundColor: '#E9E9E9',
+                                    padding: '6px 12px', 
+                                }}
+                            >
                             <View>
                               <Text style={{fontSize: 10}}>Nombre de la compañia: { pos?.company } </Text>
                             </View>

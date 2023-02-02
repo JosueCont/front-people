@@ -71,7 +71,6 @@ const TableCandidates = ({
         <HighDirectionReport
             infoCandidate={infoCandidate}
             infoEducation={ infoEducation}
-            // infoExperience={infoExperience}
             infoPositions={ infoPositions}
         />
     const NyCandidateReport = ({infoCandidate, infoEducation, infoPositions}) => 
@@ -79,14 +78,13 @@ const TableCandidates = ({
     <CandidateReport
         infoCandidate={infoCandidate}
         infoEducation={ infoEducation}
-        // infoExperience={infoExperience}
         infoPositions={ infoPositions}
     />
     
 
-    const linkTo = (url, download = false ) =>{
+    const linkTo = (url, download = false, nameCandidate ) =>{
         // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-        let nameFile = 'demo'
+        let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -106,6 +104,7 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -113,7 +112,7 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
+                linkTo(url+'#toolbar=0', download, nameCandidate);
             },2000)
         } catch (e) {
             console.log(e)

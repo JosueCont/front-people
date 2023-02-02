@@ -117,8 +117,6 @@ const CandidateReport = ({
         }
     ]
 
-    console.log('InfoEducation', infoEducation)
-
     const ageCandidate = (date) => {
       let birthdate = moment(date)
       let currentDate = moment()
@@ -150,65 +148,110 @@ const CandidateReport = ({
                         flexDirection: 'row',
                 }}>
                     <View style={{
-                      flex: '0 0 100%', 
+                      flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 12 }}>Nombre del candidato: {infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Nombre del candidato: </Text>
+                        <Text style={{ fontSize: 12 }}>{infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
+                      flexDirection: 'row',
                       }}
                     >
-                        <Text style={{ fontSize: 12 }}>Edad: { infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) }</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Edad: </Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) }</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 12 }}>Fecha de nacimiento: { infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""}</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Fecha de nacimiento: </Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 12 }}>Grado maximo de estudios: { maxEducation() }</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Grado maximo de estudios: </Text>
+                        <Text style={{ fontSize: 12 }}>{ maxEducation() }</Text>
                     </View>
                 </View>
-                {/* <View
+                <View
                     style={{
                         display: 'flex',
                         flexWrap: 'wrap',
                         flexDirection: 'row',
-                        padding: '6px 12px',
-                        marginBottom: 10
-                }}
+                        marginTop: 20,
+                        marginBottom: 20
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: '0 0 100%'
+                        }}
+                    >
+                        <Text style={{ fontSize: 13, marginBottom: 20, fontWeight: 'bold' }}>Resumen: </Text>
+                    </View>
+                    <View
+                        style={{
+                            flex: '0 0 100%'
+                        }}
+                    >
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                            Luis está casado, actualmente vive con sus hijos y su esposa que se dedica al hogar. Viven en
+                            Ocoyoacac, Estado de México.
+                        </Text>
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                            Cuenta con 11 años de experiencia en el área de producción y almacén. Su último empleo fue en
+                            Sanofi Aventis como operador de producción y tableteador, su salida se debió a la reestructuración
+                            de la planta y el movimiento de esta a Brasil
+                        </Text>
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                            Cuenta con disponibilidad para laborar de lunes a domingo y de rolar turnos.
+                        </Text>
+                    </View>
+                </View>
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        marginBottom: 20
+                    }}
                 >
                     <View style={{
-                        flex: '0 0 100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 10, marginRight: 15 }}>Idiomas: </Text>
-                        {
-                            infoCandidate?.languages.length > 0 &&
-
-                            infoCandidate.languages.map((lang) => (
-                                <Text 
-                                    key={lang.id} 
-                                    style={{
-                                        fontSize: 10,
-                                        padding: '3px 5px',
-                                        backgroundColor: '#FFF',
-                                        marginRight: 5,
-                                        borderRadius: 5
-                                    }}
-                                > 
-                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                    / 
-                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
-                                </Text>
-                            ))
-                        }
+                      flex: '0 0 100%',
+                      flexDirection: 'row'
+                    }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Motivo de salida último empleo: </Text>
+                        <Text style={{ fontSize: 12 }}>Recorte de personal</Text>
                     </View>
-                </View> */}
+                </View>
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        marginBottom: 20
+                    }}
+                >
+                    <View style={{
+                      flex: '0 0 100%',
+                    }}>
+                        <Text style={{ fontSize: 13, marginBottom: 10, fontWeight: 'bold' }}>Sueldo último empleo incluyendo prestaciones:</Text>
+
+                        <ul>
+                            <li><Text style={{ fontSize: 12 }}>&middot; $2,400 libres semanales</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Seguro de Vida</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Utilidades</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Vales de Despensa</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Vacaciones</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Aguinaldo</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Ayuda transporte y útiles</Text></li>
+                        </ul>
+                    </View>
+                </View>
             </View>
         </View>
     )
@@ -435,7 +478,7 @@ const CandidateReport = ({
                       <Image 
                         src={'/images/logo_HEX.png'}
                         style={{
-                                width: '50px',
+                                width: '30px',
                                 height: '25px',
                                 marginLeft: '10%'
                               }}
