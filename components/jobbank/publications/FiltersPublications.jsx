@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
+import { optionsStatusVacant } from '../../../utils/constant';
 
-const FiltersInterviews = ({
+const FiltersPublications = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -12,19 +12,14 @@ const FiltersInterviews = ({
 }) => {
 
     const {
-        load_candidates_options,
-        list_candidates_options,
+        list_connections_options,
+        load_connections_options,
         list_vacancies_options,
         load_vacancies_options,
-        list_clients_options,
-        load_clients_options
+        list_profiles_options,
+        load_profiles_options
     } = useSelector(state => state.jobBankStore);
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
-    const customer = Form.useWatch('customer', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -33,16 +28,6 @@ const FiltersInterviews = ({
             setLoading(false)
             onFinish(values);
         },1000)
-    }
-
-    const optionsVacant = useMemo(()=>{
-        if(!customer) return list_vacancies_options;
-        const filter_ = item => item.customer?.id == customer;
-        return list_vacancies_options.filter(filter_);
-    },[customer, list_vacancies_options])
-
-    const onChangeCustomer = (value) =>{
-        formSearch.setFieldsValue({vacant: null})
     }
 
     return (
@@ -61,22 +46,22 @@ const FiltersInterviews = ({
                 <Row gutter={[16,0]}>
                     <Col span={12}>
                         <Form.Item
-                            name='customer'
-                            label='Cliente'
+                            label='Cuenta'
+                            name='account_to_share'
                         >
                             <Select
                                 allowClear
-                                showSearch
-                                disabled={load_clients_options}
-                                loading={load_clients_options}
+                                mode='multiple'
+                                maxTagCount={1}
+                                disabled={load_connections_options}
+                                loading={load_connections_options}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
-                                onChange={onChangeCustomer}
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
+                                {list_connections_options.length > 0 && list_connections_options.map(item=> (
+                                    <Select.Option disabled={!item.is_active} value={item.code} key={item.code}>
+                                        {item.name} {item.is_active ? '':' / No disponible'}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -84,19 +69,19 @@ const FiltersInterviews = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='vacant'
                             label='Vacante'
+                            name='vacant'
                         >
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={optionsVacant.length <= 0}
+                                disabled={load_vacancies_options}
                                 loading={load_vacancies_options}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {optionsVacant.length > 0 && optionsVacant.map(item => (
+                                {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.job_position}
                                     </Select.Option>
@@ -106,21 +91,36 @@ const FiltersInterviews = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='recruiter'
-                            label='Reclutador'
+                            label='Estatus vacante'
+                            name='vacant__status'
+                        >
+                            <Select
+                                allowClear
+                                placeholder='Seleccionar una opción'
+                                options={optionsStatusVacant}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Template'
+                            name='profile'
                         >
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
+                                disabled={load_profiles_options}
+                                loading={load_profiles_options}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {persons_company.length > 0 && persons_company.map(item => (
+                                <Select.Option value='open_fields' key='open_fields'>
+                                    Personalizado
+                                </Select.Option>
+                                {list_profiles_options.length > 0 && list_profiles_options.map(item=> (
                                     <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
+                                        {item.name}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -128,23 +128,15 @@ const FiltersInterviews = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='candidate'
-                            label='Candidato'
+                            label='Estatus'
+                            name='is_published'
                         >
                             <Select
                                 allowClear
-                                showSearch
                                 placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                disabled={load_candidates_options}
-                                loading={load_candidates_options}
-                                optionFilterProp='children'
                             >
-                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.fisrt_name} {item.last_name}
-                                    </Select.Option>
-                                ))}
+                                <Select.Option value='true' key='true'>Publicado</Select.Option>
+                                <Select.Option value='false' key='false'>En borrador</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -165,4 +157,4 @@ const FiltersInterviews = ({
     )
 }
 
-export default FiltersInterviews
+export default FiltersPublications

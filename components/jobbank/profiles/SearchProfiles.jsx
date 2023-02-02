@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
-import { Button, Input, Row, Col, Form, Select, Tooltip } from 'antd';
+import React, { useState } from 'react'
+import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { ruleWhiteSpace } from '../../../utils/rules';
-import { createFiltersJB } from '../../../utils/functions';
+import { createFiltersJB, getValueFilter } from '../../../utils/functions';
+import TagFilters from '../TagFilters';
+import FiltersProfiles from './FiltersProfiles';
 
 const SearchProfiles = ({
     currentNode,
@@ -17,80 +19,85 @@ const SearchProfiles = ({
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
 
-    useEffect(()=>{
-        formSearch.setFieldsValue(router.query);
-    },[router.query])
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/profiles',
+        query: filters
+    }, undefined, {shallow: true});
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        router.replace({
-            pathname: '/jobbank/profiles/',
-            query: filters
-        }, undefined, {shallow: true});
+        setFilters(filters)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace('/jobbank/profiles', undefined, {shallow: true});
+        setFilters()
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
+    }
+
+    const showModal = () =>{
+        formSearch.setFieldsValue(router.query);
+        setOpenModal(true)
     }
 
     return (
-        <Row gutter={[24,24]}>
-            <Col xs={18} xxl={14}>
-                <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
-                    <Row style={{width: '100%'}}>
-                        <Col span={12}>
-                            <Form.Item
-                                name='name__unaccent__icontains'
-                                rules={[ruleWhiteSpace]}
-                                style={{marginBottom: 0}}
-                            >
-                                <Input placeholder='Buscar por nombre'/>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item name='customer' style={{marginBottom: 0}}>
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    loading={load_clients_options}
-                                    placeholder='Cliente'
-                                    notFoundContent='No se encontraron resultados'
-                                    optionFilterProp='children'
-                                >
-                                    {list_clients_options.length > 0 && list_clients_options.map(item=> (
-                                        <Select.Option value={item.id} key={item.id}>
-                                            {item.name}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={4} style={{display: 'flex', gap: '8px'}}>
-                            <Tooltip title='Buscar'>
-                                <Button htmlType='submit'>
-                                    <SearchOutlined />
+        <>
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div span={24} className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                Templates de vacante
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Limpiar filtros'>
+                                    <Button onClick={()=> deleteFilter()}>
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Button onClick={()=> router.push({
+                                    pathname: '/jobbank/profiles/add',
+                                    query: router.query
+                                })}>
+                                    Agregar
                                 </Button>
-                            </Tooltip>
-                            <Tooltip title='Limpiar filtros'>
-                                <Button onClick={()=> deleteFilter()}>
-                                    <SyncOutlined />
-                                </Button>
-                            </Tooltip>
-                        </Col>
-                    </Row>
-                </Form>
-            </Col>
-            <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push({
-                    pathname: '/jobbank/profiles/add',
-                    query: router.query
-                })}>
-                    Agregar
-                </Button>
-            </Col>
-        </Row>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={{
+                                name__unaccent__icontains: 'Nombre',
+                                customer: 'Cliente'
+                            }}
+                            listGets={{
+                                customer: e => getValueFilter({
+                                    value: e,
+                                    list: list_clients_options
+                                })
+                            }}
+                        />
+                    </Col>  
+                </Row>
+            </Card>
+            <FiltersProfiles
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
+        </>
     )
 }
 

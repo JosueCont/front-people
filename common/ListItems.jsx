@@ -14,7 +14,7 @@ const ListItems = ({
     textConfirm = 'Eliminar', //string
     useWithAction = true, //boolean,
     timeLoad = 2000, //integer
-    disableList = false //boolean
+    showList = true //boolean
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -75,11 +75,8 @@ const ListItems = ({
             closable={!loading}
         >
             <Row gutter={[0,16]}>
-                <Col span={24}>
-                    
-                    {
-                        !disableList && 
-
+                {showList && (
+                    <Col span={24}>
                         <div className='items-to-list scroll-bar'>
                             {itemsToList.length > 0 && itemsToList.map((item, idx) => (
                                 <div key={idx}>
@@ -88,10 +85,8 @@ const ListItems = ({
                                 </div>
                             ))}
                         </div>
-                    }
-
-                    
-                </Col>
+                    </Col>
+                )}
                 <Col span={24} className='content-end' style={{gap: 8}}>
                     <Button disabled={loading} onClick={()=> close()}>
                         {textCancel}

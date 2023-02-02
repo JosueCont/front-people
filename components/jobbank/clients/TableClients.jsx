@@ -28,8 +28,8 @@ import { connect } from 'react-redux';
 import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
-import Clipboard from '../../../components/Clipboard';
 import ViewContacts from './ViewContacts';
+import { copyContent } from '../../../utils/functions';
 
 const TableClients = ({
     list_clients,
@@ -156,6 +156,14 @@ const TableClients = ({
         }
     }
 
+    const copyLinkAutoregister = () =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/client`,
+            onSucces: ()=> message.success('Link de autorregistro copiado'),
+            onError: () => message.error('Link de autorregistro no copiado')
+        })
+    }
+
     const ViewList = ({item}) => (
         <Space>
             {item.contact_list?.length > 0 ? (
@@ -180,13 +188,12 @@ const TableClients = ({
     const menuTable = () => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/client`}
-                        title='Autoregistro'
-                        border={false}
-                        tooltipTitle='Copiar link de autoregistro'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined />}
+                    onClick={()=> copyLinkAutoregister()}
+                >
+                    Autorregistro
                 </Menu.Item>
                 <Menu.Item
                     key='2'

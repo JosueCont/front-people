@@ -506,9 +506,40 @@ class WebApiPeople {
     return WebApi.ApisType(url, "post", data);
   }
 
+  static afilliateMovements(data){
+    return WebApi.ApisType(
+      `/business/document/${data}`,
+      'get'
+    );
+  }
+
+  static getWithHoldingNotice(data){
+    return WebApi.ApisType(`/payroll/retention-notice${data}`,'get');
+  }
+
+  static withHoldingNotice(data){
+    return WebApi.ApisType('/payroll/retention-notice','post',data);
+  }
+
+  static syncUpAfilliateMovements(data){
+    return WebApi.ApisType(
+      '/payroll/infonavit-affiliate-movements',
+      'post',
+      data
+    );
+  }
+
+  static sendFilesToAddPerson(data){
+    return WebApi.ApisType(
+      '/business/add-person-from-cif/',
+      'post',
+      data
+    );
+  }
+
   static validateKhor(data){
     return WebApi.ApisType(`/external-services/khor/sso/`,"post",data)
-  }
+  }  
 
 }
 

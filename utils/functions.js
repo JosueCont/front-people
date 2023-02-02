@@ -514,3 +514,17 @@ export const copyContent = async ({
     onError()
   }
 }
+
+export const getValueFilter = ({
+  value = '',
+  list = [],
+  keyEquals = 'id',
+  keyShow = 'name'
+}) =>{
+  if(!value) return value;
+  const find_ = item => item[keyEquals] == value;
+  let result = list.find(find_);
+  if(!result) return value;
+  return typeof keyShow == 'function'
+    ? keyShow(result) : result[keyShow];
+}

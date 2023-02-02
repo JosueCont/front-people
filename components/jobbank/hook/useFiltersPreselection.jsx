@@ -4,6 +4,7 @@ import {
     optionsStatusAcademic,
     optionsLangVacant
 } from "../../../utils/constant";
+import { getValueFilter } from "../../../utils/functions";
 
 export const useFiltersPreselection = () =>{
 
@@ -33,48 +34,35 @@ export const useFiltersPreselection = () =>{
         age_start: 'Edad mínima',
         age_end: 'Edad máxima'
     }
-
-    const getValue = ({
-        value = '',
-        list = [],
-        keyEquals = 'id',
-        keyShow = 'name'
-    }) =>{
-        if(!value) return value;
-        const find_ = item => item[keyEquals] == value;
-        let result = list.find(find_);
-        if(!result) return value;
-        return result[keyShow];
-    }
-
-    const getCategory = (id) => getValue({
+    
+    const getCategory = (id) => getValueFilter({
         value: id,
         list: list_main_categories
     });
 
-    const getState = (id) => getValue({
+    const getState = (id) => getValueFilter({
         value: id,
         list: list_states
     });
 
-    const getGender = (value) => getValue({
+    const getGender = (value) => getValueFilter({
         value,
         list: optionsGenders,
         ...paramsOptions
     });
 
-    const getStudy = (id) => getValue({
+    const getStudy = (id) => getValueFilter({
         value: id,
         list: list_scholarship
     });
 
-    const getStatus = (value) => getValue({
+    const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusAcademic,
         ...paramsOptions
     });
 
-    const getLang = (value) => getValue({
+    const getLang = (value) => getValueFilter({
         value,
         list: optionsLangVacant,
         ...paramsOptions

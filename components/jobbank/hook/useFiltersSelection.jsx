@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { optionsStatusSelection } from "../../../utils/constant";
+import { getValueFilter } from "../../../utils/functions";
 
 export const useFiltersSelection = () =>{
 
@@ -17,38 +18,23 @@ export const useFiltersSelection = () =>{
         candidate: 'Candidato'
     }
 
-    const getValue = ({
-        value = '',
-        list = [],
-        keyEquals = 'id',
-        keyShow = 'name'
-    }) =>{
-        if(!value) return value;
-        const find_ = item => item[keyEquals] == value;
-        let result = list.find(find_);
-        if(!result) return value;
-        return result[keyShow];
-    }
-
-    const getStatus = (value) => getValue({
+    const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusSelection,
         ...paramsOptions
     })
 
-    const getVacant = (id) => getValue({
+    const getVacant = (id) => getValueFilter({
         value: id,
         list: list_vacancies_options,
         keyShow: 'job_position'
     })
 
-    const getCandidate = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_candidates_options.find(find_);
-        if(!result) return id;
-        return `${result?.fisrt_name} ${result.last_name}`;
-    }
+    const getCandidate = (id) => getValueFilter({
+        value: id,
+        list: list_candidates_options,
+        keyShow: e => `${e?.fisrt_name} ${e.last_name}`
+    })
 
     const listGets = {
         status_process: getStatus,

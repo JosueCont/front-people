@@ -30,12 +30,13 @@ const CalendarHeader = ({
     const getLabel = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
     const yearsOptions = useMemo(()=>{
-        let range = (year + rangeYear) - (year - rangeYear);
+        let num = nowDate.getFullYear();
+        let range = ((num + rangeYear) - (num - rangeYear)) + 1;
         return Array(range).fill(null).map((_, idx) =>{
-            let result = idx > rangeYear ? year + (idx - rangeYear) : year - (rangeYear - idx);
+            let result = idx > rangeYear ? num + (idx - rangeYear) : num - (rangeYear - idx);
             return {value: result, key: result, label: `${result}`};
         })
-    },[year])
+    },[])
 
     const today = useMemo(()=>{
         let day = days[nowDate.getDay()];
@@ -107,7 +108,7 @@ const CalendarHeader = ({
                         </button>
                     </Tooltip>
                 </div>
-                <p role={(!titlePrev || !titleNext) ? 'stop' : 'month'}>{currentMonth}</p>
+                <p role='month'>{currentMonth}</p>
             </div>
             <div className='content-end' style={{gap: 8}}>
                 <Select

@@ -51,34 +51,39 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const [catalog, setCat] = useState([]);
 
   const data = [
+    // {
+    //   name: "applies_to_unjustified_absences",
+    //   label: "Aplica para faltas injustificadas.",
+    //   value: false,
+    // },
+    // {
+    //   name: "applies_to_excused_absences",
+    //   label: "Aplica para faltas justificadas.",
+    //   value: false,
+    // },
     {
-      name: "applies_to_unjustified_absences",
-      label: "Aplica para faltas injustificadas.",
+      name: "not_applies_to_absences",
+      label: "No aplicar para faltas.",
       value: false,
     },
+    // {
+    //   name: "applies_to_paid_permit",
+    //   label: "Aplica para permiso con goce.",
+    //   value: false,
+    // },
+    // {
+    //   name: "applies_to_unpaid_permit",
+    //   label: "Aplica para permiso sin goce.",
+    //   value: false,
+    // },
     {
-      name: "applies_to_excused_absences",
-      label: "Aplica para faltas justificadas.",
-      value: false,
-    },
-    {
-      name: "applies_to_paid_permit",
-      label: "Aplica para permiso con goce.",
-      value: false,
-    },
-    {
-      name: "applies_to_unpaid_permit",
-      label: "Aplica para permiso sin goce.",
-      value: false,
-    },
-    {
-      name: "applies_to_disabilities",
-      label: "Aplica para incapacidades.",
+      name: "not_applies_to_disabilities",
+      label: "No aplicar aplicar para incapacidades.",
       value: false,
     },
     {
       name: "applies_to_vacations",
-      label: "Aplica para vacaciones.",
+      label: "No aplicar para vacaciones.",
       value: false,
     },
   ];
@@ -381,6 +386,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const data_type = [
     { value: 1, label: "Monto" },
     { value: 2, label: "Porcentaje" },
+    { value: 3, label: "Veces salario" },
   ];
   const based_on = [
     { value: 1, label: "Salario" },
