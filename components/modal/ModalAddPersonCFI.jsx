@@ -55,15 +55,14 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
             formData.append("node_id", node_id);
             const addPerson = await WebApiPeople.sendFilesToAddPerson(formData);
             setLoading(false)
-            if(addPerson?.data?.message){
-                message.success(addPerson?.data?.message)
-                
-            }else{
-                message.error('Error al mandar archivo')
+
+            if(addPerson?.data?.id){
+                message.success('Se agregó correctamente a ' + addPerson?.data?.first_name + addPerson?.data?.flast_name);
             }
         } catch (e) {
             console.log(e)
             setLoading(false)
+            message.error('Intenta nuevamente')
         }
       }
     return(
@@ -103,7 +102,7 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
                         <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                         </p>
-                        <p className="ant-upload-text">Selecciona o arrastra un archivo para cargrlo</p>
+                        <p className="ant-upload-text">Selecciona o arrastra un archivo para cargarlo</p>
                         <p className="ant-upload-hint">
                             Soporte para una carga única o masiva. Prohibir estrictamente la carga de datos de la empresa u otros
                             archivos sensibles.

@@ -1456,7 +1456,7 @@ const homeScreen = ({ ...props }) => {
                           icon={<UserAddOutlined />}
                           onClick={() =>setPersonCfi(true)}
                       >
-                        Agregar persona usando CFI
+                        Agregar persona usando CIF
                       </Button>
                     
                     </Col>
