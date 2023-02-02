@@ -1,6 +1,7 @@
 import React, {
     useEffect,
-    useState
+    useState,
+    useMemo
 } from 'react';
 import {
     Tabs,
@@ -24,7 +25,7 @@ const DetailsClients = ({
     newFilters = {},
     isAutoRegister = false
 }) => {
-
+    
     const router = useRouter();
     const [formClients] = Form.useForm();
     const [loading, setLoading] = useState({});
@@ -161,17 +162,28 @@ const DetailsClients = ({
     }
 
     const onChangeTab = (tab) =>{
+        let url = isAutoRegister
+            ? `/jobbank/${currentNode.permanent_code}/client`
+            : '/jobbank/clients/edit'; 
         if(action == 'add'){
             setCurrentKey(tab)
             return;
         }
         let querys = {...router.query, tab};
-        if(querys['tab'] == '1') delete querys['tab'];
+        if(querys.tab == '1') delete querys.tab;
+        if(querys.uid) delete querys.uid;
         router.replace({
-            pathname: router.asPath.split('?')[0],
+            pathname: url,
             query: querys
         }, undefined, {shallow: true})
     }
+
+    const activeKey = useMemo(()=>{
+        let tab = router.query?.tab;
+        return action == 'edit'
+            ? tab ? tab : '1'
+            : currentKey;
+    },[router.query, currentKey, action])
 
     const propsCustom = {
         action,
@@ -200,7 +212,7 @@ const DetailsClients = ({
             >
                 <Tabs
                     type='card'
-                    activeKey={action == 'edit' ? router.query?.tab ?? '1' : currentKey}
+                    activeKey={activeKey}
                     onChange={onChangeTab}
                 >
                     <Tabs.TabPane
