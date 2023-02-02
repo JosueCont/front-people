@@ -22,7 +22,7 @@ import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
-import { copyContent } from '../../../utils/functions';
+import CandidateReport from './CandidateReport';
 
 const TableCandidates = ({
     currentNode,
@@ -71,14 +71,20 @@ const TableCandidates = ({
         <HighDirectionReport
             infoCandidate={infoCandidate}
             infoEducation={ infoEducation}
-            // infoExperience={infoExperience}
             infoPositions={ infoPositions}
         />
+    const NyCandidateReport = ({infoCandidate, infoEducation, infoPositions}) => 
+
+    <CandidateReport
+        infoCandidate={infoCandidate}
+        infoEducation={ infoEducation}
+        infoPositions={ infoPositions}
+    />
     
 
-    const linkTo = (url, download = false ) =>{
+    const linkTo = (url, download = false, nameCandidate ) =>{
         // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-        let nameFile = 'demo'
+        let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -98,7 +104,38 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
+            let url = URL.createObjectURL(resp);
+            setTimeout(()=>{
+                setLoading(false);
+                message.success({content: 'PDF generado', key})
+            }, 1000)
+            setTimeout(()=>{  
+                linkTo(url+'#toolbar=0', download, nameCandidate);
+            },2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                setLoading(false)
+                message.error({content: 'PDF no generado', key});
+            },2000)
+        }
+    }
+
+    const generateReportCandidate = async (id, download) => {
+        if(!id) return
+        const key = 'updatable';
+        message.loading({content: 'Generando PDF...', key});
+        try {
+            setLoading(true)
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
+            let infoCan = responseInfo.data || {}
+            let infoEducation = responseEdu.data || []
+            let infoPositions = responsePos.data || []
+            let resp = await pdf(<NyCandidateReport infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
                 setLoading(false);
@@ -253,6 +290,13 @@ const TableCandidates = ({
                     onClick={() => generatePDF(item.id, true)}
                 >
                     Descargar reporte alta dirección
+                </Menu.Item>
+                <Menu.Item
+                    key='5'
+                    icon={<DownloadOutlined />}
+                    onClick={() => { generateReportCandidate(item.id, true) }}
+                >
+                    Descargar reporte de candidato
                 </Menu.Item>
             </Menu>
         );

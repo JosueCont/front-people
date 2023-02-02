@@ -140,7 +140,7 @@ const FormMessages = ({
             <Col span={24}>
                 <div style={{width: '100%', color: 'rgba(0,0,0,0.5)'}}>
                     De la siguiente lista copiar (click sobre el nombre) los campos
-                    que se desean visualizar en el mensaje, según la posicón u
+                    que se desean visualizar en el mensaje, según la posición u
                     orden que se requiera.
                 </div>
                 <TagsNotify copyTag={copyTag}/>

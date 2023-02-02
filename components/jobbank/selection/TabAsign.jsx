@@ -140,7 +140,7 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
 
   const columns = [
     {
-      title: 'Nombre de evaluacón',
+      title: 'Nombre de evaluación',
       render: (item) => item.vacant_assessment? item.vacant_assessment.name : ""
     },
     {
