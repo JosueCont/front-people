@@ -14,6 +14,7 @@ import TabGeneral from './TabGeneral';
 import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
+import TabReferences from './TabReferences';
 
 //*Necesario para la libreria react-pdf
 const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
@@ -32,6 +33,7 @@ const DetailsCandidates = ({
     const [infoEducation, setInfoEducation] = useState([]);
     const [infoExperience, setInfoExperience] = useState([]);
     const [infoPositions, setInfoPositions] = useState([]);
+    const [infoReferences, setInfoReferences] = useState([]);
 
     const actionBack = () =>{
         router.push({
@@ -143,16 +145,15 @@ const DetailsCandidates = ({
                             />
                         </Tabs.TabPane>
                         {/* <Tabs.TabPane
-                            tab='Expediente'
+                            tab='Referencias'
                             disabled={disableTab}
                             forceRender
                             key='5'
                         >
-                            <DocExpedient
-                                infoCandidate={infoCandidate}
-                                infoEducation={infoEducation}
-                                infoExperience={infoExperience}
-                                infoPositions={infoPositions}
+                            <TabReferences
+                                action={action}
+                                setInfoReferences={setInfoReferences}
+                                infoReferences={infoReferences}
                             />
                         </Tabs.TabPane> */}
                     </Tabs>    

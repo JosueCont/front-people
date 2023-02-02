@@ -206,6 +206,7 @@ const TablePreselection = ({
             // },
             title: 'Acciones',
             show: true,
+            width: 80,
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -243,7 +244,7 @@ const TablePreselection = ({
             <ListItems
                 title={availableVacant
                     ? '¿Iniciar proceso de selección?'
-                    : 'No se puede iniciar un nuevo proceso selección para esta vacante'
+                    : 'No se puede iniciar un nuevo proceso de selección para esta vacante'
                 }
                 visible={openModal}
                 keyTitle={['fisrt_name','last_name']}
