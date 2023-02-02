@@ -55,7 +55,7 @@ const ButtonWizardLight=()=>{
                          <br/>
                          <Steps direction="vertical" current={0}>
                              {
-                                 steps.map((st)=>{
+                                steps &&  steps.map((st)=>{
                                      return <Step status={'finish'} description={st.description} title={st.title} />
                                  })
                              }

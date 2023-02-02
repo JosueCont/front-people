@@ -11,7 +11,7 @@ import {
   Spin,
   message,
   Modal,
-  Typography,
+  Typography, Alert,
 } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainInter";
@@ -166,14 +166,15 @@ const ImssMovements = ({ ...props }) => {
               </Panel>
               <Panel header="EMA y EBA" key="2">
                 <Row justify={"space-between"} style={{ marginTop: "20px" }}>
-                  <Col span={10}>
+                  <Col span={12}>
                     <SelectPatronalRegistration
                       currentNode={currentNodeId}
                       onChange={(value) => setPatronalSelected(value)}
                     />
                   </Col>
+
                   <Col
-                    span={10}
+                    span={12}
                     style={{ display: "flex", justifyContent: "end" }}
                   >
                     <Col span={5} style={{ marginRight: 20 }}>
@@ -193,6 +194,17 @@ const ImssMovements = ({ ...props }) => {
                         Sincronizar
                       </Button>
                     </Col>
+
+                  </Col>
+                  <Col span={24}>
+                    <Alert
+                        message=""
+                        showIcon
+                        description={
+                          <p>La obtención de la información está sujeta a disponibilidad de los servicios de la plataforma IDSE. También recuerda que los primeros días de cada mes pudieran no existir los archivos.</p>
+                        }
+                        type="warning"
+                    />
                   </Col>
                 </Row>
                 <EmaYEvaFiles
