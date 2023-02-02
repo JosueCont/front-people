@@ -25,20 +25,6 @@ export const useFiltersInterviews = () =>{
         customer: 'Cliente'
     }
 
-    // const getValueFilter = ({
-    //     value = '',
-    //     list = [],
-    //     keyEquals = 'id',
-    //     keyShow = 'name'
-    // }) =>{
-    //     if(!value) return value;
-    //     const find_ = item => item[keyEquals] == value;
-    //     let result = list.find(find_);
-    //     if(!result) return value;
-    //     return typeof keyShow == 'function'
-    //         ? keyShow(result) : result[keyShow];
-    // }
-
     const getRecruiter = (id) => getValueFilter({
         value: id,
         list: persons_company,

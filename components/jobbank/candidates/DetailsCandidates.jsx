@@ -144,7 +144,7 @@ const DetailsCandidates = ({
                                 infoPositions={infoPositions}
                             />
                         </Tabs.TabPane>
-                        <Tabs.TabPane
+                        {/* <Tabs.TabPane
                             tab='Referencias'
                             disabled={disableTab}
                             forceRender
@@ -155,7 +155,7 @@ const DetailsCandidates = ({
                                 setInfoReferences={setInfoReferences}
                                 infoReferences={infoReferences}
                             />
-                        </Tabs.TabPane>
+                        </Tabs.TabPane> */}
                     </Tabs>    
                 </Col>
             </Row>
