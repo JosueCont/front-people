@@ -44,8 +44,6 @@ const HighDirectionReport = ({
     //     }
     // },[infoCandidate])
 
-    console.log('info education', infoEducation)
-
 
     const list_status = [
         {
@@ -531,8 +529,6 @@ const HighDirectionReport = ({
     //         </View>
     //     </View>
     // )
-
-    console.log('xdxdxd', infoPositions)
 
     const SectionUltimateJobs = () => (
         <View style={{ width: '80%', margin: 'auto' }}>

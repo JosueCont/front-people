@@ -1,77 +1,58 @@
-import React, { useEffect } from 'react';
-import { Button, Input, Row, Col, Form, Select, Tooltip} from 'antd';
+import React, { useState } from 'react';
+import { Button, Row, Col, Form, Card, Tooltip} from 'antd';
 import {
-    SearchOutlined,
     SyncOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
-import { ruleWhiteSpace } from '../../../utils/rules';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
+import TagFilters from '../TagFilters';
+import FiltersClients from './FiltersClients';
 
-const SearchClients = ({
-    user,
-    currentNode
-}) => {
+const SearchClients = () => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const [openModal, setOpenModal] = useState(false);
 
-    useEffect(()=>{
-        formSearch.setFieldsValue(router.query);
-    },[router])
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/clients',
+        query: filters
+    }, undefined, {shallow: true});
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        router.replace({
-            pathname: '/jobbank/clients/',
-            query: filters
-        }, undefined, {shallow: true});
+        setFilters(filters)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace('/jobbank/clients', undefined, {shallow: true});
+        setFilters()
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
+    }
+
+    const showModal = () =>{
+        formSearch.setFieldsValue(router.query);
+        setOpenModal(true)
     }
 
     return (
         <>
-            <Row gutter={[24,24]}>
-                <Col span={20}>
-                    <Form
-                        onFinish={onFinishSearch}
-                        form={formSearch}
-                        layout='inline'
-                        style={{width: '100%'}}
-                    >
-                        <Row style={{width: '100%'}}>
-                            <Col span={14}>
-                                <Form.Item
-                                    name='name__unaccent__icontains'
-                                    rules={[ruleWhiteSpace]}
-                                    style={{marginBottom: 0}}
-                                >
-                                    <Input placeholder='Buscar por nombre'/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={6}>
-                                <Form.Item
-                                    name='is_active'
-                                    style={{marginBottom: 0}}
-                                >
-                                    <Select
-                                        allowClear
-                                        placeholder='Estatus'
-                                    >
-                                        <Select.Option value='true' key='true'>Activo</Select.Option>
-                                        <Select.Option value='false' key='false'>Inactivo</Select.Option>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                            <Col span={4} style={{display: 'flex', gap: '8px'}}>
-                                <Tooltip title='Buscar'>
-                                    <Button htmlType='submit'>
-                                        <SearchOutlined />
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div span={24} className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                Clientes
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
@@ -79,28 +60,37 @@ const SearchClients = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Col>
-                <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=> router.push({
-                        pathname: '/jobbank/clients/add',
-                        query: router.query
-                    })}>
-                        Agregar
-                    </Button>
-                </Col>
-            </Row>
+                                <Button onClick={()=> router.push({
+                                    pathname: '/jobbank/clients/add',
+                                    query: router.query
+                                })}>
+                                    Agregar
+                                </Button>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={{
+                                name__unaccent__icontains: 'Nombre',
+                                is_active: 'Estatus'
+                            }}
+                            listGets={{
+                                is_active: e => e == 'true'
+                                    ? 'Activo' : 'Inactivo'
+                            }}
+                        />
+                    </Col>  
+                </Row>
+            </Card>
+            <FiltersClients
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
         </>
     )
 }
 
-const mapState = (state) => {
-    return{
-        currentNode: state.userStore.current_node,
-        user: state.userStore.user
-    }
-}
-
-export default connect(mapState)(SearchClients);
+export default SearchClients

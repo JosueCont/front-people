@@ -16,7 +16,6 @@ const DocExpedient = ({
 }) => {
 
     const [marginTop, setMarginTop ] = useState(80)
-    console.log('infoCandidate', infoCandidate)
 
     useEffect(() => {
         if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){

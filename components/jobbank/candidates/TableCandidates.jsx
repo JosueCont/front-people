@@ -12,8 +12,8 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    DownloadOutlined
-    
+    DownloadOutlined,
+    LinkOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
@@ -22,7 +22,7 @@ import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
-import CandidateReport from './CandidateReport';
+import { copyContent } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -220,16 +220,31 @@ const TableCandidates = ({
         }
     }
 
+    const copyLinkAutoregister = () =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
+            onSucces: ()=> message.success('Link de autorregistro copiado'),
+            onError: () => message.error('Link de autorregistro no copiado')
+        })
+    }
+
+    const copyLinkUpdate = (item) =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`,
+            onSucces: ()=> message.success('Link de actualización copiado'),
+            onError: () => message.error('Link de actualización no copiado')
+        })
+    }
+
     const menuTable = () => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`}
-                        title='Autorregistro'
-                        border={false}
-                        tooltipTitle='Copiar link de autorregistro'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined/>}
+                    onClick={()=> copyLinkAutoregister()}
+                >
+                    Autorregistro
                 </Menu.Item>
                 <Menu.Item
                     key='2'
@@ -245,13 +260,12 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`}
-                        title='Actualización'
-                        border={false}
-                        tooltipTitle='Copiar link de actualización'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined/>}
+                    onClick={() => copyLinkUpdate(item)}
+                >
+                    Actualización
                 </Menu.Item>
                 <Menu.Item
                     key='2'
@@ -273,7 +287,7 @@ const TableCandidates = ({
                 <Menu.Item
                     key='4'
                     icon={<DownloadOutlined />}
-                    onClick={() => { generatePDF(item.id, true) }}
+                    onClick={() => generatePDF(item.id, true)}
                 >
                     Descargar reporte alta dirección
                 </Menu.Item>

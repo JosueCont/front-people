@@ -6,7 +6,6 @@ import {
     DownloadOutlined,
     EyeOutlined
 } from "@ant-design/icons";
-// import { info } from 'console';
 
 const Expedient = ({
     infoCandidate,

@@ -529,6 +529,18 @@ class WebApiPeople {
     );
   }
 
+  static sendFilesToAddPerson(data){
+    return WebApi.ApisType(
+      '/business/add-person-from-cif/',
+      'post',
+      data
+    );
+  }
+
+  static validateKhor(data){
+    return WebApi.ApisType(`/external-services/khor/sso/`,"post",data)
+  }  
+
 }
 
 export default WebApiPeople;
