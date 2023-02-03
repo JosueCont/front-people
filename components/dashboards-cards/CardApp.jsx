@@ -117,9 +117,9 @@ const CardApps = ({ user, config, ...props }) => {
   };
 
   const linkToKhor = () =>{
-    const url = `${getCurrentURL(true)}.${urlPeople}/validationKhor`;
-    // const url = `${getCurrentURL(true)}.localhost:3000/validationKhor`;
-    redirectTo(url);
+    const url = props.is_admin ? `${getCurrentURL(true)}.${urlPeople}/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.${urlPeople}/validationKhor`;
+    // const url = props.is_admin ? `${getCurrentURL(true)}.localhost:3000/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.localhost:3000/validationKhor`;
+    redirectTo(url,true);
   }
 
   const linkToExternalApp = (app_name) => {
