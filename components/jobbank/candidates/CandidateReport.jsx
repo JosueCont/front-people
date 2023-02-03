@@ -12,6 +12,7 @@ import moment from 'moment';
 const CandidateReport = ({
     infoCandidate,
     infoEducation,
+    infoExperience,
     infoPositions,
 }) => {
 
@@ -134,6 +135,14 @@ const CandidateReport = ({
       return stringMaxEdu
     }
 
+    infoPositions.sort((a, b) => {
+            if (a.end_date > b.end_date) return -1;
+            if (a.end_date < b.end_date) return 1;
+            return 0;
+    });
+    
+    console.log('xdxdxd', infoPositions)
+
     const SectionDetails = () => (
         <View
           style={{
@@ -199,20 +208,68 @@ const CandidateReport = ({
                         }}
                     >
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                            Luis está casado, actualmente vive con sus hijos y su esposa que se dedica al hogar. Viven en
-                            Ocoyoacac, Estado de México.
+                        {infoCandidate?.fisrt_name} {infoCandidate?.last_name}, reside actualmente en { infoCandidate?.municipality } en el estado de 
+                        { ' ' + infoCandidate?.state.name }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
+                        con disponibilidad para viajar, su ultimo trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : " " }
+                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : ' '}
                         </Text>
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                            Cuenta con 11 años de experiencia en el área de producción y almacén. Su último empleo fue en
-                            Sanofi Aventis como operador de producción y tableteador, su salida se debió a la reestructuración
-                            de la planta y el movimiento de esta a Brasil
+                            Cuenta con experiencia en:
                         </Text>
+                        
+                        <View style={{ display: 'flex', flexDirection: 'row', flexWrap:'wrap' }}>
+                        {
+                            infoExperience?.length > 0 && infoExperience.map((pos) => (
+                                <View key={pos.id} style={{ flex: '0 0 100%' }}>
+                                    <Text  style={{ fontSize: 12, marginBottom: 10 }}>
+                                        { 
+                                            pos.experience_years > 1? 
+                                            `${'\u2022 ' + pos.experience_years} años de experiencia en ${pos.category.name} en el area de ${pos.sub_category.name}.` 
+                                            : 
+                                            `${'\u2022 ' + pos.experience_years} año de experiencia en ${pos.category.name} en el area de ${pos.sub_category.name}.` 
+                                        } 
+                                    </Text>
+                                </View>
+                            ))
+                        }
+
+                        </View>
+
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                            Cuenta con disponibilidad para laborar de lunes a domingo y de rolar turnos.
+                            Tiene conocimientos en los siguientes lenguajes:
                         </Text>
+
+                        <View
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap'
+                          }}
+                        >
+                            {
+                                infoCandidate?.languages.length > 0 &&
+
+                                infoCandidate.languages.map((lang) => (
+                                    <View key={lang.id} style={{ flex: '0 0 100%' }}>
+                                        <Text 
+                                            style={{
+                                                fontSize: 12,
+                                                marginBottom: 10
+                                            }}
+                                        > 
+                                            { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                            / 
+                                            { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
+                                        </Text>
+                                    </View>
+                                ))
+                            }
+                        </View>
+ 
+
                     </View>
                 </View>
-                <View
+                {/* <View
                     style={{
                         display: 'flex',
                         flexWrap: 'wrap',
@@ -227,8 +284,8 @@ const CandidateReport = ({
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Motivo de salida último empleo: </Text>
                         <Text style={{ fontSize: 12 }}>Recorte de personal</Text>
                     </View>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                     style={{
                         display: 'flex',
                         flexWrap: 'wrap',
@@ -251,7 +308,7 @@ const CandidateReport = ({
                             <li><Text style={{ fontSize: 12 }}>&middot; Ayuda transporte y útiles</Text></li>
                         </ul>
                     </View>
-                </View>
+                </View> */}
             </View>
         </View>
     )

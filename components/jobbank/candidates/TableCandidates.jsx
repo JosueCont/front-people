@@ -22,7 +22,7 @@ import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
-import { copyContent } from '../../../utils/functions';
+import CandidateReport from './CandidateReport';
 
 const TableCandidates = ({
     currentNode,
@@ -73,11 +73,12 @@ const TableCandidates = ({
             infoEducation={ infoEducation}
             infoPositions={ infoPositions}
         />
-    const NyCandidateReport = ({infoCandidate, infoEducation, infoPositions}) => 
+    const NyCandidateReport = ({infoCandidate, infoEducation, infoExperience, infoPositions, }) => 
 
     <CandidateReport
         infoCandidate={infoCandidate}
         infoEducation={ infoEducation}
+        infoExperience = { infoExperience }
         infoPositions={ infoPositions}
     />
     
@@ -132,17 +133,26 @@ const TableCandidates = ({
             let responseInfo = await WebApiJobBank.getInfoCandidate(id);
             let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
+            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0')
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
+            let infoExp = responseExp.data || []
             let infoPositions = responsePos.data || []
-            let resp = await pdf(<NyCandidateReport infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let resp = await pdf(
+                                <NyCandidateReport 
+                                    infoCandidate={infoCan} 
+                                    infoEducation = {infoEducation} 
+                                    infoExperience  = { infoExp } 
+                                    infoPositions = {infoPositions}
+                                />).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
                 setLoading(false);
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
+                linkTo(url+'#toolbar=0', download, nameCandidate);
             },2000)
         } catch (e) {
             console.log(e)
