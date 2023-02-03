@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Alert, Button, Table, message, Menu, Dropdown } from 'antd';
 import { valueToFilter} from '../../../utils/functions';
 import {
@@ -75,7 +75,7 @@ const TabContact = ({
         setItemsToDelete([])
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit])
 
     const menuItem = (item) => {
         return (
@@ -150,7 +150,7 @@ const TabContact = ({
             <Table
                 className='table-custom'
                 size='small'
-                rowKey={(item, idx)=> idx}
+                rowKey={(item)=> item.email}
                 columns={columns}
                 dataSource={contactList}
                 locale={{ emptyText: contactList.length > 0
@@ -164,12 +164,12 @@ const TabContact = ({
                 }}
             />
             <ModalContact
-                title={validateAction() && openModal ? 'Editar contacto' : 'Agregar contacto'}
+                title={isEdit ? 'Editar contacto' : 'Agregar contacto'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
             <ListItems
                 title='¿Estás seguro de eliminar este contacto?'
