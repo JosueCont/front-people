@@ -163,7 +163,7 @@ const ModalAsignament = ({
             <Col span={24}>
               <Form.Item
                 name='sent_timestamp'
-                label='Fecha de envio'
+                label='Fecha de envío'
                 rules={ [ruleRequired] }
               >
                 <DatePicker style={{ width: '100%' }} placeholder="Selecciona una fecha de envío"/>

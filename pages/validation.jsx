@@ -178,7 +178,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
                 validatePermissions()
             }
         } else {
-            accessDenied()
+            validatePermissions()
         }
     }
 
