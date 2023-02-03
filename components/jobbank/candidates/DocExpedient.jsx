@@ -275,7 +275,7 @@ const DocExpedient = ({
                         padding: '6px 12px',
                     }}
                 >
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Escolaridad</Text>
                     </View>
                     <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
@@ -310,11 +310,10 @@ const DocExpedient = ({
                                 flexWrap: 'wrap',
                                 flexDirection: 'row',
                                 borderRadius: 10,
-                                padding: '0px 6px',
                                 marginBottom: 5
                             }}
                         >
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.study_level?.name } </Text>
                             </View>
                             <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
@@ -357,13 +356,13 @@ const DocExpedient = ({
                         padding: '6px 12px',
                     }}
                 >
-                    <View style={{flex: '0 0 25%', textAlign: 'left' }}>
+                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Categoría</Text>
                     </View>
-                    <View style={{flex: '0 0 25%', textAlign: 'left' }}>
+                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Subcategoría</Text>
                     </View>
-                    <View style={{flex: '0 0 20%', textAlign: 'left' }}>
+                    <View style={{flex: '0 0 20%', textAlign: 'center' }}>
                         <Text style={{ fontSize: 10 }}>Años de experiencia</Text>
                     </View>
                     <View style={{flex: '0 0 30%', textAlign: 'center' }}>
@@ -389,16 +388,15 @@ const DocExpedient = ({
                                 flexWrap: 'wrap',
                                 flexDirection: 'row',
                                 borderRadius: 10,
-                                padding: '0px 6px',
                                 marginBottom: 5,
                                 flex: '0 0 70%',
                                 maxHeight: 12
                             }}
                         >
-                            <View style={{flex: '0 0 35%', textAlign: 'left' }}>
+                            <View style={{flex: '0 0 35%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { info?.category?.name } </Text>
                             </View>
-                            <View style={{flex: '0 0 35%', textAlign: 'left' }}>
+                            <View style={{flex: '0 0 35%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}>{ info?.sub_category?.name }</Text>
                             </View>
                             <View style={{flex: '0 0 30%', textAlign: 'center' }}>
@@ -452,20 +450,20 @@ const DocExpedient = ({
                         padding: '6px 12px',
                     }}
                 >
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
-                        <Text style={{ fontSize: 10 }}>Puesto</Text>
+                    <View style={{flex: '0 0 15%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10, }}>Puesto</Text>
                     </View>
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Empresa</Text>
+                    <View style={{flex: '0 0 15%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10, }}>Empresa</Text>
                     </View>
-                    <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Sector</Text>
+                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10, }}>Sector</Text>
                     </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de inicio</Text>
+                    <View style={{flex: '0 0 20%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10, }}>Fecha de inicio</Text>
                     </View>
-                    <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
+                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
+                        <Text style={{ fontSize: 10, }}>Fecha de finalización</Text>
                     </View>
                 </View>
                 <View
@@ -487,23 +485,22 @@ const DocExpedient = ({
                                 flexWrap: 'wrap',
                                 flexDirection: 'row',
                                 borderRadius: 10,
-                                padding: '0px 6px',
                                 marginBottom: 5
                             }}
                         >
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'left' }}>
+                            <View style={{flex: '0 0 15%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.position_name } </Text>
                             </View>
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 15%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.company } </Text>
                             </View>
-                            <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 25%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
                             </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 20%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.start_date } </Text>
                             </View>
-                            <View style={{flex: '0 0 25%', border: '1px solid', textAlign: 'center' }}>
+                            <View style={{flex: '0 0 25%', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.end_date} </Text>
                             </View>
                         </View>
@@ -533,8 +530,8 @@ const DocExpedient = ({
                             <Image 
                                 src={'/images/logo_HEX.png'}
                                 style={{
-                                    width: '110px',
-                                    height: '25px',
+                                    width: '135px',
+                                    height: '30px',
                                     marginLeft: '90%',
                                 }}
                             />
