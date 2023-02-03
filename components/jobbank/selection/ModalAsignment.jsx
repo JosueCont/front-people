@@ -75,8 +75,6 @@ const ModalAsignament = ({
     },1000)
 }
 
-console.log('status', status)
-
   return (
     <MyModal
       title={title}

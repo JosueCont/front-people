@@ -79,6 +79,7 @@ const ModalFile = ({
                             isRequired={true}
                             setFile={setFile}
                             typeFile={typeFile}
+                            disabled={Object.keys(itemToEdit).length > 0}
                             setNameFile={e => formReference.setFieldsValue({
                                 file_read: e
                             })}

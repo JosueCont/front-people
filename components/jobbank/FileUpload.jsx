@@ -91,6 +91,7 @@ const FileUpload = ({
                         className='custom-btn'
                         onClick={()=> resetImg()}
                         icon={<DeleteOutlined />}
+                        disabled={disabled}
                     />
                 )}
                 <Button

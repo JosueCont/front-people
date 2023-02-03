@@ -9,14 +9,15 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    DownloadOutlined
+    DownloadOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import ListItems from '../../../../common/ListItems';
 import moment from 'moment';
 import ModalFile from './ModalFile';
-import { downloadCustomFile } from '../../../../utils/functions';
+import { popupPDF, downloadCustomFile } from '../../../../utils/functions';
 
 const TableFile = ({
     infoFiles = [],
@@ -57,14 +58,6 @@ const TableFile = ({
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
 
-    const downloadPDF = (item) =>{
-        let name = item.file ? item.file?.split('/')?.at(-1) : item.name;
-        downloadCustomFile({
-            url: item.file,
-            name
-        })
-    }
-
     const menuItem = (item) => {
         return (
             <Menu>
@@ -82,18 +75,21 @@ const TableFile = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {/* <Menu.Divider/>
+                <Menu.Divider/>
                 <Menu.Item
                     key='3'
                     icon={<EyeOutlined/>}
-                    onClick={()=> redirectTo(`${item.file}#toolbar=0`, true)}
+                    onClick={()=> popupPDF({url: item.file})}
                 >
                     Visualizar
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='4'
                     icon={<DownloadOutlined/>}
-                    onClick={()=> downloadPDF(item)}
+                    onClick={()=> downloadCustomFile({
+                        url: item.file,
+                        name: item.file?.split('/')?.at(-1)
+                    })}
                 >
                     Descargar
                 </Menu.Item>
