@@ -39,9 +39,7 @@ const TabAsign = ({
     const [msgHTML, setMsgHTML] = useState("<p></p>");
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [ searchAsignaments, setSearchAsignaments ] = useState([])
-
-    // let dataSource = searchAsignaments.length > 0? searchAsignaments : asignaments
-    // let validateAction = Object.keys(itemToEdit).length > 0
+    
     useEffect(()=>{ setSearchAsignaments(asignaments) },[asignaments])
 
     const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit]);
@@ -194,7 +192,7 @@ const TabAsign = ({
 
     return (
         <>
-            <Row gutter={[24,0]} className='tab-client'>
+            <Row gutter={[0,24]} className='tab-client'>
                 <Col span={24} style={{display: 'flex', justifyContent: 'space-between'}}>
                     <Col span={12}>
                         <Input
@@ -218,7 +216,6 @@ const TabAsign = ({
                         size='small'
                         className='table-custom'
                         columns={ columns }
-                        loading = { loading }
                         dataSource = { searchAsignaments }
                         pagination = {{
                             hideOnSinglePage: true,

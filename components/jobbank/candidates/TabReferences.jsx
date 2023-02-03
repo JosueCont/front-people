@@ -46,7 +46,6 @@ const TabReferences = ({
         try {
             setLoading(true);
             let response = await WebApiJobBank.getReferences(id, `&type_file=${type}`);
-            console.log("🚀 ~ file: TabReferences.jsx:26 ~ getInfoReference ~ response", response)
             setInfoReferences(response.data.results);
             setLoading(false);
         } catch (e) {
