@@ -302,7 +302,7 @@ const FormFamily = ({ person_id = null, ...props }) => {
                 locale={ locale }
                 style={{ width: "100%" }}
                 onChange={onChangeBDFamily}
-                moment={"YYYY-MM-DD"}
+                format={"DD-MM-YYYY"}
               />
             </Form.Item>
           </Col>
