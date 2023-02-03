@@ -528,3 +528,23 @@ export const getValueFilter = ({
   return typeof keyShow == 'function'
     ? keyShow(result) : result[keyShow];
 }
+
+export const downloadCustomFile = async ({
+  url = '',
+  name = ''
+}) =>{
+  try {
+    let config = {url, method: 'GET', responseType: 'blob', headers:{'Access-Control-Allow-Origin':'*'}};
+    let response = await axios(config);
+    console.log('response pdf-------->', response)
+    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = name;
+    link.target = "_blank";
+    link.click();
+  } catch (e) {
+    console.log('error pdf',e)
+    console.log('erorr response pdf', e.response)
+  }
+}

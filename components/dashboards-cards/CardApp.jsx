@@ -116,6 +116,12 @@ const CardApps = ({ user, config, ...props }) => {
     redirectTo(url, true);
   };
 
+  const linkToKhor = () =>{
+    const url = `${getCurrentURL(true)}.${urlPeople}/validationKhor`;
+    // const url = `${getCurrentURL(true)}.localhost:3000/validationKhor`;
+    redirectTo(url);
+  }
+
   const linkToExternalApp = (app_name) => {
     // const url = props.applications[app_name].front;
     switch (app_name){
@@ -175,12 +181,7 @@ const CardApps = ({ user, config, ...props }) => {
               <Space
                 direction="vertical"
                 align="center"
-                onClick={() => {
-                  const link2 = document.createElement('a');
-                  link2.href = "http://iu.khor.mx";
-                  link2.target = '_blank';
-                  link2.click();
-                }}
+                onClick={() => linkToKhor()}
               >
                 <img src={"/images/logoKhor15.svg"} />
                 <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>

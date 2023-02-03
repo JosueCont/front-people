@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     Card,
     Row,
@@ -15,6 +15,7 @@ import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
 import TabReferences from './TabReferences';
+import TabEconomic from './TabEconomic';
 
 //*Necesario para la libreria react-pdf
 const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
@@ -33,7 +34,6 @@ const DetailsCandidates = ({
     const [infoEducation, setInfoEducation] = useState([]);
     const [infoExperience, setInfoExperience] = useState([]);
     const [infoPositions, setInfoPositions] = useState([]);
-    const [infoReferences, setInfoReferences] = useState([]);
 
     const actionBack = () =>{
         router.push({
@@ -43,18 +43,28 @@ const DetailsCandidates = ({
     }
 
     const onChangeTab = (tab) =>{
+        let url = isAutoRegister
+            ?  `/jobbank/${currentNode.permanent_code}/candidate`
+            : '/jobbank/candidates/edit';
         if(action == 'add'){
             setCurrentKey(tab)
             return;
         }
         let querys = {...router.query, tab};
-        if(querys['tab'] == '1') delete querys['tab'];
-        if(querys['uid']) delete querys['uid'];
+        if(querys.tab == '1') delete querys.tab;
+        if(querys.uid) delete querys.uid;
         router.replace({
-            pathname: router.asPath.split('?')[0],
+            pathname: url,
             query: querys
-        }, undefined, {shallow: true})
+        }, undefined, { shallow: true})
     }
+    
+    const activeKey = useMemo(()=>{
+        let tab = router.query?.tab;
+        return action == 'edit'
+            ? tab ? tab : '1'
+            : currenKey;
+    },[router.query, currenKey, action])
 
     return (
         <Card>
@@ -88,10 +98,7 @@ const DetailsCandidates = ({
                 <Col span={24} className='tabs-vacancies'>
                     <Tabs
                         type='card'
-                        activeKey={action == 'edit'
-                            ? router.query?.tab ?? '1'
-                            : currenKey
-                        }
+                        activeKey={activeKey}
                         onChange={onChangeTab}
                     >
                         <Tabs.TabPane
@@ -144,18 +151,22 @@ const DetailsCandidates = ({
                                 infoPositions={infoPositions}
                             />
                         </Tabs.TabPane>
-                        {/* <Tabs.TabPane
+                        <Tabs.TabPane
                             tab='Referencias'
                             disabled={disableTab}
                             forceRender
                             key='5'
                         >
-                            <TabReferences
-                                action={action}
-                                setInfoReferences={setInfoReferences}
-                                infoReferences={infoReferences}
-                            />
-                        </Tabs.TabPane> */}
+                            <TabReferences action={action}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane
+                            tab='Estudio socioeconómico'
+                            disabled={disableTab}
+                            forceRender
+                            key='6'
+                        >
+                            <TabEconomic action={action}/>
+                        </Tabs.TabPane>
                     </Tabs>    
                 </Col>
             </Row>
