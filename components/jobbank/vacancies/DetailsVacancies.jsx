@@ -2,7 +2,7 @@ import React, {
     useEffect,
     useState,
     useRef,
-    useLayoutEffect
+    useMemo
 } from 'react';
 import {
     Card,
@@ -277,12 +277,19 @@ const DetailsVacancies = ({
             return;
         }
         let querys = {...router.query, tab};
-        if(querys['tab'] == '1') delete querys['tab'];
+        if(querys.tab == '1') delete querys.tab;
         router.replace({
-            pathname: router.asPath.split('?')[0],
+            pathname: `/jobbank/vacancies/${action}`,
             query: querys
         }, undefined, {shallow: true})
     }
+
+    const activeKey = useMemo(()=>{
+        let tab = router.query?.tab;
+        return action == 'edit'
+            ? tab ? tab : '1'
+            : currentKey;
+    },[router.query, currentKey, action])
 
     return (
         <Card>
@@ -319,10 +326,7 @@ const DetailsVacancies = ({
                     >
                         <Tabs
                             type='card'
-                            activeKey={action == 'edit'
-                                ? router.query?.tab ?? '1'
-                                : currentKey
-                            }
+                            activeKey={activeKey}
                             onChange={onChangeTab}
                         >
                             <Tabs.TabPane

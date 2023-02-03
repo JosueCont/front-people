@@ -49,7 +49,7 @@ const SearchSelection = () => {
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Filtros aplicados
+                                Proceso de selección
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>

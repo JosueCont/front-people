@@ -102,19 +102,19 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const [infoGenericModal, setInfoGenericModal] = useState(null);
 
-  const getVoucherTypeStr=(type)=>{
+  const getVoucherTypeStr = (type) => {
     // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
-    switch (type){
+    switch (type) {
       case 1:
-        return 'Aguinaldo';
+        return "Aguinaldo";
       case 2:
-        return 'Finiquito';
+        return "Finiquito";
       case 3:
-        return 'Liquidacion';
+        return "Liquidacion";
       default:
-        return 'Ordinaria'
+        return "Ordinaria";
     }
-  }
+  };
 
   const persons = [
     {
@@ -241,11 +241,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    console.log(item)
+                    console.log(item);
                     downloadReceipt({
                       person_id: item.person.id,
                       payment_period_id: periodSelected.id,
-                      receipt_type: getVoucherTypeStr(item?.payroll_cfdi_person?.movement_type),
+                      receipt_type: getVoucherTypeStr(
+                        item?.payroll_cfdi_person?.movement_type
+                      ),
                     });
                   }}
                 >
@@ -1402,6 +1404,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
+                              style={{ minWidth: "200px" }}
                               block
                               htmlType="button"
                               onClick={() => calculateExtra()}
@@ -1416,6 +1419,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
+                              style={{ minWidth: "200px" }}
                               block
                               icon={<LockOutlined />}
                               htmlType="button"
@@ -1433,6 +1437,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<UnlockOutlined />}
                             htmlType="button"
@@ -1471,6 +1476,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<FileDoneOutlined />}
                             htmlType="button"
@@ -1485,6 +1491,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={6} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<StopOutlined />}
                             htmlType="button"
@@ -1519,68 +1526,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-
-                      {/* 
-                          {step >= 1 && (
-                            <>
-                             
-                              {step == 2 &&
-                                consolidated &&
-                                consolidated.status < 3 && (
-                                  <Col md={5} offset={1}>
-                                    <Button
-                                      size="large"
-                                      block
-                                      icon={<FileDoneOutlined />}
-                                      htmlType="button"
-                                      onClick={() => setMessageModal(3)}
-                                    >
-                                      Timbrar nómina
-                                    </Button>
-                                  </Col>
-                                )}
-                              {step == 3 && (
-                                <Col md={5} offset={1}>
-                                  <Button
-                                    size="large"
-                                    block
-                                    icon={<StopOutlined />}
-                                    htmlType="button"
-                                    onClick={() =>
-                                      setMessageModal(5, {
-                                        title: "Cancelar nómina",
-                                        description:
-                                          "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
-                                        type_alert: "warning",
-                                        action: () => cancelStamp(),
-                                        title_action_button: "Cancelar nómina",
-                                        components: (
-                                          <>
-                                            <Row
-                                              style={{
-                                                width: "100%",
-                                                marginTop: "5px",
-                                              }}
-                                            >
-                                              <Input.TextArea
-                                                maxLength={290}
-                                                id="motive"
-                                                placeholder="Capture el motivo de cancelacion."
-                                              />
-                                            </Row>
-                                          </>
-                                        ),
-                                      })
-                                    }
-                                  >
-                                    Cancelar todos los cfdis
-                                  </Button>
-                                </Col>
-                              )}
-                            </>
-                          )}
-                        </>
-                      )} */}
                     </Row>
                   </div>
                   {previousStep && step > 0 && (
