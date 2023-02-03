@@ -12,12 +12,6 @@ import {
   Dropdown, 
   Menu } 
   from 'antd'
-  import {
-    ruleRequired,
-    ruleWhiteSpace,
-    ruleEmail,
-    rulePhone
-} from '../../../utils/rules';
 import { SearchOutlined, EllipsisOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import ModalAsignament from './ModalAsignment';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
@@ -203,7 +197,6 @@ const TabAsign = ({ loading, setLoading, assesments, processSelection, asignamen
           <Table 
             key='id'
             columns={ columns }
-            loading = { loading }
             dataSource = { dataSource }
             pagination = {{
               hideOnSinglePage: true,
