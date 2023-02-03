@@ -15,12 +15,21 @@ import {
 import WebApiPeople from '../api/WebApiPeople';
 import { getCurrentURL, redirectTo } from '../utils/constant';
 import { urlPeople } from '../config/config';
+import { useRouter } from 'next/router';
 
 const validationKhor = ({userInfo, appsInfo, ...props}) => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [urlKhor, setUrlKhor] = useState("");
+    const [IsViewAdmin, setIsViewAdmin] = useState(false);
+
+    useEffect(() => {
+       if(router?.query?.is_admin != undefined){
+            setIsViewAdmin(router?.query?.is_admin)
+       }
+    }, [router.query]);
 
     useEffect(() => {
         if(userInfo != null){
@@ -49,11 +58,6 @@ const validationKhor = ({userInfo, appsInfo, ...props}) => {
             setIsLoading(false)
             setIsError(true)
             console.log(e)
-            let url = isAdmin ? `${getCurrentURL(true)}.${urlPeople}/home/persons` : `${getCurrentURL(true)}.${urlPeople}/user`;
-            // let url = isAdmin ? `${getCurrentURL(true)}.localhost:3000/home/persons` : `${getCurrentURL(true)}.localhost:3000/user`;
-            setTimeout(()=>{
-                redirectTo(url)
-            },2000)
         }
     }
 
@@ -77,44 +81,26 @@ const validationKhor = ({userInfo, appsInfo, ...props}) => {
     const successAccessAdmin = (response) => {
         setIsLoading(false)
         setIsSuccess(true)
-        const url = `${urlKhor}/apiPerNavigate.asp?type=admin&token=${response.token}`;
+        const url =  IsViewAdmin == "true" ?  `${urlKhor}/apiPerNavigate.asp?type=admin&token=${response.token}` : `${urlKhor}/apiPerNavigate.asp?type=&token=${response.token}`
         setTimeout(()=>{
-            redirectTo(url, true)
-        },2000)
-        setTimeout(()=>{
-            // redirectTo(`${getCurrentURL(true)}.localhost:3000/home/persons`)
-            redirectTo(`${getCurrentURL(true)}.${urlPeople}/home/persons`)
+            redirectTo(url)
         },2000)
     }
     const deniedAccessAdmin = () => {
         setIsLoading(false)
         setIsError(true)
-        const url = `${getCurrentURL(true)}.${urlPeople}/home/persons`
-        // const url = `${getCurrentURL(true)}.localhost:3000/home/persons`;
-        setTimeout(()=>{
-            redirectTo(url)
-        },2000)
     }
     const successAccessUser = (response) => {
         setIsLoading(false)
         setIsSuccess(true)
         const url = `${urlKhor}/apiPerNavigate.asp?type=&token=${response.token}`;
         setTimeout(()=>{
-            redirectTo(url, true)
-        },2000)
-        setTimeout(()=>{
-            // redirectTo(`${getCurrentURL(true)}.localhost:3000/user`)
-            redirectTo(`${getCurrentURL(true)}.${urlPeople}/user`)
+            redirectTo(url)
         },2000)
     }
     const deniedAccessUser = () => {
         setIsLoading(false)
         setIsError(true)
-        const url = `${getCurrentURL(true)}.${urlPeople}/user`
-        // const url = `${getCurrentURL(true)}.localhost:3000/user`;
-        setTimeout(()=>{
-            redirectTo(url)
-        },2000)
     }
 
 
