@@ -294,20 +294,20 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Item
-                    key='4'
-                    icon={<DownloadOutlined />}
-                    onClick={() => generatePDF(item.id, true)}
-                >
-                    Descargar reporte alta dirección
-                </Menu.Item>
-                <Menu.Item
-                    key='5'
-                    icon={<DownloadOutlined />}
-                    onClick={() => { generateReportCandidate(item.id, true) }}
-                >
-                    Descargar reporte de candidato
-                </Menu.Item>
+                <Menu.SubMenu title="Descargar reporte" icon={<DownloadOutlined />}>
+                    <Menu.Item
+                        key='4'
+                        onClick={() => generatePDF(item.id, true)}
+                    >
+                        Reporte alta dirección
+                    </Menu.Item>
+                    <Menu.Item
+                        key='5'
+                        onClick={() => { generateReportCandidate(item.id, true) }}
+                    >
+                        Reporte de candidato
+                    </Menu.Item>
+                </Menu.SubMenu>
             </Menu>
         );
     };
