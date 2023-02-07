@@ -146,7 +146,7 @@ const DataPerson = ({
       });
     setLoading(false);
     setPhoto(person.photo);
-    setDateAdmission(person.date_of_admission);
+    setDateAdmission(moment(person.date_of_admission));
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);
   };
@@ -155,11 +155,11 @@ const DataPerson = ({
     if (value.patronal_registration === undefined) {
       value.patronal_registration = null;
     }
-    if (dateIngPlatform) value.register_date = dateIngPlatform;
+    if (dateIngPlatform) value.register_date = moment(dateIngPlatform).format('YYYY-MM-DD');
     else delete value["register_date"];
-    if (birthDate) value.birth_date = birthDate;
+    if (birthDate) value.birth_date = moment(birthDate).format('YYYY-MM-DD');
     else delete value["birth_date"];
-    if (dateAdmission) value.date_of_admission = dateAdmission;
+    if (dateAdmission) value.date_of_admission = moment(dateAdmission).format('YYYY-DD-MM');
     else delete value["date_of_admission"];
     value.id = person.id;
     value.is_active = isActive;

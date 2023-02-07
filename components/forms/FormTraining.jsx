@@ -135,14 +135,14 @@ const FormTraining = ({ person_id = null }) => {
   const formFinishTraining = (value) => {
     if (upTraining) {
       value.id = idTraining;
-      value.since = dateTraining[0];
-      value.until = dateTraining[1];
+      value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
+      value.until = moment(dateTraining[1]).format('YYYY-MM-DD');
       value.currently_studing = currenlyStuding;
       updateTraining(value);
       setDateRange("");
     } else {
-      value.since = dateTraining[0];
-      value.until = dateTraining[1];
+      value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
+      value.until = moment(dateTraining[0]).format('YYYY-MM-DD');
       value.currently_studing = currenlyStuding;
       value.person = person_id;
       saveTraining(value);
@@ -205,7 +205,7 @@ const FormTraining = ({ person_id = null }) => {
       width: 100,
       title: "Fecha inicio",
       render: (item) => {
-        return <div style={{ maxWidth: 100 }}>{item.since}</div>;
+        return <div style={{ maxWidth: 100 }}>{moment(item.since).format('DD-MM-YYYY')}</div>;
       },
     },
     {
@@ -213,7 +213,7 @@ const FormTraining = ({ person_id = null }) => {
       width: 100,
       title: "Fecha fin",
       render: (item) => {
-        return <div style={{ maxWidth: 100 }}>{item.until}</div>;
+        return <div style={{ maxWidth: 100 }}>{moment(item.until).format('DD-MM-YYYY')}</div>;
       },
     },
     {
