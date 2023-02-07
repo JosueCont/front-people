@@ -5,8 +5,11 @@ import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
 import SearchSelection from '../../../components/jobbank/selection/SearchSelection';
 import TableSelection from '../../../components/jobbank/selection/TableSelection';
-import { getVacanciesOptions, getCandidatesOptions } from '../../../redux/jobBankDuck';
-import { getListSelection } from '../../../redux/jobBankDuck';
+import {
+    getListSelection,
+    getVacanciesOptions,
+    getCandidatesOptions
+} from '../../../redux/jobBankDuck';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
@@ -28,8 +31,9 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             let page = router.query.page ? parseInt(router.query.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
             let filters = getFiltersJB(router.query);
-            getListSelection(currentNode.id, filters, page);
+            getListSelection(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])
 

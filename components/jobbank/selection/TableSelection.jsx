@@ -29,7 +29,8 @@ const TableSelection = ({
     getListSelection,
     list_selection,
     load_selection,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -108,19 +109,12 @@ const TableSelection = ({
         return optionsStatusSelection.map(map_)
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/selection',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/selection',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -264,8 +258,9 @@ const TableSelection = ({
                 pagination={{
                     total: list_selection.count,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    pageSize: jobbank_page_size,
+                    hideOnSinglePage: list_selection?.count < 10,
+                    showSizeChanger: list_selection?.count > 10
                 }}
             />
             <ListItems
@@ -297,6 +292,7 @@ const mapState = (state) =>{
         load_selection: state.jobBankStore.load_selection,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user
     }

@@ -37,9 +37,10 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             let page = router.query?.page ? parseInt(router.query?.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
             let applyMatch = router.query?.applyMatch ?? '1';
             let filters = getFiltersJB({...router.query, applyMatch});
-            getPreselection(currentNode.id, filters, page)
+            getPreselection(currentNode.id, filters, page, size)
         }
     },[currentNode, router.query])
 
