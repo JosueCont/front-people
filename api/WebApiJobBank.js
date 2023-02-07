@@ -275,6 +275,42 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'get');
     }
 
+    //AGENGAS - ENTREVISTAS
+
+    static getInterviews(node, query){
+        return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
+    }
+
+    static createInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
+    }
+
+    static updateInterview(id, data){
+        return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
+    }
+
+    static deleteInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
+    }
+
+    //REFERENCIAS, ESTUDIO SOCIOECONOMICO DE CANDIDATOS
+
+    static getReferences(id, query){
+        return WebApi.ApisType(`/job-bank/references/?candidate=${id}${query}`, 'get')
+    }
+
+    static createReferences(data){
+        return WebApi.ApisType('/job-bank/references/', 'post', data)
+    }
+
+    static updateReference(id, data){
+        return WebApi.ApisType(`/job-bank/references/${id}/`, 'patch', data)
+    }
+
+    static deleteReference(id){
+        return WebApi.ApisType(`/job-bank/references/${id}/`, 'delete')
+    }
+
     //LISTADO DE CATÁLOGOS
 
     static getMainCategories(node, query){
@@ -449,24 +485,6 @@ class WebApiJobBank {
 
     static getTagsNotification(node, query){
         return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
-    }
-
-    //AGENGAS - ENTREVISTAS
-
-    static getInterviews(node, query){
-        return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
-    }
-
-    static createInterview(data){
-        return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
-    }
-
-    static updateInterview(id, data){
-        return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
-    }
-
-    static deleteInterview(data){
-        return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
     }
 
     static deleteProcessSelection(id){

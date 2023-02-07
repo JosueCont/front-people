@@ -93,7 +93,7 @@ const EventForm = ({
         setEditorState(template);
         formEvent.setFieldsValue(values);
         setMsgHTML(itemToEdit.description);
-        setEmailCandidate(candidateEmail);
+        // setEmailCandidate(candidateEmail);
 
         const some_ = (record, item) => valueToFilter(record) == valueToFilter(item.email);
         const filter_ = item => !candidateEmail.some(e => some_(e, item));
