@@ -186,25 +186,25 @@ const BranchCatalog = ({
     <>
       <Form form={form} layout="vertical" onFinish={onFinishForm}>
         <Row gutter={20}>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={6} xs={22} md={12} xl={6}>
             <Form.Item
               name="code"
               label="Código"
               rules={[ruleRequired, ruleWhiteSpace]}
             >
-              <Input />
+              <Input maxLength={200}/>
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={10} xs={22} md={12} xl={9}>
             <Form.Item
               name="name"
               label="Nombre de la Sucursal"
               rules={[ruleRequired, ruleWhiteSpace]}
             >
-              <Input />
+              <Input  maxLength={350}/>
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={6} xs={22} md={12} xl={6}>
             <SelectPatronalRegistration
               name={"patronal_registration"}
               value_form={"patronal_registration"}

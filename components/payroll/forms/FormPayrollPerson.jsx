@@ -571,7 +571,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChangeLastDayPaid}
-                      format={"YYYY-MM-DD"}
+                      format={"DD-MM-YYYY"}
                       locale={locale}
                     />
                   </Form.Item>

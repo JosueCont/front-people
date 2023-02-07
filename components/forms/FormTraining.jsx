@@ -152,8 +152,8 @@ const FormTraining = ({ person_id = null }) => {
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
     setDateRange([
-      moment(dateString[0], "YYYY-MM-DD"),
-      moment(dateString[1], "YYYY-MM-DD"),
+      moment(dateString[0], "DD-MM-YYYY"),
+      moment(dateString[1], "DD-MM-YYYY"),
     ]);
     formTraining.setFieldsValue({ since: dateString });
   };
@@ -162,8 +162,8 @@ const FormTraining = ({ person_id = null }) => {
   };
   const updateFormTraining = (item) => {
     setDateRange([
-      moment(item.since, "YYYY-MM-DD"),
-      moment(item.until, "YYYY-MM-DD"),
+      moment(item.since, "DD-MM-YYYY"),
+      moment(item.until, "DD-MM-YYYY"),
     ]);
     formTraining.setFieldsValue({
       school: item.school,
@@ -282,10 +282,11 @@ const FormTraining = ({ person_id = null }) => {
               <Space direction="vertical" size={13}>
                 <RangePicker
                   style={{ width: "100%", border: "1px green solid" }}
-                  format={"YYYY-MM-DD"}
+                  format={"DD-MM-YYYY"}
                   value={dateRange}
                   onChange={onChangeDateTrainig}
                   locale = { locale }
+                  allowClear
                 />
               </Space>
             </Form.Item>

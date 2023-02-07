@@ -430,7 +430,7 @@ const DataPerson = ({
                       <DatePicker
                         locale={locale}
                         onChange={onChangeDateAdmission}
-                        moment={"YYYY-MM-DD"}
+                        format={"DD-MM-YYYY"}
                         readOnly
                         style={{ width: "100%" }}
                       />
@@ -531,7 +531,7 @@ const DataPerson = ({
                     locale={locale}
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
-                    moment={"YYYY-MM-DD"}
+                    format={"DD-MM-YYYY"}
                     placeholder="Fecha de ingreso a la plataforma"
                     disabled={true}
                   />
@@ -636,7 +636,7 @@ const DataPerson = ({
                     locale={locale}
                     style={{ width: "100%" }}
                     onChange={onChangeBirthDate}
-                    moment={"YYYY-MM-DD"}
+                    format={"DD-MM-YYYY"}
                     placeholder="Fecha de nacimiento"
                   />
                 </Form.Item>

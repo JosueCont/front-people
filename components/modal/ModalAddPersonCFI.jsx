@@ -36,7 +36,6 @@ const ModalAddPersonCFI = ({visible,setVisible,node_id}) => {
             console.log(info.file, info.fileList);
           }
           if (status === 'done') {
-            message.success(`${info.file.name} se cargó el archivo con exito`);
             setFile(info.fileList[0].originFileObj)
           } else if (status === 'error') {
             message.error(`${info.file.name} error al cargar archivo`);
