@@ -495,30 +495,9 @@ const ImssInformationNode = ({
           </Row>
           <Divider style={{ marginTop: "2px" }} />
           <AutomaticMovements patronalData={patronalData} />
-          <Row style={{ marginTop: 20 }}>
-            <Title style={{ fontSize: "15px" }}>Certificados digitales</Title>
-          </Row>
           <Row>
             <Col>
               <Divider style={{ marginTop: "2px" }} />
-              <Row>
-                <Col lg={2} xs={22} offset={1}>
-                  <Form form={form}>
-                    <Switch
-                      onChange={(value) => setAcceptAgreement(value)}
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    />
-                  </Form>
-                </Col>
-                <Col lg={14} xs={22} offset={1}>
-                  <p>
-                    Estoy de acuerdo y doy mi consentimiento para que EL SISTEMA
-                    almacene y utilice estos archivos con fines exclusivos para
-                    emisión y consulta de datos del IMSS.
-                  </p>
-                </Col>
-              </Row>
               <div style={{ width: "100%" }}>
                 {acceptAgreement && (
                   <Form layout={"vertical"} form={form}>
@@ -605,13 +584,14 @@ const ImssInformationNode = ({
             setVisible={() => setModal(false)}
             title='Solicitar movimientos'
             actionButton={() => verifyPeriod()}
+            width='30%'
           >
-            <Row justify="space-between">
+            <Row justify="center">
               <Col>
                 <div style={{display:'flex', flexDirection:'column', marginBottom:'10px'}}>
                   <span>Fecha</span>
                   <DatePicker
-                      style={{ width: "100%" }}
+                      style={{ width: "100%", marginBottom:'10px' }}
                       onChange={(value) => setYear(value)}
                       picker="year"
                       moment={"YYYY"}
@@ -620,13 +600,9 @@ const ImssInformationNode = ({
                       locale={locale}
                   />       
 
-                </div>
-              </Col>
-              <Col>
-                <div style={{display:'flex', flexDirection:'column'}}>
                   <span>Bimestre</span>
                   <Select
-                    size={"medium"}
+                    size="middle"
                     key={"period"}
                     disabled={false}
                     val={bimester}
@@ -637,7 +613,6 @@ const ImssInformationNode = ({
                     optionFilterProp="children"
                     placeholder="Selecciona bimestre"
                   >{getOptions()}</Select>
-
                 </div>
               </Col>
             </Row>
