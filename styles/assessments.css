@@ -988,4 +988,8 @@ div.header-event-form p{
     margin-bottom: 0px;
 }
 
+div.preview-img-jb .ant-image-preview-mask{
+    background-color: rgba(0, 0, 0, 1);
+}
+
 /* Termina diseño bolsa de trabajo */

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { deleteFiltersJb } from '../../../utils/functions';
 //Details
 import DetailsTemplate from './Templates/DetailsTemplate';
-import DetailsMessages from './messages/DetailsMessages';
+//Esta modificación es para la librería html-to-draftjs
+const DetailsMessages = dynamic(()=> import('./messages/DetailsMessages'), { ssr: false });
 
 const GetViewAddOrEdit = ({action}) => {
 

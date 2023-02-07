@@ -1,6 +1,6 @@
 import React, {
   useEffect,
-  useState
+  useState,
 } from 'react';
 import {
   Form,
@@ -14,6 +14,7 @@ import DetailsCustom from '../../DetailsCustom';
 import FormMessages from './FormMessages';
 import { getTagsNotification, getConnectionsOptions } from '../../../../redux/jobBankDuck';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
 
 const DetailsMessages = ({
     action,
@@ -52,10 +53,11 @@ const DetailsMessages = ({
         formMessage.setFieldsValue({...infoNotification, notification_source});
         if(!infoNotification.message) return;
         setMsgHTML(infoNotification.message);
-        let convert = convertFromHTML(infoNotification.message);
-        let htmlMsg = ContentState.createFromBlockArray(convert);
-        let template = EditorState.createWithContent(htmlMsg);
-        setEditorState(template);
+        //Editor state
+        const blocksFromHtml = htmlToDraft(infoNotification.message);
+        const { contentBlocks, entityMap } = blocksFromHtml;
+        let htmlMsg = ContentState.createFromBlockArray(contentBlocks, entityMap);
+        setEditorState(EditorState.createWithContent(htmlMsg));
     },[infoNotification])
 
     const getInfoNotification = async (id) =>{

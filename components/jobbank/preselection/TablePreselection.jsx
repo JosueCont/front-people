@@ -24,7 +24,8 @@ const TablePreselection = ({
     getPreselection,
     getVacanciesOptions,
     list_vacancies_options,
-    load_vacancies_options
+    load_vacancies_options,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -94,19 +95,12 @@ const TablePreselection = ({
         }
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/preselection',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/preselection',
+            query: filters
+        })
     }
 
     const menuTable = () => {
@@ -237,8 +231,9 @@ const TablePreselection = ({
                 pagination={{
                     total: list_preselection.count,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    pageSize: jobbank_page_size,
+                    hideOnSinglePage: list_preselection?.count < 10,
+                    showSizeChanger: list_preselection?.count > 10
                 }}
             />
             <ListItems
@@ -266,6 +261,7 @@ const mapState = (state) =>{
         load_preselection: state.jobBankStore.load_preselection,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size,
         currentNode: state.userStore.current_node,
         currentUser: state.userStore.user,
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
