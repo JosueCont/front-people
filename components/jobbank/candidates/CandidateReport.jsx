@@ -9,41 +9,12 @@ import {
 } from '@react-pdf/renderer';
 import moment from 'moment';
 
-const HighDirectionReport = ({
+const CandidateReport = ({
     infoCandidate,
     infoEducation,
-    // infoExperience,
+    infoExperience,
     infoPositions,
 }) => {
-
-    // const [marginTop, setMarginTop ] = useState(80)
-
-    // useEffect(() => {
-    //     if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
-    //         if(infoCandidate.about_me.length > 100){
-    //             setMarginTop(marginTop - 30)
-    //         } else {
-    //             setMarginTop(marginTop + 10)
-    //         }
-    //     }
-    // },[infoCandidate])
-
-    // useEffect(() => {
-    //     if (infoExperience && infoExperience.length > 0) {
-    //         if (infoExperience.length > 2) {
-    //             setMarginTop(marginTop - 25)
-    //         }
-    //     }
-    // },[infoExperience])
-
-    // useEffect(() => {
-    //     if(infoEducation && infoEducation.length > 0){
-    //         if(infoEducation.length <= 3){
-    //             setMarginTop(marginTop + 25)
-    //         }
-    //     }
-    // },[infoCandidate])
-
 
     const list_status = [
         {
@@ -147,13 +118,30 @@ const HighDirectionReport = ({
         }
     ]
 
-    const listCap = [
-        'Kerio Control Training Level 100',
-        'Tanaza Profesional Certificado',
-        'Tanaza Profesional del marketing',
-        'Bitdefender Bussines Portfolio Certification Sales',
-        'Bitdefender Bussines Portfolio Certification Technical'
-    ]
+    const ageCandidate = (date) => {
+      let birthdate = moment(date)
+      let currentDate = moment()
+      let age = currentDate.diff(birthdate, 'years')
+      let stringAge = `${age} años`
+      return stringAge
+    }
+
+    const maxEducation = () => {
+      let listEducationIds = infoEducation.map((item) => item.study_level.id )
+      let max = Math.max(listEducationIds)
+      let maxEdu = infoEducation.find((item) => item.study_level.id === max)
+      let maxEduStatus = list_status.find((item) => item.value === maxEdu.status).label
+      let stringMaxEdu = `${maxEdu.study_level.name} ${maxEduStatus.toLocaleLowerCase()}`
+      return stringMaxEdu
+    }
+
+    infoPositions.sort((a, b) => {
+            if (a.end_date > b.end_date) return -1;
+            if (a.end_date < b.end_date) return 1;
+            return 0;
+    });
+    
+    console.log('xdxdxd', infoPositions)
 
     const SectionDetails = () => (
         <View
@@ -162,9 +150,6 @@ const HighDirectionReport = ({
             margin: 'auto'
           }}
         >
-            <View style={{ marginBottom: 10}}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >I INFORMACIÓN PERSONAL</Text>
-            </View>
             <View>
                 <View style={{
                         display: 'flex',
@@ -172,126 +157,116 @@ const HighDirectionReport = ({
                         flexDirection: 'row',
                 }}>
                     <View style={{
-                      flex: '0 0 50%', 
-                      borderTop: '2px solid black',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
+                      flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 10 }}>Nombre completo y apellidos:</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Nombre del candidato: </Text>
+                        <Text style={{ fontSize: 12 }}>{infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
                     </View>
                     <View style={{
-                      flex: '0 0 50%',
-                      borderTop: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
+                      flex: '0 0 100%',
+                      flexDirection: 'row',
                       }}
                     >
-                        <Text style={{ fontSize: 10 }}>Lugar y fecha de nacimiento:</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Edad: </Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) }</Text>
                     </View>
                     <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
+                      flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 10 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""} {infoCandidate?.municipality} {infoCandidate?.state?.name}</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Fecha de nacimiento: </Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""}</Text>
                     </View>
                     <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
+                      flex: '0 0 100%',
+                      flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 10 }}>Estado civil:</Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Grado maximo de estudios: </Text>
+                        <Text style={{ fontSize: 12 }}>{ maxEducation() }</Text>
                     </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{''}</Text>
+                </View>
+                <View
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        marginTop: 20,
+                        marginBottom: 20
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: '0 0 100%'
+                        }}
+                    >
+                        <Text style={{ fontSize: 13, marginBottom: 20, fontWeight: 'bold' }}>Resumen: </Text>
                     </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>Dirección:</Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.street_address}</Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>Número telefónico particular: </Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.telephone}</Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>Número de celular: </Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.cell_phone}</Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderLeft: '2px solid black',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px' 
-                    }}>
-                        <Text style={{ fontSize: 10 }}>Dirección de correo electrónico: </Text>
-                    </View>
-                    <View style={{
-                      flex: '0 0 50%',
-                      borderRight: '2px solid black',
-                      borderBottom: '2px solid black',
-                      padding: '6px 12px'
-                    }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.email}</Text>
+                    <View
+                        style={{
+                            flex: '0 0 100%'
+                        }}
+                    >
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                        {infoCandidate?.fisrt_name} {infoCandidate?.last_name}, reside actualmente en { infoCandidate?.municipality } en el estado de 
+                        { ' ' + infoCandidate?.state.name }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
+                        con disponibilidad para viajar, su ultimo trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : " " }
+                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : ' '}
+                        </Text>
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                            Cuenta con experiencia en:
+                        </Text>
+                        
+                        <View style={{ display: 'flex', flexDirection: 'row', flexWrap:'wrap' }}>
+                        {
+                            infoExperience?.length > 0 && infoExperience.map((pos) => (
+                                <View key={pos.id} style={{ flex: '0 0 100%' }}>
+                                    <Text  style={{ fontSize: 12, marginBottom: 10 }}>
+                                        { 
+                                            pos.experience_years > 1? 
+                                            `${'\u2022 ' + pos.experience_years} años de experiencia en ${pos.category.name} en el area de ${pos.sub_category.name}.` 
+                                            : 
+                                            `${'\u2022 ' + pos.experience_years} año de experiencia en ${pos.category.name} en el area de ${pos.sub_category.name}.` 
+                                        } 
+                                    </Text>
+                                </View>
+                            ))
+                        }
+
+                        </View>
+
+                        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                            Tiene conocimientos en los siguientes lenguajes:
+                        </Text>
+
+                        <View
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap'
+                          }}
+                        >
+                            {
+                                infoCandidate?.languages.length > 0 &&
+
+                                infoCandidate.languages.map((lang) => (
+                                    <View key={lang.id} style={{ flex: '0 0 100%' }}>
+                                        <Text 
+                                            style={{
+                                                fontSize: 12,
+                                                marginBottom: 10
+                                            }}
+                                        > 
+                                            { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                            / 
+                                            { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
+                                        </Text>
+                                    </View>
+                                ))
+                            }
+                        </View>
+ 
+
                     </View>
                 </View>
                 {/* <View
@@ -299,37 +274,39 @@ const HighDirectionReport = ({
                         display: 'flex',
                         flexWrap: 'wrap',
                         flexDirection: 'row',
-                        padding: '6px 12px',
-                        marginBottom: 10
-                }}
+                        marginBottom: 20
+                    }}
                 >
                     <View style={{
-                        flex: '0 0 100%',
+                      flex: '0 0 100%',
+                      flexDirection: 'row'
+                    }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Motivo de salida último empleo: </Text>
+                        <Text style={{ fontSize: 12 }}>Recorte de personal</Text>
+                    </View>
+                </View> */}
+                {/* <View
+                    style={{
                         display: 'flex',
-                        alignItems: 'center',
                         flexWrap: 'wrap',
-                        flexDirection: 'row', }}>
-                        <Text style={{ fontSize: 10, marginRight: 15 }}>Idiomas: </Text>
-                        {
-                            infoCandidate?.languages.length > 0 &&
+                        flexDirection: 'row',
+                        marginBottom: 20
+                    }}
+                >
+                    <View style={{
+                      flex: '0 0 100%',
+                    }}>
+                        <Text style={{ fontSize: 13, marginBottom: 10, fontWeight: 'bold' }}>Sueldo último empleo incluyendo prestaciones:</Text>
 
-                            infoCandidate.languages.map((lang) => (
-                                <Text 
-                                    key={lang.id} 
-                                    style={{
-                                        fontSize: 10,
-                                        padding: '3px 5px',
-                                        backgroundColor: '#FFF',
-                                        marginRight: 5,
-                                        borderRadius: 5
-                                    }}
-                                > 
-                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                    / 
-                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
-                                </Text>
-                            ))
-                        }
+                        <ul>
+                            <li><Text style={{ fontSize: 12 }}>&middot; $2,400 libres semanales</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Seguro de Vida</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Utilidades</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Vales de Despensa</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Vacaciones</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Aguinaldo</Text></li>
+                            <li><Text style={{ fontSize: 12 }}>&middot; Ayuda transporte y útiles</Text></li>
+                        </ul>
                     </View>
                 </View> */}
             </View>
@@ -351,16 +328,7 @@ const HighDirectionReport = ({
               {
                 infoEducation?.length > 0 && infoEducation.map((inst) => (
 
-                  <View 
-                    key={inst.id} 
-                    style={{ 
-                        marginBottom: 10, 
-                        flex: '0 0 100%', 
-                        borderRadius: 10, 
-                        backgroundColor: '#E9E9E9',
-                        padding: '6px 12px',
-                    }}
-                    >
+                  <View key={inst.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
                     <View>
                       <Text style={{fontSize: 10}}>Titulo obtenido: { inst?.specialitation_area } </Text>
                     </View>
@@ -391,44 +359,23 @@ const HighDirectionReport = ({
                     <View style={{ marginTop: 10, marginBottom: 5}}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold' }} >Idiomas:</Text>
                     </View>
-                    <View
-                        style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            flexDirection: 'row',
-                        }}
-                    >
-
                     {
                             infoCandidate?.languages.length > 0 &&
 
                             infoCandidate.languages.map((lang) => (
-
-                                <View 
+                                <Text 
                                     key={lang.id} 
                                     style={{
-                                        borderRadius: 10, 
-                                        backgroundColor: '#E9E9E9',
-                                        padding: '6px 12px',
+                                        fontSize: 10,
+                                        borderRadius: 5
                                     }}
-                                >
-
-                                    <Text 
-                                        style={{
-                                            fontSize: 10,
-                                            borderRadius: 5
-                                        }}
-                                    > 
-                                        { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                        nivel
-                                        { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
-                                    </Text>
-
-                                </View>
-                                
+                                > 
+                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
+                                    nivel
+                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
+                                </Text>
                             ))
                         }
-                    </View>
                </View>
 
             </View>
@@ -547,16 +494,7 @@ const HighDirectionReport = ({
                     {
                         infoPositions?.length > 0 && infoPositions.map((pos) => (
 
-                            <View 
-                                key={pos.id} 
-                                style={{ 
-                                    marginBottom: 10, 
-                                    flex: '0 0 100%',
-                                    borderRadius: 10, 
-                                    backgroundColor: '#E9E9E9',
-                                    padding: '6px 12px', 
-                                }}
-                            >
+                            <View key={pos.id} style={{ marginBottom: 10, flex: '0 0 100%' }}>
                             <View>
                               <Text style={{fontSize: 10}}>Nombre de la compañia: { pos?.company } </Text>
                             </View>
@@ -592,54 +530,16 @@ const HighDirectionReport = ({
                         display: 'flex',
                         justifyContent: 'center',
                         marginBottom: 20,
-                        // position: 'absolute',
-                        // top: 0,
-                        // left: 0,
-                        // right: 0,
                     }}
-                    fixed
                     >
-                            <Image 
-                                src={'/images/logo_HEX.png'}
-                                style={{
-                                    width: '110px',
-                                    height: '25px',
-                                    marginLeft: '90%',
-                                }}
-                            />
-                    </View>
-                    <View
+                      <Image 
+                        src={'/images/logo_HEX.png'}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          marginBottom: 12,
-                        }}
-                    >
-                        <View 
-                          style={{
-                            width: '80%',
-                            margin: 'auto'
-                          }}
-                        >
-                           <Text style={{ fontSize: 10}}>Lee detenidamente el siguiente formato de currículum vitae y llena cada uno de los puntos que loconforman utilizando mayúsculas y minúsculas.</Text>
-                        </View>
-                       
-                    </View>
-                    <View
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                        }}
-                    >
-                        <View 
-                          style={{
-                            width: '80%',
-                            margin: 'auto'
-                          }}
-                        >
-                           <Text style={{ fontSize: 10}}>Una vez que lo hayas concluido, te agradeceremos que nos lo hagas llegar lo antes posible porcorreo electrónico al correo: <Text style={{ fontWeight: 'bold' }}>miguel.lumbreras@iucorporation.com Gracias.</Text></Text>
-                        </View>
-                       
+                                width: '30px',
+                                height: '25px',
+                                marginLeft: '10%'
+                              }}
+                      />
                     </View>
                 </View>
                 <View
@@ -651,7 +551,7 @@ const HighDirectionReport = ({
                 >
                   <SectionDetails />
                 </View>
-                <View
+                {/* <View
                   style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -667,34 +567,11 @@ const HighDirectionReport = ({
                   }}
                 >
                   <SectionUltimateJobs />
-                </View>
-                    {/* <SectionDetails />
-                    <SectionEducation />
-                    <SectionExperience />
-                    <SectionUltimateJobs />
-                     */}
-                    {/* <View style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'wrap'
-                    }}>
-                        <View style={{
-                            flex: '0 0 40%',
-                            paddingRight: 6
-                        }}>
-                            <SectionEducation/>
-                        </View>
-                        <View style={{
-                            flex: '0 0 60%',
-                            paddingLeft: 6
-                        }}>
-                           <SectionExperience/>
-                        </View>
-                    </View> */}
+                </View> */}
                 </Page>
             </Document>
         // </PDFViewer>
     )
 }
 
-export default memo(HighDirectionReport);
+export default memo(CandidateReport);
