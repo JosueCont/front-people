@@ -466,18 +466,9 @@ export const createFiltersJB = (obj = {}) =>{
   }, {});
 }
 
-export const validPaginationJB = (obj = {}) =>{
-  if(obj.page > 1 && obj.size <= 10) delete obj.size;
-  if(obj.page <= 1 && obj.size > 10) delete obj.page;
-  if(obj.page == 1 && obj.size == 10){
-    delete obj.page;
-    delete obj.size;
-  }
-  return obj;
-}
-
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
+    if(key == "size") return query;
     if(key == "page"){
       const find_ = item => item[0] == "size";
       let result = Object.entries(obj).find(find_);

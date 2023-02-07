@@ -19,10 +19,10 @@ import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
-import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
 import CandidateReport from './CandidateReport';
+import { copyContent } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -30,7 +30,8 @@ const TableCandidates = ({
     getCandidates,
     list_candidates,
     load_candidates,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -207,19 +208,12 @@ const TableCandidates = ({
         setItemsToDelete([])
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/candidates',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/candidates',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -390,9 +384,10 @@ const TableCandidates = ({
                 }}
                 pagination={{
                     total: list_candidates.count,
+                    pageSize: jobbank_page_size,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    hideOnSinglePage: list_candidates?.count < 10,
+                    showSizeChanger: list_candidates?.count > 10
                 }}
             />
             <ListItems
@@ -416,7 +411,8 @@ const mapState = (state) =>{
         load_candidates: state.jobBankStore.load_candidates,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size
     }
 }
 
