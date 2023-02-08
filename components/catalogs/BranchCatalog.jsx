@@ -46,15 +46,18 @@ const BranchCatalog = ({
     {
       title: "Código",
       dataIndex: "code",
+      responsive: ['lg']
     },
     {
       title: "Sucursal",
       dataIndex: "name",
       key: "key",
+      responsive: ['lg']
     },
     {
       title: "Registro Patronal",
       dataIndex: ["patronal_registration", "code"],
+      responsive: ['lg']
     },
     {
       title: "Acciones",
@@ -63,11 +66,12 @@ const BranchCatalog = ({
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <EditOutlined onClick={() => editBranch(item, "td")} />
+                <EditOutlined style={{cursor:'pointer'}}  onClick={() => editBranch(item, "td")} />
               </Col>
 
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
+                  style={{cursor:'pointer'}}
                   onClick={() => {
                     setDeleteRegister({
                       id: item.id,
@@ -186,25 +190,25 @@ const BranchCatalog = ({
     <>
       <Form form={form} layout="vertical" onFinish={onFinishForm}>
         <Row gutter={20}>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={6} xs={22} md={12} xl={6}>
             <Form.Item
               name="code"
               label="Código"
               rules={[ruleRequired, ruleWhiteSpace]}
             >
-              <Input />
+              <Input maxLength={50}/>
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={10} xs={22} md={12} xl={9}>
             <Form.Item
               name="name"
               label="Nombre de la Sucursal"
               rules={[ruleRequired, ruleWhiteSpace]}
             >
-              <Input />
+              <Input  maxLength={100}/>
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={6} xs={22} md={12} xl={6}>
             <SelectPatronalRegistration
               name={"patronal_registration"}
               value_form={"patronal_registration"}

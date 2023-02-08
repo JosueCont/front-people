@@ -162,12 +162,12 @@ const EventDetails = ({
                                     <Avatar style={{backgroundColor: idx % 2 == 0 ? '#5d4037' : '#455a64'}}>
                                         {record.displayName ? record.displayName[0].toUpperCase() : record.email[0].toUpperCase()}
                                     </Avatar>
-                                    {['accepted','declined'].includes(record.responseStatus) ? (
+                                    {/* {['accepted','declined'].includes(record.responseStatus) ? (
                                         <StatusGuest status={record.responseStatus}>
                                             {record.responseStatus == 'accepted' && (<BiCheck/>)}
                                             {record.responseStatus == 'declined' && (<RiCloseLine/>)}
                                         </StatusGuest>
-                                    ) : null}
+                                    ) : null} */}
                                 </div>
                                 <ContentVertical>
                                     <TextDescripcion isTitle>{record.displayName ?? record.email}</TextDescripcion>

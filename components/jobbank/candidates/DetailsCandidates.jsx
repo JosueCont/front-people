@@ -15,7 +15,6 @@ import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
 import TabReferences from './TabReferences';
-import TabEconomic from './TabEconomic';
 
 //*Necesario para la libreria react-pdf
 const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
@@ -157,7 +156,10 @@ const DetailsCandidates = ({
                             forceRender
                             key='5'
                         >
-                            <TabReferences action={action}/>
+                            <TabReferences
+                                action={action}
+                                type='1'
+                            />
                         </Tabs.TabPane>
                         <Tabs.TabPane
                             tab='Estudio socioeconómico'
@@ -165,7 +167,10 @@ const DetailsCandidates = ({
                             forceRender
                             key='6'
                         >
-                            <TabEconomic action={action}/>
+                            <TabReferences
+                                action={action}
+                                type='2'
+                            />
                         </Tabs.TabPane>
                     </Tabs>    
                 </Col>

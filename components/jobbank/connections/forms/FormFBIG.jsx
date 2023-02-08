@@ -221,7 +221,7 @@ const FormFBIG = ({
                     label='Llave secreta'
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input placeholder='Llave secreta de la aplicación'/>
+                    <Input.Password placeholder='Llave secreta de la aplicación'/>
                 </Form.Item>
             </Col>
             <Col span={24}>

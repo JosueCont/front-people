@@ -75,8 +75,6 @@ const ModalAsignament = ({
     },1000)
 }
 
-console.log('status', status)
-
   return (
     <MyModal
       title={title}
@@ -165,7 +163,7 @@ console.log('status', status)
             <Col span={24}>
               <Form.Item
                 name='sent_timestamp'
-                label='Fecha de envio'
+                label='Fecha de envío'
                 rules={ [ruleRequired] }
               >
                 <DatePicker style={{ width: '100%' }} placeholder="Selecciona una fecha de envío"/>

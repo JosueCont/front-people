@@ -31,17 +31,21 @@ const SearchCandidates = ({
         formSearch.resetFields()
     }
 
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/candidates/',
+        query: filters
+    }, undefined, {shallow: true});
+
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        router.replace({
-            pathname: '/jobbank/candidates/',
-            query: filters
-        }, undefined, {shallow: true});
+        setFilters(filters)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace('/jobbank/candidates', undefined, {shallow: true});
+        // let page = router.query.page ? parseInt(router.query.page) : 1;
+        // let size = router.query.size ? parseInt(router.query.size) : 10;
+        setFilters()
     }
 
     return (
