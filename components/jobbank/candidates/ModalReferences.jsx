@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
-import { ruleRequired, ruleWhiteSpace } from '../../../../utils/rules';
+import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
-import MyModal from '../../../../common/MyModal';
-import FileUpload from '../../FileUpload';
+import MyModal from '../../../common/MyModal';
+import FileUpload from '../FileUpload';
 
-const ModalFile = ({
+const ModalReferences = ({
     title = '',
     close = () =>{},
     itemToEdit = {},
@@ -28,13 +28,14 @@ const ModalFile = ({
 
     const createData = (values) =>{
         let reference = new FormData();
-        reference.append('name', values.name)
+        reference.append('file_name', values.file_name)
         if(file.length > 0) reference.append('file', file[0]);
         return reference;
     }
 
     const onCloseModal = () =>{
         close();
+        setFile([])
         formReference.resetFields();
     }
 
@@ -64,7 +65,7 @@ const ModalFile = ({
                 <Row gutter={[24,0]}>
                     <Col span={24}>
                         <Form.Item
-                            name='name'
+                            name='file_name'
                             label='Nombre'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
@@ -79,6 +80,7 @@ const ModalFile = ({
                             isRequired={true}
                             setFile={setFile}
                             typeFile={typeFile}
+                            disabled={Object.keys(itemToEdit).length > 0}
                             setNameFile={e => formReference.setFieldsValue({
                                 file_read: e
                             })}
@@ -96,4 +98,4 @@ const ModalFile = ({
     )
 }
 
-export default ModalFile
+export default ModalReferences

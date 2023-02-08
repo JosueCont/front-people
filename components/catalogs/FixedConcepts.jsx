@@ -557,6 +557,11 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                             ? deductionsCat
                             : otherPaymentsCat
                         }
+                        optionFilterProp="children"
+                        showSearch
+                        filterOption={(input, option) =>
+                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
                       />
                     </Form.Item>
                   </Col>

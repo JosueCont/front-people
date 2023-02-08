@@ -135,14 +135,14 @@ const FormTraining = ({ person_id = null }) => {
   const formFinishTraining = (value) => {
     if (upTraining) {
       value.id = idTraining;
-      value.since = dateTraining[0];
-      value.until = dateTraining[1];
+      value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
+      value.until = moment(dateTraining[1]).format('YYYY-MM-DD');
       value.currently_studing = currenlyStuding;
       updateTraining(value);
       setDateRange("");
     } else {
-      value.since = dateTraining[0];
-      value.until = dateTraining[1];
+      value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
+      value.until = moment(dateTraining[0]).format('YYYY-MM-DD');
       value.currently_studing = currenlyStuding;
       value.person = person_id;
       saveTraining(value);
@@ -152,8 +152,8 @@ const FormTraining = ({ person_id = null }) => {
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
     setDateRange([
-      moment(dateString[0], "YYYY-MM-DD"),
-      moment(dateString[1], "YYYY-MM-DD"),
+      moment(dateString[0], "DD-MM-YYYY"),
+      moment(dateString[1], "DD-MM-YYYY"),
     ]);
     formTraining.setFieldsValue({ since: dateString });
   };
@@ -162,8 +162,8 @@ const FormTraining = ({ person_id = null }) => {
   };
   const updateFormTraining = (item) => {
     setDateRange([
-      moment(item.since, "YYYY-MM-DD"),
-      moment(item.until, "YYYY-MM-DD"),
+      moment(item.since, "DD-MM-YYYY"),
+      moment(item.until, "DD-MM-YYYY"),
     ]);
     formTraining.setFieldsValue({
       school: item.school,
@@ -205,7 +205,7 @@ const FormTraining = ({ person_id = null }) => {
       width: 100,
       title: "Fecha inicio",
       render: (item) => {
-        return <div style={{ maxWidth: 100 }}>{item.since}</div>;
+        return <div style={{ maxWidth: 100 }}>{moment(item.since).format('DD-MM-YYYY')}</div>;
       },
     },
     {
@@ -213,7 +213,7 @@ const FormTraining = ({ person_id = null }) => {
       width: 100,
       title: "Fecha fin",
       render: (item) => {
-        return <div style={{ maxWidth: 100 }}>{item.until}</div>;
+        return <div style={{ maxWidth: 100 }}>{moment(item.until).format('DD-MM-YYYY')}</div>;
       },
     },
     {
@@ -282,10 +282,11 @@ const FormTraining = ({ person_id = null }) => {
               <Space direction="vertical" size={13}>
                 <RangePicker
                   style={{ width: "100%", border: "1px green solid" }}
-                  format={"YYYY-MM-DD"}
+                  format={"DD-MM-YYYY"}
                   value={dateRange}
                   onChange={onChangeDateTrainig}
                   locale = { locale }
+                  allowClear
                 />
               </Space>
             </Form.Item>

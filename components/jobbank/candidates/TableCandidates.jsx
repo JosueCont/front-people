@@ -19,9 +19,9 @@ import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
-import Clipboard from '../../../components/Clipboard';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
+import CandidateReport from './CandidateReport';
 import { copyContent } from '../../../utils/functions';
 
 const TableCandidates = ({
@@ -30,7 +30,8 @@ const TableCandidates = ({
     getCandidates,
     list_candidates,
     load_candidates,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -71,14 +72,21 @@ const TableCandidates = ({
         <HighDirectionReport
             infoCandidate={infoCandidate}
             infoEducation={ infoEducation}
-            // infoExperience={infoExperience}
             infoPositions={ infoPositions}
         />
+    const NyCandidateReport = ({infoCandidate, infoEducation, infoExperience, infoPositions, }) => 
+
+    <CandidateReport
+        infoCandidate={infoCandidate}
+        infoEducation={ infoEducation}
+        infoExperience = { infoExperience }
+        infoPositions={ infoPositions}
+    />
     
 
-    const linkTo = (url, download = false ) =>{
+    const linkTo = (url, download = false, nameCandidate ) =>{
         // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-        let nameFile = 'demo'
+        let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -98,6 +106,7 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -105,7 +114,46 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
+                linkTo(url+'#toolbar=0', download, nameCandidate);
+            },2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                setLoading(false)
+                message.error({content: 'PDF no generado', key});
+            },2000)
+        }
+    }
+
+    const generateReportCandidate = async (id, download) => {
+        if(!id) return
+        const key = 'updatable';
+        message.loading({content: 'Generando PDF...', key});
+        try {
+            setLoading(true)
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
+            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0')
+            let infoCan = responseInfo.data || {}
+            let infoEducation = responseEdu.data || []
+            let infoExp = responseExp.data || []
+            let infoPositions = responsePos.data || []
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let resp = await pdf(
+                                <NyCandidateReport 
+                                    infoCandidate={infoCan} 
+                                    infoEducation = {infoEducation} 
+                                    infoExperience  = { infoExp } 
+                                    infoPositions = {infoPositions}
+                                />).toBlob();
+            let url = URL.createObjectURL(resp);
+            setTimeout(()=>{
+                setLoading(false);
+                message.success({content: 'PDF generado', key})
+            }, 1000)
+            setTimeout(()=>{  
+                linkTo(url+'#toolbar=0', download, nameCandidate);
             },2000)
         } catch (e) {
             console.log(e)
@@ -160,19 +208,12 @@ const TableCandidates = ({
         setItemsToDelete([])
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/candidates',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/candidates',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -247,13 +288,20 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.Item
-                    key='4'
-                    icon={<DownloadOutlined />}
-                    onClick={() => generatePDF(item.id, true)}
-                >
-                    Descargar reporte alta dirección
-                </Menu.Item>
+                <Menu.SubMenu title="Descargar reporte" icon={<DownloadOutlined />}>
+                    <Menu.Item
+                        key='4'
+                        onClick={() => generatePDF(item.id, true)}
+                    >
+                        Reporte alta dirección
+                    </Menu.Item>
+                    <Menu.Item
+                        key='5'
+                        onClick={() => { generateReportCandidate(item.id, true) }}
+                    >
+                        Reporte de candidato
+                    </Menu.Item>
+                </Menu.SubMenu>
             </Menu>
         );
     };
@@ -336,9 +384,10 @@ const TableCandidates = ({
                 }}
                 pagination={{
                     total: list_candidates.count,
+                    pageSize: jobbank_page_size,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    hideOnSinglePage: list_candidates?.count < 10,
+                    showSizeChanger: list_candidates?.count > 10
                 }}
             />
             <ListItems
@@ -362,7 +411,8 @@ const mapState = (state) =>{
         load_candidates: state.jobBankStore.load_candidates,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size
     }
 }
 
