@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Input, Row, Col, Form, Select, Checkbox } from 'antd';
+import { Button, Input, Row, Col, Form, Select, InputNumber } from 'antd';
 import { useSelector } from 'react-redux';
 import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
+import RangeAge from '../RangeAge';
 
 const FiltersCandidates = ({
     visible,
@@ -118,10 +119,13 @@ const FiltersCandidates = ({
                             label='Sector'
                         >
                             <Select
+                                allowClear
+                                showSearch
                                 disabled={load_sectors}
                                 loading={load_sectors}
                                 placeholder='Seleccionar un opción'
                                 notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
                             >
                                 {list_sectors.length > 0 && list_sectors.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -209,6 +213,13 @@ const FiltersCandidates = ({
                             />
                         </Form.Item>
                     </Col>
+                    <RangeAge
+                        minAgeKey='age_start'
+                        maxAgeKey='age_end'
+                        maxAgeRequired={false}
+                        minAgeRequired={false}
+                        sizeCol={{span: 12}}
+                    />
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

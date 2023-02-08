@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Alert, Button, Table, message, Menu, Dropdown } from 'antd';
 import { valueToFilter} from '../../../utils/functions';
 import {
@@ -9,7 +9,7 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 import ModalContact from './ModalContact';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 
 const TabContact = ({
     contactList,
@@ -75,7 +75,7 @@ const TabContact = ({
         setItemsToDelete([])
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit])
 
     const menuItem = (item) => {
         return (
@@ -150,7 +150,7 @@ const TabContact = ({
             <Table
                 className='table-custom'
                 size='small'
-                rowKey={(item, idx)=> idx}
+                rowKey={(item)=> item.email}
                 columns={columns}
                 dataSource={contactList}
                 locale={{ emptyText: contactList.length > 0
@@ -164,20 +164,20 @@ const TabContact = ({
                 }}
             />
             <ModalContact
-                title={validateAction() && openModal ? 'Editar contacto' : 'Agregar contacto'}
+                title={isEdit ? 'Editar contacto' : 'Agregar contacto'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
-            <DeleteItems
+            <ListItems
                 title='¿Estás seguro de eliminar este contacto?'
                 visible={openModalDelete}
                 keyTitle='name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
                 timeLoad={1000}
             />
         </>

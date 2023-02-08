@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -16,7 +16,7 @@ import {
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 
 const TabSchool = ({
@@ -92,7 +92,7 @@ const TabSchool = ({
         }
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
     
     const closeModal = () =>{
         setOpenModal(false)
@@ -224,21 +224,21 @@ const TabSchool = ({
                 }}
             />
             <ModalEducation
-                title={validateAction() && openModal ? 'Editar educación' : 'Agregar educación'}
+                title={isEdit ? 'Editar educación' : 'Agregar educación'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
-           <DeleteItems
+           <ListItems
                 title='¿Estás seguro de eliminar esta educación?'
                 visible={openModalDelete}
                 keyTitle='study_level, name'
                 keyDescription='institution_name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )

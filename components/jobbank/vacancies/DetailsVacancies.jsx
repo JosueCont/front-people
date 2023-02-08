@@ -2,7 +2,7 @@ import React, {
     useEffect,
     useState,
     useRef,
-    useLayoutEffect
+    useMemo
 } from 'react';
 import {
     Card,
@@ -20,10 +20,10 @@ import { useRouter } from 'next/router';
 import TabFeatures from './TabFeatures';
 import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
+import TabEvaluations from './TabEvaluations';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';;
 import { useInfoVacancy } from '../hook/useInfoVacancy';
-import ListLangs from '../candidates/ListLangs';
 
 const DetailsVacancies = ({
     action,
@@ -31,7 +31,6 @@ const DetailsVacancies = ({
     newFilters = {}
 }) => {
 
-    const rule_languages = {text:'', status:''};
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -41,21 +40,21 @@ const DetailsVacancies = ({
     const router = useRouter();
     const btnSave = useRef(null);
     const [formVacancies] = Form.useForm();
+    const [idVacant, setIdVacant ] = useState(null)
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
     const [listInterviewers, setListInterviewers] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [currentKey, setCurrentKey] = useState('1');
+    const [evaluationList, setEvaluationList] = useState([]);
     const { setValuesForm, createData } = useInfoVacancy();
-     //Idiomas
-    const [currentValue, setCurrentValue] = useState([]);
-    const [listLangDomain, setListLangDomain] = useState([]);
-    const [ruleLanguages, setRuleLanguages] = useState(rule_languages);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoVacant(router.query.id)
+            getEvaluationsVacant(router.query.id)
+            setIdVacant(router.query.id)
         }
     },[router.query?.id])
 
@@ -64,13 +63,8 @@ const DetailsVacancies = ({
             formVacancies.resetFields()
             let allValues = setValuesForm(infoVacant);
             formVacancies.setFieldsValue(allValues)
-            let inters = allValues?.interviewers?.length > 0
-                ? allValues.interviewers : [];
-            let langs = allValues?.languages?.length > 0
-                ? allValues.languages?.map(item => ({lang: item.lang, domain: item.domain}))
-                : []; 
+            let inters = allValues?.interviewers?.length > 0 ? allValues.interviewers : [];
             setListInterviewers(inters)
-            setListLangDomain(langs)
         }
     },[infoVacant])
 
@@ -93,6 +87,95 @@ const DetailsVacancies = ({
             setFetching(false)
         }
     }
+
+    const getEvaluationsVacant = async (id) => {
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getEvaluationsVacant(id)
+            setEvaluationList(response.data.results)
+        } catch (e) {
+            console.log(e)
+        } finally {
+            setFetching(false)
+        }
+    }
+
+    const addEvaluations = async (values) => {
+        let data = new FormData()
+        data.append('vacant', router.query.id)
+        data.append('name', values.name)
+        data.append('source', values.source)
+        data.append('url', values.url)
+        data.append('instructions', values.instructions)
+        data.append('is_active', values.is_active)
+
+        try {
+            let response = await WebApiJobBank.addEvaluationVacant(data)
+            if (response) {
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluación agregada')
+        } catch (error) {
+            console.log('Error', error)
+            message.error('Error al agregar evaluación')
+        }
+    }
+
+    const updateEvaluation = async (id, values) => {
+
+        console.log('Values', values)
+
+        let data = new FormData()
+        data.append('vacant', router.query.id)
+        data.append('name', values.name)
+        data.append('source', values.source)
+        data.append('url', values.url)
+        data.append('instructions', values.instructions)
+        data.append('is_active', values.is_active)
+
+        try {
+            let response = await WebApiJobBank.updateEvaluation(id, data)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluación editada')
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al editar evaluación')
+        }
+    }
+
+    const deleteEvaluation = async (id) => {
+        try {
+            let response = await WebApiJobBank.deleteEvaluation(id)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Evaluacion eliminada')
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al eliminar evaluación')
+        }
+    }
+
+    const changeEvaluationstatus = async (id, status) => {
+        
+        let data = new FormData()
+        data.append('is_active', status)
+
+        try {
+            let response = await WebApiJobBank.updateStatusEvaluation(id, data)
+            if(response){
+                getEvaluationsVacant(router.query.id)
+            }
+            message.success('Estatus de evaluación editada')
+
+        } catch (error) {
+            console.log('Error -->', error)
+            message.error('Error al editar estatus de la evaluación')
+        }
+    }
+
 
     const keepClient = () =>{
         formVacancies.setFieldsValue({
@@ -131,11 +214,12 @@ const DetailsVacancies = ({
         }
     }
 
+
+
     const onFinish = (values) => {
         setFetching(true);
         let bodyData = createData(values);
         bodyData.interviewers = listInterviewers;
-        bodyData.languages = listLangDomain;
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -155,9 +239,6 @@ const DetailsVacancies = ({
         if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
-        setCurrentValue([])
-        setRuleLanguages(rule_languages)
-        setListLangDomain([])
     }
 
     const actionBack = () =>{
@@ -196,12 +277,19 @@ const DetailsVacancies = ({
             return;
         }
         let querys = {...router.query, tab};
-        if(querys['tab'] == '1') delete querys['tab'];
+        if(querys.tab == '1') delete querys.tab;
         router.replace({
-            pathname: router.asPath.split('?')[0],
+            pathname: `/jobbank/vacancies/${action}`,
             query: querys
         }, undefined, {shallow: true})
     }
+
+    const activeKey = useMemo(()=>{
+        let tab = router.query?.tab;
+        return action == 'edit'
+            ? tab ? tab : '1'
+            : currentKey;
+    },[router.query, currentKey, action])
 
     return (
         <Card>
@@ -232,15 +320,13 @@ const DetailsVacancies = ({
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
-                            requires_travel_availability: false
+                            requires_travel_availability: false,
+                            languages: []
                         }}
                     >
                         <Tabs
                             type='card'
-                            activeKey={action == 'edit'
-                                ? router.query?.tab ?? '1'
-                                : currentKey
-                            }
+                            activeKey={activeKey}
                             onChange={onChangeTab}
                         >
                             <Tabs.TabPane
@@ -252,7 +338,7 @@ const DetailsVacancies = ({
                                     <TabFeatures
                                         formVacancies={formVacancies}
                                         disabledClient={router.query?.client}
-                                        hasEstrategy={infoVacant?.has_estrategy}
+                                        hasEstrategy={infoVacant?.has_strategy}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -262,18 +348,7 @@ const DetailsVacancies = ({
                                 key='2'
                             >
                                 <Spin spinning={fetching}>
-                                    <TabEducation formVacancies={formVacancies}>
-                                        <ListLangs
-                                            changeColor={true}
-                                            listLangDomain={listLangDomain}
-                                            setListLangDomain={setListLangDomain}
-                                            setCurrentValue={setCurrentValue}
-                                            currentValue={currentValue}
-                                            setRuleLanguages={setRuleLanguages}
-                                            ruleLanguages={ruleLanguages}
-                                            rule_languages={rule_languages}
-                                        />
-                                    </TabEducation>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -286,6 +361,23 @@ const DetailsVacancies = ({
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
+                                tab='Evaluaciones'
+                                forceRender
+                                key='4'
+                            >
+                                <Spin spinning={fetching}>
+                                    <TabEvaluations 
+                                        evaluationList={evaluationList}
+                                        setEvaluationList={setEvaluationList}
+                                        idVacant = { idVacant? idVacant : null }
+                                        addEvaluationVacant = { addEvaluations }
+                                        updateEvaluation = { updateEvaluation }
+                                        deleteEvaluation = {deleteEvaluation}
+                                        changeEvaluationstatus = {changeEvaluationstatus}
+                                    />
+                                </Spin>
+                            </Tabs.TabPane>
+                            {/* <Tabs.TabPane
                                 tab='Proceso de reclutamiento'
                                 forceRender
                                 key='4'
@@ -296,7 +388,7 @@ const DetailsVacancies = ({
                                         listInterviewers={listInterviewers}
                                     />
                                 </Spin>
-                            </Tabs.TabPane>
+                            </Tabs.TabPane> */}
                         </Tabs>
                     </Form>
                 </Col>

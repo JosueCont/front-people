@@ -32,9 +32,9 @@ const ModalPost = ({
 
     useEffect(()=>{
         if(Object.keys(itemToPublish).length <= 0) return;
-        let accounts_to_share = itemToPublish.account_to_share?.length > 0
-            ? itemToPublish.account_to_share
-            : [];
+        let selected = itemToPublish.account_to_share?.length > 0 ? itemToPublish.account_to_share : [];
+        const filter_ = item => selected.includes(item.code) && item.is_active;
+        let accounts_to_share = list_connections_options.filter(filter_).map(item => item.code);
         formPost.setFieldsValue({accounts_to_share})
     },[itemToPublish])
 
@@ -114,8 +114,8 @@ const ModalPost = ({
                                 optionFilterProp='children'
                             >
                                 {list_connections_options.length > 0 && list_connections_options.map(item=> (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
+                                    <Select.Option disabled={!item.is_active} value={item.code} key={item.code}>
+                                        {item.name} {item.is_active ? '':' / No disponible'}
                                     </Select.Option>
                                 ))}
                             </Select>

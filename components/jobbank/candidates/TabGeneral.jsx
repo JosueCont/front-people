@@ -8,7 +8,8 @@ import {
     Spin,
     message,
     Button,
-    Checkbox
+    Checkbox,
+    DatePicker
 } from 'antd';
 import {
     ruleWhiteSpace,
@@ -23,6 +24,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListLangs from './ListLangs';
 import FileUpload from '../FileUpload';
 import { optionsGenders } from '../../../utils/constant';
+import moment from 'moment';
 
 const TabGeneral = ({
     action,
@@ -33,10 +35,12 @@ const TabGeneral = ({
     setInfoCandidate,
     infoCandidate,
     list_states,
-    load_states
+    load_states,
+    list_connections_options,
+    load_connections_options
 }) => {
 
-    const rule_init = {text:'', status:''};
+    const noValid = [undefined, null, '', ' '];
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
@@ -47,15 +51,12 @@ const TabGeneral = ({
     const btnSave = useRef(null);
     const [formCandidate] = Form.useForm();
     const state = Form.useWatch('state', formCandidate);
+    const languages = Form.useWatch('languages', formCandidate);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
     const [fileCV, setFileCV] = useState([]);
     const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
-    //Idiomas
-    const [currentValue, setCurrentValue] = useState([]);
-    const [listLangDomain, setListLangDomain] = useState([]);
-    const [ruleLanguages, setRuleLanguages] = useState(rule_init);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -71,16 +72,16 @@ const TabGeneral = ({
 
     const setValueForm = () =>{
         setDisabledTab(false)
-        setCurrentValue([])
-        setRuleLanguages(rule_init)
         formCandidate.resetFields();
-        const getLang = item => ({lang: item.lang, domain: item.domain});
-        let listLanguages = infoCandidate.languages.map(getLang);
-        let listLang = infoCandidate.languages?.length > 0 ? listLanguages : [];
-        let cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
-        let state = infoCandidate?.state?.id ?? null;
-        setListLangDomain(listLang)
-        formCandidate.setFieldsValue({...infoCandidate, cv_name_read, state});
+        let values = {...infoCandidate};
+        const getLang = item => `${item.lang}-${item.domain}`;
+        values.languages = infoCandidate.languages?.length > 0 ? infoCandidate.languages.map(getLang) : [];
+        values.cv_name_read = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        values.state = infoCandidate?.state?.id ?? null;
+        values.birthdate = infoCandidate.birthdate ? moment(infoCandidate.birthdate) : null;
+        values.notification_source = Array.isArray(infoCandidate.notification_source)
+            ? infoCandidate.notification_source : [];
+        formCandidate.setFieldsValue(values);
     }
 
     const getInfoCandidate = async (id) =>{
@@ -126,20 +127,36 @@ const TabGeneral = ({
     }
 
     const createData = (obj) =>{
-        let noValid = [undefined, null, '', ' '];
         let dataCandidate = new FormData();
         dataCandidate.append('node', currentNode.id);
         dataCandidate.append('auto_register', isAutoRegister);
-        Object.entries(obj).map(([key, val])=>{
+        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
+        
+        const getLang_ = item =>{
+            let value = item.split('-');
+            return {lang: value[0], domain: value[1]};
+        };
+
+        Object.entries(obj).map(([key, val]) => {
+            if(key == "languages"){
+                let languages = Array.isArray(val) ? val.map(getLang_) : [];
+                dataCandidate.append('languages', JSON.stringify(languages));
+                return;
+            }
+            if(key == "notification_source"){
+                let codes = Array.isArray(val) ? val : [];
+                dataCandidate.append('notification_source', JSON.stringify(codes));
+                return;
+            }
             let value = noValid.includes(val) ? "" : val;
             dataCandidate.append(key, value);
         });
-        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
-        dataCandidate.append('languages', JSON.stringify(listLangDomain));
+        
         return dataCandidate;
     }
 
     const onFinish = (values) =>{
+        if(values.birthdate) values.birthdate = values.birthdate?.format('YYYY-MM-DD');
         const body = createData(values);
         setFetching(true);
         const actionFunction = {
@@ -158,9 +175,6 @@ const TabGeneral = ({
         setFetching(false);
         setLoading({});
         setFileCV([]);
-        setCurrentValue([])
-        setListLangDomain([])
-        setRuleLanguages(rule_init)
     }
 
     const actionSaveAnd = (id) =>{
@@ -194,6 +208,10 @@ const TabGeneral = ({
         if(!value) formCandidate.setFieldsValue({municipality: null});
     }
 
+    const disabledDate = (current) => {
+        return current && current > moment().subtract(18,'years').endOf("day");
+    };
+
     return (
         <Row>
             <Col span={24}>
@@ -206,7 +224,9 @@ const TabGeneral = ({
                         onFinishFailed={onFailed}
                         initialValues={{
                             is_active: true,
-                            availability_to_travel: false
+                            availability_to_travel: false,
+                            languages: [],
+                            notification_source: []
                         }}
                     >
                         <Row gutter={[24,0]}>
@@ -253,6 +273,38 @@ const TabGeneral = ({
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
+                                    name='birthdate'
+                                    label='Fecha de nacimiento'
+                                    rules={[ruleRequired]}
+                                    tooltip='Edad mínima requerida 18 años'
+                                >
+                                    <DatePicker
+                                        style={{width: '100%'}}
+                                        placeholder='Seleccionar una fecha'
+                                        format='DD-MM-YYYY'
+                                        defaultPickerValue={moment().subtract(18,'years')}
+                                        disabledDate={disabledDate}
+                                        inputReadOnly
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
+                                    name='gender'
+                                    label='Género'
+                                >
+                                    <Select
+                                        // allowClear
+                                        showSearch
+                                        placeholder='Seleccionar un género'
+                                        notFoundContent='No se encontraron resultados'
+                                        optionFilterProp='label'
+                                        options={optionsGenders}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
+                                <Form.Item
                                     name='telephone'
                                     label='Teléfono fijo'
                                     rules={[rulePhone]}
@@ -290,7 +342,7 @@ const TabGeneral = ({
                                     label='Municipio'
                                     rules={[ruleWhiteSpace]}
                                 >
-                                    <Input disabled={!state} maxLength={300} placeholder='Especificar el municipio'/>
+                                    <Input disabled={!state} maxLength={100} placeholder='Especificar el municipio'/>
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -340,31 +392,31 @@ const TabGeneral = ({
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={12} xl={8} xxl={6}>
+                                <ListLangs listSelected={languages}/>
+                            </Col>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
-                                    name='gender'
-                                    label='Género'
+                                    name='notification_source'
+                                    label='Recibir notificaciones por'
                                 >
                                     <Select
-                                        // allowClear
-                                        showSearch
-                                        placeholder='Seleccionar un género'
+                                        mode='multiple'
+                                        maxTagCount={1}
+                                        disabled={load_connections_options}
+                                        loading={load_connections_options}
+                                        placeholder='Seleccionar las opciones'
                                         notFoundContent='No se encontraron resultados'
-                                        optionFilterProp='label'
-                                        options={optionsGenders}
-                                    />
+                                        optionFilterProp='children'
+                                    >
+                                        <Select.Option value='EM' key='EM'>Correo electrónico</Select.Option>
+                                        {list_connections_options.length > 0 &&
+                                            list_connections_options.map(item=> (
+                                            <Select.Option value={item.code} key={item.code}>
+                                                {item.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
                                 </Form.Item>
-                            </Col>
-                            <Col span={24}>
-                                <ListLangs
-                                    listLangDomain={listLangDomain}
-                                    setListLangDomain={setListLangDomain}
-                                    setCurrentValue={setCurrentValue}
-                                    currentValue={currentValue}
-                                    setRuleLanguages={setRuleLanguages}
-                                    ruleLanguages={ruleLanguages}
-                                    rule_languages={rule_init}
-                                    changeColor={true}
-                                />
                             </Col>
                             <Col span={24}>
                                 <Form.Item
@@ -381,20 +433,6 @@ const TabGeneral = ({
                                     />
                                 </Form.Item>
                             </Col>
-                            {/* <Col xs={24} md={12} xl={8} xxl={6}>
-                                <Form.Item
-                                    name='date_birth'
-                                    label='Fecha de nacimiento'
-                                    rules={[ruleRequired]}
-                                >
-                                    <DatePicker
-                                        style={{width: '100%'}}
-                                        placeholder='Fecha de nacimiento'
-                                        format='YYYY-MM-DD'
-                                        inputReadOnly
-                                    />
-                                </Form.Item>
-                            </Col> */}
                         </Row>
                     </Form>
                 </Spin>
@@ -448,7 +486,9 @@ const mapState = (state) =>{
     return{
         currentNode: state.userStore.current_node,
         list_states: state.jobBankStore.list_states,
-        load_states: state.jobBankStore.load_states
+        load_states: state.jobBankStore.load_states,
+        load_connections_options: state.jobBankStore.load_connections_options,
+        list_connections_options: state.jobBankStore.list_connections_options
     }
 }
 

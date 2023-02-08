@@ -1,41 +1,45 @@
 import { useSelector } from "react-redux";
 import { optionsStatusSelection } from "../../../utils/constant";
+import { getValueFilter } from "../../../utils/functions";
 
 export const useFiltersSelection = () =>{
 
     const {
         list_vacancies_options,
-        load_vacancies_options
+        load_vacancies_options,
+        load_candidates_options,
+        list_candidates_options,
     } = useSelector(state => state.jobBankStore);
+    const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
 
     const listKeys = {
-        name: 'Nombre',
-        lastname: 'Apellidos',
-        email: 'Correo',
-        phone: 'Teléfono',
-        status: 'Estatus',
-        vacant: 'Vacante'
+        status_process: 'Estatus',
+        vacant: 'Vacante',
+        candidate: 'Candidato'
     }
 
-    const getStatus = (value) => {
-        if(!value) return value;
-        const find_ = item => item.value == value;
-        let result = optionsStatusSelection.find(find_);
-        if(!result) return value;
-        return result.label;
-    }
+    const getStatus = (value) => getValueFilter({
+        value,
+        list: optionsStatusSelection,
+        ...paramsOptions
+    })
 
-    const getVacant = (id) =>{
-        if(!id) return id;
-        const find_ = item => item.id == id;
-        let result = list_vacancies_options.find(find_);
-        if(!result) return id;
-        return result.job_position;
-    }
+    const getVacant = (id) => getValueFilter({
+        value: id,
+        list: list_vacancies_options,
+        keyShow: 'job_position'
+    })
+
+    const getCandidate = (id) => getValueFilter({
+        value: id,
+        list: list_candidates_options,
+        keyShow: e => `${e?.fisrt_name} ${e.last_name}`
+    })
 
     const listGets = {
-        status: getStatus,
-        vacant: getVacant
+        status_process: getStatus,
+        vacant: getVacant,
+        candidate: getCandidate
     }
 
     return { listKeys, listGets };

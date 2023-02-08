@@ -8,6 +8,7 @@ import {
   Form,
   Button,
   Typography,
+  ConfigProvider
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
@@ -18,6 +19,7 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
+import esES from "antd/lib/locale/es_ES";
 
 const HolidaysReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -309,11 +311,13 @@ const HolidaysReport = ({ permissions, ...props }) => {
       </Row>
       <Row style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
+          <ConfigProvider locale={esES}>
           <Table
             loading={loading}
             dataSource={holidayList}
             key="tableHolidays"
             columns={columns}
+            pagination={{showSizeChanger:true}}
             scroll={{ x: 350 }}
             locale={{
               emptyText: loading
@@ -321,6 +325,7 @@ const HolidaysReport = ({ permissions, ...props }) => {
                 : "No se encontraron resultados.",
             }}
           ></Table>
+          </ConfigProvider>
         </Col>
       </Row>
     </>

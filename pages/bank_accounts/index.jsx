@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Tooltip,
+  ConfigProvider
 } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -22,6 +23,7 @@ import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import { verifyMenuNewForTenant } from "../../utils/functions"
+import esES from "antd/lib/locale/es_ES";
 
 const BankAccounts = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -285,10 +287,12 @@ const BankAccounts = ({ permissions, ...props }) => {
 
             <Row justify="end">
               <Col span={24}>
+                <ConfigProvider locale={esES}>
                 <Table
                   dataSource={backsAccountsList}
                   key="tableHolidays"
                   loading={loading}
+                  pagination={{showSizeChanger:true}}
                   columns={columns}
                   scroll={{ x: 350 }}
                   locale={{
@@ -297,6 +301,7 @@ const BankAccounts = ({ permissions, ...props }) => {
                       : "No se encontraron resultados.",
                   }}
                 ></Table>
+                </ConfigProvider>
               </Col>
             </Row>
           </>

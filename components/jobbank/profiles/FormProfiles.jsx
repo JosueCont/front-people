@@ -49,7 +49,7 @@ const FormProfiles = ({
     }
 
     const onChangeDisabled = () =>{
-        if(!disabledField) return;
+        if(disabledField) return;
         setDisabledField(false)
         formProfile.setFieldsValue({
             profile_type: 'open_fields'

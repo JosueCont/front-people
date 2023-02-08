@@ -22,23 +22,30 @@ const SearchPreselection = ({
     const [openModal, setOpenModal] = useState(false);
     const { listKeys, listGets } = useFiltersPreselection();
     const idVacant = router.query?.vacant ?? null;
-    const match = router.query?.match ?? null;
+    const match = router.query?.applyMatch ?? null;
 
     const infoVacant = useMemo(()=>{
         if(!idVacant) return [];
+        if(list_vacancies_options.length <=0) return [];
         const find_ = item => item.id == idVacant;
         let result = list_vacancies_options.find(find_);
         if(!result) return [];
         return Object.entries({
+            'Cliente': result?.customer?.name,
             'Vacante': result.job_position,
-            'Género': listGets['gender'](result.gender) ?? 'N/A'
+            'Género': listGets['gender'](result.gender) ?? 'N/A',
+            'Puestos': result.qty ?? 0,
+            'Aceptados': result.candidates_accepted,
+            'En proceso': result.candidates_in_process,
+            'Disponibles': result.available
         });
     },[idVacant, list_vacancies_options])
 
     const showModal = () =>{
-        let state = router.query?.state ? parseInt(router.query.state) : null;
-        let gender = router.query?.gender ? parseInt(router.query.gender) : null;
-        formSearch.setFieldsValue({...router.query, state, gender});
+        let filters = {...router.query};
+        filters.language = router.query?.language ? parseInt(router.query.language) : null;
+        filters.status_level_study = router.query?.status_level_study ? parseInt(router.query.status_level_study) : null;
+        formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
 
@@ -54,25 +61,27 @@ const SearchPreselection = ({
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
-        if(match == '0') filters.match = match;
         if(idVacant) filters.vacant = idVacant;
+        if(match == '0') filters.applyMatch = match;
         setFilters(filters)
     }
 
     const deleteFilter = () =>{
+        let filters = {};
+        if(idVacant) filters.vacant = idVacant;
+        if(match == '0') filters.applyMatch = match;
         formSearch.resetFields();
-        setFilters()
+        setFilters(filters)
     }
 
     const onChangeType = ({target: { value }}) =>{
-        let filters = {...router.query, match: value};
-        if(value == '1') delete filters.match;
+        let filters = {...router.query, applyMatch: value};
+        if(value == '1') delete filters.applyMatch;
         setFilters(filters)
     }
 
     const onChangeVacant = (value) =>{
-        let filters = {...router.query, vacant: value};
-        if(!value) delete filters.vacant;
+        let filters = value ? {...router.query, vacant: value} : {};
         setFilters(filters)
     }
 
@@ -92,6 +101,7 @@ const SearchPreselection = ({
                                     disabled={load_vacancies_options}
                                     loading={load_vacancies_options}
                                     value={idVacant}
+                                    className='select-jb'
                                     placeholder='Vacante'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
@@ -104,17 +114,24 @@ const SearchPreselection = ({
                                         </Select.Option>
                                     ))}
                                 </Select>
-                                <Radio.Group
-                                    onChange={onChangeType}
-                                    buttonStyle='solid'
-                                    value={router.query?.match ?? '1'}
-                                    className='radio-group-options'
-                                >
-                                    <Radio.Button value='1'>Compatibles</Radio.Button>
-                                    <Radio.Button value='0'>Todos</Radio.Button>
-                                </Radio.Group>
-                                <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                <Tooltip title={idVacant ? '' : 'Seleccionar una vacante'}>
+                                    <Radio.Group
+                                        onChange={onChangeType}
+                                        buttonStyle='solid'
+                                        value={router.query?.applyMatch ?? '1'}
+                                        disabled={!idVacant}
+                                        className='radio-group-options'
+                                    >
+                                            <Radio.Button value='1'>Compatibles</Radio.Button>
+                                            <Radio.Button value='0'>Todos</Radio.Button>
+                                    </Radio.Group>
+                                </Tooltip>
+                                <Tooltip title={idVacant ? 'Configurar filtros' : 'Seleccionar una vacante'}>
+                                    <Button
+                                        className='btn-jb-disabled'
+                                        onClick={()=> showModal()}
+                                        disabled={!idVacant}
+                                    >
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
@@ -127,13 +144,10 @@ const SearchPreselection = ({
                         </div>
                     </Col>
                     <Col span={24}>
-
-                    </Col>
-                    <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
-                            deleteKeys={['vacant','match']}
+                            deleteKeys={['vacant','applyMatch']}
                             defaultFilters={infoVacant}
                         />
                     </Col>  

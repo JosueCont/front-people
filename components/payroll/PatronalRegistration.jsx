@@ -12,7 +12,9 @@ import {
   Table,
   Modal,
   Spin,
-  DatePicker
+  DatePicker,
+  ConfigProvider,
+  Select
 } from "antd";
 import {
   CheckOutlined,
@@ -21,6 +23,7 @@ import {
   EditOutlined,
 } from "@material-ui/icons";
 import WebApiPeople from "../../api/WebApiPeople";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import {
   messageError,
   messageSaveSuccess,
@@ -38,6 +41,13 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
 import moment from 'moment'
+import esES from "antd/lib/locale/es_ES";
+import WithHoldingNotice from "../../pages/business/WithHoldingNotice";
+import AfilliateMovements from "../../pages/business/AfilliateMovements";
+import GenericModal from "../modal/genericModal";
+const { Option } = Select;
+
+
 const ImssInformationNode = ({
   node_id = null,
   fiscal,
@@ -68,6 +78,9 @@ const ImssInformationNode = ({
   const [disabledSwitch, setDisabledSwitch] = useState(false);
 
   const [loadingData, setLoadingData] = useState(false);
+  const [bimester, setBimester] = useState(null);
+  const [year, setYear] = useState('');
+  const [modal, setModal] = useState(false);
 
   const columns = [
     {
@@ -294,6 +307,7 @@ const ImssInformationNode = ({
 
   //MÉTODO PARA ENSEÑAR U OCULTAR TABLA Y ENSEÑAR FORMULARIO
   const onChange = () => {
+    setIsEdit(false);
     setVisibleTable(false);
     setDisabledSwitch(true);
   };
@@ -331,8 +345,56 @@ const ImssInformationNode = ({
     });
   };
 
+  const syncUpData = async() => {
+    try {
+      setLoading(true);
+      let dataSend = {
+        patronal_registration_id:dataPatronalRegistration[0].id,
+        node_id:dataPatronalRegistration[0].node
+      };
+      const syncData = await WebApiPeople.withHoldingNotice(dataSend);
+      setLoading(false);
+      if(syncData?.data?.message) message.success(syncData?.data?.message)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getOptions = () => {
+    let options = [];
+    let period= 1;
+    for(period; period<=6; period++){
+      options.push(
+        <Option key={period.toString()} value={`0${period.toString()}`}>
+          0{period}
+        </Option>
+      )
+    }
+    return options;
+  }
+
+  const verifyPeriod = async() => {
+    try {
+      setModal(false);
+      setLoading(true);
+      let period =moment(year).format('YYYY').slice(2,4).concat(bimester);
+      let data = {
+        period,
+        node: dataPatronalRegistration[0].node,
+        patronal_registration: dataPatronalRegistration[0].id
+      }
+      const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
+      setLoading(false)
+      if(syncMovements?.data?.message) message.success(syncMovements?.data?.message)
+      else message.error('Hubo un problema, intentalo más tarde')
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <>
+    <Spin spinning={loading}>
       <Row style={{ marginBottom: "15px" }} justify="end">
         {!disabledSwitch && (
           <>
@@ -342,15 +404,20 @@ const ImssInformationNode = ({
       </Row>
       {visibleTable && (
         <Spin spinning={loadingData}>
-          <Table
-            dataSource={dataPatronalRegistration}
-            columns={columns}
-            locale={{
-              emptyText: loading
-                ? "Cargando..."
-                : "No se encontraron resultados.",
-            }}
-          />
+          <ConfigProvider locale={esES}>
+            <Table
+              dataSource={dataPatronalRegistration}
+              columns={columns}
+              pagination={{
+                showSizeChanger:true
+              }}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+            />
+          </ConfigProvider>
         </Spin>
       )}
       {!visibleTable && (
@@ -359,7 +426,7 @@ const ImssInformationNode = ({
             <Button onClick={resetForms} style={{ marginRight: "5px" }}>
               Cancelar
             </Button>
-            <Button onClick={saveForms} form="formGeneric" htmlType="submit">
+            <Button onClick={saveForms} >
               Guardar
             </Button>
           </Row>
@@ -419,9 +486,10 @@ const ImssInformationNode = ({
               Guardar
             </Button>
           </Row>
-
+              
+          { isEdit ? (<>
           <Row>
-            <Title style={{ fontSize: "15px" }}>
+            <Title style={{ fontSize: "15px" }} >
               Configuracíon de movimientos automáticos
             </Title>
           </Row>
@@ -501,8 +569,83 @@ const ImssInformationNode = ({
               </div>
             </Col>
           </Row>
+          <Row justify="space-between">
+            <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
+              Movimientos afiliatorios
+            </Title>
+            <Button 
+              onClick={()=>setModal(true)} 
+              form="formGeneric" 
+              htmlType="submit" 
+              style={{marginBottom:'20px'}}>
+              Sincronizar / Solicitar
+            </Button>
+          </Row>
+          <Divider style={{ marginTop: "2px" }} />
+          <AfilliateMovements dataAffiliateMovements={dataPatronalRegistration[0]}/>
+
+          <Row justify="space-between">
+            <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
+              Avisos de retenciones
+            </Title>
+            <Button 
+              onClick={syncUpData} 
+              form="formGeneric" 
+              htmlType="submit" 
+              style={{marginBottom:'20px'}}>
+              Sincronizar / Solicitar
+            </Button>
+          </Row>
+            
+          <Divider style={{ marginTop: "2px" }} />
+          <WithHoldingNotice patronalData={dataPatronalRegistration[0]}/>
+
+          <GenericModal 
+            visible={modal}
+            setVisible={() => setModal(false)}
+            title='Solicitar movimientos'
+            actionButton={() => verifyPeriod()}
+          >
+            <Row justify="space-between">
+              <Col>
+                <div style={{display:'flex', flexDirection:'column', marginBottom:'10px'}}>
+                  <span>Fecha</span>
+                  <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={(value) => setYear(value)}
+                      picker="year"
+                      moment={"YYYY"}
+                      disabledDate={(currentDate) => currentDate.year() > new Date().getFullYear() }
+                      placeholder="Selecciona año"
+                      locale={locale}
+                  />       
+
+                </div>
+              </Col>
+              <Col>
+                <div style={{display:'flex', flexDirection:'column'}}>
+                  <span>Bimestre</span>
+                  <Select
+                    size={"medium"}
+                    key={"period"}
+                    disabled={false}
+                    val={bimester}
+                    onChange={(value) => setBimester(value) }
+                    allowClear
+                    notFoundContent={"No se encontraron resultados."}
+                    showSearch
+                    optionFilterProp="children"
+                    placeholder="Selecciona bimestre"
+                  >{getOptions()}</Select>
+
+                </div>
+              </Col>
+            </Row>
+          </GenericModal>
+          </>) : null}
         </>
       )}
+    </Spin>
     </>
   );
 };

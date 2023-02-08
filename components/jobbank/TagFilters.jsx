@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 import { deleteFiltersJb } from '../../utils/functions';
@@ -15,7 +15,7 @@ const TagFilters = ({
     const newFilters = useMemo(()=>{
         let exist = Object.keys(router.query).length <= 0;
         if(exist) return [];
-        let filters = deleteFiltersJb(router.query, [...deleteKeys, 'page']);
+        let filters = deleteFiltersJb(router.query, [...deleteKeys, 'page','size']);
         return Object.entries(filters);
     },[router.query])
 

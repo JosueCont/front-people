@@ -6,8 +6,7 @@ import {
     getVacanciesOptions,
     getVacantFields,
     getConnectionsOptions,
-    getClientsOptions,
-    getStrategiesOptions
+    getClientsOptions
 } from '../../../redux/jobBankDuck';
 import DetailsPublication from './DetailsPublication';
 import { deleteFiltersJb } from '../../../utils/functions';
@@ -20,8 +19,7 @@ const AddOrEditPublication = ({
     getVacanciesOptions,
     getVacantFields,
     getConnectionsOptions,
-    getClientsOptions,
-    getStrategiesOptions
+    getClientsOptions
 }) => {
 
     const router = useRouter();
@@ -40,8 +38,7 @@ const AddOrEditPublication = ({
             getVacanciesOptions(currentNode.id, '&status=1');
             getVacantFields(currentNode.id);
             getClientsOptions(currentNode.id);
-            getStrategiesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id, '&is_active=true');
+            getConnectionsOptions(currentNode.id, '&conection_type=1');
         }
     },[currentNode])
 
@@ -76,7 +73,6 @@ export default connect(
         getVacanciesOptions,
         getVacantFields,
         getConnectionsOptions,
-        getClientsOptions,
-        getStrategiesOptions
+        getClientsOptions
     }
 )(AddOrEditPublication);

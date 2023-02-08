@@ -10,6 +10,7 @@ import {
   Input,
   message,
   Modal,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -30,6 +31,7 @@ import ListCatalogData from "../forms/ListCatalogData";
 import SelectCostCenter from "../selects/SelectCostCenter";
 import SelectTags from "../selects/SelectTags";
 import SelectProfile from "../selects/SelectProfile";
+import esES from "antd/lib/locale/es_ES";
 
 const TabJobs = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -279,7 +281,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
             </Col>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-                <Input />
+                <Input maxLength={150}/>
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} md={12}>
@@ -307,15 +309,18 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
         </Form>
       )}
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={colJob.filter(col => col.show)}
           dataSource={props.cat_job}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

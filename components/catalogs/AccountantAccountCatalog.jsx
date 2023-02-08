@@ -11,6 +11,7 @@ import {
   message,
   Modal,
   Switch,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -27,6 +28,7 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import esES from "antd/lib/locale/es_ES";
 
 const UrlModel = "/payroll/accountant-account/";
 
@@ -264,15 +266,18 @@ const CostCenterCatalog = ({ permissions,cat_accounts, currentNode,cat_cost_cent
         </Form>
 
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
         <Table
           columns={colsData}
           dataSource={cat_accounts}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

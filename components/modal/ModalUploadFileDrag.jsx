@@ -22,11 +22,12 @@ const ModalUploadFileDrag = ({
     multiple: true,
     showUploadList: false,
     beforeUpload: (file) => {
-      const isXML = file.type === extensionFile;
-      if (!isXML) {
-        message.error(`${file.name} no es un ${extensionFile}.`);
+      console.log(file.type)
+      const isXMLZIP = (file.type === extensionFile  || file.type === 'application/zip');
+      if (!isXMLZIP) {
+        message.error(`${file.name} no es un archivo válido.`);
       }
-      return isXML || Upload.LIST_IGNORE;
+      return isXMLZIP || Upload.LIST_IGNORE;
     },
     onDrop(info){
       setLoading(true)
@@ -109,8 +110,8 @@ const ModalUploadFileDrag = ({
                     Haga clic o arrastre el archivo a esta área para cargar
                   </p>
                   <p className="ant-upload-hint">
-                    Soporte para una carga única o masiva. Sólo se permitan
-                    archivos xml de recibos de nómina
+                    Soporte para una carga única o masiva. Sólo se permiten
+                    archivos xml de recibos de nómina ó archivos .zip que contengan elementos xmls. En caso de elegir archivos comprimidos considerar que dentro sólo debe contener carpetas y xmls.
                   </p>
                 </>
               )}

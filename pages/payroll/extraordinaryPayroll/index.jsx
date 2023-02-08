@@ -32,7 +32,9 @@ import {
   ExclamationCircleOutlined,
   CheckCircleOutlined,
   StopOutlined,
+  FilePdfOutlined,
   FileExcelOutlined,
+  ClearOutlined,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -43,6 +45,7 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
 import {
+  messageDeleteSuccess,
   messageError,
   messageSaveSuccess,
   messageSendSuccess,
@@ -98,6 +101,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   const [infoGenericModal, setInfoGenericModal] = useState(null);
+
+  const getVoucherTypeStr = (type) => {
+    // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
+    switch (type) {
+      case 1:
+        return "Aguinaldo";
+      case 2:
+        return "Finiquito";
+      case 3:
+        return "Liquidacion";
+      default:
+        return "Ordinaria";
+    }
+  };
 
   const persons = [
     {
@@ -224,10 +241,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 <Button
                   size="small"
                   onClick={() => {
-                    downloadReceipt(item);
+                    console.log(item);
+                    downloadReceipt({
+                      person_id: item.person.id,
+                      payment_period_id: periodSelected.id,
+                      receipt_type: getVoucherTypeStr(
+                        item?.payroll_cfdi_person?.movement_type
+                      ),
+                    });
                   }}
                 >
-                  <FileExcelOutlined />
+                  <FilePdfOutlined />
                 </Button>
               </Tooltip>
             </div>
@@ -243,24 +267,63 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
-              <Button
-                size="small"
-                onClick={() => {
-                  setPersonId(item?.person?.id),
-                    console.log(
-                      "🚀 ~ file: index.jsx:175 ~ ExtraordinaryPayroll ~ listPersons",
-                      item.person.id
-                    ),
-                    setModalVisible(true);
-                }}
-              >
-                <PlusOutlined />
-              </Button>
+              <Tooltip placement="top" title="Agrrgar conceptos">
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setPersonId(item?.person?.id), setModalVisible(true);
+                  }}
+                >
+                  <PlusOutlined />
+                </Button>
+              </Tooltip>
             )}
           </>
         ),
     },
+    {
+      title: "",
+      className: "cursor_pointer",
+      render: (item) => (
+        <>
+          {consolidated && item.payroll_cfdi_person && (
+            <div>
+              <Tooltip placement="top" title="Limpiar cálculo">
+                <Button size="small" onClick={() => removeCfdiPerson(item)}>
+                  <ClearOutlined style={{ color: "white" }} />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ),
+    },
   ];
+
+  const removeCfdiPerson = (item) => {
+    setLoading(true);
+    WebApiPayroll.deleteCfdiCalculated({
+      consolidated: item.payroll_cfdi_person.consolidated_payroll,
+      payroll_cfdi: item.payroll_cfdi_person.id,
+      person_id: item.person.id,
+    })
+      .then((response) => {
+        const result = resetStateViews();
+        if (result) {
+          message.success(messageDeleteSuccess);
+          setTimeout(() => {
+            sendCalculateExtraordinaryPayrroll({
+              payment_period: periodSelected.id,
+              movement_type: movementType,
+            });
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error(messageError);
+      });
+  };
 
   const downloadResignationLetter = async (id) => {
     try {
@@ -293,7 +356,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = "Carta de renuncia.pdf";
+      link.download = "comprobante.pdf";
       link.click();
     } catch (error) {
       error &&
@@ -549,8 +612,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getPaymentCalendars = async (value) => {
     await WebApiPayroll.getPaymentCalendar(value)
       .then((response) => {
-        setPaymentCalendars(response.data.results);
-        let calendars = response.data.results.map((item, index) => {
+        const calendarFilter = response.data.results.filter(
+          (item) => item.perception_type.code != "046"
+        );
+        setPaymentCalendars(calendarFilter);
+        let calendars = calendarFilter.map((item, index) => {
           return { key: item.id, label: item.name, value: item.id };
         });
         setOptionsPaymentCalendars(calendars);
@@ -594,7 +660,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const resetStateViews = () => {
-    setExtraOrdinaryPayroll([]);
+    setExtraOrdinaryPayroll(null);
     setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
@@ -608,14 +674,32 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setPersonKeys([]);
     setPersonId(null);
     setListPersons([]);
+    return true;
   };
+
+  const changePeriod = (period_id) => {
+    const result = resetStateViews();
+    if (result) {
+      setPeriodSelcted(calendarSelect.periods.find((p) => p.id == period_id));
+    }
+  };
+
+  useEffect(() => {
+    if (periodSelected) {
+      sendCalculateExtraordinaryPayrroll({
+        payment_period: periodSelected.id,
+        movement_type: movementType,
+        calendar: calendarSelect.id,
+      });
+    }
+  }, [periodSelected]);
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
     if (!movementType) return;
     data.calendar = calendarSelect.id;
     setLoading(true);
-    // setExtraOrdinaryPayroll([]);
-    await WebApiPayroll.extraordinaryPayroll(data)
+    // setExtraOrdinaryPayroll(null);
+    await WebApiPayroll.getExtraordinaryPayroll(data)
       .then((response) => {
         if (response.data.consolidated) {
           if (movementType >= 1) {
@@ -627,32 +711,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           }
           setConsolidated(response.data.consolidated);
-          setExtraOrdinaryPayroll(response.data.payroll);
+          // setExtraOrdinaryPayroll(response.data.payroll);
+          setExtraOrdinaryPayroll(
+            response.data.payroll.sort((a, b) =>
+              a.person.code.localeCompare(b.person.code)
+            )
+          );
         } else {
           setConsolidatedObj(response.data);
-          if (movementType > 1 && extraOrdinaryPayroll.length > 0) {
-            let calculateExist = extraOrdinaryPayroll;
-            response.data.map((item) => {
-              calculateExist = calculateExist.filter(
-                (a) => item.person.id != a.person.id
-              );
-            });
-            response.data.map((item) => {
-              calculateExist[calculateExist.length] = item;
-            });
-
-            setExtraOrdinaryPayroll(
-              calculateExist.sort((a, b) =>
-                a.person.first_name.localeCompare(b.person.first_name)
-              )
-            );
-          } else {
-            setExtraOrdinaryPayroll(
-              response.data.sort((a, b) =>
-                a.person.first_name.localeCompare(b.person.first_name)
-              )
-            );
-          }
+          recalculate(response);
         }
         validatedStatusPayroll(response.data.consolidated);
         setLoading(false);
@@ -662,6 +729,31 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         console.log(error);
         setLoading(false);
       });
+  };
+
+  const recalculate = (response) => {
+    if (extraOrdinaryPayroll == null) {
+      console.log("Else");
+      setExtraOrdinaryPayroll(
+        response.data.sort((a, b) => a.person.code.localeCompare(b.person.code))
+      );
+    } else {
+      let calculateExist = extraOrdinaryPayroll;
+      response.data.map((item) => {
+        calculateExist = calculateExist.filter(
+          (a) => item.person.id != a.person.id
+        );
+      });
+      response.data.map((item) => {
+        calculateExist[calculateExist.length] = item;
+      });
+
+      setExtraOrdinaryPayroll(
+        calculateExist.sort((a, b) =>
+          a.person.code.localeCompare(b.person.code)
+        )
+      );
+    }
   };
 
   const rowSelectionPerson = {
@@ -783,17 +875,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    console.log("🚀 ~ file: index.jsx:623 ~ setPayrollCalculate ~ data", data);
     setExtraOrdinaryPayroll(data.payroll);
     setObjectSend(data);
   };
 
   const validatedStatusPayroll = (data) => {
-    console.log(
-      "🚀 ~ file: index.jsx:625 ~ validatedStatusPayroll ~ data",
-      data
-    );
-
     if (data === null || data === undefined) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
@@ -837,7 +923,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           else setNextStep(false);
         return;
       }
-      if (step == 1) {
+      if (step == 1 && consolidated) {
         setStep(step + 1);
         if (!isOpen) setPreviuosStep(false);
         return;
@@ -1108,7 +1194,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
-  const openPayroll = (type) => {
+  const openPayroll = () => {
     let data = {
       payment_period: periodSelected.id,
       movement_type: movementType,
@@ -1248,19 +1334,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             <Select
                               placeholder="Periodo"
                               size="large"
-                              onChange={(value) => {
-                                resetStateViews(),
-                                  sendCalculateExtraordinaryPayrroll({
-                                    payment_period: value,
-                                    movement_type: movementType,
-                                    calendar: calendarSelect.id,
-                                  });
-                                setPeriodSelcted(
-                                  calendarSelect.periods.find(
-                                    (p) => p.id == value
-                                  )
-                                );
-                              }}
+                              onChange={(value) => changePeriod(value)}
                               options={
                                 calendarSelect
                                   ? calendarSelect.periods
@@ -1330,6 +1404,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
+                              style={{ minWidth: "200px" }}
                               block
                               htmlType="button"
                               onClick={() => calculateExtra()}
@@ -1344,6 +1419,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
+                              style={{ minWidth: "200px" }}
                               block
                               icon={<LockOutlined />}
                               htmlType="button"
@@ -1361,6 +1437,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<UnlockOutlined />}
                             htmlType="button"
@@ -1370,7 +1447,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                 description:
                                   "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
                                 type_alert: "warning",
-                                action: () => openPayroll(1),
+                                action: () => openPayroll(),
                                 title_action_button: "Abrir nómina",
                                 components: (
                                   <>
@@ -1399,6 +1476,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<FileDoneOutlined />}
                             htmlType="button"
@@ -1413,6 +1491,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         <Col md={6} offset={1}>
                           <Button
                             size="large"
+                            style={{ minWidth: "200px" }}
                             block
                             icon={<StopOutlined />}
                             htmlType="button"
@@ -1447,71 +1526,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-
-                      {/* 
-                          {step >= 1 && (
-                            <>
-                             
-                              {step == 2 &&
-                                consolidated &&
-                                consolidated.status < 3 && (
-                                  <Col md={5} offset={1}>
-                                    <Button
-                                      size="large"
-                                      block
-                                      icon={<FileDoneOutlined />}
-                                      htmlType="button"
-                                      onClick={() => setMessageModal(3)}
-                                    >
-                                      Timbrar nómina
-                                    </Button>
-                                  </Col>
-                                )}
-                              {step == 3 && (
-                                <Col md={5} offset={1}>
-                                  <Button
-                                    size="large"
-                                    block
-                                    icon={<StopOutlined />}
-                                    htmlType="button"
-                                    onClick={() =>
-                                      setMessageModal(5, {
-                                        title: "Cancelar nómina",
-                                        description:
-                                          "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
-                                        type_alert: "warning",
-                                        action: () => cancelStamp(),
-                                        title_action_button: "Cancelar nómina",
-                                        components: (
-                                          <>
-                                            <Row
-                                              style={{
-                                                width: "100%",
-                                                marginTop: "5px",
-                                              }}
-                                            >
-                                              <Input.TextArea
-                                                maxLength={290}
-                                                id="motive"
-                                                placeholder="Capture el motivo de cancelacion."
-                                              />
-                                            </Row>
-                                          </>
-                                        ),
-                                      })
-                                    }
-                                  >
-                                    Cancelar todos los cfdis
-                                  </Button>
-                                </Col>
-                              )}
-                            </>
-                          )}
-                        </>
-                      )} */}
                     </Row>
                   </div>
-                  {previousStep && (
+                  {previousStep && step > 0 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(false)}

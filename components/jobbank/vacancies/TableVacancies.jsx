@@ -20,8 +20,9 @@ import { connect } from 'react-redux';
 import { getVacancies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import { optionsStatusVacant } from '../../../utils/constant';
+import { validPaginationJB } from '../../../utils/functions';
 
 const TableVacancies = ({
     load_vacancies,
@@ -29,21 +30,21 @@ const TableVacancies = ({
     list_vacancies,
     getVacancies,
     currentNode,
-    currentPage,
-    currentFilters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [viewAsList, setViewAsList] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacancies(currentNode.id, currentFilters, currentPage);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
             message.success(msg)
         } catch (e) {
@@ -56,7 +57,7 @@ const TableVacancies = ({
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacancies(currentNode.id, currentFilters, currentPage);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -71,7 +72,7 @@ const TableVacancies = ({
             await WebApiJobBank.duplicateVacant(item.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
-                getVacancies(currentNode.id, currentFilters, currentPage);
+                getVacancies(currentNode.id, jobbank_filters, jobbank_page);
             },1000)
         } catch (e) {
             console.log(e)
@@ -82,15 +83,15 @@ const TableVacancies = ({
     }
 
     const openModalManyDelete = () =>{
-        const filter_ = item => item.has_estrategy;
+        const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setViewAsList(true)
+            setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setViewAsList(false);
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -100,44 +101,37 @@ const TableVacancies = ({
     }
 
     const openModalRemove = (item) =>{
-        setViewAsList(item.has_estrategy)
+        setUseToDelete(!item?.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        setViewAsList(false)
+        setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
     const titleDelete = useMemo(()=>{
-        if(viewAsList){
+        if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estas vacantes no se pueden eliminar, ya que
-                se encuentran asociadas a una estrategia.`
+                se encuentran asociadas a una estrategia`
             : `Esta vacante no se puede eliminar, ya que
                 se encuentra asociada a una estrategia`;
         }
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estas vacantes?'
             : '¿Estás seguro de eliminar esta vacante?';
-    },[viewAsList, itemsToDelete])
-
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/vacancies',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current};
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    },[useToDelete, itemsToDelete])
+    
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = validPaginationJB({...router.query, page: current, size: pageSize});
+        router.replace({
+            pathname: '/jobbank/vacancies',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -189,7 +183,7 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                {item.status == 1 && (
+                {/* {item.status == 1 && (
                     <Menu.Item
                         key='4'
                         icon={<SettingOutlined />}
@@ -200,7 +194,7 @@ const TableVacancies = ({
                     >
                         Configurar publicación
                     </Menu.Item>
-                )}
+                )} */}
             </Menu>
         );
     };
@@ -236,12 +230,12 @@ const TableVacancies = ({
     {
         title: 'Estrategia',
         render: (item) =>{
-            return item.has_estrategy ? (
+            return item.has_strategy ? (
                 <a
                     style={{color: '#1890ff'}}
                     onClick={()=> router.push({
                         pathname: '/jobbank/strategies/edit',
-                        query: {id: item.has_estrategy}
+                        query: {id: item.has_strategy}
                     })}
                 >
                     Ver estrategia
@@ -294,21 +288,22 @@ const TableVacancies = ({
             }}
             pagination={{
                 total: list_vacancies.count,
+                pageSize: jobbank_page_size,
                 current: jobbank_page,
-                hideOnSinglePage: true,
-                showSizeChanger: false
+                showSizeChanger: list_vacancies.count > jobbank_page_size,
+                hideOnSinglePage: list_vacancies.count <= jobbank_page_size
             }}
         />
-        <DeleteItems
+        <ListItems
             title={titleDelete}
             visible={openModalDelete}
             keyTitle='job_position'
             keyDescription='customer, name'
             close={closeModalDelete}
-            itemsToDelete={itemsToDelete}
-            actionDelete={actionDelete}
-            textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
-            viewAsList={viewAsList}
+            itemsToList={itemsToDelete}
+            actionConfirm={actionDelete}
+            textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+            useWithAction={useToDelete}
         />
     </>
   )
@@ -319,7 +314,9 @@ const mapState = (state) =>{
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
         jobbank_page: state.jobBankStore.jobbank_page,
-        currentNode: state.userStore.current_node
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        currentNode: state.userStore.current_node,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size
     }
 }
 

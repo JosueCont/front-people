@@ -57,6 +57,49 @@ const CfdiVaucher = ({
   const [lenData, setLenData] = useState(0);
   const [page, setPage] = useState(1);
 
+  const getVoucherTypeStr=(type)=>{
+   // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
+     switch (type){
+       case 1:
+         return 'Aguinaldo';
+       case 2:
+         return 'Finiquito';
+       case 3:
+         return 'Liquidacion';
+       default:
+         return 'Ordinaria'
+     }
+  }
+
+  const downloadReceipt = async (data) => {
+    console.log(data)
+    let req = {
+      person_id: data?.payroll_person?.person?.id,
+      payment_period_id: data?.payment_period?.id,
+      receipt_type: getVoucherTypeStr(data.movement_type)
+
+    }
+
+    try {
+      let response = await WebApiPayroll.downLoadReceipt(req);
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "comprobante_2.pdf";
+      link.click();
+    } catch (error) {
+      error &&
+      error.response &&
+      error.response.data &&
+      error.response.data.message &&
+      message.error(error.response.data.message);
+    }
+  };
+
   const pagination = async (page, pageSize) => {
     setPage(page);
     if (calendar) {
@@ -161,6 +204,15 @@ const CfdiVaucher = ({
                 </a>
               )
             )}
+
+            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"} key={"#3d78b9"}>
+              <FilePdfTwoTone
+                  onClick={() => downloadReceipt(item)}
+                  style={{ fontSize: "25px" }}
+              />
+            </Tooltip>
+
+
             {!viewFilter && (
               <Tooltip title="Cancelar" color={"#3d78b9"} key={"#3d78b9"}>
                 <Button
@@ -266,6 +318,7 @@ const CfdiVaucher = ({
           item.key = item.id;
           return item;
         });
+        console.log('setCfdis', cfdi_data)
         setCfdis(cfdi_data);
         setLoading(false);
       })

@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons';
 import { getProfilesList } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableProfiles = ({
@@ -27,8 +27,7 @@ const TableProfiles = ({
     load_clients_options,
     list_clients_options,
     getProfilesList,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -40,7 +39,7 @@ const TableProfiles = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteProfile({ids});
-            getProfilesList(currentNode.id, currentFilters, currentPage);
+            getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Templates eliminados' : 'Template eliminado';
             message.success(msg);
         } catch (e) {
@@ -57,7 +56,7 @@ const TableProfiles = ({
             await WebApiJobBank.duplicateProfile(item.id);
             setTimeout(()=>{
                 message.success({content: 'Template duplicado', key});
-                getProfilesList(currentNode.id, currentFilters, currentPage);
+                getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
             },1000);
         } catch (e) {
             console.log(e);
@@ -221,7 +220,7 @@ const TableProfiles = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos templates?'
                     : '¿Estás seguro de eliminar este template?'
@@ -229,8 +228,8 @@ const TableProfiles = ({
                 visible={openModalDelete}
                 keyTitle='name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )
@@ -243,6 +242,7 @@ const mapState = (state) =>{
         list_clients_options: state.jobBankStore.list_clients_options,
         load_clients_options: state.jobBankStore.load_clients_options,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

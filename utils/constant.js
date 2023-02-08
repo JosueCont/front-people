@@ -374,12 +374,12 @@ export const movementType = [
 
 export const salaryDays = [
   {
-    label: "Dias naturales",
+    label: "Días naturales",
     value: 1,
     key: 1,
   },
   {
-    label: "30 dias",
+    label: "30 días",
     value: 2,
     key: 2,
   },
@@ -485,7 +485,7 @@ export const optionsTypeSale = [
 ];
 
 export const optionsStatusSelection = [
-  { value: 0, key: 0, label: "Sin iniciar"},
+  { value: 0, key: 0, label: "Sin iniciar" },
   { value: 1, key: 1, label: "Filtro telefónico" },
   { value: 2, key: 2, label: "Entrevista con HEX" },
   { value: 3, key: 3, label: "Enviado a cliente" },
@@ -493,6 +493,26 @@ export const optionsStatusSelection = [
   { value: 5, key: 5, label: "Rechazado" },
   { value: 6, key: 6, label: "Aceptado" },
   { value: 7, key: 7, label: "Contratado" },
+];
+
+export const optionsStatusAsignament = [
+  { value: 1, key: 1, label: 'Asignada' },
+  { value: 2, key: 2, label: 'Enviada' },
+  { value: 3, key: 3, label: 'Finalizada' },
+  { value: 4, key: 4, label: 'No finalizada'}
+]
+
+export const optionsTypeNotify = [
+  { value: 0, key: 0, label: "Informativa" },
+  { value: 1, key: 1, label: "Seguimiento" },
+  { value: 2, key: 2, label: "Recordatorio" },
+  { value: 3, key: 3, label: "Alerta" },
+  { value: 4, key: 4, label: "Error" },
+];
+
+export const optionsSourceJB = [
+  { value: 0, key: 0, label: "Correo" },
+  { value: 1, key: 1, label: "WhatsApp" },
 ];
 
 export const optionsEconomicBenefits = [
@@ -517,6 +537,25 @@ export const optionsDomainLang = [
   { value: 3, key: 3, label: "Avanzado" },
   { value: 4, key: 4, label: "Experto" },
 ];
+
+export const optionsTypeConnection = [
+  {value: 1, key: 1, label: 'Publicaciones'},
+  {value: 2, key: 2, label: 'Notificaciones'},
+  {value: 3, key: 3, label: 'Agenda'}
+];
+
+export const optionsConnectionsJB = [
+  {label: 'Facebook', value: 'FB', key: 'FB', type: 1},
+  {label: 'Instagram', value: 'IG', key: 'IG', type: 1},
+  {label: 'Linkedin', value: 'LK', key: 'LK', type: 1, disabled: true},
+  {label: 'WhatsApp', value: 'WP', key: 'WP', type: 2},
+  {label: 'Google Calendar', value: 'GC', key: 'GC', type: 3}
+];
+
+export const optionsSourceType = [
+  {label: 'Khor', value: 1, key: 1},
+  {label: 'Cliente', value: 2, key: 2},
+]
 
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
@@ -557,10 +596,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
     let url = window.location.href;
     if (tenant) {
       let link = url.split(".");
-      if (getTenant){
-        const tenantSolo = link[0].split("://")
+      if (getTenant) {
+        const tenantSolo = link[0].split("://");
         return tenantSolo[1];
-      }else{
+      } else {
         return link[0];
       }
     } else {
@@ -597,7 +636,7 @@ export const catalogsJobbank = [
   { catalog: "jobboars", name: "Bolsas de empleo" },
   // { catalog: "types", name: "Tipos de notificación" },
   { catalog: "messages", name: "Mensajes de notificación" },
-  { catalog: "scholarship", name: "Escolaridad" }
+  { catalog: "scholarship", name: "Escolaridad" },
 ];
 
 export const departureMotive = [
@@ -633,4 +672,12 @@ export const CareerlabAccess = [
     label: "No",
     value: false,
   },
+];
+
+// INFONAVIT
+
+export const InfonavitDiscountType = [
+  { value: 1, label: "Por porcentaje" },
+  { value: 2, label: "Cuota fija (CF)" },
+  { value: 3, label: "Veces de salario mínimo (VSM)" },
 ];

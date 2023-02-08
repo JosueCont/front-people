@@ -31,8 +31,9 @@ const SearchSelection = () => {
     }
 
     const showModal = () =>{
-        let status = router.query?.status ? parseInt(router.query.status) : null;
-        formSearch.setFieldsValue({...router.query, status});
+        let status_process = router.query?.status_process ? parseInt(router.query.status_process) : null;
+        let candidate = router.query?.candidate ? parseInt(router.query.candidate) : null;
+        formSearch.setFieldsValue({...router.query, status_process, candidate});
         setOpenModal(true)
     }
 
@@ -48,7 +49,7 @@ const SearchSelection = () => {
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Filtros aplicados
+                                Proceso de selección
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>

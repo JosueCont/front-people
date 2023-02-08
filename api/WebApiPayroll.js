@@ -178,6 +178,14 @@ class WebApiPayroll {
     );
   }
 
+  static deleteCfdiCalculated(data) {
+    return WebApi.ApisType(
+      `payroll/consolidated_payroll/delete_cfdi_calculated/`,
+      "post",
+      data
+    );
+  }
+
   static cancelCfdi(data) {
     return WebApi.ApisType(
       `payroll/cfdi_multi_emitter_facturama/cancel_cfdi/`,
@@ -218,7 +226,7 @@ class WebApiPayroll {
     );
   }
 
-  static extraordinaryPayroll(data) {
+  static getExtraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 
@@ -294,6 +302,41 @@ class WebApiPayroll {
 
   static downLoadReceipt(data) {
     return WebApi.ApisType("/payroll/payroll-receipt", "post", data);
+  }
+
+  static getVacationsRecord(person_id) {
+    return WebApi.ApisType(
+      `/payroll/person-vacations-record/?person=${person_id}`,
+      "get"
+    );
+  }
+
+  static saveVacationsRecord(data) {
+    return WebApi.ApisType("/payroll/person-vacations-record", "post", data);
+  }
+
+  static updateVacationsRecord(id, data) {
+    return WebApi.ApisType(
+      `/payroll/person-vacations-record/${id}/`,
+      "patch",
+      data
+    );
+  }
+
+  static getPeople({id,search}){
+    return WebApi.ApisType(
+      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search :''}`,
+      'get'
+    );
+  }
+
+  static addMassiveCalendar(data){
+    console.log(data)
+    return WebApi.ApisType(
+      "/payroll/assign-calendar-employees",
+      "post",
+      data
+    );
   }
 }
 

@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import { DeleteOutline } from "@material-ui/icons";
 import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import ModalMassiveCalendar from "../../../components/modal/ModalMassiveCalendar";
 
 const PaymentCalendars = ({ ...props }) => {
   const { Column } = Table;
@@ -35,6 +36,7 @@ const PaymentCalendars = ({ ...props }) => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [titleModal, setTitleModal] = useState("Crear");
   const [idPaymentCalendar, setIdPaymentCalendar] = useState(null);
+  const [modalCalendar, setModalCalendar] = useState(false);
 
   useEffect(() => {
     if (props.currentNode && props.currentNode != undefined)
@@ -50,6 +52,7 @@ const PaymentCalendars = ({ ...props }) => {
           item.key = index;
           return item;
         });
+        console.log('calendarios',data)
         setPaymentCalendars(data);
         setLoading(false);
       })
@@ -126,6 +129,25 @@ const PaymentCalendars = ({ ...props }) => {
         </Breadcrumb>
         <Row justify="end">
           <Col>
+          <Button 
+            style={{
+              fontWeight: "bold",
+              color: "white",
+              marginTop: "auto",
+              marginRight:'15px',
+              marginBottom:'10px',
+              border: "none",
+              padding: "0 30px",
+              background: "#7B25F1 !important",
+            }}
+            onClick={() =>
+              setModalCalendar(true)
+            }
+            key="btn_massive_calendar"
+            size="large">
+              <PlusCircleOutlined />
+              <small style={{ marginLeft: 10 }}>Asignación masiva calendarios</small>
+          </Button>
             <Button
               style={{
                 fontWeight: "bold",
@@ -328,7 +350,7 @@ const PaymentCalendars = ({ ...props }) => {
         maskClosable={false}
         confirmLoading={loading}
         centered
-        okText="Si, eliminar"
+        okText="Sí, eliminar"
         cancelText="Cancelar"
       >
         <Row justify="center" align="middle">
@@ -339,13 +361,17 @@ const PaymentCalendars = ({ ...props }) => {
               message="¿Está seguro de eliminar este calendario?"
               description={
                 <p style={{ textAlign: "justify", paddingLeft: 15 }}>
-                  Al eliminar este calendario no se podra recuperar
+                  Al eliminar este calendario no se podrá recuperar
                 </p>
               }
             />
           </Col>
         </Row>
       </Modal>
+      <ModalMassiveCalendar 
+        visible={modalCalendar}
+        setVisible={() => setModalCalendar(false)}
+        calendars={paymentCalendars}/>
     </>
   );
 };

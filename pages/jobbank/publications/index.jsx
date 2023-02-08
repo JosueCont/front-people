@@ -22,14 +22,12 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentFilters, setCurrentFilters] = useState('');
 
     useEffect(()=>{
         if(currentNode){
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getConnectionsOptions(currentNode.id, '&is_active=true');
+            getConnectionsOptions(currentNode.id, '&conection_type=1');
         }
     },[currentNode])
 
@@ -38,8 +36,6 @@ const index = ({
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let filters = getFiltersJB(router.query);
             getPublications(currentNode.id, filters, page);
-            setCurrentPage(page)
-            setCurrentFilters(filters)
         }
     },[currentNode, router.query])
 
@@ -49,10 +45,7 @@ const index = ({
             extraBread={[{name: 'Publicaciones'}]}
         >
             <SearchPublications/>
-            <TablePublications
-                currentPage={currentPage}
-                currentFilters={currentFilters}
-            />
+            <TablePublications/>
         </MainIndexJB>
     )
 }

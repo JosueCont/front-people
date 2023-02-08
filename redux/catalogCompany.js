@@ -319,7 +319,8 @@ export const getWorkTitle = (idCompany) => async (dispatch, getState) => {
 export const getCostCenter = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.centerCost(idCompany)
     .then((response) => {
-      dispatch({ type: COST_CENTER, payload: response.data.results });
+      let costs = _.orderBy(response.data.results, ['code'],['asc']);
+      dispatch({ type: COST_CENTER, payload: costs });
     })
     .catch((error) => {
       dispatch({ type: COST_CENTER, payload: [] });
@@ -329,9 +330,10 @@ export const getCostCenter = (idCompany) => async (dispatch, getState) => {
 export const getTags = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.tags(idCompany)
     .then((response) => {
+      let tags = _.orderBy(response.data.results, ['name'],['asc']);
       dispatch({
         type: TAGS,
-        payload: { data: response.data.results, error: null },
+        payload: { data: tags, error: null },
       });
     })
     .catch((error) => {

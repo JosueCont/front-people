@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Typography,
   Form,
@@ -13,6 +13,7 @@ import {
   Select,
   Tabs,
   Switch,
+  ConfigProvider
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -30,6 +31,8 @@ import {
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import {showHideMessage} from "../../redux/NotificationDuck";
+import esES from "antd/lib/locale/es_ES";
+import _ from "lodash";
 
 const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
   const { TabPane } = Tabs;
@@ -42,6 +45,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
+  const [search, setSearch] = useState('');
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
@@ -101,6 +105,12 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       },
     },
   ];
+
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
 
   useEffect(() => {
     resetForm();
@@ -368,7 +378,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50}/>
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} md={12}>
@@ -515,6 +525,28 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       );
   }, [intConcept]);
 
+  const debouncedResults = useMemo(() => {
+    return _.debounce((e) => handleChange(e), 1000);
+  }, []);
+
+  const handleChange = (e) =>  {
+    const { value } = e.target;
+    setSearch(value);
+  }
+
+  let newCatalog = catalog;
+
+  if(search !== ''){
+     newCatalog = !!catalog && catalog.filter(cat => (
+      cat.description.toLowerCase().includes(search.toLowerCase()) 
+      || cat.code.toLowerCase().includes(search.toLowerCase())
+      || cat.perception_type?.code.includes(search)
+      || cat.other_type_payment?.code.includes(search)
+      || cat.deduction_type?.code.includes(search)
+   ));
+  }
+  
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -563,15 +595,24 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       </Tabs>
 
       <Spin tip="Cargando..." spinning={loading}>
+        <ConfigProvider locale={esES}>
+          <Row style={{marginBottom:'15px'}}>
+            <Col>
+              <Input placeholder="Buscar" allowClear onChange={debouncedResults} />
+            </Col>
+          </Row>
         <Table
           columns={columns}
-          dataSource={catalog}
+          dataSource={newCatalog}
+          //dataSource={filterData()}
+          pagination={{showSizeChanger:true}}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
         />
+        </ConfigProvider>
       </Spin>
     </>
   );

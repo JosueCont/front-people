@@ -13,6 +13,7 @@ import {
   message,
   Tooltip,
   Alert,
+  ConfigProvider
 } from "antd";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +41,7 @@ import {
   messageUpdateSuccess
 } from "../../utils/constant";
 import { verifyMenuNewForTenant } from "../../utils/functions";
+import esES from "antd/lib/locale/es_ES";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -134,16 +136,21 @@ const businessForm = ({ currentNode, ...props }) => {
     data.append("name", name);
     data.append("description", description);
     fNode && data.append("parent", fNode);
+    data.append("active", true);
     setAddB(true);
+    setLoading(true)
 
-    data.append("image", logo);
+
     data.append("person", personId);
     setLoading(true);
-    if (logo == null || logo == undefined) {
-      message.error("Agregue una imagen");
-      setAddB(false);
-      return;
+    if(logo){
+      data.append("image", logo);
     }
+    // if (logo == null || logo == undefined) {
+    //   message.error("Agregue una imagen");
+    //   setAddB(false);
+    //   return;
+    // }
     WebApiPeople.createNode(data)
       .then(function (response) {
         if (response.status === 200) {
@@ -154,12 +161,12 @@ const businessForm = ({ currentNode, ...props }) => {
         setAddB(false);
         getCopaniesList();
         message.success(messageSaveSuccess);
+        setLoading(false)
       })
       .catch(function (error) {
         setAddB(false);
         message.error(messageError);
         setLoading(false);
-        console.log(error);
       });
   };
 
@@ -462,19 +469,24 @@ const businessForm = ({ currentNode, ...props }) => {
         <Row>
           <Col span={24}>
             {treeTable ? (
-              <Table
-                className={"mainTable"}
-                scroll={{ x: 300 }}
-                size="small"
-                columns={columns}
-                dataSource={business}
-                loading={loading}
-                locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : "No se encontraron resultados.",
-                }}
-              />
+              <ConfigProvider locale={esES}>
+                <Table
+                  className={"mainTable"}
+                  scroll={{ x: 300 }}
+                  size="small"
+                  columns={columns}
+                  dataSource={business}
+                  loading={loading}
+                  pagination={{
+                    showSizeChanger:true,
+                  }}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
+                />
+              </ConfigProvider>
             ) : (
               <NodeTreeView />
             )}
@@ -494,6 +506,7 @@ const businessForm = ({ currentNode, ...props }) => {
             form="addBusinessForm"
             type="primary"
             key="submit"
+            loading={loading}
             htmlType="submit"
             disabled={addB}
           >

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, message } from 'antd';
+import { Row, Col, message, Switch } from 'antd';
 import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import SearchCatalogs from '../SearchCatalogs';
@@ -45,6 +45,41 @@ const ViewTemplates = ({
         }
     }
 
+    const actionStatus = async (checked, item) =>{
+        try {
+            await WebApiJobBank.updateProfileTypeForm(item.id, {form_enable: checked});
+            getProfilesTypes(currentNode.id, filtersString);
+            message.success('Edicicón actualizada');
+        } catch (e) {
+            console.log(e)
+            message.success('Edicicón no actualizada');
+            message.error(msg);
+        }
+    }
+
+    const extraColumns = [
+        {
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
+        },
+        {
+            title: 'Editable',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={item.form_enable}
+                        checked={item.form_enable}
+                        checkedChildren="Sí"
+                        unCheckedChildren="No"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }
+        }
+    ]
+
     return (
         <Row gutter={[0,24]}>
             <Col span={24}>
@@ -64,6 +99,7 @@ const ViewTemplates = ({
                     catalogResults={mainData}
                     catalogLoading={loading}
                     numPage={currentPage}
+                    extraColumns={extraColumns}
                     actionBtnEdit={(item)=> router.push({
                         pathname: '/jobbank/settings/catalogs/profiles/edit',
                         query: {...filtersQuery, id: item.id}

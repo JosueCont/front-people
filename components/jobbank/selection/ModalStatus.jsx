@@ -18,7 +18,7 @@ const ModalStatus = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         formStatus.setFieldsValue({
-            status: itemToEdit.status
+            status_process: itemToEdit.status_process
         })
     },[itemToEdit])
 
@@ -49,17 +49,16 @@ const ModalStatus = ({
                 form={formStatus}
             >
                 <Row>
-                    {/* <Col> */}
-                    {/* </Col> */}
                     <Col span={24}>
                         <Form.Item
-                            name='status'
+                            name='status_process'
                             label='Estatus'
                             rules={[ruleRequired]}
                         >
                             <Select
                                 allowClear
                                 showSearch
+                                disabled
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 options={optionsStatusSelection}

@@ -26,6 +26,7 @@ const ModalEducation = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
+        itemToEdit.study_level = itemToEdit.study_level?.id ?? null;
         formEducation.setFieldsValue(itemToEdit);
     },[itemToEdit])
 

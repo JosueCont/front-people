@@ -25,7 +25,7 @@ import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPublications } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import ModalPost from './ModalPost';
 import { optionsStatusVacant } from '../../../utils/constant';
 
@@ -38,8 +38,7 @@ const TablePublications = ({
     list_connections_options,
     load_connections_options,
     getPublications,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -55,7 +54,7 @@ const TablePublications = ({
         try {
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
             setTimeout(()=>{
-                getPublications(currentNode.id, currentFilters, currentPage);
+                getPublications(currentNode.id, jobbank_filters, jobbank_page);
                 message.success({content: 'Vacante publicada', key});
             }, 1000)
         } catch (e) {
@@ -73,7 +72,7 @@ const TablePublications = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deletePublication({ids});
-            getPublications(currentNode.id, currentFilters, currentPage);
+            getPublications(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Publicaciones eliminadas' : 'Publicación eliminada';
             message.success(msg);
         } catch (e) {
@@ -103,17 +102,9 @@ const TablePublications = ({
         setItemsToDelete([])
     }
 
-    const nameAndIcon = (item) =>{
-        const list = {
-            FB: { icon: <FacebookOutlined/>, color: "#3b5999"},
-            IG: { icon: <InstagramOutlined />, color: "#E1306C"}
-        }
-        return list[item.code];
-    }
-
     const getRed = (item) =>{
         if(item.account_to_share?.length <= 0) return [];
-        const red = record => item.account_to_share.includes(record.id);
+        const red = record => item.account_to_share?.includes(record.code);
         return list_connections_options.filter(red);
     }
 
@@ -174,16 +165,18 @@ const TablePublications = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
-                    key='1'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/publications/edit`,
-                        query:{...router.query, id: item.id }
-                    })}
-                >
-                    Editar
-                </Menu.Item> */}
+                {!item.is_published && (
+                    <Menu.Item
+                        key='1'
+                        icon={<EditOutlined/>}
+                        onClick={()=> router.push({
+                            pathname: `/jobbank/publications/edit`,
+                            query:{...router.query, id: item.id }
+                        })}
+                    >
+                        Editar
+                    </Menu.Item>
+                )}
                 {/* <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
@@ -259,14 +252,14 @@ const TablePublications = ({
         //         )
         //     }
         // },
-        // {
-        //     title: 'Estatus',
-        //     render: (item) =>{
-        //         return(
-        //             <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
-        //         )
-        //     }
-        // },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
+                )
+            }
+        },
         {
             // title: ()=> {
             //     return(
@@ -281,7 +274,7 @@ const TablePublications = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -297,7 +290,7 @@ const TablePublications = ({
                 rowKey='id'
                 columns={columns}
                 loading={load_publications}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 onChange={onChangePage}
                 dataSource={list_publications.results}
                 locale={{ emptyText: load_publications
@@ -318,7 +311,7 @@ const TablePublications = ({
                 close={closeModalShare}
                 itemToPublish={itemToPublish}
             />
-            <DeleteItems
+            <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estas publicaciones?'
                     : '¿Estás seguro de eliminar esta publicación?'
@@ -327,8 +320,8 @@ const TablePublications = ({
                 keyTitle='vacant, job_position'
                 keyDescription='profile, name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
         </>
     )
@@ -338,10 +331,11 @@ const TablePublications = ({
 const mapState = (state) =>{
     return{
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
         list_connections_options: state.jobBankStore.list_connections_options,
-        list_connections_options: state.jobBankStore.list_connections_options,
+        load_connections_options: state.jobBankStore.load_connections_options,
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }

@@ -158,6 +158,14 @@ const ModalConceptsPayroll = ({
     );
   };
 
+  const resetperceptionsDeductions = () => {
+    setConcepts([]);
+    setPerceptions([]);
+    setDeductions([]);
+    setOtherPayments([]);
+    createObjectSend();
+  };
+
   const RenderConcept = ({ data = [], type }) => {
     return (
       <>
@@ -330,6 +338,14 @@ const ModalConceptsPayroll = ({
 
     clearConcept();
     calendar.payroll = data;
+    console.log(
+      "🚀 ~ file: ModalConceptsPayroll.jsx:341 ~ createObjectSend ~ data",
+      data
+    );
+    if (!extraOrdinary) {
+      calendar.status = true;
+      calendar.persona_edit = person_id;
+    }
     sendCalculatePayroll(calendar);
   };
 
@@ -374,6 +390,19 @@ const ModalConceptsPayroll = ({
       footer={
         <Col>
           <Space>
+            {!extraOrdinary && (
+              <Button
+                size="large"
+                htmlType="button"
+                onClick={() => {
+                  resetperceptionsDeductions();
+                }}
+                style={{ paddingLeft: 50, paddingRight: 50 }}
+              >
+                Reiniciar conceptos
+              </Button>
+            )}
+
             <Button
               size="large"
               htmlType="button"
@@ -396,11 +425,19 @@ const ModalConceptsPayroll = ({
                 htmlType="button"
                 disabled={ceros && currentStep == 2 ? true : false}
                 onClick={() =>
-                  currentStep == 2 ? createObjectSend() : listConcepts()
+                  movementType == 3
+                    ? createObjectSend()
+                    : currentStep == 2
+                    ? createObjectSend()
+                    : listConcepts()
                 }
                 style={{ paddingLeft: 50, paddingRight: 50 }}
               >
-                {currentStep == 2 ? "Guardar" : "Siguiente"}
+                {movementType == 3
+                  ? "Guardar"
+                  : currentStep == 2
+                  ? "Guardar"
+                  : "Siguiente"}
               </Button>
             ) : (
               <></>

@@ -11,6 +11,7 @@ import {
   Modal,
   Alert,
   Space,
+  ConfigProvider
 } from "antd";
 import {
   EditOutlined,
@@ -27,6 +28,7 @@ import { connect } from "react-redux";
 import WebApiFiscal from '../../../api/WebApiFiscal';
 import moment from 'moment';
 import { verifyMenuNewForTenant } from "../../../utils/functions"
+import esES from "antd/lib/locale/es_ES";
 
 const integrationFactorsIndex = ({ ...props }) =>{
 
@@ -96,7 +98,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
 
   const integrationFactorsColumns = [
     {
-      title: "Descripción",
+      title: "Nombre",
       key: "description",
       dataIndex: 'description',
       render: (description) => description || ""
@@ -248,6 +250,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
         </Row>
         <Row justify="end" style={{ marginTop: 30 }}>
           <Col span={24}>
+          <ConfigProvider locale={esES}>
             <Table 
               className="table-data"
               columns={integrationFactorsColumns}
@@ -261,11 +264,13 @@ const integrationFactorsIndex = ({ ...props }) =>{
                   : "No se encontraron resultados.",
               }}
               pagination = {{
-                pageSize: 10,
-                total: integratorFsctorsList?.count
+                // pageSize: 10,
+                total: integratorFsctorsList?.count,
+                showSizeChanger:true
                 
               }}
             />
+          </ConfigProvider> 
           </Col>
         </Row>
     </MainLayout>

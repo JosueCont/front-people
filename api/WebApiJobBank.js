@@ -59,6 +59,30 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/vacant/massive_delete/', 'post', data);
     }
 
+    // Evaluaciones de las vacantes
+
+    static getEvaluationsVacant(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/?vacant=${id}`, 'get')
+    }
+
+    static addEvaluationVacant(data){
+        return WebApi.ApisType('/job-bank/vacant-assessment/', 'post', data)
+    }
+
+    static updateEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'put', data)
+    }
+
+    static updateStatusEvaluation(id, data){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'patch', data)
+    }
+
+    static deleteEvaluation(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment/${id}/`, 'delete')
+    }
+
+    //////////////////////////////
+
     static getStrategies(node, query){
         return WebApi.ApisType(`/job-bank/strategy/?node=${node}${query}`, 'get')
     }
@@ -223,8 +247,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/share/`, 'post', data);
     }
 
-    static getListSelection(node){
-        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}`, 'get');
+    static getListSelection(node, query){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/?node=${node}${query}`, 'get');
     }
 
     static createSelection(data){
@@ -235,12 +259,20 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'put', data);
     }
 
+    static updateDetailSelection(id, data){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
+    }
+
     static updateSelectionStatus(id, data){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'patch', data);
     }
 
     static deleteSelection(id){
         return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'delete');
+    }
+
+    static getInfoSelection(id){
+        return WebApi.ApisType(`/job-bank/candidates-vacancy/${id}/`, 'get');
     }
 
     //LISTADO DE CATÁLOGOS
@@ -341,6 +373,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'put', data);
     }
 
+    static updateProfileTypeForm(id, data){
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'patch', data);
+    }
+
     static deleteProfileType(id){
         return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
@@ -390,7 +426,23 @@ class WebApiJobBank {
     //TEMPLATE DE NOTIFICACIONES
 
     static getTemplateNotification(node, query){
-        return WebApi.ApisType(`/job-bank/template-notification/?node=${node}${query}`, 'get');
+        return WebApi.ApisType(`/job-bank/notification/?node=${node}${query}`, 'get');
+    }
+
+    static getInfoNotification(id){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'get');
+    }
+
+    static createTemplateNotification(data){
+        return WebApi.ApisType('/job-bank/notification/', 'post', data);
+    }
+
+    static updateTemplateNotification(id, data){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'put', data);
+    }
+
+    static deleteTemplateNotification(id){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'delete');
     }
 
     //TAGS DE NOTIFICACIONES
@@ -398,7 +450,48 @@ class WebApiJobBank {
     static getTagsNotification(node, query){
         return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
     }
+
+    //AGENGAS - ENTREVISTAS
+
+    static getInterviews(node, query){
+        return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
+    }
+
+    static createInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
+    }
+
+    static updateInterview(id, data){
+        return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
+    }
+
+    static deleteInterview(data){
+        return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
+    }
+
+    static deleteProcessSelection(id){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'delete')
+    }
+
+    static updateProcessSelection(id, values){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
+    }
+
+    static getVacancyAssesmentCandidateVacancy(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/?candidate_vacancy=${id}`, 'get')
+    }
+
+    static addVacancyAssesmentCandidateVacancy(values){
+        return WebApi.ApisType('/job-bank/vacant-assessment-candidate-vacancy/', 'post', values)
+    }
+
+    static deleteVacancyAssesmentCandidateVacancy(id){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'delete')
+    }
     
+    static editVacancyAssesmentCandidateVacancy(id, values){
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'patch', values)
+    }
 }
 
 export default WebApiJobBank;

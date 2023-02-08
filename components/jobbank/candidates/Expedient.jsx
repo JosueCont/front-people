@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Tooltip, message } from 'antd';
+import { Button, Tooltip, message, Dropdown, Menu } from 'antd';
 import { pdf } from '@react-pdf/renderer';
 import DocExpedient from './DocExpedient';
 import {
@@ -16,12 +16,42 @@ const Expedient = ({
 
     const [loading, setLoading] = useState(false);
 
-    const MyDoc = () => <DocExpedient
-        infoCandidate={infoCandidate}
-        infoEducation={infoEducation}
-        infoExperience={infoExperience}
-        infoPositions={infoPositions}
-    />;
+    const MyDoc = (partial) => {
+
+        let partialEducation = []
+        let partialPositions = []
+
+        if(partial && partial.partial){
+
+            infoEducation.sort((a, b) => {
+                if (a.end_date > b.end_date) return -1;
+                if (a.end_date < b.end_date) return 1;
+                return 0;
+              });
+
+            infoPositions.sort((a, b) => {
+                if (a.end_date > b.end_date) return -1;
+                if (a.end_date < b.end_date) return 1;
+                return 0;
+              });
+
+            infoEducation.forEach((edu, index) => {
+                index <= 2 && partialEducation.push(edu)
+            })
+
+            infoPositions.forEach((edu, index) => {
+                index <= 2 && partialPositions.push(edu)
+            })
+            
+        }
+
+        return (<DocExpedient
+            infoCandidate={infoCandidate}
+            infoEducation={ partialEducation?.length > 0 ? partialEducation : infoEducation }
+            infoExperience={infoExperience}
+            infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+        />)
+    }
 
     const linkTo = (url, download = false ) =>{
         let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
@@ -32,12 +62,12 @@ const Expedient = ({
         link.click();
     }
 
-    const generatePDF = async (download) =>{
+    const generatePDF = async (download, partial) =>{
         const key = 'updatable';
         message.loading({content: 'Generando PDF...', key});
         try {
             setLoading(true)
-            let resp = await pdf(<MyDoc/>).toBlob();
+            let resp = await pdf(<MyDoc partial = {partial}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
                 setLoading(false);
@@ -55,6 +85,25 @@ const Expedient = ({
         }
     }
 
+    const menuItems = 
+        <Menu>
+            <Menu.Item key={1}>
+                <a
+                    onClick={()=> generatePDF(true, false)}
+                >
+                    Expediente completo
+                </a>
+            </Menu.Item>
+            <Menu.Item key={2}>
+                <a
+                    onClick={()=> generatePDF(true, true)}
+                >
+                    Expediente resumido
+                </a>
+            </Menu.Item>
+        </Menu>
+
+
     return (
         <>
             <Tooltip title='Visualizar expediente'>
@@ -66,14 +115,23 @@ const Expedient = ({
                     Expediente
                 </Button>
             </Tooltip>
-            <Tooltip title='Descargar expediente'>
-                <Button
+            <Tooltip title=''>
+                {/* <Button
                     loading={loading}
                     icon={<DownloadOutlined/>}
                     onClick={()=> generatePDF(true)}
                 >
                     Expediente
+                </Button> */}
+                <Dropdown overlay={menuItems}>
+                    <Button
+                    loading={loading}
+                    icon={<DownloadOutlined/>}
+                    // onClick={()=> generatePDF(true)}
+                >
+                    Descargar expediente
                 </Button>
+                </Dropdown>
             </Tooltip>
         </>
     )

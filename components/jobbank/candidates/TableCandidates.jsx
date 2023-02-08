@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -12,12 +12,17 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    DownloadOutlined,
+    LinkOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import Clipboard from '../../../components/Clipboard';
+import { pdf } from '@react-pdf/renderer';
+import HighDirectionReport from './HighDirectionReport';
+import { copyContent } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -25,20 +30,21 @@ const TableCandidates = ({
     getCandidates,
     list_candidates,
     load_candidates,
-    currentPage,
-    currentFilters
+    jobbank_filters
 }) => {
 
     const router = useRouter();
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
         } catch (e) {
@@ -51,7 +57,7 @@ const TableCandidates = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidates(currentNode.id, currentFilters, currentPage);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
         } catch (e) {
@@ -61,22 +67,95 @@ const TableCandidates = ({
         }
     }
 
-    const openModalManyDelete = () =>{
-        if(itemsToDelete.length > 1){
-            setOpenModalDelete(true)
-        }else{
-            setOpenModalDelete(false)
-            message.error('Selecciona al menos dos candidatos')
+    const MyDoc = ({ infoCandidate, infoEducation, infoPositions }) =>
+        <HighDirectionReport
+            infoCandidate={infoCandidate}
+            infoEducation={ infoEducation}
+            // infoExperience={infoExperience}
+            infoPositions={ infoPositions}
+        />
+    
+
+    const linkTo = (url, download = false ) =>{
+        // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
+        let nameFile = 'demo'
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_black";
+        if(download) link.download = nameFile;
+        link.click();
+    }
+
+    const generatePDF = async (id, download) =>{
+        if(!id) return
+        const key = 'updatable';
+        message.loading({content: 'Generando PDF...', key});
+        try {
+            setLoading(true)
+            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
+            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
+            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
+            let infoCan = responseInfo.data || {}
+            let infoEducation = responseEdu.data || []
+            let infoPositions = responsePos.data || []
+            let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
+            let url = URL.createObjectURL(resp);
+            setTimeout(()=>{
+                setLoading(false);
+                message.success({content: 'PDF generado', key})
+            }, 1000)
+            setTimeout(()=>{  
+                linkTo(url+'#toolbar=0', download);
+            },2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                setLoading(false)
+                message.error({content: 'PDF no generado', key});
+            },2000)
         }
     }
 
+    const openModalManyDelete = () =>{
+        const filter_ = item => item.in_selection_process;
+        let notDelete = itemsToDelete.filter(filter_);
+        if(notDelete.length > 0){
+            setUseToDelete(false)
+            setOpenModalDelete(true)
+            setItemsToDelete(notDelete)
+            return;
+        }
+        setUseToDelete(true);
+        if(itemsToDelete.length > 1){
+            setOpenModalDelete(true)
+            return;
+        }
+        setOpenModalDelete(false)
+        message.error('Selecciona al menos dos candidatos')
+    }
+
+    const titleDelete = useMemo(()=>{
+        if(!useToDelete){
+            return itemsToDelete.length > 1
+            ? `Estos candidatos no se pueden eliminar, ya que
+                se encuentran en un proceso de selección`
+            : `Este candidato no se puede eliminar, ya que
+                se encuentra en un proceso de selección`;
+        }
+        return itemsToDelete.length > 1
+            ? '¿Estás seguro de eliminar estos candidatos?'
+            : '¿Estás seguro de eliminar este candidato?';
+    },[useToDelete, itemsToDelete])
+
     const openModalRemove = (item) =>{
+        setUseToDelete(!item?.in_selection_process)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
+        setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -104,16 +183,31 @@ const TableCandidates = ({
         }
     }
 
+    const copyLinkAutoregister = () =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
+            onSucces: ()=> message.success('Link de autorregistro copiado'),
+            onError: () => message.error('Link de autorregistro no copiado')
+        })
+    }
+
+    const copyLinkUpdate = (item) =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`,
+            onSucces: ()=> message.success('Link de actualización copiado'),
+            onError: () => message.error('Link de actualización no copiado')
+        })
+    }
+
     const menuTable = () => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`}
-                        title='Autorregistro'
-                        border={false}
-                        tooltipTitle='Copiar link de autorregistro'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined/>}
+                    onClick={()=> copyLinkAutoregister()}
+                >
+                    Autorregistro
                 </Menu.Item>
                 <Menu.Item
                     key='2'
@@ -129,13 +223,12 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`}
-                        title='Actualización'
-                        border={false}
-                        tooltipTitle='Copiar link de actualización'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined/>}
+                    onClick={() => copyLinkUpdate(item)}
+                >
+                    Actualización
                 </Menu.Item>
                 <Menu.Item
                     key='2'
@@ -153,6 +246,13 @@ const TableCandidates = ({
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='4'
+                    icon={<DownloadOutlined />}
+                    onClick={() => generatePDF(item.id, true)}
+                >
+                    Descargar reporte alta dirección
                 </Menu.Item>
             </Menu>
         );
@@ -172,7 +272,7 @@ const TableCandidates = ({
             ellipsis: true
         },
         {
-            title:'Correo',
+            title:'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true
@@ -241,17 +341,16 @@ const TableCandidates = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos candidatos?'
-                    : '¿Estás seguro de eliminar este candidato?'
-                }
+            <ListItems
+                title={titleDelete}
                 visible={openModalDelete}
-                keyTitle='fisrt_name'
-                keyDescription='last_name'
+                keyTitle={['fisrt_name','last_name']}
+                keyDescription='email'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
+                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useToDelete}
             />
         </>
     )
@@ -262,6 +361,7 @@ const mapState = (state) =>{
         list_candidates: state.jobBankStore.list_candidates,
         load_candidates: state.jobBankStore.load_candidates,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

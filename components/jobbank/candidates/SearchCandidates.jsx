@@ -22,7 +22,7 @@ const SearchCandidates = ({
 
     const showModal = () =>{
         let state = router.query?.state ? parseInt(router.query.state) : null;
-        formSearch.setFieldsValue({...router.query, is_other, state});
+        formSearch.setFieldsValue({...router.query, state});
         setOpenModal(true)
     }
 
@@ -51,7 +51,7 @@ const SearchCandidates = ({
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Filtros aplicados
+                                Candidatos
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>

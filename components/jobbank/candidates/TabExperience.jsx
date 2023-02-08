@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Table,
     Menu,
@@ -21,7 +21,7 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
-import DeleteItems from '../../../common/DeleteItems';
+import ListItems from '../../../common/ListItems';
 import ListCompetences from './ListCompetences';
 
 const TabExperience = ({
@@ -99,7 +99,7 @@ const TabExperience = ({
         }
     }
 
-    const validateAction = () => Object.keys(itemToEdit).length > 0;
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
     const showModalAdd = () =>{
         setItemToEdit({})
@@ -260,21 +260,21 @@ const TabExperience = ({
                 }}
             />
             <ModalExperience
-                title={validateAction() && openModal ? 'Editar experiencia' : 'Agregar experiencia'}
-                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                title={isEdit ? 'Editar experiencia' : 'Agregar experiencia'}
+                actionForm={isEdit ? actionUpdate : actionCreate}
                 close={closeModal}
                 itemToEdit={itemToEdit}
                 visible={openModal}
-                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+                textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
-            <DeleteItems
+            <ListItems
                 title='¿Estás seguro de eliminar esta experiencia?'
                 visible={openModalDelete}
                 keyTitle='category, name'
                 keyDescription='sub_category, name'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
             />
             <ListCompetences
                 itemSelected={itemSelected}

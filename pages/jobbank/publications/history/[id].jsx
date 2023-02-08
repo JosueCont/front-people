@@ -23,7 +23,7 @@ const index = ({
     },[router.query])
 
     useEffect(()=>{
-        if(currentNode) getConnectionsOptions(currentNode.id, '&is_active=true');
+        if(currentNode) getConnectionsOptions(currentNode.id, '&conection_type=1');
     },[currentNode])
 
     const ExtraBread = [

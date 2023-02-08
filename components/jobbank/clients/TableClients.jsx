@@ -27,10 +27,9 @@ import {
 import { connect } from 'react-redux';
 import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import DeleteItems from '../../../common/DeleteItems';
-import Clipboard from '../../../components/Clipboard';
+import ListItems from '../../../common/ListItems';
 import ViewContacts from './ViewContacts';
-import { getFiltersJB } from '../../../utils/functions';
+import { copyContent } from '../../../utils/functions';
 
 const TableClients = ({
     list_clients,
@@ -38,8 +37,7 @@ const TableClients = ({
     jobbank_page,
     currentNode,
     getClients,
-    currentFilters,
-    currentPage
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -48,12 +46,12 @@ const TableClients = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const [viewAsList, setViewAsList] = useState(false);
+    const [useToDelete, setUseToDelete] = useState(true);
 
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            getClients(currentNode.id, currentFilters, currentPage);
+            getClients(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Cliente activado' : 'Cliente desactivado';
             message.success(msg)
         } catch (e) {
@@ -67,7 +65,7 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClients(currentNode.id, currentFilters, currentPage);
+            getClients(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Clientes eliminados' : 'Cliente eliminado';
             message.success(msg);
         } catch (e) {
@@ -89,18 +87,19 @@ const TableClients = ({
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
+        setUseToDelete(true)
     }
 
     const openModalManyDelete = () =>{
-        const filter_ = item => item.has_estrategy;
+        const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setViewAsList(true)
+            setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setViewAsList(false);
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -110,7 +109,7 @@ const TableClients = ({
     }
 
     const openModalRemove = (item) =>{
-        setViewAsList(item.has_estrategy)
+        setUseToDelete(!item.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -121,7 +120,7 @@ const TableClients = ({
     }
 
     const titleDelete = useMemo(()=>{
-        if(viewAsList){
+        if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estos clientes no se pueden eliminar,
                 ya que se encuentran asociados a una estrategia.`
@@ -132,7 +131,7 @@ const TableClients = ({
             ? '¿Estás seguro de eliminar estos clientes?'
             : '¿Estás seguro de eliminar este cliente?';
         
-    },[viewAsList, itemsToDelete])
+    },[useToDelete, itemsToDelete])
 
     const savePage = (query) => router.replace({
         pathname: '/jobbank/clients',
@@ -155,6 +154,14 @@ const TableClients = ({
             setItemsKeys(selectedRowKeys)
             setItemsToDelete(selectedRows)
         }
+    }
+
+    const copyLinkAutoregister = () =>{
+        copyContent({
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/client`,
+            onSucces: ()=> message.success('Link de autorregistro copiado'),
+            onError: () => message.error('Link de autorregistro no copiado')
+        })
     }
 
     const ViewList = ({item}) => (
@@ -181,13 +188,12 @@ const TableClients = ({
     const menuTable = () => {
         return (
             <Menu>
-                <Menu.Item key='1'>
-                    <Clipboard
-                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/client`}
-                        title='Autoregistro'
-                        border={false}
-                        tooltipTitle='Copiar link de autoregistro'
-                    />
+                <Menu.Item
+                    key='1'
+                    icon={<LinkOutlined />}
+                    onClick={()=> copyLinkAutoregister()}
+                >
+                    Autorregistro
                 </Menu.Item>
                 <Menu.Item
                     key='2'
@@ -253,7 +259,7 @@ const TableClients = ({
                         >
                             Registrar estrategia
                         </Menu.Item>
-                        <Menu.Item
+                        {/* <Menu.Item
                             key='3'
                             icon={<SettingOutlined />}
                             onClick={()=> router.push({
@@ -262,7 +268,7 @@ const TableClients = ({
                             })}
                         >
                             Configurar publicación
-                        </Menu.Item>
+                        </Menu.Item> */}
                     </>
                 )}
             </Menu>
@@ -343,16 +349,16 @@ const TableClients = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
+            <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
                 keyTitle='name'
                 keyDescription='rfc'
                 close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
-                textCancel={viewAsList ? 'Cerrar' : 'Cancelar'}
-                viewAsList={viewAsList}
+                itemsToList={itemsToDelete}
+                actionConfirm={actionDelete}
+                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useToDelete}
             />
            <ViewContacts
                 visible={openModalList}
@@ -368,6 +374,7 @@ const mapState = (state) =>{
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
         jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
         currentNode: state.userStore.current_node
     }
 }

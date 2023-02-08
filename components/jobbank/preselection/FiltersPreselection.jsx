@@ -2,8 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select, InputNumber } from 'antd';
 import { useSelector } from 'react-redux';
-import { optionsGenders } from '../../../utils/constant';
 import { ruleWhiteSpace } from '../../../utils/rules';
+import { optionsStatusAcademic, optionsLangVacant } from '../../../utils/constant';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
+import RangeAge from '../RangeAge';
 
 const FiltersPreselection = ({
     visible,
@@ -17,9 +19,11 @@ const FiltersPreselection = ({
         load_states,
         load_main_categories,
         list_main_categories,
+        list_scholarship,
+        load_scholarship
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
-    const category = Form.useWatch('main_category', formSearch);
+    const level = Form.useWatch('study_level', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -28,6 +32,11 @@ const FiltersPreselection = ({
             setLoading(false)
             onFinish(values);
         },1000)
+    }
+
+    const onChangeLevel = (value) =>{
+        if(value) return;
+        formSearch.setFieldsValue({status_level_study: null});
     }
 
     return (
@@ -47,7 +56,7 @@ const FiltersPreselection = ({
                     <Col span={12}>
                         <Form.Item
                             label='Nombre'
-                            name='name'
+                            name='fisrt_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por nombre'/>
@@ -56,7 +65,7 @@ const FiltersPreselection = ({
                     <Col span={12}>
                         <Form.Item
                             label='Apellidos'
-                            name='lastname'
+                            name='last_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por apellidos'/>
@@ -64,8 +73,8 @@ const FiltersPreselection = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label='Correo'
-                            name='email'
+                            label='Correo electrónico'
+                            name='email__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por correo'/>
@@ -95,21 +104,6 @@ const FiltersPreselection = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='gender'
-                            label='Género'
-                        >
-                            <Select
-                                // allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='label'
-                                options={optionsGenders}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
                             name='state'
                             label='Estado'
                         >
@@ -123,7 +117,7 @@ const FiltersPreselection = ({
                                 optionFilterProp='children'
                             >
                                 {list_states?.length > 0 && list_states.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
@@ -142,6 +136,92 @@ const FiltersPreselection = ({
                             />
                         </Form.Item>
                     </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='study_level'
+                            label='Nivel de estudios'
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                disabled={load_scholarship}
+                                loading={load_scholarship}
+                                placeholder='Selecionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                                onChange={onChangeLevel}
+                            >
+                                {list_scholarship.length > 0 && list_scholarship.map(item => (
+                                    <Select.Option value={item.id+""} key={item.id+""}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='status_level_study'
+                            label='Estatus académico'
+                        >
+                            <Select
+                                allowClear
+                                disabled={!level}
+                                placeholder='Seleccionar una opción'
+                                options={optionsStatusAcademic}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Puesto'
+                            name='last_job'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input maxLength={200} placeholder='Buscar por puesto'/>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item 
+                            label='Edad'
+                            name='age'
+                        >
+                            <InputNumber
+                                type='number'
+                                max={99}
+                                min={1}
+                                allowClear
+                                maxLength={2}
+                                controls={false}
+                                placeholder='Buscar por edad'
+                                onKeyDown={validateNum}
+                                onKeyPress={validateMaxLength}
+                                style={{
+                                    width: '100%',
+                                    border: '1px solid black'
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Idioma'
+                            name='language'
+                        >
+                            <Select
+                                allowClear
+                                placeholder='Seleccionar una opción'
+                                options={optionsLangVacant}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <RangeAge
+                        minAgeKey='age_start'
+                        maxAgeKey='age_end'
+                        maxAgeRequired={false}
+                        minAgeRequired={false}
+                        sizeCol={{span: 12}}
+                    />
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>
                             Cancelar

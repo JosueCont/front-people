@@ -22,78 +22,29 @@ const FormPublications = ({
         list_profiles_options,
         list_clients_options,
         load_clients_options,
-        list_vacancies_fields,
-        list_strategies_options,
-        load_strategies_options
+        list_vacancies_fields
     } = useSelector(state => state.jobBankStore);
     const router = useRouter();
-    const vacant = router?.query?.vacancy;
-    const strategy = router?.query?.strategy;
-    const client = router?.query?.client;
-    const vacancy = Form.useWatch('vacant', formPublications);
-    const template = Form.useWatch('profile', formPublications);
-    // const strategy = Form.useWatch('strategy', formPublications);
     const customer = Form.useWatch('customer', formPublications);
     const { formatData } = useInfoProfile();
-
-    // useEffect(()=>{
-    //     onChangeCustomer();
-    // },[customer])
-
-    useEffect(()=>{
-        if(list_vacancies_options.length <= 0) return;
-        clientByVacant();
-    },[vacant, list_vacancies_options, customer])
-
-    useEffect(()=>{
-        if(list_strategies_options.length <= 0) return;
-        valuesByStrategy();
-    },[strategy, list_strategies_options, customer])
-    
-    const setValue = (key, val) => formPublications.setFieldsValue({[key]: val});
-    const setCustomer = (val = null) => setValue('customer', val);
-    const setVacant = (val = null) => setValue('vacant', val);
-    const setProfile = (val = null) => setValue('profile', val);
-    
-    const resetValues = () =>{
-        setCustomer()
-        setVacant()
-    }
-
-    const valuesByStrategy = () =>{
-        if(!strategy) return;
-        const _find = item => item.id == strategy;
-        let result = list_strategies_options.find(_find);
-        if(!result) return resetValues();
-        if(result.customer?.id) setCustomer(result.customer.id);
-        let idVacant = result?.vacant?.id;
-        if(idVacant) setVacant(idVacant);
-    }
-
-    const clientByVacant = () =>{
-        if(!vacant) return;
-        const _find = item => item.id == vacant;
-        let result = list_vacancies_options.find(_find);
-        if(!result) return setCustomer();
-        if(!result.customer) return setCustomer();
-        setCustomer(result.customer.id);
-    }
 
     const templatesByClient = useMemo(()=>{
         if(!customer) return [];
         const _filter = item => item.customer == customer;
         return list_profiles_options.filter(_filter);
-    },[customer, list_profiles_options, template])
+    },[customer, list_profiles_options])
 
     const vacantsByClient = useMemo(()=>{
         if(!customer) return [];
         const options = item => item.customer?.id == customer;
         return list_vacancies_options.filter(options);
-    },[customer, list_vacancies_options, vacancy])
+    },[customer, list_vacancies_options])
 
     const onChangeCustomer = () =>{
-        setProfile();
-        setVacant();
+        formPublications.setFieldsValue({
+            vacant: null,
+            profile: null
+        })
         resetVacantFields();
         setDisabledField(false);
     }
@@ -118,14 +69,15 @@ const FormPublications = ({
         if(!type_) return;
         if(Object.keys(type_).length <= 0) return;
         if(Object.keys(type_.fields_name).length <= 0) return;
-        // if(type_.profile_type) setDisabledField(type_.profile_type.form_enable);
-        setDisabledField(true);
+        let isEnable = Object.keys(type_.profile_type ?? {}).length > 0
+            ? type_.profile_type?.form_enable : true;
+        setDisabledField(!isEnable)
         let activeFields = formatData(type_.fields_name);
         formPublications.setFieldsValue(activeFields);
     }
 
     const onChangeDisabled = () =>{
-        if(!disableField) return;
+        if(disableField) return;
         setDisabledField(false)
         formPublications.setFieldsValue({
             profile: 'open_fields'
@@ -134,29 +86,6 @@ const FormPublications = ({
 
     return (
         <Row gutter={[24,0]}>
-            {/* <Col span={5}>
-                <Form.Item
-                    name='strategy'
-                    label='Estrategia'
-                    rules={[ruleRequired]}
-                    style={{marginBottom: 0}}
-                >
-                    <Select
-                        allowClear
-                        showSearch
-                        loading={load_strategies_options}
-                        placeholder='Seleccionar una estrategia'
-                        notFoundContent='No se encontraron resultados'
-                        optionFilterProp='children'
-                    >
-                        {list_strategies_options.length > 0 && list_strategies_options.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {item.product}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-            </Col> */}
             <Col span={6}>
                 <Form.Item
                     name='customer'
@@ -167,7 +96,7 @@ const FormPublications = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={client || vacant || strategy}
+                        disabled={load_clients_options}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
@@ -193,7 +122,7 @@ const FormPublications = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={vacantsByClient.length <=0 || vacant || strategy}
+                        disabled={vacantsByClient.length <=0}
                         loading={load_vacancies_options}
                         placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
@@ -252,8 +181,8 @@ const FormPublications = ({
                         optionFilterProp='children'
                     >
                         {list_connections_options.length > 0 && list_connections_options.map(item=> (
-                            <Select.Option value={item.id} key={item.id}>
-                                {item.name}
+                            <Select.Option disabled={!item.is_active} value={item.code} key={item.code}>
+                                {item.name} {item.is_active ? '': ' / No disponible'}
                             </Select.Option>
                         ))}
                     </Select>
