@@ -21,6 +21,7 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, twoDigit, expMonths, expYear } from "../../utils/rules";
 import SelectBank from "../selects/SelectBank";
+import { useSelector } from 'react-redux'
 import { ruleRequired } from "../../utils/rules";
 import moment from "moment";
 
@@ -33,10 +34,22 @@ const FormBanckAccount = ({ person_id = null }) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const [selectedBank, setSelectedBank] = useState(null);
+  const [banks, setBanks] = useState([]);
+  const banksStore = useSelector((state) => state?.fiscalStore?.banks)
 
   useEffect(() => {
     getBankAccount();
   }, []);
+
+  useEffect(()=>{
+    if(banksStore){
+      let b = {};
+      banksStore.map((ele)=> {
+          b[ele.code] = ele.id;
+      });
+      setBanks(b)
+    }
+  },[banksStore])
 
   /* functions CRUD*/
   const getBankAccount = async () => {
@@ -70,6 +83,20 @@ const FormBanckAccount = ({ person_id = null }) => {
       console.log(error);
     }
   };
+
+  const onBlurClabe=(clabe)=>{
+    const bankCode = clabe.substring(0, 3);
+    const bankSelected = banks[bankCode];
+    if (bankSelected) {
+       formBank.setFieldsValue({
+         bank: banks[bankCode]
+       })
+    } else {
+      formBank.setFieldsValue({
+        bank: null
+      })
+    }
+  }
 
   const updateBankAcc = async (data) => {
     setLoadingTable(true);
@@ -299,15 +326,6 @@ const FormBanckAccount = ({ person_id = null }) => {
         className="inputs_form_responsive"
       >
         <Row gutter={16}>
-          <Col lg={22} xs={22} md={12} >
-            <SelectBank
-              withDescription={true}
-              rules={[ruleRequired]}
-              name="bank"
-              bankSelected={selectedBank}
-              style={{ width: "100%" }}
-            />
-          </Col>
           <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="account_number"
@@ -321,6 +339,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
+              onBlur={(e)=> onBlurClabe(e.target.value)}
               rules={[onlyNumeric]}
             >
               <Input minLength={18} maxLength={18} />
@@ -344,6 +363,15 @@ const FormBanckAccount = ({ person_id = null }) => {
             >
               <Input minLengyh={2} maxLength={2} />
             </Form.Item>
+          </Col>
+          <Col lg={11} xs={22} md={12} >
+            <SelectBank
+                withDescription={true}
+                rules={[ruleRequired]}
+                name="bank"
+                bankSelected={selectedBank}
+                style={{ width: "100%" }}
+            />
           </Col>
           <Col lg={11} xs={22} md={12}>
             <Form.Item
