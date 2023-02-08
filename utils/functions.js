@@ -466,18 +466,9 @@ export const createFiltersJB = (obj = {}) =>{
   }, {});
 }
 
-export const validPaginationJB = (obj = {}) =>{
-  if(obj.page > 1 && obj.size <= 10) delete obj.size;
-  if(obj.page <= 1 && obj.size > 10) delete obj.page;
-  if(obj.page == 1 && obj.size == 10){
-    delete obj.page;
-    delete obj.size;
-  }
-  return obj;
-}
-
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
+    if(key == "size") return query;
     if(key == "page"){
       const find_ = item => item[0] == "size";
       let result = Object.entries(obj).find(find_);
@@ -529,14 +520,34 @@ export const getValueFilter = ({
     ? keyShow(result) : result[keyShow];
 }
 
+export const popupPDF = ({
+  url = '',
+  notFound = 'Archivo no encontrado',
+  tip = 'Enlace roto o cambió de ubicación'
+}) => {
+  if (typeof window !== "undefined") {
+    let viewer = window.open("","_blank","width=800,height=800");
+    viewer.document.write(`
+      <object data=${url} style="width: 100%; height: 100%;">
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <div style="display: flex; align-items: center; flex-direction: column; gap: 8px;">
+            <p style="margin: 0px; font-size: 20px; font-family: system-ui;">${notFound} :(</p>
+            <p style="margin: 0px; font-family: system-ui; color: rgba(0,0,0,0.4);">${tip}</p>
+          </div>
+        </div>
+      </object>
+    `);
+    viewer.document.body.style.margin = "0px";
+  }
+};
+
 export const downloadCustomFile = async ({
   url = '',
   name = ''
 }) =>{
   try {
-    let config = {url, method: 'GET', responseType: 'blob', headers:{'Access-Control-Allow-Origin':'*'}};
+    let config = {url, method: 'GET', responseType: 'blob'};
     let response = await axios(config);
-    console.log('response pdf-------->', response)
     const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = urlBlob;
@@ -544,7 +555,6 @@ export const downloadCustomFile = async ({
     link.target = "_blank";
     link.click();
   } catch (e) {
-    console.log('error pdf',e)
-    console.log('erorr response pdf', e.response)
+    console.log(e)
   }
 }

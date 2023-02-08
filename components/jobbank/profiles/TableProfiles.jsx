@@ -27,7 +27,8 @@ const TableProfiles = ({
     load_clients_options,
     list_clients_options,
     getProfilesList,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -94,19 +95,12 @@ const TableProfiles = ({
         setItemsToDelete([])
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/profiles',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        let newQuery = {...router.query, page: current}
-        if(current > 1){
-            savePage(newQuery);
-            return;
-        }
-        if(newQuery.page) delete newQuery.page;
-        savePage(newQuery)
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/profiles',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -215,9 +209,10 @@ const TableProfiles = ({
                 }}
                 pagination={{
                     total: list_profiles.count,
+                    pageSize: jobbank_page_size,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    hideOnSinglePage: list_profiles?.count < 10,
+                    showSizeChanger: list_profiles?.count > 10
                 }}
             />
             <ListItems
@@ -243,7 +238,8 @@ const mapState = (state) =>{
         load_clients_options: state.jobBankStore.load_clients_options,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size
     }
 }
 
