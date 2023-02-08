@@ -38,7 +38,8 @@ const TablePublications = ({
     list_connections_options,
     load_connections_options,
     getPublications,
-    jobbank_filters
+    jobbank_filters,
+    jobbank_page_size
 }) => {
 
     const router = useRouter();
@@ -126,18 +127,12 @@ const TablePublications = ({
         setOpenModalShare(true)
     }
 
-    const savePage = (query) => router.replace({
-        pathname: '/jobbank/publications',
-        query
-    })
-
-    const onChangePage = ({current}) =>{
-        if(current > 1) savePage({...router.query, page: current});
-        else{
-            let newQuery = {...router.query};
-            if(newQuery.page) delete newQuery.page;
-            savePage(newQuery)
-        };
+    const onChangePage = ({current, pageSize}) =>{
+        let filters = {...router.query, page: current, size: pageSize};
+        router.replace({
+            pathname: '/jobbank/publications',
+            query: filters
+        })
     }
 
     const rowSelection = {
@@ -300,8 +295,9 @@ const TablePublications = ({
                 pagination={{
                     total: list_publications.count,
                     current: jobbank_page,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
+                    pageSize: jobbank_page_size,
+                    hideOnSinglePage: list_publications?.count < 10,
+                    showSizeChanger: list_publications?.count > 10
                 }}
             />
             <ModalPost
@@ -332,6 +328,7 @@ const mapState = (state) =>{
     return{
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page_size: state.jobBankStore.jobbank_page_size,
         list_publications: state.jobBankStore.list_publications,
         load_publications: state.jobBankStore.load_publications,
         list_connections_options: state.jobBankStore.list_connections_options,

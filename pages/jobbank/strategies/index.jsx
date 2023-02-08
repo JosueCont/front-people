@@ -30,11 +30,10 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            let page = router.query.page
-                ? parseInt(router.query.page)
-                : 1;
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
             let filters = getFiltersJB(router.query);
-            getStrategies(currentNode.id, filters, page);
+            getStrategies(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])
 
