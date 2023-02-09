@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Table,
     Button,
@@ -40,6 +40,24 @@ const TableCandidates = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [loading, setLoading] = useState(false);
     const [useToDelete, setUseToDelete] = useState(true);
+    const [widthAndHeight, setWidthAndHeight] = useState({
+        width: 0,
+        height: 0
+    })
+    const image = currentNode?.image? currentNode.image : ''
+
+    useEffect(() => {
+        if(image){
+            const widthImage = new Image()
+            widthImage.src = image
+            widthImage.onload = () => {
+            setWidthAndHeight({
+                width: widthImage.width,
+                height: widthImage.height
+            })
+    }
+        }
+    },[image])
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
@@ -72,7 +90,10 @@ const TableCandidates = ({
         <HighDirectionReport
             infoCandidate={infoCandidate}
             infoEducation={ infoEducation}
-            infoPositions={ infoPositions}
+            infoPositions={infoPositions}
+            image = { image }
+            widthAndHeight = {widthAndHeight}
+            
         />
     const NyCandidateReport = ({infoCandidate, infoEducation, infoExperience, infoPositions, }) => 
 
@@ -81,6 +102,8 @@ const TableCandidates = ({
         infoEducation={ infoEducation}
         infoExperience = { infoExperience }
         infoPositions={ infoPositions}
+        image = { image }
+        widthAndHeight = {widthAndHeight}
     />
     
 
