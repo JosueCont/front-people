@@ -2,9 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
-import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox} from 'antd';
+import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox, Typography} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import { optionsStatusAcademic } from '../../../utils/constant';
-import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
+import { ruleRequired, ruleWhiteSpace, ruleURL } from '../../../utils/rules';
+import FileUpload from '../FileUpload';
 
 const ModalEducation = ({
     title = '',
@@ -21,15 +23,18 @@ const ModalEducation = ({
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [document, setDocument] = useState([])
     const status = Form.useWatch('status', formEducation);
+    const { Text } = Typography
+    const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
+        itemToEdit.file = itemToEdit.file.split('/').at(-1) || ''
         itemToEdit.study_level = itemToEdit.study_level?.id ?? null;
         formEducation.setFieldsValue(itemToEdit);
     },[itemToEdit])
-
 
     const onCloseModal = () =>{
         close()
@@ -40,6 +45,7 @@ const ModalEducation = ({
     const setEndDate = (val = null) => setValue('end_date', val);
 
     const onFinish = (values) =>{
+        if(document.length > 0) values.file = document[0]
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
         setLoading(true);
         setTimeout(()=>{
@@ -141,6 +147,33 @@ const ModalEducation = ({
                         >
                             <Input maxLength={500} placeholder='Escriba el nombre de la carrera o especialzación'/>
                         </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Text style={{ fontWeight: 'bold' }}>Adjuntar certificado de estudios</Text>
+                    </Col>
+                    <Col span={24} style={{ marginTop: 10 }}>
+                        <FileUpload 
+                            label='Archivo'
+                            keyName='file'
+                            tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                            isRequired={true}
+                            // download={true}
+                            // urlPreview={infoCandidate?.cv}
+                            setFile={setDocument}
+                            typeFile={typeFileCV}
+                            setNameFile={e => formEducation.setFieldsValue({
+                                file: e
+                            })}
+                        />
+                    </Col>
+                    <Col span={24}>            
+                       <Form.Item
+                           name='url_file'
+                           label='URL'
+                           rules={[ruleURL]}
+                       >
+                            <Input />
+                       </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>

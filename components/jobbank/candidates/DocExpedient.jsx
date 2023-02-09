@@ -13,9 +13,12 @@ const DocExpedient = ({
     infoEducation,
     infoExperience,
     infoPositions,
+    image, 
+    widthAndHeight
 }) => {
 
     const [marginTop, setMarginTop ] = useState(80)
+    const widthImage = widthAndHeight.width > 100 ? '100px' : widthAndHeight.width
 
     useEffect(() => {
         if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
@@ -522,19 +525,36 @@ const DocExpedient = ({
                     }}
                 >
                     <View 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginBottom: 12,
-                    }}>
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            marginBottom: 12,
+                        }}
+                    >
+                        <View style={{ flex:'0 0 95px', marginRight: 20 }}>
                             <Image 
-                                src={'/images/logo_HEX.png'}
+                                src={'/images/LogoKhorconnect_1.png'}
                                 style={{
-                                    width: '135px',
+                                    width: '95px',
                                     height: '30px',
-                                    marginLeft: '90%',
                                 }}
                             />
+                        </View>
+                        <View style={{ flex:'0 0 auto' }}>
+                            <Image 
+                                src={{ 
+                                    uri: image, 
+                                    method: "GET", 
+                                    headers: { 
+                                        "Cache-Control": "no-cache" }, 
+                                    body: "" }} 
+                                style={{
+                                    width: widthAndHeight.width > widthAndHeight.height ? widthImage  : '30px',
+                                    height: '30px',
+                                }}
+                            />
+                        </View>
                     </View>
                     <View
                         style={{
