@@ -369,6 +369,7 @@ const TabGeneral = ({
                                     keyName='cv_name_read'
                                     tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
                                     isRequired={true}
+                                    download={true}
                                     urlPreview={infoCandidate?.cv}
                                     setFile={setFileCV}
                                     typeFile={typeFileCV}

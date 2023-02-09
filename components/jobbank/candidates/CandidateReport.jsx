@@ -132,7 +132,12 @@ const CandidateReport = ({
       let maxEdu = infoEducation.find((item) => item.study_level.id === max)
       let maxEduStatus = list_status.find((item) => item.value === maxEdu.status).label
       let stringMaxEdu = `${maxEdu.study_level.name} ${maxEduStatus.toLocaleLowerCase()}`
-      return stringMaxEdu
+      if (stringMaxEdu !== '' || stringMaxEdu !== null || stringMaxEdu !== undefined){
+        return stringMaxEdu
+      } else {
+        return "**********"
+      }
+      
     }
 
     infoPositions.sort((a, b) => {
@@ -140,8 +145,7 @@ const CandidateReport = ({
             if (a.end_date < b.end_date) return 1;
             return 0;
     });
-    
-    console.log('xdxdxd', infoPositions)
+
 
     const SectionDetails = () => (
         <View
@@ -169,21 +173,21 @@ const CandidateReport = ({
                       }}
                     >
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Edad: </Text>
-                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) }</Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) || "**********" }</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
                       flexDirection: 'row',
                     }}>
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Fecha de nacimiento: </Text>
-                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""}</Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || "**********"}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
                       flexDirection: 'row',
                     }}>
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Grado maximo de estudios: </Text>
-                        <Text style={{ fontSize: 12 }}>{ maxEducation() }</Text>
+                        <Text style={{ fontSize: 12 }}>{ maxEducation()  }</Text>
                     </View>
                 </View>
                 <View
@@ -208,10 +212,10 @@ const CandidateReport = ({
                         }}
                     >
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                        {infoCandidate?.fisrt_name} {infoCandidate?.last_name}, reside actualmente en { infoCandidate?.municipality } en el estado de 
-                        { ' ' + infoCandidate?.state.name }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
-                        con disponibilidad para viajar, su ultimo trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : " " }
-                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : ' '}
+                        {infoCandidate?.fisrt_name || "**********"} {infoCandidate?.last_name || "**********"}, reside actualmente en { infoCandidate?.municipality || "**********" } en el estado de 
+                        { ' ' + infoCandidate?.state.name || "**********" }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
+                        con disponibilidad para viajar, su ultimo trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : "********** " }
+                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "**********" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : "********** "}
                         </Text>
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
                             Cuenta con experiencia en:
