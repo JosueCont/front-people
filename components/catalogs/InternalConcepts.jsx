@@ -365,7 +365,7 @@ const InternalConcepts = ({
               <>
                 <Option key={item.id} value={item.id}>
                   {item.description}{" "}
-                  {item && item.is_assimilated && `(Aplica a asimilado)`}
+                  {/* item && item.is_assimilated && `(Aplica a asimilado)`*/}
                 </Option>
                 ;
               </>
@@ -387,7 +387,7 @@ const InternalConcepts = ({
           </Col>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="description" label="Nombre" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} md={12}>
