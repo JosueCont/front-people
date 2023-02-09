@@ -127,7 +127,7 @@ const FormFamily = ({ person_id = null, ...props }) => {
     lifeFamily ? setLifeFamily(false) : setLifeFamily(true);
   };
   const onChangeBDFamily = (date, dateString) => {
-    setBirthDateFam(dateString);
+    setBirthDateFam(moment(date).format('YYYY-MM-DD'));
   };
   const formFinishFamily = (value) => {
     if (upFamily) {
