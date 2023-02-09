@@ -302,7 +302,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
-      value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
+      value.last_day_paid = moment(lastDayPaid).format('YYYY-MM-DD');
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);

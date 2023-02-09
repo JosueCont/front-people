@@ -16,6 +16,7 @@ import {
   EditOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
+    ExclamationCircleOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
@@ -305,7 +306,7 @@ const PaymentCalendars = ({ ...props }) => {
                     {!record.locked && (
                       <Tooltip title="Eliminar">
                         <DeleteOutline
-                          style={{ fontSize: "22px", marginBottom: "-5px" }}
+                          style={{ fontSize: "19px", marginBottom: "-5px", cursor:'pointer' }}
                           className="icon_actions"
                           key={"delCalendar" + record.id}
                           onClick={() => handleDelteCalendar(record.id)}
@@ -340,7 +341,6 @@ const PaymentCalendars = ({ ...props }) => {
         />
       </Modal> */}
       <Modal
-        title="Eliminar calendario de pagos"
         className="modal_form"
         width={500}
         destroyOnClose
@@ -353,20 +353,17 @@ const PaymentCalendars = ({ ...props }) => {
         okText="Sí, eliminar"
         cancelText="Cancelar"
       >
-        <Row justify="center" align="middle">
-          <Col span={24} style={{ textAlign: "center", width: "100%" }}>
-            <Alert
-              type="warning"
-              showIcon
-              message="¿Está seguro de eliminar este calendario?"
-              description={
-                <p style={{ textAlign: "justify", paddingLeft: 15 }}>
-                  Al eliminar este calendario no se podrá recuperar
-                </p>
-              }
-            />
-          </Col>
-        </Row>
+          <Row justify="center" align="middle">
+              <Col span={4}>
+                  <ExclamationCircleOutlined style={{ fontSize: '40px', color: '#FAAD14' }} twoToneColor="#eb2f96" />
+              </Col>
+              <Col span={20} style={{textAlign: "left", width: "100%"}}>
+                  <h3>¿Está seguro de eliminar este calendario?</h3>
+                  <p style={{textAlign: "left", paddingLeft: 15}}>
+                      Al eliminar este calendario no se podrá recuperar
+                  </p>
+              </Col>
+          </Row>
       </Modal>
       <ModalMassiveCalendar 
         visible={modalCalendar}

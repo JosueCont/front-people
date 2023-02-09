@@ -133,13 +133,13 @@ const FormFamily = ({ person_id = null, ...props }) => {
     if (upFamily) {
       value.person = person_id;
       value.id = idFamily;
-      value.birth_date = birthDateFam;
+      value.birth_date = moment(birthDateFam).format('YYYY-MM-DD');
       // setLifeFamily(value.life);
       value.life = lifeFamily;
       updateFamily(value);
     } else {
       value.person = person_id;
-      value.birth_date = birthDateFam;
+      value.birth_date = moment(birthDateFam).format('YYYY-MM-DD');
       value.life = lifeFamily;
       saveFamily(value);
     }
