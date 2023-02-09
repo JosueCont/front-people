@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Drawer, Typography, Divider } from "antd";
-import { DollarCircleOutlined } from "@ant-design/icons";
+import { Layout, Row, Col, Drawer, Typography, Divider, Modal, Button, Input, Form, message  } from "antd";
+import { DollarCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
@@ -10,6 +10,8 @@ import NewHeader from "../components/newHeaderUser";
 // import NewHeaderUser from "../components/newHeaderUser";
 import Head from "next/head";
 import MainSiderUser from "../components/MainSiderUser";
+import WebApiPeople from '../api/WebApiPeople';
+import { ruleWhiteSpace, ruleRequired } from "../utils/rules";
 
 const { Content } = Layout;
 
@@ -26,11 +28,16 @@ const MainLayoutUser = ({
     pageTitle = "KHOR Plus",
   ...props
 }) => {
+  const [form] = Form.useForm();
   const { Title } = Typography;
   const [mainLogo, setMainLogo] = useState("");
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
+  const [changePassword, setChangePassword] = useState(true);
+  const [isOpenModalChangePassword, setIsOpenModalChangePassword] = useState(false);
+  const [khonnectId, setKhonnectId] = useState("");
+  const [disabledButtonSend, setDisabledButtonSend] = useState(false);
 
   useEffect(() => {
     try {
@@ -63,18 +70,85 @@ const MainLayoutUser = ({
   }, [logoNode, companyName]);
 
   useEffect(() => {
-    if (props.currentNode && props.config) {
+    if (props.currentNode && props.config && props.userData) {
       setMainLogo(props.currentNode.image);
+      setChangePassword(props.userData.status_first_change_password)
+      setKhonnectId(props.userData.khonnect_id)
     } else {
       if (props.config) props.companySelected(null, props.config);
     }
-  }, [props.currentNode, props.config]);
+  }, [props.currentNode, props.config, props.userData]);
+
+  useEffect(() => {
+    changePassword ? setIsOpenModalChangePassword(false) : setIsOpenModalChangePassword(true);
+  }, [changePassword]);
 
   const closeEvents = () => {
     setShowEvents(false);
   };
 
+  const onFinishChangePassword = (data) =>{
+    setDisabledButtonSend(true)
+    let dataToApi = {
+      khonnect_id: khonnectId,
+      password: data.passwordTwo,
+    }
+    data.passwordTwo === data.passwordOne ? changePasswordUser(dataToApi) : message.info("Confirme bien sus contraseñas")
+  }
+
+  const changePasswordUser = async (data) =>{
+    try {
+      let response = await WebApiPeople.validateChangePassword(data);
+      if(response.status == 200){
+        setDisabledButtonSend(false)
+        message.success("Cambio de contraseña exitoso");
+        setIsOpenModalChangePassword(false)
+      }
+    } catch (e) {
+      message.error("Ocurrio un error intenta nuevamente");
+      form.resetFields()
+      setDisabledButtonSend(false)
+      console.log(e)
+    }
+  }
+
+
   return (<>
+        <Modal title="Cambio de contraseña" visible={isOpenModalChangePassword} closable={false} footer={false}>
+          <div>
+            <Form
+              form={form}
+              onFinish={onFinishChangePassword}
+              layout={"vertical"}
+              requiredMark={false}
+            >
+              <Row justify="center">
+                <p><b>Por seguridad, es necesario que cambies tu contraseña por primera vez</b></p>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <Form.Item
+                    name="passwordOne"
+                    label="Contraseña nueva"
+                    rules={[ruleRequired, ruleWhiteSpace]}
+                  >
+                    <Input.Password type="password" style={{minWidth:"100%"}} prefix={<EyeOutlined />} />
+                  </Form.Item>
+                  <Form.Item
+                    name="passwordTwo"
+                    label="Confirmar contraseña"
+                    rules={[ruleRequired, ruleWhiteSpace]}
+                  >
+                    <Input.Password type="password" style={{minWidth:"100%"}} prefix={<EyeOutlined />} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row justify="end">
+                <Button disabled={disabledButtonSend} type="primary" htmlType="submit">Cambiar contraseña</Button>
+              </Row>
+            </Form>
+          </div>
+        </Modal>
         <Head>
           <title>{pageTitle}</title>
         </Head>
@@ -276,6 +350,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     versionCfdi: state.fiscalStore.version_cfdi,
+    userData: state.userStore.user,
   };
 };
 
