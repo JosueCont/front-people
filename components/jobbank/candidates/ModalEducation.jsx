@@ -6,7 +6,6 @@ import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox, Typography
 import { UploadOutlined } from '@ant-design/icons';
 import { optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace, ruleURL } from '../../../utils/rules';
-import UploadFileEducation from './TabsFiles/UploadFileEducation';
 import FileUpload from '../FileUpload';
 
 const ModalEducation = ({
@@ -24,7 +23,7 @@ const ModalEducation = ({
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [Document, setDocument] = useState('')
+    const [document, setDocument] = useState([])
     const status = Form.useWatch('status', formEducation);
     const { Text } = Typography
     const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
@@ -32,10 +31,10 @@ const ModalEducation = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
+        itemToEdit.file = itemToEdit.file.split('/').at(-1) || ''
         itemToEdit.study_level = itemToEdit.study_level?.id ?? null;
         formEducation.setFieldsValue(itemToEdit);
     },[itemToEdit])
-
 
     const onCloseModal = () =>{
         close()
@@ -46,7 +45,7 @@ const ModalEducation = ({
     const setEndDate = (val = null) => setValue('end_date', val);
 
     const onFinish = (values) =>{
-        values.file = document
+        if(document.length > 0) values.file = document[0]
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
         setLoading(true);
         setTimeout(()=>{
