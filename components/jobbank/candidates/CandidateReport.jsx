@@ -14,7 +14,11 @@ const CandidateReport = ({
     infoEducation,
     infoExperience,
     infoPositions,
+    image,
+    widthAndHeight
 }) => {
+
+    const widthImage = widthAndHeight.width > 100 ? '100px' : widthAndHeight.width
 
     const list_status = [
         {
@@ -129,13 +133,13 @@ const CandidateReport = ({
     const maxEducation = () => {
       let listEducationIds = infoEducation.map((item) => item.study_level.id )
       let max = Math.max(listEducationIds)
-      let maxEdu = infoEducation.find((item) => item.study_level.id === max)
-      let maxEduStatus = list_status.find((item) => item.value === maxEdu.status).label
-      let stringMaxEdu = `${maxEdu.study_level.name} ${maxEduStatus.toLocaleLowerCase()}`
-      if (stringMaxEdu !== '' || stringMaxEdu !== null || stringMaxEdu !== undefined){
+      let maxEdu = infoEducation.find((item) => item.study_level.id === max) || {}
+      let maxEduStatus = Object.keys(maxEdu).length >0 && list_status.find((item) => item.value === maxEdu.status).label || ''
+      let stringMaxEdu = Object.keys(maxEdu).length >0 &&`${maxEdu.study_level.name} ${maxEduStatus.toLocaleLowerCase()}` || ''
+      if (stringMaxEdu){
         return stringMaxEdu
       } else {
-        return "**********"
+        return ""
       }
       
     }
@@ -173,20 +177,20 @@ const CandidateReport = ({
                       }}
                     >
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Edad: </Text>
-                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) || "**********" }</Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && ageCandidate(infoCandidate.birthdate) || "" }</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
                       flexDirection: 'row',
                     }}>
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Fecha de nacimiento: </Text>
-                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || "**********"}</Text>
+                        <Text style={{ fontSize: 12 }}>{ infoCandidate?.birthdate && moment(infoCandidate?.birthdate).format('DD-MM-YYYY') || ""}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
                       flexDirection: 'row',
                     }}>
-                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Grado maximo de estudios: </Text>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Grado máximo de estudios: </Text>
                         <Text style={{ fontSize: 12 }}>{ maxEducation()  }</Text>
                     </View>
                 </View>
@@ -212,10 +216,10 @@ const CandidateReport = ({
                         }}
                     >
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                        {infoCandidate?.fisrt_name || "**********"} {infoCandidate?.last_name || "**********"}, reside actualmente en { infoCandidate?.municipality || "**********" } en el estado de 
-                        { ' ' + infoCandidate?.state.name || "**********" }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
-                        con disponibilidad para viajar, su ultimo trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : "********** " }
-                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "**********" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : "********** "}
+                        {infoCandidate?.fisrt_name || ""} {infoCandidate?.last_name || ""}, reside actualmente en { infoCandidate?.municipality || "" } en el estado de 
+                        { infoCandidate?.state?.name !== undefined ? ' ' + infoCandidate.state.name : "" }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
+                        con disponibilidad para viajar, su último trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : " " }
+                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : " "}
                         </Text>
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
                             Cuenta con experiencia en:
@@ -529,21 +533,44 @@ const CandidateReport = ({
                         marginBottom: 30,
                     }}
                 >
-                  <View 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginBottom: 20,
-                    }}
-                    >
-                      <Image 
-                        src={'/images/logo_HEX.png'}
+                       <View 
                         style={{
-                                width: '30px',
-                                height: '25px',
-                                marginLeft: '10%'
-                              }}
-                      />
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            marginBottom: 12,
+                        }}
+                    >
+                        <View style={{ flex:'0 0 95px', marginRight: 20 }}>
+                            <Image 
+                                src={'/images/LogoKhorconnect_1.png'}
+                                style={{
+                                    width: '95px',
+                                    height: '30px',
+                                }}
+                            />
+                        </View>
+                        <View style={{ flex:'0 0 auto' }}>
+                            <Image 
+                                src={{ 
+                                    uri: image, 
+                                    method: "GET", 
+                                    headers: { 
+                                        "Cache-Control": "no-cache" }, 
+                                    body: "" }} 
+                                style={{
+                                    width: widthAndHeight.width > widthAndHeight.height ? widthImage  : '30px',
+                                    height: '30px',
+                                }}
+                            />
+                        </View>
+                    </View>
+                    <View
+                        style={{
+                            textAlign: 'center'
+                        }}
+                    >
+                        <Text>Reporte de candidato</Text>
                     </View>
                 </View>
                 <View

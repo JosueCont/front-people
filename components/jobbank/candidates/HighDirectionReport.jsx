@@ -12,37 +12,11 @@ import moment from 'moment';
 const HighDirectionReport = ({
     infoCandidate,
     infoEducation,
-    // infoExperience,
     infoPositions,
+    image,
+    widthAndHeight
 }) => {
-
-    // const [marginTop, setMarginTop ] = useState(80)
-
-    // useEffect(() => {
-    //     if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
-    //         if(infoCandidate.about_me.length > 100){
-    //             setMarginTop(marginTop - 30)
-    //         } else {
-    //             setMarginTop(marginTop + 10)
-    //         }
-    //     }
-    // },[infoCandidate])
-
-    // useEffect(() => {
-    //     if (infoExperience && infoExperience.length > 0) {
-    //         if (infoExperience.length > 2) {
-    //             setMarginTop(marginTop - 25)
-    //         }
-    //     }
-    // },[infoExperience])
-
-    // useEffect(() => {
-    //     if(infoEducation && infoEducation.length > 0){
-    //         if(infoEducation.length <= 3){
-    //             setMarginTop(marginTop + 25)
-    //         }
-    //     }
-    // },[infoCandidate])
+    const widthImage = widthAndHeight.width > 100 ? '100px' : widthAndHeight.width
 
 
     const list_status = [
@@ -587,59 +561,44 @@ const HighDirectionReport = ({
                         marginBottom: 30,
                     }}
                 >
-                  <View 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginBottom: 20,
-                        // position: 'absolute',
-                        // top: 0,
-                        // left: 0,
-                        // right: 0,
-                    }}
-                    fixed
+                    <View 
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            marginBottom: 12,
+                        }}
                     >
+                        <View style={{ flex:'0 0 95px', marginRight: 20 }}>
                             <Image 
-                                src={'/images/logo_HEX.png'}
+                                src={'/images/LogoKhorconnect_1.png'}
                                 style={{
-                                    width: '110px',
-                                    height: '25px',
-                                    marginLeft: '90%',
+                                    width: '95px',
+                                    height: '30px',
                                 }}
                             />
+                        </View>
+                        <View style={{ flex:'0 0 auto' }}>
+                            <Image 
+                                src={{ 
+                                    uri: image, 
+                                    method: "GET", 
+                                    headers: { 
+                                        "Cache-Control": "no-cache" }, 
+                                    body: "" }} 
+                                style={{
+                                    width: widthAndHeight.width > widthAndHeight.height ? widthImage  : '30px',
+                                    height: '30px',
+                                }}
+                            />
+                        </View>
                     </View>
                     <View
                         style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          marginBottom: 12,
+                            textAlign: 'center'
                         }}
                     >
-                        <View 
-                          style={{
-                            width: '80%',
-                            margin: 'auto'
-                          }}
-                        >
-                           <Text style={{ fontSize: 10}}>Lee detenidamente el siguiente formato de currículum vitae y llena cada uno de los puntos que loconforman utilizando mayúsculas y minúsculas.</Text>
-                        </View>
-                       
-                    </View>
-                    <View
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                        }}
-                    >
-                        <View 
-                          style={{
-                            width: '80%',
-                            margin: 'auto'
-                          }}
-                        >
-                           <Text style={{ fontSize: 10}}>Una vez que lo hayas concluido, te agradeceremos que nos lo hagas llegar lo antes posible porcorreo electrónico al correo: <Text style={{ fontWeight: 'bold' }}>miguel.lumbreras@iucorporation.com Gracias.</Text></Text>
-                        </View>
-                       
+                        <Text>Reporte de alta dirección</Text>
                     </View>
                 </View>
                 <View
@@ -668,29 +627,6 @@ const HighDirectionReport = ({
                 >
                   <SectionUltimateJobs />
                 </View>
-                    {/* <SectionDetails />
-                    <SectionEducation />
-                    <SectionExperience />
-                    <SectionUltimateJobs />
-                     */}
-                    {/* <View style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'wrap'
-                    }}>
-                        <View style={{
-                            flex: '0 0 40%',
-                            paddingRight: 6
-                        }}>
-                            <SectionEducation/>
-                        </View>
-                        <View style={{
-                            flex: '0 0 60%',
-                            paddingLeft: 6
-                        }}>
-                           <SectionExperience/>
-                        </View>
-                    </View> */}
                 </Page>
             </Document>
         // </PDFViewer>
