@@ -49,7 +49,7 @@ const TablePreselection = ({
                 candidate: itemsSelected?.at(-1)?.id,
                 vacant: router.query?.vacant
             });
-            getPreselection(currentNode.id, jobbank_filters, jobbank_page)
+            getPreselection(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size)
             getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {

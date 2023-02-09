@@ -117,11 +117,9 @@ const DetailsPreselection = ({
         setCurrentKey(tab)
         return;
     }
-    let querys = {...router.query, tab};
-    if(querys.tab == '1') delete querys.tab;
     router.replace({
         pathname: '/jobbank/selection/details',
-        query: querys
+        query: {...router.query, tab}
     }, undefined, {shallow: true})
 }
 

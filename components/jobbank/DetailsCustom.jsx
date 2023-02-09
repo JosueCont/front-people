@@ -23,7 +23,8 @@ const DetailsCustom = ({
     ExtraActions = ()=> <></>,
     actionBack = ()=>{},
     setActionType,
-    onlyOptions = false
+    onlyOptions = false,
+    borderTitle = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -88,7 +89,7 @@ const DetailsCustom = ({
     return !onlyOptions ? (
         <Card>
             <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content'>
+                <Col span={24} className={`title-action-content ${borderTitle ? 'title-action-border' : ''}`}>
                     <p className='title-action-text'>
                         {titleCard}
                     </p>

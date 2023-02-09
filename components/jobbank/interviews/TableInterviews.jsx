@@ -35,7 +35,7 @@ const TableInterviews = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [openModalDetail, setOpenModalDetail] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
-    const { actionDelete, actionUpdate, fetchAction } = useContext(InterviewContext);
+    const { fetchAction } = useContext(InterviewContext);
 
     const openModalRemove = (item) =>{
         let selected = item ?? itemToDetail;
@@ -212,7 +212,7 @@ const TableInterviews = ({
                     showSizeChanger: false
                 }}
             />
-            <ListItems
+            {/* <ListItems
                 title={itemsToDelete.length > 1
                     ? '¿Estás seguro de eliminar estos eventos?'
                     : '¿Estás seguro de eliminar este evento?'
@@ -223,7 +223,7 @@ const TableInterviews = ({
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={()=> actionDelete(itemsToDelete.at(-1).id)}
-            />
+            /> */}
             <EventDetails
                 visible={openModalDetail}
                 close={closeModalDetail}
@@ -231,12 +231,12 @@ const TableInterviews = ({
                 showModalForm={()=> fetchAction(showModalEdit)}
                 showModalDelete={()=> fetchAction(openModalRemove)}
             />
-            <EventForm
+            {/* <EventForm
                 visible={openModalEdit}
                 itemToEdit={itemToEdit}
                 close={closeModalEdit}
                 actionForm={e=> actionUpdate(itemToEdit.id, e)}
-            />
+            /> */}
         </>
     )
 }

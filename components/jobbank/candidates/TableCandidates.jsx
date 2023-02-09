@@ -39,13 +39,13 @@ const TableCandidates = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [useToDelete, setUseToDelete] = useState(true);
+    const [useWithAction, setUseWithAction] = useState(true);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
         } catch (e) {
@@ -58,7 +58,7 @@ const TableCandidates = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
         } catch (e) {
@@ -168,12 +168,12 @@ const TableCandidates = ({
         const filter_ = item => item.in_selection_process;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setUseToDelete(false)
+            setUseWithAction(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setUseToDelete(true);
+        setUseWithAction(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -183,7 +183,7 @@ const TableCandidates = ({
     }
 
     const titleDelete = useMemo(()=>{
-        if(!useToDelete){
+        if(!useWithAction){
             return itemsToDelete.length > 1
             ? `Estos candidatos no se pueden eliminar, ya que
                 se encuentran en un proceso de selección`
@@ -193,17 +193,17 @@ const TableCandidates = ({
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estos candidatos?'
             : '¿Estás seguro de eliminar este candidato?';
-    },[useToDelete, itemsToDelete])
+    },[useWithAction, itemsToDelete])
 
     const openModalRemove = (item) =>{
-        setUseToDelete(!item?.in_selection_process)
+        setUseWithAction(!item?.in_selection_process)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        setUseToDelete(true)
+        setUseWithAction(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -225,8 +225,9 @@ const TableCandidates = ({
     }
 
     const copyLinkAutoregister = () =>{
+        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
         copyContent({
-            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
+            text: `${url}?code=${currentNode.permanent_code}`,
             onSucces: ()=> message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
@@ -264,13 +265,13 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<LinkOutlined/>}
                     onClick={() => copyLinkUpdate(item)}
                 >
                     Actualización
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
@@ -349,7 +350,7 @@ const TableCandidates = ({
             title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -358,7 +359,7 @@ const TableCandidates = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -398,8 +399,8 @@ const TableCandidates = ({
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
-                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
-                useWithAction={useToDelete}
+                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useWithAction}
             />
         </>
     )

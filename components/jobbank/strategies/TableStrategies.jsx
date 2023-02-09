@@ -39,7 +39,7 @@ const TableStrategies = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteStrategy({ids});
-            getStrategies(currentNode.id, jobbank_filters, jobbank_page);
+            getStrategies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Estrategias eliminadas' : 'Estrategia eliminada';
             message.success(msg);
         } catch (e) {

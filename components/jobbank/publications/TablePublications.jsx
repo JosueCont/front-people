@@ -55,7 +55,7 @@ const TablePublications = ({
         try {
             await WebApiJobBank.sharePublication(itemToPublish.id, values);
             setTimeout(()=>{
-                getPublications(currentNode.id, jobbank_filters, jobbank_page);
+                getPublications(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
                 message.success({content: 'Vacante publicada', key});
             }, 1000)
         } catch (e) {
@@ -73,7 +73,7 @@ const TablePublications = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deletePublication({ids});
-            getPublications(currentNode.id, jobbank_filters, jobbank_page);
+            getPublications(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Publicaciones eliminadas' : 'Publicación eliminada';
             message.success(msg);
         } catch (e) {
