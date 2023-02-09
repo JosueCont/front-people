@@ -146,7 +146,7 @@ const DataPerson = ({
       });
     setLoading(false);
     setPhoto(person.photo);
-    setDateAdmission(moment(person.date_of_admission));
+    setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);
   };
@@ -158,8 +158,8 @@ const DataPerson = ({
     if (dateIngPlatform) value.register_date = moment(dateIngPlatform).format('YYYY-MM-DD');
     else delete value["register_date"];
     if (birthDate) value.birth_date = moment(birthDate).format('YYYY-MM-DD');
-    else delete value["birth_date"];
-    if (dateAdmission) value.date_of_admission = moment(dateAdmission).format('YYYY-DD-MM');
+    else  value.birth_date=null;
+    if (dateAdmission) value.date_of_admission = moment(dateAdmission).format('YYYY-MM-DD');
     else delete value["date_of_admission"];
     value.id = person.id;
     value.is_active = isActive;
@@ -237,7 +237,7 @@ const DataPerson = ({
   );
 
   const onChangeDateAdmission = (date, dateString) => {
-    setDateAdmission(dateString);
+    setDateAdmission(moment(date).format('YYYY-MM-DD'));
   };
 
   const changeStatus = async (value) => {
@@ -261,7 +261,12 @@ const DataPerson = ({
   };
 
   const onChangeBirthDate = (date, dateString) => {
-    setBirthDate(dateString);
+    if(date){
+      setBirthDate(moment(date).format('YYYY-MM-DD'));
+    }else{
+      setBirthDate(null)
+    }
+
   };
 
   return (
