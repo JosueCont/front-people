@@ -11,7 +11,9 @@ const Expedient = ({
     infoCandidate,
     infoEducation,
     infoExperience,
-    infoPositions
+    infoPositions,
+    image,
+    widthAndHeight
 }) => {
 
     const [loading, setLoading] = useState(false);
@@ -50,6 +52,8 @@ const Expedient = ({
             infoEducation={ partialEducation?.length > 0 ? partialEducation : infoEducation }
             infoExperience={infoExperience}
             infoPositions={ partialPositions?.length > 0 ? partialPositions : infoPositions}
+            image = { image }
+            widthAndHeight = {widthAndHeight}
         />)
     }
 

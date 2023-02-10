@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Card,
     Row,
@@ -22,7 +22,8 @@ const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
 const DetailsCandidates = ({
     action,
     currentNode,
-    newFilters = {}
+    newFilters = {},
+    isAutoRegister = false
 }) => {
 
     const router = useRouter();
@@ -32,20 +33,46 @@ const DetailsCandidates = ({
     const [infoEducation, setInfoEducation] = useState([]);
     const [infoExperience, setInfoExperience] = useState([]);
     const [infoPositions, setInfoPositions] = useState([]);
+    const [widthAndHeight, setWidthAndHeight] = useState({
+        width: 0,
+        height: 0
+    })
+    const image = currentNode?.image? currentNode.image : ''
 
-    const actionBack = () => router.push({
-        pathname: '/jobbank/candidates',
-        query: newFilters
-    });
+    useEffect(() => {
+        if(image){
+            const widthImage = new Image()
+            widthImage.src = image
+            widthImage.onload = () => {
+            setWidthAndHeight({
+                width: widthImage.width,
+                height: widthImage.height
+            })
+    }
+        }
+    },[image])
+
+    const actionBack = () =>{
+        router.push({
+            pathname: '/jobbank/candidates',
+            query: newFilters
+        })
+    }
 
     const onChangeTab = (tab) =>{
+        let url = isAutoRegister
+            ?  `/jobbank/${currentNode.permanent_code}/candidate`
+            : '/jobbank/candidates/edit';
         if(action == 'add'){
             setCurrentKey(tab)
             return;
         }
+        let querys = {...router.query, tab};
+        if(querys.tab == '1') delete querys.tab;
+        if(querys.uid) delete querys.uid;
         router.replace({
-            pathname: '/jobbank/candidates/edit',
-            query: {...router.query, tab}
+            pathname: url,
+            query: querys
         }, undefined, { shallow: true})
     }
     
@@ -66,22 +93,26 @@ const DetailsCandidates = ({
                             : 'Información del candidato'
                         }
                     </p>
-                    <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                        {action == 'edit' && (
-                            <Expedient
-                                infoCandidate={infoCandidate}
-                                infoEducation={infoEducation}
-                                infoExperience={infoExperience}
-                                infoPositions={infoPositions}
-                            />
-                        )}
-                        <Button
-                            onClick={()=> actionBack()}
-                            icon={<ArrowLeftOutlined />}
-                        >
-                            Regresar
-                        </Button>
-                    </div>
+                    {!isAutoRegister && (
+                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                            {action == 'edit' && (
+                                <Expedient
+                                    infoCandidate={infoCandidate}
+                                    infoEducation={infoEducation}
+                                    infoExperience={infoExperience}
+                                    infoPositions={infoPositions}
+                                    image = {image}
+                                    widthAndHeight = {widthAndHeight}
+                                />
+                            )}
+                            <Button
+                                onClick={()=> actionBack()}
+                                icon={<ArrowLeftOutlined />}
+                            >
+                                Regresar
+                            </Button>
+                        </div>
+                    )}
                 </Col>
                 <Col span={24} className='tabs-vacancies'>
                     <Tabs
@@ -100,7 +131,7 @@ const DetailsCandidates = ({
                                 newFilters={newFilters}
                                 setInfoCandidate={setInfoCandidate}
                                 infoCandidate={infoCandidate}
-                                actionBack={actionBack}
+                                isAutoRegister={isAutoRegister}
                             />
                         </Tabs.TabPane>
                         <Tabs.TabPane
@@ -159,17 +190,6 @@ const DetailsCandidates = ({
                             <TabReferences
                                 action={action}
                                 type='2'
-                            />
-                        </Tabs.TabPane>
-                        <Tabs.TabPane
-                            tab='Otros documentos'
-                            disabled={disableTab}
-                            forceRender
-                            key='7'
-                        >
-                            <TabReferences
-                                action={action}
-                                type='3'
                             />
                         </Tabs.TabPane>
                     </Tabs>    

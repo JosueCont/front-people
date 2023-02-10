@@ -67,6 +67,7 @@ import ImportButtonList from "../../../components/payroll/ImportGenericButton/Im
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
+import _ from "lodash"
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -586,7 +587,7 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
-        {props.config?.kuiz_enabled && (
+        {props?.applications && (_.has(props.applications, "kuiz") && props.applications["kuiz"].active) && (
           <>
             {/* {permissions.view && (
               <Menu.Item key="4" icon={<EyeOutlined />}>

@@ -11,13 +11,15 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    PlusOutlined
+    PlusOutlined,
+    DownloadOutlined
 } from '@ant-design/icons';
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
 import moment from 'moment';
+import { downloadCustomFile } from '../../../utils/functions';
 
 const TabSchool = ({
     action,
@@ -31,6 +33,7 @@ const TabSchool = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const noValid = [undefined, null, '', ' '];
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -43,6 +46,7 @@ const TabSchool = ({
             setLoading(true);
             let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             setInfoEducation(response.data);
+            console.log('Response', response.data)
             setLoading(false);
         } catch (e) {
             console.log(e)
@@ -50,11 +54,25 @@ const TabSchool = ({
         }
     }
 
+    const createData = (obj) => {
+        let dataEducation = new FormData();
+
+        dataEducation.append('candidate', router.query.id)
+
+        Object.entries(obj).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            dataEducation.append(key, value);
+        })
+
+        return dataEducation
+    }
+
     const actionCreate = async (values) =>{
+        let data = createData(values)
         try {
             setLoading(true);
-            let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.createCandidateEducation(body);
+            // let body = {...values, candidate: router.query.id};
+            await WebApiJobBank.createCandidateEducation(data);
             message.success('Educación registrada');
             getInfoEducation(router.query.id);
         } catch (e) {
@@ -65,10 +83,11 @@ const TabSchool = ({
     }
 
     const actionUpdate = async (values) =>{
+        let data = createData(values)
         try {
             setLoading(true)
-            let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.updateCandidateEducation(itemToEdit.id, body);
+            // let body = {...values, candidate: router.query.id};
+            await WebApiJobBank.updateCandidateEducation(itemToEdit.id, data);
             message.success('Educación actualizada');
             getInfoEducation(router.query.id);
         } catch (e) {
@@ -153,6 +172,21 @@ const TabSchool = ({
                 >
                     Eliminar
                 </Menu.Item>
+                {
+                    !noValid.includes(item.file) && 
+
+                    <Menu.Item
+                        key='3'
+                        icon={<DownloadOutlined/>}
+                        onClick={()=> downloadCustomFile({
+                            url: item.file,
+                            name: item.file?.split('/')?.at(-1)
+                        })}
+                    >
+                        Descargar
+                    </Menu.Item>
+                }
+
             </Menu>
         );
     };

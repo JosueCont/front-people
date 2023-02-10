@@ -134,6 +134,7 @@ const FormTraining = ({ person_id = null }) => {
 
   const formFinishTraining = (value) => {
     if (upTraining) {
+      debugger;
       value.id = idTraining;
       value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
       value.until = moment(dateTraining[1]).format('YYYY-MM-DD');
@@ -142,7 +143,7 @@ const FormTraining = ({ person_id = null }) => {
       setDateRange("");
     } else {
       value.since = moment(dateTraining[0]).format('YYYY-MM-DD');
-      value.until = moment(dateTraining[0]).format('YYYY-MM-DD');
+      value.until = moment(dateTraining[1]).format('YYYY-MM-DD');
       value.currently_studing = currenlyStuding;
       value.person = person_id;
       saveTraining(value);
@@ -150,10 +151,13 @@ const FormTraining = ({ person_id = null }) => {
     }
   };
   const onChangeDateTrainig = (date, dateString) => {
-    setDateTraining(dateString);
+    setDateTraining([
+      moment(date[0], "YYYY-MM-DD"),
+      moment(date[1], "YYYY-MM-DD"),
+    ]);
     setDateRange([
-      moment(dateString[0], "DD-MM-YYYY"),
-      moment(dateString[1], "DD-MM-YYYY"),
+      moment(date[0], "YYYY-MM-DD"),
+      moment(date[1], "YYYY-MM-DD"),
     ]);
     formTraining.setFieldsValue({ since: dateString });
   };
@@ -162,8 +166,8 @@ const FormTraining = ({ person_id = null }) => {
   };
   const updateFormTraining = (item) => {
     setDateRange([
-      moment(item.since, "DD-MM-YYYY"),
-      moment(item.until, "DD-MM-YYYY"),
+      moment(item.since, "YYYY-MM-DD"),
+      moment(item.until, "YYYY-MM-DD"),
     ]);
     formTraining.setFieldsValue({
       school: item.school,

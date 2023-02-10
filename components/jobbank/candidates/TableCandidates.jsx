@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Table,
     Button,
@@ -39,13 +39,31 @@ const TableCandidates = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [useWithAction, setUseWithAction] = useState(true);
+    const [useToDelete, setUseToDelete] = useState(true);
+    const [widthAndHeight, setWidthAndHeight] = useState({
+        width: 0,
+        height: 0
+    })
+    const image = currentNode?.image? currentNode.image : ''
+
+    useEffect(() => {
+        if(image){
+            const widthImage = new Image()
+            widthImage.src = image
+            widthImage.onload = () => {
+            setWidthAndHeight({
+                width: widthImage.width,
+                height: widthImage.height
+            })
+    }
+        }
+    },[image])
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteCandidate({ids});
-            getCandidates(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
         } catch (e) {
@@ -58,7 +76,7 @@ const TableCandidates = ({
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
-            getCandidates(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
+            getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
         } catch (e) {
@@ -72,7 +90,10 @@ const TableCandidates = ({
         <HighDirectionReport
             infoCandidate={infoCandidate}
             infoEducation={ infoEducation}
-            infoPositions={ infoPositions}
+            infoPositions={infoPositions}
+            image = { image }
+            widthAndHeight = {widthAndHeight}
+            
         />
     const NyCandidateReport = ({infoCandidate, infoEducation, infoExperience, infoPositions, }) => 
 
@@ -81,11 +102,13 @@ const TableCandidates = ({
         infoEducation={ infoEducation}
         infoExperience = { infoExperience }
         infoPositions={ infoPositions}
+        image = { image }
+        widthAndHeight = {widthAndHeight}
     />
     
 
     const linkTo = (url, download = false, nameCandidate ) =>{
-        // let nameFile = `${infoCandidate.first_name} ${infoCandidate.last_name}`;
+        // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
         let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
         const link = document.createElement("a");
         link.href = url;
@@ -106,7 +129,7 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -139,7 +162,7 @@ const TableCandidates = ({
             let infoEducation = responseEdu.data || []
             let infoExp = responseExp.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
             let resp = await pdf(
                                 <NyCandidateReport 
                                     infoCandidate={infoCan} 
@@ -168,12 +191,12 @@ const TableCandidates = ({
         const filter_ = item => item.in_selection_process;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setUseWithAction(false)
+            setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setUseWithAction(true);
+        setUseToDelete(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -183,7 +206,7 @@ const TableCandidates = ({
     }
 
     const titleDelete = useMemo(()=>{
-        if(!useWithAction){
+        if(!useToDelete){
             return itemsToDelete.length > 1
             ? `Estos candidatos no se pueden eliminar, ya que
                 se encuentran en un proceso de selección`
@@ -193,17 +216,17 @@ const TableCandidates = ({
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estos candidatos?'
             : '¿Estás seguro de eliminar este candidato?';
-    },[useWithAction, itemsToDelete])
+    },[useToDelete, itemsToDelete])
 
     const openModalRemove = (item) =>{
-        setUseWithAction(!item?.in_selection_process)
+        setUseToDelete(!item?.in_selection_process)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        setUseWithAction(true)
+        setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
@@ -225,9 +248,8 @@ const TableCandidates = ({
     }
 
     const copyLinkAutoregister = () =>{
-        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
         copyContent({
-            text: `${url}?code=${currentNode.permanent_code}`,
+            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
             onSucces: ()=> message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
@@ -265,13 +287,13 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                {/* <Menu.Item
+                <Menu.Item
                     key='1'
                     icon={<LinkOutlined/>}
                     onClick={() => copyLinkUpdate(item)}
                 >
                     Actualización
-                </Menu.Item> */}
+                </Menu.Item>
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
@@ -310,8 +332,8 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: 'first_name',
-            key: 'first_name',
+            dataIndex: 'fisrt_name',
+            key: 'fisrt_name',
             ellipsis: true
         },
         {
@@ -350,7 +372,7 @@ const TableCandidates = ({
             title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
-                        <Button size='small'>
+                        <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -359,7 +381,7 @@ const TableCandidates = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size='small'>
+                        <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -394,13 +416,13 @@ const TableCandidates = ({
             <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle={['first_name','last_name']}
+                keyTitle={['fisrt_name','last_name']}
                 keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
-                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
-                useWithAction={useWithAction}
+                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useToDelete}
             />
         </>
     )

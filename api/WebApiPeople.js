@@ -541,6 +541,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/external-services/khor/sso/`,"post",data)
   }  
 
+  static validateChangePassword(data){
+    return WebApi.ApisType(`/person/change-password/`,"post",data)
+  }  
+
 }
 
 export default WebApiPeople;
