@@ -10,8 +10,15 @@ class WebApiAssessment {
     );
   }
   static getOnlyGroupAssessment(id) {
-    return WebApi.ApisType(`/person/group-assessments/${id}`, "get");
+    return WebApi.ApisType(`/person/group-assessments/${id}/`, "get");
   }
+
+  static getOnlyGroupAssessmentByNode(id) {
+    return WebApi.ApisType(`/person/group-assessments/?node=${id}`, "get");
+  }
+
+
+
   static getListSurveys(nodeId, queryParam = "") {
     return WebApi.ApisType(
       `/person/assessment/?companies=${nodeId}${queryParam}`,
