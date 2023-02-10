@@ -35,6 +35,12 @@ const TabSchool = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const noValid = [undefined, null, '', ' '];
 
+    infoEducation?.length > 0 && infoEducation.sort((a,b) => {
+        if (a.study_level.name > b.study_level.name) return 1;
+        if (a.study_level.name < b.study_level.name) return -1;
+        return 0;
+    })
+
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
             getInfoEducation(router.query.id);
