@@ -131,7 +131,13 @@ const TabReferences = ({
         setItemsToDelete([])
     }
 
-    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
+
+    // const onChangePage = (e1, e2, e3) =>{
+    //     console.log('e1--------->', e1)
+    //     console.log('e2----------->', e2)
+    //     console.log('e3---------->', e3)
+    // }
 
     const menuItem = (item) => {
         return (
@@ -196,6 +202,12 @@ const TabReferences = ({
         },
         {
             title: 'Estatus',
+            filters: optionsStatusReferences.map(item => ({
+                text: item.label,
+                value: item.value
+            })),
+            onFilter: (value, record) => record.status == value,
+            // filterSearch: true,
             render: (item) =>{
                 return(
                     <Select
@@ -238,6 +250,7 @@ const TabReferences = ({
                 size='small'
                 columns={columns}
                 loading={loading}
+                // onChange={onChangePage}
                 dataSource={infoReferences}
                 locale={{ emptyText: loading
                     ? 'Cargando...'

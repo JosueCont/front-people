@@ -38,7 +38,7 @@ const candidate = ({
     useEffect(()=>{
         if(currentNode){
             getListStates(currentNode.id);
-            getVacanciesOptions(currentNode.id);
+            getVacanciesOptions(currentNode.id, '&status=1');
             getConnectionsOptions(currentNode.id, '&conection_type=2');
         }
     },[currentNode])
@@ -57,7 +57,11 @@ const candidate = ({
             setFileCV([]);
         }catch(e){
             console.log(e)
-            let msg = router.query?.vacant
+            setFetching(false);
+            let error = e.response?.data?.email;
+            let msg = error
+                ?'Este correo ya existe'
+                : router.query?.vacant
                 ? 'Postulación no registrada'
                 : 'Candidato no registrado';
             message.error(msg);

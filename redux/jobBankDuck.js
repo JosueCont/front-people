@@ -31,6 +31,7 @@ const initialState = {
     list_tags_notification: [],
     list_interviews: {},
     list_selection_options: [],
+    list_applications: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -61,6 +62,7 @@ const initialState = {
     load_tags_notification: false,
     load_interviews: false,
     load_selection_options: false,
+    load_applications: false,
     jobbank_page: 1,
     jobbank_filters: "",
     jobbank_load: false,
@@ -107,6 +109,8 @@ const GET_SCHOLARSHIP = "GET_SCHOLARSHIP";
 const GET_TAGS_NOTIFICATION = "GET_TAGS_NOTIFICATION";
 
 const GET_INTERVIEWS = "GET_INTERVIEWS";
+
+const GET_APPLICATIONS = "GET_APPLICATIONS";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -281,6 +285,14 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state,
                 list_selection_options: action.payload,
                 load_selection_options: action.fetching
+            }
+        case GET_APPLICATIONS:
+            return {...state,
+                list_applications: action.payload,
+                load_applications: action.fetching,
+                jobbank_filters: action.query,
+                jobbank_page: action.page,
+                jobbank_page_size: action.size
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -634,6 +646,45 @@ export const getInterviews = (node, query = '', page = 1) => async (dispatch) =>
     try {
         let response = await WebApiJobBank.getInterviews(node, query);
         dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getApplications = (node, query = '', page = 1, size = 10) => async (dispatch, getState) =>{
+    try {
+        const { jobBankStore: { list_applications } } = getState();
+        const typeFunction = {
+            type: GET_APPLICATIONS,
+            payload: list_applications,
+            fetching: false, query, page, size
+        };
+        dispatch({...typeFunction, fetching: true})
+        let results = [];
+        for (let i = 0; i < 50; i++) {
+            results.push({
+                "id": i,
+                "status": Math.ceil(Math.random()*3),
+                "candidate": {
+                    "id": "fcfcf4cf3e2b49ad85e946487d80f9dd"+i,
+                    "fisrt_name": "Candidato Demo "+ i,
+                    "last_name": "apellido demo "+ i,
+                    "email": "2@2.com",
+                    "cell_phone": "9999999999",
+                    "cv": "https://khorplus.s3.amazonaws.com/grupohuman/people/job_bank/candidates/cv/122023235340/cv-demo.pdf",
+                },
+                "vacant": {
+                    "id": "fcfcf4cf3e2b49ad85e946487d80f9dd",
+                    "job_position": "demo1"
+                }
+            })
+            setTimeout(()=>{
+                let candidates = results.map(item => item.candidate);
+                let payload = {count: results.length, results, candidates};
+                dispatch({...typeFunction, payload});
+            },1000)
+        }
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

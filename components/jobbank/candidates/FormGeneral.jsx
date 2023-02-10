@@ -60,6 +60,7 @@ const FormGeneral = ({
                     <Form.Item
                         name='vacant'
                         label='Vacante'
+                        rules={[ruleRequired]}
                     >
                         <Select
                             allowClear
@@ -81,7 +82,7 @@ const FormGeneral = ({
             )}
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='fisrt_name'
+                    name='first_name'
                     label='Nombre'
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
@@ -131,6 +132,20 @@ const FormGeneral = ({
                         inputReadOnly
                     />
                 </Form.Item>
+            </Col>
+            <Col xs={24} md={12} xl={8} xxl={6}>
+                <FileUpload
+                    label='CV'
+                    keyName='cv_name_read'
+                    tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                    isRequired={true}
+                    urlPreview={infoCandidate?.cv}
+                    setFile={setFileCV}
+                    typeFile={typeFileCV}
+                    setNameFile={e => formCandidate.setFieldsValue({
+                        cv_name_read: e
+                    })}
+                />
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
@@ -206,20 +221,6 @@ const FormGeneral = ({
                 >
                     <Input maxLength={10} placeholder='Código postal'/>
                 </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <FileUpload
-                    label='CV'
-                    keyName='cv_name_read'
-                    tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
-                    isRequired={true}
-                    urlPreview={infoCandidate?.cv}
-                    setFile={setFileCV}
-                    typeFile={typeFileCV}
-                    setNameFile={e => formCandidate.setFieldsValue({
-                        cv_name_read: e
-                    })}
-                />
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
