@@ -153,3 +153,20 @@ export const nameLastname = {
   message:
     "El valor ingresado no puede contener números y/o caracteres especiales.",
 };
+
+export const ruleMinPassword = (min) => {
+  return{
+    min: min,
+    message: `La contraseña debe de tener mínimo ${min} carácteres`
+  }
+}
+
+export const validateSpaces = {
+  validator(_, value){
+    if(value.includes(" ")){
+      return Promise.reject('No están permitidos los espacios')
+    } else {
+      return Promise.resolve()
+    }
+  }
+}
