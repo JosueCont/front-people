@@ -11,13 +11,15 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    PlusOutlined
+    PlusOutlined,
+    DownloadOutlined
 } from '@ant-design/icons';
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
 import moment from 'moment';
+import { downloadCustomFile } from '../../../utils/functions';
 
 const TabSchool = ({
     action,
@@ -44,6 +46,7 @@ const TabSchool = ({
             setLoading(true);
             let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             setInfoEducation(response.data);
+            console.log('Response', response.data)
             setLoading(false);
         } catch (e) {
             console.log(e)
@@ -169,6 +172,21 @@ const TabSchool = ({
                 >
                     Eliminar
                 </Menu.Item>
+                {
+                    !noValid.includes(item.file) && 
+
+                    <Menu.Item
+                        key='3'
+                        icon={<DownloadOutlined/>}
+                        onClick={()=> downloadCustomFile({
+                            url: item.file,
+                            name: item.file?.split('/')?.at(-1)
+                        })}
+                    >
+                        Descargar
+                    </Menu.Item>
+                }
+
             </Menu>
         );
     };
