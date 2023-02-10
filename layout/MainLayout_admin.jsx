@@ -114,6 +114,15 @@ const MainLayoutAdmin = ({
     }
   }
 
+  const validatePassword = ({ getFieldValue }) => ({
+    validator(rule, value) {
+      if (!value || getFieldValue("passwordOne") === value) {
+        return Promise.resolve();
+      }
+      return Promise.reject("Las contraseñas no coinciden");
+    },
+  });
+
   return (
     <>
       <Modal title="Cambio de contraseña" visible={isOpenModalChangePassword} closable={false} footer={false}>
@@ -134,14 +143,14 @@ const MainLayoutAdmin = ({
                   label="Contraseña nueva"
                   rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}} prefix={<EyeOutlined />} />
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
                 </Form.Item>
                 <Form.Item
                   name="passwordTwo"
                   label="Confirmar contraseña"
-                  rules={[ruleRequired, ruleWhiteSpace]}
+                  rules={[ruleRequired, ruleWhiteSpace, validatePassword]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}} prefix={<EyeOutlined />} />
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
                 </Form.Item>
               </Col>
             </Row>
