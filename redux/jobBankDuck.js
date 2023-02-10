@@ -32,6 +32,7 @@ const initialState = {
     list_interviews: {},
     list_selection_options: [],
     list_applications: {},
+    list_applications_candidates: [],
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -63,6 +64,7 @@ const initialState = {
     load_interviews: false,
     load_selection_options: false,
     load_applications: false,
+    load_applications_candidates: false,
     jobbank_page: 1,
     jobbank_filters: "",
     jobbank_load: false,
@@ -111,6 +113,7 @@ const GET_TAGS_NOTIFICATION = "GET_TAGS_NOTIFICATION";
 const GET_INTERVIEWS = "GET_INTERVIEWS";
 
 const GET_APPLICATIONS = "GET_APPLICATIONS";
+const GET_APPLICATIONS_CANDIDATES = "GET_APPLICATIONS_CANDIDATES";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -293,6 +296,11 @@ const jobBankReducer = (state = initialState, action) =>{
                 jobbank_filters: action.query,
                 jobbank_page: action.page,
                 jobbank_page_size: action.size
+            }
+        case GET_APPLICATIONS_CANDIDATES:
+            return {...state,
+                list_applications_candidates: action.payload,
+                load_applications_candidates: action.fetching
             }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
@@ -652,42 +660,27 @@ export const getInterviews = (node, query = '', page = 1) => async (dispatch) =>
     }
 }
 
-export const getApplications = (node, query = '', page = 1, size = 10) => async (dispatch, getState) =>{
+export const getApplications = (node, query = '', page = 1, size = 10) => async (dispatch) =>{
+    const typeFunction = { type: GET_APPLICATIONS, payload: {}, fetching: false, query, page, size};
+    dispatch({...typeFunction, fetching: true})
     try {
-        const { jobBankStore: { list_applications } } = getState();
-        const typeFunction = {
-            type: GET_APPLICATIONS,
-            payload: list_applications,
-            fetching: false, query, page, size
-        };
-        dispatch({...typeFunction, fetching: true})
-        let results = [];
-        for (let i = 0; i < 50; i++) {
-            results.push({
-                "id": i,
-                "status": Math.ceil(Math.random()*3),
-                "candidate": {
-                    "id": "fcfcf4cf3e2b49ad85e946487d80f9dd"+i,
-                    "first_name": "Candidato Demo "+ i,
-                    "last_name": "apellido demo "+ i,
-                    "email": "2@2.com",
-                    "cell_phone": "9999999999",
-                    "cv": "https://khorplus.s3.amazonaws.com/grupohuman/people/job_bank/candidates/cv/122023235340/cv-demo.pdf",
-                },
-                "vacant": {
-                    "id": "fcfcf4cf3e2b49ad85e946487d80f9dd",
-                    "job_position": "demo1"
-                }
-            })
-            setTimeout(()=>{
-                let candidates = results.map(item => item.candidate);
-                let payload = {count: results.length, results, candidates};
-                dispatch({...typeFunction, payload});
-            },1000)
-        }
+        // const { jobBankStore: { list_applications } } = getState();
+        let response = await WebApiJobBank.getApplications(node, query);
+        dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
+    }
+}
+
+export const getApplicationsCandidates = (node, query = '') => async (dispatch) =>{
+    const typeFunction = { type: GET_APPLICATIONS_CANDIDATES, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getApplicationsCandidates(node, query);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
     }
 }
 

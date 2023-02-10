@@ -315,6 +315,24 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/references/${id}/`, 'delete')
     }
 
+    //POSTULACIONES
+
+    static getApplications(node, query){
+        return WebApi.ApisType(`/job-bank/applications/?node=${node}${query}`, 'get');
+    }
+
+    static getInfoApplication(id){
+        return WebApi.ApisType(`/job-bank/applications/${id}/`, 'get');
+    }
+
+    static getApplicationsCandidates(node, query){
+        return WebApi.ApisType(`/job-bank/applications/get_candidates/?node=${node}${query}`, 'get');
+    }
+
+    static updateApplications(id, data){
+        return WebApi.ApisType(`/job-bank/applications/${id}/`, 'patch', data);
+    }
+
     //LISTADO DE CATÁLOGOS
 
     static getMainCategories(node, query){

@@ -14,8 +14,8 @@ const FiltersApplications = ({
 }) => {
 
     const {
-        list_applications,
-        load_applications,
+        list_applications_candidates,
+        load_applications_candidates,
         list_vacancies_options,
         load_vacancies_options
     } = useSelector(state => state.jobBankStore);
@@ -52,15 +52,15 @@ const FiltersApplications = ({
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={load_applications}
-                                loading={load_applications}
+                                disabled={load_applications_candidates}
+                                loading={load_applications_candidates}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {list_applications?.candidates?.length > 0 &&
-                                    list_applications.candidates?.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
+                                {list_applications_candidates.length > 0 &&
+                                    list_applications_candidates.map(item => (
+                                    <Select.Option value={item.id+""} key={item.id+""}>
                                         {item.first_name} {item.last_name}
                                     </Select.Option>
                                 ))}

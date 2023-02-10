@@ -5,21 +5,29 @@ import { withAuthSync } from '../../../libs/auth';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 import SearchApplications from '../../../components/jobbank/applications/SearchApplications';
 import TableApplications from '../../../components/jobbank/applications/TableApplications';
-import { getApplications, getVacanciesOptions } from '../../../redux/jobBankDuck';
+import {
+    getApplications,
+    getVacanciesOptions,
+    getApplicationsCandidates
+} from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import moment from 'moment';
 
 const index = ({
     currentNode,
     getApplications,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getApplicationsCandidates
 }) => {
 
     const router = useRouter();
     const format = 'DD-MM-YYYY';
 
     useEffect(()=>{
-        if(currentNode) getVacanciesOptions(currentNode.id, '&status=1');
+        if(currentNode){
+            getVacanciesOptions(currentNode.id, '&status=1');
+            getApplicationsCandidates(currentNode.id);
+        }
     },[currentNode])
 
     const validFilters = () =>{
@@ -65,6 +73,7 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getApplications,
-        getVacanciesOptions
+        getVacanciesOptions,
+        getApplicationsCandidates
     }
 )(withAuthSync(index));

@@ -19,8 +19,9 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { optionsStatusApplications } from '../../../utils/constant';
-import { getApplications } from '../../../redux/jobBankDuck';
+import { getApplications, getApplicationsCandidates } from '../../../redux/jobBankDuck';
 import { downloadCustomFile } from '../../../utils/functions';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableApplications = ({
     currentNode,
@@ -29,15 +30,19 @@ const TableApplications = ({
     jobbank_page,
     jobbank_filters,
     jobbank_page_size,
-    getApplications
+    getApplications,
+    getApplicationsCandidates
 }) => {
 
     const router = useRouter();
 
     const actionStatus = async (value, item) =>{
         try {
-            getApplications(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size)
-            message.success('Estatus actualizado');
+            let response = await WebApiJobBank.updateApplications(item.id, {status: value});
+            getApplications(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
+            let txt = response?.data?.message;
+            let msg = txt ? txt : 'Estatus actualizado';
+            message.success(msg);
         } catch (e) {
             console.log(e)
             message.error('Estatus no actualizado');
@@ -52,41 +57,29 @@ const TableApplications = ({
         })
     }
 
-    const menuItem = (item) => {
-        return (
-            <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<EyeOutlined/>}
-                >
-                    Ver detalle
-                </Menu.Item>
-                <Menu.Item
-                    key='2'
-                    icon={<DownloadOutlined/>}
-                    onClick={()=> downloadCustomFile({
-                        name: item.candidate?.cv?.split('/')?.at(-1),
-                        url: item.candidate.cv
-                    })}
-                >
-                    Descargar CV
-                </Menu.Item>
-            </Menu>
-        );
-    };
+    const optionsStatus = (status) =>{ 
+        return optionsStatusApplications.map(item =>{
+            let disabled = status == 1 ? false : !(item.value == status);
+            return {...item, disabled}
+        })
+    }
 
     const columns = [
         {
-            title: 'Nombre',
-            dataIndex: ['candidate','first_name'],
-            key: ['candidate','first_name'],
-            ellipsis: true
-        },
-        {
-            title: 'Apellidos',
-            dataIndex: ['candidate','last_name'],
-            key: ['candidate','last_name'],
-            ellipsis: true
+            title: 'Candidato',
+            render: (item) =>{
+                return item?.candidate ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/candidates/edit',
+                            query: {...router.query, id: item.candidate?.id}
+                        })}
+                    >
+                        {item.candidate?.first_name} {item.candidate?.last_name}
+                    </span>
+                ) : <></>;
+            }   
         },
         {
             title:'Correo electrónico',
@@ -101,9 +94,20 @@ const TableApplications = ({
         },
         {
             title: 'Vacante',
-            dataIndex: ['vacant','job_position'],
-            key: ['vacant','job_postion'],
-            ellipsis: true
+            ellipsis: true,
+            render: (item) =>{
+                return item.vacant?.job_position ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/vacancies/edit',
+                            query: {...router.query, id: item.vacant?.id}
+                        })}
+                    >
+                        {item.vacant?.job_position}
+                    </span>
+                ) : <></>;
+            }
         },
         {
             title: 'Estatus',
@@ -115,7 +119,7 @@ const TableApplications = ({
                         defaultValue={item.status}
                         value={item.status}
                         placeholder='Estatus'
-                        options={optionsStatusApplications}
+                        options={optionsStatus(item.status)}
                         onChange={(e) => actionStatus(e, item)}
                     />
                 )
@@ -123,15 +127,19 @@ const TableApplications = ({
         },
         {
             title: 'Acciones',
-            width: 80,
+            width: 105,
             render: (item) =>{
-                return (
-                    <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
+                return(
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> downloadCustomFile({
+                            name: item.candidate?.cv?.split('/')?.at(-1),
+                            url: item.candidate.cv
+                        })}
+                    >
+                        Descargar CV
+                    </span>
+                )   
             }
         }
     ]
@@ -174,5 +182,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, { getApplications }
+    mapState, {
+        getApplications,
+        getApplicationsCandidates
+    }
 )(TableApplications);

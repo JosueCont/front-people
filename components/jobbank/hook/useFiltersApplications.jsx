@@ -6,15 +6,8 @@ import moment from "moment";
 export const useFiltersApplications = () =>{
 
     const {
-        load_main_categories,
-        list_main_categories,
-        list_states,
-        load_states,
-        list_sectors,
-        load_sectors,
-        load_sub_categories,
-        list_sub_categories,
-        list_applications,
+        list_applications_candidates,
+        load_applications_candidates,
         list_vacancies_options,
         load_vacancies_options
     } = useSelector(state => state.jobBankStore);
@@ -29,7 +22,7 @@ export const useFiltersApplications = () =>{
 
     const getCandidate = (id) => getValueFilter({
         value: id,
-        list: list_applications.candidates,
+        list: list_applications_candidates,
         keyShow: e => `${e?.first_name} ${e.last_name}`
     })
 

@@ -24,6 +24,7 @@ const DetailsCustom = ({
     actionBack = ()=>{},
     setActionType,
     onlyOptions = false,
+    showOptions = true,
     borderTitle = false
 }) => {
 
@@ -108,9 +109,11 @@ const DetailsCustom = ({
                 <Col span={24}>
                     {children}
                 </Col>
-                <Col span={24} className='tab-vacancies-btns'>
-                    <Options/>
-                </Col>
+                {showOptions && (
+                    <Col span={24} className='tab-vacancies-btns'>
+                        <Options/>
+                    </Col>
+                )}
             </Row>
         </Card>
     ) : (

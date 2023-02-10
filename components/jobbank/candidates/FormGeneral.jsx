@@ -25,7 +25,8 @@ const FormGeneral = ({
     formCandidate,
     setFileCV,
     infoCandidate,
-    showVacant = false
+    showVacant = false,
+    onlyRead = false
 }) => {
 
     const {
@@ -86,7 +87,11 @@ const FormGeneral = ({
                     label='Nombre'
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input maxLength={150} placeholder='Nombre del candidato'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={150}
+                        placeholder='Nombre del candidato'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -95,7 +100,11 @@ const FormGeneral = ({
                     label='Apellidos'
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input maxLength={150} placeholder='Apellidos del candidato'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={150}
+                        placeholder='Apellidos del candidato'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -104,7 +113,11 @@ const FormGeneral = ({
                     label='Correo electrónico'
                     rules={[ruleRequired, ruleEmail]}
                 >
-                    <Input maxLength={150} placeholder='Correo'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={150}
+                        placeholder='Correo electrónico'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -113,7 +126,11 @@ const FormGeneral = ({
                     label='Teléfono celular'
                     rules={[rulePhone, ruleRequired]}
                 >
-                    <Input maxLength={10} placeholder='Teléfono celular'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={10}
+                        placeholder='Teléfono celular'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -124,6 +141,7 @@ const FormGeneral = ({
                     tooltip='Edad mínima requerida 18 años'
                 >
                     <DatePicker
+                        disabled={onlyRead}
                         style={{width: '100%'}}
                         placeholder='Seleccionar una fecha'
                         format='DD-MM-YYYY'
@@ -141,6 +159,7 @@ const FormGeneral = ({
                     isRequired={true}
                     urlPreview={infoCandidate?.cv}
                     setFile={setFileCV}
+                    disabled={onlyRead}
                     typeFile={typeFileCV}
                     setNameFile={e => formCandidate.setFieldsValue({
                         cv_name_read: e
@@ -154,6 +173,7 @@ const FormGeneral = ({
                 >
                     <Select
                         // allowClear
+                        disabled={onlyRead}
                         showSearch
                         placeholder='Seleccionar un género'
                         notFoundContent='No se encontraron resultados'
@@ -168,7 +188,11 @@ const FormGeneral = ({
                     label='Teléfono fijo'
                     rules={[rulePhone]}
                 >
-                    <Input maxLength={10} placeholder='Teléfono fijo'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={10}
+                        placeholder='Teléfono fijo'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -182,7 +206,7 @@ const FormGeneral = ({
                         showSearch
                         placeholder='Seleccionar un estado'
                         notFoundContent='No se encontraron resultados'
-                        disabled={load_states}
+                        disabled={load_states || onlyRead}
                         loading={load_states}
                         optionFilterProp='children'
                         onChange={onChangeState}
@@ -201,7 +225,11 @@ const FormGeneral = ({
                     label='Municipio'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input disabled={!state} maxLength={100} placeholder='Especificar el municipio'/>
+                    <Input
+                        disabled={!state || onlyRead}
+                        maxLength={100}
+                        placeholder='Especificar el municipio'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -210,7 +238,10 @@ const FormGeneral = ({
                     label='Dirección'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Dirección'/>
+                    <Input
+                        disabled={onlyRead}
+                        placeholder='Dirección'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -219,7 +250,11 @@ const FormGeneral = ({
                     label='Código postal'
                     rules={[onlyNumeric]}
                 >
-                    <Input maxLength={10} placeholder='Código postal'/>
+                    <Input
+                        disabled={onlyRead}
+                        maxLength={10}
+                        placeholder='Código postal'
+                    />
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -228,6 +263,7 @@ const FormGeneral = ({
                     name='availability_to_travel'
                 >
                     <Select
+                        disabled={onlyRead}
                         placeholder='Seleccionar una opción'
                         notFoundContent='No se encontraron resultados'
                     >
@@ -237,7 +273,10 @@ const FormGeneral = ({
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
-                <ListLangs listSelected={languages}/>
+                <ListLangs
+                    disabled={onlyRead}
+                    listSelected={languages}
+                />
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
@@ -247,7 +286,7 @@ const FormGeneral = ({
                     <Select
                         mode='multiple'
                         maxTagCount={1}
-                        disabled={load_connections_options}
+                        disabled={load_connections_options || onlyRead}
                         loading={load_connections_options}
                         placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
@@ -270,6 +309,7 @@ const FormGeneral = ({
                     rules={[ruleWhiteSpace]}
                 >
                     <Input.TextArea
+                        disabled={onlyRead}
                         placeholder='Acerca de ti'
                         autoSize={{
                             minRows: 5,
