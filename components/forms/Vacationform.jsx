@@ -163,6 +163,8 @@ const Vacationform = (props) => {
                   label="Empleado"
                   name="person"
                   onChange={changePerson}
+                  showSearch={true}
+                  placeholder={"Seleccione"}
                   // setAllPersons={setAllPersons}
                 />
               </Form.Item>
