@@ -11,7 +11,8 @@ import NewHeader from "../components/newHeaderUser";
 import Head from "next/head";
 import MainSiderUser from "../components/MainSiderUser";
 import WebApiPeople from '../api/WebApiPeople';
-import { ruleWhiteSpace, ruleRequired } from "../utils/rules";
+import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../utils/rules";
+import { logoutAuth } from "../libs/auth";
 
 const { Content } = Layout;
 
@@ -103,6 +104,9 @@ const MainLayoutUser = ({
         setDisabledButtonSend(false)
         message.success("Cambio de contraseña exitoso");
         setIsOpenModalChangePassword(false)
+        setTimeout(() => {
+          logoutAuth();
+        }, 2000);
       }
     } catch (e) {
       message.error("Ocurrio un error intenta nuevamente");
@@ -131,21 +135,22 @@ const MainLayoutUser = ({
               requiredMark={false}
             >
               <Row justify="center">
-                <p><b>Por seguridad, es necesario que cambies tu contraseña por primera vez</b></p>
+                <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.
+                Una vez realizado, serás redirigido al login para iniciar sesión con tu nueva contraseña</b></p>
               </Row>
               <Row>
                 <Col span={24}>
                   <Form.Item
                     name="passwordOne"
                     label="Contraseña nueva"
-                    rules={[ruleRequired, ruleWhiteSpace]}
+                    rules={[ruleRequired, ruleWhiteSpace, validateSpaces, ruleMinPassword(6)]}
                   >
                     <Input.Password type="password" style={{minWidth:"100%"}}/>
                   </Form.Item>
                   <Form.Item
                     name="passwordTwo"
                     label="Confirmar contraseña"
-                    rules={[ruleRequired, ruleWhiteSpace, validatePassword]}
+                    rules={[ruleRequired, ruleWhiteSpace, validatePassword, validateSpaces, ruleMinPassword(6)]}
                   >
                     <Input.Password type="password" style={{minWidth:"100%"}}/>
                   </Form.Item>
