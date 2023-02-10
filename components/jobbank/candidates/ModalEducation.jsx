@@ -31,9 +31,11 @@ const ModalEducation = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
         if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
-        itemToEdit.file = itemToEdit.file.split('/').at(-1) || ''
-        itemToEdit.study_level = itemToEdit.study_level?.id ?? null;
-        formEducation.setFieldsValue(itemToEdit);
+        if(itemToEdit.file) itemToEdit.file = itemToEdit.file.split('/').at(-1) || ''
+        formEducation.setFieldsValue({
+            ...itemToEdit,
+            study_level: itemToEdit.study_level?.id ?? null
+        });
     },[itemToEdit])
 
     const onCloseModal = () =>{
@@ -156,7 +158,7 @@ const ModalEducation = ({
                             label='Archivo'
                             keyName='file'
                             tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
-                            isRequired={true}
+                            isRequired={false}
                             // download={true}
                             // urlPreview={infoCandidate?.cv}
                             setFile={setDocument}

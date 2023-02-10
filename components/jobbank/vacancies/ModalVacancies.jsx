@@ -35,7 +35,9 @@ const ModalVacancies = ({
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
-        console.log('Edit', itemToEdit)
+        if(itemToEdit.group_assessment.length > 0){
+            itemToEdit.group_assessment = itemToEdit.group_assessment.map((gas) => gas.id)
+        }
         setOptionKey(itemToEdit.source)
         formEvaluations.setFieldsValue(itemToEdit);
     },[itemToEdit])

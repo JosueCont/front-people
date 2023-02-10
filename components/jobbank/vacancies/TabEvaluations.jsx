@@ -11,6 +11,7 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 import ListItems from '../../../common/ListItems';
 import ModalVacancies from './ModalVacancies';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
+import { render } from 'react-dom';
 
 const TabEvaluations = ({ 
   evaluationList, 
@@ -136,7 +137,23 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
     {
       title: 'URL',
       dataIndex: 'url',
-      key: 'url'
+      key: 'url',
+      render: (url) => url || '----------'
+    },
+    {
+      title: 'Grupos de evaluaciones',
+      render: (item) => {
+          let stringGroup = []
+          item.group_assessment.length > 0 && item.group_assessment.forEach((element) => {
+            let nameGroup = evaluationsGroup.find((item) => item.people_group_assessment_id === element.id)
+            if(nameGroup){
+              stringGroup.push(nameGroup.name)
+            }
+            stringGroup.join(',')
+          })
+          if(stringGroup) return stringGroup
+          return '----------'
+      }
     },
     {
       title: 'Estatus',
