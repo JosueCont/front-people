@@ -7,6 +7,7 @@ import {
   PlusOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import WebApiAssessment from '../../../api/WebApiAssessment';
 import ListItems from '../../../common/ListItems';
 import ModalVacancies from './ModalVacancies';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
@@ -18,7 +19,8 @@ const TabEvaluations = ({
   addEvaluationVacant,
   updateEvaluation,
   deleteEvaluation,
-  changeEvaluationstatus
+  changeEvaluationstatus,
+  currentNodeId
 }) => {
 
   const [openModal, setOpenModal] = useState(false);
@@ -27,6 +29,27 @@ const TabEvaluations = ({
   const [itemToDelete, setItemToDelete] = useState({});
   const [msgHTML, setMsgHTML] = useState("<p></p>");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [evaluationsGroup, setEvaluationsGroup] = useState([])
+
+  useEffect(() => {
+    if(currentNodeId){
+      getNodeEvaluationsGroup(currentNodeId)
+    }
+  },[currentNodeId])
+
+  const getNodeEvaluationsGroup = async (id) => {
+    let stringId = id.toString()
+    console.log('string', stringId)
+    try {
+      let response = await WebApiAssessment.getOnlyGroupAssessmentByNode(stringId);
+      if(response.data.results.length > 0){
+        setEvaluationsGroup(response.data.results)
+      }
+    } catch (e) {
+      console.log(e)
+      return e.response;
+    }
+  }
 
   const actionCreate = async (values) => {
     values.instructions = msgHTML
@@ -182,6 +205,7 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
         setMsgHTML = { setMsgHTML }
         setEditorState = {setEditorState}
         editorState = { editorState }
+        evaluationsGroup = { evaluationsGroup }
       />
       <ListItems
         title='¿Estás seguro de eliminar esta evaluación?'

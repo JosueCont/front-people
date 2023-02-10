@@ -49,6 +49,7 @@ const DetailsVacancies = ({
     const [currentKey, setCurrentKey] = useState('1');
     const [evaluationList, setEvaluationList] = useState([]);
     const { setValuesForm, createData } = useInfoVacancy();
+    const noValid = [undefined, null, '', ' '];
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -74,6 +75,19 @@ const DetailsVacancies = ({
             keepClient()
         }
     },[router.query])
+
+    const createDataevaluations = (obj) => {
+        let dataEvaluation = new FormData();
+
+        dataEvaluation.append('vacant', router.query.id)
+
+        Object.entries(obj).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            dataEvaluation.append(key, value);
+        })
+
+        return dataEvaluation
+    }
 
 
     const getInfoVacant = async (id) =>{
@@ -101,13 +115,7 @@ const DetailsVacancies = ({
     }
 
     const addEvaluations = async (values) => {
-        let data = new FormData()
-        data.append('vacant', router.query.id)
-        data.append('name', values.name)
-        data.append('source', values.source)
-        data.append('url', values.url)
-        data.append('instructions', values.instructions)
-        data.append('is_active', values.is_active)
+        let data = createDataevaluations(values)
 
         try {
             let response = await WebApiJobBank.addEvaluationVacant(data)
@@ -123,15 +131,7 @@ const DetailsVacancies = ({
 
     const updateEvaluation = async (id, values) => {
 
-        console.log('Values', values)
-
-        let data = new FormData()
-        data.append('vacant', router.query.id)
-        data.append('name', values.name)
-        data.append('source', values.source)
-        data.append('url', values.url)
-        data.append('instructions', values.instructions)
-        data.append('is_active', values.is_active)
+        let data = createDataevaluations(values)
 
         try {
             let response = await WebApiJobBank.updateEvaluation(id, data)
@@ -374,6 +374,7 @@ const DetailsVacancies = ({
                                         updateEvaluation = { updateEvaluation }
                                         deleteEvaluation = {deleteEvaluation}
                                         changeEvaluationstatus = {changeEvaluationstatus}
+                                        currentNodeId = { currentNode?.id }
                                     />
                                 </Spin>
                             </Tabs.TabPane>
