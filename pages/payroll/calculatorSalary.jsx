@@ -39,36 +39,42 @@ const calculatorSalary = ({ ...props }) => {
   const [changeType, setChangeType] = useState(false);
   const [personSalary, setPersonSalary] = useState(null);
   const [periodicity, setPeriodicity] = useState(null);
+  const [textPeriodicity, setTextPeriodicity] = useState("");
 
   const { Text, Title } = Typography;
 
   const onFinish = async (value) => {
-    value.allowance = allowance;
-    value.salary = parseFloat(value.salary);
-    setSalary(null);
-    setLoading(true);
-    if (value.person_id) delete value["person_id"];
-    await webApiFiscal
-      .calculatorSalary(value)
-      .then((response) => {
-        if (response.status == 200) {
-          setTimeout(() => {
-            if (response.data.message) return;
-            setSalary(response.data);
+    if (value.salary > 0 || value.daily_salary > 0) {
+      value.allowance = allowance;
+      value.salary = parseFloat(value.salary);
+      value.daily_salary = parseFloat(value.daily_salary);
+      setSalary(null);
+      setLoading(true);
+      if (value.person_id) delete value["person_id"];
+      await webApiFiscal
+        .calculatorSalary(value)
+        .then((response) => {
+          if (response.status == 200) {
+            setTimeout(() => {
+              if (response.data.message) return;
+              setSalary(response.data);
+              setLoading(false);
+            }, 500);
+          } else {
+            message.error("Ocurrio un error intente de nuevo");
+            setSalary(null);
             setLoading(false);
-          }, 500);
-        } else {
-          message.error("Ocurrio un error intente de nuevo");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error("Ocurrio un error intente de nuevo, " + error);
           setSalary(null);
           setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message.error("Ocurrio un error intente de nuevo, " + error);
-        setSalary(null);
-        setLoading(false);
-      });
+        });
+    } else {
+      message.error("Ingresa el salario");
+    }
   };
 
   const changeMode = (item) => {
@@ -82,18 +88,23 @@ const calculatorSalary = ({ ...props }) => {
   };
 
   const setPerson = (value) => {
-    if (props.peopleCompany) {
+    if (props.peopleCompany && value) {
       WebApiPayroll.getPayrollPerson(value)
         .then((response) => {
           setPersonSalary(response.data.daily_salary);
           form.setFieldsValue({
-            salary: response.data.daily_salary,
+            daily_salary: response.data.daily_salary,
           });
         })
         .catch((e) => {
           setLoading(false);
           console.log(e);
         });
+    } else {
+      form.setFieldsValue({
+        daily_salary: null,
+      });
+      setPersonSalary(null);
     }
   };
 
@@ -101,35 +112,37 @@ const calculatorSalary = ({ ...props }) => {
     const periodicitySelected = props.periodicities.find(
       (item) => item.id == periodicity
     )?.description;
-    let new_salary = "";
-    if (
-      personSalary &&
-      periodicitySelected &&
-      periodicitySelected != undefined
-    ) {
-      switch (periodicitySelected) {
-        case "Diario":
-          new_salary = personSalary;
-          break;
-        case "Semanal":
-          new_salary = personSalary * 7;
-          break;
-        case "Catorcenal":
-          new_salary = personSalary * 14;
-          break;
-        case "Quincenal":
-          new_salary = personSalary * 15;
-          break;
-        case "Mensual":
-          new_salary = personSalary * 30;
-          break;
-        default:
-          break;
-      }
-      form.setFieldsValue({
-        salary: new_salary,
-      });
-    }
+    setTextPeriodicity(periodicitySelected ? periodicitySelected : "");
+    // let new_salary = "";
+    // if (
+    //   personSalary &&
+    //   periodicitySelected &&
+    //   periodicitySelected != undefined
+    // ) {
+    //   switch (periodicitySelected) {
+    //     case "Diario":
+    //       new_salary = personSalary;
+    //       break;
+    //     case "Semanal":
+    //       new_salary = personSalary * 7;
+    //       break;
+    //     case "Catorcenal":
+    //       new_salary = personSalary * 14;
+    //       break;
+    //     case "Quincenal":
+    //       new_salary = personSalary * 15;
+    //       break;
+    //     case "Mensual":
+    //       new_salary = personSalary * 30;
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    //   console.log("New Salary", new_salary);
+    //   form.setFieldsValue({
+    //     salary: new_salary.toFixed(4),
+    //   });
+    // }
   }, [personSalary, periodicity]);
 
   return (
@@ -245,6 +258,49 @@ const calculatorSalary = ({ ...props }) => {
                           onChange={(value) => setPerson(value)}
                         />
                       </Col>
+                      {personSalary && (
+                        <Col md={24}>
+                          <Form.Item
+                            label="Salario diario actual"
+                            name="daily_salary"
+                          >
+                            <Input
+                              type="number"
+                              placeholder="Salario diario"
+                              size="large"
+                              disabled={true}
+                            />
+                          </Form.Item>
+                        </Col>
+                      )}
+
+                      <Col md={12}>
+                        <SelectPeriodicity
+                          size="large"
+                          onChangePeriodicy={(value) => setPeriodicity(value)}
+                          rules={[ruleRequired]}
+                        />
+                      </Col>
+                      <Col md={12}>
+                        <Form.Item
+                          label={"Nuevo salario " + textPeriodicity}
+                          name="salary"
+                          rules={!personSalary ? [ruleRequired] : []}
+                        >
+                          <Input
+                            type="number"
+                            placeholder="Salario por periodo"
+                            size="large"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12}>
+                        <SelectYear
+                          size="large"
+                          label={"Periodo"}
+                          rules={[ruleRequired]}
+                        />
+                      </Col>
                       <Col span={12}>
                         <Form.Item
                           label="Tipo de calculo"
@@ -261,48 +317,27 @@ const calculatorSalary = ({ ...props }) => {
                           />
                         </Form.Item>
                       </Col>
-                      <Col md={12}>
-                        <Form.Item label="Salario" name="salary">
-                          <Input
-                            type="number"
-                            placeholder="Salario"
-                            size="large"
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col md={12}>
-                        <SelectPeriodicity
-                          size="large"
-                          onChangePeriodicy={(value) => setPeriodicity(value)}
-                          rules={[ruleRequired]}
-                        />
-                      </Col>
-                      <Col md={12}>
-                        <SelectYear
-                          size="large"
-                          label={"Periodo"}
-                          rules={[ruleRequired]}
-                        />
-                      </Col>
 
                       {changeType && (
-                        <Col md={12}>
-                          <Form.Item
-                            name="month"
-                            label="Mes"
-                            placeholder="Selecciona mes"
-                            rules={[ruleRequired]}
-                          >
-                            <Select size="large" options={monthsName} />
-                          </Form.Item>
-                        </Col>
+                        <>
+                          <Col md={12}>
+                            <Form.Item
+                              name="month"
+                              label="Mes"
+                              placeholder="Selecciona mes"
+                              rules={[ruleRequired]}
+                            >
+                              <Select size="large" options={monthsName} />
+                            </Form.Item>
+                          </Col>
+                          <Col md={12}>
+                            <SelectGeographicArea
+                              size="large"
+                              rules={[ruleRequired]}
+                            />
+                          </Col>
+                        </>
                       )}
-                      <Col md={12}>
-                        <SelectGeographicArea
-                          size="large"
-                          rules={[ruleRequired]}
-                        />
-                      </Col>
                     </Row>
                     <Row gutter={10}>
                       <Col
@@ -421,16 +456,10 @@ const calculatorSalary = ({ ...props }) => {
                                   </span>
                                 </Col>
                                 <Col span={6}>
-                                  {salary.retention_isr
-                                    ? salary.retention_isr
-                                    : salary.allowance_employee}
-                                </Col>
-                                <Col span={18}>
-                                  <span>Percepción del trabajador</span>
-                                </Col>
-                                <Col span={6}>
                                   <Text strong>
-                                    {numberFormat(salary.perception_employee)}
+                                    {salary.retention_isr
+                                      ? salary.retention_isr
+                                      : salary.allowance_employee}
                                   </Text>
                                 </Col>
                                 <Col span={18}>
@@ -439,6 +468,18 @@ const calculatorSalary = ({ ...props }) => {
                                 <Col span={6}>
                                   <Text strong>
                                     {numberFormat(salary.imss_infonavit_afore)}
+                                  </Text>
+                                </Col>
+                              </>
+                            )}
+                            {salary.new_daily_salary && (
+                              <>
+                                <Col span={18}>
+                                  <span style={{}}>Nuevo Salario diario</span>
+                                </Col>
+                                <Col span={6}>
+                                  <Text strong>
+                                    {numberFormat(salary.new_daily_salary)}
                                   </Text>
                                 </Col>
                               </>
@@ -460,6 +501,26 @@ const calculatorSalary = ({ ...props }) => {
                               >
                                 <Text strong>
                                   $ {numberFormat(salary.net_salary)}
+                                </Text>
+                              </Col>
+                            </Row>
+                          )}
+                          {allowance && (
+                            <Row className="table-grid-footer">
+                              <Col span={16}>
+                                <Text strong={type == 1 ? true : false}>
+                                  SALARIO NETO
+                                </Text>
+                              </Col>
+                              <Col
+                                span={8}
+                                style={{
+                                  backgroundColor: type == 2 && "yellow",
+                                }}
+                                className="border-results"
+                              >
+                                <Text strong>
+                                  $ {numberFormat(salary.perception_employee)}
                                 </Text>
                               </Col>
                             </Row>
