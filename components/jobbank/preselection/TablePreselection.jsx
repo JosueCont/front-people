@@ -134,8 +134,8 @@ const TablePreselection = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: 'fisrt_name',
-            key: 'fisrt_name',
+            dataIndex: 'first_name',
+            key: 'first_name',
             show: true,
             ellipsis: true
         },
@@ -242,7 +242,7 @@ const TablePreselection = ({
                     : 'No se puede iniciar un nuevo proceso de selección para esta vacante'
                 }
                 visible={openModal}
-                keyTitle={['fisrt_name','last_name']}
+                keyTitle={['first_name','last_name']}
                 keyDescription='email'
                 close={closeModal}
                 itemsToList={itemsSelected}

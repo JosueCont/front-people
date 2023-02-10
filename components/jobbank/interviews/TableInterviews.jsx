@@ -164,7 +164,7 @@ const TableInterviews = ({
             render: (item) =>{
                 let obj = item?.process_selection?.candidate;
                 return(
-                    <>{obj?.fisrt_name} {obj?.last_name}</>
+                    <>{obj?.first_name} {obj?.last_name}</>
                 )
             }
         },
@@ -218,7 +218,7 @@ const TableInterviews = ({
                     : '¿Estás seguro de eliminar este evento?'
                 }
                 visible={openModalDelete}
-                keyTitle='process_selection, candidate, fisrt_name'
+                keyTitle='process_selection, candidate, first_name'
                 keyDescription='process_selection, vacant, job_position'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

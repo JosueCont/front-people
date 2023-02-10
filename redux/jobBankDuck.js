@@ -668,7 +668,7 @@ export const getApplications = (node, query = '', page = 1, size = 10) => async 
                 "status": Math.ceil(Math.random()*3),
                 "candidate": {
                     "id": "fcfcf4cf3e2b49ad85e946487d80f9dd"+i,
-                    "fisrt_name": "Candidato Demo "+ i,
+                    "first_name": "Candidato Demo "+ i,
                     "last_name": "apellido demo "+ i,
                     "email": "2@2.com",
                     "cell_phone": "9999999999",

@@ -142,7 +142,7 @@ const FiltersInterviews = ({
                             >
                                 {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
-                                        {item.fisrt_name} {item.last_name}
+                                        {item.first_name} {item.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>

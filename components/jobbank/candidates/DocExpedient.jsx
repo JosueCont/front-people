@@ -164,7 +164,7 @@ const DocExpedient = ({
                         padding: '6px 12px',
                 }}>
                     <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Nombre: {infoCandidate?.fisrt_name}</Text>
+                        <Text style={{ fontSize: 10 }}>Nombre: {infoCandidate?.first_name}</Text>
                     </View>
                     <View style={{flex: '0 0 50%' }}>
                         <Text style={{ fontSize: 10 }}>Apellidos: {infoCandidate?.last_name}</Text>

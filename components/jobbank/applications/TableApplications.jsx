@@ -78,8 +78,8 @@ const TableApplications = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: ['candidate','fisrt_name'],
-            key: ['candidate','fisrt_name'],
+            dataIndex: ['candidate','first_name'],
+            key: ['candidate','first_name'],
             ellipsis: true
         },
         {

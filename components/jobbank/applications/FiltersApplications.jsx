@@ -61,7 +61,7 @@ const FiltersApplications = ({
                                 {list_applications?.candidates?.length > 0 &&
                                     list_applications.candidates?.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
-                                        {item.fisrt_name} {item.last_name}
+                                        {item.first_name} {item.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>

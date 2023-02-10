@@ -63,7 +63,7 @@ const DetailsPreselection = ({
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
       formPreselection.setFieldsValue(({
-        candidate: infoSelection?.candidate?.fisrt_name + infoSelection?.candidate?.last_name,
+        candidate: infoSelection?.candidate?.first_name + infoSelection?.candidate?.last_name,
         vacant: infoSelection?.vacant?.job_position,
         email: infoSelection?.candidate?.email,
         telephone: infoSelection?.candidate?.telephone || infoSelection?.candidate?.cell_phone,

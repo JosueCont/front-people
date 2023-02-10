@@ -174,8 +174,8 @@ const TableSelection = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: ['candidate', 'fisrt_name'],
-            key: ['candidate', 'fisrt_name'],
+            dataIndex: ['candidate', 'first_name'],
+            key: ['candidate', 'first_name'],
             ellipsis: true
         },
         {
@@ -269,7 +269,7 @@ const TableSelection = ({
                     : '¿Estás seguro de eliminar este proceso?'
                 }
                 visible={openModalDelete}
-                keyTitle='candidate, fisrt_name'
+                keyTitle='candidate, first_name'
                 keyDescription='vacant, job_position'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

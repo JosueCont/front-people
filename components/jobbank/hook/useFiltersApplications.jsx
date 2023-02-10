@@ -30,7 +30,7 @@ export const useFiltersApplications = () =>{
     const getCandidate = (id) => getValueFilter({
         value: id,
         list: list_applications.candidates,
-        keyShow: e => `${e?.fisrt_name} ${e.last_name}`
+        keyShow: e => `${e?.first_name} ${e.last_name}`
     })
 
     const getVacant = (id) => getValueFilter({
