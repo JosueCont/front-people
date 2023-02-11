@@ -58,7 +58,7 @@ const Expedient = ({
     }
 
     const linkTo = (url, download = false ) =>{
-        let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
+        let nameFile = `${infoCandidate.first_name} ${infoCandidate.last_name}`;
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";

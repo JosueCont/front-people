@@ -47,12 +47,12 @@ const TableClients = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const [useToDelete, setUseToDelete] = useState(true);
+    const [useWithAction, setUseWithAction] = useState(true);
 
     const actionStatus = async (checked, item) =>{
         try {
             await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
-            getClients(currentNode.id, jobbank_filters, jobbank_page);
+            getClients(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = checked ? 'Cliente activado' : 'Cliente desactivado';
             message.success(msg)
         } catch (e) {
@@ -66,7 +66,7 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClients(currentNode.id, jobbank_filters, jobbank_page);
+            getClients(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Clientes eliminados' : 'Cliente eliminado';
             message.success(msg);
         } catch (e) {
@@ -88,19 +88,19 @@ const TableClients = ({
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
-        setUseToDelete(true)
+        setUseWithAction(true)
     }
 
     const openModalManyDelete = () =>{
         const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setUseToDelete(false)
+            setUseWithAction(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setUseToDelete(true);
+        setUseWithAction(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -110,7 +110,7 @@ const TableClients = ({
     }
 
     const openModalRemove = (item) =>{
-        setUseToDelete(!item.has_strategy)
+        setUseWithAction(!item.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -121,10 +121,10 @@ const TableClients = ({
     }
 
     const titleDelete = useMemo(()=>{
-        if(!useToDelete){
+        if(!useWithAction){
             return itemsToDelete.length > 1
             ? `Estos clientes no se pueden eliminar,
-                ya que se encuentran asociados a una estrategia.`
+                ya que se encuentran asociados a una estrategia`
             : `Este cliente no se puede eliminar, ya que
                 se encuentra asociado a una estrategia`;
         }
@@ -132,7 +132,7 @@ const TableClients = ({
             ? '¿Estás seguro de eliminar estos clientes?'
             : '¿Estás seguro de eliminar este cliente?';
         
-    },[useToDelete, itemsToDelete])
+    },[useWithAction, itemsToDelete])
 
     const onChangePage = ({current, pageSize}) =>{
         let filters = {...router.query, page: current, size: pageSize};
@@ -151,8 +151,9 @@ const TableClients = ({
     }
 
     const copyLinkAutoregister = () =>{
+        let url = `${window.location.origin}/jobbank/autoregister/customer`
         copyContent({
-            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/client`,
+            text: `${url}?code=${currentNode.permanent_code}`,
             onSucces: ()=> message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
@@ -352,8 +353,8 @@ const TableClients = ({
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
-                textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
-                useWithAction={useToDelete}
+                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+                useWithAction={useWithAction}
             />
            <ViewContacts
                 visible={openModalList}

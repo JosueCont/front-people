@@ -4,7 +4,8 @@ import {
     Dropdown,
     Menu,
     Button,
-    message
+    message,
+    Select
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -20,6 +21,7 @@ import { useRouter } from 'next/router';
 import { popupPDF, downloadCustomFile } from '../../../utils/functions';
 import ListItems from '../../../common/ListItems';
 import ModalReferences from './ModalReferences';
+import { optionsStatusReferences } from '../../../utils/constant';
 
 const TabReferences = ({
     action,
@@ -45,8 +47,9 @@ const TabReferences = ({
     const getInfoReference = async (id) =>{
         try {
             setLoading(true);
-            let response = await WebApiJobBank.getReferences(id, `&type_file=${type}`);
-            setInfoReferences(response.data.results);
+            let params = `&paginate=0&type_file=${type}`;
+            let response = await WebApiJobBank.getReferences(id, params);
+            setInfoReferences(response.data);
             setLoading(false);
         } catch (e) {
             console.log(e)
@@ -74,7 +77,7 @@ const TabReferences = ({
             values.append('type_file', type)
             values.append('upload_date', date)
             values.append('registration_date', date)
-            values.append('Uploaded_by', currentUser.id)
+            values.append('uploaded_by', currentUser.id)
             await WebApiJobBank.createReferences(values)
             message.success({content: 'Archivo guardado', key})
             getInfoReference(router.query.id);
@@ -93,6 +96,18 @@ const TabReferences = ({
         } catch (e) {
             console.log(e)
             message.error('Archivo no eliminado')
+        }
+    }
+
+    const actionStatus = async (value, item) =>{
+        try {
+            let body = {file_name: item.file_name, status: value};
+            await WebApiJobBank.updateReference(item.id, body);
+            message.success('Estatus actualizado');
+            getInfoReference(router.query.id);
+        } catch (e) {
+            console.log(e)
+            message.error('Estatus no actualizado');
         }
     }
 
@@ -116,7 +131,13 @@ const TabReferences = ({
         setItemsToDelete([])
     }
 
-    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
+
+    // const onChangePage = (e1, e2, e3) =>{
+    //     console.log('e1--------->', e1)
+    //     console.log('e2----------->', e2)
+    //     console.log('e3---------->', e3)
+    // }
 
     const menuItem = (item) => {
         return (
@@ -180,6 +201,28 @@ const TabReferences = ({
             }
         },
         {
+            title: 'Estatus',
+            filters: optionsStatusReferences.map(item => ({
+                text: item.label,
+                value: item.value
+            })),
+            onFilter: (value, record) => record.status == value,
+            // filterSearch: true,
+            render: (item) =>{
+                return(
+                    <Select
+                        size='small'
+                        style={{width: 101}}
+                        defaultValue={item.status}
+                        value={item.status}
+                        placeholder='Estatus'
+                        options={optionsStatusReferences}
+                        onChange={(e) => actionStatus(e, item)}
+                    />
+                )
+            }
+        },
+        {
             title: ()=> (
                 <Button size='small' onClick={()=> setOpenModal(true)}>
                     Agregar
@@ -207,6 +250,7 @@ const TabReferences = ({
                 size='small'
                 columns={columns}
                 loading={loading}
+                // onChange={onChangePage}
                 dataSource={infoReferences}
                 locale={{ emptyText: loading
                     ? 'Cargando...'

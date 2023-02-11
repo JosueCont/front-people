@@ -14,7 +14,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   CopyOutlined,
-  SettingOutlined
+  SettingOutlined,
+  UserAddOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getVacancies } from '../../../redux/jobBankDuck';
@@ -22,6 +23,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import { optionsStatusVacant } from '../../../utils/constant';
+import { copyContent } from '../../../utils/functions';
 
 const TableVacancies = ({
     load_vacancies,
@@ -37,13 +39,14 @@ const TableVacancies = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [useToDelete, setUseToDelete] = useState(true);
+    const [useWithAction, setUseWithAction] = useState(true);
+    const [useToCopy, setUseToCopy] = useState(false);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
         try {
             await WebApiJobBank.deleteVacant({ids});
-            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
             message.success(msg)
         } catch (e) {
@@ -56,7 +59,7 @@ const TableVacancies = ({
     const actionStatus = async (value, item) =>{
         try {
             await WebApiJobBank.updateVacantStatus(item.id, {status: value});
-            getVacancies(currentNode.id, jobbank_filters, jobbank_page);
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -64,20 +67,15 @@ const TableVacancies = ({
         }
     }
 
-    const actionDuplicate = async (item) =>{
-        const key = 'updatable';
-        message.loading({content: 'Duplicando vacante...', key});
+    const actionDuplicate = async () =>{
         try {
-            await WebApiJobBank.duplicateVacant(item.id);
-            setTimeout(()=>{
-                message.success({content: 'Vacante duplicada', key});
-                getVacancies(currentNode.id, jobbank_filters, jobbank_page);
-            },1000)
+            let id = itemsToDelete?.at(-1)?.id;
+            await WebApiJobBank.duplicateVacant(id);
+            message.success('Vacante duplicada');
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
         } catch (e) {
             console.log(e)
-            setTimeout(()=>{
-                message.error({content: 'Vacante no duplicada', key});
-            },1000)
+            message.error('Vacante no duplicada');
         }
     }
 
@@ -85,12 +83,12 @@ const TableVacancies = ({
         const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
         if(notDelete.length > 0){
-            setUseToDelete(false)
+            setUseWithAction(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
-        setUseToDelete(true);
+        setUseWithAction(true);
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
             return;
@@ -100,30 +98,38 @@ const TableVacancies = ({
     }
 
     const openModalRemove = (item) =>{
-        setUseToDelete(!item?.has_strategy)
+        setUseWithAction(!item?.has_strategy)
+        setItemsToDelete([item])
+        setOpenModalDelete(true)
+    }
+
+    const openModalDuplicate = (item) =>{
+        setUseToCopy(true)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
-        setUseToDelete(true)
+        setUseWithAction(true)
+        setUseToCopy(false)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
     const titleDelete = useMemo(()=>{
-        if(!useToDelete){
+        if(!useWithAction){
             return itemsToDelete.length > 1
             ? `Estas vacantes no se pueden eliminar, ya que
                 se encuentran asociadas a una estrategia`
             : `Esta vacante no se puede eliminar, ya que
                 se encuentra asociada a una estrategia`;
         }
+        if(useToCopy) return '¿Estás seguro de duplicar esta vacante?';
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estas vacantes?'
             : '¿Estás seguro de eliminar esta vacante?';
-    },[useToDelete, itemsToDelete])
+    },[useWithAction, useToCopy, itemsToDelete])
     
     const onChangePage = ({current, pageSize}) =>{
         let filters = {...router.query, page: current, size: pageSize};
@@ -139,6 +145,15 @@ const TableVacancies = ({
             setItemsKeys(selectedRowKeys)
             setItemsToDelete(selectedRows)
         }
+    }
+
+    const copyLinkPostulation = (item) =>{
+        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
+        copyContent({
+            text: `${url}?code=${currentNode.permanent_code}&vacant=${item.id}`,
+            onSucces: ()=> message.success('Link de postulación copiado'),
+            onError: () => message.error('Link de postulación no copiado')
+        })
     }
 
     const menuTable = () => {
@@ -178,22 +193,31 @@ const TableVacancies = ({
                 <Menu.Item
                     key='3'
                     icon={<CopyOutlined />}
-                    onClick={()=> actionDuplicate(item)}
+                    onClick={()=> openModalDuplicate(item)}
                 >
                     Duplicar
                 </Menu.Item>
-                {/* {item.status == 1 && (
-                    <Menu.Item
-                        key='4'
-                        icon={<SettingOutlined />}
-                        onClick={()=> router.push({
-                            pathname: '/jobbank/publications/add',
-                            query: {...router.query, vacancy: item.id }
-                        })}
-                    >
-                        Configurar publicación
-                    </Menu.Item>
-                )} */}
+                {item.status == 1 && (
+                    <>
+                        {/* <Menu.Item
+                            key='4'
+                            icon={<SettingOutlined />}
+                            onClick={()=> router.push({
+                                pathname: '/jobbank/publications/add',
+                                query: {...router.query, vacancy: item.id }
+                            })}
+                        >
+                            Configurar publicación
+                        </Menu.Item> */}
+                        <Menu.Item
+                            key='5'
+                            icon={<UserAddOutlined />}
+                            onClick={()=> copyLinkPostulation(item)}
+                        >
+                            Autopostulación
+                        </Menu.Item>
+                    </>
+                )}
             </Menu>
         );
     };
@@ -252,7 +276,7 @@ const TableVacancies = ({
         title: ()=> {
             return(
                 <Dropdown overlay={menuTable}>
-                    <Button size={'small'}>
+                    <Button size='small'>
                         <EllipsisOutlined />
                     </Button>
                 </Dropdown>
@@ -262,7 +286,7 @@ const TableVacancies = ({
         render: (item) =>{
             return (
                 <Dropdown overlay={()=> menuItem(item)}>
-                    <Button size={'small'}>
+                    <Button size='small'>
                         <EllipsisOutlined />
                     </Button>
                 </Dropdown>
@@ -300,9 +324,10 @@ const TableVacancies = ({
             keyDescription='customer, name'
             close={closeModalDelete}
             itemsToList={itemsToDelete}
-            actionConfirm={actionDelete}
-            textCancel={useToDelete ? 'Cancelar' : 'Cerrar'}
-            useWithAction={useToDelete}
+            actionConfirm={useToCopy ? actionDuplicate : actionDelete}
+            textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+            textConfirm={useToCopy ? 'Duplicar' : 'Eliminar'}
+            useWithAction={useWithAction}
         />
     </>
   )
