@@ -107,9 +107,15 @@ const TableCandidates = ({
     />
     
 
-    const linkTo = (url, download = false, nameCandidate ) =>{
-        // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-        let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
+    const linkTo = (url, download = false, nameCandidate, type ) =>{
+
+        let nameFile = nameCandidate !== ''? 
+                            type === 1?
+                                `Reporte de alta dirección ${nameCandidate}`
+                            :
+                                `Reporte de ${nameCandidate}`
+                        : 
+                            'demo'
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -137,7 +143,7 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate);
+                linkTo(url+'#toolbar=0', download, nameCandidate, 1);
             },2000)
         } catch (e) {
             console.log(e)
@@ -176,7 +182,7 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate);
+                linkTo(url+'#toolbar=0', download, nameCandidate, 2);
             },2000)
         } catch (e) {
             console.log(e)
