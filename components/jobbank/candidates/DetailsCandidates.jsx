@@ -182,6 +182,17 @@ const DetailsCandidates = ({
                                 type='2'
                             />
                         </Tabs.TabPane>
+                        <Tabs.TabPane
+                            tab='Otros documentos'
+                            disabled={disableTab}
+                            forceRender
+                            key='7'
+                        >
+                            <TabReferences
+                                action={action}
+                                type='3'
+                            />
+                        </Tabs.TabPane>
                     </Tabs>    
                 </Col>
             </Row>
