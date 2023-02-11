@@ -135,7 +135,7 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -168,7 +168,7 @@ const TableCandidates = ({
             let infoEducation = responseEdu.data || []
             let infoExp = responseExp.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
             let resp = await pdf(
                                 <NyCandidateReport 
                                     infoCandidate={infoCan} 
@@ -338,8 +338,8 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: 'fisrt_name',
-            key: 'fisrt_name',
+            dataIndex: 'first_name',
+            key: 'first_name',
             ellipsis: true
         },
         {
@@ -422,7 +422,7 @@ const TableCandidates = ({
             <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle={['fisrt_name','last_name']}
+                keyTitle={['first_name','last_name']}
                 keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

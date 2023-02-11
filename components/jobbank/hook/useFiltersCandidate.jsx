@@ -14,7 +14,7 @@ export const useFiltersCandidate = () =>{
     } = useSelector(state => state.jobBankStore);
 
     const listKeys = {
-        fisrt_name__unaccent__icontains: 'Nombre',
+        first_name__unaccent__icontains: 'Nombre',
         last_name__unaccent__icontains: 'Apellidos',
         email__unaccent__icontains: 'Correo',
         cell_phone: 'Teléfono',

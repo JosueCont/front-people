@@ -273,11 +273,9 @@ const DetailsVacancies = ({
             setCurrentKey(tab)
             return;
         }
-        let querys = {...router.query, tab};
-        if(querys.tab == '1') delete querys.tab;
         router.replace({
-            pathname: `/jobbank/vacancies/${action}`,
-            query: querys
+            pathname: '/jobbank/vacancies/edit',
+            query: {...router.query, tab}
         }, undefined, {shallow: true})
     }
 

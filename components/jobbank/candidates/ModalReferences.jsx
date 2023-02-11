@@ -78,6 +78,7 @@ const ModalReferences = ({
                             keyName='file_read'
                             tooltip={`Archivos permitidos: ${typeFile.join(', ')}`}
                             isRequired={true}
+                            revertColor={true}
                             setFile={setFile}
                             typeFile={typeFile}
                             disabled={Object.keys(itemToEdit).length > 0}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     Table,
     Button,
@@ -35,12 +35,13 @@ const TableProfiles = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [useToCopy, setUseToCopy] = useState(false);
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteProfile({ids});
-            getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
+            getProfilesList(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Templates eliminados' : 'Template eliminado';
             message.success(msg);
         } catch (e) {
@@ -50,20 +51,15 @@ const TableProfiles = ({
         }
     }
 
-    const actionDuplicate = async (item) =>{
-        const key = 'updatable';
-        message.loading({content: 'Duplicando template...', key});
+    const actionDuplicate = async () =>{
         try {
-            await WebApiJobBank.duplicateProfile(item.id);
-            setTimeout(()=>{
-                message.success({content: 'Template duplicado', key});
-                getProfilesList(currentNode.id, jobbank_filters, jobbank_page);
-            },1000);
+            let id = itemsToDelete?.at(-1)?.id;
+            await WebApiJobBank.duplicateProfile(id);
+            message.success('Template duplicado');
+            getProfilesList(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
         } catch (e) {
             console.log(e);
-            setTimeout(()=>{
-                message.error({content: 'Template no duplicado', key});
-            },1000)
+            message.error('Template no duplicado');
         }
     }
 
@@ -89,11 +85,26 @@ const TableProfiles = ({
         setOpenModalDelete(true)
     }
 
+    const openModalDuplicate = (item) =>{
+        setUseToCopy(true)
+        setItemsToDelete([item])
+        setOpenModalDelete(true)
+    }
+
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
+        setUseToCopy(false)
     }
+
+
+    const titleDelete = useMemo(()=>{
+        if(useToCopy) return '¿Estás seguro de duplicar este template?';
+        return itemsToDelete.length > 1
+        ? '¿Estás seguro de eliminar estos templates?'
+        : '¿Estás seguro de eliminar este template?';
+    },[useToCopy, itemsToDelete])
 
     const onChangePage = ({current, pageSize}) =>{
         let filters = {...router.query, page: current, size: pageSize};
@@ -148,7 +159,7 @@ const TableProfiles = ({
                 <Menu.Item
                     key='3'
                     icon={<CopyOutlined />}
-                    onClick={()=> actionDuplicate(item)}
+                    onClick={()=> openModalDuplicate(item)}
                 >
                     Duplicar
                 </Menu.Item>
@@ -216,15 +227,13 @@ const TableProfiles = ({
                 }}
             />
             <ListItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos templates?'
-                    : '¿Estás seguro de eliminar este template?'
-                }
+                title={titleDelete}
                 visible={openModalDelete}
                 keyTitle='name'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
-                actionConfirm={actionDelete}
+                actionConfirm={useToCopy ? actionDuplicate : actionDelete}
+                textConfirm={useToCopy ? 'Duplicar' : 'Eliminar'}
             />
         </>
     )
