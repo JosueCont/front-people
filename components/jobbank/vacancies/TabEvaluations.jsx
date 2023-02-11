@@ -4,14 +4,15 @@ import {
   EllipsisOutlined,
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined
+  PlusOutlined,
+  EyeOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import ListItems from '../../../common/ListItems';
 import ModalVacancies from './ModalVacancies';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
-import { render } from 'react-dom';
+import ViewAssessments from './ViewAssessments';
 
 const TabEvaluations = ({ 
   evaluationList, 
@@ -26,11 +27,13 @@ const TabEvaluations = ({
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [itemToEdit, setItemToEdit] = useState({});
   const [itemToDelete, setItemToDelete] = useState({});
   const [msgHTML, setMsgHTML] = useState("<p></p>");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [evaluationsGroup, setEvaluationsGroup] = useState([])
+  const [itemGroup, setItemGroup] = useState([]);
 
   useEffect(() => {
     if(currentNodeId){
@@ -40,7 +43,6 @@ const TabEvaluations = ({
 
   const getNodeEvaluationsGroup = async (id) => {
     let stringId = id.toString()
-    console.log('string', stringId)
     try {
       let response = await WebApiAssessment.getOnlyGroupAssessmentByNode(stringId);
       if(response.data.results.length > 0){
@@ -99,6 +101,23 @@ const closeModalDelete = () =>{
     setItemToDelete({})
 }
 
+const openViewModal = (item) => {
+  
+  let listAssesmentsGroups = item?.group_assessment.map((as) => as.id)
+  let itemGroups = []
+
+  listAssesmentsGroups.length > 0 && evaluationsGroup.forEach((eg) => {
+    listAssesmentsGroups.forEach((ga) => {
+      if(eg.people_group_assessment_id === ga){
+        itemGroups.push(eg)
+      }
+    })
+  })
+
+  setShowModalSurveys(true)
+  setItemGroup(itemGroups)
+}
+
 const validateAction = () => Object.keys(itemToEdit).length > 0;
 
     const menuItem = (item) => {
@@ -142,18 +161,18 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
     },
     {
       title: 'Grupos de evaluaciones',
-      render: (item) => {
-          let stringGroup = []
-          item.group_assessment.length > 0 && item.group_assessment.forEach((element) => {
-            let nameGroup = evaluationsGroup.find((item) => item.people_group_assessment_id === element.id)
-            if(nameGroup){
-              stringGroup.push(nameGroup.name)
-            }
-            stringGroup.join(',')
-          })
-          if(stringGroup) return stringGroup
-          return '----------'
-      }
+      render: (item) => (
+        item.group_assessment.length > 0 && (
+
+          <Button 
+            icon={<EyeOutlined />}
+            disabled = { item.group_assessment.length > 0 ? false : true }
+            onClick ={() => openViewModal(item)}
+          />
+
+        )
+
+      )
     },
     {
       title: 'Estatus',
@@ -233,6 +252,14 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
         actionConfirm={actionDelete}
         timeLoad={1000}
       />
+        {showModalSurveys && (
+          <ViewAssessments
+            title={'Lista de evaluaciones'}
+            visible={showModalSurveys}
+            setVisible={setShowModalSurveys}
+            item={itemGroup.length > 0 && itemGroup}
+          />
+        )}
     </>
   )
 }
