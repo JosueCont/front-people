@@ -162,19 +162,13 @@ const DetailsClients = ({
     }
 
     const onChangeTab = (tab) =>{
-        let url = isAutoRegister
-            ? `/jobbank/${currentNode.permanent_code}/client`
-            : '/jobbank/clients/edit'; 
         if(action == 'add'){
             setCurrentKey(tab)
             return;
         }
-        let querys = {...router.query, tab};
-        if(querys.tab == '1') delete querys.tab;
-        if(querys.uid) delete querys.uid;
         router.replace({
-            pathname: url,
-            query: querys
+            pathname: '/jobbank/clients/edit',
+            query: {...router.query, tab}
         }, undefined, {shallow: true})
     }
 

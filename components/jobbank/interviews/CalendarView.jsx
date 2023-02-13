@@ -10,6 +10,7 @@ import ListItems from '../../../common/ListItems';
 import moment from 'moment';
 import { getInterviews } from '../../../redux/jobBankDuck';
 import { InterviewContext } from '../context/InterviewContext';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
 //Formato para la semana
 const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
@@ -31,7 +32,33 @@ const CalendarView = ({
     const [itemToDetail, setItemToDetail] = useState({});
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemToDelete, setItemToDelete] = useState([]);
-    const { actionUpdate, actionDelete, fetchAction } = useContext(InterviewContext);
+    const { fetchAction, token, createData } = useContext(InterviewContext);
+
+    const actionUpdate = async (values) =>{
+        try {
+            let body = createData(values);
+            let headers = {'access-token': token.access_token};
+            await WebApiJobBank.updateInterview(itemToEdit.id, body, headers);
+            getInterviews(currentNode.id, jobbank_filters)
+            message.success('Evento actualizado')
+        } catch (e) {
+            console.log(e)
+            message.error('Evento no actualizado')
+        }
+    }
+
+    const actionDelete = async () =>{
+        try {
+            let event_id = itemToDelete?.at(-1)?.id;
+            let headers = {'access-token': token.access_token};
+            await WebApiJobBank.deleteInterview({event_id}, headers);
+            getInterviews(currentNode.id, jobbank_filters)
+            message.success('Evento eliminado')
+        } catch (e) {
+            console.log(e)
+            message.error('Evento no eliminado')
+        }
+    }
 
     const closeModalDetail = () =>{
         setOpenModalDetail(false)
@@ -83,14 +110,14 @@ const CalendarView = ({
                 itemToDetail={itemToDetail}
                 close={closeModalDetail}
                 visible={openModalDetail}
-                showModalForm={()=> fetchAction(showModalForm)}
-                showModalDelete={()=> fetchAction(showModalDelete)}
+                showModalForm={()=> fetchAction(showModalForm, itemToEdit)}
+                showModalDelete={()=> fetchAction(showModalDelete, itemToDelete[0])}
             />
             <EventForm
                 visible={openModalForm}
                 close={closeModalForm}
                 itemToEdit={itemToEdit}
-                actionForm={e => actionUpdate(itemToEdit.id, e)}
+                actionForm={actionUpdate}
             />
             <ListItems
                 title='¿Estas seguro de eliminar este evento?'
@@ -99,7 +126,7 @@ const CalendarView = ({
                 close={closeModalDelete}
                 keyTitle='all_data_response, summary'
                 keyDescription='process_selection, vacant, job_position'
-                actionConfirm={()=> actionDelete(itemToDelete?.at(-1).id)}
+                actionConfirm={actionDelete}
             />
         </>
     )

@@ -94,6 +94,7 @@ const MainSider = ({
       jb_selection: "/jobbank/selection",
       jb_preselection: "/jobbank/preselection",
       jb_interviews: "/jobbank/interviews",
+      jb_applications: "/jobbank/applications"
     };
     router.push(pathRoutes[key]);
   };
@@ -295,6 +296,7 @@ const MainSider = ({
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
             getItem("Template de vacante", "jb_profiles"),
+            getItem("Postulaciones", "jb_applications"),
             getItem("Candidatos", "jb_candidates"),
             getItem("Publicaciones", "jb_publications"),
             getItem("Preselección", "jb_preselection"),

@@ -162,7 +162,7 @@ const HighDirectionReport = ({
                       borderBottom: '2px solid black',
                       padding: '6px 12px'
                     }}>
-                        <Text style={{ fontSize: 10 }}>{infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
+                        <Text style={{ fontSize: 10 }}>{infoCandidate?.first_name} {infoCandidate?.last_name}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 50%',

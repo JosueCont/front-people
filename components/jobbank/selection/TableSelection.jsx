@@ -44,7 +44,7 @@ const TableSelection = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             // await WebApiJobBank.deleteSelection({ids});
-            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
+            getListSelection(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Procesos eliminados' : 'Proceso eliminado';
             message.success(msg);
         } catch (e) {
@@ -63,7 +63,7 @@ const TableSelection = ({
                 candidate: itemToEdit.candidate?.id,
                 vacant: itemToEdit.vacant?.id
             });
-            getListSelection(currentNode.id, jobbank_filters, jobbank_page);
+            getListSelection(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             message.success('Estatus actualizado');
         } catch (e) {
             console.log(e)
@@ -174,8 +174,8 @@ const TableSelection = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: ['candidate', 'fisrt_name'],
-            key: ['candidate', 'fisrt_name'],
+            dataIndex: ['candidate', 'first_name'],
+            key: ['candidate', 'first_name'],
             ellipsis: true
         },
         {
@@ -269,7 +269,7 @@ const TableSelection = ({
                     : '¿Estás seguro de eliminar este proceso?'
                 }
                 visible={openModalDelete}
-                keyTitle='candidate, fisrt_name'
+                keyTitle='candidate, first_name'
                 keyDescription='vacant, job_position'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

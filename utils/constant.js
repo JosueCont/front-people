@@ -557,6 +557,18 @@ export const optionsSourceType = [
   {label: 'Cliente', value: 2, key: 2},
 ]
 
+export const optionsStatusReferences = [
+  {value: 1, key: 1, label: 'Pendiente'},
+  {value: 2, key: 2, label: 'Aprobado'},
+  {value: 3, key: 3, label: 'Rechazado'}
+]
+
+export const optionsStatusApplications = [
+  {value: 1, key: 1, label: 'Pendiente'},
+  {value: 2, key: 2, label: 'Aprobado'},
+  {value: 3, key: 3, label: 'No aprobado'}
+]
+
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
 

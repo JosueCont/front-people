@@ -263,7 +263,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <Col>
               <Image
                 preview={false}
-                // onClick={() => router.push("/home/persons")}
+                onClick={() => router.push("/user")}
                 style={{
                   maxWidth: 100,
                   margin: "auto",
@@ -271,9 +271,23 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   cursor: "pointer",
                 }}
                 src={
+                  "/images/LogoKhorconnect.svg"
+                }
+              />
+              <Image
+                preview={false}
+                // onClick={() => router.push("/home/persons")}
+                style={{
+                  maxWidth: 100,
+                  margin: "auto",
+                  maxHeight: 50,
+                  cursor: "pointer",
+                  paddingLeft: "24px"
+                }}
+                src={
                   !hideLogo && mainLogo
                     ? mainLogo
-                    : "/images/LogoKhorconnect.svg"
+                    : null
                 }
               />
             </Col>

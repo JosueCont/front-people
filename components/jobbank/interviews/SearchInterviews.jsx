@@ -6,6 +6,7 @@ import {
   CalendarOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons';
+import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
 import TagFilters from '../TagFilters';
@@ -15,9 +16,15 @@ import moment from 'moment';
 import EventForm from './EventForm';
 import { InterviewContext } from '../context/InterviewContext';
 import BtnLoginGC from '../BtnLoginGC';
+import WebApiJobBank from '../../../api/WebApiJobBank';
+import { getInterviews } from '../../../redux/jobBankDuck';
 
 const SearchInterviews = ({
-    isCalendar = false
+    currentNode,
+    isCalendar = false,
+    getInterviews,
+    jobbank_filters,
+    jobbank_page
 }) => {
 
     const urlDefault = '/jobbank/interviews';
@@ -26,7 +33,20 @@ const SearchInterviews = ({
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const { listKeys, listGets } = useFiltersInterviews();
-    const { fetchAction, actionCreate, googleCalendar } = useContext(InterviewContext);
+    const { fetchAction, googleCalendar, createData, token } = useContext(InterviewContext);
+
+    const actionCreate = async (values) =>{
+        try{
+            let body = {...createData(values), node: currentNode.id};
+            let headers = {'access-token': token.access_token};
+            await WebApiJobBank.createInterview(body, headers);
+            getInterviews(currentNode.id, jobbank_filters);
+            message.success('Evento registrado')
+        }catch(e){
+            console.log(e)
+            message.error('Evento no registrado')
+        }
+    }
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -132,4 +152,12 @@ const SearchInterviews = ({
     )
 }
 
-export default SearchInterviews;
+const mapState = (state) =>{
+    return{
+        currentNode: state.userStore.current_node,
+        jobbank_page: state.jobBankStore.jobbank_page,
+        jobbank_filters: state.jobBankStore.jobbank_filters
+    }
+}
+
+export default connect(mapState, { getInterviews })(SearchInterviews);

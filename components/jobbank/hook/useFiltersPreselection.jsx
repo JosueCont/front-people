@@ -19,7 +19,7 @@ export const useFiltersPreselection = () =>{
     const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
 
     const listKeys = {
-        fisrt_name__unaccent__icontains: 'Nombre',
+        first_name__unaccent__icontains: 'Nombre',
         last_name__unaccent__icontains: 'Apellidos',
         email__unaccent__icontains: 'Correo',
         main_category: 'Categoría',

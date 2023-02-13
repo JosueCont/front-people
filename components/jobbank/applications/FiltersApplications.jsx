@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Row, Col, Form, Select } from 'antd';
+import { Button, Input, Row, Col, Form, Select, InputNumber, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
+import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
+import RangeAge from '../RangeAge';
+import { optionsStatusApplications } from '../../../utils/constant';
 
-const FiltersInterviews = ({
+const FiltersApplications = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -12,19 +14,12 @@ const FiltersInterviews = ({
 }) => {
 
     const {
-        load_candidates_options,
-        list_candidates_options,
+        list_applications_candidates,
+        load_applications_candidates,
         list_vacancies_options,
-        load_vacancies_options,
-        list_clients_options,
-        load_clients_options
+        load_vacancies_options
     } = useSelector(state => state.jobBankStore);
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
-    const customer = Form.useWatch('customer', formSearch);
 
     const onFinishSearch = (values) =>{
         setLoading(true)
@@ -33,16 +28,6 @@ const FiltersInterviews = ({
             setLoading(false)
             onFinish(values);
         },1000)
-    }
-
-    const optionsVacant = useMemo(()=>{
-        if(!customer) return list_vacancies_options;
-        const filter_ = item => item.customer?.id == customer;
-        return list_vacancies_options.filter(filter_);
-    },[customer, list_vacancies_options])
-
-    const onChangeCustomer = (value) =>{
-        formSearch.setFieldsValue({vacant: null})
     }
 
     return (
@@ -61,22 +46,22 @@ const FiltersInterviews = ({
                 <Row gutter={[16,0]}>
                     <Col span={12}>
                         <Form.Item
-                            name='customer'
-                            label='Cliente'
+                            name='candidate'
+                            label='Candidato'
                         >
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={load_clients_options}
-                                loading={load_clients_options}
+                                disabled={load_applications_candidates}
+                                loading={load_applications_candidates}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
-                                onChange={onChangeCustomer}
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
+                                {list_applications_candidates.length > 0 &&
+                                    list_applications_candidates.map(item => (
+                                    <Select.Option value={item.id+""} key={item.id+""}>
+                                        {item.first_name} {item.last_name}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -86,17 +71,18 @@ const FiltersInterviews = ({
                         <Form.Item
                             name='vacant'
                             label='Vacante'
+                            // rules={[ruleRequired]}
                         >
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={optionsVacant.length <= 0}
+                                disabled={load_vacancies_options}
                                 loading={load_vacancies_options}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {optionsVacant.length > 0 && optionsVacant.map(item => (
+                                {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.job_position}
                                     </Select.Option>
@@ -106,46 +92,29 @@ const FiltersInterviews = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='recruiter'
-                            label='Reclutador'
+                            label='Estatus'
+                            name='status'
                         >
                             <Select
                                 allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
                                 placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                                options={optionsStatusApplications}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='candidate'
-                            label='Candidato'
+                            label='Fecha'
+                            name='date'
+                            tooltip={`
+                                En caso de no seleccionar un rango de fechas,
+                                de manera interna se filtra por el mes actual.
+                            `}
                         >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                disabled={load_candidates_options}
-                                loading={load_candidates_options}
-                                optionFilterProp='children'
-                            >
-                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.first_name} {item.last_name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                             <DatePicker.RangePicker
+                                style={{width: '100%'}}
+                                format='DD-MM-YYYY'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
@@ -165,4 +134,4 @@ const FiltersInterviews = ({
     )
 }
 
-export default FiltersInterviews
+export default FiltersApplications
