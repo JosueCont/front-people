@@ -476,8 +476,7 @@ export const getFiltersJB = (obj = {}) =>{
       let offset = (parseInt(val) - 1) * limit;
       return `${query}&limit=${limit}&offset=${offset}`;
     }
-    let value = val == "open_fields" ? "" : val;
-    return `${query}&${key}=${value}`;
+    return `${query}&${key}=${val}`;
   }, '');
 }
 
@@ -554,6 +553,7 @@ export const downloadCustomFile = async ({
     link.download = name;
     link.target = "_blank";
     link.click();
+    window.URL.revokeObjectURL(urlBlob);
   } catch (e) {
     console.log(e)
   }

@@ -1,13 +1,16 @@
 import React, { useRef } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button, message, Tooltip } from 'antd';
 import { ruleRequired } from '../../utils/rules';
 import { getFileExtension } from '../../utils/functions';
 import {
     ToTopOutlined,
     EyeOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    DownloadOutlined,
+    QuestionCircleOutlined
 } from '@ant-design/icons';
 import { redirectTo } from '../../utils/constant';
+import { downloadCustomFile } from '../../utils/functions';
 
 const FileUpload = ({
     isRequired = false,
@@ -20,7 +23,9 @@ const FileUpload = ({
     typeFile = [],
     label = '',
     keyName = 'name_file',
-    disabled = false
+    disabled = false,
+    download = false,
+    revertColor = false
 }) => {
 
     const inputFile = useRef(null);
@@ -57,12 +62,56 @@ const FileUpload = ({
     }
 
     return (
-        <Form.Item
-            label={label}
-            tooltip={tooltip}
-            required={isRequired}
-        >
-            <Input.Group compact>
+        <Form.Item>
+            <div className='custom-label-form'>
+                <label className={isRequired ? 'custom-required': ''}>
+                    {label} {tooltip && ( <Tooltip title={tooltip}><QuestionCircleOutlined/></Tooltip> )}
+                </label>
+                <div className={`label-options ${revertColor ? 'revert' : 'default'}`}>
+                    {urlPreview ? (
+                        <Tooltip title={download ? 'Descargar' : 'Visualizar'}>
+                            {download ?
+                                <DownloadOutlined onClick={()=> downloadCustomFile({
+                                    url: urlPreview,
+                                    name: urlPreview?.split('/')?.at(-1)})}
+                                /> : <EyeOutlined onClick={()=> redirectTo(urlPreview, true)}/>}
+                        </Tooltip>
+                    ): (
+                        <Tooltip title={!disabled ? 'Eliminar' : ''}>
+                            <DeleteOutlined
+                                disabled={disabled}
+                                onClick={()=> !disabled ? resetImg() : {}}
+                            />
+                        </Tooltip>
+                    )}
+                    <Tooltip title={!disabled ? 'Subir archivo' : ''}>
+                        <ToTopOutlined
+                            disabled={disabled}
+                            onClick={()=> !disabled ? openFile() : {}}
+                        />
+                    </Tooltip>
+                </div>
+            </div>
+            <Form.Item
+                noStyle
+                name={keyName}
+                dependencies={dependencies}
+                rules={[isRequired ? ruleRequired : {}]}
+            >
+                <Input
+                    readOnly
+                    disabled={disabled}
+                    placeholder='Ningún archivo seleccionado'
+                />
+            </Form.Item>
+            <input
+                type='file'
+                style={{display: 'none'}}
+                accept={typeFile.reduce((acc, item) => `${acc}.${item}, `,'')}
+                ref={inputFile}
+                onChange={onChangeFile}
+            />
+            {/* <Input.Group compact>
                 <Form.Item
                     noStyle
                     name={keyName}
@@ -83,8 +132,11 @@ const FileUpload = ({
                 {urlPreview ? (
                     <Button
                         className='custom-btn'
-                        onClick={()=> redirectTo(urlPreview, true)}
-                        icon={<EyeOutlined />}
+                        onClick={()=> download
+                            ? downloadCustomFile({url: urlPreview, name: urlPreview?.split('/')?.at(-1)})
+                            : redirectTo(urlPreview, true)
+                        }
+                        icon={download ? <DownloadOutlined/> : <EyeOutlined />}
                     />
                 ): (
                     <Button
@@ -110,7 +162,7 @@ const FileUpload = ({
                     ref={inputFile}
                     onChange={onChangeFile}
                 />
-            </Input.Group>
+            </Input.Group> */}
         </Form.Item>
     )
 }

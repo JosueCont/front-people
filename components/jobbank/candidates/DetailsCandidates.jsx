@@ -22,8 +22,7 @@ const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
 const DetailsCandidates = ({
     action,
     currentNode,
-    newFilters = {},
-    isAutoRegister = false
+    newFilters = {}
 }) => {
 
     const router = useRouter();
@@ -60,19 +59,13 @@ const DetailsCandidates = ({
     }
 
     const onChangeTab = (tab) =>{
-        let url = isAutoRegister
-            ?  `/jobbank/${currentNode.permanent_code}/candidate`
-            : '/jobbank/candidates/edit';
         if(action == 'add'){
             setCurrentKey(tab)
             return;
         }
-        let querys = {...router.query, tab};
-        if(querys.tab == '1') delete querys.tab;
-        if(querys.uid) delete querys.uid;
         router.replace({
-            pathname: url,
-            query: querys
+            pathname: '/jobbank/candidates/edit',
+            query: {...router.query, tab}
         }, undefined, { shallow: true})
     }
     
@@ -93,26 +86,24 @@ const DetailsCandidates = ({
                             : 'Información del candidato'
                         }
                     </p>
-                    {!isAutoRegister && (
-                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                            {action == 'edit' && (
-                                <Expedient
-                                    infoCandidate={infoCandidate}
-                                    infoEducation={infoEducation}
-                                    infoExperience={infoExperience}
-                                    infoPositions={infoPositions}
-                                    image = {image}
-                                    widthAndHeight = {widthAndHeight}
-                                />
-                            )}
-                            <Button
-                                onClick={()=> actionBack()}
-                                icon={<ArrowLeftOutlined />}
-                            >
-                                Regresar
-                            </Button>
-                        </div>
-                    )}
+                    <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                        {action == 'edit' && (
+                            <Expedient
+                                infoCandidate={infoCandidate}
+                                infoEducation={infoEducation}
+                                infoExperience={infoExperience}
+                                infoPositions={infoPositions}
+                                image = {image}
+                                widthAndHeight = {widthAndHeight}
+                            />
+                        )}
+                        <Button
+                            onClick={()=> actionBack()}
+                            icon={<ArrowLeftOutlined />}
+                        >
+                            Regresar
+                        </Button>
+                    </div>
                 </Col>
                 <Col span={24} className='tabs-vacancies'>
                     <Tabs
@@ -131,7 +122,6 @@ const DetailsCandidates = ({
                                 newFilters={newFilters}
                                 setInfoCandidate={setInfoCandidate}
                                 infoCandidate={infoCandidate}
-                                isAutoRegister={isAutoRegister}
                             />
                         </Tabs.TabPane>
                         <Tabs.TabPane
@@ -190,6 +180,17 @@ const DetailsCandidates = ({
                             <TabReferences
                                 action={action}
                                 type='2'
+                            />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane
+                            tab='Otros documentos'
+                            disabled={disableTab}
+                            forceRender
+                            key='7'
+                        >
+                            <TabReferences
+                                action={action}
+                                type='3'
                             />
                         </Tabs.TabPane>
                     </Tabs>    

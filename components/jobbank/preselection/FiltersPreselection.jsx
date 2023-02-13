@@ -56,7 +56,7 @@ const FiltersPreselection = ({
                     <Col span={12}>
                         <Form.Item
                             label='Nombre'
-                            name='fisrt_name__unaccent__icontains'
+                            name='first_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input placeholder='Buscar por nombre'/>

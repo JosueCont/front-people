@@ -138,7 +138,7 @@ const EventDetails = ({
                 {/* <ContentVertical>
                     <TextDescripcion>{itemToDetail?.process_selection?.vacant?.job_position}</TextDescripcion>
                     <TextDescripcion>
-                        {itemToDetail?.process_selection?.candidate?.fisrt_name}&nbsp;
+                        {itemToDetail?.process_selection?.candidate?.first_name}&nbsp;
                         {itemToDetail?.process_selection?.candidate?.last_name}
                     </TextDescripcion>
                 </ContentVertical> */}

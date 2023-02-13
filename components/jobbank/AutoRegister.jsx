@@ -14,12 +14,12 @@ const AutoRegister = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(router.query?.uid) getCompay(router.query.uid);
-    },[router.query?.uid])
+        if(router.query?.code) getCompay(router.query.code);
+    },[router.query?.code])
 
-    const getCompay = async (uid) =>{
+    const getCompay = async (code) =>{
         try {
-            let response = await WebApiPeople.getCompanyPermanentCode(uid);
+            let response = await WebApiPeople.getCompanyPermanentCode(code);
             saveCurrentNode(response.data.results.at(-1))       
         } catch (e) {
             console.log(e)

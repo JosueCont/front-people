@@ -76,20 +76,6 @@ const DetailsVacancies = ({
         }
     },[router.query])
 
-    const createDataevaluations = (obj) => {
-        let dataEvaluation = new FormData();
-
-        dataEvaluation.append('vacant', router.query.id)
-
-        Object.entries(obj).map(([key, val]) => {
-            let value = noValid.includes(val) ? "" : val;
-            dataEvaluation.append(key, value);
-        })
-
-        return dataEvaluation
-    }
-
-
     const getInfoVacant = async (id) =>{
         try {
             setFetching(true)
@@ -115,10 +101,16 @@ const DetailsVacancies = ({
     }
 
     const addEvaluations = async (values) => {
-        let data = createDataevaluations(values)
+
+        values.vacant = router.query.id
+
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            values[key] = value
+        })
 
         try {
-            let response = await WebApiJobBank.addEvaluationVacant(data)
+            let response = await WebApiJobBank.addEvaluationVacant(values)
             if (response) {
                 getEvaluationsVacant(router.query.id)
             }
@@ -131,10 +123,15 @@ const DetailsVacancies = ({
 
     const updateEvaluation = async (id, values) => {
 
-        let data = createDataevaluations(values)
+        values.vacant = router.query.id
+
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            values[key] = value
+        })
 
         try {
-            let response = await WebApiJobBank.updateEvaluation(id, data)
+            let response = await WebApiJobBank.updateEvaluation(id, values)
             if(response){
                 getEvaluationsVacant(router.query.id)
             }
@@ -276,11 +273,9 @@ const DetailsVacancies = ({
             setCurrentKey(tab)
             return;
         }
-        let querys = {...router.query, tab};
-        if(querys.tab == '1') delete querys.tab;
         router.replace({
-            pathname: `/jobbank/vacancies/${action}`,
-            query: querys
+            pathname: '/jobbank/vacancies/edit',
+            query: {...router.query, tab}
         }, undefined, {shallow: true})
     }
 
