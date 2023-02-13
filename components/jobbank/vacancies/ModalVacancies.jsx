@@ -118,7 +118,7 @@ const ModalVacancies = ({
                             }}
                           >
                             <Select.Option key={1} value={1}>
-                              Khor +
+                              KHOR+
                             </Select.Option>
                             <Select.Option key={2} value={2}>
                               Cliente
