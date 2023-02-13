@@ -197,7 +197,7 @@ const TableVacancies = ({
                 >
                     Duplicar
                 </Menu.Item>
-                {item.status == 1 && (
+                {item.status == 1 && item.has_strategy && (
                     <>
                         {/* <Menu.Item
                             key='4'
