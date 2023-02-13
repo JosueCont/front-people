@@ -13,7 +13,7 @@ import {
   Select,
   Tabs,
   Switch,
-  ConfigProvider
+  ConfigProvider,
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -30,11 +30,16 @@ import {
 } from "../../utils/constant";
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
-import {showHideMessage} from "../../redux/NotificationDuck";
+import { showHideMessage } from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
 
-const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }) => {
+const InternalConcepts = ({
+  permissions,
+  currentNode,
+  showHideMessage,
+  ...props
+}) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
   const [edit, setEdit] = useState(false);
@@ -45,10 +50,9 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
-
 
   const columns = [
     {
@@ -129,7 +133,6 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     }
   }, [key]);
 
-
   useEffect(() => {
     if (
       (props.perceptions_int, props.deductions_int, props.other_payments_int)
@@ -195,9 +198,9 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     } catch (error) {
       setLoading(false);
       console.log(error);
-      let  msg = "Ocurrio un error intente de nuevos.";
-      if(error.response?.data?.message){
-        msg = error.response?.data?.message
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error.response?.data?.message) {
+        msg = error.response?.data?.message;
       }
       message.error(msg);
     }
@@ -218,7 +221,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         is_holiday: item.is_holiday,
         is_rest_day: item.is_rest_day,
         is_seventh_day: item.is_seventh_day,
-        apply_assimilated: item.apply_assimilated
+        apply_assimilated: item.apply_assimilated,
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -264,9 +267,9 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       setEdit(false);
       setLoading(false);
       resetForm();
-      let  msg = "Ocurrio un error intente de nuevos.";
-      if(error.response?.data?.message){
-        msg = error.response?.data?.message
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error.response?.data?.message) {
+        msg = error.response?.data?.message;
       }
       message.error(msg);
 
@@ -275,7 +278,6 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
       //   level:'error',
       //   type:2
       // })
-
     }
   };
 
@@ -336,19 +338,20 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
             : "other_type_payment"
         }
         label={key === 1 ? "Percepción" : key === 2 ? "Deducción" : "Otro pago"}
-        rules={[ruleRequired
-         //  ,{
-         //  validator(_, value) {
-         //    let item = data.find((it)=> it.id === value)
-         //    if (apply_assimilated && !item?.is_assimilated) {
-         //      return Promise.reject('Este concepto no aplica para asimilado.');
-         //    }
-         //    if(!apply_assimilated && !item?.is_payroll){
-         //      return Promise.reject('Este concepto no aplica para nómina.');
-         //    }
-         //    return Promise.resolve();
-         //  },
-         // },
+        rules={[
+          ruleRequired,
+          //  ,{
+          //  validator(_, value) {
+          //    let item = data.find((it)=> it.id === value)
+          //    if (apply_assimilated && !item?.is_assimilated) {
+          //      return Promise.reject('Este concepto no aplica para asimilado.');
+          //    }
+          //    if(!apply_assimilated && !item?.is_payroll){
+          //      return Promise.reject('Este concepto no aplica para nómina.');
+          //    }
+          //    return Promise.resolve();
+          //  },
+          // },
         ]}
       >
         <Select
@@ -361,7 +364,8 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
             return (
               <>
                 <Option key={item.id} value={item.id}>
-                  {item.description} {/* item && item.is_assimilated && `(Aplica a asimilado)`*/}
+                  {item.description}{" "}
+                  {/* item && item.is_assimilated && `(Aplica a asimilado)`*/}
                 </Option>
                 ;
               </>
@@ -378,7 +382,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
-              <Input maxLength={50}/>
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} md={12}>
@@ -395,14 +399,15 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
               <Select options={dataType} />
             </Form.Item>
           </Col>
-          <Col lg={percepciones? 12 : 6} xs={22} md={percepciones? 24 : 12}>
+          <Col lg={percepciones ? 12 : 6} xs={22} md={percepciones ? 24 : 12}>
             <RenderSelect
               data={
                 key == 1
-                  ? props.cat_perceptions.filter(
-                      (item) => item.code != "046" //&& item.code != "001"
-                    )
-                  : key == 2
+                  ? props.cat_perceptions
+                  : // ? props.cat_perceptions.filter(
+                  //     (item) => item.code != "046" //&& item.code != "001"
+                  //   )
+                  key == 2
                   ? props.cat_deductions
                   : // .filter(
                     //     (item) => item.code != "001" && item.code != "002"
@@ -422,69 +427,64 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
           </Col>
           <Col lg={6} xs={22} md={12}>
             <Form.Item
-                name="apply_assimilated"
-                label="Aplica asimilado"
-                valuePropName="checked"
+              name="apply_assimilated"
+              label="Aplica asimilado"
+              valuePropName="checked"
             >
-              <Switch  />
+              <Switch />
             </Form.Item>
           </Col>
-          {
-            key === 1 &&
-                <Col lg={6} xs={22} md={12}>
-                  <Form.Item
-                      name="is_salary"
-                      label="¿Es sueldo?"
-                      valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
-          }
-
+          {key === 1 && (
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item
+                name="is_salary"
+                label="¿Es sueldo?"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
-        {
-          key === 1 && <Row>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                    name="is_holiday"
-                    label="¿Es festivo?"
-                    valuePropName="checked"
-                >
-                  <Switch  />
-                </Form.Item>
-              </Col>
+        {key === 1 && (
+          <Row>
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item
+                name="is_holiday"
+                label="¿Es festivo?"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
 
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                    name="is_rest_day"
-                    label="¿Es descanso?"
-                    valuePropName="checked"
-                >
-                  <Switch  />
-                </Form.Item>
-              </Col>
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item
+                name="is_rest_day"
+                label="¿Es descanso?"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
 
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                    name="is_seventh_day"
-                    label="¿Es séptimo día?"
-                    valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
-
-
-
-            </Row>
-        }
-
-
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item
+                name="is_seventh_day"
+                label="¿Es séptimo día?"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
 
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
-            <Button loading={loading} onClick={resetForm}>Cancelar</Button>
+            <Button loading={loading} onClick={resetForm}>
+              Cancelar
+            </Button>
           </Col>
           <Col>
             <Button loading={loading} type="primary" htmlType="submit">
@@ -529,23 +529,25 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
     return _.debounce((e) => handleChange(e), 1000);
   }, []);
 
-  const handleChange = (e) =>  {
+  const handleChange = (e) => {
     const { value } = e.target;
     setSearch(value);
-  }
+  };
 
   let newCatalog = catalog;
 
-  if(search !== ''){
-     newCatalog = !!catalog && catalog.filter(cat => (
-      cat.description.toLowerCase().includes(search.toLowerCase()) 
-      || cat.code.toLowerCase().includes(search.toLowerCase())
-      || cat.perception_type?.code.includes(search)
-      || cat.other_type_payment?.code.includes(search)
-      || cat.deduction_type?.code.includes(search)
-   ));
+  if (search !== "") {
+    newCatalog =
+      !!catalog &&
+      catalog.filter(
+        (cat) =>
+          cat.description.toLowerCase().includes(search.toLowerCase()) ||
+          cat.code.toLowerCase().includes(search.toLowerCase()) ||
+          cat.perception_type?.code.includes(search) ||
+          cat.other_type_payment?.code.includes(search) ||
+          cat.deduction_type?.code.includes(search)
+      );
   }
-  
 
   return (
     <>
@@ -564,7 +566,7 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm  percepciones />
+              <RenderForm percepciones />
             </Form>
           )}
         </TabPane>
@@ -596,22 +598,26 @@ const InternalConcepts = ({ permissions, currentNode,showHideMessage, ...props }
 
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
-          <Row style={{marginBottom:'15px'}}>
+          <Row style={{ marginBottom: "15px" }}>
             <Col>
-              <Input placeholder="Buscar" allowClear onChange={debouncedResults} />
+              <Input
+                placeholder="Buscar"
+                allowClear
+                onChange={debouncedResults}
+              />
             </Col>
           </Row>
-        <Table
-          columns={columns}
-          dataSource={newCatalog}
-          //dataSource={filterData()}
-          pagination={{showSizeChanger:true}}
-          locale={{
-            emptyText: loading
-              ? "Cargando..."
-              : "No se encontraron resultados.",
-          }}
-        />
+          <Table
+            columns={columns}
+            dataSource={newCatalog}
+            //dataSource={filterData()}
+            pagination={{ showSizeChanger: true }}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
+          />
         </ConfigProvider>
       </Spin>
     </>
@@ -630,4 +636,6 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { doFiscalCatalogs, showHideMessage })(InternalConcepts);
+export default connect(mapState, { doFiscalCatalogs, showHideMessage })(
+  InternalConcepts
+);

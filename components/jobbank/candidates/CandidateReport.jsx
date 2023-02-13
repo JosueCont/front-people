@@ -169,7 +169,7 @@ const CandidateReport = ({
                       flexDirection: 'row',
                     }}>
                         <Text style={{ fontSize: 13, fontWeight: 'bold' }}>Nombre del candidato: </Text>
-                        <Text style={{ fontSize: 12 }}>{infoCandidate?.fisrt_name} {infoCandidate?.last_name}</Text>
+                        <Text style={{ fontSize: 12 }}>{infoCandidate?.first_name} {infoCandidate?.last_name}</Text>
                     </View>
                     <View style={{
                       flex: '0 0 100%',
@@ -216,10 +216,10 @@ const CandidateReport = ({
                         }}
                     >
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                        {infoCandidate?.fisrt_name || ""} {infoCandidate?.last_name || ""}, reside actualmente en { infoCandidate?.municipality || "" } en el estado de 
-                        { infoCandidate?.state?.name !== undefined ? ' ' + infoCandidate.state.name : "" }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
-                        con disponibilidad para viajar, su último trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : " " }
-                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : " "}
+                        {infoCandidate?.first_name || "----------"} {infoCandidate?.last_name || "----------"}, reside actualmente en { infoCandidate?.municipality || "----------" } en el estado de 
+                        { infoCandidate?.state?.name !== undefined ? ' ' + infoCandidate.state.name : "----------" }, { infoCandidate.availability_to_travel? 'cuenta ' : 'no cuenta ' } 
+                        con disponibilidad para viajar, su último trabajo fue el {  infoPositions?.length > 0 ? moment (infoPositions[0]?.end_date).format('DD-MM-YYYY') + ' ' : "---------- " }
+                        como {  infoPositions?.length > 0 ? infoPositions[0]?.position_name : "----------" } en { infoPositions?.length > 0 ? infoPositions[0]?.company + ' ' : "---------- "}
                         </Text>
                         <Text style={{ fontSize: 12, marginBottom: 10 }}>
                             Cuenta con experiencia en:

@@ -24,15 +24,21 @@ const ModalVacancies = ({
     actionForm = () =>{},
     setMsgHTML,
     setEditorState,
-    editorState
+    editorState,
+    evaluationsGroup
 
 }) => {
 
     const [formEvaluations] = Form.useForm();
     const [loading, setLoading ] = useState(false);
+    const [optionKey, setOptionKey ] = useState(0)
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
+        if(itemToEdit.group_assessment.length > 0){
+            itemToEdit.group_assessment = itemToEdit.group_assessment.map((gas) => gas.id)
+        }
+        setOptionKey(itemToEdit.source)
         formEvaluations.setFieldsValue(itemToEdit);
     },[itemToEdit])
 
@@ -45,7 +51,18 @@ const ModalVacancies = ({
 
     const onCloseModal = () =>{
         close();
+        setOptionKey(0)
         formEvaluations.resetFields();
+    }
+
+    const setValue = (key, val) => formEvaluations.setFieldsValue({[key]: val});
+    const setUrl = (val = '') => setValue('url', val)
+    const setEvaluationsGroup = (val = []) => setValue('group_assessment', val)
+
+    const onchangeSource = (val) => {
+        if(val === 1) setUrl()
+        if(val === 2) setEvaluationsGroup()
+        return
     }
 
     const onFinish = (values) =>{
@@ -56,6 +73,7 @@ const ModalVacancies = ({
             onCloseModal()
         },1000)
     }
+
 
     return (
         <MyModal
@@ -92,9 +110,15 @@ const ModalVacancies = ({
                             label='Tipo'
                             rules={[ruleRequired]}
                         >
-                          <Select placeholder='selecciona el tipo'>
+                          <Select 
+                            placeholder='selecciona una opción' 
+                            onChange={(e) => { 
+                                setOptionKey(e)
+                                onchangeSource(e)
+                            }}
+                          >
                             <Select.Option key={1} value={1}>
-                              Khor
+                              KHOR+
                             </Select.Option>
                             <Select.Option key={2} value={2}>
                               Cliente
@@ -102,19 +126,41 @@ const ModalVacancies = ({
                           </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='url'
-                            label='URL'
-                            rules={[ruleRequired, ruleURL]}
-                        >
-                            <Input
-                                placeholder='Url del sitio'
-                                // maxLength={10}
-                                // onKeyPress={validateMaxLength}
-                            />
-                        </Form.Item>
-                    </Col>
+
+                    {
+                        optionKey !== 0 && optionKey === 1 ? (
+                            <Col span={12}>
+                            <Form.Item
+                                name='group_assessment'
+                                label='Grupo de evaluaciones'
+                                rules={[ruleRequired]}
+                            >
+                                <Select placeholder='Selecciona una evaluación' mode='multiple'>
+                                    {
+                                        evaluationsGroup.length > 0 && evaluationsGroup.map((eva) => (
+                                            <Select.Option key={eva.people_group_assessment_id} value={eva.people_group_assessment_id}>
+                                                    { eva.name }
+                                            </Select.Option>
+                                        ))
+                                    }
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        ) : (
+                            <Col span={12}>
+                            <Form.Item
+                                name='url'
+                                label='URL'
+                                rules={[ruleRequired, ruleURL]}
+                            >
+                                <Input
+                                    placeholder='Url del sitio'
+                                />
+                            </Form.Item>
+                        </Col>
+                        )
+                    }
+
                     <Col span={12}>
                         <Form.Item
                             name='is_active'

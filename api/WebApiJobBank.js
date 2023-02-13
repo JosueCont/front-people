@@ -1,4 +1,5 @@
 import WebApi from './webApi';
+import { axiosApi } from './axiosApi';
 
 class WebApiJobBank {
 
@@ -281,16 +282,19 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
     }
 
-    static createInterview(data){
-        return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
+    static createInterview(data, headers){
+        // return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
+        return axiosApi.post('/job-bank/calendar-events/', data, {headers});
     }
 
-    static updateInterview(id, data){
-        return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
+    static updateInterview(id, data, headers){
+        // return WebApi.ApisType(`/job-bank/calendar-events/${id}/`, 'put', data);
+        return axiosApi.put(`/job-bank/calendar-events/${id}/`, data, {headers});
     }
 
-    static deleteInterview(data){
-        return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
+    static deleteInterview(data, headers){
+        // return WebApi.ApisType('/job-bank/calendar-events/delete_event/', 'post', data);
+        return axiosApi.post('/job-bank/calendar-events/delete_event/', data, {headers});
     }
 
     //REFERENCIAS, ESTUDIO SOCIOECONOMICO DE CANDIDATOS
@@ -304,11 +308,29 @@ class WebApiJobBank {
     }
 
     static updateReference(id, data){
-        return WebApi.ApisType(`/job-bank/references/${id}/`, 'patch', data)
+        return WebApi.ApisType(`/job-bank/references/${id}/`, 'put', data)
     }
 
     static deleteReference(id){
         return WebApi.ApisType(`/job-bank/references/${id}/`, 'delete')
+    }
+
+    //POSTULACIONES
+
+    static getApplications(node, query){
+        return WebApi.ApisType(`/job-bank/applications/?node=${node}${query}`, 'get');
+    }
+
+    static getInfoApplication(id){
+        return WebApi.ApisType(`/job-bank/applications/${id}/`, 'get');
+    }
+
+    static getApplicationsCandidates(node, query){
+        return WebApi.ApisType(`/job-bank/applications/get_candidates/?node=${node}${query}`, 'get');
+    }
+
+    static updateApplications(id, data){
+        return WebApi.ApisType(`/job-bank/applications/${id}/`, 'patch', data);
     }
 
     //LISTADO DE CATÁLOGOS

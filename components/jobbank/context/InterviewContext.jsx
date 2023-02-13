@@ -1,9 +1,12 @@
-import React, { createContext, useMemo, useEffect, useState } from 'react';
+import React, {
+    createContext,
+    useMemo,
+    useEffect,
+    useState
+} from 'react';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { getInterviews } from '../../../redux/jobBankDuck';
-import { typeHttp, domainApiWithTenant } from '../../../api/axiosApi';
-import { notification, message } from 'antd';
+import { useSelector } from 'react-redux';
+import { notification } from 'antd';
 import cookies from 'js-cookie';
 import { valueToFilter } from '../../../utils/functions';
 
@@ -17,13 +20,8 @@ export const InterviewProvider = ({children}) =>{
         list_connections_options,
         load_connections_options,
     } = useSelector(state => state.jobBankStore);
-    const getNode = state => state.userStore.current_node;
-    const currentNode = useSelector(getNode);
-    const dispatch = useDispatch();
     const [token, setToken] = useState({});
     const [emailCreator, setEmailCreator] = useState('');
-    const baseURL = `${typeHttp}://${domainApiWithTenant}/job-bank/calendar-events/`;
-    const headers = {'Content-Type': 'application/json', 'access-token': token.access_token};
     const msgGC = `La configuración no se encuentra activa o esta incompleta`;
     const msgVoid = `No se ha encontrado ninguna configuración para Google Calendar`;
 
@@ -51,7 +49,7 @@ export const InterviewProvider = ({children}) =>{
                 cookies.remove('token_gc')
                 return 'DECLINED';
             };
-            return 'VALID';
+            return response;
         } catch (e) {
             console.log(e)
             cookies.remove('token_gc')
@@ -59,42 +57,46 @@ export const InterviewProvider = ({children}) =>{
         }
     }
 
-    const checkToken = async () =>{
+    const fetchAction  = async (callback = ()=>{}, item) =>{
         let token = getToken();
         let size = Object.keys(token).length;
-        if(size <= 0) return 'EMPTY';
-        return await isValidToken(token);
-    }
-
-    const fetchAction  = async (callback = ()=>{}) =>{
-        let resp = await checkToken();
-        if(resp == 'EMPTY'){
+        if(size <= 0){
             notification.error({
                 message: 'No se ha detectado ninguna sesión iniciada',
                 placement: 'topLeft'
             });
             return;
         }
+        let resp = await isValidToken(token, item);
         if(resp == 'ERROR'){
             notification.error({
-                message: 'No se pudo validar la sesión',
-                description: 'Inicie sesión de nuevo',
+                message: 'Inicie sesión de nuevo',
+                description: 'No se pudo validar la sesión',
                 placement: 'topLeft'
             });
             return;
         }
         if(resp == 'EXPIRED'){
             notification.info({
-                message: 'La sessión actual ha expirado',
-                description: 'Inicie sesión de nuevo',
+                message: 'Inicie sesión de nuevo',
+                description: 'La sessión actual ha expirado',
                 placement: 'topLeft'
             });
             return;
         }
         if(resp == 'DECLINED'){
             notification.warning({
-                message: 'La sessión actual está por expirar',
-                description: 'Inicie sesión de nuevo',
+                message: 'Inicie sesión de nuevo',
+                description: 'La sessión actual está por expirar',
+                placement: 'topLeft'
+            });
+            return;
+        }
+        let emailValid = item?.all_data_response?.organizer?.email;
+        if(item && resp.data?.email !== emailValid){
+            notification.warning({
+                message: 'Acción bloqueada',
+                description: 'Solo el organizador del evento puede realizar esta acción',
                 placement: 'topLeft'
             });
             return;
@@ -108,41 +110,6 @@ export const InterviewProvider = ({children}) =>{
         const some_ = item => valueToFilter(item.email) == valueToFilter(emailCreator);
         obj.attendees_list = emails.some(some_) ? emails : [...emails, {email: emailCreator}];
         return obj;
-    }
-
-    const actionCreate = async (values) =>{
-        try {
-            let body = {...createData(values), node:currentNode.id};
-            await axios.post(baseURL, body, {headers});
-            dispatch(getInterviews(currentNode.id, jobbank_filters, jobbank_page))
-            message.success('Evento registrado');
-        } catch (e) {
-            console.log(e)
-            message.error('Evento no registrado')
-        }
-    }
-
-    const actionUpdate = async (id, values) =>{
-        try {
-            let body = createData(values);
-            await axios.put(`${baseURL}${id}/`, body, {headers});
-            dispatch(getInterviews(currentNode.id, jobbank_filters, jobbank_page))
-            message.success('Evento actualizado');
-        } catch (e) {
-            console.log(e)
-            message.error('Evento no actualizado');
-        }
-    }
-
-    const actionDelete = async (event_id) =>{
-        try {
-            await axios.post(`${baseURL}delete_event/`, {event_id}, {headers});
-            dispatch(getInterviews(currentNode.id, jobbank_filters, jobbank_page))
-            message.success('Evento eliminado');
-        } catch (e) {
-            console.log(e)
-            message.error('Evento no eliminado')
-        }
     }
 
     const googleCalendar = useMemo(()=>{
@@ -160,10 +127,9 @@ export const InterviewProvider = ({children}) =>{
         <InterviewContext.Provider value={{
             setToken,
             fetchAction,
-            actionCreate,
-            actionUpdate,
-            actionDelete,
-            googleCalendar
+            googleCalendar,
+            createData,
+            token,
         }}>
             {children}
         </InterviewContext.Provider>

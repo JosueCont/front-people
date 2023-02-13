@@ -252,7 +252,8 @@ const TableAssessments = ({
   const convertResults = (results) =>{
     if(results){
       if(typeof(results.results) == 'string'){
-        let obj = JSON.parse(results.results);
+        let new_string_results = results.results.replace(/'/g, '"');
+        let obj = JSON.parse(new_string_results);
         return obj.assessment_results
           ? obj.assessment_results
           : '';

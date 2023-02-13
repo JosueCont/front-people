@@ -49,6 +49,7 @@ const DetailsVacancies = ({
     const [currentKey, setCurrentKey] = useState('1');
     const [evaluationList, setEvaluationList] = useState([]);
     const { setValuesForm, createData } = useInfoVacancy();
+    const noValid = [undefined, null, '', ' '];
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -75,7 +76,6 @@ const DetailsVacancies = ({
         }
     },[router.query])
 
-
     const getInfoVacant = async (id) =>{
         try {
             setFetching(true)
@@ -101,16 +101,16 @@ const DetailsVacancies = ({
     }
 
     const addEvaluations = async (values) => {
-        let data = new FormData()
-        data.append('vacant', router.query.id)
-        data.append('name', values.name)
-        data.append('source', values.source)
-        data.append('url', values.url)
-        data.append('instructions', values.instructions)
-        data.append('is_active', values.is_active)
+
+        values.vacant = router.query.id
+
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            values[key] = value
+        })
 
         try {
-            let response = await WebApiJobBank.addEvaluationVacant(data)
+            let response = await WebApiJobBank.addEvaluationVacant(values)
             if (response) {
                 getEvaluationsVacant(router.query.id)
             }
@@ -123,18 +123,15 @@ const DetailsVacancies = ({
 
     const updateEvaluation = async (id, values) => {
 
-        console.log('Values', values)
+        values.vacant = router.query.id
 
-        let data = new FormData()
-        data.append('vacant', router.query.id)
-        data.append('name', values.name)
-        data.append('source', values.source)
-        data.append('url', values.url)
-        data.append('instructions', values.instructions)
-        data.append('is_active', values.is_active)
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            values[key] = value
+        })
 
         try {
-            let response = await WebApiJobBank.updateEvaluation(id, data)
+            let response = await WebApiJobBank.updateEvaluation(id, values)
             if(response){
                 getEvaluationsVacant(router.query.id)
             }
@@ -276,11 +273,9 @@ const DetailsVacancies = ({
             setCurrentKey(tab)
             return;
         }
-        let querys = {...router.query, tab};
-        if(querys.tab == '1') delete querys.tab;
         router.replace({
-            pathname: `/jobbank/vacancies/${action}`,
-            query: querys
+            pathname: '/jobbank/vacancies/edit',
+            query: {...router.query, tab}
         }, undefined, {shallow: true})
     }
 
@@ -374,6 +369,7 @@ const DetailsVacancies = ({
                                         updateEvaluation = { updateEvaluation }
                                         deleteEvaluation = {deleteEvaluation}
                                         changeEvaluationstatus = {changeEvaluationstatus}
+                                        currentNodeId = { currentNode?.id }
                                     />
                                 </Spin>
                             </Tabs.TabPane>

@@ -153,6 +153,7 @@ const ModalConnection = ({
                             tooltip={`Esta imagen será utilizada en caso de que
                             no se haya seleccionado ninguna antes de realizar la publicación.`}
                             isRequired={code == 'IG'}
+                            revertColor={true}
                             disabled={['WP','GC'].includes(code)}
                             dependencies={['code']}
                             setFile={setFileImg}
