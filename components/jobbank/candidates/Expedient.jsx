@@ -57,8 +57,8 @@ const Expedient = ({
         />)
     }
 
-    const linkTo = (url, download = false ) =>{
-        let nameFile = `${infoCandidate.first_name} ${infoCandidate.last_name}`;
+    const linkTo = (url, download = false, partial = false ) =>{
+        let nameFile = partial? `Expediente ${infoCandidate.fisrt_name} ${infoCandidate.last_name} - resumido`  : `Expediente ${infoCandidate.fisrt_name} ${infoCandidate.last_name} - completo`;
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -78,7 +78,7 @@ const Expedient = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
+                linkTo(url+'#toolbar=0', download, partial);
             },2000)
         } catch (e) {
             console.log(e)
