@@ -22,6 +22,7 @@ import { optionsStatusApplications } from '../../../utils/constant';
 import { getApplications, getApplicationsCandidates } from '../../../redux/jobBankDuck';
 import { downloadCustomFile } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import moment from 'moment';
 
 const TableApplications = ({
     currentNode,
@@ -110,6 +111,14 @@ const TableApplications = ({
             }
         },
         {
+            title: 'Fecha de registro',
+            render: (item) =>{
+                return(
+                    <>{moment(item.registration_date).format('DD-MM-YYYY hh:mm a')}</>
+                )
+            }
+        },
+        {
             title: 'Estatus',
             render: (item) =>{
                 return(
@@ -127,7 +136,7 @@ const TableApplications = ({
         },
         {
             title: 'Acciones',
-            width: 105,
+            // width: 105,
             render: (item) =>{
                 return(
                     <span
