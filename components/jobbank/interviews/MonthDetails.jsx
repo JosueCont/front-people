@@ -76,10 +76,11 @@ const MonthDetails = ({
             if(month && pos_month != date_month) return acc;
             let date_day = moment(start).format(formatDay);
             let list_month = acc[date_month] ?? {};
-            let list_day = list_month[date_day] ?? [];
+            let list_mode = month ? acc : list_month;
+            let list_day = list_mode[date_day] ?? [];
             let itemDay = [...list_day, current];
+            if(month) return {...acc, [date_day]: itemDay};
             let itemMonth = {...list_month, [date_day]: itemDay};
-            if(month) return {...acc, ...itemMonth};
             return {...acc, [date_month]: itemMonth};
         }, {})
         setSegmentation(results)
@@ -123,34 +124,39 @@ const MonthDetails = ({
     )
     
     const ComponentDay = ({record}) => (
-        <>
-            {!router.query?.mth ? (
-                <ContentVertical gap={4}>
-                    <TextDescripcion isTitle weight={500}>
-                        {getDay(record[0])}
-                    </TextDescripcion>
-                    {Array.isArray(record[1]) && record[1]?.map((event, idx) => (
-                        <ComponentEvent event={event} key={"event_"+idx} />
-                    ))}
-                </ContentVertical>
-            ): (
-                <ComponentEvent event={record[1]}/>
-            )}
-        </>
-    )
-
-    const ComponentYear = ({item}) => (
-        <ContentNormal className='month' gap={8}>
-            <TextDescripcion isTitle weight={500} className='title'>
-                {router.query?.mth ? getDay(item[0]) : getMonth(item[0])}
-            </TextDescripcion>
-            <ContentVertical gap={16} className='list'>
-                {Object.entries(item[1]).map((record, idx) => (
-                    <ComponentDay key={"record_"+idx} record={record}/>
+        <ContentVertical gap={2}>
+            <div style={{marginLeft: 10}}>
+                <TextDescripcion isTitle weight={500}>
+                    {getDay(record[0])}
+                </TextDescripcion>
+            </div>
+            <ContentVertical>
+                {Array.isArray(record[1]) && record[1]?.map((event, idx) => (
+                    <ComponentEvent event={event} key={"event_"+idx} />
                 ))}
             </ContentVertical>
-        </ContentNormal>  
+        </ContentVertical>
     )
+
+    const ComponentYear = ({item}) => {
+        return(
+            <ContentNormal className='month' gap={8}>
+                <div className='title'>
+                    <TextDescripcion isTitle weight={500}>
+                        {router.query?.mth ? getDay(item[0]) : getMonth(item[0]) }
+                    </TextDescripcion>
+                </div>
+                <ContentVertical gap={router.query?.mth ? 0 : 8} className='list'>
+                    {Object.entries(item[1]).map((record, idx) => (
+                        <>{router.query?.mth
+                            ? <ComponentEvent key={"record_"+idx} event={record[1]}/>
+                            : <ComponentDay key={"record_"+idx} record={record}/>
+                        }</>
+                    ))}
+                </ContentVertical>
+            </ContentNormal>  
+        )
+    }
 
     return (
         <ContentEvents>
