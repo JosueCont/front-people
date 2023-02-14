@@ -12,6 +12,7 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import WebApiAssessment from '../../../api/WebApiAssessment';
 import DetailsCustom from '../DetailsCustom';
 import TabDetail from './TabDetail';
 import TabAsign from './TabAsign';
@@ -35,6 +36,7 @@ const DetailsPreselection = ({
   const [comments, setComments] = useState([])
   const [ assesments, setAssesments ] = useState([])
   const [asignaments, setAsignaments ] = useState([])
+  const [personalAsignament, setPersonalAsignament] = useState([])
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
@@ -50,6 +52,11 @@ const DetailsPreselection = ({
     }
   },[router.query?.vacant])
 
+  useEffect(() => {
+    if(!router.query.user_person) return
+    getAsignamentByPerson(router.query?.user_person)
+  },[router.query?.user_person])
+
   const getEvaluationVacant = async (id) => {
     try {
       let response = await WebApiJobBank.getEvaluationsVacant(id)
@@ -60,6 +67,19 @@ const DetailsPreselection = ({
       console.log('Error', error)
     }
   } 
+
+  const getAsignamentByPerson = async (id, type = '') => {
+    let data = {
+      person: id
+    }
+    try {
+      let response = await WebApiAssessment.getAssignListPersonal(data)
+      if(response?.data.length <= 0) return
+      setPersonalAsignament(response.data)
+    } catch (error) {
+      console.log('Error', error)
+    }
+  }
 
   useEffect(() => {
     if(Object.keys(infoSelection).length > 0){
@@ -95,9 +115,9 @@ const DetailsPreselection = ({
   const getAssesmets = async (id) => {
     try {
       let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id)
-      console.log('dededed', response)
-      if(response){
-        setAsignaments(response.data.results)
+
+      if(response.data.length > 0){
+        setAsignaments(response.data)
       }
     } catch (error) {
       console.log('Error', error)
@@ -241,6 +261,7 @@ const DetailsPreselection = ({
                   asignaments = { asignaments }
                   getAssesmets = { getAssesmets }
                   currentNodeId = { currentNode?.id }
+                  personAssignament = { personalAsignament }
                 />
               </Spin>
             </Tabs.TabPane>

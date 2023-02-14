@@ -7,6 +7,7 @@ import {
     Page,
     PDFViewer,
 } from '@react-pdf/renderer';
+import moment from 'moment';
 
 const DocExpedient = ({
     infoCandidate,
@@ -173,7 +174,7 @@ const DocExpedient = ({
                         <Text style={{ fontSize: 10 }}>Apellidos: {infoCandidate?.last_name}</Text>
                     </View>
                     <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de nacimiento: {infoCandidate?.birthdate || ""}</Text>
+                        <Text style={{ fontSize: 10 }}>Fecha de nacimiento: {infoCandidate?.birthdate? moment(infoCandidate?.birthdate).format('DD-MM-YYYY'): ''}</Text>
                     </View>
                     <View style={{flex: '0 0 50%' }}>
                         <Text style={{ fontSize: 10 }}>Correo electrónico: {infoCandidate?.email}</Text>
@@ -326,7 +327,7 @@ const DocExpedient = ({
                                 <Text style={{ fontSize: 10 }}> { inst && list_status.find((sch) => sch.value == inst.status).label } </Text>
                             </View>
                             <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.end_date } </Text>
+                                <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY') } </Text>
                             </View>
                             <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.institution_name } </Text>
@@ -501,10 +502,10 @@ const DocExpedient = ({
                                 <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
                             </View>
                             <View style={{flex: '0 0 20%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.start_date } </Text>
+                                <Text style={{ fontSize: 10 }}> { inst?.start_date && moment(inst.start_date).format('DD-MM-YYYY') } </Text>
                             </View>
                             <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.end_date} </Text>
+                                <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY')} </Text>
                             </View>
                         </View>
                         ))
