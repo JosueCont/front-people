@@ -282,6 +282,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
     }
 
+    static getDetailInterview(id, headers){
+        return axiosApi.get(`/job-bank/calendar-events/${id}/`, {headers});
+    }
+
     static createInterview(data, headers){
         // return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
         return axiosApi.post('/job-bank/calendar-events/', data, {headers});
