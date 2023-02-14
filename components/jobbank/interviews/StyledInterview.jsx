@@ -92,7 +92,7 @@ export const StatusGuest = styled.span`
 `;
 
 
-export const EventInfo = styled(ContentBetween)`
+export const EventInfo = styled.div`
     width: 100%;
     background-color: #ffff;
     border-radius: 12px;

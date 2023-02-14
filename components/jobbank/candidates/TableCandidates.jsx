@@ -107,9 +107,15 @@ const TableCandidates = ({
     />
     
 
-    const linkTo = (url, download = false, nameCandidate ) =>{
-        // let nameFile = `${infoCandidate.fisrt_name} ${infoCandidate.last_name}`;
-        let nameFile = nameCandidate !== ''? nameCandidate : 'demo'
+    const linkTo = (url, download = false, nameCandidate, type ) =>{
+
+        let nameFile = nameCandidate !== ''? 
+                            type === 1?
+                                `Reporte de alta dirección ${nameCandidate}`
+                            :
+                                `Reporte de ${nameCandidate}`
+                        : 
+                            'demo'
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
@@ -129,7 +135,7 @@ const TableCandidates = ({
             let infoCan = responseInfo.data || {}
             let infoEducation = responseEdu.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
             let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
             let url = URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -137,7 +143,7 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate);
+                linkTo(url+'#toolbar=0', download, nameCandidate, 1);
             },2000)
         } catch (e) {
             console.log(e)
@@ -162,7 +168,7 @@ const TableCandidates = ({
             let infoEducation = responseEdu.data || []
             let infoExp = responseExp.data || []
             let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.fisrt_name} ${infoCan.last_name}`
+            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
             let resp = await pdf(
                                 <NyCandidateReport 
                                     infoCandidate={infoCan} 
@@ -176,7 +182,7 @@ const TableCandidates = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate);
+                linkTo(url+'#toolbar=0', download, nameCandidate, 2);
             },2000)
         } catch (e) {
             console.log(e)
@@ -248,8 +254,9 @@ const TableCandidates = ({
     }
 
     const copyLinkAutoregister = () =>{
+        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
         copyContent({
-            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
+            text: `${url}?code=${currentNode.permanent_code}`,
             onSucces: ()=> message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
@@ -287,13 +294,13 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<LinkOutlined/>}
                     onClick={() => copyLinkUpdate(item)}
                 >
                     Actualización
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
@@ -332,8 +339,8 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex: 'fisrt_name',
-            key: 'fisrt_name',
+            dataIndex: 'first_name',
+            key: 'first_name',
             ellipsis: true
         },
         {
@@ -416,7 +423,7 @@ const TableCandidates = ({
             <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle={['fisrt_name','last_name']}
+                keyTitle={['first_name','last_name']}
                 keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

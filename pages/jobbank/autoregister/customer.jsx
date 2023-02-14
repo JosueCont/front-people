@@ -4,7 +4,7 @@ import { getSectors } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
 import DetailsClients from '../../../components/jobbank/clients/DetailsClients';
 
-const client = ({
+const customer = ({
     currentNode,
     getSectors
 }) => {
@@ -30,4 +30,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, { getSectors })(client);
+export default connect(mapState, { getSectors })(customer);

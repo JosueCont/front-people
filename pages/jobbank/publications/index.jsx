@@ -33,9 +33,11 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
+            let params = {...router.query};
             let page = router.query.page ? parseInt(router.query.page) : 1;
             let size = router.query.size ? parseInt(router.query.size) : 10;
-            let filters = getFiltersJB(router.query);
+            if(router.query?.profile == 'open_fields') params.profile = "";
+            let filters = getFiltersJB(params);
             getPublications(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])

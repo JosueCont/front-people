@@ -247,7 +247,7 @@ const EventForm = ({
                                 >
                                     {list_selection_options.length > 0 && list_selection_options.map(item => (
                                         <Select.Option value={item.id} key={item.id}>
-                                            {item.vacant?.job_position} / {item.candidate?.fisrt_name} {item.candidate?.last_name}
+                                            {item.vacant?.job_position} / {item.candidate?.first_name} {item.candidate?.last_name}
                                         </Select.Option>
                                     ))}
                                 </Select>
@@ -329,7 +329,7 @@ const EventForm = ({
                                 >
                                     {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
                                         <Select.Option value={item.email} key={item.email}>
-                                            {item.fisrt_name} {item.last_name}
+                                            {item.first_name} {item.last_name}
                                         </Select.Option>
                                     ))}
                                 </Select>

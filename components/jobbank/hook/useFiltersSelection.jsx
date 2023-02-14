@@ -33,7 +33,7 @@ export const useFiltersSelection = () =>{
     const getCandidate = (id) => getValueFilter({
         value: id,
         list: list_candidates_options,
-        keyShow: e => `${e?.fisrt_name} ${e.last_name}`
+        keyShow: e => `${e?.first_name} ${e.last_name}`
     })
 
     const listGets = {

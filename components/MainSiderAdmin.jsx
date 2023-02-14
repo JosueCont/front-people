@@ -103,7 +103,8 @@ const MainSider = ({
       jb_publications: "/jobbank/publications",
       jb_selection: "/jobbank/selection",
       jb_preselection: "/jobbank/preselection",
-      jb_interviews: "/jobbank/interviews"
+      jb_interviews: "/jobbank/interviews",
+      jb_applications: "/jobbank/applications"
     };
     switch (key){
       case "sukha":
@@ -212,6 +213,7 @@ const MainSider = ({
           getItem("Vacantes", "jb_vacancies"),
           getItem("Estrategias", "jb_strategies"),
           getItem("Template de vacante", "jb_profiles"),
+          getItem("Postulaciones", "jb_applications"),
           getItem("Candidatos", "jb_candidates"),
           getItem("Publicaciones", "jb_publications"),
           getItem("Preselección", "jb_preselection"),

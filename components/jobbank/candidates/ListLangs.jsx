@@ -8,7 +8,8 @@ import {
 const ListLangs = ({
     label = 'Idiomas',
     keyName = 'languages',
-    listSelected = []
+    listSelected = [],
+    disabled = false
 }) => {
 
     const getDomain = (item) =>{
@@ -42,6 +43,7 @@ const ListLangs = ({
         >
             <Select
                 showSearch
+                disabled={disabled}
                 mode='multiple'
                 maxTagCount={1}
                 options={optionsPrueba}

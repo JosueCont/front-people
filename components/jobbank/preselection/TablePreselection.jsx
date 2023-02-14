@@ -49,12 +49,12 @@ const TablePreselection = ({
                 candidate: itemsSelected?.at(-1)?.id,
                 vacant: router.query?.vacant
             });
-            getPreselection(currentNode.id, jobbank_filters, jobbank_page)
+            getPreselection(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size)
             getVacanciesOptions(currentNode.id, '&status=1&has_strategy=1')
             message.success('Proceso iniciado')
         } catch (e) {
             let error = e.response?.data?.message;
-            let msg = error ?? 'Proceso no iniciado';
+            let msg = error ? error : 'Proceso no iniciado';
             message.error(msg)
         }
     }
@@ -133,18 +133,14 @@ const TablePreselection = ({
 
     const columns = [
         {
-            title: 'Nombre',
-            dataIndex: 'fisrt_name',
-            key: 'fisrt_name',
+            title: 'Candidato',
             show: true,
-            ellipsis: true
-        },
-        {
-            title: 'Apellidos',
-            dataIndex: 'last_name',
-            key: 'last_name',
-            show: true,
-            ellipsis: true
+            ellipsis: true,
+            render: (item) =>{
+                return(
+                    <>{item?.first_name} {item?.last_name}</>
+                )
+            }
         },
         {
             title: 'Género',
@@ -174,17 +170,18 @@ const TablePreselection = ({
             show: true,
             ellipsis: true,
         },
-        // {
-        //     title: 'Teléfono',
-        //     dataIndex: 'cell_phone',
-        //     key: 'cell_phone'
-        // },
+        {
+            title: 'Teléfono',
+            dataIndex: 'cell_phone',
+            key: 'cell_phone',
+            show: true
+        },
         {
             title: 'Compatibilidad',
             show: !router.query?.applyMatch,
             render: (item) => {
                 return(
-                    <span>{item.compatibility ?  `${item.compatibility}%` : null}</span>
+                    <>{item.compatibility ?  `${item.compatibility}%` : null}</>
                 )
             }
         },
@@ -203,11 +200,11 @@ const TablePreselection = ({
             width: 80,
             render: (item) =>{
                 return(
-                    <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
+                    // <Dropdown overlay={()=> menuItem(item)}>
+                        <Button size='small' onClick={()=> openModalOne(item)}>
+                            <UserAddOutlined />
                         </Button>
-                    </Dropdown>
+                    // </Dropdown>
                 )
             }
         }
@@ -242,7 +239,7 @@ const TablePreselection = ({
                     : 'No se puede iniciar un nuevo proceso de selección para esta vacante'
                 }
                 visible={openModal}
-                keyTitle={['fisrt_name','last_name']}
+                keyTitle={['first_name','last_name']}
                 keyDescription='email'
                 close={closeModal}
                 itemsToList={itemsSelected}
