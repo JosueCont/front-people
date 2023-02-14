@@ -151,7 +151,7 @@ const validateAction = () => Object.keys(itemToEdit).length > 0;
       title: 'Tipo',
       dataIndex: 'source',
       key: 'source',
-      render: (source) => source === 1? 'Khor' : 'Cliente'
+      render: (source) => source === 1? 'KHOR+' : 'Cliente'
     },
     {
       title: 'URL',
