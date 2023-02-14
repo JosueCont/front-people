@@ -24,7 +24,7 @@ import UploadCerOrPfxFile from "../UploadCerOrPfxFile";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
 
-const AutomaticMovements = ({patronalData}) => {
+const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
 
   const { Text } = Typography
   const [ modalInfonavitForm ] = Form.useForm()
@@ -157,16 +157,20 @@ const AutomaticMovements = ({patronalData}) => {
   const getPatronalCredentials = async () => {
 
     setLoadingTable(true)
+    console.log('getPatronalCredentials',patronalData)
 
     try {
       let response = await WebApiPeople.getCredentials('imss', patronalData.id)
       if(response?.data?.results?.credentials===true){
         setHasCredentialIMSS(true)
+        hasImss(true)
       }else{
         setHasCredentialIMSS(false)
+        hasImss(false)
       }
     } catch (error) {
       setHasCredentialIMSS(false)
+      hasImss(false)
       console.log('Error', error)
 
     } finally {
@@ -178,11 +182,14 @@ const AutomaticMovements = ({patronalData}) => {
       let response = await WebApiPeople.getCredentials('infonavit', patronalData.id)
       if(response?.data?.results?.credentials===true){
           setHasCredentialInfonavit(true)
+          hasInfonavit(true)
       }else{
         setHasCredentialInfonavit(false)
+        hasInfonavit(false)
       }
     } catch (error) {
       setHasCredentialInfonavit(false)
+      hasInfonavit(false)
       console.log('Error', error)
 
     } 
@@ -268,6 +275,11 @@ const AutomaticMovements = ({patronalData}) => {
       let response = await WebApiPeople.deleteCredentials(newSite, patronalData.id)
       if(response){
         message.success('Credenciales eliminadas con éxito')
+        if(endpoint === 'IMSS'){
+          hasImss(false)
+        } else {
+          hasInfonavit(false)
+        }
         getPatronalCredentials()
       }
     } catch (error) {
