@@ -92,6 +92,13 @@ class WebApiAssessment {
       "get"
     );
   }
+
+  static getAssignListPersonal(data){
+    return WebApi.ApisType(
+      `/person/person-assessments/user-assignments-list/`, 'post', data
+    )
+  }
+
   static getAssignByGroup(id, queryParam, type) {
     return WebApi.ApisType(
       `/person/group-person-assessment/?group_person=${id}${queryParam}${type}`,

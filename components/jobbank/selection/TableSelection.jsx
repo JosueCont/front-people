@@ -145,10 +145,22 @@ const TableSelection = ({
                 <Menu.Item
                     key='4'
                     icon={<EditOutlined/>}
-                    onClick={()=> router.push({
-                        pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id, vacant: item.vacant.id }
-                    })} 
+                    onClick={()=> {
+                                let { user_person } = item?.candidate
+                                let query = {
+                                    ...router.query, 
+                                    id: item.id, 
+                                    vacant: item.vacant.id,
+                                }
+                                if(user_person){
+                                    query.user_person = user_person
+                                }
+                                router.push({
+                                pathname: `/jobbank/selection/details`,
+                                query: query
+                            })
+                        }
+                    } 
                 >
                     Editar
                 </Menu.Item>
