@@ -15,6 +15,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import DetailsCustom from '../DetailsCustom';
 import TabDetail from './TabDetail';
 import TabAsign from './TabAsign';
+import TabKhorEvaluations from './TabKhorEvaluations';
 
 const DetailsPreselection = ({
   action,
@@ -211,7 +212,7 @@ const DetailsPreselection = ({
               </Spin>
             </Tabs.TabPane>
             <Tabs.TabPane
-              tab='Asignar evaluación'
+              tab='Evaluaciones cliente'
               forceRender
               key='2'
             >
@@ -223,6 +224,23 @@ const DetailsPreselection = ({
                   processSelection = { infoSelection?.id }
                   asignaments = { asignaments }
                   getAssesmets = { getAssesmets }
+                />
+              </Spin>
+            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab='Evaluaciones Khor'
+              forceRender
+              key='3'
+            >
+              <Spin spinning={fetching}>
+                <TabKhorEvaluations 
+                  loading={ fetching }
+                  setLoading = { setFetching }
+                  assesments = { assesments }
+                  processSelection = { infoSelection?.id }
+                  asignaments = { asignaments }
+                  getAssesmets = { getAssesmets }
+                  currentNodeId = { currentNode?.id }
                 />
               </Spin>
             </Tabs.TabPane>

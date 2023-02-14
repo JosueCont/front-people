@@ -12,46 +12,80 @@ import {
   Button, 
   Table, 
   message, 
-  Dropdown, 
+  Dropdown,
+  Tooltip,
+  Modal,
+  List,
   Menu } 
   from 'antd'
-import { SearchOutlined, EllipsisOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { 
+  SearchOutlined, 
+  EllipsisOutlined, 
+  EditOutlined, 
+  DeleteOutlined, 
+  UnorderedListOutlined,
+  TeamOutlined
+} from '@ant-design/icons';
 import ModalAsignament from './ModalAsignment';
 import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import WebApiAssessment from '../../../api/WebApiAssessment';
 import { optionsStatusAsignament, optionsSourceType } from "../../../utils/constant";
 import ListItems from '../../../common/ListItems';
 import { valueToFilter } from '../../../utils/functions';
 
-const TabAsign = ({
+const TabKhorEvaluations = ({
     loading,
     setLoading,
     assesments,
     processSelection,
     asignaments,
-    getAssesmets
+    getAssesmets,
+    currentNodeId
 }) => {
 
     const [openModal, setOpenModal] = useState(false);
     const [visibleDeleteModal, setVisibleDeleteModal ] = useState(false)
+    const [visibleGroupModal, setVisibleGroupModal ] = useState(false)
     const [itemToEdit, setItemToEdit] = useState({})
     const [itemsToDelete, setItemsToDelete ] = useState ({})
     const [msgHTML, setMsgHTML] = useState("<p></p>");
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [ searchAsignaments, setSearchAsignaments ] = useState([])
-    const [clientAssessments, setClientAssessments] = useState([])
-    
-    useEffect(()=>{
-        if(asignaments.length <= 0) return
-        let clientAsignament = asignaments.filter((asign) => asign.vacant_assessment.source === 2)
-        setSearchAsignaments(clientAsignament) 
-      },[asignaments])
+    const [khorAssessments, setkhorAssessments] = useState([])
+    const [evaluationsGroup, setEvaluationsGroup] = useState([])
+    const [listGroupNames, setListGroupName ] = useState([])
 
     useEffect(() => {
-        if(assesments.length <= 0) return
-        let clientAssessments = assesments.filter((as) => as.source === 2)
-        setClientAssessments(clientAssessments)
-    },[assesments])
+      if(currentNodeId){
+        getNodeEvaluationsGroup(currentNodeId)
+      }
+    },[currentNodeId])
+  
+    const getNodeEvaluationsGroup = async (id) => {
+      let stringId = id.toString()
+      try {
+        let response = await WebApiAssessment.getOnlyGroupAssessmentByNode(stringId);
+        if(response.data.results.length > 0){
+          setEvaluationsGroup(response.data.results)
+        }
+      } catch (e) {
+        console.log(e)
+        return e.response;
+      }
+    }
+    
+    useEffect(()=>{
+      if(asignaments.length <= 0) return
+      let khorAsignament = asignaments.filter((asign) => asign.vacant_assessment.source === 1)
+      setSearchAsignaments(khorAsignament) 
+    },[asignaments])
+
+    useEffect(() => {
+      if(assesments.length <= 0) return
+      let khorAssessments = assesments.filter((as) => as.source === 1)
+      setkhorAssessments(khorAssessments)
+  },[assesments])
 
     const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
@@ -116,6 +150,19 @@ const TabAsign = ({
         setMsgHTML("<p></p>")
     }
 
+    const openGroupModal = (list) => {
+      setVisibleGroupModal(true)
+      setListGroupName(list)
+    }
+
+    const handleOk = () => {
+      setVisibleGroupModal(false);
+    };
+  
+    const handleCancel = () => {
+      setVisibleGroupModal(false);
+    };
+
 
 
     const menuItem = (item) => {
@@ -165,24 +212,47 @@ const TabAsign = ({
 
     const columns = [
         {
-            title: 'Nombre de evaluación',
+            title: 'Evaluación',
             render: (item) => item.vacant_assessment? item.vacant_assessment.name : ""
         },
         {
-            title: 'Usuario',
-            dataIndex: 'user',
-            key: 'user'
+            title: 'Grupo de evaluaciones',
+            render: (item) => {
+
+              let { group_assessment } = item?.vacant_assessment
+              let listIds = group_assessment.map((gs) => gs.id)
+              let listNames = []
+              listIds.length > 0 && evaluationsGroup.forEach((gr) => {
+                listIds.forEach((ids) => {
+                  if(ids === gr.people_group_assessment_id){
+                    let { name } = gr
+                    listNames.push(name)
+                  }
+                })
+              })
+
+              let listGroup = <>
+                {
+                  listNames.length >= 1 &&
+                  <Tooltip title="Ver grupos de evaluaciones">
+                    <UnorderedListOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> openGroupModal(listNames)} />
+                  </Tooltip>
+                }
+              </>
+              
+              return listGroup
+              
+            }
         },
         {
             title: 'Estatus',
-            dataIndex: 'status',
             render: (status) => {
                 let labelStatus = optionsStatusAsignament.find((item) => item.value === status)?.label || ""
                 return labelStatus
             }
         },
         {
-            title: 'Tipo',
+            title: 'Progreso',
             render: (item) => {
                 let labelSource = optionsSourceType.find((op) => op.value == item.vacant_assessment.source)?.label || ""
                 return labelSource
@@ -241,13 +311,12 @@ const TabAsign = ({
                 visible = { openModal }
                 close = { closeModal }
                 textSave = { isEdit? 'Actualizar' : 'Asignar' }
-                assesments = { clientAssessments }
+                assesments = { khorAssessments }
                 actionForm = { isEdit? actionEdit : actionCreate }
                 itemToEdit = { itemToEdit }
                 setMsgHTML = { setMsgHTML }
                 setEditorState = {setEditorState}
                 editorState = { editorState }
-                isClient = {true}
             />
             <ListItems
                 title={'¿Estás seguro de eliminar este asignación?'}
@@ -257,8 +326,17 @@ const TabAsign = ({
                 itemsToList={[itemsToDelete]}
                 actionConfirm={actionDelete}
             />
+            <Modal title={"Grupos asignados"} footer={[]} visible={visibleGroupModal} onOk={handleOk} onCancel={handleCancel}>
+              <Col span={24} className='content-feeling-scroll scroll-bar'>
+                <List
+                  size="small"
+                  dataSource={listGroupNames}
+                  renderItem={(item) => <><div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}><TeamOutlined /><List.Item>{item}</List.Item></div></>}
+                />
+              </Col>
+            </Modal>
         </>
     )
 }
 
-export default TabAsign
+export default TabKhorEvaluations
