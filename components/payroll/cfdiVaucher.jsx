@@ -134,6 +134,20 @@ const CfdiVaucher = ({
       },
     },
     {
+      title: "UUID",
+      key: "uuid",
+      render: (item) => {
+        return `${item.uuid}`;
+      },
+    },
+    {
+      title: "Tipo",
+      key: "type_movement",
+      render: (item) => {
+        return `${getVoucherTypeStr(item?.movement_type)}`;
+      },
+    },
+    {
       title: "Periodo",
       key: "timestamp",
       render: (item) => {
