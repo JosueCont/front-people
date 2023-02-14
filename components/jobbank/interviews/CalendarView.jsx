@@ -1,21 +1,23 @@
 import React, { useState, useMemo, useContext, useCallback } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { useRouter } from 'next/router';
 import { Calendar, Spin, message } from 'antd';
 import CalendarHeader from './CalendarHeader';
 import CalendarDateCell from './CalendarDateCell';
 import CalendarMonthCell from './CalendarMonthCell';
 import EventDetails from './EventDetails';
+import MonthDetails from './MonthDetails';
 import EventForm from './EventForm';
 import ListItems from '../../../common/ListItems';
-import moment from 'moment';
 import { getInterviews } from '../../../redux/jobBankDuck';
 import { InterviewContext } from '../context/InterviewContext';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 //Formato para la semana
-const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
-const monthsShort = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
-moment.updateLocale('es_ES', { weekdaysMin, monthsShort });
+// const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
+// const monthsShort = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+// moment.updateLocale('es_ES', { weekdaysMin, monthsShort });
 
 const CalendarView = ({
     currentNode,
@@ -26,6 +28,7 @@ const CalendarView = ({
     getInterviews
 }) => {
 
+    const router = useRouter();
     const [openModalDetail, setOpenModalDetail] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -94,17 +97,21 @@ const CalendarView = ({
 
     const getHeader = e => <CalendarHeader {...e}/>;
     const getCell = e => <CalendarDateCell {...{showModalDetails, value: e}}/>;
-    const getMonth = e => <CalendarMonthCell {...e}/>;
+    const getMonth = e => <CalendarMonthCell date={e}/>;
 
     return (
         <>
             <Spin spinning={load_interviews}>
                 <Calendar
-                    className='calendar-interviews'
+                    className={`calendar-interviews ${(router.query?.view == 'calendar' || !router.query.view) ? 'open' : 'close'}`}
                     headerRender={getHeader}
                     dateCellRender={getCell}
                     monthCellRender={getMonth}
+                    mode={router.query?.type ?? 'month'}
                 />
+                {router.query?.view == 'schedule' &&
+                    <MonthDetails showModalDetails={showModalDetails}/>
+                }
             </Spin>
             <EventDetails
                 itemToDetail={itemToDetail}

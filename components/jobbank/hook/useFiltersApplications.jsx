@@ -41,8 +41,8 @@ export const useFiltersApplications = () =>{
 
     const getDate = (value) =>{
         let dates = value.split(',');
-        let start = moment(dates[0], format).format(format);
-        let end = moment(dates[1], format).format(format);
+        let start = moment(dates[0], 'YYYY-MM-DD').format(format);
+        let end = moment(dates[1], 'YYYY-MM-DD').format(format);
         return `${start} - ${end}`;
     } 
 

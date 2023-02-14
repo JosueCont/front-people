@@ -20,7 +20,7 @@ const SearchApplications = ({
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const { listKeys, listGets } = useFiltersApplications();
-    const format = 'DD-MM-YYYY';
+    const format = 'YYYY-MM-DD';
 
     const formatRange = () =>{
         let dates = router.query?.date?.split(',');

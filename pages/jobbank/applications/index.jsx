@@ -21,7 +21,7 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const format = 'DD-MM-YYYY';
+    const format = 'YYYY-MM-DD';
 
     useEffect(()=>{
         if(currentNode){
@@ -38,8 +38,8 @@ const index = ({
                 moment().startOf('month').format(format),
                 moment().endOf('month').format(format)
             ];
-        params.registration_date__gte = dates[0];
-        params.registration_date__lte = dates[1];
+        params.registration_date__date__gte = dates[0];
+        params.registration_date__date__lte = dates[1];
         if(params.date) delete params.date;
         return params;
     }
