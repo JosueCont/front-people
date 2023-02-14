@@ -100,7 +100,8 @@ const MonthDetails = ({
         let pos = parseInt(num) - 1;
         let locale = moment().locale('es-mx').localeData();
         let month = locale.months()[pos];
-        return `${month.charAt(0).toUpperCase()}${month.slice(1)}`;
+        if(!month) return null; 
+        return `${month?.charAt(0).toUpperCase()}${month?.slice(1)}`;
     }
 
     const getDay = (date) =>{
