@@ -254,8 +254,9 @@ const TableCandidates = ({
     }
 
     const copyLinkAutoregister = () =>{
+        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
         copyContent({
-            text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate`,
+            text: `${url}?code=${currentNode.permanent_code}`,
             onSucces: ()=> message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
@@ -293,13 +294,13 @@ const TableCandidates = ({
     const menuItem = (item) => {
         return (
             <Menu>
-                <Menu.Item
+                {/* <Menu.Item
                     key='1'
                     icon={<LinkOutlined/>}
                     onClick={() => copyLinkUpdate(item)}
                 >
                     Actualización
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                     key='2'
                     icon={<EditOutlined/>}
