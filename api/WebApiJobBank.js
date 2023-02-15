@@ -503,6 +503,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/notification/${id}/`, 'put', data);
     }
 
+    static updateTemplateStatus(id, data){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'patch', data);
+    }
+
     static deleteTemplateNotification(id){
         return WebApi.ApisType(`/job-bank/notification/${id}/`, 'delete');
     }

@@ -50,23 +50,23 @@ const FormMessages = ({
     }
 
     return (
-        <Row gutter={[24,24]}>
-            <Col span={5}>
+        <Row gutter={[24,0]}>
+            <Col xs={24} md={12} xl={8} xxl={5}>
                 <Form.Item
                     name='subject'
                     label='Asunto'
                     rules={[ruleRequired]}
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                    <Input maxLength={50} placeholder='Asunto'/>
                 </Form.Item>
             </Col>
-            <Col span={5}>
+            <Col xs={24} md={12} xl={8} xxl={5}>
                 <Form.Item
                     name='notification_source'
                     label='Enviar notificación por'
                     rules={[ruleRequired]}
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                    <Select
                         mode='multiple'
@@ -87,12 +87,12 @@ const FormMessages = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={5}>
+            <Col xs={24} md={12} xl={8} xxl={5}>
                 <Form.Item
                     name='status_process'
                     label='Enviar notificación en'
                     rules={[ruleRequired]}
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                     <Select
                         allowClear
@@ -104,11 +104,11 @@ const FormMessages = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={5}>
+            <Col xs={24} md={12} xl={8} xxl={5}>
                 <Form.Item
                     name='type'
                     label='Tipo de notificación'
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                     <Select
                         allowClear
@@ -120,11 +120,11 @@ const FormMessages = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} md={12} xl={8} xxl={4}>
                 <Form.Item
                     name='draft'
                     label='Borrador'
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                     <Select
                         placeholder='Seleccionar una opción'
@@ -145,7 +145,7 @@ const FormMessages = ({
                 </div>
                 <TagsNotify copyTag={copyTag}/>
             </Col>
-            <Col span={24}>
+            <Col span={24} style={{marginTop: '24px'}}>
                 <Editor
                     editorState={editorState}
                     onEditorStateChange={onChangeEditor}

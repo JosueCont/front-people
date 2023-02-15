@@ -4,6 +4,8 @@ import MainLayout from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
+import esES from 'antd/lib/locale/es_ES';
+import { ConfigProvider } from 'antd';
 
 const AutoRegister = ({
     children,
@@ -31,7 +33,9 @@ const AutoRegister = ({
             hideMenu={true}
             onClickImage={false}
         >
-            {children}
+            <ConfigProvider locale={esES}>
+                {children}
+            </ConfigProvider>
         </MainLayout>
     )
 }

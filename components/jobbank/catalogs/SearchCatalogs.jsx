@@ -14,7 +14,9 @@ const SearchCatalogs = ({
     actionBtnAdd = ()=>{},
     keyName = 'name__unaccent__icontains',
     showBtnAdd = true,
-    backURl = '/jobbank/settings/catalogs'
+    backURl = '/jobbank/settings/catalogs',
+    disabledAdd = false,
+    msgAdd = ''
 }) => {
 
     const router = useRouter();
@@ -76,9 +78,14 @@ const SearchCatalogs = ({
                             Regresar
                         </Button>
                         {showBtnAdd && (
-                            <Button onClick={()=> actionBtnAdd()}>
-                                Agregar
-                            </Button>
+                            <Tooltip title={msgAdd}>
+                                <Button
+                                    disabled={disabledAdd}
+                                    onClick={()=> actionBtnAdd()}
+                                >
+                                    Agregar
+                                </Button>
+                            </Tooltip>
                         )}
                     </div>
                 </Col>
