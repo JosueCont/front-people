@@ -93,6 +93,12 @@ const CalendarHeader = ({
         setFilters(filters)
     }
 
+    const onChangeMode = (value) =>{
+        let filters = {...router.query, view: value, mth: month+1};
+        if(router.query?.type == 'year' && filters.mth) delete filters.mth;
+        setFilters(filters)
+    }
+
     // const onChangeToday = () =>{
     //     let mth = moment().month();
     //     setFilters({...router.query, mth});
@@ -139,7 +145,7 @@ const CalendarHeader = ({
                     showSearch
                     value={router.query?.view ?? 'calendar'}
                     placeholder='Modo'
-                    onChange={e => setFilters({...router.query, view: e})}
+                    onChange={onChangeMode}
                     optionFilterProp='label'
                     notFoundContent='No se encontraron resultados'
                     style={{width: '100px'}}

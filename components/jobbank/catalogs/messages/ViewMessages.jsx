@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, message, Tag } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Row, Col, message, Tag, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import SearchCatalogs from '../SearchCatalogs';
@@ -36,12 +36,21 @@ const ViewMessages = ({
         getTemplateNotification(currentNode.id, filtersString);
     },[currentNode, filtersString])
 
+    const disabledAdd = useMemo(()=>{
+        let is_valid = !mainData.results || mainData.results?.length <=0;
+        if(is_valid) return false;
+        let types = mainData.results?.map(item => item.status_process);
+        const filter_ = item => item.value !== 0 && !types.includes(item.value);
+        let can_add = optionsStatusSelection.filter(filter_);
+        return can_add?.length <= 0;
+    },[mainData])
+
     const getTemplateNotification = async (node, query) =>{
         try {
             setLoading(true)
             let response = await WebApiJobBank.getTemplateNotification(node, query);
             setMainData(response.data)
-            setLoading()
+            setLoading(false)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -56,6 +65,17 @@ const ViewMessages = ({
         } catch (e) {
             console.log(e)
             message.error('Notificación no eliminada')
+        }
+    }
+
+    const actionStatus = async (value, item) =>{
+        try {
+            await WebApiJobBank.updateTemplateStatus(item.id, {draft: !value});
+            getTemplateNotification(currentNode.id, filtersString);
+            message.success('Estas actualizado');
+        } catch (e) {
+            console.log(e)
+            message.error('Estas no actualizado');
         }
     }
 
@@ -86,7 +106,7 @@ const ViewMessages = ({
             key: 'subject'
         },
         {
-            title: 'Estatus',
+            title: 'Proceso',
             render: (item) => getStatus(item)
         },
         {
@@ -104,7 +124,22 @@ const ViewMessages = ({
                     </div>
                 )
             }
-        }
+        },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <Switch
+                        size='small'
+                        defaultChecked={!item.draft}
+                        checked={!item.draft}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
+                    />
+                )
+            }  
+        },
     ];
 
     return (
@@ -112,6 +147,8 @@ const ViewMessages = ({
             <Col span={24}>
                 <SearchCatalogs
                     keyName='subject__unaccent__icontains'
+                    msgAdd={disabledAdd ? 'Ningún template disponible para registrar' : ''}
+                    disabledAdd={disabledAdd}
                     actionBtnAdd={()=> router.push({
                         pathname: '/jobbank/settings/catalogs/messages/add',
                         query: filtersQuery
