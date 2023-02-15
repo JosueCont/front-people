@@ -30,6 +30,7 @@ const ContentMsg = styled.div`
 const ContentVertical = styled.div`
     display: flex;
     align-items: center;
+    text-align: center;
     flex-direction: column;
     gap: ${({gap}) => gap ? `${gap}px` : '0px'};
 `;
@@ -105,10 +106,7 @@ const candidate = ({
                     <ContentVertical gap={8}>
                         <CheckCircleFilled style={{fontSize:50, color:"#28a745"}} />
                         <p style={{marginBottom: 0, fontSize: '1.5rem', fontWeight: 500}}>
-                            {router.query?.vacant
-                                ? 'Postulación registrada'
-                                : 'Candidato registrado'
-                            }
+                            Gracias por registrarte.<br/>Hemos recibido tu información.
                         </p>
                     </ContentVertical>
                 </ContentMsg>
