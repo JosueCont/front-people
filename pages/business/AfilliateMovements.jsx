@@ -4,7 +4,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import moment from 'moment';
 import {  FileExcelOutlined } from '@ant-design/icons';
 
-const AfilliateMovements = ({dataAffiliateMovements}) => {
+const AfilliateMovements = ({node, id}) => {
     const [loading,setLoading] = useState(false);
     const [data,setData] = useState([]);
     const columns = [
@@ -32,17 +32,19 @@ const AfilliateMovements = ({dataAffiliateMovements}) => {
         },
     ];
     useEffect(() => {
-        getAfilliateMovements()
-    },[]);
+        id && getAfilliateMovements()
+    },[id]);
+
+
     const getAfilliateMovements = async() => {
         try {
             setLoading(true);
-            const {id,node,setup_period} = dataAffiliateMovements;
             let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}`;
             const movements = await WebApiPeople.afilliateMovements(url);
             setLoading(false)
             setData(movements?.data?.results)
         } catch (e) {
+            setData([])
             console.log('error',e)
         }finally {
             setLoading(false)

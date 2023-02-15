@@ -58,7 +58,7 @@ const Expedient = ({
     }
 
     const linkTo = (url, download = false, partial = false ) =>{
-        let nameFile = partial? `Expediente ${infoCandidate.fisrt_name} ${infoCandidate.last_name} - resumido`  : `Expediente ${infoCandidate.fisrt_name} ${infoCandidate.last_name} - completo`;
+        let nameFile = partial? `Expediente ${infoCandidate.first_name} ${infoCandidate.last_name} - resumido`  : `Expediente ${infoCandidate.first_name} ${infoCandidate.last_name} - completo`;
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";

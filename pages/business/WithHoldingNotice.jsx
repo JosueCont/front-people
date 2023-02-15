@@ -38,19 +38,17 @@ const WithHoldingNotice = ({patronalData}) => {
     },[]);
 
     const getnotices = async() => {
+        setLoading(true);
         try {
-            let data = [
-                {generated_date:'2023-01-30',csv_document:'prueba.csv',pdf_document:'prueba.pdf'}
-            ];
             const {id,node,} = patronalData;
             let url = `?node_id=${node}&patronal_registration_id=${id}`;
-            setLoading(true);
             const notices = await WebApiPeople.getWithHoldingNotice(url);
             setLoading(false);
             if(notices?.data?.message) setMessage(notices?.data?.message)
             else setData(notices?.data)
         } catch (e) {
             console.log(e)
+            setLoading(false);
         }finally {
             setLoading(false);
         }
