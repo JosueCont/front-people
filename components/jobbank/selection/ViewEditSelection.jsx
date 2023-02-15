@@ -27,7 +27,7 @@ useEffect(()=>{
 },[currentNode])
 
   const ExtraBread = [
-    {name: 'Selección', URL: '/jobbank/selection'},
+    {name: 'Proceso de selección', URL: '/jobbank/selection'},
     {name: action == 'add' ? 'Nuevo' : 'Detalle de proceso de selección'}
 ]
 

@@ -46,15 +46,11 @@ const TabKhorEvaluations = ({
 }) => {
 
     const [ searchAsignaments, setSearchAsignaments ] = useState([])
-    const [khorAssessments, setkhorAssessments] = useState([])
-
 
     useEffect(() => {
-      if(assesments.length <= 0) return
-      let khorAssessments = assesments.filter((as) => as.source === 1)
-      setkhorAssessments(khorAssessments)
-  },[assesments])
-
+        if(personAssignament.lenght <= 0) return
+        setSearchAsignaments(personAssignament)
+    },[personAssignament])
 
     const onFilter = ({ target: { value } }) =>{
         if(value.trim()){
@@ -96,7 +92,7 @@ const TabKhorEvaluations = ({
         {
             title: 'Progreso',
             render: (record) => {
-                return record?.applys[0]?.progress ? <span>{record?.applys[0]?.progress}%</span> : <span></span>;
+                return record?.applys[0] ? <span>{record.applys[0].progress}%</span> : <span></span>;
               }
         },
     ]
