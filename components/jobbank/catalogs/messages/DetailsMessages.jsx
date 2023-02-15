@@ -31,12 +31,14 @@ const DetailsMessages = ({
     const [loading, setLoading] = useState({});
     const [fetching, setFetching] = useState(false);
     const [msgHTML, setMsgHTML] = useState("<p></p>");
+    const [allTemplate, setAllTemplate] = useState([]);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     useEffect(()=>{
         if(!currentNode) return;
         getTagsNotification(currentNode.id);
         getConnectionsOptions(currentNode.id, '&conection_type=2');
+        getTemplateNotification(currentNode.id);
     },[currentNode])
 
     useEffect(()=>{
@@ -60,6 +62,15 @@ const DetailsMessages = ({
         setEditorState(EditorState.createWithContent(htmlMsg));
     },[infoNotification])
 
+    const getTemplateNotification = async (node, query) =>{
+        try {
+            let response = await WebApiJobBank.getTemplateNotification(node, query);
+            setAllTemplate(response.data?.results)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     const getInfoNotification = async (id) =>{
         try {
             setFetching(true)
@@ -73,6 +84,14 @@ const DetailsMessages = ({
     }
 
     const onFinishCreate = async (values) =>{
+        const some_ = item => item.status_process == values.status_process;
+        let exist = allTemplate.some(some_);
+        if(exist){
+            message.error('Notificación ya registrada');
+            setFetching(false)
+            setLoading({})
+            return;
+        }
         try {
             let response = await WebApiJobBank.createTemplateNotification({...values, node: currentNode.id})
             actionSaveAnd(response.data?.id)
@@ -87,6 +106,13 @@ const DetailsMessages = ({
     }
 
     const onFinisUpdate = async (values) =>{
+        const filter_ = item => item.status_process == values.status_process;
+        let exist = allTemplate.filter(filter_);
+        if(exist?.length > 1){
+            message.error('Notificación ya registrada');
+            setFetching(false)
+            return;
+        }
         try {
             await WebApiJobBank.updateTemplateNotification(router.query?.id, values);
             getInfoNotification(router.query?.id)
@@ -128,6 +154,7 @@ const DetailsMessages = ({
         setFetching(false)
         setLoading({})
         setEditorState(EditorState.createEmpty())
+        getTemplateNotification(currentNode.id);
     }
 
     const actionSaveAnd = (id) =>{

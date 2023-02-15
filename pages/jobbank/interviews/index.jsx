@@ -30,6 +30,14 @@ const calendar = ({
 }) => {
 
     const router = useRouter();
+    const discard = ['type','view','mth'];
+    const watchQuerys = [
+        router.query?.year,
+        router.query?.customer,
+        router.query?.vacant,
+        router.query?.recruiter,
+        router.query?.candidate
+    ];
 
     useEffect(()=>{
         if(currentNode){
@@ -44,12 +52,11 @@ const calendar = ({
 
     useEffect(()=>{
         if(currentNode){
-            let page = router.query.page ? parseInt(router.query.page) : 1;
             let year = router.query?.year ? parseInt(router.query.year) : moment().year();
-            let filters = getFiltersJB({...router.query, year});
-            getInterviews(currentNode.id, filters, page)
+            let filters = getFiltersJB({...router.query, year}, discard);
+            getInterviews(currentNode.id, filters)
         }
-    },[currentNode, router.query])
+    },[currentNode, ...watchQuerys])
 
     return (
         <MainIndexJB

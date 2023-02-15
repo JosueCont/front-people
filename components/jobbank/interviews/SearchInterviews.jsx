@@ -29,6 +29,7 @@ const SearchInterviews = ({
 
     const urlDefault = '/jobbank/interviews';
     const router = useRouter();
+    const deleteKeys = ['year','type','view','mth'];
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
@@ -132,7 +133,7 @@ const SearchInterviews = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
-                            deleteKeys={['month','year']}
+                            deleteKeys={deleteKeys}
                         />
                     </Col>  
                 </Row>

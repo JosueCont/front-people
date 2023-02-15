@@ -3,7 +3,7 @@ import { userId, withAuthSync } from "../../../libs/auth";
 import {
   PlusCircleOutlined,
   EditOutlined,
-  DeleteOutlined,
+  DeleteOutlined, LoadingOutlined, PlusOutlined,
 } from "@ant-design/icons";
 
 import PropTypes from "prop-types";
@@ -16,7 +16,7 @@ import { useSpring, animated } from "react-spring/web.cjs";
 import { TreeViewContent } from "./TreeView.style";
 import ModalDeleteBusiness from "../../modal/deleteBusiness";
 import IconButton from "./iconbutton";
-import { Tooltip, Modal, Button, Form, Select, Input, message } from "antd";
+import {Tooltip, Modal, Button, Form, Select, Input, message, Upload} from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import jsCookie from "js-cookie";
 import WebApiPeople from "../../../api/WebApiPeople";
@@ -32,6 +32,9 @@ const NodeTreeView = ({ ...props }) => {
   const [creUp, setCreup] = useState(false);
   const [nameNode, setNameNode] = useState("");
   const [idNodeUpdate, setIdNodeUpdate] = useState(0);
+  const [loadingLogo, setLoadingLogo] = useState(false);
+  const [logo, setLogo] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   let personId = userId();
 
   useEffect(() => {
@@ -71,6 +74,44 @@ const NodeTreeView = ({ ...props }) => {
         console.log(error);
       });
   };
+
+  const configUpload = {
+    label: "Logo",
+
+    listType: "picture-card",
+
+    className: "avatar-uploader",
+    showUploadList: false,
+
+    beforeUpload: (file) => {
+      const isPNG = file.type === "image/png" || file.type === "image/jpg";
+      if (!isPNG) {
+        message.error(`${file.name} , No es una imagen.`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+    onChange: (image) => {
+      if (image.file.status === "uploading") {
+        setLoadingLogo(true);
+        return;
+      }
+      if (image.file.status === "done") {
+        if (image.fileList.length > 0) {
+          setLogo(image.file.originFileObj);
+          getBase64(image.file.originFileObj, (imageUrl) => {
+            setLoadingLogo(false);
+            setImageUrl(imageUrl);
+          });
+        }
+      }
+    },
+  };
+
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
 
   const Nodos = () => {
     WebApiPeople.getCompanys()
@@ -239,7 +280,7 @@ const NodeTreeView = ({ ...props }) => {
   const modalCreateUpdate = (value) => {
     formBusiness.resetFields();
     setCreup(value.bool);
-    if (value.parent > 0 && value.bool == false) {
+    if (value.parent > 0 && value.bool === false) {
       formBusiness.setFieldsValue({
         parent: value.parent,
       });
@@ -247,6 +288,7 @@ const NodeTreeView = ({ ...props }) => {
       if (value.parent > 0 && value.bool) {
         setIdNodeUpdate(value.edit.value);
         setNameNode(value.edit.title);
+        console.log('valores',value)
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
@@ -280,8 +322,18 @@ const NodeTreeView = ({ ...props }) => {
   };
 
   const createBusiness = (value) => {
+    let data = new FormData();
+    data.append("name", value.name);
+    data.append("description", value.description);
+    data.append("active", true);
+    if (value.parent) {
+      data.append("parent", value.parent ? value.parent : null);
+    }
+    if (logo) {
+       data.append("image", logo);
+    }
     if (idNodeUpdate > 0) {
-      WebApiPeople.updateNode(idNodeUpdate, value)
+      WebApiPeople.updateNode(idNodeUpdate, data)
         .then(function (response) {
           Nodos();
           getNodes();
@@ -296,8 +348,8 @@ const NodeTreeView = ({ ...props }) => {
           console.log(error);
         });
     } else {
-      value.person = personId;
-      WebApiPeople.createNode(value)
+      data.append("person", personId);
+      WebApiPeople.createNode(data)
         .then(function (response) {
           Nodos();
           getNodes();
@@ -313,6 +365,13 @@ const NodeTreeView = ({ ...props }) => {
         });
     }
   };
+
+  const uploadButton = (
+      <div>
+        {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+  );
 
   return (
     <div>
@@ -363,6 +422,16 @@ const NodeTreeView = ({ ...props }) => {
           layout={"vertical"}
           onFinish={createBusiness}
         >
+          <Form.Item label="Logo">
+            <Upload {...configUpload}>
+              {imageUrl ? (
+                  <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
+              ) : (
+                  uploadButton
+              )}
+            </Upload>
+          </Form.Item>
+
           <Form.Item
             name="name"
             label="Nombre"

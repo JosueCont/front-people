@@ -27,6 +27,12 @@ const CalendarHeader = ({
         onChange(value.year(num))
     },[router.query?.year])
 
+    useEffect(()=>{
+        if(!router.query?.mth) return;
+        let num = parseInt(router.query.mth);
+        onChange(current?.year(year).month(num-1))
+    },[router.query?.mth])
+
     const getLabel = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
     const yearsOptions = useMemo(()=>{
@@ -54,26 +60,49 @@ const CalendarHeader = ({
         // if(type == 'month' && month == 11 && year >= maxYear) return;
         if(type == 'month' && month >= 11) return;
         if(type == 'year' && year >= maxYear) return;
-        let next = current?.year(year).month(month+1);
+        // let next = current?.year(year).month(month+1);
         if(type == 'year') onChangeYear(year+1);
-        else onChange(next);
+        else onChangeMonth(month+1);
     }
 
     const prevMonth = () =>{
         // if(type == 'month' && month == 0 && year <= minYear) return;
         if(type == 'month' && month <= 0) return;
         if(type == 'year' && year <= minYear) return;
-        let prev = current?.year(year).month(month-1);
+        // let prev = current?.year(year).month(month-1);
         if(type == 'year') onChangeYear(year-1);
-        else onChange(prev);
+        else onChangeMonth(month-1);
+    }
+
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/interviews',
+        query: filters
+    }, undefined, {shallow: true});
+
+    const onChangeMonth = (month) =>{
+        setFilters({...router.query, mth: month+1})
     }
 
     const onChangeYear = (newYear) =>{
-        router.replace({
-            pathname: '/jobbank/interviews/',
-            query: {...router.query, year: newYear}
-        })
+        setFilters({...router.query, year: newYear})
     }
+    
+    const onChangeType = (value) =>{
+        let filters = {...router.query, type: value, mth: month+1};
+        if(value == 'year' && filters.mth) delete filters.mth;
+        setFilters(filters)
+    }
+
+    const onChangeMode = (value) =>{
+        let filters = {...router.query, view: value, mth: month+1};
+        if(router.query?.type == 'year' && filters.mth) delete filters.mth;
+        setFilters(filters)
+    }
+
+    // const onChangeToday = () =>{
+    //     let mth = moment().month();
+    //     setFilters({...router.query, mth});
+    // }
 
     const { titlePrev, titleNext} = useMemo(() =>{
         let titlePrev = '';
@@ -95,7 +124,7 @@ const CalendarHeader = ({
                 <p role='title'>Calendario</p>
                 <div className='content-end' style={{gap: 8}}>
                     <Tooltip title={today} placement='bottom'>
-                        <button onClick={()=> onChange(moment())}>Hoy</button>
+                        <button onClick={()=> onChangeMonth(moment().month())}>Hoy</button>
                     </Tooltip>
                     <Tooltip title={titlePrev} placement='bottom'>
                         <button disabled={!titlePrev} role='prev' onClick={()=> prevMonth()}>
@@ -114,6 +143,20 @@ const CalendarHeader = ({
                 <Select
                     className='select-jb'
                     showSearch
+                    value={router.query?.view ?? 'calendar'}
+                    placeholder='Modo'
+                    onChange={onChangeMode}
+                    optionFilterProp='label'
+                    notFoundContent='No se encontraron resultados'
+                    style={{width: '100px'}}
+                    options={[
+                        {value: 'calendar', key: 'calendar', label: 'Calendario'},
+                        {value: 'schedule', key: 'schedule', label: 'Agenda'}
+                    ]}
+                />
+                <Select
+                    className='select-jb'
+                    showSearch
                     value={year}
                     placeholder='Año'
                     options={yearsOptions}
@@ -126,7 +169,7 @@ const CalendarHeader = ({
                     className='select-jb'
                     value={type}
                     placeholder='Tipo'
-                    onChange={e => onTypeChange(e)}
+                    onChange={onChangeType}
                     optionFilterProp='label'
                     notFoundContent='No se encontraron resultados'
                     style={{width: '80px'}}

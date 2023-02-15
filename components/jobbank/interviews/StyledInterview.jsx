@@ -71,7 +71,7 @@ export const TextDescripcion = styled.p`
     font-size: 14px;
     margin-bottom: 0px;
     color: ${({isTitle}) => isTitle ? 'rgb(60,64,67)' : 'rgb(95,99,104)'};
-    font-weight: 400;
+    font-weight: ${({weight}) => weight ?? 400};
     line-height: 1.2;
 `;
 

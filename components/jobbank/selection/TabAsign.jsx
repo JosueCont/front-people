@@ -39,8 +39,19 @@ const TabAsign = ({
     const [msgHTML, setMsgHTML] = useState("<p></p>");
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [ searchAsignaments, setSearchAsignaments ] = useState([])
+    const [clientAssessments, setClientAssessments] = useState([])
     
-    useEffect(()=>{ setSearchAsignaments(asignaments) },[asignaments])
+    useEffect(()=>{
+        if(asignaments.length <= 0) return
+        let clientAsignament = asignaments.filter((asign) => asign.vacant_assessment.source === 2)
+        setSearchAsignaments(clientAsignament) 
+      },[asignaments])
+
+    useEffect(() => {
+        if(assesments.length <= 0) return
+        let clientAssessments = assesments.filter((as) => as.source === 2)
+        setClientAssessments(clientAssessments)
+    },[assesments])
 
     const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
@@ -164,6 +175,7 @@ const TabAsign = ({
         },
         {
             title: 'Estatus',
+            dataIndex: 'status',
             render: (status) => {
                 let labelStatus = optionsStatusAsignament.find((item) => item.value === status)?.label || ""
                 return labelStatus
@@ -229,12 +241,13 @@ const TabAsign = ({
                 visible = { openModal }
                 close = { closeModal }
                 textSave = { isEdit? 'Actualizar' : 'Asignar' }
-                assesments = { assesments }
+                assesments = { clientAssessments }
                 actionForm = { isEdit? actionEdit : actionCreate }
                 itemToEdit = { itemToEdit }
                 setMsgHTML = { setMsgHTML }
                 setEditorState = {setEditorState}
                 editorState = { editorState }
+                isClient = {true}
             />
             <ListItems
                 title={'¿Estás seguro de eliminar este asignación?'}
