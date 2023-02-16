@@ -21,14 +21,14 @@ const WithHoldingNotice = ({patronalData}) => {
           title: "Documento csv",
           dataIndex: "csv_document",
           render:(item) => (
-            item != null ? <><a href={item}  download> <FileExcelOutlined /> Descargar excel</a></> : <span style={{color:'gray'}}>Sin documento</span>
+            item != null ? <><a href={item} download> <FileExcelOutlined /> Descargar excel</a></> : <span style={{color:'gray'}}>Sin documento</span>
           )
         },
         {
             title: "Documento pdf",
             dataIndex: "pdf_document",
             render:(item) => (
-              item != null ? <><a href={item}  download> <FilePdfOutlined /> Descargar pdf</a></> : <span style={{color:'gray'}}>Sin documento</span>
+              item != null ? <><a href={item} target={'_blank'} download> <FilePdfOutlined /> Descargar pdf</a></> : <span style={{color:'gray'}}>Sin documento</span>
             )
           },
     ];

@@ -96,14 +96,14 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
           movement_date: moment(updateCredit.movement_date),
           family_medical_unit: updateCredit.family_medical_unit.id,
           nss: updateCredit.nss,
-          sd: updateCredit.sd,
+          sdi: updateCredit.sdi,
         });
         setNSS(updateCredit.nss);
       } else {
         console.log("Save", updateCredit);
         formImssInfonavit.setFieldsValue({
           nss: person.imss,
-          sd: updateCredit.sd,
+          sdi: updateCredit.sdi,
         });
         setNSS(person.imss);
       }
@@ -549,8 +549,8 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
 
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
-                name="sd"
-                label="Salario diario"
+                name="sdi"
+                label="Salario diario integrado"
                 maxLength={13}
                 rules={[fourDecimal, ruleRequired]}
               >
