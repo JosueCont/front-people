@@ -117,7 +117,7 @@ const TabReferences = ({
                 message.error('Estatus no actualizado');
             }
         } else  {
-            openReject(value, item)
+            openReject(item)
         }
     }
 
@@ -149,7 +149,7 @@ const TabReferences = ({
         setOpenModalDelete(true)
     }
 
-    const openReject = (value, item) => {
+    const openReject = (item) => {
         setOpenModalReject(true)
         setItemToEdit(item)
         if(!item.comments) return;
@@ -272,6 +272,7 @@ const TabReferences = ({
 
                         <Button 
                             icon={<EyeOutlined />}
+                            onClick={() => openReject(item)}
                         />
                     }
 
