@@ -65,21 +65,26 @@ const MonthDetails = ({
         if(Object.keys(list_interviews).length <= 0) return;
         if(list_interviews.results?.length <=0) return;
         getEvents()
-    },[list_interviews, router.query?.mth])
+    },[
+        list_interviews,
+        router.query?.mth,
+        router.query?.type
+    ])
 
     const getEvents = () =>{
-        let month = router.query?.mth ?? null;
-        let pos_month = month && month.length <= 1 ? "0"+month : month;
+        let month = router.query?.mth ?? `${moment().month()+1}`;
+        let pos_month = month.length <= 1 ? "0"+month : month;
+        let type = router.query?.type;
         let results = list_interviews.results?.reduce((acc, current) =>{
             let start = current?.all_data_response?.start?.dateTime;
             let date_month = moment(start).format(formatMonth);
-            if(month && pos_month != date_month) return acc;
+            if(type !== 'year' && pos_month != date_month) return acc;
             let date_day = moment(start).format(formatDay);
             let list_month = acc[date_month] ?? {};
-            let list_mode = month ? acc : list_month;
+            let list_mode = type !== 'year' ? acc : list_month;
             let list_day = list_mode[date_day] ?? [];
             let itemDay = [...list_day, current];
-            if(month) return {...acc, [date_day]: itemDay};
+            if(type !== 'year') return {...acc, [date_day]: itemDay};
             let itemMonth = {...list_month, [date_day]: itemDay};
             return {...acc, [date_month]: itemMonth};
         }, {})
@@ -143,14 +148,14 @@ const MonthDetails = ({
             <ContentNormal className='month' gap={8}>
                 <div className='title'>
                     <TextDescripcion isTitle weight={500}>
-                        {router.query?.mth ? getDay(item[0]) : getMonth(item[0]) }
+                        {router.query?.type == 'year' ? getMonth(item[0]) : getDay(item[0]) }
                     </TextDescripcion>
                 </div>
-                <ContentVertical gap={router.query?.mth ? 0 : 8} className='list'>
+                <ContentVertical gap={router.query?.type == 'year' ? 8 : 0} className='list'>
                     {Object.entries(item[1]).map((record, idx) => (
-                        <>{router.query?.mth
-                            ? <ComponentEvent key={"record_"+idx} event={record[1]}/>
-                            : <ComponentDay key={"record_"+idx} record={record}/>
+                        <>{router.query?.type == 'year'
+                            ? <ComponentDay key={"record_"+idx} record={record}/>
+                            : <ComponentEvent key={"record_"+idx} event={record[1]}/>
                         }</>
                     ))}
                 </ContentVertical>
