@@ -75,6 +75,7 @@ const MainSider = ({
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
+      systemLog: "/log/LogSystem",
       intranet_groups: "/intranet/groups",
       intranet_configuration: "/intranet/config",
       publications_statistics: "/intranet/publications_statistics",
@@ -216,9 +217,10 @@ const MainSider = ({
         let children = [
           getItem("Carga masiva de personas", "bulk_upload"),
           getItem("Carga de documentos", "documentsLog"),
+          getItem("Log de sistema", "systemLog"),
         ];
         items.push(
-          getItem("Registro de errores", "uploads", <BugOutlined />, children)
+          getItem("Registro de logs", "uploads", <BugOutlined />, children)
         );
       }
 

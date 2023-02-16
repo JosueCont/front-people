@@ -182,6 +182,12 @@ class WebApi {
   static updateGeneralDataPerson(id, data) {
     return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
   }
+
+  static getSystemLog(type=null,page=1,search){
+    let url = `/business/eventLog/?page=${page}${type ? `&type=${type}`:''}${search ? `&search=${search}`:''}`;
+    return WebApi.ApisType(url, "get");
+  }
+
 }
 
 export default WebApi;
