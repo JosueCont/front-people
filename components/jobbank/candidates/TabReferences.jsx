@@ -5,7 +5,8 @@ import {
     Menu,
     Button,
     message,
-    Select
+    Select,
+    Space
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -22,6 +23,8 @@ import { popupPDF, downloadCustomFile } from '../../../utils/functions';
 import ListItems from '../../../common/ListItems';
 import ModalReferences from './ModalReferences';
 import { optionsStatusReferences } from '../../../utils/constant';
+import ModalRejected from './ModalRejected';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const TabReferences = ({
     action,
@@ -35,8 +38,11 @@ const TabReferences = ({
     const [infoReferences, setInfoReferences] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [openModalReject, setOpenModalReject] = useState(false)
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [msgHTML, setMsgHTML] = useState("<p></p>");
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
     
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -100,16 +106,38 @@ const TabReferences = ({
     }
 
     const actionStatus = async (value, item) =>{
-        try {
-            let body = {file_name: item.file_name, status: value};
-            await WebApiJobBank.updateReference(item.id, body);
-            message.success('Estatus actualizado');
-            getInfoReference(router.query.id);
-        } catch (e) {
-            console.log(e)
-            message.error('Estatus no actualizado');
+        if(value !== 3){
+            try {
+                let body = {file_name: item.file_name, status: value};
+                await WebApiJobBank.updateReference(item.id, body);
+                message.success('Estatus actualizado');
+                getInfoReference(router.query.id);
+            } catch (e) {
+                console.log(e)
+                message.error('Estatus no actualizado');
+            }
+        } else  {
+            openReject(value, item)
         }
     }
+
+    const actionRejectstatus = async () => {
+        try {
+            let body = {
+                status: 3,
+                file_name: itemToEdit.file_name,
+                comments: msgHTML
+            }
+            await WebApiJobBank.updateReference(itemToEdit.id, body);
+            message.success('Estatus actualizado');
+            getInfoReference(router.query.id);
+        } catch (error) {
+            console.log(error)
+            message.error('Estatus no actualizado');
+        }
+
+    }
+
 
     const openModalEdit = (item)=>{
         setItemToEdit(item)
@@ -121,6 +149,18 @@ const TabReferences = ({
         setOpenModalDelete(true)
     }
 
+    const openReject = (value, item) => {
+        setOpenModalReject(true)
+        setItemToEdit(item)
+        if(!item.comments) return;
+        setMsgHTML(item.comments);
+        let convert = convertFromHTML(item.comments);
+        let htmlMsg = ContentState.createFromBlockArray(convert);
+        let template = EditorState.createWithContent(htmlMsg);
+        setEditorState(template);
+        setOpenModalReject(false)
+    }
+
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
@@ -129,6 +169,13 @@ const TabReferences = ({
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
+    }
+
+    const closeModalRejected = () => {
+        setOpenModalReject(false)
+        setMsgHTML('<p></p>');
+        setItemToEdit({})
+        setEditorState(EditorState.createEmpty())
     }
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
@@ -210,6 +257,7 @@ const TabReferences = ({
             // filterSearch: true,
             render: (item) =>{
                 return(
+                    <Space>
                     <Select
                         size='small'
                         style={{width: 101}}
@@ -219,6 +267,15 @@ const TabReferences = ({
                         options={optionsStatusReferences}
                         onChange={(e) => actionStatus(e, item)}
                     />
+                    {
+                        item.status === 3 &&
+
+                        <Button 
+                            icon={<EyeOutlined />}
+                        />
+                    }
+
+                    </Space>
                 )
             }
         },
@@ -269,6 +326,17 @@ const TabReferences = ({
                 actionForm={isEdit ? actionUpdate : actionCreate}
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
+            <ModalRejected 
+                title='Rechazo de archivo'
+                visible={openModalReject}
+                close ={ closeModalRejected }
+                itemToEdit ={ itemToEdit }
+                setMsgHTML = { setMsgHTML }
+                setEditorState = {setEditorState}
+                editorState = { editorState }
+                actionForm = { actionRejectstatus }
+                textSave = {'Rechazar'}
+            />
             <ListItems
                 title='¿Estás seguro de eliminar este archivo?'
                 visible={openModalDelete}
@@ -277,6 +345,7 @@ const TabReferences = ({
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
             />
+            
         </>
     )
 }
