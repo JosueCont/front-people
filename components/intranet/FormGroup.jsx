@@ -22,10 +22,12 @@ const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
     message.error("¡Solo puede cargar archivos JPG / PNG!");
+    return false;
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
     message.error("¡La imagen debe tener un tamaño inferior a 2 MB!");
+    return false;
   }
   return isJpgOrPng && isLt2M;
 };
@@ -39,14 +41,15 @@ const FormGroup = (props) => {
   const [loadingGroup, setLoadingGroup] = useState(false);
 
   const { Title } = Typography;
+  const validateExtension = ".png,.pgj,.jpeg"
 
   const onFinish = (values) => {
     if (props.isEdit) {
       saveGroup(values);
-      message.success("Actualizado correctamente.");
+      //message.success("Actualizado correctamente.");
     } else {
       saveGroup(values);
-      message.success("Guardado correctamente.");
+
     }
   };
 
@@ -82,11 +85,13 @@ const FormGroup = (props) => {
         .then((res) => {
           closeDialog();
           setLoadingGroup(false);
+          message.success("Actualizado correctamente.");
         })
         .catch((e) => {
           setLoadingGroup(false);
           console.log(e);
           closeDialog();
+          message.error("No se pudo realizar la acción, porfavor intente nuevamente.");
         });
     } else {
       setLoadingGroup(true);
@@ -94,10 +99,12 @@ const FormGroup = (props) => {
         .then((res) => {
           closeDialog();
           setLoadingGroup(false);
+          message.success("Guardado correctamente.");
         })
         .catch((e) => {
           console.log(e);
           setLoadingGroup(false);
+          message.error("NO se pudo realizar la acción, porfavor intente nuevamente.");
           closeDialog();
         });
     }
@@ -178,7 +185,8 @@ const FormGroup = (props) => {
                   label="avatar"
                   listType="picture-card"
                   showUploadList={false}
-                  /* beforeUpload={beforeUpload} */
+                  // beforeUpload={beforeUpload}
+                  accept={'.jpg,.png,.jpeg'}
                   onChange={upImage}
                 >
                   {photo ? (

@@ -364,6 +364,8 @@ const CfdiVaucher = ({
   const clearFilter = () => {
     form.resetFields();
     setPeriods([]);
+    setCurrentPage(1)
+    setPage(1)
     setCalendarSelect(null);
     setCfdis([]);
     getVoucher("");
@@ -413,6 +415,7 @@ const CfdiVaucher = ({
                 <Col md={3}>
                   <Form.Item name="movement_type" label="Tipo de nómina">
                     <Select
+                        placeholder="Todos"
                         style={{ width: '100%' }}
                         allowClear
                         options={[
