@@ -774,7 +774,8 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
               <Form.Item
                 label="Valor de descuento"
                 name="discount_value"
-                rules={[ruleRequired]}
+                maxLength={8}
+                rules={[fourDecimal, ruleRequired]}
               >
                 <Input
                   type="number"
