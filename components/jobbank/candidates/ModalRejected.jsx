@@ -20,9 +20,10 @@ const ModalRejected = ({
     setMsgHTML,
     setEditorState,
     editorState,
+    viewFooter = true
 }) => {
 
-    const [formReference] = Form.useForm();
+    const [formRejected] = Form.useForm();
     const [loading, setLoading] = useState();
     const [file, setFile] = useState([]);
     const typeFile = ['pdf'];
@@ -31,7 +32,7 @@ const ModalRejected = ({
         if(Object.keys(itemToEdit).length <= 0) return;
         let values = {...itemToEdit};
         values.file_read = itemToEdit.file ? itemToEdit.file?.split('/')?.at(-1) : null;
-        formReference.setFieldsValue(values)
+        formRejected.setFieldsValue(values)
     },[itemToEdit])
 
     const onChangeEditor = (value) =>{
@@ -51,7 +52,7 @@ const ModalRejected = ({
     const onCloseModal = () =>{
         close();
         setFile([])
-        formReference.resetFields();
+        formRejected.resetFields();
     }
 
     const onFinish = (values) =>{
@@ -73,7 +74,7 @@ const ModalRejected = ({
             closable={!loading}
         >
             <Form
-                form={formReference}
+                form={formRejected}
                 layout='vertical'
                 onFinish={onFinish}
             >
@@ -84,7 +85,7 @@ const ModalRejected = ({
                             label='Nombre'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Nombre'/>
+                            <Input maxLength={200} placeholder='Nombre' disabled={true}/>
                         </Form.Item>
                     </Col>
                     <Col span={24}>
@@ -96,8 +97,8 @@ const ModalRejected = ({
                             revertColor={true}
                             setFile={setFile}
                             typeFile={typeFile}
-                            disabled={Object.keys(itemToEdit).length > 0}
-                            setNameFile={e => formReference.setFieldsValue({
+                            disabled={true}
+                            setNameFile={e => formRejected.setFieldsValue({
                                 file_read: e
                             })}
                         />
@@ -122,12 +123,17 @@ const ModalRejected = ({
                                 toolbarHidden = {true}
                             />
                     </Col>
-                    <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
-                        <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
-                        <Button htmlType='submit' loading={loading}>
-                            {textSave}
-                        </Button>
-                    </Col>
+                    
+                    {            
+                        viewFooter &&
+                                
+                        <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
+                            <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
+                            <Button htmlType='submit' loading={loading}>
+                                {textSave}
+                            </Button>
+                        </Col>
+                    }
                 </Row>
             </Form>
         </MyModal>

@@ -38,8 +38,10 @@ const TabReferences = ({
     const [infoReferences, setInfoReferences] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [openModalReject, setOpenModalReject] = useState(false)
+    const [openModalReject, setOpenModalReject] = useState(false);
+    const [visibleFooter, setVisibleFooter] = useState(true);
     const [itemToEdit, setItemToEdit] = useState({});
+    const [itemToReject, setItemToReject] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [msgHTML, setMsgHTML] = useState("<p></p>");
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -84,6 +86,7 @@ const TabReferences = ({
             values.append('upload_date', date)
             values.append('registration_date', date)
             values.append('uploaded_by', currentUser.id)
+            values.append('comments', '')
             await WebApiJobBank.createReferences(values)
             message.success({content: 'Archivo guardado', key})
             getInfoReference(router.query.id);
@@ -125,15 +128,17 @@ const TabReferences = ({
         try {
             let body = {
                 status: 3,
-                file_name: itemToEdit.file_name,
+                file_name: itemToReject.file_name,
                 comments: msgHTML
             }
-            await WebApiJobBank.updateReference(itemToEdit.id, body);
+            await WebApiJobBank.updateReference(itemToReject.id, body);
             message.success('Estatus actualizado');
             getInfoReference(router.query.id);
+            setItemToEdit({})
         } catch (error) {
             console.log(error)
             message.error('Estatus no actualizado');
+            setItemToEdit({})
         }
 
     }
@@ -149,16 +154,16 @@ const TabReferences = ({
         setOpenModalDelete(true)
     }
 
-    const openReject = (item) => {
+    const openReject = (item, visibleFooter) => {
         setOpenModalReject(true)
-        setItemToEdit(item)
+        setItemToReject(item)
+        if(visibleFooter) setVisibleFooter(false)
         if(!item.comments) return;
         setMsgHTML(item.comments);
         let convert = convertFromHTML(item.comments);
         let htmlMsg = ContentState.createFromBlockArray(convert);
         let template = EditorState.createWithContent(htmlMsg);
         setEditorState(template);
-        setOpenModalReject(false)
     }
 
     const closeModal = () =>{
@@ -174,9 +179,12 @@ const TabReferences = ({
     const closeModalRejected = () => {
         setOpenModalReject(false)
         setMsgHTML('<p></p>');
-        setItemToEdit({})
+        setItemToReject({})
         setEditorState(EditorState.createEmpty())
+        setVisibleFooter(true)
     }
+
+    console.log('ItemToedit', itemToEdit)
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
@@ -272,7 +280,7 @@ const TabReferences = ({
 
                         <Button 
                             icon={<EyeOutlined />}
-                            onClick={() => openReject(item)}
+                            onClick={() => openReject(item, true)}
                         />
                     }
 
@@ -331,12 +339,13 @@ const TabReferences = ({
                 title='Rechazo de archivo'
                 visible={openModalReject}
                 close ={ closeModalRejected }
-                itemToEdit ={ itemToEdit }
+                itemToEdit ={ itemToReject }
                 setMsgHTML = { setMsgHTML }
                 setEditorState = {setEditorState}
                 editorState = { editorState }
                 actionForm = { actionRejectstatus }
                 textSave = {'Rechazar'}
+                viewFooter = {visibleFooter}
             />
             <ListItems
                 title='¿Estás seguro de eliminar este archivo?'
