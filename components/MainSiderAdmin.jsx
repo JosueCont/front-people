@@ -294,8 +294,8 @@ const MainSider = ({
         getItem("Asignar empresa", "asign"),
       ];
       let children8 = [
-        getItem("Carga masiva de personas", "bulk_upload"),
-        getItem("Carga de documentos", "documentsLog"),
+        // getItem("Carga masiva de personas", "bulk_upload"),
+        // getItem("Carga de documentos", "documentsLog"),
         getItem("Log de sistema", "systemLog"),
       ];
       let children4 = [

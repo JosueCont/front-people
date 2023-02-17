@@ -215,8 +215,8 @@ const MainSider = ({
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
         let children = [
-          getItem("Carga masiva de personas", "bulk_upload"),
-          getItem("Carga de documentos", "documentsLog"),
+          // getItem("Carga masiva de personas", "bulk_upload"),
+          // getItem("Carga de documentos", "documentsLog"),
           getItem("Log de sistema", "systemLog"),
         ];
         items.push(

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainInter";
-import {Row, Col, Table, Breadcrumb,Select, message, Modal,Button, ConfigProvider, Typography, Pagination, Form, Input} from "antd";
+import {Row, Col, Table, Breadcrumb,Select, Space, message, Modal,Button, ConfigProvider, Typography, Pagination, Form, Input} from "antd";
 import { useRouter } from "next/router";
 import moment from 'moment'
 import WebApi from '/api/webApi'
 import {
   TYPE_LOGS
 } from "../../utils/constant";
-import { API_URL } from "../../config/config";
-import { EyeOutlined, CheckCircleTwoTone } from "@ant-design/icons";
+import { RightOutlined, LeftOutlined } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import { verifyMenuNewForTenant } from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
@@ -27,10 +26,11 @@ const LogSystem = ({ ...props }) => {
   const [lenData, setLenData] = useState(0);
   const [dataTypesLog, setDataTypesLog] = useState([]);
   const [form] = Form.useForm();
+  const [nextURL,setNextURL] = useState(null)
+  const [prevURL,setPrevURL] = useState(null)
 
 
   const onFinish = (values) => {
-    console.log('Success:', values);
 
     if(!values?.type){
       values.type=null;
@@ -60,14 +60,33 @@ const LogSystem = ({ ...props }) => {
     setCurrentPage(page);
   };
 
-  const getLog=async(type, page, search)=>{
+  const goNextPrevPage=(isNext=false)=>{
+    if(isNext){
+      getLog(null,null,'',nextURL)
+    }else{
+      getLog(null,null,'',prevURL)
+    }
+
+  }
+
+  const getLog=async(type, page, search,url)=>{
     setLoading(true)
     try{
-      const res = await WebApi.getSystemLog(type,page,search);
-      console.log(res)
+      const res = await WebApi.getSystemLog(type,null,search,url);
       setLenData(res.data.count);
       setLog(res.data.results)
+      setNextURL(null)
+      setPrevURL(null)
+      if(res?.data?.next){
+        setNextURL(res?.data?.next)
+      }
+
+      if(res?.data?.previous){
+        setPrevURL(res?.data?.previous)
+      }
     }catch (e){
+      setNextURL(null)
+      setPrevURL(null)
       console.log(e)
       setLog([])
 
@@ -167,22 +186,24 @@ const LogSystem = ({ ...props }) => {
                   <Form.Item
                       label="Tipo de log"
                       name="type"
+
                   >
                     <Select
                         style={{ width: '100%' }}
                         allowClear
+                        placeholder={'Todos'}
                         options={dataTypesLog}
                     />
                   </Form.Item>
                 </Col>
-                <Col md={6}>
-                  <Form.Item
-                      label="Buscar"
-                      name="search"
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
+                {/*<Col md={6}>*/}
+                {/*  <Form.Item*/}
+                {/*      label="Buscar"*/}
+                {/*      name="search"*/}
+                {/*  >*/}
+                {/*    <Input />*/}
+                {/*  </Form.Item>*/}
+                {/*</Col>*/}
               </Row>
 
 
@@ -196,6 +217,14 @@ const LogSystem = ({ ...props }) => {
           </Col>
         </Row>
         <Row>
+          <Col span={24}>
+            <Space wrap style={{marginBottom:10}}>
+              <Button type="primary" disabled={!prevURL} onClick={()=> goNextPrevPage(false)}>
+                <LeftOutlined />
+              </Button>
+              <Button disabled={!nextURL} onClick={()=> goNextPrevPage(true)}><RightOutlined /></Button>
+            </Space>
+          </Col>
           <Col span={24}>
             <ConfigProvider locale={esES}>
             <Table
@@ -221,13 +250,13 @@ const LogSystem = ({ ...props }) => {
                     marginTop: 10,
                   }}
               >
-                <Pagination
-                    current={currentPage}
-                    total={lenData}
-                    onChange={pagination}
-                    showSizeChanger={false}
-                    defaultPageSize={10}
-                />
+                {/*<Pagination*/}
+                {/*    current={currentPage}*/}
+                {/*    total={lenData}*/}
+                {/*    onChange={pagination}*/}
+                {/*    showSizeChanger={false}*/}
+                {/*    defaultPageSize={10}*/}
+                {/*/>*/}
               </Col>
           )}
         </Row>

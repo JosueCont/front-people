@@ -697,5 +697,5 @@ export const InfonavitDiscountType = [
 // LOG (Tipos de log)
 export const TYPE_LOGS = {
   1: 'Log',
-  2: 'Scrapper'
+  2: 'Mov. Automáticos' // (Scrapper)
 }

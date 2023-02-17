@@ -104,7 +104,7 @@ const FormGroup = (props) => {
         .catch((e) => {
           console.log(e);
           setLoadingGroup(false);
-          message.error("NO se pudo realizar la acción, porfavor intente nuevamente.");
+          message.error("No se pudo realizar la acción, porfavor intente nuevamente.");
           closeDialog();
         });
     }

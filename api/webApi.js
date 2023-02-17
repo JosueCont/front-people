@@ -183,8 +183,8 @@ class WebApi {
     return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
   }
 
-  static getSystemLog(type=null,page=1,search){
-    let url = `/business/eventLog/?page=${page}${type ? `&type=${type}`:''}${search ? `&search=${search}`:''}`;
+  static getSystemLog(type=null,page=1,search,_url){
+    let url =_url ? _url :  `/business/eventLog/?page=${page}${type ? `&type=${type}`:''}${search ? `&search=${search}`:''}`;
     return WebApi.ApisType(url, "get");
   }
 
