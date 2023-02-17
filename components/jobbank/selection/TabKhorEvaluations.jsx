@@ -140,8 +140,6 @@ const TabKhorEvaluations = ({
       }
 
     const validateGetResults = (item, record) =>{
-        console.log('el item-------->', item)
-        console.log('el record----->', record)
         setLoadResults({...loadResults, [item.code]: true})
         let codes = [
           '7_KHOR_EST_SOC',
@@ -152,10 +150,8 @@ const TabKhorEvaluations = ({
         ]
         if(codes.includes(item.code)){
           getResults(item, record)
-          console.log('de los 5---->')
         }else{
           tokenToResults(item, record)
-          console.log('no de los 5----->')
         }
       }
 
