@@ -94,28 +94,29 @@ const CalendarHeader = ({
     }
 
     const onChangeMode = (value) =>{
-        let filters = {...router.query, view: value, mth: month+1};
+        let filters = {...router.query, view: value};
         if(router.query?.type == 'year' && filters.mth) delete filters.mth;
         setFilters(filters)
     }
 
-    // const onChangeToday = () =>{
-    //     let mth = moment().month();
-    //     setFilters({...router.query, mth});
-    // }
+    const onChangeToday = () =>{
+        let current_year = moment().year();
+        let filters = {...router.query};
+        if(filters.mth) delete filters.mth;
+        if(filters.year && filters.year != current_year) delete filters.year;
+        setFilters(filters)
+        onChange(moment())
+    }
 
-    const { titlePrev, titleNext} = useMemo(() =>{
-        let titlePrev = '';
-        let titleNext = '';
-        if(type == 'month'){
-            titlePrev = month <= 0 ? '' : 'Mes anterior'; 
-            titleNext =  month >= 11 ? '' : 'Mes siguiente';
-        }
-        if(type == 'year'){
-            titlePrev = year <= minYear ? '' : 'Año anterior';
-            titleNext =  year >= maxYear ? '' : 'Año siguiente';
-        }
-        return { titlePrev, titleNext };
+    const {titlePrev, titleNext} = useMemo(() =>{
+        return {
+            titlePrev: type == 'month'
+                ? month <= 0 ? null : 'Mes anterior'
+                : year <= minYear ? null : 'Año anterior',
+            titleNext: type == 'month'
+                ? month >= 11 ? null : 'Mes siguiente'
+                : year >= maxYear ? null : 'Año siguiente'
+        };
     }, [type, month, year])
 
     return (
@@ -123,15 +124,15 @@ const CalendarHeader = ({
             <div className='calendar-title'>
                 <p role='title'>Calendario</p>
                 <div className='content-end' style={{gap: 8}}>
-                    <Tooltip title={today} placement='bottom'>
-                        <button onClick={()=> onChangeMonth(moment().month())}>Hoy</button>
+                    <Tooltip title={today} placement='top'>
+                        <button onClick={()=> onChangeToday()}>Hoy</button>
                     </Tooltip>
-                    <Tooltip title={titlePrev} placement='bottom'>
+                    <Tooltip title={titlePrev} placement='top'>
                         <button disabled={!titlePrev} role='prev' onClick={()=> prevMonth()}>
                             {`<`}
                         </button>
                     </Tooltip>
-                    <Tooltip title={titleNext} placement='bottom'>
+                    <Tooltip title={titleNext} placement='top'>
                         <button disabled={!titleNext} role='next' onClick={()=> nextMonth()}>
                             {`>`}
                         </button>
