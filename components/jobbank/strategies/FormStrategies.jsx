@@ -150,6 +150,7 @@ const FormStrategies = ({
                 <Form.Item
                     name='recruiter'
                     label='Reclutador'
+                    rules={[ruleRequired]}
                 >
                     <Select
                         allowClear
