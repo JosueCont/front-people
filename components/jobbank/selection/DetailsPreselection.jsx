@@ -248,7 +248,7 @@ const DetailsPreselection = ({
               </Spin>
             </Tabs.TabPane>
             <Tabs.TabPane
-              tab='Evaluaciones Khor'
+              tab='Evaluaciones KHOR+'
               forceRender
               key='3'
             >

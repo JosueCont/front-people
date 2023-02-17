@@ -85,6 +85,7 @@ const MainSider = ({
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
+      systemLog: "/log/LogSystem",
       intranet_groups: "/intranet/groups",
       intranet_configuration: "/intranet/config",
       publications_statistics: "/intranet/publications_statistics",
@@ -293,11 +294,12 @@ const MainSider = ({
         getItem("Asignar empresa", "asign"),
       ];
       let children8 = [
-        getItem("Carga masiva de personas", "bulk_upload"),
-        getItem("Carga de documentos", "documentsLog"),
+        // getItem("Carga masiva de personas", "bulk_upload"),
+        // getItem("Carga de documentos", "documentsLog"),
+        getItem("Log de sistema", "systemLog"),
       ];
       let children4 = [
-        getItem("Registro de errores", "uploads",  <></>, children8 ),
+        getItem("Registro de log", "uploads",  <></>, children8 ),
         getItem("Configuración", "config",  <></>, children7),
         getItem("Reportes", "reports")
       ]

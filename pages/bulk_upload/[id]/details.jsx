@@ -119,7 +119,7 @@ const DetailsBulkUpload = () => {
           Inicio
         </Breadcrumb.Item>
 
-        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de log</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/bulk_upload" })}
