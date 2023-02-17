@@ -12,14 +12,15 @@ import {
     DeleteOutlined,
     EditOutlined,
     PlusOutlined,
-    DownloadOutlined
+    DownloadOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
 import moment from 'moment';
-import { downloadCustomFile } from '../../../utils/functions';
+import { downloadCustomFile, popupPDF } from '../../../utils/functions';
 
 const TabSchool = ({
     action,
@@ -147,6 +148,13 @@ const TabSchool = ({
         return result.label;
     }
 
+    const linkTo = (url) => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_black";
+        link.click();
+    }
+
     const menuTable = () => {
         return (
             <Menu>
@@ -162,6 +170,7 @@ const TabSchool = ({
     };
 
     const menuItem = (item) => {
+
         return (
             <Menu>
                 <Menu.Item
@@ -190,6 +199,19 @@ const TabSchool = ({
                         })}
                     >
                         Descargar
+                    </Menu.Item>
+                }
+                {
+                    !noValid.includes(item.url_file) && 
+
+                    <Menu.Item
+                        key='4'
+                        icon={<EyeOutlined />}
+                        onClick = {() => {
+                            linkTo(item.file)
+                        }}
+                    >
+                        Ver certificado
                     </Menu.Item>
                 }
 

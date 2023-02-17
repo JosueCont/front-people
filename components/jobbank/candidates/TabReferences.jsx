@@ -5,7 +5,8 @@ import {
     Menu,
     Button,
     message,
-    Select
+    Select,
+    Space
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -22,6 +23,8 @@ import { popupPDF, downloadCustomFile } from '../../../utils/functions';
 import ListItems from '../../../common/ListItems';
 import ModalReferences from './ModalReferences';
 import { optionsStatusReferences } from '../../../utils/constant';
+import ModalRejected from './ModalRejected';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const TabReferences = ({
     action,
@@ -35,8 +38,13 @@ const TabReferences = ({
     const [infoReferences, setInfoReferences] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [openModalReject, setOpenModalReject] = useState(false);
+    const [visibleFooter, setVisibleFooter] = useState(true);
     const [itemToEdit, setItemToEdit] = useState({});
+    const [itemToReject, setItemToReject] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [msgHTML, setMsgHTML] = useState("<p></p>");
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
     
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -78,6 +86,7 @@ const TabReferences = ({
             values.append('upload_date', date)
             values.append('registration_date', date)
             values.append('uploaded_by', currentUser.id)
+            values.append('comments', '')
             await WebApiJobBank.createReferences(values)
             message.success({content: 'Archivo guardado', key})
             getInfoReference(router.query.id);
@@ -100,16 +109,40 @@ const TabReferences = ({
     }
 
     const actionStatus = async (value, item) =>{
-        try {
-            let body = {file_name: item.file_name, status: value};
-            await WebApiJobBank.updateReference(item.id, body);
-            message.success('Estatus actualizado');
-            getInfoReference(router.query.id);
-        } catch (e) {
-            console.log(e)
-            message.error('Estatus no actualizado');
+        if(value !== 3){
+            try {
+                let body = {file_name: item.file_name, status: value};
+                await WebApiJobBank.updateReference(item.id, body);
+                message.success('Estatus actualizado');
+                getInfoReference(router.query.id);
+            } catch (e) {
+                console.log(e)
+                message.error('Estatus no actualizado');
+            }
+        } else  {
+            openReject(item)
         }
     }
+
+    const actionRejectstatus = async () => {
+        try {
+            let body = {
+                status: 3,
+                file_name: itemToReject.file_name,
+                comments: msgHTML
+            }
+            await WebApiJobBank.updateReference(itemToReject.id, body);
+            message.success('Estatus actualizado');
+            getInfoReference(router.query.id);
+            setItemToEdit({})
+        } catch (error) {
+            console.log(error)
+            message.error('Estatus no actualizado');
+            setItemToEdit({})
+        }
+
+    }
+
 
     const openModalEdit = (item)=>{
         setItemToEdit(item)
@@ -121,6 +154,18 @@ const TabReferences = ({
         setOpenModalDelete(true)
     }
 
+    const openReject = (item, visibleFooter) => {
+        setOpenModalReject(true)
+        setItemToReject(item)
+        if(visibleFooter) setVisibleFooter(false)
+        if(!item.comments) return;
+        setMsgHTML(item.comments);
+        let convert = convertFromHTML(item.comments);
+        let htmlMsg = ContentState.createFromBlockArray(convert);
+        let template = EditorState.createWithContent(htmlMsg);
+        setEditorState(template);
+    }
+
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
@@ -130,6 +175,16 @@ const TabReferences = ({
         setOpenModalDelete(false)
         setItemsToDelete([])
     }
+
+    const closeModalRejected = () => {
+        setOpenModalReject(false)
+        setMsgHTML('<p></p>');
+        setItemToReject({})
+        setEditorState(EditorState.createEmpty())
+        setVisibleFooter(true)
+    }
+
+    console.log('ItemToedit', itemToEdit)
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
@@ -210,6 +265,7 @@ const TabReferences = ({
             // filterSearch: true,
             render: (item) =>{
                 return(
+                    <Space>
                     <Select
                         size='small'
                         style={{width: 101}}
@@ -219,6 +275,16 @@ const TabReferences = ({
                         options={optionsStatusReferences}
                         onChange={(e) => actionStatus(e, item)}
                     />
+                    {
+                        item.status === 3 &&
+
+                        <Button 
+                            icon={<EyeOutlined />}
+                            onClick={() => openReject(item, true)}
+                        />
+                    }
+
+                    </Space>
                 )
             }
         },
@@ -269,6 +335,18 @@ const TabReferences = ({
                 actionForm={isEdit ? actionUpdate : actionCreate}
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
+            <ModalRejected 
+                title='Rechazo de archivo'
+                visible={openModalReject}
+                close ={ closeModalRejected }
+                itemToEdit ={ itemToReject }
+                setMsgHTML = { setMsgHTML }
+                setEditorState = {setEditorState}
+                editorState = { editorState }
+                actionForm = { actionRejectstatus }
+                textSave = {'Rechazar'}
+                viewFooter = {visibleFooter}
+            />
             <ListItems
                 title='¿Estás seguro de eliminar este archivo?'
                 visible={openModalDelete}
@@ -277,6 +355,7 @@ const TabReferences = ({
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
             />
+            
         </>
     )
 }
