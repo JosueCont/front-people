@@ -693,3 +693,9 @@ export const InfonavitDiscountType = [
   { value: 2, label: "Cuota fija (CF)" },
   { value: 3, label: "Veces de salario mínimo (VSM)" },
 ];
+
+// LOG (Tipos de log)
+export const TYPE_LOGS = {
+  1: 'Log',
+  2: 'Mov. Automáticos' // (Scrapper)
+}
