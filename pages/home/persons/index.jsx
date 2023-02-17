@@ -67,6 +67,7 @@ import ImportButtonList from "../../../components/payroll/ImportGenericButton/Im
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
+import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 
 const homeScreen = ({ ...props }) => {
@@ -805,6 +806,11 @@ const homeScreen = ({ ...props }) => {
       filters.periodicity = value.periodicity;
       valueQuery.periodicity = value.periodicity;
     }
+    if (value && value.immediate_supervisor !== undefined) {
+      urlFilter = urlFilter + "immediate_supervisor=" + value.immediate_supervisor + "&";
+      filters.immediate_supervisor = value.immediate_supervisor;
+      valueQuery.immediate_supervisor = value.immediate_supervisor;
+    }
     filterPersonName(urlFilter);
     route.replace({
       pathname: '/home/persons/',
@@ -1303,6 +1309,20 @@ const homeScreen = ({ ...props }) => {
                                     placeholder="Estatus"
                                     notFoundContent={"No se encontraron resultados."}
                                 />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="immediate_supervisor" label="Jefe inmediato">
+                                <Select
+                                  showSearch
+                                  optionFilterProp="children"
+                                  >
+                                    { person.length > 0 && person.map(item => (
+                                      <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                      </Select.Option>
+                                    ))}
+                                </Select>
                               </Form.Item>
                             </Col>
                             <Col
