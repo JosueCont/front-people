@@ -46,7 +46,9 @@ const TableApplications = ({
             message.success(msg);
         } catch (e) {
             console.log(e)
-            message.error('Estatus no actualizado');
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Estatus no actualizado';
+            message.error(msg);
         }
     }
 
@@ -63,6 +65,17 @@ const TableApplications = ({
             let disabled = status == 1 ? false : !(item.value == status);
             return {...item, disabled}
         })
+    }
+
+    const getPercentGen = (item) =>{
+        let assets = item.candidate?.person_assessment_list;
+        if(!assets || assets.length <= 0) return null;
+        let percent = 100 / (assets?.length * 100);
+        let progress = assets.reduce((acc, current) =>{
+            if(!current?.applys[0]) return acc;
+            return acc + current.applys[0]?.progress;
+        }, 0);
+        return (percent * progress).toFixed(2);
     }
 
     const columns = [
@@ -116,6 +129,21 @@ const TableApplications = ({
                 return(
                     <>{moment(item.registration_date).format('DD-MM-YYYY hh:mm a')}</>
                 )
+            }
+        },
+        {
+            title: 'Evaluaciones',
+            render: (item) =>{
+                let valid = item.candidate?.user_person
+                    && item.candidate?.person_assessment_list?.length > 0;
+                return valid ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push(`/assessment/persons/${item.candidate?.user_person}`)}
+                    >
+                        {getPercentGen(item)}%
+                    </span>
+                ) : <></>;
             }
         },
         {
