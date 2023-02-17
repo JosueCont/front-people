@@ -43,9 +43,9 @@ const index = ({userStore, ...props}) => {
             curp: userStore.curp,
             rfc: userStore.rfc,
         })
-        if(userStore.date_of_admission){
+        if(userStore.timestamp){
             formInformation.setFieldsValue({
-                date_of_admission: moment(userStore.date_of_admission)
+                date_of_admission: moment(userStore.timestamp)
             })
         }
         if(userStore.birth_date){
