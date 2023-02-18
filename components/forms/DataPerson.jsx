@@ -375,7 +375,7 @@ const DataPerson = ({
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
                 <Col lg={8} xs={12}>
-                  <Form.Item label="Número dasdasde empleado" name="code">
+                  <Form.Item label="Número de empleado" name="code">
                     <Input type="text" placeholder="Núm. empleado" />
                   </Form.Item>
                 </Col>
