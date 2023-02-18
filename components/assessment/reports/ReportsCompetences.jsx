@@ -10,7 +10,9 @@ import {
     Button,
     Tooltip,
     message,
-    Skeleton
+    Skeleton,
+    Dropdown,
+    Menu
 } from 'antd';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -19,7 +21,8 @@ import {
     UserOutlined,
     ProfileOutlined,
     EyeOutlined,
-    RadarChartOutlined
+    RadarChartOutlined,
+    ExportOutlined
 } from "@ant-design/icons";
 import ViewList from './ViewList';
 import {
@@ -30,6 +33,7 @@ import {
 import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { valueToFilter } from '../../../utils/functions';
+import _ from 'lodash';
 
 // Se renderiza en el navegador, donde existe el objeto windown.
 //Esta modificación es para la librería chartjs-plugin-zoom
@@ -709,6 +713,64 @@ const ReportsCompetences = ({
         return params;
     }
 
+    const generateExcelReport = () => {
+
+        let columns = getColumns();
+        let data = getDataReport()
+
+        if(data){
+            try {
+
+            let statistic_values = _.map(data, (rw) => {
+
+                rw.competence = rw.competence.name
+
+                const row = [
+                    rw.competence,
+                    rw.level,
+                    rw.description,
+                ]
+
+                return row
+            })
+
+            const rowHeader = columns.map((col) => col.title)
+            statistic_values.unshift(rowHeader)
+            let csvContent = statistic_values.map(e => e.join(",")).join("\n")
+            console.log('csv content', csvContent)
+            let link = document.createElement("a");
+            link.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csvContent)
+            link.download = 'demo.csv'
+            link.click(); // This will download the data file named "my_data.csv".
+                
+            } catch (error) {
+                console.error('Error al descargar csv', error)
+            }
+        }
+
+    }
+    
+    const items = [
+        {
+            label: 'Excel',
+            key: 1,
+            onClick: () => {
+                generateExcelReport()
+            }
+        },
+        {
+            label: 'PDF',
+            key: 2,
+            onClick: () => {
+                console.log('PDF')
+            }
+        }
+    ]
+
+    const menuDropdown = (
+        <Menu items={items} />
+    )
+
     return (
         <div style={{margin: '20px'}}>
             <Row gutter={[24,24]}>
@@ -782,6 +844,18 @@ const ReportsCompetences = ({
                         </Button>
                     </div>
                     <div className='content_inputs'>
+                            <div
+                                style={{alignItems:'center', marginTop: 30}}
+                                className='content_inputs_element'
+                            >   
+                                <Dropdown overlay={ menuDropdown }>
+                                    <Button
+                                        icon={<ExportOutlined />}
+                                    >
+                                        Exportar a
+                                    </Button>
+                                </Dropdown>
+                            </div>
                         {currentTab == 'pp' && (
                             <div
                                 style={{alignItems:'center'}}
