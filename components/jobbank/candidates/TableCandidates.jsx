@@ -270,6 +270,17 @@ const TableCandidates = ({
         })
     }
 
+    const getPercentGen = (item) =>{
+        let assets = item?.person_assessment_list;
+        if(!assets || assets.length <= 0) return null;
+        let percent = 100 / (assets?.length * 100);
+        let progress = assets.reduce((acc, current) =>{
+            if(!current?.applys[0]) return acc;
+            return acc + current.applys[0]?.progress;
+        }, 0);
+        return (percent * progress).toFixed(2);
+    }
+
     const menuTable = () => {
         return (
             <Menu>
@@ -359,6 +370,21 @@ const TableCandidates = ({
             title: 'Teléfono',
             dataIndex: 'cell_phone',
             key: 'cell_phone'
+        },
+        {
+            title: 'Evaluaciones',
+            render: (item) =>{
+                let valid = item?.user_person
+                    && item?.person_assessment_list?.length > 0;
+                return valid ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push(`/assessment/persons/${item?.user_person}`)}
+                    >
+                        {getPercentGen(item)}%
+                    </span>
+                ) : <></>;
+            }
         },
         {
             title: 'Estatus',

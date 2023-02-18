@@ -54,7 +54,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
   const [movementTypes, setMovementTypes] = useState([]);
   const [disabledStartDate, setDisabledStartDate] = useState(false);
   const [disabledNumber, setDisabledNumber] = useState(false);
-  const [disabledCreditType, setDisabledCreditType] = useState(false);
+  const [disabledCreditType, setDisabledCreditType] = useState(true);
   const [disabledStatus, setDisabledStatus] = useState(false);
   const [disabledMovementType, setDisabledMovementType] = useState(false);
   const [disabledDiscountType, setDisabledDiscountType] = useState(false);
@@ -87,7 +87,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
   useEffect(() => {
     if (updateCredit) {
       if (updateCredit.id) {
-        console.log("Update", updateCredit);
         setIsEdit(true);
         formImssInfonavit.setFieldsValue({
           employee_type: updateCredit.employee_type,
@@ -100,7 +99,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         });
         setNSS(updateCredit.nss);
       } else {
-        console.log("Save", updateCredit);
         formImssInfonavit.setFieldsValue({
           nss: person.imss,
           sdi: updateCredit.sdi,
@@ -113,6 +111,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
   useEffect(() => {
     if (updateInfonavit) {
       formInfonavitManual.setFieldsValue({
+        folio: updateInfonavit.folio,
         start_date: moment(updateInfonavit.start_date),
         start_date_movement: moment(updateInfonavit.start_date_movement),
         number: updateInfonavit.number,
@@ -137,7 +136,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         // Campos bloqueados
         setDisabledStartDate(false);
         setDisabledNumber(false);
-        setDisabledCreditType(false);
+        // setDisabledCreditType(false);
         setDisabledStatus(false);
         setDisabledMovementType(true);
         setDisabledDiscountType(false);
@@ -149,7 +148,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         setMovementTypes(choises_type);
         setDisabledStartDate(true);
         setDisabledNumber(true);
-        setDisabledCreditType(true);
+        // setDisabledCreditType(true);
         setDisabledStatus(false);
         setDisabledMovementType(true);
         setDisabledDiscountType(true);
@@ -178,8 +177,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     values.modify_by = "System";
     // values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    :  ""
     // funcion WEB API
-
-    console.log("Values-->", values);
 
     if (isEdit) {
       WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
@@ -265,7 +262,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     setLodingIMSS(true);
     try {
       let response = await WebApiPayroll.getPersonalCredits(person_id);
-      console.log("Response", response.data);
       setUpdateCredit(response.data);
     } catch (error) {
       console.log(error);
@@ -320,28 +316,39 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
       // width: 100,
     },
     {
+      title: "Folio",
+      dataIndex: "folio",
+      key: "folio",
+      // width: 100,
+    },
+    {
       title: "Número",
       dataIndex: "number",
       key: "number",
       // width: 100,
     },
     {
-      title: "Tipo de crédito",
-      dataIndex: "type",
+      title: "Tipo de descuento",
+      dataIndex: "discount_type",
       // width: 100,
       render: (item) => {
         return (
           <div>
             {item == 1
-              ? "Crédito Tradicional"
+              ? "Porcentaje"
               : item == 2
-              ? "Crédito Apoyo INFONAVIT"
+              ? "Cuota fija mensual en Pesos"
               : item == 3
-              ? "Credito Cofinanciado 08"
+              ? "Cuota fija mensual en VSM"
               : ""}
           </div>
         );
       },
+    },
+    {
+      title: "Valor de descuento",
+      dataIndex: "discount_value",
+      key: "discount_value",
     },
     {
       title: "Movimiento",
@@ -363,12 +370,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         );
       },
     },
-    {
-      title: "Estatus",
-      dataIndex: "status",
-      key: "status",
-      // width: 100,
-    },
+    // {
+    //   title: "Estatus",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   // width: 100,
+    // },
     {
       title: "Opciones",
       render: (item, record) => {
@@ -412,13 +419,18 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
       //Campos bloqueados
       setDisabledStartDate(true);
       setDisabledNumber(true);
-      setDisabledCreditType(true);
+      // setDisabledCreditType(true);
       setDisabledStatus(true);
       setDisabledMovementType(false);
       setDisabledDiscountType(true);
       setDisabledDiscountValue(true);
     } else {
       setMovementTypes(InfonavitMovementype);
+      formInfonavitManual.setFieldsValue({
+        type: 1,
+        status: "Vigente",
+        movement: 1,
+      });
     }
     setIsSuspension(false);
     setModalVisible(true);
@@ -434,7 +446,6 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
 
   const changeMovement = (value) => {
     if (value) {
-      console.log("Value", value);
       switch (value) {
         case 2:
           // suspensión
@@ -642,6 +653,13 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         >
           <Row>
             <Col span={11}>
+              <Form.Item label="Folio" name="folio">
+                <Input maxLength={20} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11}>
               <Form.Item
                 label="Fecha de inicio"
                 name="start_date"
@@ -656,22 +674,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
               </Form.Item>
             </Col>
             <Col span={11} offset={2}>
-              <Form.Item
-                label="Número"
-                name="number"
-                rules={[ruleRequired, onlyNumeric]}
-              >
-                <Input maxLength={10} disabled={disabledNumber} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={11}>
-              <Form.Item
-                label="Tipo de crédito"
-                name="type"
-                rules={[ruleRequired]}
-              >
+              <Form.Item label="Tipo de crédito" name="type">
                 <Select
                   allowClear
                   disabled={disabledCreditType}
@@ -680,9 +683,24 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                 ></Select>
               </Form.Item>
             </Col>
+          </Row>
+          <Row>
+            <Col span={11}>
+              <Form.Item
+                label="Número"
+                name="number"
+                rules={[ruleRequired, onlyNumeric]}
+              >
+                <Input maxLength={10} disabled={disabledNumber} />
+              </Form.Item>
+            </Col>
             <Col span={11} offset={2}>
-              <Form.Item label="Estatus" name="status" rules={[ruleRequired]}>
-                <Select allowClear disabled={disabledStatus}>
+              <Form.Item label="Estatus" name="status">
+                <Select
+                  allowClear
+                  disabled={disabledStatus}
+                  initialValue={"Vigente"}
+                >
                   <Select.Option value={"Vigente"} key={"Vigente"}>
                     Vigente
                   </Select.Option>
@@ -756,7 +774,8 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
               <Form.Item
                 label="Valor de descuento"
                 name="discount_value"
-                rules={[ruleRequired]}
+                maxLength={8}
+                rules={[fourDecimal, ruleRequired]}
               >
                 <Input
                   type="number"
