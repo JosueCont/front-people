@@ -74,11 +74,15 @@ const StyleDay = css`
 
 const ContentList = styled(ContentVertical)`
     width: calc(100% - 100px);
-    ${({equals}) => equals && StyleDay};
+    ${({equals}) => equals ? StyleDay : css`
+        margin-left: 5px;
+    `};
 `;
 
 const ContentDay = styled(ContentVertical)`
-    ${({equals}) => equals && StyleDay};
+    ${({equals}) => equals ? StyleDay : css`
+        margin-left: 5px;
+    `};
 `;
 
 const MonthDetails = ({
@@ -185,19 +189,20 @@ const MonthDetails = ({
     )
 
     const ComponentYear = ({item}) => {
-        let equals = router.query?.type == 'year' ? equalsMonth(item) : equalsDay(item);
-        let title = router.query?.type == 'year' ? getMonth(item[0]) : getDay(item[0]);
+        let type = router.query?.type;
+        let equals = type == 'year' ? equalsMonth(item) : equalsDay(item);
+        let title = type == 'year' ? getMonth(item[0]) : getDay(item[0]);
         return(
-            <ContentMonth gap={equals ? 8 : 13}>
+            <ContentMonth gap={8}>
                 <TitleMonth equals={equals}>
                     <p>{title}</p>
                 </TitleMonth>
                 <ContentList
-                    equals={router.query?.type == 'year' ? false : equals}
-                    gap={router.query?.type == 'year' ? 8 : 0}
+                    equals={type == 'year' ? false : equals}
+                    gap={type == 'year' ? 8 : 0}
                 >
                     {Object.entries(item[1]).map((record, idx) => (
-                        <>{router.query?.type == 'year'
+                        <>{type == 'year'
                             ? <ComponentDay key={"record_"+idx} record={record}/>
                             : <ComponentEvent key={"record_"+idx} event={record[1]}/>
                         }</>
