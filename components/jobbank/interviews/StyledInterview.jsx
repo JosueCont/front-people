@@ -97,7 +97,6 @@ export const EventInfo = styled.div`
     background-color: #ffff;
     border-radius: 12px;
     padding: 2px 6px;
-    border-radius: 10px;
     border: 1px solid rgb(3, 155, 229);
     transition: 0.5s background-color ease;
     & p {
