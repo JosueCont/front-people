@@ -115,6 +115,7 @@ const homeScreen = ({ ...props }) => {
   const [depSelect, setDepSelect] = useState(null);
   const [wtSelct, setWtSelct] = useState(null);
   const [addPersonCfi, setPersonCfi] = useState(false)
+  const [listPersons, setListPersons] = useState([]);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -162,6 +163,23 @@ const homeScreen = ({ ...props }) => {
     } catch (error) {
       setPerson([]);
       setLoading(false);
+      console.log(error);
+    }
+  };
+  const getListPersons = async () => {
+    let data = {
+      node: props.currentNode.id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
       console.log(error);
     }
   };
@@ -1068,6 +1086,7 @@ const homeScreen = ({ ...props }) => {
         const jwt = JSON.parse(jsCookie.get("token"));
         setUserSession(jwt);
         filterPersonName()
+        getListPersons()
       }
     }else{
       if(props.currentNode){
@@ -1105,7 +1124,12 @@ const homeScreen = ({ ...props }) => {
           urlFilter = urlFilter + "periodicity=" + route.query.periodicity + "&";
           filters.periodicity = route.query.periodicity;
         }
+        if (route && route.query.immediate_supervisor !== undefined) {
+          urlFilter = urlFilter + "immediate_supervisor=" + route.query.immediate_supervisor + "&";
+          filters.immediate_supervisor = route.query.immediate_supervisor;
+        }
         filterPersonName(urlFilter)
+        getListPersons()
         formFilter.setFieldsValue({
           ...route.query,
           gender: router.query.gender ? parseInt(route.query.gender) : "",
@@ -1316,8 +1340,9 @@ const homeScreen = ({ ...props }) => {
                                 <Select
                                   showSearch
                                   optionFilterProp="children"
+                                  allowClear={true}
                                   >
-                                    { person.length > 0 && person.map(item => (
+                                    { listPersons.length > 0 && listPersons.map(item => (
                                       <Select.Option value={item.id} key={item.id}>
                                         {getFullName(item)}
                                       </Select.Option>

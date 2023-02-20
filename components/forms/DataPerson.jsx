@@ -125,7 +125,7 @@ const DataPerson = ({
       careerlab_access: person.careerlab_access,
       is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
-      immediate_supervisor: person?.immediate_supervisor ? person?.immediate_supervisor : null,
+      immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
     });
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
