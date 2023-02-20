@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
     Select,
     Form,
@@ -34,6 +34,7 @@ import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { valueToFilter } from '../../../utils/functions';
 import _ from 'lodash';
+import { CSVLink } from "react-csv";
 
 // Se renderiza en el navegador, donde existe el objeto windown.
 //Esta modificación es para la librería chartjs-plugin-zoom
@@ -101,6 +102,9 @@ const ReportsCompetences = ({
     const [openModalChart, setOpenModalChart] = useState(false);
     const [dataChart, setDataChart] = useState([]);
     const [typeReport, setTypeReport] = useState('p');
+    const [csvHeaders, setCsvHeaders] = useState([])
+    const [csvDataSource, setCsvDataSource ] = useState([])
+    const csvLink = useRef()
 
     useEffect(()=>{
         if(currentTab !== currentKey){
@@ -716,7 +720,18 @@ const ReportsCompetences = ({
     const generateExcelReport = () => {
 
         let columns = getColumns();
-        let data = getDataReport()
+        let data = getDataReport();
+
+        //Aqui se haria un state en donde se guarden los headers (columns) y
+        //el datasource (data)
+
+        //se haria un map de los headers para dejarlos así
+        
+        // let headers = [
+        //     { label: "First Name", key: "firstname" },
+        //     { label: "Last Name", key: "lastname" },
+        //     { label: "Email", key: "email" }
+        //   ];
 
         if(data){
             try {
@@ -733,6 +748,7 @@ const ReportsCompetences = ({
 
                 return row
             })
+            
 
             const rowHeader = columns.map((col) => col.title)
             statistic_values.unshift(rowHeader)
@@ -742,6 +758,10 @@ const ReportsCompetences = ({
             link.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csvContent)
             link.download = 'demo.csv'
             link.click(); // This will download the data file named "my_data.csv".
+
+            //funcion que la da click al CSVLINK (solo cuando este tenga datos)
+
+            //    csvLink.current.link.click()
                 
             } catch (error) {
                 console.error('Error al descargar csv', error)
@@ -855,6 +875,17 @@ const ReportsCompetences = ({
                                         Exportar a
                                     </Button>
                                 </Dropdown>
+                                <CSVLink
+                                    headers={headers}
+                                    filename="Demo.csv"
+                                    data={data}
+                                    ref={csvLink}
+                                    style={{
+                                    display: 'none'
+                                    }}
+                                >
+                                    Descargar
+                                </CSVLink>
                             </div>
                         {currentTab == 'pp' && (
                             <div
