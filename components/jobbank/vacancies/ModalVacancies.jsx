@@ -158,7 +158,7 @@ const ModalVacancies = ({
                             <Form.Item
                                 name='url'
                                 label='URL'
-                                rules={[ruleRequired, ruleURL]}
+                                rules={[ ruleURL]}
                             >
                                 <Input
                                     placeholder='Url del sitio'

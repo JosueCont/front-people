@@ -83,7 +83,7 @@ const ListBulkUpload = ({ ...props }) => {
         {verifyMenuNewForTenant() && 
           <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
         }
-        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de log</Breadcrumb.Item>
         <Breadcrumb.Item>Carga masiva de personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

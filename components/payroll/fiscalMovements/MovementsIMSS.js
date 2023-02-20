@@ -209,17 +209,17 @@ const MovementsIMSS=({ currentNode })=>{
                           importar
                         </Button>
                     </Col> */}
-                     <Col span={7}>
-                        <Button 
-                          onClick={ () => {
-                            getMovements(true)
-                          } 
-                        }
-                          disabled = { patronalSelected?  false : true }
-                        >
-                            Sincronizar
-                        </Button>
-                    </Col>
+                    {/* <Col span={7}>*/}
+                    {/*    <Button */}
+                    {/*      onClick={ () => {*/}
+                    {/*        getMovements(true)*/}
+                    {/*      } */}
+                    {/*    }*/}
+                    {/*      disabled = { patronalSelected?  false : true }*/}
+                    {/*    >*/}
+                    {/*        Sincronizar*/}
+                    {/*    </Button>*/}
+                    {/*</Col>*/}
                 </Col>
             </Row>
 

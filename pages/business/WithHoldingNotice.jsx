@@ -13,9 +13,8 @@ const WithHoldingNotice = ({patronalData}) => {
         {
            title: "Fecha",
            dataIndex: "generated_date",
-           render:(item) =>(
-                <>{moment(item).format('YYYY-MM-DD')}</>
-           )
+           key:"generated_date",
+            width: 300
         },
         {
           title: "Documento csv",
