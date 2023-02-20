@@ -407,13 +407,6 @@ const homeScreen = ({ ...props }) => {
 
   let columns2 = [
     {
-      title: "Núm. Empleado",
-      show: true,
-      render: (item) => {
-        return <div>{item.code ? item.code : ""}</div>;
-      },
-    },
-    {
       title: "Foto",
       show: true,
       render: (item) => {
@@ -422,6 +415,13 @@ const homeScreen = ({ ...props }) => {
             <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
+      },
+    },
+    {
+      title: "Núm. Empleado",
+      show: true,
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
@@ -444,6 +444,13 @@ const homeScreen = ({ ...props }) => {
             )}
           </>
         );
+      },
+    },
+    {
+      title: "Jefe inmediato",
+      show: true,
+      render: (item) => {
+        return <div>{ item?.immediate_supervisor ? getFullName(item.immediate_supervisor) : ""}</div>;
       },
     },
     {

@@ -177,6 +177,15 @@ const DataPerson = ({
     setIsActive(person.is_active);
   };
 
+  const validateImmediateSupervisor = (id) => ({
+    validator(rule, value) {
+      if (value != id) {
+        return Promise.resolve();
+      }
+      return Promise.reject("No se puede elegir al mismo usuario como jefe inmediato");
+    },
+  });
+
   const onFinishPerson = (value) => {
     if (value.patronal_registration === undefined) {
       value.patronal_registration = null;
@@ -575,6 +584,7 @@ const DataPerson = ({
                 <Form.Item
                   name="immediate_supervisor"
                   label="Jefe inmediato"
+                  rules={[validateImmediateSupervisor(person.id)]}
                 >
                   <Select
                     showSearch
