@@ -1493,6 +1493,7 @@ const homeScreen = ({ ...props }) => {
             nameNode={props.currentNode && props.currentNode.name}
             node={props.currentNode && props.currentNode.id}
             currentNode={props.currentNode && props.currentNode}
+            listPersons={person}
           />
         )}
         {showModalGroup && (
