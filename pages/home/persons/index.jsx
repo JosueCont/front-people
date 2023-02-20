@@ -67,6 +67,7 @@ import ImportButtonList from "../../../components/payroll/ImportGenericButton/Im
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
+import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 
 const homeScreen = ({ ...props }) => {
@@ -114,6 +115,7 @@ const homeScreen = ({ ...props }) => {
   const [depSelect, setDepSelect] = useState(null);
   const [wtSelct, setWtSelct] = useState(null);
   const [addPersonCfi, setPersonCfi] = useState(false)
+  const [listPersons, setListPersons] = useState([]);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -161,6 +163,23 @@ const homeScreen = ({ ...props }) => {
     } catch (error) {
       setPerson([]);
       setLoading(false);
+      console.log(error);
+    }
+  };
+  const getListPersons = async () => {
+    let data = {
+      node: props.currentNode.id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
       console.log(error);
     }
   };
@@ -388,13 +407,6 @@ const homeScreen = ({ ...props }) => {
 
   let columns2 = [
     {
-      title: "Núm. Empleado",
-      show: true,
-      render: (item) => {
-        return <div>{item.code ? item.code : ""}</div>;
-      },
-    },
-    {
       title: "Foto",
       show: true,
       render: (item) => {
@@ -403,6 +415,13 @@ const homeScreen = ({ ...props }) => {
             <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
+      },
+    },
+    {
+      title: "Núm. Empleado",
+      show: true,
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
@@ -425,6 +444,13 @@ const homeScreen = ({ ...props }) => {
             )}
           </>
         );
+      },
+    },
+    {
+      title: "Jefe inmediato",
+      show: true,
+      render: (item) => {
+        return <div>{ item?.immediate_supervisor ? getFullName(item.immediate_supervisor) : ""}</div>;
       },
     },
     {
@@ -805,6 +831,11 @@ const homeScreen = ({ ...props }) => {
       filters.periodicity = value.periodicity;
       valueQuery.periodicity = value.periodicity;
     }
+    if (value && value.immediate_supervisor !== undefined) {
+      urlFilter = urlFilter + "immediate_supervisor=" + value.immediate_supervisor + "&";
+      filters.immediate_supervisor = value.immediate_supervisor;
+      valueQuery.immediate_supervisor = value.immediate_supervisor;
+    }
     filterPersonName(urlFilter);
     route.replace({
       pathname: '/home/persons/',
@@ -1062,6 +1093,7 @@ const homeScreen = ({ ...props }) => {
         const jwt = JSON.parse(jsCookie.get("token"));
         setUserSession(jwt);
         filterPersonName()
+        getListPersons()
       }
     }else{
       if(props.currentNode){
@@ -1099,7 +1131,12 @@ const homeScreen = ({ ...props }) => {
           urlFilter = urlFilter + "periodicity=" + route.query.periodicity + "&";
           filters.periodicity = route.query.periodicity;
         }
+        if (route && route.query.immediate_supervisor !== undefined) {
+          urlFilter = urlFilter + "immediate_supervisor=" + route.query.immediate_supervisor + "&";
+          filters.immediate_supervisor = route.query.immediate_supervisor;
+        }
         filterPersonName(urlFilter)
+        getListPersons()
         formFilter.setFieldsValue({
           ...route.query,
           gender: router.query.gender ? parseInt(route.query.gender) : "",
@@ -1303,6 +1340,21 @@ const homeScreen = ({ ...props }) => {
                                     placeholder="Estatus"
                                     notFoundContent={"No se encontraron resultados."}
                                 />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} md={8}>
+                              <Form.Item name="immediate_supervisor" label="Jefe inmediato">
+                                <Select
+                                  showSearch
+                                  optionFilterProp="children"
+                                  allowClear={true}
+                                  >
+                                    { listPersons.length > 0 && listPersons.map(item => (
+                                      <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                      </Select.Option>
+                                    ))}
+                                </Select>
                               </Form.Item>
                             </Col>
                             <Col
