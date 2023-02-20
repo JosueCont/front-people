@@ -29,6 +29,7 @@ import SelectAccessKhorflix from "../selects/SelectAccessKhorflix";
 import { ruleRequired, nameLastname } from "../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
+import { getFullName } from "../../utils/functions";
 
 const FormPerson = ({
   config = null,
@@ -36,6 +37,7 @@ const FormPerson = ({
   setPerson = null,
   currentNode,
   close,
+  listPersons=[],
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -116,6 +118,7 @@ const FormPerson = ({
         <Form
           initialValues={{
             intranet_access: false,
+            immediate_supervisor: null
           }}
           layout={'vertical'}
           onFinish={onFinish}
@@ -216,7 +219,23 @@ const FormPerson = ({
                     />
                   </Form.Item>
                 </Col>
-
+                <Col lg={8} xs={24}>
+                  <Form.Item
+                    name="immediate_supervisor"
+                    label='Jefe inmediato'
+                  >
+                    <Select
+                    showSearch
+                    optionFilterProp="children"
+                    >
+                      { listPersons.length > 0 && listPersons.map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
                 <Col lg={20} xs={24} style={{ padding: "10px" }}>
                   {config &&
                     config.applications &&
