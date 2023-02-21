@@ -212,7 +212,7 @@ const Holidays = (props) => {
                         </Form.Item>
                       </Col>
                     </Row>
-                    <Row style={{marginTop:"24px", marginRight:"16px"}} gutter={[8,8]} justify="end">
+                    <Row style={{marginTop:"24px"}} gutter={8} justify="end">
                       <Col md={4} xs={12} >
                         <Tooltip
                             title="Filtrar"
@@ -235,7 +235,7 @@ const Holidays = (props) => {
                         </Button>
                         </Tooltip>
                       </Col>
-                      <Col md={4} xs={12} style={{ display: "flex" }}>
+                      <Col md={4} xs={12}>
                         <Tooltip
                           title="Limpiar filtros"
                           color={"#3d78b9"}
@@ -249,13 +249,13 @@ const Holidays = (props) => {
                           </Button>
                         </Tooltip>
                       </Col>
-                      <Col md={4} xs={12}>
+                      <Col md={5} xs={12}>
                         {permissions.create && (
                             <Button
                                 style={{
                                   background: "#fa8c16",
                                   color: "white",
-                                  minwidth:'100%',
+                                  width:'100%',
                                   marginTop: "auto",
                                 }}
                                 onClick={() => route.push("holidays/new")}
