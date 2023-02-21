@@ -313,7 +313,7 @@ const TableAssessments = ({
       }
       const token = jwtEncode(body, 'secret', 'HS256');
       const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
-      // const url = `http://humand.localhost:3002/?token=${token}`;
+      // const url = `http://grupohuman.localhost:3005/?token=${token}`;
       popupWindow(url)
     }else{
       message.error('Resultados no encontrados');
@@ -527,13 +527,17 @@ const TableAssessments = ({
   const getNewFilters = () =>{
     let newFilters = {...router.query};
     if(newFilters.id) delete newFilters.id;
+    if(newFilters.back) delete newFilters.back;
     return newFilters;
   }
   
   const actionBack = () =>{
     let filters = getNewFilters();
+    let url = router.query?.back
+      ? `/jobbank/${router.query?.back}`
+      : '/home/persons';
     router.push({
-        pathname: '/home/persons',
+        pathname: url,
         query: filters
     })
   }
