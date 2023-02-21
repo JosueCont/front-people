@@ -30,7 +30,7 @@ import {
   BsHandIndex
 } from "react-icons/bs";
 import AssignAssessments from '../person/assignments/AssignAssessments';
-import {urlKuizBaseFront, typeHttp} from '../../../config/config'
+import {urlKuizBaseFront, typeHttp} from '../../config/config'
 
 let tenant = "demo";
 
