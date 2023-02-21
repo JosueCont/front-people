@@ -24,7 +24,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
-import { verifyMenuNewForTenant } from "../../utils/functions";
+import { verifyMenuNewForTenant, getFullName } from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 
 const Holidays = (props) => {
@@ -35,6 +35,7 @@ const Holidays = (props) => {
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [permissions, setPermissions] = useState({});
+  const [listPersons, setListPersons] = useState([]);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -53,7 +54,8 @@ const Holidays = (props) => {
   const getAllHolidays = async (
     collaborator = null,
     department = null,
-    status = null
+    status = null,
+    immediate_supervisor = null,
   ) => {
     setLoading(true);
 
@@ -66,6 +68,9 @@ const Holidays = (props) => {
     }
     if (department) {
       url += `&department__id=${department}`;
+    }
+    if(immediate_supervisor){
+      url += `&immediate_supervisor=${immediate_supervisor}`;
     }
 
     WebApiPeople.getVacationRequest(url)
@@ -92,18 +97,37 @@ const Holidays = (props) => {
 
   const filterHolidays = async (values) => {
     setSearching(true);
-    getAllHolidays(values.collaborator, values.department, values.status);
+    getAllHolidays(values.collaborator, values.department, values.status, values.immediate_supervisor);
   };
 
   useEffect(() => {
     if (props.currentNode) {
       getAllHolidays();
+      getListPersons(props.currentNode.id)
     }
   }, [route, props.currentNode]);
 
   const resetFilter = () => {
     form.resetFields();
     getAllHolidays();
+  };
+
+  const getListPersons = async (node_id) => {
+    let data = {
+      node: node_id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
+      console.log(error);
+    }
   };
 
   return (
@@ -148,13 +172,30 @@ const Holidays = (props) => {
                           name="collaborator"
                         />
                       </Col>
-
                       <Col md={8} xs={12}>
+                        <Form.Item
+                          name="immediate_supervisor"
+                          label="Jefe inmediato"
+                        >
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            allowClear={true}
+                            >
+                              { listPersons.length > 0 && listPersons.map(item => (
+                                <Select.Option value={item.id} key={item.id}>
+                                  {getFullName(item)}
+                                </Select.Option>
+                              ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      {/* <Col md={6} xs={12}>
                         <SelectDepartment
                           name="department"
                           companyId={props.currentNode}
                         />
-                      </Col>
+                      </Col> */}
                       <Col md={8} xs={12}>
                         <Form.Item
                           key="estatus_filter"
@@ -265,11 +306,11 @@ const Holidays = (props) => {
                       </>
                     )}
                   />
-                  <Column
+                  {/* <Column
                     title="Departamentos"
                     dataIndex="department"
                     key="department"
-                  />
+                  /> */}
                   <Column
                     title="Días solicitados"
                     dataIndex="days_requested"
@@ -284,6 +325,21 @@ const Holidays = (props) => {
                         ? record.collaborator.Available_days_vacation
                         : null
                     }
+                  />
+                  <Column
+                    dataIndex="immediate_supervisor"
+                    key="id"
+                    title="Jefe inmediato"
+                    render={(immediate_supervisor, record) => (
+                      <>
+                        { immediate_supervisor 
+                          ?
+                          getFullName(immediate_supervisor)
+                          :
+                          null
+                          }
+                      </>
+                    )}
                   />
                   <Column
                     title="Estatus"
