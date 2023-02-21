@@ -46,3 +46,6 @@ export const urlCareerlab = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_CAREERLAB_TENANT
   : process.env.BASE_URL_CAREERLAB_TENANT;
 
+export const urlKuizBaseFront = process.browser
+  ? process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE_FRONT
+  : process.env.FRONT_BASE_URL_KUIZ
