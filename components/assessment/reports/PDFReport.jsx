@@ -11,85 +11,493 @@ import moment from 'moment';
 
 const PDFReport = ({
   user,
+  currentTab,
   columns,
-  data
+  data,
+  profilesSelected
 }) => {
 
-    console.log('user', user)
-    console.log('Columns', columns)
-    console.log('data', data)
+    console.log('profile', profilesSelected)
 
-    // const SectionProfileCard = () => (
-    //   <View>
-    //     <View 
-    //       style={{
-    //           display: 'flex',
-    //           flexDirection: 'row',
-    //           justifyContent: 'flex-start',
-    //           alignItems: 'center',
-    //           height: '100px'
+    const findPhoto = (id) => {
+      let userSelected = user.find((us) => us.id === id)
+      let photoUser = userSelected.photo? userSelected.photo : '/images/usuario.png'
+      return photoUser
+    }
+
+    const SectionProfileCard = () => (
+      <View>
+        <View 
+          style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              height: '50px',
+              marginBottom: 15
+            }}
+          >
+            <View
+              style={{ 
+                flex: '0 0 100%',
+                display: 'flex',
+                flexDirection: 'row',
+                height: '100%',
+              }}
+            >
               
-    //         }}
-    //       >
-    //         <View
-    //           style={{ 
-    //             flex: '0 0 50%',
-    //             backgroundColor: '#E9E9E9',
-    //           }}
-    //         >
-    //           <View style={{ flex:'0 0 30px', marginRight: 20 }}>
-    //             <Image 
-    //               src={'/images/usuario.png'}
-    //               style={{
-    //                       width: '30px',
-    //                       height: '90px',
-    //               }}
-    //             />
-    //           </View>
-    //         </View>
-    //     </View>
-    //   </View>
-    // )
+              { currentTab !== 'psp' && 
+              
+                <View style={{ flex:'0 0 10%', alignItems: 'center' }}>
+                  <Image 
+                    src={{ 
+                      uri: user[0].photo? user[0].photo : '/images/usuario.png', 
+                      method: "GET", 
+                      headers: {"Cache-Control": "no-cache" }, 
+                      body: ""
+                    }}
+                    style={{
+                            width: '40px',
+                            height: '40px',
+                            marginTop: '3px',
+                            borderRadius: '50%'
+                    }}
+                  />
+                </View>
+              }
+              <View 
+                style={{ 
+                  flex:'0 0 40%', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  textAlign:'left',
+                  alignItems: 'left',
+                  marginRight: 20 
+                }}
+              >
+                  <Text style={{ fontSize: 14, marginTop: '10px' }}>
+                    {
+                      currentTab !== 'psp' ? 
+                        `${user[0].first_name} ${user[0].flast_name} ${user[0].mlast_name || ''}` 
+                      : 
+                        profilesSelected[0].name? profilesSelected[0].name : 'N/A'
+                    }
+                  </Text>
+                  <Text style={{ fontSize: 10, textAlign: 'left', marginTop: 5 }}>
+                    {
+                      currentTab !== 'psp' ? 
+                        user[0].work_title ? 
+                          `${user[0].work_title.name}` 
+                        : 
+                          'N/A' 
+                      : 
+                      profilesSelected[0]? profilesSelected[0].description : 'N/A'
+                    }
+                  </Text>
+              </View>
+            </View>
+        </View>
+      </View>
+    )
 
-    const SectionTable = () => (
+    const SectionTablePerson = () => (
       <View>
         <View
           style={{
             display: 'flex',
             flexDirection: 'row'
           }}
-        >
-          {
-            columns.length > 0 && columns.map((col) => (
+        > 
               <View 
-                key={col.title} 
+                key={columns[0].title} 
                 style={{
-                  flex: `0 0 33%`,
-                  backgroundColor: '#E9E9E9'
+                  flex: `0 0 20%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
                 }}
               >
-                <Text style={{fontSize: 10}}>{ col.title }</Text>
+                <Text style={{fontSize: 10}}>{ columns[0].title }</Text>
               </View>
-            ))
-          }
+              <View 
+                key={columns[1].title} 
+                style={{
+                  flex: `0 0 10%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[1].title }</Text>
+              </View>
+              <View 
+                key={columns[2].title} 
+                style={{
+                  flex: `0 0 70%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[2].title }</Text>
+              </View>
         </View>
         <View
           style={{
             display: 'flex',
             flexDirection: 'row',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            backgroundColor: '#E9E9E9'
           }}        
         >
           {
-            data.length > 0 && data.map((row) => {
+            data.length > 0 && data.map((row, index) => (
               <View
-              
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 15,
+                  marginBottom: data.length === index + 1 ? '10px' : 0
+                }}               
               >
-
+                <View style={{flex: '0 0 20%', paddingLeft: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.competence.name
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 10%', textAlign: 'center'}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.level
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 70%', paddingLeft: 10,paddingRight: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.description
+                  }
+                  </Text>
+                </View>
               </View>
-            })
+            ))
           }
         </View>
+      </View>
+    )
+
+    const SectionTablePersonProfile = () => (
+      <View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row'            
+          }}
+        >
+                        <View 
+                key={columns[0].title} 
+                style={{
+                  flex: `0 0 15%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[0].title }</Text>
+              </View>
+              <View 
+                key={columns[1].title} 
+                style={{
+                  flex: `0 0 10%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[1].title }</Text>
+              </View>
+              <View 
+                key={columns[2].title} 
+                style={{
+                  flex: `0 0 25%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[2].title }</Text>
+              </View>
+              <View 
+                key={columns[3].title} 
+                style={{
+                  flex: `0 0 10%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[3].title }</Text>
+              </View>
+              <View 
+                key={columns[4].title} 
+                style={{
+                  flex: `0 0 25%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[4].title }</Text>
+              </View>
+              <View 
+                key={columns[5].title} 
+                style={{
+                  flex: `0 0 15%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[5].title }</Text>
+              </View>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            backgroundColor: '#E9E9E9'
+          }}        
+        >
+          {
+            data.length > 0 && data.map((row, index) => (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 15,
+                  marginBottom: data.length === index + 1 ? '10px' : 0
+                }}               
+              >
+                <View style={{flex: '0 0 15%', paddingLeft: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.name
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 10%', textAlign: 'center'}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.level_person
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 25%', paddingRight: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.description_person
+                  }
+                  </Text>
+                  
+                </View>
+                <View style={{flex: '0 0 10%', paddingLeft: 10, textAlign: 'center'}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.level_profile
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 25%', textAlign: 'center'}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.description_profile
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 15%', textAlign: 'center',paddingRight: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.compatibility !== 'N/A'? row.compatibility.toFixed(2) + '%' : 'N/A'
+                  }
+                  </Text>
+                  
+                </View>
+              </View>
+            ))
+          }
+        </View>
+      </View>
+    )
+
+    const SectionPersonsProfile = () => (
+      <View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row'
+          }}
+        > 
+              <View 
+                key={columns[0].title} 
+                style={{
+                  flex: `0 0 20%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                  
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[0].title }</Text>
+              </View>
+              <View 
+                key={columns[1].title} 
+                style={{
+                  flex: `0 0 50%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[1].title }</Text>
+              </View>
+              <View 
+                key={columns[2].title} 
+                style={{
+                  flex: `0 0 30%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[2].title }</Text>
+              </View>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            backgroundColor: '#E9E9E9'
+          }}        
+        >
+          {
+            data.length > 0 && data.map((row, index) => (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 15,
+                  marginBottom: data.length === index + 1 ? '10px' : 0
+                }}               
+              >
+                <View style={{flex: '0 0 20%', paddingLeft: 10}}>
+                  <Image 
+                    src={{ 
+                        uri: findPhoto(row.persons.id), 
+                        method: "GET", 
+                        headers: { 
+                          "Cache-Control": "no-cache" }, 
+                        body: ""
+                    }}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: '50%'
+                    }}                     
+                  />
+                </View>
+                <View style={{flex: '0 0 50%', paddingLeft: 10, paddingTop: 15}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.persons.fullName
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 30%', paddingLeft: 10, paddingTop: 15}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.profiles[0].compatibility !== 'N/A'? row.profiles[0].compatibility.toFixed(2) + '%' : 'N/A'
+                  }
+                  </Text>
+                </View>
+              </View>
+            ))
+          }
+        </View>
+      </View>
+    )
+
+    const SectionPersonProfiles = () => (
+      <View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row'
+          }}
+        > 
+              <View 
+                key={columns[0].title} 
+                style={{
+                  flex: `0 0 50%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                  
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[0].title }</Text>
+              </View>
+              <View 
+                key={columns[1].title} 
+                style={{
+                  flex: `0 0 50%`,
+                  backgroundColor: '#E9E9E9',
+                  paddingLeft: '10px',
+                  paddingTop: 10
+                }}
+              >
+                <Text style={{fontSize: 10}}>{ columns[1].title }</Text>
+              </View>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            backgroundColor: '#E9E9E9'
+          }}        
+        >
+          {
+            data.length > 0 && data.map((row, index) => (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 15,
+                  marginBottom: data.length === index + 1 ? '10px' : 0
+                }}               
+              >
+                <View style={{flex: '0 0 50%', paddingLeft: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.name
+                  }
+                  </Text>
+                </View>
+                <View style={{flex: '0 0 50%', paddingLeft: 10}}>
+                  <Text style={{ fontSize: 10 }}>
+                  {
+                    row.compatibility !== 'N/A'? row.compatibility.toFixed(2) + '%' : 'N/A'
+                  }
+                  </Text>
+                </View>
+              </View>
+            ))
+          }
+        </View>        
       </View>
     )
 
@@ -464,6 +872,34 @@ const PDFReport = ({
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
                 <Page size='LETTER' style={{padding: 24}} wrap={true}>
+                  <View
+                    style={{
+                      display : 'flex', 
+                      justifyContent: 'center',
+                    }}
+                  >
+                      <SectionProfileCard />
+                      {
+                        currentTab === 'p' && (
+                          <SectionTablePerson />
+                        )
+                      }
+                      {
+                        currentTab === 'pp' && (
+                          <SectionTablePersonProfile />
+                        )
+                      }
+                      {
+                        currentTab === 'psp' && (
+                          <SectionPersonsProfile />
+                        )
+                      }
+                      {
+                        currentTab === 'pps' && (
+                          <SectionPersonProfiles />
+                        )
+                      }
+                  </View>
                 {/* <View
                     style={{
                         marginBottom: 30,
@@ -510,7 +946,7 @@ const PDFReport = ({
                     </View> */}
                 {/* </View>  */}
                 {/* <SectionProfileCard /> */}
-                <SectionTable />
+
                     {/* <SectionDetails />
                     <SectionEducation />
                     <SectionExperience />
