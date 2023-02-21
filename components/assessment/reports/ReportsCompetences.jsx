@@ -35,6 +35,8 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 import { valueToFilter } from '../../../utils/functions';
 import _ from 'lodash';
 import { CSVLink } from "react-csv";
+import PDFReport from './PDFReport';
+import { pdf } from '@react-pdf/renderer';
 
 // Se renderiza en el navegador, donde existe el objeto windown.
 //Esta modificación es para la librería chartjs-plugin-zoom
@@ -92,6 +94,7 @@ const ReportsCompetences = ({
     const [profilesSelected, setProfilesSelected] = useState([]);
     const [listReports, setListReports] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingExport, setLoadingExport] = useState(false)
     const [openModal, setOpenModal] = useState();
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
@@ -104,6 +107,7 @@ const ReportsCompetences = ({
     const [typeReport, setTypeReport] = useState('p');
     const [csvHeaders, setCsvHeaders] = useState([])
     const [csvDataSource, setCsvDataSource ] = useState([])
+    const [nameFile, setNameFile] = useState('')
     const csvLink = useRef()
 
     useEffect(()=>{
@@ -128,6 +132,9 @@ const ReportsCompetences = ({
         setListReports([])
         setIsUsers(false)
         setColumnsMany(columns_many)
+        setCsvDataSource([])
+        setCsvHeaders([])
+        setNameFile('')
     }
 
     const getReportCompetences = async (data) =>{
@@ -332,11 +339,14 @@ const ReportsCompetences = ({
         generateColumns()
         getReportProfile()
     }
+    
+    const subTitle = (item, subs = 3) => {  return  item?.competence?.name.substring(0, subs).toUpperCase() }
 
     const generateColumns = () =>{
         let info_columns = profilesSelected?.at(-1).competences;
         let list_columns = [...columns_many];
         info_columns.map((item, idx) =>{
+            let title = subTitle(item)
             list_columns.push({
                 title: ()=>{
                     return (
@@ -719,55 +729,282 @@ const ReportsCompetences = ({
 
     const generateExcelReport = () => {
 
+        setLoadingExport(true)
+
+        let columns = getColumns();
+        let data = getDataReport();
+        let rowReaders = []
+
+        console.log('Columns', columns)
+        console.log('Data', data)
+
+        try {
+            
+        
+
+        if(currentTab === 'p') {
+
+            let nameFile = usersSelected.length > 0 ? 
+                            `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
+                           : 'Demo.csv'
+            setNameFile(nameFile)
+
+            columns.forEach((col) => {
+                if(col.title === 'Competencia'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'competence.name'
+                    })
+                }
+                if(col.title === 'Nivel'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'level'
+                    })
+                }
+                if(col.title === 'Descripción'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'description'
+                    })
+                }
+                
+            })
+
+            setCsvDataSource(data)
+        }
+
+        if(currentTab === 'pp'){
+
+            let nameFile = usersSelected.length > 0 ? 
+                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
+                           : 'Demo.csv'
+            setNameFile(nameFile)
+            
+            columns.forEach((col) => {
+                if(col.title === 'Competencia'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'name'
+                    })
+                }
+                if(col.title === 'Nivel persona'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'level_person'
+                    })
+                }
+                if(col.key === 'description_person'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'description_person'
+                    })
+                }
+                if(col.title === 'Nivel perfil'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'level_profile'
+                    })
+                }
+                if(col.key === 'description_profile'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'description_profile'
+                    })
+                }
+                if(col.title === 'Compatibilidad'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'compatibility'
+                    })
+                }
+                
+            })
+
+            setCsvDataSource(data)
+        }
+
+        if(currentTab === 'psp'){
+            let nameFile = profilesSelected.length > 0 ? `Personas Perfil - ${profilesSelected[0].name}.csv` : 'Demo.csv'
+            setNameFile(nameFile)
+
+            columns.forEach((col) => {
+                if(col.title === 'Persona'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'fullname'
+                    })
+                }
+                if(col.title === 'Compatibilidad'){
+
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'compatibility'
+                    })
+                }
+            })
+
+            let newData = data.map((row) => {
+                let obj = {
+                fullname: row.persons.fullName,
+                compatibility: row.profiles[0].compatibility}
+
+                return obj
+
+            })
+
+            setCsvDataSource(newData)
+
+            
+        }
+
+        if(currentTab === 'pps'){
+            let nameFile = usersSelected.length > 0 ? 
+            `Persona Perfiles - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
+            : 'Demo.csv'
+           setNameFile(nameFile)
+
+           columns.forEach((col) => {
+                if(col.title === 'Perfil'){
+                    rowReaders.push({
+                        label: col.title,
+                        key: 'name'
+                    })
+                }
+
+                if(col.title === 'Compatibilidad'){
+                        rowReaders.push({
+                            label: col.title,
+                            key: 'compatibility'
+                        })
+                    }
+                })
+           
+            setCsvDataSource(data)
+
+        }
+
+        if(currentTab === 'psc'){ 
+
+            let nameFile = profilesSelected.length > 0 ? `Personas competencias - ${profilesSelected[0].name}.csv` : 'Demo.csv'
+            setNameFile(nameFile)
+            let newDatasource = []
+
+            rowReaders.push({
+                label: 'Persona',
+                key: 'fullname'
+            })
+
+            data?.length > 0  && data[0].profiles[0].competences.sort((a, b) => {
+                if (a.name > b.name) return 1;
+                if (a.name < b.name) return -1;
+                return 0;
+            }).forEach((com) => {
+                rowReaders.push({
+                    label: com.name.substring(0,3).toUpperCase() + ` (${com.level_profile})`,
+                    key: com.name.substring(0,3).toUpperCase()
+                })
+                
+            })
+
+            rowReaders.push({
+                label: 'Compatibilidad',
+                key: 'compatibility'
+            })
+
+            data.map((row) => {
+                
+                let object = {}
+                object['fullname'] = row.persons.fullName
+                object['compatibility'] = row.profiles[0].compatibility
+                let recuArray = row.profiles[0].competences
+
+                recuArray.sort((a, b) => {
+                    if (a.name > b.name) return 1;
+                    if (a.name < b.name) return -1;
+                    return 0;
+                })
+
+                let recuArrayV2 = recuArray.reduce((acc, current, index) => {
+
+                    let nameCom = current.name.substring(0,3).toUpperCase()
+                    
+                    return{...acc, [nameCom] : current.level_person}
+                }, object)
+
+                newDatasource.push(recuArrayV2)
+                
+            })
+            
+            setCsvDataSource(newDatasource)
+            let nameCol = rowReaders.find((record) => record.key === 'fullname')
+            let nameComp = rowReaders.find((record) => record.key === 'compatibility')
+            let unOrderedColumns = rowReaders.filter((reg) => reg.key !== 'fullname' && reg.key !== 'compatibility')
+            let orderedColumns = unOrderedColumns.sort((a, b) => {
+                if (a.key > b.key) return 1;
+                if (a.key < b.key) return -1;
+                return 0;
+            })
+            let arr = []
+            arr.push(nameCol)
+            let newArr = [...arr, ...orderedColumns]
+            newArr.push(nameComp)
+            setCsvHeaders(newArr)
+        }
+
+        if(currentTab !== 'psc') setCsvHeaders(rowReaders)
+
+
+        setTimeout(() => {
+            csvLink.current.link.click()
+            message.success('Documento Generado')
+            setLoadingExport(false)
+        },[3000]) 
+
+    } catch (error) {
+         console.log('error', error)
+         setLoadingExport(false)
+    }
+
+    }
+
+    let MyDoc = ({user, columns, data }) => <PDFReport user={user} columns={columns} data={data}/>
+
+    const linkTo = (url, download = false ) =>{
+        let nameFile = ''
+        if(currentTab === 'p'){
+            nameFile = `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
+        }
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_black";
+        if(download) link.download = nameFile;
+        link.click();
+    }
+
+
+    const generatePDF = async (download) => {
+        const key = 'updatable';
         let columns = getColumns();
         let data = getDataReport();
 
-        //Aqui se haria un state en donde se guarden los headers (columns) y
-        //el datasource (data)
-
-        //se haria un map de los headers para dejarlos así
-        
-        // let headers = [
-        //     { label: "First Name", key: "firstname" },
-        //     { label: "Last Name", key: "lastname" },
-        //     { label: "Email", key: "email" }
-        //   ];
-
-        if(data){
-            try {
-
-            let statistic_values = _.map(data, (rw) => {
-
-                rw.competence = rw.competence.name
-
-                const row = [
-                    rw.competence,
-                    rw.level,
-                    rw.description,
-                ]
-
-                return row
-            })
-            
-
-            const rowHeader = columns.map((col) => col.title)
-            statistic_values.unshift(rowHeader)
-            let csvContent = statistic_values.map(e => e.join(",")).join("\n")
-            console.log('csv content', csvContent)
-            let link = document.createElement("a");
-            link.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csvContent)
-            link.download = 'demo.csv'
-            link.click(); // This will download the data file named "my_data.csv".
-
-            //funcion que la da click al CSVLINK (solo cuando este tenga datos)
-
-            //    csvLink.current.link.click()
-                
-            } catch (error) {
-                console.error('Error al descargar csv', error)
-            }
+        message.loading({content: 'Generando PDF...', key})
+        try {
+            let resp = await pdf(<MyDoc user={usersSelected} columns={columns} data={data} />).toBlob();
+            let url = URL.createObjectURL(resp);
+            setTimeout(()=>{
+                message.success({content: 'PDF generado', key})
+            }, 1000)
+            setTimeout(()=>{  
+                linkTo(url+'#toolbar=0', download);
+            },2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                setLoading(false)
+                message.error({content: 'PDF no generado', key});
+            },2000)
         }
-
     }
     
     const items = [
@@ -782,7 +1019,7 @@ const ReportsCompetences = ({
             label: 'PDF',
             key: 2,
             onClick: () => {
-                console.log('PDF')
+                generatePDF(true)
             }
         }
     ]
@@ -871,14 +1108,15 @@ const ReportsCompetences = ({
                                 <Dropdown overlay={ menuDropdown }>
                                     <Button
                                         icon={<ExportOutlined />}
+                                        loading = {loadingExport}
                                     >
                                         Exportar a
                                     </Button>
                                 </Dropdown>
                                 <CSVLink
-                                    headers={headers}
-                                    filename="Demo.csv"
-                                    data={data}
+                                    headers={csvHeaders}
+                                    filename={nameFile}
+                                    data={csvDataSource}
                                     ref={csvLink}
                                     style={{
                                     display: 'none'
