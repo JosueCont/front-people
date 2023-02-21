@@ -155,7 +155,7 @@ const Holidays = (props) => {
         {permissions.view ? (
           <>
             <div className="top-container-border-radius">
-              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+              <Row justify="space-between" style={{ paddingBottom: 10 }}>
                 <Col span={24}>
                   <Form
                     name="filter"
@@ -211,6 +211,8 @@ const Holidays = (props) => {
                           />
                         </Form.Item>
                       </Col>
+                    </Row>
+                    <Row style={{marginTop:"24px", marginRight:"16px"}} gutter={[8,8]} justify="end">
                       <Col md={4} xs={12} >
                         <Tooltip
                             title="Filtrar"
@@ -252,9 +254,8 @@ const Holidays = (props) => {
                             <Button
                                 style={{
                                   background: "#fa8c16",
-                                  fontWeight: "bold",
                                   color: "white",
-                                  width:'100%',
+                                  minwidth:'100%',
                                   marginTop: "auto",
                                 }}
                                 onClick={() => route.push("holidays/new")}
