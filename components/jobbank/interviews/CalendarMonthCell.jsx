@@ -25,7 +25,6 @@ const CalendarMonthCell = ({date}) => {
     },[current, list_interviews])
 
     const showEvents = () =>{
-        // let mth = date.month() + 1;
         router.replace({
             pathname: '/jobbank/interviews',
             query: {...router.query, view: 'schedule'}
@@ -33,7 +32,7 @@ const CalendarMonthCell = ({date}) => {
     }
 
     return eventsMonth.length > 0 ? (
-        <EventInfo onClick={()=> showEvents()}>
+        <EventInfo equals={true}>
             <p>Eventos del mes {eventsMonth.length}</p>
         </EventInfo>
     ) : null;

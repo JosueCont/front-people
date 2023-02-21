@@ -50,7 +50,6 @@ const candidate = ({
     const [formCandidate] = Form.useForm();
     const [fetching, setFetching] = useState(false);
     const [fileCV, setFileCV] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
     const { createData } = useInfoCandidate({
         fileCV, isAutoRegister: true
     });
@@ -91,7 +90,7 @@ const candidate = ({
             setFetching(false);
             let error = e.response?.data?.email;
             let msg = error
-                ?'Este correo ya existe'
+                ? 'Este correo ya existe'
                 : router.query?.vacant
                 ? 'Postulación no registrada'
                 : 'Candidato no registrado';
