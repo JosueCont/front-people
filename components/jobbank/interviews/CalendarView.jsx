@@ -29,6 +29,7 @@ const CalendarView = ({
 }) => {
 
     const router = useRouter();
+    const currentMonth = moment()?.month()+1;
     const [openModalDetail, setOpenModalDetail] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -95,6 +96,21 @@ const CalendarView = ({
         setOpenModalDetail(true)
     }
 
+    const disabledDate = (value) =>{
+        let type = router.query?.type ?? 'month';
+        if(type == 'year') return false;
+        let mth = value.format('MM');
+        let current = router.query?.mth
+            ? parseInt(router.query?.mth)
+            : currentMonth;
+        return parseInt(mth) != current;
+    }
+
+    const classOpen = useMemo(()=>{
+        let valid = router.query?.view == 'calendar' || !router.query?.view;
+        return valid ? 'open' : 'close';
+    },[router.query?.view])
+
     const getHeader = e => <CalendarHeader {...e}/>;
     const getCell = e => <CalendarDateCell {...{showModalDetails, value: e}}/>;
     const getMonth = e => <CalendarMonthCell date={e}/>;
@@ -103,11 +119,12 @@ const CalendarView = ({
         <>
             <Spin spinning={load_interviews}>
                 <Calendar
-                    className={`calendar-interviews ${(router.query?.view == 'calendar' || !router.query.view) ? 'open' : 'close'}`}
+                    className={`calendar-interviews ${classOpen}`}
                     headerRender={getHeader}
                     dateCellRender={getCell}
                     monthCellRender={getMonth}
                     mode={router.query?.type ?? 'month'}
+                    disabledDate={disabledDate}
                 />
                 {router.query?.view == 'schedule' &&
                     <MonthDetails showModalDetails={showModalDetails}/>

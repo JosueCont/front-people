@@ -14,7 +14,7 @@ const ViewEditSelection = ({
 
   const router = useRouter();
   const [newFilters, setNewFilters] = useState({});
-  const deleteKeys = ['id', 'vacant', 'tab'];
+  const deleteKeys = ['id', 'vacant', 'tab','user_person'];
 
   useEffect(()=>{
     if(Object.keys(router.query).length <= 0) return;
