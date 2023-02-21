@@ -6,6 +6,7 @@ import {
     TextDescripcion
 } from './StyledInterview';
 import styled from '@emotion/styled';
+import { css } from '@emotion/core';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 
@@ -18,8 +19,8 @@ const ContentEvents = styled.div`
 `;
 
 const BallEvent = styled.span`
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background-color: rgb(3, 155, 229);
 `;
@@ -29,21 +30,59 @@ const ItemEvent = styled(ContentNormal)`
     border-radius: 12px;
     cursor: pointer;
     :hover{
-        background-color: #f0f0f0;
+        background-color: rgba(1,1,1,0.03);
     }
 `;
 
-const ContentMonths = styled(ContentVertical)`
-    & .month:not(:last-child){
+const ContentMonth = styled(ContentNormal)`
+    :not(:last-child){
         padding-bottom: 8px;
         border-bottom: 1px solid #f0f0f0;
     }
-    & .title{
-        width: 100px;
+`;
+
+const TitleMonth = styled.div`
+    width: 100px;
+    text-align: center;
+    ${({equals}) => equals && css`
+        border-radius: 12px;
+        padding: 2px 6px;
+        background-color: rgb(3, 155, 229);
+    `};
+    & p{
+        font-size: 14px;
+        margin-bottom: 0px;
+        color: ${({equals}) => equals ? '#ffff' :'rgb(60,64,67)'};
+        font-weight: ${({equals}) => equals ? 400 : 500};
+        line-height: 1.2;
     }
-    & .list{
-        width: calc(100% - 100px);
+`;
+
+const TitleDay = styled.div`
+    margin-left: 10px;
+`;
+
+const StyleDay = css`
+    padding: 5px;
+    border-radius: 12px;
+    background-color: rgba(3, 155, 229,0.06);
+    box-sizing: border-box;
+    & .event:hover{
+        background-color: #ffff;
     }
+`;
+
+const ContentList = styled(ContentVertical)`
+    width: calc(100% - 100px);
+    ${({equals}) => equals ? StyleDay : css`
+        margin-left: 5px;
+    `};
+`;
+
+const ContentDay = styled(ContentVertical)`
+    ${({equals}) => equals ? StyleDay : css`
+        margin-left: 5px;
+    `};
 `;
 
 const MonthDetails = ({
@@ -114,8 +153,14 @@ const MonthDetails = ({
         return moment(date, formatDay).locale('es-mx').format('DD, dddd');
     }
 
+    const equalsMonth = (item)=> parseInt(item[0]) == moment().month()+1;
+    const equalsDay = (record) =>{
+        let day = moment(record[0], formatDay).format(formatDay);
+        return day == moment().format(formatDay);
+    }
+
     const ComponentEvent = ({event}) => (
-        <ItemEvent gap={16} onClick={()=> showModalDetails(event)}>
+        <ItemEvent className='event' gap={16} onClick={()=> showModalDetails(event)}>
             <ContentNormal gap={8}>
                 <BallEvent/>
                 <TextDescripcion>
@@ -129,43 +174,47 @@ const MonthDetails = ({
     )
     
     const ComponentDay = ({record}) => (
-        <ContentVertical gap={2}>
-            <div style={{marginLeft: 10}}>
+        <ContentDay equals={equalsDay(record)} gap={2}>
+            <TitleDay>
                 <TextDescripcion isTitle weight={500}>
                     {getDay(record[0])}
                 </TextDescripcion>
-            </div>
+            </TitleDay>
             <ContentVertical>
                 {Array.isArray(record[1]) && record[1]?.map((event, idx) => (
                     <ComponentEvent event={event} key={"event_"+idx} />
                 ))}
             </ContentVertical>
-        </ContentVertical>
+        </ContentDay>
     )
 
     const ComponentYear = ({item}) => {
+        let type = router.query?.type;
+        let equals = type == 'year' ? equalsMonth(item) : equalsDay(item);
+        let title = type == 'year' ? getMonth(item[0]) : getDay(item[0]);
         return(
-            <ContentNormal className='month' gap={8}>
-                <div className='title'>
-                    <TextDescripcion isTitle weight={500}>
-                        {router.query?.type == 'year' ? getMonth(item[0]) : getDay(item[0]) }
-                    </TextDescripcion>
-                </div>
-                <ContentVertical gap={router.query?.type == 'year' ? 8 : 0} className='list'>
+            <ContentMonth gap={8}>
+                <TitleMonth equals={equals}>
+                    <p>{title}</p>
+                </TitleMonth>
+                <ContentList
+                    equals={type == 'year' ? false : equals}
+                    gap={type == 'year' ? 8 : 0}
+                >
                     {Object.entries(item[1]).map((record, idx) => (
-                        <>{router.query?.type == 'year'
+                        <>{type == 'year'
                             ? <ComponentDay key={"record_"+idx} record={record}/>
                             : <ComponentEvent key={"record_"+idx} event={record[1]}/>
                         }</>
                     ))}
-                </ContentVertical>
-            </ContentNormal>  
+                </ContentList>
+            </ContentMonth>  
         )
     }
 
     return (
         <ContentEvents>
-            <ContentMonths gap={8}>
+            <ContentVertical gap={8}>
                 {Object.entries(segmentation).length > 0
                     ? Object.entries(segmentation).map((item, idx) =>(
                     <ComponentYear key={"item_"+idx} item={item}/>                       
@@ -174,7 +223,7 @@ const MonthDetails = ({
                         <p>Ningún evento agendado</p>
                     </div>
                 )}
-            </ContentMonths>
+            </ContentVertical>
         </ContentEvents>
     )
 }

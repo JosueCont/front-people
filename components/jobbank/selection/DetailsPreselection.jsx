@@ -130,6 +130,7 @@ const DetailsPreselection = ({
   const actionBack = () =>{
       router.push({
           pathname: '/jobbank/selection',
+          query: newFilters
       })
   }
 

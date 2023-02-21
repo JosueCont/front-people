@@ -92,29 +92,33 @@ export const StatusGuest = styled.span`
 `;
 
 
-export const EventInfo = styled.div`
-    width: 100%;
-    background-color: #ffff;
-    border-radius: 12px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    border: 1px solid rgb(3, 155, 229);
-    transition: 0.5s background-color ease;
-    & p {
-        font-size: 12px;
+export const EventInfo = styled.div(({
+    equals
+}) =>{
+    let color = equals ? 'rgb(3, 155, 229)' : 'rgba(0, 0, 0, 0.25)';
+    return css`
         width: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-bottom: 0px;
-        color:rgb(3, 155, 229);
-        transition: 0.5s color ease;
-    }
-    :hover, :focus-within{
-        background-color: rgb(3, 155, 229);
-        & p, span{
-            color: #ffff;
+        background-color: #ffff;
+        border-radius: 12px;
+        padding: 2px 6px;
+        border: ${`1px solid ${color}`};
+        transition: 0.5s background-color ease;
+        & p {
+            font-size: 12px;
+            width: 100%;
+            max-width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin-bottom: 0px;
+            color: ${color};
+            transition: 0.5s color ease;
         }
-    }
-`;
+        :hover, :focus-within{
+            background-color: ${color};
+            & p, span{
+                color: #ffff;
+            }
+        }
+    `
+});
