@@ -121,7 +121,6 @@ const MainSider = ({
           link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
         }
         // link1.href = "https://admin.demo.sukhatv.com/";
-        link1.target = '_blank';
         link1.click();
         break;
       case "khorflix":
@@ -129,7 +128,6 @@ const MainSider = ({
         const link2 = document.createElement('a');
         link2.href = `https://admin.${getCurrentURL(true, true)}.${urlKhorflx}/validation?token=${token2}`;
         // link1.href = "https://admin.demo.sukhatv.com/";
-        link2.target = '_blank';
         link2.click();
         break;
 
@@ -246,7 +244,7 @@ const MainSider = ({
         children2.push(getItem("Khorflix", "khorflix"))
       }
       if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.is_sukhatv_admin) {
-        children2.push(getItem("Sukha", "sukha"))
+        children2.push(getItem("SukhaTV", "sukha"))
       }
       if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.is_careerlab_admin) {
         children2.push(getItem("Careerlab", "careerlab"))
