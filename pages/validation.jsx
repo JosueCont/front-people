@@ -28,6 +28,7 @@ import {
     delStorage,
     logoutAuth
 } from '../libs/auth';
+import cookie from "js-cookie";
 
 
 const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...props}) => {
@@ -67,8 +68,8 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         },2000)
     }
 
-    const accessSuccess = (jwt) =>{
-        // if(jwt.perms) delete jwt.perms;
+    const accessSuccess =async (jwt) =>{
+        if(jwt.perms) delete jwt.perms;
         Cookies.remove("token")
         Cookies.set("token", jwt)
         setLoading(false)
