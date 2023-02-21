@@ -786,7 +786,7 @@ const ReportsCompetences = ({
         if(currentTab === 'pp'){
 
             let nameFile = usersSelected.length > 0 ? 
-                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
+                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}.csv`
                            : 'Demo.csv'
             setNameFile(nameFile)
             
@@ -998,7 +998,7 @@ const ReportsCompetences = ({
         }
         if(currentTab === 'pp'){
             nameFile = usersSelected.length > 0 ? 
-                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
+                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}`
                            : 'Demo'
         }
         if(currentTab === 'psp'){
