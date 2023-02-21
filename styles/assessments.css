@@ -853,6 +853,14 @@ div.calendar-header.border-card{
     border-bottom: 2px solid #f0f0f0;
 }
 
+div.calendar-interviews.open .ant-picker-panel{
+    display: block;
+}
+
+div.calendar-interviews.close .ant-picker-panel{
+    display: none;
+}
+
 div.calendar-interviews .ant-picker-panel .ant-picker-body th {
     height: inherit;
     line-height: inherit;

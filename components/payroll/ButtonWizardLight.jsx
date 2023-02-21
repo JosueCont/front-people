@@ -37,7 +37,7 @@ const ButtonWizardLight=()=>{
             description: <a style={styles.links} href={'/config/catalogs'} target={'_blank'}>  Ir a configurar <ArrowRightOutlined /></a>,
         },
         {
-            title: '3. Verificar información de la persona (Noómina, Imss, Fecha de ingreso)',
+            title: '3. Verificar información de la persona (Nómina, Imss, Fecha de ingreso)',
             description: <a style={styles.links} href={'/home/persons'} target={'_blank'}> Ir a configurar <ArrowRightOutlined /></a>,
         },
     ]

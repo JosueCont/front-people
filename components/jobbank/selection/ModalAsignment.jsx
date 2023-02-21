@@ -22,6 +22,7 @@ const ModalAsignament = ({
   setMsgHTML,
   setEditorState,
   editorState,
+  isClient = false
 }) => {
 
   const [ formAsignament ] = Form.useForm()
@@ -93,7 +94,7 @@ const ModalAsignament = ({
           <Col span={24}>
             <Form.Item
               name='vacant_assessment'
-              label='Evaluación'
+              label={ isClient? 'Evaluación cliente' : 'Evaluación Khor' }
               rules={ [ruleRequired] }
             >
               <Select disabled = { disable } placeholder="Selecciona una evaluación">

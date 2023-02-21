@@ -14,7 +14,7 @@ const ViewEditSelection = ({
 
   const router = useRouter();
   const [newFilters, setNewFilters] = useState({});
-  const deleteKeys = ['id', 'vacant'];
+  const deleteKeys = ['id', 'vacant', 'tab'];
 
   useEffect(()=>{
     if(Object.keys(router.query).length <= 0) return;
@@ -27,7 +27,7 @@ useEffect(()=>{
 },[currentNode])
 
   const ExtraBread = [
-    {name: 'Selección', URL: '/jobbank/selection'},
+    {name: 'Proceso de selección', URL: '/jobbank/selection'},
     {name: action == 'add' ? 'Nuevo' : 'Detalle de proceso de selección'}
 ]
 

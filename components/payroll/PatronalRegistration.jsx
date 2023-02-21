@@ -82,6 +82,9 @@ const ImssInformationNode = ({
   const [year, setYear] = useState('');
   const [modal, setModal] = useState(false);
 
+  const [hasCredentialInfonavit, setHasCredentialInfonavit] = useState(false)
+  const [hasCredentialIMSS, setHasCredentialIMSS] = useState(false)
+
   const columns = [
     {
       title: "Código",
@@ -314,7 +317,7 @@ const ImssInformationNode = ({
 
   //SE SETEAN LOS VALORES DEL REGISTRO A SUS INPUTS PARA PODER SER EDITADOS
   const editRegister = (item) => {
-    setPatronalData(item);
+    setPatronalData(null);
     setDisabledSwitch(true);
     setIsEdit(true);
     setIdRegister(item.id);
@@ -335,6 +338,8 @@ const ImssInformationNode = ({
       imss_subdelegation: item?.imss_subdelegation,
     });
 
+    setPatronalData(item);
+
     formLegalRep.setFieldsValue({
       name: item?.legal_representative?.name,
       position: item?.legal_representative?.position,
@@ -349,14 +354,15 @@ const ImssInformationNode = ({
     try {
       setLoading(true);
       let dataSend = {
-        patronal_registration_id:dataPatronalRegistration[0].id,
+        patronal_registration_id:patronalData.id,
         node_id:dataPatronalRegistration[0].node
       };
       const syncData = await WebApiPeople.withHoldingNotice(dataSend);
-      setLoading(false);
       if(syncData?.data?.message) message.success(syncData?.data?.message)
     } catch (e) {
       console.log(e)
+    }finally {
+      setLoading(false);
     }
   }
 
@@ -381,7 +387,7 @@ const ImssInformationNode = ({
       let data = {
         period,
         node: dataPatronalRegistration[0].node,
-        patronal_registration: dataPatronalRegistration[0].id
+        patronal_registration: patronalData.id
       }
       const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
       setLoading(false)
@@ -442,7 +448,7 @@ const ImssInformationNode = ({
               <Divider style={{ marginTop: "2px" }} />
               <FormPatronalRegistration
                 patronalRegistration={
-                  patronalData && patronalData.patronal_registartion
+                  patronalData && patronalData.patronal_registration
                 }
                 form={formPatronal}
                 currentNodeId={currentNode.id}
@@ -494,7 +500,7 @@ const ImssInformationNode = ({
             </Title>
           </Row>
           <Divider style={{ marginTop: "2px" }} />
-          <AutomaticMovements patronalData={patronalData} />
+          <AutomaticMovements hasInfonavit={(data)=>setHasCredentialInfonavit(data)} hasImss={(data)=>setHasCredentialIMSS(data)} patronalData={patronalData} />
           <Row>
             <Col>
               <Divider style={{ marginTop: "2px" }} />
@@ -548,36 +554,43 @@ const ImssInformationNode = ({
               </div>
             </Col>
           </Row>
-          <Row justify="space-between">
-            <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-              Movimientos afiliatorios
-            </Title>
-            <Button 
-              onClick={()=>setModal(true)} 
-              form="formGeneric" 
-              htmlType="submit" 
-              style={{marginBottom:'20px'}}>
-              Sincronizar / Solicitar
-            </Button>
-          </Row>
-          <Divider style={{ marginTop: "2px" }} />
-          <AfilliateMovements dataAffiliateMovements={dataPatronalRegistration[0]}/>
 
-          <Row justify="space-between">
-            <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-              Avisos de retenciones
-            </Title>
-            <Button 
-              onClick={syncUpData} 
-              form="formGeneric" 
-              htmlType="submit" 
-              style={{marginBottom:'20px'}}>
-              Sincronizar / Solicitar
-            </Button>
-          </Row>
-            
-          <Divider style={{ marginTop: "2px" }} />
-          <WithHoldingNotice patronalData={dataPatronalRegistration[0]}/>
+            {
+              hasCredentialInfonavit &&
+                <>
+                  <Row justify="space-between">
+                    <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
+                      Movimientos afiliatorios
+                    </Title>
+                    <Button
+                        onClick={()=>setModal(true)}
+                        form="formGeneric"
+                        htmlType="submit"
+                        style={{marginBottom:'20px'}}>
+                      Sincronizar / Solicitar
+                    </Button>
+                  </Row>
+                  <Divider style={{ marginTop: "2px" }} />
+                  <AfilliateMovements id={patronalData.id} node={dataPatronalRegistration[0].node}/>
+
+                  <Row justify="space-between">
+                    <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
+                      Avisos de retenciones
+                    </Title>
+                    <Button
+                        onClick={syncUpData}
+                        form="formGeneric"
+                        htmlType="submit"
+                        style={{marginBottom:'20px'}}>
+                      Sincronizar / Solicitar
+                    </Button>
+                  </Row>
+
+                  <Divider style={{ marginTop: "2px" }} />
+                  <WithHoldingNotice patronalData={dataPatronalRegistration[0]}/>
+
+                </>
+            }
 
           <GenericModal 
             visible={modal}

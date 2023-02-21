@@ -27,6 +27,12 @@ const CalendarHeader = ({
         onChange(value.year(num))
     },[router.query?.year])
 
+    useEffect(()=>{
+        if(!router.query?.mth) return;
+        let num = parseInt(router.query.mth);
+        onChange(current?.year(year).month(num-1))
+    },[router.query?.mth])
+
     const getLabel = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
     const yearsOptions = useMemo(()=>{
@@ -54,39 +60,63 @@ const CalendarHeader = ({
         // if(type == 'month' && month == 11 && year >= maxYear) return;
         if(type == 'month' && month >= 11) return;
         if(type == 'year' && year >= maxYear) return;
-        let next = current?.year(year).month(month+1);
+        // let next = current?.year(year).month(month+1);
         if(type == 'year') onChangeYear(year+1);
-        else onChange(next);
+        else onChangeMonth(month+1);
     }
 
     const prevMonth = () =>{
         // if(type == 'month' && month == 0 && year <= minYear) return;
         if(type == 'month' && month <= 0) return;
         if(type == 'year' && year <= minYear) return;
-        let prev = current?.year(year).month(month-1);
+        // let prev = current?.year(year).month(month-1);
         if(type == 'year') onChangeYear(year-1);
-        else onChange(prev);
+        else onChangeMonth(month-1);
+    }
+
+    const setFilters = (filters = {}) => router.replace({
+        pathname: '/jobbank/interviews',
+        query: filters
+    }, undefined, {shallow: true});
+
+    const onChangeMonth = (month) =>{
+        setFilters({...router.query, mth: month+1})
     }
 
     const onChangeYear = (newYear) =>{
-        router.replace({
-            pathname: '/jobbank/interviews/',
-            query: {...router.query, year: newYear}
-        })
+        setFilters({...router.query, year: newYear})
+    }
+    
+    const onChangeType = (value) =>{
+        let filters = {...router.query, type: value, mth: month+1};
+        if(value == 'year' && filters.mth) delete filters.mth;
+        setFilters(filters)
     }
 
-    const { titlePrev, titleNext} = useMemo(() =>{
-        let titlePrev = '';
-        let titleNext = '';
-        if(type == 'month'){
-            titlePrev = month <= 0 ? '' : 'Mes anterior'; 
-            titleNext =  month >= 11 ? '' : 'Mes siguiente';
-        }
-        if(type == 'year'){
-            titlePrev = year <= minYear ? '' : 'Año anterior';
-            titleNext =  year >= maxYear ? '' : 'Año siguiente';
-        }
-        return { titlePrev, titleNext };
+    const onChangeMode = (value) =>{
+        let filters = {...router.query, view: value};
+        if(router.query?.type == 'year' && filters.mth) delete filters.mth;
+        setFilters(filters)
+    }
+
+    const onChangeToday = () =>{
+        let current_year = moment().year();
+        let filters = {...router.query};
+        if(filters.mth) delete filters.mth;
+        if(filters.year && filters.year != current_year) delete filters.year;
+        setFilters(filters)
+        onChange(moment())
+    }
+
+    const {titlePrev, titleNext} = useMemo(() =>{
+        return {
+            titlePrev: type == 'month'
+                ? month <= 0 ? null : 'Mes anterior'
+                : year <= minYear ? null : 'Año anterior',
+            titleNext: type == 'month'
+                ? month >= 11 ? null : 'Mes siguiente'
+                : year >= maxYear ? null : 'Año siguiente'
+        };
     }, [type, month, year])
 
     return (
@@ -94,15 +124,15 @@ const CalendarHeader = ({
             <div className='calendar-title'>
                 <p role='title'>Calendario</p>
                 <div className='content-end' style={{gap: 8}}>
-                    <Tooltip title={today} placement='bottom'>
-                        <button onClick={()=> onChange(moment())}>Hoy</button>
+                    <Tooltip title={today} placement='top'>
+                        <button onClick={()=> onChangeToday()}>Hoy</button>
                     </Tooltip>
-                    <Tooltip title={titlePrev} placement='bottom'>
+                    <Tooltip title={titlePrev} placement='top'>
                         <button disabled={!titlePrev} role='prev' onClick={()=> prevMonth()}>
                             {`<`}
                         </button>
                     </Tooltip>
-                    <Tooltip title={titleNext} placement='bottom'>
+                    <Tooltip title={titleNext} placement='top'>
                         <button disabled={!titleNext} role='next' onClick={()=> nextMonth()}>
                             {`>`}
                         </button>
@@ -111,6 +141,20 @@ const CalendarHeader = ({
                 <p role='month'>{currentMonth}</p>
             </div>
             <div className='content-end' style={{gap: 8}}>
+                <Select
+                    className='select-jb'
+                    showSearch
+                    value={router.query?.view ?? 'calendar'}
+                    placeholder='Modo'
+                    onChange={onChangeMode}
+                    optionFilterProp='label'
+                    notFoundContent='No se encontraron resultados'
+                    style={{width: '100px'}}
+                    options={[
+                        {value: 'calendar', key: 'calendar', label: 'Calendario'},
+                        {value: 'schedule', key: 'schedule', label: 'Agenda'}
+                    ]}
+                />
                 <Select
                     className='select-jb'
                     showSearch
@@ -126,7 +170,7 @@ const CalendarHeader = ({
                     className='select-jb'
                     value={type}
                     placeholder='Tipo'
-                    onChange={e => onTypeChange(e)}
+                    onChange={onChangeType}
                     optionFilterProp='label'
                     notFoundContent='No se encontraron resultados'
                     style={{width: '80px'}}

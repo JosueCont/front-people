@@ -13,22 +13,21 @@ const WithHoldingNotice = ({patronalData}) => {
         {
            title: "Fecha",
            dataIndex: "generated_date",
-           render:(item) =>(
-                <>{moment(item).format('YYYY-MM-DD')}</>
-           )
+           key:"generated_date",
+            width: 300
         },
         {
           title: "Documento csv",
           dataIndex: "csv_document",
           render:(item) => (
-            item != null ? <><a href={item}  download> <FileExcelOutlined /> Descargar excel</a></> : <span style={{color:'gray'}}>Sin documento</span>
+            item != null ? <><a href={item} download> <FileExcelOutlined /> Descargar excel</a></> : <span style={{color:'gray'}}>Sin documento</span>
           )
         },
         {
             title: "Documento pdf",
             dataIndex: "pdf_document",
             render:(item) => (
-              item != null ? <><a href={item}  download> <FilePdfOutlined /> Descargar pdf</a></> : <span style={{color:'gray'}}>Sin documento</span>
+              item != null ? <><a href={item} target={'_blank'} download> <FilePdfOutlined /> Descargar pdf</a></> : <span style={{color:'gray'}}>Sin documento</span>
             )
           },
     ];
@@ -38,19 +37,17 @@ const WithHoldingNotice = ({patronalData}) => {
     },[]);
 
     const getnotices = async() => {
+        setLoading(true);
         try {
-            let data = [
-                {generated_date:'2023-01-30',csv_document:'prueba.csv',pdf_document:'prueba.pdf'}
-            ];
             const {id,node,} = patronalData;
             let url = `?node_id=${node}&patronal_registration_id=${id}`;
-            setLoading(true);
             const notices = await WebApiPeople.getWithHoldingNotice(url);
             setLoading(false);
             if(notices?.data?.message) setMessage(notices?.data?.message)
             else setData(notices?.data)
         } catch (e) {
             console.log(e)
+            setLoading(false);
         }finally {
             setLoading(false);
         }
