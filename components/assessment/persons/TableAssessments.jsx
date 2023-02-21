@@ -9,10 +9,22 @@ import moment from 'moment/moment';
 import { useSelector } from 'react-redux'
 import { popupWindow, getCurrentURL } from '../../../utils/constant';
 import jwtEncode from "jwt-encode";
-import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
 import CardGeneric from '../../dashboards-cards/CardGeneric';
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import {urlKuizBaseFront, typeHttp} from '../../../config/config'
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Front with Tenant
+const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
 const TableAssessments = ({
   user_profile,
@@ -300,7 +312,7 @@ const TableAssessments = ({
         apply_id: record.id
       }
       const token = jwtEncode(body, 'secret', 'HS256');
-      const url = `${domainKuiz}/?token=${token}`;
+      const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
       // const url = `http://humand.localhost:3002/?token=${token}`;
       popupWindow(url)
     }else{
