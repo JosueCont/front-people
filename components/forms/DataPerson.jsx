@@ -331,6 +331,7 @@ const DataPerson = ({
                       name="avatar"
                       listType="picture-card"
                       showUploadList={false}
+                      accept={'.jpg,.png'}
                       onChange={upImage}
                     >
                       {photo ? (
