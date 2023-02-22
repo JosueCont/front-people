@@ -120,8 +120,8 @@ const Vacationform = ({edit = false,...props}) => {
         antiquity: props.details.collaborator
           ? props.details.collaborator.antiquity
           : null,
-        availableDays: props.details.collaborator
-          ? props.details.collaborator.Available_days_vacation
+        availableDays: props.details
+          ? props.details.available_days_vacation
           : null,
         dateOfAdmission: props.details.collaborator
           ? moment(props.details.collaborator.date_of_admission).format(

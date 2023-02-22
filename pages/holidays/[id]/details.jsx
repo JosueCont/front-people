@@ -253,7 +253,7 @@ const HolidaysDetails = (props) => {
                       optionFilterProp="children"
                       allowClear={true}
                       value={immediateSupervisor}
-                      readOnly
+                      disabled
                       >
                         { listPersons.length > 0 && listPersons.map(item => (
                           <Select.Option value={item.id} key={item.id}>
