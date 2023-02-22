@@ -699,3 +699,12 @@ export const TYPE_LOGS = {
   1: 'Log',
   2: 'Mov. Automáticos' // (Scrapper)
 }
+
+
+// Dashboard
+export const DASHBOARD_WIDGET_URLS = {
+  TOTAL_PEOPLE_IN_NODE: `/person/dashboard/`,
+  ANNIVERSARY_CURRENT_MONTH : `/person/dashboard/`,
+  BIRTHDAY_CURRENT_MONTH : `/person/dashboard/`,
+  PEOPLE_BY_GENDER : `/person/dashboard/`
+}

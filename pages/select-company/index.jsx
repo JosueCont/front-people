@@ -166,7 +166,7 @@ const SelectCompany = ({ ...props }) => {
             switch (router.query.type) {
               case "admin":
                 localStorage.setItem("is_admin", true);
-                useRouter.push("/home/persons");
+                useRouter.push("/dashboard");
                 break;
               case "user":
                 localStorage.setItem("is_admin", false);
@@ -189,7 +189,7 @@ const SelectCompany = ({ ...props }) => {
           }
         } else {
           if (is_admin_people || admin) {
-            useRouter.push("/home/persons");
+            useRouter.push("/dashboard");
           } else {
             useRouter.push("/user");
           }
@@ -360,17 +360,16 @@ const SelectCompany = ({ ...props }) => {
                               <div className="center-content">
                                 <img
                                   alt="example"
-                                  src="/images/empresas.svg"
-                                  style={{ width: "30%" }}
+                                  src="/images/LogoKhorconnect.svg"
+                                  style={{ width: "50%" }}
                                   onError={handleOnError}
                                 />
                               </div>
                             )
                           }
                           style={{
-                            backgroundColor: `#${Math.floor(
-                              Math.random() * 16777215
-                            ).toString(16)}`,
+                            backgroundColor: `#262837`,
+                            padding:40
                           }}
                           onClick={() => setCompanySelect(item)}
                         >
