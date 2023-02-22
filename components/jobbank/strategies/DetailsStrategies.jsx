@@ -127,12 +127,11 @@ const DetailsStrategies = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.client) router.push({
-            pathname: '/jobbank/clients',
-            query: newFilters
-        });
-        else router.push({
-            pathname: '/jobbank/strategies',
+        let url = router.query?.back
+            ? `/jobbank/${router.query?.back}`
+            : '/jobbank/strategies';
+        router.push({
+            pathname: url,
             query: newFilters
         });
     }

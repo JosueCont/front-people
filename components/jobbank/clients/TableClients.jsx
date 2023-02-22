@@ -229,7 +229,7 @@ const TableClients = ({
                             icon={<PlusOutlined />}
                             onClick={()=> router.push({
                                 pathname: '/jobbank/vacancies/add',
-                                query: {...router.query, client: item.id }
+                                query: {...router.query, client: item.id, back: 'clients'}
                             })}
                         >
                             Registrar vacante
@@ -239,7 +239,7 @@ const TableClients = ({
                             icon={<PlusOutlined />}
                             onClick={()=> router.push({
                                 pathname: '/jobbank/profiles/add',
-                                query: {...router.query, client: item.id }
+                                query: {...router.query, client: item.id, back: 'clients'}
                             })}
                         >
                             Registrar template
@@ -249,7 +249,7 @@ const TableClients = ({
                             icon={<PlusOutlined />}
                             onClick={()=> router.push({
                                 pathname: '/jobbank/strategies/add',
-                                query: {...router.query, client: item.id }
+                                query: {...router.query, client: item.id, back: 'clients'}
                             })}
                         >
                             Registrar estrategia
