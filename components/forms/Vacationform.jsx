@@ -202,7 +202,7 @@ const Vacationform = ({edit = false,...props}) => {
             <Col sm={24} md={12} lg={12}>
               <Form.Item rules={[ruleRequired]}>
                 <SelectCollaborator
-                  label="Empleado"
+                  label="Colaborador"
                   name="person"
                   onChange={changePerson}
                   showSearch={true}
