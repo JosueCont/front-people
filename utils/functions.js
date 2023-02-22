@@ -375,7 +375,7 @@ export const UserPermissions = (permits = null, is_admin = false) => {
 
 export const getDomain = (api) => {
   try {
-    let tenat = window.location.hostname.split(".")[0];
+    let tenat = !window.location.hostname.split(".")[0].includes('localhost') ? window.location.hostname.split(".")[0] : 'demo';
     return `${tenat}.${api}`;
   } catch (error) {
     return "error";
