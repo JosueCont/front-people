@@ -1,4 +1,5 @@
 import axiosApi from "./axiosApi";
+import {DASHBOARD_WIDGET_URLS} from '../utils/constant'
 
 class WebApi {
   static ApisType = (url, method = "post", params = {}) => {
@@ -186,6 +187,12 @@ class WebApi {
   static getSystemLog(type=null,page=1,search,_url){
     let url =_url ? _url :  `/business/eventLog/?page=${page}${type ? `&type=${type}`:''}${search ? `&search=${search}`:''}`;
     return WebApi.ApisType(url, "get");
+  }
+
+
+  static getDashboardDataWidget(widget= null, params='' ){
+    let url = DASHBOARD_WIDGET_URLS[widget]
+    return WebApi.ApisType(`${url}${params}`, "get");
   }
 
 }
