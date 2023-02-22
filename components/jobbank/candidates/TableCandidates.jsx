@@ -379,7 +379,10 @@ const TableCandidates = ({
                 return valid ? (
                     <span
                         style={{color: '#1890ff', cursor: 'pointer'}}
-                        onClick={()=> router.push(`/assessment/persons/${item?.user_person}`)}
+                        onClick={()=> router.push({
+                            pathname: `/assessment/persons/${item?.user_person}`,
+                            query: {...router.query, back: 'candidates'}
+                        })}
                     >
                         {getPercentGen(item)}%
                     </span>
