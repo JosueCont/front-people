@@ -170,6 +170,7 @@ const Holidays = (props) => {
                         <SelectCollaborator
                             style={{width:'100%'}}
                           name="collaborator"
+                          showSearch={true}
                         />
                       </Col>
                       <Col md={8} xs={12}>
@@ -262,7 +263,7 @@ const Holidays = (props) => {
                                 key="btn_new"
                             >
                               <PlusOutlined />
-                              Agregar vacaciones
+                              Agregar solicitud
                             </Button>
                         )}
                       </Col>
