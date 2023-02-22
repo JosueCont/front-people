@@ -85,7 +85,7 @@ const SearchInterviews = ({
                     <Col span={24}>
                         <div className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Listado de eventos
+                                Eventos
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>
