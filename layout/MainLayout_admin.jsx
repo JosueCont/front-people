@@ -37,7 +37,6 @@ const MainLayoutAdmin = ({
   const [isOpenModalChangePassword, setIsOpenModalChangePassword] = useState(false);
   const [khonnectId, setKhonnectId] = useState("");
   const [disabledButtonSend, setDisabledButtonSend] = useState(false);
-  const [localStateChangedPassword, setlocalStateChangedPassword] = useState(false);
 
   useEffect(() => {
     try {
@@ -75,24 +74,25 @@ const MainLayoutAdmin = ({
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {
       setMainLogo(props.currentNode.image);
-      validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password, localStateChangedPassword)
+      validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
       if (props.config) props.companySelected(null, props.config);
     }
   }, [props.currentNode, props.config, props.userData]);
 
-  const validateShowModal = (showModal, changePassword, localStateChanged) =>{
-    if(!localStateChanged){
-      if(showModal){
-        if(changePassword){
-          setIsOpenModalChangePassword(false)
-        }else{
+  const validateShowModal = (showModal, changePassword) =>{
+    let localStateChangedPassword = window.sessionStorage.getItem("requestChangePassword")
+    if(showModal){
+      if(!changePassword){
+        if(localStateChangedPassword == null){
           setIsOpenModalChangePassword(true)
         }
       }else{
         setIsOpenModalChangePassword(false)
       }
+    }else{
+      setIsOpenModalChangePassword(false)
     }
   }
 
@@ -114,7 +114,9 @@ const MainLayoutAdmin = ({
       let response = await WebApiPeople.validateChangePassword(data);
       if(response.status == 200){
         setTimeout(() => {
-          setlocalStateChangedPassword(true)
+          if(isBrowser()){
+            window.sessionStorage.setItem("requestChangePassword", "changed")
+          }
           setDisabledButtonSend(false)
           message.success("Cambio de contraseña exitoso");
           setIsOpenModalChangePassword(false)
