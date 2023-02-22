@@ -60,6 +60,7 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
+      dashboard: "/dashboard",
       business: "/business",
       asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
@@ -167,6 +168,7 @@ const MainSider = ({
         getItem("Grupos", "groups_people"),
       ];
       let children90 = [
+        getItem("Dashboard", "dashboard"),
         getItem("Empresa", "company", <></>, children0),
         getItem("Colaboradores", "people", <></>, children0101)
       ]

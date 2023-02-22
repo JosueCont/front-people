@@ -559,22 +559,22 @@ const homeScreen = ({ ...props }) => {
   const menuGeneric = () => {
     return (
       <Menu>
-        {props.currentNode && permissions && (
-          <Menu.Item key="1">
-            <Clipboard
-              text={
-                window.location.origin +
-                "/ac/urn/" +
-                props.currentNode.permanent_code
-              }
-              title={"Link de empresa"}
-              border={false}
-              type={"button"}
-              msg={"Copiado en portapapeles"}
-              tooltipTitle={"Copiar link de auto registro"}
-            />
-          </Menu.Item>
-        )}
+        {/*{props.currentNode && permissions && (*/}
+        {/*  <Menu.Item key="1">*/}
+        {/*    <Clipboard*/}
+        {/*      text={*/}
+        {/*        window.location.origin +*/}
+        {/*        "/ac/urn/" +*/}
+        {/*        props.currentNode.permanent_code*/}
+        {/*      }*/}
+        {/*      title={"Link de empresa"}*/}
+        {/*      border={false}*/}
+        {/*      type={"button"}*/}
+        {/*      msg={"Copiado en portapapeles"}*/}
+        {/*      tooltipTitle={"Copiar link de auto registro"}*/}
+        {/*    />*/}
+        {/*  </Menu.Item>*/}
+        {/*)}*/}
         {permissions.create && props.config?.kuiz_enabled && (
           <>
             <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
@@ -594,9 +594,9 @@ const homeScreen = ({ ...props }) => {
             Eliminar
           </Menu.Item>
         )}
-        <Menu.Item key="3" onClick={() => handleDeactivate()}>
-          Desactivar
-        </Menu.Item>
+        {/*<Menu.Item key="3" onClick={() => handleDeactivate()}>*/}
+        {/*  Desactivar*/}
+        {/*</Menu.Item>*/}
         { showSynchronizeYNL && (
           <Menu.Item key="6"  onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
             Sincronizar YNL
