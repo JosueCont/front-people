@@ -322,8 +322,8 @@ const Holidays = (props) => {
                     dataIndex="available_days"
                     key="available_days"
                     render={(days, record) =>
-                      record.collaborator
-                        ? record.collaborator.Available_days_vacation
+                      record
+                        ? record?.available_days_vacation
                         : null
                     }
                   />
