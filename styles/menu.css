@@ -9,6 +9,12 @@
     color: white;
 }
 
+.ant-menu-root > .ant-menu-item-selected:first-child {
+    background-color: #F99543 !important;
+    color: white !important;
+    border-color:#F99543 !important;
+}
+
 .ant-menu-item{ margin: 0!important;}
 
 .ant-menu-submenu-selected .ant-menu-item-icon,
