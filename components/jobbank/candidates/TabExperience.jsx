@@ -22,7 +22,6 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
-import ListCompetences from './ListCompetences';
 
 const TabExperience = ({
     action,
@@ -36,8 +35,7 @@ const TabExperience = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const [openModalList, setOpenModalList] = useState(false);
-    const [itemSelected, setItemSelected] = useState({});
+    const [withAction, setWithAction] = useState(true);
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -101,11 +99,6 @@ const TabExperience = ({
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
-    const showModalAdd = () =>{
-        setItemToEdit({})
-        setOpenModal(true)
-    }
-
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
@@ -119,36 +112,20 @@ const TabExperience = ({
     const openModalRemove = (item) =>{
         setItemsToDelete([item])
         setOpenModalDelete(true)
+        setWithAction(true)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
+        setWithAction(true)
     }
 
     const showModalList = (item) =>{
-        setItemSelected(item)
-        setOpenModalList(true)
+        setItemsToDelete(item.competences)
+        setOpenModalDelete(true)
+        setWithAction(false)
     }
-
-    const closeModalList = () =>{
-        setItemToEdit({})
-        setOpenModalList(false)
-    }
-
-    const menuTable = () => {
-        return (
-            <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<PlusOutlined/>}
-                    onClick={()=> showModalAdd()}
-                >
-                    Agregar
-                </Menu.Item>
-            </Menu>
-        );
-    };
 
     const menuItem = (item) => {
         return (
@@ -213,15 +190,6 @@ const TabExperience = ({
             }
         },
         {
-            // title: ()=>{
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size={'small'}>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
             title: ()=> (
                 <Button size='small' onClick={()=> setOpenModal(true)}>
                     Agregar
@@ -268,18 +236,18 @@ const TabExperience = ({
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
             />
             <ListItems
-                title='¿Estás seguro de eliminar esta experiencia?'
+                title={withAction
+                    ? '¿Estás seguro de eliminar esta experiencia?'
+                    : 'Listado de competencias'
+                }
                 visible={openModalDelete}
-                keyTitle='category, name'
-                keyDescription='sub_category, name'
+                keyTitle={withAction ? 'category, name' : 'name'}
+                keyDescription={withAction ? 'sub_category, name' : ''}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
-            />
-            <ListCompetences
-                itemSelected={itemSelected}
-                close={closeModalList}
-                visible={openModalList}
+                textCancel={withAction ? 'Cancelar' : 'Cerrar'}
+                useWithAction={withAction}
             />
         </>
     )
