@@ -291,8 +291,8 @@ const Dashboard = () => {
                             }
                         ]
                         if(dataD?.data){
+                            // conseguimos cual se repite mas
                             let maximo = _.max(dataD.data);
-                            console.log(maximo)
                             let maxIdx = dataD.data.findIndex((ele)=> ele===maximo)
                             setMaximunGeneration(dataD?.labels[maxIdx])
                         }
