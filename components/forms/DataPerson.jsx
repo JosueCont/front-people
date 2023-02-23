@@ -60,6 +60,7 @@ const DataPerson = ({
   const [formPerson] = Form.useForm();
   const [photo, setPhoto] = useState(null);
   const [isActive, setIsActive] = useState(false);
+  const [isActiveAdmin, setIsActiveAdmin] = useState(false);
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
@@ -126,6 +127,7 @@ const DataPerson = ({
       is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
       immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
+      is_admin: person.is_admin
     });
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
@@ -157,6 +159,12 @@ const DataPerson = ({
     if (person.timestamp)
       formPerson.setFieldsValue({
         register_date: moment(person.timestamp),
+      });
+
+      if (person.is_admin)
+      setIsActiveAdmin(person.is_admin)
+      formPerson.setFieldsValue({
+        is_admin: person.is_admin,
       });
 
     getGroupPerson(config, person.khonnect_id)
@@ -290,6 +298,10 @@ const DataPerson = ({
         message.error(messageError);
         console.log(error);
       });
+  };
+
+  const changeStatusAdmin = async (value) => {
+    setIsActiveAdmin(value)
   };
 
   const onChangeIngPlatform = (date, dateString) => {
@@ -755,6 +767,19 @@ const DataPerson = ({
                   currentNode={currentNode}
                 />
               </Col>
+              {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
+              <Form.Item
+                  name="is_admin"
+                  label="Es admin"
+                >
+                  <Switch
+                    checked={isActiveAdmin}
+                    onClick={changeStatusAdmin}
+                    checkedChildren="Si"
+                    unCheckedChildren="No"
+                  />
+                </Form.Item>
+                </Col>}
             </Row>
           </Col>
         </Row>
