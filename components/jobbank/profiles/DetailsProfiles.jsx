@@ -149,12 +149,11 @@ const DetailsProfiles = ({
     }
 
     const actionBack = () =>{
-        if(router.query?.client) router.push({
-            pathname: '/jobbank/clients',
-            query: newFilters
-        });
-        else router.push({
-            pathname: '/jobbank/profiles',
+        let url = router.query?.back
+            ? `/jobbank/${router.query?.back}`
+            : '/jobbank/profiles';
+        router.push({
+            pathname: url,
             query: newFilters
         });
     }
