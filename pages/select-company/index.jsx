@@ -103,7 +103,7 @@ const SelectCompany = ({ ...props }) => {
         if (response.data.is_admin) {
           if (personId == "" || personId == null || personId == undefined)
             sessionStorage.setItem("number", response.data.id);
-          getCopaniesList();
+          getCopaniesList(response.data.id);
         } else {
           if (response.data.nodes)
             if (response.data.nodes.length > 1) {
@@ -125,8 +125,8 @@ const SelectCompany = ({ ...props }) => {
       });
   };
 
-  const getCopaniesList = async () => {
-    await WebApiPeople.getCompanys()
+  const getCopaniesList = async (personID) => {
+    await WebApiPeople.getCompanys(personID)
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);

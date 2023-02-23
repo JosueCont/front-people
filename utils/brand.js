@@ -4,7 +4,7 @@ export const getFlavor = () => {
       
           if (typeof window !== 'undefined') {
               let splitDomain = window.location.hostname.split(".")
-              if(splitDomain.length > 0){
+              if(splitDomain.length > 0 && !splitDomain[0].includes('localhost') ){
                   tenant = splitDomain[0]
               }
           }
@@ -23,7 +23,7 @@ export const getFlavor = () => {
       
           if (typeof window !== 'undefined') {
               let splitDomain = window.location.hostname.split(".")
-              if(splitDomain.length > 0){
+              if(splitDomain.length > 0 && !splitDomain[0].includes('localhost') ){
                   tenant = splitDomain[0]
               }
           }

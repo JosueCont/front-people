@@ -284,14 +284,15 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col style={{ width: 'auto', textAlign: "end" }}>
               {person && (
                 <div
                   className={"pointer"}
                   style={{ float: "right" }}
                   key={"menu_user_" + props.currentKey}
                 >
-                  <Space size={"middle"}>
+                  <Space size={"large"}>
+                    <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span>
                     <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill

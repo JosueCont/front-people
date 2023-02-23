@@ -1,34 +1,16 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { validateTokenKhonnect } from '../api/apiKhonnect';
 import WebApiIntranet from '../api/WebApiIntranet';
 import WebApiPeople from '../api/WebApiPeople';
-import {
-    doGetGeneralConfig,
-    setUserPermissions
-} from '../redux/UserDuck';
-import {
-    LoadingOutlined,
-    CloseCircleFilled,
-    CheckCircleFilled,
-    InfoCircleFilled
-} from '@ant-design/icons';
-import {
-    Content,
-    ContentVerify,
-    ContentVertical
-} from '../components/validation/styled';
+import { doGetGeneralConfig, setUserPermissions } from '../redux/UserDuck';
+import { LoadingOutlined, CloseCircleFilled, CheckCircleFilled } from '@ant-design/icons';
+import { Content, ContentVerify, ContentVertical } from '../components/validation/styled';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
-import {
-    setStorage,
-    getStorage,
-    delStorage,
-    logoutAuth
-} from '../libs/auth';
-import cookie from "js-cookie";
+import { setStorage, getStorage, delStorage, logoutAuth } from '../libs/auth';
 
 
 const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...props}) => {
@@ -37,7 +19,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [personInfo, setPersonInfo] = useState();
+    // const [personInfo, setPersonInfo] = useState();
     const [statusConfig, setStatusConfig] = useState(false);
 
     useEffect(()=>{

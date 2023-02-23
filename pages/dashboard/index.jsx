@@ -10,6 +10,7 @@ import {
     Statistic,
     Avatar
 } from "antd";
+import { useSelector } from "react-redux";
 import {
     ReloadOutlined,
     ManOutlined,
@@ -23,6 +24,7 @@ import {withAuthSync} from "../../libs/auth";
 import webApi from "../../api/webApi";
 import {useRouter} from "next/router";
 import moment from 'moment'
+moment.locale("es");
 
 const { Title } = Typography;
 
@@ -41,6 +43,7 @@ const Dashboard = () => {
     const [aniversaryPeople, setAniversaryPeople] = useState(null)
     const [birthDayPeople, setBirthDayPeople] = useState(null)
     const [peopleByGender, setPeopleByGender] = useState(null)
+    const company = useSelector(state => state.userStore.current_node);
 
     useEffect(()=>{
         if(node){
@@ -75,7 +78,7 @@ const Dashboard = () => {
                 }}
             >
                 {
-                    totalPerson ? <Statistic title="" value={totalPerson} precision={0} /> : <ReloadOutlined  spin />
+                    totalPerson ? <Title style={{cursor:'pointer'}} onClick={()=>router.push(`/home/persons/`) } level={1}>{totalPerson}</Title> : <ReloadOutlined  spin />
                 }
             </Card>
         )
@@ -168,12 +171,13 @@ const Dashboard = () => {
                 }}
             >
                 {
-                    peopleByGender ?<Row gutter={16}>
+                    peopleByGender ?
+                        <Row gutter={16}>
                        <Col span={8}>
-                           <Statistic prefix={<ManOutlined style={{color:'#EC23FC'}} />} title="Masculino" value={peopleByGender['Masculino']} />
+                           <Statistic prefix={<ManOutlined style={{color:'#2351FC'}}  />} title="Masculino" value={peopleByGender['Masculino']} />
                        </Col>
                         <Col span={8}>
-                            <Statistic prefix={<WomanOutlined style={{color:'#2351FC'}}  />} title="Femenino" value={peopleByGender['Femenino']} />
+                            <Statistic prefix={<WomanOutlined  style={{color:'#EC23FC'}}   />} title="Femenino" value={peopleByGender['Femenino']} />
                         </Col>
                         <Col span={8}>
                             <Statistic title="Otro" value={peopleByGender['Otro']} />
@@ -230,19 +234,20 @@ const Dashboard = () => {
             <MainLayout currentKey={["dashboard"]}>
                 <Row style={{marginTop:50}}>
                     <Col>
-                        <Title level={1}>Dashboard</Title>
+                        <Title style={{marginBottom:0}} level={1}>{company && company.name}</Title>
+                        <p>{moment().format('LLL')}</p>
                     </Col>
                 </Row>
                 <Row gutter={[16]} style={{marginBottom:50}}>
-                    <Col md={8} xs={12}>
+                    <Col md={8} sm={12}>
                         <WidgetTotalPeople/>
                         <br/>
                         <WidgetPeopleByGender/>
                     </Col>
-                    <Col md={8} xs={12}>
+                    <Col md={8} sm={12}>
                         <WidgetAniversaryPeople/>
                     </Col>
-                    <Col md={8} xs={24}>
+                    <Col md={8} sm={12}>
                         <WidgetBirthDayPeople/>
                     </Col>
                 </Row>
