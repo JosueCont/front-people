@@ -347,20 +347,23 @@ const ReportsCompetences = ({
         let list_columns = [...columns_many];
         info_columns.map((item, idx) =>{
             let title = subTitle(item)
+            let exist = list_columns.some(record => record.comp == title)
+            if(exist) title = subTitle(item, title.length + 1)
             list_columns.push({
                 title: ()=>{
                     return (
                         <Tooltip title={item.competence?.name}>
-                            <span>{item.competence?.name.substring(0,3).toUpperCase()} ({item.level})</span>
+                            <span>{title} ({item.level})</span>
                         </Tooltip>
                     )
                 },
+                comp: title,
                 width: 30,
                 align: 'center',
                 show: true,
                 render: (record) =>{
                     return (
-                        <span>{getLevelPerson(record, idx)}</span>
+                        <span>{getLevelPerson(record, item?.competence?.id)}</span>
                     )
                 }
             })
@@ -424,8 +427,14 @@ const ReportsCompetences = ({
             : 'Pendiente';
     }
 
-    const getLevelPerson = ({profiles}, index) =>{
-        return profiles ? profiles?.at(-1).competences[index]?.level_person : 'N/A';
+    const getLevelPerson = (record, id) =>{
+       if(!id) return 'N/A'
+       const find_ = item => item.id == id
+       let profiles = record?.profiles?.at(-1).competences
+       if(!profiles) return 'N/A'
+       let result = profiles.find(find_)
+       if(!result) return 'N/A'
+       return result.level_person
     }
 
     const getProfile = (item) =>{
@@ -777,7 +786,7 @@ const ReportsCompetences = ({
         if(currentTab === 'pp'){
 
             let nameFile = usersSelected.length > 0 ? 
-                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
+                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}.csv`
                            : 'Demo.csv'
             setNameFile(nameFile)
             
@@ -900,11 +909,19 @@ const ReportsCompetences = ({
                 if (a.name < b.name) return -1;
                 return 0;
             }).forEach((com) => {
-                rowReaders.push({
+                let exist = rowReaders.find((row) => row.key == com.name.substring(0,3).toUpperCase())
+                if(exist) {
+                    rowReaders.push({
+                        label: com.name.substring(0,4).toUpperCase() + ` (${com.level_profile})`,
+                        key: com.name.substring(0,4).toUpperCase()
+                    })
+                } else {
+                    rowReaders.push({
                     label: com.name.substring(0,3).toUpperCase() + ` (${com.level_profile})`,
                     key: com.name.substring(0,3).toUpperCase()
                 })
-                
+                }
+
             })
 
             rowReaders.push({
@@ -927,7 +944,9 @@ const ReportsCompetences = ({
 
                 let recuArrayV2 = recuArray.reduce((acc, current, index) => {
 
-                    let nameCom = current.name.substring(0,3).toUpperCase()
+                    let nameCom = acc[current.name.substring(0,3).toUpperCase()] !== undefined ?
+                                    current.name.substring(0,4).toUpperCase()
+                                : current.name.substring(0,3).toUpperCase()
                     
                     return{...acc, [nameCom] : current.level_person}
                 }, object)
@@ -968,12 +987,27 @@ const ReportsCompetences = ({
 
     }
 
-    let MyDoc = ({user, columns, data }) => <PDFReport user={user} columns={columns} data={data}/>
+    let MyDoc = ({user, columns, data }) => <PDFReport user={user} currentTab={currentTab} columns={columns} data={data} profilesSelected = {profilesSelected}/>
 
     const linkTo = (url, download = false ) =>{
         let nameFile = ''
         if(currentTab === 'p'){
-            nameFile = `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
+            nameFile = usersSelected.length > 0 ? 
+            `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
+           : 'Demo'
+        }
+        if(currentTab === 'pp'){
+            nameFile = usersSelected.length > 0 ? 
+                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}`
+                           : 'Demo'
+        }
+        if(currentTab === 'psp'){
+            nameFile = profilesSelected.length > 0 ? `Personas Perfil - ${profilesSelected[0].name}` : 'Demo'
+        }
+        if(currentTab === 'pps'){
+            nameFile = usersSelected.length > 0 ? 
+            `Persona Perfiles - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
+            : 'Demo'
         }
         const link = document.createElement("a");
         link.href = url;
@@ -983,7 +1017,7 @@ const ReportsCompetences = ({
     }
 
 
-    const generatePDF = async (download) => {
+    const generatePDF = async () => {
         const key = 'updatable';
         let columns = getColumns();
         let data = getDataReport();
@@ -996,7 +1030,7 @@ const ReportsCompetences = ({
                 message.success({content: 'PDF generado', key})
             }, 1000)
             setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
+                linkTo(url+'#toolbar=0', true);
             },2000)
         } catch (e) {
             console.log(e)
@@ -1019,13 +1053,24 @@ const ReportsCompetences = ({
             label: 'PDF',
             key: 2,
             onClick: () => {
-                generatePDF(true)
+                generatePDF()
             }
         }
+
+    ]
+
+    const item = [
+        {
+            label: 'Excel',
+            key: 1,
+            onClick: () => {
+                generateExcelReport()
+            }
+        },
     ]
 
     const menuDropdown = (
-        <Menu items={items} />
+        <Menu items={currentTab !== 'psc'? items : item} />
     )
 
     return (
