@@ -1,5 +1,4 @@
 import WebApi from "./webApi";
-import { getJobRisk } from "../redux/catalogCompany";
 
 class WebApiPeople {
   static getGeneralConfig() {
