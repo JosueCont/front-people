@@ -1,20 +1,10 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import {
-    Content,
-    ContentVerify,
-    ContentVertical
-} from '../components/validation/styled';
-import {
-    LoadingOutlined,
-    CloseCircleFilled,
-    CheckCircleFilled,
-    InfoCircleFilled
-} from '@ant-design/icons';
+import { Content, ContentVerify, ContentVertical } from '../components/validation/styled';
+import { LoadingOutlined, CloseCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import WebApiPeople from '../api/WebApiPeople';
-import { getCurrentURL, redirectTo } from '../utils/constant';
-import { urlPeople } from '../config/config';
+import { redirectTo } from '../utils/constant';
 import { useRouter } from 'next/router';
 
 const validationKhor = ({userInfo, appsInfo, ...props}) => {
