@@ -103,7 +103,7 @@ const SelectCompany = ({ ...props }) => {
         if (response.data.is_admin) {
           if (personId == "" || personId == null || personId == undefined)
             sessionStorage.setItem("number", response.data.id);
-          getCopaniesList(personId);
+          getCopaniesList(response.data.id);
         } else {
           if (response.data.nodes)
             if (response.data.nodes.length > 1) {
