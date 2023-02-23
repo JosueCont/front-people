@@ -708,5 +708,6 @@ export const DASHBOARD_WIDGET_URLS = {
   TOTAL_PEOPLE_IN_NODE: `/person/dashboard/`,
   ANNIVERSARY_CURRENT_MONTH : `/person/dashboard/`,
   BIRTHDAY_CURRENT_MONTH : `/person/dashboard/`,
-  PEOPLE_BY_GENDER : `/person/dashboard/`
+  PEOPLE_BY_GENDER : `/person/dashboard/`,
+  PEOPLE_BY_GENERATION : `/person/dashboard/`,
 }

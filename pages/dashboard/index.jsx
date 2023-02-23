@@ -24,6 +24,8 @@ import {withAuthSync} from "../../libs/auth";
 import webApi from "../../api/webApi";
 import {useRouter} from "next/router";
 import moment from 'moment'
+import _ from 'lodash'
+import ChartDoughnut from "../../components/dashboards-cards/ChartDoughnut";
 moment.locale("es");
 
 const { Title } = Typography;
@@ -33,6 +35,7 @@ const TOTAL_PEOPLE_IN_NODE = "TOTAL_PEOPLE_IN_NODE";
 const ANNIVERSARY_CURRENT_MONTH = "ANNIVERSARY_CURRENT_MONTH";
 const BIRTHDAY_CURRENT_MONTH = "BIRTHDAY_CURRENT_MONTH";
 const PEOPLE_BY_GENDER = "PEOPLE_BY_GENDER";
+const PEOPLE_BY_GENERATION = "PEOPLE_BY_GENERATION";
 
 const Dashboard = () => {
 
@@ -43,6 +46,8 @@ const Dashboard = () => {
     const [aniversaryPeople, setAniversaryPeople] = useState(null)
     const [birthDayPeople, setBirthDayPeople] = useState(null)
     const [peopleByGender, setPeopleByGender] = useState(null)
+    const [peopleByGenenation, setPeopleByGeneration] = useState(null)
+    const [maximunGeneration, setMaximunGeneration] = useState(null)
     const company = useSelector(state => state.userStore.current_node);
 
     useEffect(()=>{
@@ -51,6 +56,7 @@ const Dashboard = () => {
             getDashboardWidget(ANNIVERSARY_CURRENT_MONTH, `?widget_code=${ANNIVERSARY_CURRENT_MONTH}&node_id=${node}`)
             getDashboardWidget(BIRTHDAY_CURRENT_MONTH, `?widget_code=${BIRTHDAY_CURRENT_MONTH}&node_id=${node}`)
             getDashboardWidget(PEOPLE_BY_GENDER, `?widget_code=${PEOPLE_BY_GENDER}&node_id=${node}`)
+            getDashboardWidget(PEOPLE_BY_GENERATION, `?widget_code=${PEOPLE_BY_GENERATION}&node_id=${node}`)
         }
     },[node])
 
@@ -156,6 +162,49 @@ const Dashboard = () => {
         )
     }
 
+    const WidgetGeneracionalPeople=()=>{
+
+        const dataWidget = {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [
+                {
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1,
+                },
+            ],
+            };
+
+        return (
+            <Card
+                title={
+                    <span>
+                    <img src={'/images/people.png'} width={35} style={{marginRight:10}}/>
+                    Generaciones
+                </span>
+                }
+                style={{
+                    width: '100%',
+                    minHeight:185
+                }}
+            >
+                {
+                    peopleByGenenation ?<div>
+                        <ChartDoughnut data={peopleByGenenation} />
+                        <p>Predominante: {maximunGeneration}</p>
+                        {/*<Button>Ver todos</Button>*/}
+                    </div>  : <ReloadOutlined  spin />
+                }
+            </Card>
+        )
+    }
+
+
     const WidgetPeopleByGender=()=>{
         return (
             <Card
@@ -207,11 +256,59 @@ const Dashboard = () => {
                 case PEOPLE_BY_GENDER:
                     setPeopleByGender(res?.data?.data)
                     break;
+                case PEOPLE_BY_GENERATION:
+                    console.log(res.data)
+                    if(res.data){
+                        let dataD = {...res.data};
+                    //     datasets: [
+                    //         {
+                    //             label: '# of Votes',
+                    //             data: [12, 19, 3, 5, 2, 3],
+                    //             backgroundColor: [
+                    //                 'rgba(255, 99, 132, 1)',
+                    //                 'rgba(54, 162, 235, 1)',
+                    //                 'rgba(255, 206, 86, 1)',
+                    //                 'rgba(75, 192, 192, 1)',
+                    //                 'rgba(153, 102, 255, 1)',
+                    //                 'rgba(255, 159, 64, 1)',
+                    //             ],
+                    //             borderWidth: 1,
+                    //         },
+                    //     ],
+                    // };
+                        dataD.datasets= [
+                            {
+                                label: '# of Votes',
+                                data: res?.data?.data,
+                                backgroundColor: [
+                                    'rgba(208, 0, 0,1)',
+                                    'rgba(255, 186, 8,1)',
+                                    'rgba(63, 136, 197,1)',
+                                    'rgba(3, 43, 67,1)',
+                                    'rgba(19, 111, 99,1)',
+                                    'rgba(41, 63, 20,1)',
+                                ]
+                            }
+                        ]
+                        if(dataD?.data){
+                            // conseguimos cual se repite mas
+                            let maximo = _.max(dataD.data);
+                            let maxIdx = dataD.data.findIndex((ele)=> ele===maximo)
+                            setMaximunGeneration(dataD?.labels[maxIdx])
+                        }
+                        console.log(dataD.data)
+                        setPeopleByGeneration(dataD)
+                    }else{
+                        setPeopleByGeneration(null)
+                    }
+
+
+
+                    break;
                 default:
                     break;
 
             }
-            console.log(res)
         }catch (e){
             console.log(e)
 
@@ -249,6 +346,12 @@ const Dashboard = () => {
                     </Col>
                     <Col md={8} sm={12}>
                         <WidgetBirthDayPeople/>
+                    </Col>
+                </Row>
+                <Row gutter={[16]} style={{marginBottom:50}}>
+
+                    <Col md={8} sm={12}>
+                        <WidgetGeneracionalPeople/>
                     </Col>
                 </Row>
             </MainLayout>
