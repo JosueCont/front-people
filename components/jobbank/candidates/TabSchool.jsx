@@ -208,7 +208,7 @@ const TabSchool = ({
                         key='4'
                         icon={<EyeOutlined />}
                         onClick = {() => {
-                            linkTo(item.file)
+                            linkTo(item.url_file)
                         }}
                     >
                         Ver certificado
