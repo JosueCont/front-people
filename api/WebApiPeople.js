@@ -543,7 +543,11 @@ class WebApiPeople {
 
   static validateChangePassword(data){
     return WebApi.ApisType(`/person/change-password/`,"post",data)
-  }  
+  }
+  
+  static assignedMassiveImmediateSupervisor(data){
+    return WebApi.ApisType(`/person/person/set-immediate-supervisor/`,"post",data)
+  } 
 
 }
 

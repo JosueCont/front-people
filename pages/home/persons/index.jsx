@@ -31,7 +31,8 @@ import {
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
-  UserAddOutlined
+  UserAddOutlined,
+  UserSwitchOutlined
 } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
@@ -120,6 +121,7 @@ const homeScreen = ({ ...props }) => {
   const [wtSelct, setWtSelct] = useState(null);
   const [addPersonCfi, setPersonCfi] = useState(false)
   const [listPersons, setListPersons] = useState([]);
+  const [isLoadingImmediateSupervisor, setIsLoadingImmediateSupervisor] = useState(false);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -606,7 +608,7 @@ const homeScreen = ({ ...props }) => {
             Sincronizar YNL
           </Menu.Item>
         )}
-        <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<SyncOutlined />}>
+        <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
       </Menu>
@@ -693,7 +695,7 @@ const homeScreen = ({ ...props }) => {
         )}
         <Menu.Item
           key="7"
-          icon={<SyncOutlined />}
+          icon={<UserSwitchOutlined />}
           onClick={ () => {
             setPersonsToAddImmediateSupervisor([item]), setModalAddImmediateSupervisor(true);
           }}
@@ -897,7 +899,7 @@ const homeScreen = ({ ...props }) => {
 
   const AlertAddImmediateSupervisor = () => (
     <div>
-      <b>Colaboradores a asignar:</b>
+      {personsToAddImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
       <br /><br />
       <ListElementsToAddImmediateSupervisor personsToAddImmediateSupervisor={personsToAddImmediateSupervisor} />
     </div>
@@ -1113,10 +1115,11 @@ const homeScreen = ({ ...props }) => {
 
   const finishImmediateSupervisor = (value) =>{
     let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
-    validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe") : assignedImmediateSupervisor(value.immediate_supervisor)
+    validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe inmediato") : assignedImmediateSupervisor(value.immediate_supervisor)
   }
 
   const assignedImmediateSupervisor = (immediate_supervisor) => {
+    setIsLoadingImmediateSupervisor(true)
     let ids = null;
     if (personsToAddImmediateSupervisor.length == 1) {
       ids = personsToAddImmediateSupervisor[0].id;
@@ -1128,6 +1131,20 @@ const homeScreen = ({ ...props }) => {
     }
     let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
     console.log("Data a enviar",data)
+    WebApiPeople.assignedMassiveImmediateSupervisor(data)
+    .then((response) => {
+      message.success("Asignado correctamente.");
+      setIsLoadingImmediateSupervisor(false);
+      setModalAddImmediateSupervisor(false);
+      setPersonsToAddImmediateSupervisor([]);
+      formAddImmediateSupervisor.resetFields();
+      filterPersonName();
+    })
+    .catch((error) => {
+      setIsLoadingImmediateSupervisor(false);
+      console.log(error);
+      message.error("Error al asignar");
+    });
   };
 
   useEffect(() => {
@@ -1681,7 +1698,7 @@ const homeScreen = ({ ...props }) => {
                 </Button>
               </Col>
               <Col span={6}>
-                <Button style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                <Button loading={isLoadingImmediateSupervisor} style={{width:'100%'}} className="btn-filter" htmlType="submit">
                   Asignar
                 </Button>
               </Col>         
