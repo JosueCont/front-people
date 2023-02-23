@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
-import { Row, Col, Form, Select, Input, Button, DatePicker, Checkbox, Typography} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import { optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace, ruleURL } from '../../../utils/rules';
 import FileUpload from '../FileUpload';
@@ -23,42 +22,49 @@ const ModalEducation = ({
     } = useSelector(state => state.jobBankStore);
     const [formEducation] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [document, setDocument] = useState([])
+    const [certificate, setCertificate] = useState([])
     const status = Form.useWatch('status', formEducation);
-    const { Text } = Typography
-    const typeFileCV = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
+    const noValid = [undefined, null, "", " "];
+    const typeFile = ['pdf','png','jpg','jpeg','xlsx','docx','pptx','pub'];
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
-        if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
-        if(itemToEdit.file) itemToEdit.file = itemToEdit.file.split('/').at(-1) || ''
-        formEducation.setFieldsValue({
-            ...itemToEdit,
-            study_level: itemToEdit.study_level?.id ?? null
-        });
+        let values = {...itemToEdit};
+        values.end_date = itemToEdit.end_date ? moment(itemToEdit.end_date) : null;
+        values.certificate = itemToEdit.file ? itemToEdit.file.split('/').at(-1) : null;
+        values.study_level = itemToEdit.study_level?.id ?? null;
+        formEducation.setFieldsValue(values);
     },[itemToEdit])
 
     const onCloseModal = () =>{
         close()
+        setCertificate([])
         formEducation.resetFields();
     }
 
-    const setValue = (key, val) => formEducation.setFieldsValue({[key]: val});
-    const setEndDate = (val = null) => setValue('end_date', val);
+    const createData = (values) =>{
+        let educationData = new FormData();
+        if(certificate.length > 0) educationData.append('file', certificate[0]);
+        Object.entries(values).map(([key, val]) =>{
+            let value = noValid.includes(val) ? "" : val;
+            educationData.append(key, value);
+        })
+        return educationData;
+    }
 
     const onFinish = (values) =>{
-        if(document.length > 0) values.file = document[0]
         if(values.end_date) values.end_date = values.end_date.format('YYYY-MM-DD');
+        let body = createData(values);
         setLoading(true);
         setTimeout(()=>{
             setLoading(false)
             onCloseModal()
-            actionForm(values)
+            actionForm(body)
         },2000)
     }
 
     const onChangeStatus = (value) =>{
-        if(value == 1) setEndDate();
+        if(value == 1) formEducation.setFieldsValue({end_date: null});
     }
 
     const disabledDate = (current) => {
@@ -68,7 +74,7 @@ const ModalEducation = ({
     return (
         <MyModal
             title={title}
-            widthModal={800}
+            widthModal={700}
             close={onCloseModal}
             visible={visible}
             closable={!loading}
@@ -142,7 +148,7 @@ const ModalEducation = ({
                             <Input maxLength={200} placeholder='Escriba el nombre de la institución'/>
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
+                    <Col span={12}>
                         <Form.Item
                             name='specialitation_area'
                             label='Carrera / especialización'
@@ -150,31 +156,28 @@ const ModalEducation = ({
                             <Input maxLength={500} placeholder='Escriba el nombre de la carrera o especialzación'/>
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
-                        <Text style={{ fontWeight: 'bold' }}>Adjuntar certificado de estudios</Text>
-                    </Col>
-                    <Col span={24} style={{ marginTop: 10 }}>
+                    <Col span={12}>
                         <FileUpload 
-                            label='Archivo'
-                            keyName='file'
-                            tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
+                            label='Certificado de estudios'
+                            keyName='certificate'
+                            tooltip={`Archivos permitidos: ${typeFile.join(', ')}.`}
                             isRequired={false}
-                            // download={true}
-                            // urlPreview={infoCandidate?.cv}
-                            setFile={setDocument}
-                            typeFile={typeFileCV}
+                            download={true}
+                            urlPreview={itemToEdit?.file}
+                            setFile={setCertificate}
+                            typeFile={typeFile}
                             setNameFile={e => formEducation.setFieldsValue({
-                                file: e
+                                certificate: e
                             })}
                         />
                     </Col>
                     <Col span={24}>            
                        <Form.Item
                            name='url_file'
-                           label='URL'
+                           label='URL del certificado'
                            rules={[ruleURL]}
                        >
-                            <Input />
+                            <Input placeholder='URL del certificado'/>
                        </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
