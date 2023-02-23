@@ -126,7 +126,7 @@ const SelectCompany = ({ ...props }) => {
   };
 
   const getCopaniesList = async () => {
-    await WebApiPeople.getCompanys()
+    await WebApiPeople.getCompanys(props?.user?.id)
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
