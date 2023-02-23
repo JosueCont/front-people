@@ -6,7 +6,8 @@ import {
     Button,
     message,
     Select,
-    Space
+    Space,
+    Tooltip
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -23,8 +24,8 @@ import { popupPDF, downloadCustomFile } from '../../../utils/functions';
 import ListItems from '../../../common/ListItems';
 import ModalReferences from './ModalReferences';
 import { optionsStatusReferences } from '../../../utils/constant';
-import ModalRejected from './ModalRejected';
-import { EditorState, convertFromHTML, ContentState } from 'draft-js';
+// import ModalRejected from './ModalRejected';
+// import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const TabReferences = ({
     action,
@@ -38,13 +39,15 @@ const TabReferences = ({
     const [infoReferences, setInfoReferences] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [openModalReject, setOpenModalReject] = useState(false);
-    const [visibleFooter, setVisibleFooter] = useState(true);
+    // const [openModalReject, setOpenModalReject] = useState(false);
+    // const [visibleFooter, setVisibleFooter] = useState(true);
     const [itemToEdit, setItemToEdit] = useState({});
-    const [itemToReject, setItemToReject] = useState({});
+    // const [itemToReject, setItemToReject] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const [msgHTML, setMsgHTML] = useState("<p></p>");
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    // const [msgHTML, setMsgHTML] = useState("<p></p>");
+    // const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [isReject, setIsReject] = useState(false);
+    const [useWithAction, setUseWithAction] = useState(true);
     
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -109,66 +112,69 @@ const TabReferences = ({
     }
 
     const actionStatus = async (value, item) =>{
-        if(value !== 3){
-            try {
-                let body = {file_name: item.file_name, status: value};
-                await WebApiJobBank.updateReference(item.id, body);
-                message.success('Estatus actualizado');
-                getInfoReference(router.query.id);
-            } catch (e) {
-                console.log(e)
-                message.error('Estatus no actualizado');
-            }
-        } else  {
-            openReject(item)
+        if(value == 3){
+            openModalEdit({...item, status: value})
+            setIsReject(true)
+            return;
         }
-    }
-
-    const actionRejectstatus = async () => {
         try {
-            let body = {
-                status: 3,
-                file_name: itemToReject.file_name,
-                comments: msgHTML
-            }
-            await WebApiJobBank.updateReference(itemToReject.id, body);
+            let body = {file_name: item.file_name, status: value};
+            await WebApiJobBank.updateReference(item.id, body);
             message.success('Estatus actualizado');
             getInfoReference(router.query.id);
-            setItemToEdit({})
-        } catch (error) {
-            console.log(error)
+        } catch (e) {
+            console.log(e)
             message.error('Estatus no actualizado');
-            setItemToEdit({})
         }
-
     }
 
+    // const actionRejectstatus = async () => {
+    //     try {
+    //         let body = {
+    //             status: 3,
+    //             file_name: itemToReject.file_name,
+    //             comments: msgHTML
+    //         }
+    //         await WebApiJobBank.updateReference(itemToReject.id, body);
+    //         message.success('Estatus actualizado');
+    //         getInfoReference(router.query.id);
+    //         setItemToEdit({})
+    //     } catch (error) {
+    //         console.log(error)
+    //         message.error('Estatus no actualizado');
+    //         setItemToEdit({})
+    //     }
+
+    // }
 
     const openModalEdit = (item)=>{
         setItemToEdit(item)
         setOpenModal(true)
+        setIsReject(false)
     }
 
-    const openModalRemove = (item) =>{
+    const openModalRemove = (item, withAcion = true) =>{
         setItemsToDelete([item])
         setOpenModalDelete(true)
+        setUseWithAction(withAcion)
     }
 
-    const openReject = (item, visibleFooter) => {
-        setOpenModalReject(true)
-        setItemToReject(item)
-        if(visibleFooter) setVisibleFooter(false)
-        if(!item.comments) return;
-        setMsgHTML(item.comments);
-        let convert = convertFromHTML(item.comments);
-        let htmlMsg = ContentState.createFromBlockArray(convert);
-        let template = EditorState.createWithContent(htmlMsg);
-        setEditorState(template);
-    }
+    // const openReject = (item, visibleFooter) => {
+    //     setOpenModalReject(true)
+    //     setItemToReject(item)
+    //     if(visibleFooter) setVisibleFooter(false)
+    //     if(!item.comments) return;
+    //     setMsgHTML(item.comments);
+    //     let convert = convertFromHTML(item.comments);
+    //     let htmlMsg = ContentState.createFromBlockArray(convert);
+    //     let template = EditorState.createWithContent(htmlMsg);
+    //     setEditorState(template);
+    // }
 
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
+        setIsReject(false)
     }
 
     const closeModalDelete = () =>{
@@ -176,23 +182,15 @@ const TabReferences = ({
         setItemsToDelete([])
     }
 
-    const closeModalRejected = () => {
-        setOpenModalReject(false)
-        setMsgHTML('<p></p>');
-        setItemToReject({})
-        setEditorState(EditorState.createEmpty())
-        setVisibleFooter(true)
-    }
-
-    console.log('ItemToedit', itemToEdit)
+    // const closeModalRejected = () => {
+    //     setOpenModalReject(false)
+    //     setMsgHTML('<p></p>');
+    //     setItemToReject({})
+    //     setEditorState(EditorState.createEmpty())
+    //     setVisibleFooter(true)
+    // }
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
-
-    // const onChangePage = (e1, e2, e3) =>{
-    //     console.log('e1--------->', e1)
-    //     console.log('e2----------->', e2)
-    //     console.log('e3---------->', e3)
-    // }
 
     const menuItem = (item) => {
         return (
@@ -266,24 +264,20 @@ const TabReferences = ({
             render: (item) =>{
                 return(
                     <Space>
-                    <Select
-                        size='small'
-                        style={{width: 101}}
-                        defaultValue={item.status}
-                        value={item.status}
-                        placeholder='Estatus'
-                        options={optionsStatusReferences}
-                        onChange={(e) => actionStatus(e, item)}
-                    />
-                    {
-                        item.status === 3 &&
-
-                        <Button 
-                            icon={<EyeOutlined />}
-                            onClick={() => openReject(item, true)}
+                        <Select
+                            size='small'
+                            style={{width: 105}}
+                            defaultValue={item.status}
+                            value={item.status}
+                            placeholder='Estatus'
+                            options={optionsStatusReferences}
+                            onChange={(e) => actionStatus(e, item)}
                         />
-                    }
-
+                        {item.status === 3 && (
+                            <Tooltip title='Ver motivo'>
+                                <EyeOutlined onClick={() => openModalRemove(item, false)}/>
+                            </Tooltip>
+                        )}
                     </Space>
                 )
             }
@@ -316,7 +310,6 @@ const TabReferences = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                // onChange={onChangePage}
                 dataSource={infoReferences}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
@@ -328,14 +321,15 @@ const TabReferences = ({
                 }}
             />
             <ModalReferences
-                title={isEdit ? 'Actualizar archivo' : 'Agregar archivo'}
+                title={isEdit ? isReject ? 'Rechazar archivo' : 'Actualizar archivo' : 'Agregar archivo'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
+                isReject={isReject}
                 actionForm={isEdit ? actionUpdate : actionCreate}
-                textSave={isEdit ? 'Actualizar' : 'Guardar'}
+                textSave={isEdit ? isReject ? 'Rechazar' : 'Actualizar' : 'Guardar'}
             />
-            <ModalRejected 
+            {/* <ModalRejected 
                 title='Rechazo de archivo'
                 visible={openModalReject}
                 close ={ closeModalRejected }
@@ -346,14 +340,17 @@ const TabReferences = ({
                 actionForm = { actionRejectstatus }
                 textSave = {'Rechazar'}
                 viewFooter = {visibleFooter}
-            />
+            /> */}
             <ListItems
-                title='¿Estás seguro de eliminar este archivo?'
+                title={useWithAction ? '¿Estás seguro de eliminar este archivo?' : 'Motivo de rechazo'}
                 visible={openModalDelete}
                 keyTitle='file_name'
+                {...useWithAction ? {} : {keyDescription: 'comments'}}
+                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
+                useWithAction={useWithAction}
             />
             
         </>

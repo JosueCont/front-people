@@ -147,7 +147,7 @@ const SearchPreselection = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
-                            deleteKeys={['vacant','applyMatch']}
+                            discardKeys={['vacant','applyMatch']}
                             defaultFilters={infoVacant}
                         />
                     </Col>  

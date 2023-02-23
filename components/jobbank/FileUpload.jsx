@@ -25,7 +25,8 @@ const FileUpload = ({
     keyName = 'name_file',
     disabled = false,
     download = false,
-    revertColor = false
+    revertColor = false,
+    hideOptions = false
 }) => {
 
     const inputFile = useRef(null);
@@ -67,30 +68,32 @@ const FileUpload = ({
                 <label className={isRequired ? 'custom-required': ''}>
                     {label} {tooltip && ( <Tooltip title={tooltip}><QuestionCircleOutlined/></Tooltip> )}
                 </label>
-                <div className={`label-options ${revertColor ? 'revert' : 'default'}`}>
-                    {urlPreview ? (
-                        <Tooltip title={download ? 'Descargar' : 'Visualizar'}>
-                            {download ?
-                                <DownloadOutlined onClick={()=> downloadCustomFile({
-                                    url: urlPreview,
-                                    name: urlPreview?.split('/')?.at(-1)})}
-                                /> : <EyeOutlined onClick={()=> redirectTo(urlPreview, true)}/>}
-                        </Tooltip>
-                    ): (
-                        <Tooltip title={!disabled ? 'Eliminar' : ''}>
-                            <DeleteOutlined
+                {!hideOptions && (
+                    <div className={`label-options ${revertColor ? 'revert' : 'default'}`}>
+                        {urlPreview ? (
+                            <Tooltip title={download ? 'Descargar' : 'Visualizar'}>
+                                {download ?
+                                    <DownloadOutlined onClick={()=> downloadCustomFile({
+                                        url: urlPreview,
+                                        name: urlPreview?.split('/')?.at(-1)})}
+                                    /> : <EyeOutlined onClick={()=> redirectTo(urlPreview, true)}/>}
+                            </Tooltip>
+                        ): (
+                            <Tooltip title={!disabled ? 'Eliminar' : ''}>
+                                <DeleteOutlined
+                                    disabled={disabled}
+                                    onClick={()=> !disabled ? resetImg() : {}}
+                                />
+                            </Tooltip>
+                        )}
+                        <Tooltip title={!disabled ? 'Subir archivo' : ''}>
+                            <ToTopOutlined
                                 disabled={disabled}
-                                onClick={()=> !disabled ? resetImg() : {}}
+                                onClick={()=> !disabled ? openFile() : {}}
                             />
                         </Tooltip>
-                    )}
-                    <Tooltip title={!disabled ? 'Subir archivo' : ''}>
-                        <ToTopOutlined
-                            disabled={disabled}
-                            onClick={()=> !disabled ? openFile() : {}}
-                        />
-                    </Tooltip>
-                </div>
+                    </div>
+                )}
             </div>
             <Form.Item
                 noStyle

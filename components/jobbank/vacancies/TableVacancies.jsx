@@ -232,7 +232,8 @@ const TableVacancies = ({
     {
         title: 'Cliente',
         dataIndex: ['customer', 'name'],
-        key: ['customer', 'name']
+        key: ['customer', 'name'],
+        ellipsis: true
     },
     {
         title: 'Estatus',
@@ -258,7 +259,7 @@ const TableVacancies = ({
                     style={{color: '#1890ff'}}
                     onClick={()=> router.push({
                         pathname: '/jobbank/strategies/edit',
-                        query: {id: item.has_strategy}
+                        query: {...router.query, id: item.has_strategy, back: 'vacancies'}
                     })}
                 >
                     Ver estrategia
@@ -269,8 +270,8 @@ const TableVacancies = ({
     {
         title: 'Reclutador',
         dataIndex: ['recruiter', 'full_name'],
-        key: ['recruiter', 'full_name']
-        
+        key: ['recruiter', 'full_name'],
+        ellipsis: true
     },
     {
         title: ()=> {

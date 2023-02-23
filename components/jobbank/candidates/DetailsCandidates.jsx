@@ -52,8 +52,11 @@ const DetailsCandidates = ({
     },[image])
 
     const actionBack = () =>{
+        let url = router.query?.back
+            ? `/jobbank/${router.query?.back}`
+            : '/jobbank/candidates';
         router.push({
-            pathname: '/jobbank/candidates',
+            pathname: url,
             query: newFilters
         })
     }
@@ -122,6 +125,7 @@ const DetailsCandidates = ({
                                 newFilters={newFilters}
                                 setInfoCandidate={setInfoCandidate}
                                 infoCandidate={infoCandidate}
+                                actionBack={actionBack}
                             />
                         </Tabs.TabPane>
                         <Tabs.TabPane
