@@ -2,8 +2,20 @@ import Axios from "axios";
 import { types } from "../types/assessments";
 import _ from "lodash";
 import { asyncForEach } from "../utils/functions";
-import { API_ASSESSMENT } from "../config/config";
+import { API_ASSESSMENT, typeHttp } from "../config/config";
 import WebApiAssessment from "../api/WebApiAssessment";
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Api with Tenant
+const urlKuizBaseApiWithTenant = `${typeHttp}://${tenant}.${API_ASSESSMENT}`
 
 const initialData = {
   assessments: [],
@@ -309,37 +321,37 @@ export const getOrderApi = (method, id) => {
   switch (method) {
     case types.UP_ORDER_SECTION:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/section/move_section_up/`,
+        `${urlKuizBaseApiWithTenant}/assessments/section/move_section_up/`,
         { section_id: id }
       );
       break;
     case types.DOWN_ORDER_SECTION:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/section/move_section_down/`,
+        `${urlKuizBaseApiWithTenant}/assessments/section/move_section_down/`,
         { section_id: id }
       );
       break;
     case types.UP_ORDER_QUESTION:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/question/move_question_up/`,
+        `${urlKuizBaseApiWithTenant}/assessments/question/move_question_up/`,
         { question_id: id }
       );
       break;
     case types.DOWN_ORDER_QUESTION:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/question/move_question_down/`,
+        `${urlKuizBaseApiWithTenant}/assessments/question/move_question_down/`,
         { question_id: id }
       );
       break;
     case types.UP_ORDER_ANSWER:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/answer/move_answer_up/`,
+        `${urlKuizBaseApiWithTenant}/assessments/answer/move_answer_up/`,
         { answer_id: id }
       );
       break;
     case types.DOWN_ORDER_ANSWER:
       return Axios.post(
-        `${API_ASSESSMENT}/assessments/answer/move_answer_down/`,
+        `${urlKuizBaseApiWithTenant}/assessments/answer/move_answer_down/`,
         { answer_id: id }
       );
       break;

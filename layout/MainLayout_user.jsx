@@ -35,7 +35,6 @@ const MainLayoutUser = ({
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
-  const [changePassword, setChangePassword] = useState(true);
   const [isOpenModalChangePassword, setIsOpenModalChangePassword] = useState(false);
   const [khonnectId, setKhonnectId] = useState("");
   const [disabledButtonSend, setDisabledButtonSend] = useState(false);
@@ -73,16 +72,27 @@ const MainLayoutUser = ({
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {
       setMainLogo(props.currentNode.image);
-      setChangePassword(props.userData.status_first_change_password)
+      validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
       if (props.config) props.companySelected(null, props.config);
     }
   }, [props.currentNode, props.config, props.userData]);
 
-  useEffect(() => {
-    changePassword ? setIsOpenModalChangePassword(false) : setIsOpenModalChangePassword(true);
-  }, [changePassword]);
+  const validateShowModal = (showModal, changedPassword) =>{
+    let localStateChangedPassword = window.sessionStorage.getItem("requestChangePassword")
+    if(showModal){
+      if(!changedPassword){
+        if(localStateChangedPassword == null){
+          setIsOpenModalChangePassword(true)
+        }  
+      }else{
+        setIsOpenModalChangePassword(false)
+      }
+    }else{
+      setIsOpenModalChangePassword(false)
+    }
+  }
 
   const closeEvents = () => {
     setShowEvents(false);
@@ -101,12 +111,14 @@ const MainLayoutUser = ({
     try {
       let response = await WebApiPeople.validateChangePassword(data);
       if(response.status == 200){
-        setDisabledButtonSend(false)
-        message.success("Cambio de contraseña exitoso");
-        setIsOpenModalChangePassword(false)
         setTimeout(() => {
-          logoutAuth();
-        }, 2000);
+          if(isBrowser()){
+            window.sessionStorage.setItem("requestChangePassword", "changed")
+          }
+          setDisabledButtonSend(false)
+          message.success("Cambio de contraseña exitoso");
+          setIsOpenModalChangePassword(false)
+        }, 3000);
       }
     } catch (e) {
       message.error("Ocurrio un error intenta nuevamente");
@@ -157,7 +169,7 @@ const MainLayoutUser = ({
                 </Col>
               </Row>
               <Row justify="end">
-                <Button disabled={disabledButtonSend} type="primary" htmlType="submit">Cambiar contraseña</Button>
+                <Button loading={disabledButtonSend} type="primary" htmlType="submit">Cambiar contraseña</Button>
               </Row>
             </Form>
           </div>

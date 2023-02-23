@@ -1,5 +1,4 @@
 import WebApi from "./webApi";
-import { getJobRisk } from "../redux/catalogCompany";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -10,8 +9,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
 
-  static getCompanys() {
-    return WebApi.ApisType(`/business/node/?active=true`, "get");
+  static getCompanys(personId=null,active=true) {
+    return WebApi.ApisType(`/business/node/?${active!==null?`active=${active}`:''}${personId?`&person=${personId}`:''}`, "get");
   }
 
   static getCompany(data) {
@@ -544,7 +543,15 @@ class WebApiPeople {
   static validateChangePassword(data){
     return WebApi.ApisType(`/person/change-password/`,"post",data)
   }
-  
+
+  static getCodesApps(id){
+    return WebApi.ApisType(`/setup/get-instance-codes/?person=${id}`, 'get')
+  }
+
+  static khonnectSavePerson(data){
+    return WebApi.ApisType('/khonnect/save-person/', 'post', data)
+  }
+
   static assignedMassiveImmediateSupervisor(data){
     return WebApi.ApisType(`/person/person/set-immediate-supervisor/`,"post",data)
   } 

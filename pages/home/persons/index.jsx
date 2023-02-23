@@ -1,39 +1,7 @@
-import {
-  Breadcrumb,
-  Table,
-  Tooltip,
-  Row,
-  Col,
-  Input,
-  Select,
-  Switch,
-  Button,
-  Form,
-  Avatar,
-  message,
-  Modal,
-  Menu,
-  Space,
-  Dropdown,
-  notification,
-  Upload,
-} from "antd";
+import { Breadcrumb, Table, Tooltip, Row, Col, Input, Select, Switch, Button, Form, Avatar, message, Modal, Menu, Dropdown, notification, Upload } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import {
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-  DownloadOutlined,
-  UploadOutlined,
-  EllipsisOutlined,
-  ExclamationCircleOutlined,
-  EyeOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  UserAddOutlined,
-  UserSwitchOutlined
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -42,14 +10,8 @@ import { setDataUpload } from "../../../redux/UserDuck";
 
 import Link from "next/link";
 import jsCookie from "js-cookie";
-import Clipboard from "../../../components/Clipboard";
 import { connect } from "react-redux";
-import {
-  genders,
-  messageError,
-  messageUpdateSuccess,
-  statusSelect,
-} from "../../../utils/constant";
+import { genders, messageError, messageUpdateSuccess, statusSelect } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import router, { useRouter } from "next/router";
@@ -63,8 +25,6 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
-import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
-import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
@@ -88,8 +48,8 @@ const homeScreen = ({ ...props }) => {
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const [formAddImmediateSupervisor] = Form.useForm();
-  const inputFileRef = useRef(null);
-  const inputFileRefAsim = useRef(null);
+  // const inputFileRef = useRef(null);
+  // const inputFileRefAsim = useRef(null);
 
   let filters = { node: "" };
   const defaulPhoto =
@@ -118,7 +78,7 @@ const homeScreen = ({ ...props }) => {
   const [itemPerson, setItemPerson] = useState({});
   const [loadAssign, setLoadAssign] = useState(false);
   const [depSelect, setDepSelect] = useState(null);
-  const [wtSelct, setWtSelct] = useState(null);
+  // const [wtSelct, setWtSelct] = useState(null);
   const [addPersonCfi, setPersonCfi] = useState(false)
   const [listPersons, setListPersons] = useState([]);
   const [isLoadingImmediateSupervisor, setIsLoadingImmediateSupervisor] = useState(false);
@@ -151,7 +111,7 @@ const homeScreen = ({ ...props }) => {
           setShowSynchronizeYNL(true);
         }
       }
-    } 
+    }
   }, [props.applications]);
 
   const filterPersonName = async () => {
@@ -248,20 +208,20 @@ const homeScreen = ({ ...props }) => {
       link.href = window.URL.createObjectURL(blob);
       link.download = "Carta de renuncia.pdf"
       link.click()
-      
+
     } catch (error) {
-        error && 
-        error.response && 
-        error.response.data && 
+      error &&
+        error.response &&
+        error.response.data &&
         error.response.data.message &&
         message.error(error.response.data.message)
     }
 
-      // downLoadFileBlob(
-      //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
-      //   "carta_de_renuncia.pdf",
-      //   "GET",
-      // );
+    // downLoadFileBlob(
+    //   `${getDomain(API_URL_TENANT)}/payroll/resignation-letter?person_id=${item.id}`,
+    //   "carta_de_renuncia.pdf",
+    //   "GET",
+    // );
 
   }
 
@@ -440,7 +400,7 @@ const homeScreen = ({ ...props }) => {
           <>
             {permissions.edit || props.delete ? (
               <div
-                onClick={()=> route.push({
+                onClick={() => route.push({
                   pathname: `/home/persons/${item.id}`,
                   query: route.query
                 })}
@@ -456,7 +416,7 @@ const homeScreen = ({ ...props }) => {
       title: "Jefe inmediato",
       show: true,
       render: (item) => {
-        return <div>{ item?.immediate_supervisor ? getFullName(item.immediate_supervisor) : ""}</div>;
+        return <div>{item?.immediate_supervisor ? getFullName(item.immediate_supervisor) : ""}</div>;
       },
     },
     {
@@ -603,8 +563,8 @@ const homeScreen = ({ ...props }) => {
         {/*<Menu.Item key="3" onClick={() => handleDeactivate()}>*/}
         {/*  Desactivar*/}
         {/*</Menu.Item>*/}
-        { showSynchronizeYNL && (
-          <Menu.Item key="6"  onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
+        {showSynchronizeYNL && (
+          <Menu.Item key="6" onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
             Sincronizar YNL
           </Menu.Item>
         )}
@@ -629,10 +589,10 @@ const homeScreen = ({ ...props }) => {
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
             )} */}
-            <Menu.Item 
-              key="5" 
-              icon={<EyeOutlined />} 
-              onClick={()=> route.push({
+            <Menu.Item
+              key="5"
+              icon={<EyeOutlined />}
+              onClick={() => route.push({
                 pathname: `/assessment/persons/${item.id}`,
                 query: route.query
               })}>
@@ -653,7 +613,7 @@ const homeScreen = ({ ...props }) => {
           <Menu.Item
             key="2"
             icon={<EditOutlined />}
-            onClick={()=> route.push({
+            onClick={() => route.push({
               pathname: `/home/persons/${item.id}`,
               query: route.query
             })}
@@ -675,18 +635,18 @@ const homeScreen = ({ ...props }) => {
         <Menu.Item
           icon={<DownloadOutlined />}
           key="4"
-          onClick={ () => {
-              downloadResignationLetter(item)
-            }
+          onClick={() => {
+            downloadResignationLetter(item)
+          }
           }
         >
           Descargar carta de renuncia
         </Menu.Item>
-        { showSynchronizeYNL && (
+        {showSynchronizeYNL && (
           <Menu.Item
             key="6"
             icon={<SyncOutlined />}
-            onClick={ () => {
+            onClick={() => {
               setPersonsToSynchronizeYNL([item]), showModalSynchronizeYNL();
             }}
           >
@@ -713,9 +673,9 @@ const homeScreen = ({ ...props }) => {
       if (value.length == 1) {
         setStringToDeactivate(
           "Desactivar usuario " +
-            value[0].first_name +
-            " " +
-            value[0].flast_name
+          value[0].first_name +
+          " " +
+          value[0].flast_name
         );
       }
       setPersonsToDeactivate(value);
@@ -858,12 +818,12 @@ const homeScreen = ({ ...props }) => {
     route.replace({
       pathname: '/home/persons/',
       query: valueQuery
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
   };
 
   const resetFilter = () => {
     formFilter.resetFields();
-    route.replace('/home/persons', undefined, {shallow: true});
+    route.replace('/home/persons', undefined, { shallow: true });
     // filter();
     filterPersonName();
   };
@@ -871,7 +831,7 @@ const homeScreen = ({ ...props }) => {
   const AlertDeactivate = () => (
     <div>
       Al desactivar este registro ya no podra accerder a el hasta que lo vuelva
-      a activar. ¿Está seguro de querer desactivarlo?  
+      a activar. ¿Está seguro de querer desactivarlo?
       <br />
       <br />
       <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
@@ -1170,15 +1130,15 @@ const homeScreen = ({ ...props }) => {
   }, [modalSynchronizeYNL]);
 
   useEffect(() => {
-    if(Object.keys(route.query).length === 0){
-      if(props.currentNode){
+    if (Object.keys(route.query).length === 0) {
+      if (props.currentNode) {
         const jwt = JSON.parse(jsCookie.get("token"));
         setUserSession(jwt);
         filterPersonName()
         getListPersons()
       }
-    }else{
-      if(props.currentNode){
+    } else {
+      if (props.currentNode) {
         let page = route.query.page ? parseInt(route.query.page) : 1;
         if (route && route.query.name != "") {
           urlFilter = urlFilter + "first_name__icontains=" + route.query.name + "&";
@@ -1196,12 +1156,12 @@ const homeScreen = ({ ...props }) => {
           urlFilter = urlFilter + "gender=" + route.query.gender + "&";
           filters.gender = route.query.gender;
         }
-    
+
         if (route && route.query.is_active != "" && route.query.is_active != -1) {
           urlFilter = urlFilter + "is_active=" + route.query.is_active + "&";
           filters.is_active = route.query.is_active;
         }
-        if (route && route.query.department !="") {
+        if (route && route.query.department != "") {
           urlFilter = urlFilter + "person_department__id=" + route.query.department + "&";
           filters.department = route.query.department;
         }
@@ -1232,9 +1192,9 @@ const homeScreen = ({ ...props }) => {
     if (personsToDelete.length == 1) {
       setStringToDelete(
         "Eliminar usuario " +
-          personsToDelete[0].first_name +
-          " " +
-          personsToDelete[0].flast_name
+        personsToDelete[0].first_name +
+        " " +
+        personsToDelete[0].flast_name
       );
       ids = personsToDelete[0].id;
     } else if (personsToDelete.length > 0) {
@@ -1349,15 +1309,27 @@ const homeScreen = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning","people"]}>
-        <Breadcrumb>
-          <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-          {verifyMenuNewForTenant() && 
-            <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
-          }
-          <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
-          <Breadcrumb.Item>Personas</Breadcrumb.Item>
-        </Breadcrumb>
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning", "people"]}>
+        <Row >
+          <Col xs={12} md={20} >
+            <Breadcrumb>
+              <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+              {verifyMenuNewForTenant() &&
+                <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+              }
+              <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
+              <Breadcrumb.Item>Personas</Breadcrumb.Item>
+            </Breadcrumb>
+          </Col>
+          <Col xs={12} md={4} >
+            {permissions.create && (
+              <Button className="btn-add-person" onClick={() => getModalPerson(true)} style={{ marginLeft: '-.1vh', width: '100%' }} >
+                <PlusOutlined />
+                Agregar persona
+              </Button>
+            )}
+          </Col>
+        </Row>
         <div className="container" style={{ width: "100%" }}>
           {permissions.view ? (
             <>
@@ -1369,41 +1341,41 @@ const homeScreen = ({ ...props }) => {
                       layout={"vertical"}
                       form={formFilter}
                     >
-                      <Row gutter={[10]} style={{marginBottom:10}}>
+                      <Row gutter={[10]} style={{ marginBottom: 10 }}>
                         <Col span={24}>
-                          <Row gutter={[10]} style={{marginBottom:10}}>
+                          <Row gutter={[10]} style={{ marginBottom: 10 }}>
                             <Col xs={12} md={8}>
                               <Form.Item name="name" label={"Nombre"}>
                                 <Input
-                                    allowClear={true}
-                                    placeholder="Nombre(s)"
+                                  allowClear={true}
+                                  placeholder="Nombre(s)"
                                 />
                               </Form.Item>
                             </Col>
                             <Col xs={12} md={8}>
                               <Form.Item name="flast_name" label={"Apellido"}>
                                 <Input
-                                    allowClear={true}
-                                    placeholder="Apellido(s)"
+                                  allowClear={true}
+                                  placeholder="Apellido(s)"
                                 />
                               </Form.Item>
                             </Col>
                             <Col xs={12} md={8}>
                               <Form.Item name="code" label={"Núm. empleado"}>
                                 <Input
-                                    allowClear={true}
-                                    placeholder="Núm. empleado"
+                                  allowClear={true}
+                                  placeholder="Núm. empleado"
                                 />
                               </Form.Item>
                             </Col>
                           </Row>
-                          <Row gutter={[10]} style={{marginBottom:10}}>
+                          <Row gutter={[10]} style={{ marginBottom: 10 }}>
                             <Col xs={12} md={8}>
                               <Form.Item name="gender" label="Género">
                                 <Select
-                                    options={genders}
-                                    notFoundContent={"No se encontraron resultados."}
-                                    placeholder="Todos"
+                                  options={genders}
+                                  notFoundContent={"No se encontraron resultados."}
+                                  placeholder="Todos"
                                 />
                               </Form.Item>
                             </Col>
@@ -1414,13 +1386,13 @@ const homeScreen = ({ ...props }) => {
                               <SelectJob department={depSelect} />
                             </Col>
                           </Row>
-                          <Row gutter={[10]} style={{marginBottom:10}}>
+                          <Row gutter={[10]} style={{ marginBottom: 10 }}>
                             <Col xs={12} md={8}>
                               <Form.Item name="is_active" label="Estatus">
                                 <Select
-                                    options={statusSelect}
-                                    placeholder="Estatus"
-                                    notFoundContent={"No se encontraron resultados."}
+                                  options={statusSelect}
+                                  placeholder="Estatus"
+                                  notFoundContent={"No se encontraron resultados."}
                                 />
                               </Form.Item>
                             </Col>
@@ -1430,64 +1402,49 @@ const homeScreen = ({ ...props }) => {
                                   showSearch
                                   optionFilterProp="children"
                                   allowClear={true}
-                                  >
-                                    { listPersons.length > 0 && listPersons.map(item => (
-                                      <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                      </Select.Option>
-                                    ))}
+                                >
+                                  {listPersons.length > 0 && listPersons.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                      {getFullName(item)}
+                                    </Select.Option>
+                                  ))}
                                 </Select>
                               </Form.Item>
                             </Col>
                             <Col
-                                className="button-filter-person"
-                                style={{ display: "flex", marginTop: "10px" }}
-                                xs={12} md={4}
+                              className="button-filter-person"
+                              style={{ display: "flex", marginTop: "10px" }}
+                              xs={12} md={4}
                             >
                               <Tooltip
-                                  title="Filtrar"
-                                  color={"#3d78b9"}
-                                  key={"#filtrar"}
+                                title="Filtrar"
+                                color={"#3d78b9"}
+                                key={"#filtrar"}
                               >
-                                <Button style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                                <Button style={{ width: '100%' }} className="btn-filter" htmlType="submit">
                                   <SearchOutlined /> Filtrar
                                 </Button>
                               </Tooltip>
                             </Col>
                             <Col
-                                xs={12} md={4}
-                                className="button-filter-person"
-                                style={{ display: "flex", marginTop: "10px" }}
+                              xs={12} md={4}
+                              className="button-filter-person"
+                              style={{ display: "flex", marginTop: "10px" }}
                             >
                               <Tooltip
-                                  title="Limpiar filtros"
-                                  color={"#3d78b9"}
-                                  key={"#3d78b9"}
+                                title="Limpiar filtros"
+                                color={"#3d78b9"}
+                                key={"#3d78b9"}
                               >
                                 <Button
-                                    onClick={() => resetFilter()}
-                                    style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
+                                  onClick={() => resetFilter()}
+                                  style={{ marginTop: "auto", marginLeft: 10, width: '100%' }}
                                 >
                                   <SyncOutlined /> Limpar filtro
                                 </Button>
                               </Tooltip>
                             </Col>
-                            <Col
-                                xs={12} md={4}
-                                className="button-filter-person"
-                                style={{ display: "flex", marginTop: "10px" }}
-                            >
-                              {permissions.create && (
-                                  <Button
-                                      className="btn-add-person"
-                                      onClick={() => getModalPerson(true)}
-                                      style={{ marginTop: "auto", marginLeft: 10, width:'100%' }}
-                                  >
-                                    <PlusOutlined />
-                                    Agregar persona
-                                  </Button>
-                              )}
-                            </Col>
+
                           </Row>
 
                         </Col>
@@ -1503,103 +1460,103 @@ const homeScreen = ({ ...props }) => {
                 </Row>
 
               </div>
-              <Row span={22} gutter={[5,10]}>
-                    {permissions.export_csv_person && (
-                      <Col lg={6} sm={12} xl={5} xxl={3} >
-                        <Button
-                            type="primary"
-                            icon={<DownloadOutlined />}
-                            onClick={() => exportPersons()}
-                        >
-                          Descargar personas
-                        </Button>
-                      </Col>
-                    )}
+              <Row span={22} gutter={[5, 10]}>
+                {permissions.export_csv_person && (
+                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                    <Button
+                      type="primary"
+                      icon={<DownloadOutlined />}
+                      onClick={() => exportPersons()}
+                    >
+                      Descargar personas
+                    </Button>
+                  </Col>
+                )}
 
-                    {permissions.import_csv_person && (
-                      <Col  lg={6} sm={12} xl={5} xxl={3} >
-                        <Upload
-                            {...{
-                              showUploadList: false,
-                              beforeUpload: (file) => {
-                                const isXlsx = file.name.includes(".xlsx");
-                                if (!isXlsx) {
-                                  message.error(`${file.name} no es un xlsx.`);
-                                }
-                                return isXlsx || Upload.LIST_IGNORE;
-                              },
-                              onChange(info) {
-                                const { status } = info.file;
-                                if (status !== "uploading") {
-                                  if (info.fileList.length > 0) {
-                                    importPersonFileExtend(
-                                        info.fileList[0].originFileObj
-                                    );
-                                    info.file = null;
-                                    info.fileList = [];
-                                  }
-                                }
-                              },
-                            }}
-                        >
-                          <Button
-                              //size="middle"
-                              icon={<UploadOutlined />}
-                          >
-                            Importar personas
-                          </Button>
-                        </Upload>
-
-                      </Col>
-                    )}
-
-                    <Col  lg={6} sm={12} xl={5} xxl={3}>
-                      <Button
-                          icon={<DownloadOutlined />}
-                          onClick={() =>
-                              downLoadFileBlob(
-                                  `${getDomain(
-                                      API_URL_TENANT
-                                  )}/person/person/generate_template/?type=1`,
-                                  "platilla_personas.xlsx",
-                                  "GET"
-                              )
+                {permissions.import_csv_person && (
+                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                    <Upload
+                      {...{
+                        showUploadList: false,
+                        beforeUpload: (file) => {
+                          const isXlsx = file.name.includes(".xlsx");
+                          if (!isXlsx) {
+                            message.error(`${file.name} no es un xlsx.`);
                           }
-                      >
-                        Descargar plantilla
-                      </Button>
-                    
-                    </Col>
-                    {props.config && props.config.nomina_enabled &&
-                      <Col  lg={6} sm={12} xl={5} xxl={3}>
-                        <ButtonDownloadConfronta/>
-                      </Col>
-                    }
-
-                    {/*{props.config && props.config.nomina_enabled &&*/}
-                    {/*    <ButtonMovements node={props.currentNode}/>*/}
-                    {/*}*/}
-
-                    {props.config && props.config.nomina_enabled &&
-                      <Col  lg={6} sm={12} xl={4} xxl={3}>
-                        <ButtonUpdateSalary  personsList={rowSelectionPerson} node={props.currentNode}/>
-                      </Col>
-                    }
-                    <Col  lg={6} sm={12} xl={5} xxl={3}>
+                          return isXlsx || Upload.LIST_IGNORE;
+                        },
+                        onChange(info) {
+                          const { status } = info.file;
+                          if (status !== "uploading") {
+                            if (info.fileList.length > 0) {
+                              importPersonFileExtend(
+                                info.fileList[0].originFileObj
+                              );
+                              info.file = null;
+                              info.fileList = [];
+                            }
+                          }
+                        },
+                      }}
+                    >
                       <Button
-                          //size="middle"
-                          icon={<UserAddOutlined />}
-                          onClick={() =>setPersonCfi(true)}
+                        //size="middle"
+                        icon={<UploadOutlined />}
                       >
-                        Agregar persona usando CIF
+                        Importar personas
                       </Button>
-                    
-                    </Col>
+                    </Upload>
+
+                  </Col>
+                )}
+
+                <Col lg={6} sm={12} xl={5} xxl={3}>
+                  <Button
+                    icon={<DownloadOutlined />}
+                    onClick={() =>
+                      downLoadFileBlob(
+                        `${getDomain(
+                          API_URL_TENANT
+                        )}/person/person/generate_template/?type=1`,
+                        "platilla_personas.xlsx",
+                        "GET"
+                      )
+                    }
+                  >
+                    Descargar plantilla
+                  </Button>
+
+                </Col>
+                {props.config && props.config.nomina_enabled &&
+                  <Col lg={6} sm={12} xl={5} xxl={3}>
+                    <ButtonDownloadConfronta />
+                  </Col>
+                }
+
+                {/*{props.config && props.config.nomina_enabled &&*/}
+                {/*    <ButtonMovements node={props.currentNode}/>*/}
+                {/*}*/}
+
+                {props.config && props.config.nomina_enabled &&
+                  <Col lg={6} sm={12} xl={4} xxl={3}>
+                    <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
+                  </Col>
+                }
+                <Col lg={6} sm={12} xl={5} xxl={3}>
+                  <Button
+                    //size="middle"
+                    icon={<UserAddOutlined />}
+                    onClick={() => setPersonCfi(true)}
+                  >
+                    Agregar persona usando CIF
+                  </Button>
+
+                </Col>
 
 
 
               </Row>
-              
+
               <Table
                 className={"mainTable table-persons"}
                 rowKey={"id"}
@@ -1661,9 +1618,9 @@ const homeScreen = ({ ...props }) => {
             actionDelete={deleteAssigns}
           />
         )}
-        <ModalAddPersonCFI 
+        <ModalAddPersonCFI
           visible={addPersonCfi}
-          setVisible={()=>setPersonCfi(false)}
+          setVisible={() => setPersonCfi(false)}
           node_id={props.currentNode?.id}
         />
         <Modal title="Asignar jefe inmediato" closable={false} visible={modalAddImmediateSupervisor} footer={false} >

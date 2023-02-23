@@ -198,6 +198,7 @@ const TablePreselection = ({
             title: 'Acciones',
             show: true,
             width: 80,
+            align: 'center',
             render: (item) =>{
                 return(
                     // <Dropdown overlay={()=> menuItem(item)}>
