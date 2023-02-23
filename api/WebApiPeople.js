@@ -542,7 +542,11 @@ class WebApiPeople {
 
   static validateChangePassword(data){
     return WebApi.ApisType(`/person/change-password/`,"post",data)
-  }  
+  }
+
+  static getCodesApps(id){
+    return WebApi.ApisType(`/setup/get-instance-codes/?person=${id}`, 'get')
+  }
 
 }
 
