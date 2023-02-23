@@ -112,7 +112,7 @@ const Dashboard = () => {
                             renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
-                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } />: null}
+                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
                                         title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
                                         description={`Aniversario: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
                                     />
@@ -131,7 +131,7 @@ const Dashboard = () => {
             <Card
                 title={
                 <span>
-                    <img src={'/images/boxparty.png'} width={35} style={{marginRight:10}}/>
+                    <img src={'/images/ballon.png'} width={40} style={{marginRight:10}}/>
                     Cumpleañeros del mes
                 </span>
                 }
@@ -148,7 +148,7 @@ const Dashboard = () => {
                             renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
-                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } />: null}
+                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
                                         title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
                                         description={`Fecha de cumpleaños: ${moment(item.birth_date).format('DD/MM/YYYY')}`}
                                     />
@@ -284,9 +284,9 @@ const Dashboard = () => {
                                     'rgba(208, 0, 0,1)',
                                     'rgba(255, 186, 8,1)',
                                     'rgba(63, 136, 197,1)',
-                                    'rgba(3, 43, 67,1)',
+                                    'rgb(196,9,203)',
                                     'rgba(19, 111, 99,1)',
-                                    'rgba(41, 63, 20,1)',
+                                    'rgb(105,199,16)',
                                 ]
                             }
                         ]
