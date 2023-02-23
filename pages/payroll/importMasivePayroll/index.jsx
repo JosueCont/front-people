@@ -306,12 +306,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     } else {
       let calendars = [];
       company_list.map((comp) => {
-       comp?.calendars &&  comp.calendars.map((c) => {
-          calendars.push({
-            company: comp,
-            calendar: c,
+        comp?.calendars &&
+          comp.calendars.map((c) => {
+            calendars.push({
+              company: comp,
+              calendar: c,
+            });
           });
-        });
       });
 
       let calendar_not_saved = calendars.filter((elem) => !elem.calendar.saved);
@@ -379,6 +380,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       form_data.append("export", "False");
       form_data.append("save", "True");
       form_data.append("payroll", JSON.stringify(xmlImport));
+      form_data.append("person_id", props.user.id);
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
           processResponseSave(response);
@@ -456,9 +458,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          {verifyMenuNewForTenant() && 
+          {verifyMenuNewForTenant() && (
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
-          }
+          )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Importar nómina con XML</Breadcrumb.Item>
         </Breadcrumb>
@@ -488,8 +490,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
               </Form.Item>
             </Col>
             <Col span={5}>
-              <Form.Item extra={companies && companies.length>1 ?
-                  `${companySelect+1}/${companies.length}`:''} label="Empresa">
+              <Form.Item
+                extra={
+                  companies && companies.length > 1
+                    ? `${companySelect + 1}/${companies.length}`
+                    : ""
+                }
+                label="Empresa"
+              >
                 <Select
                   options={companies}
                   size="middle"
@@ -513,8 +521,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           {patronals.length > 0 && (
             <Row align="center" style={{ width: "100%" }}>
               <Col span={3}>
-                <Form.Item extra={patronals && patronals.length>1 ?
-                    `${patronalSelect+1}/${patronals.length}`:''} label="Registro patronal">
+                <Form.Item
+                  extra={
+                    patronals && patronals.length > 1
+                      ? `${patronalSelect + 1}/${patronals.length}`
+                      : ""
+                  }
+                  label="Registro patronal"
+                >
                   <Select
                     options={patronals}
                     size="middle"
@@ -761,6 +775,7 @@ const mapState = (state) => {
     payment_periodicity: state.fiscalStore.payment_periodicity,
     type_tax: state.fiscalStore.type_tax,
     perceptions_type: state.fiscalStore.cat_perceptions,
+    user: state.userStore.user,
   };
 };
 

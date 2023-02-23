@@ -16,7 +16,6 @@ import jwtEncode from "jwt-encode";
 import { ClearOutlined } from "@ant-design/icons";
 import { popupWindow, getCurrentURL } from '../../utils/constant';
 import { valueToFilter } from '../../utils/functions';
-import { domainKuiz } from '../../api/axiosApi'
 import {
   ContentTitle,
   ContentEnd,
@@ -31,6 +30,19 @@ import {
   BsHandIndex
 } from "react-icons/bs";
 import AssignAssessments from '../person/assignments/AssignAssessments';
+import {urlKuizBaseFront, typeHttp} from '../../config/config'
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Front with Tenant
+const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
 const TableAssessments = ({
   user_assessments,
@@ -199,7 +211,7 @@ const TableAssessments = ({
         apply_id: isArray ? item.apply[0].id : item.apply.id,
       }
       const token = jwtEncode(body, 'secret', 'HS256');
-      const url = `${domainKuiz}/?token=${token}`;
+      const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
       // const url = `http://humand.localhost:3002/?token=${token}`;
       popupWindow(url)
     }else{

@@ -587,7 +587,6 @@ header.ant-layout-header {
   background: var(--primaryColor);
   font-weight: "bold";
   color: var(--fontSpanColor);
-  margin-top: auto;
 }
 
 .btn-filter {

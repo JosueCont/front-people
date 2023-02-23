@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   Modal,
+  Select,
 } from "antd";
 import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
@@ -22,7 +23,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { verifyMenuNewForTenant } from "../../../utils/functions";
+import { verifyMenuNewForTenant, getFullName } from "../../../utils/functions";
 
 const HolidaysDetails = (props) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -44,6 +45,8 @@ const HolidaysDetails = (props) => {
   const [lastName, setLastName] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
+  const [listPersons, setListPersons] = useState([]);
+  const [immediateSupervisor, setImmediateSupervisor] = useState(null);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -51,6 +54,12 @@ const HolidaysDetails = (props) => {
       permissions;
     }, 5000);
   }, [props.permissions]);
+
+  useEffect(() => {
+    if(props.currentNode){
+      getListPersons(props.currentNode.id)
+    }
+  }, [props.currentNode]);
 
   let json = JSON.parse(userToken);
 
@@ -63,6 +72,24 @@ const HolidaysDetails = (props) => {
     setMessage(value.target.value);
   };
 
+  const getListPersons = async (node_id) => {
+    let data = {
+      node: node_id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
+      console.log(error);
+    }
+  };
+
   const getDetails = async () => {
     WebApiPeople.geVacationRequest(id)
       .then(function (response) {
@@ -70,7 +97,8 @@ const HolidaysDetails = (props) => {
         setDaysRequested(data.days_requested);
         setDepartureDate(moment(data.departure_date).format("DD/MM/YYYY"));
         setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
-        setAvailableDays(data.collaborator.Available_days_vacation);
+        setAvailableDays(data.available_days_vacation);
+        setImmediateSupervisor(data.immediate_supervisor.id)
 
         if (data.collaborator && data.collaborator.first_name) {
           setFisrtName(data.collaborator.first_name);
@@ -218,6 +246,21 @@ const HolidaysDetails = (props) => {
                   </Form.Item>
                   <Form.Item label="Fecha de regreso">
                     <Input value={returnDate} readOnly />
+                  </Form.Item>
+                  <Form.Item label="Jefe inmediato">
+                    <Select
+                      showSearch
+                      optionFilterProp="children"
+                      allowClear={true}
+                      value={immediateSupervisor}
+                      disabled
+                      >
+                        { listPersons.length > 0 && listPersons.map(item => (
+                          <Select.Option value={item.id} key={item.id}>
+                            {getFullName(item)}
+                          </Select.Option>
+                        ))}
+                    </Select>
                   </Form.Item>
                 </Form>
               </Col>

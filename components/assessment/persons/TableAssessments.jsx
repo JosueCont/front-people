@@ -9,10 +9,22 @@ import moment from 'moment/moment';
 import { useSelector } from 'react-redux'
 import { popupWindow, getCurrentURL } from '../../../utils/constant';
 import jwtEncode from "jwt-encode";
-import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
 import CardGeneric from '../../dashboards-cards/CardGeneric';
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import {urlKuizBaseFront, typeHttp} from '../../../config/config'
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Front with Tenant
+const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
 const TableAssessments = ({
   user_profile,
@@ -300,8 +312,8 @@ const TableAssessments = ({
         apply_id: record.id
       }
       const token = jwtEncode(body, 'secret', 'HS256');
-      const url = `${domainKuiz}/?token=${token}`;
-      // const url = `http://humand.localhost:3002/?token=${token}`;
+      const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
+      // const url = `http://grupohuman.localhost:3005/?token=${token}`;
       popupWindow(url)
     }else{
       message.error('Resultados no encontrados');
@@ -515,13 +527,17 @@ const TableAssessments = ({
   const getNewFilters = () =>{
     let newFilters = {...router.query};
     if(newFilters.id) delete newFilters.id;
+    if(newFilters.back) delete newFilters.back;
     return newFilters;
   }
   
   const actionBack = () =>{
     let filters = getNewFilters();
+    let url = router.query?.back
+      ? `/jobbank/${router.query?.back}`
+      : '/home/persons';
     router.push({
-        pathname: '/home/persons',
+        pathname: url,
         query: filters
     })
   }

@@ -75,7 +75,6 @@ const MainSider = ({
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link1 = document.createElement('a');
         link1.href = url1;
-        link1.target = '_blank';
         link1.click();
         break;
       case "khorflix":
@@ -84,7 +83,6 @@ const MainSider = ({
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link2 = document.createElement('a');
         link2.href = url2;
-        link2.target = '_blank';
         link2.click();
         break;
       case "careerlab":
@@ -100,7 +98,6 @@ const MainSider = ({
         const url4 = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token4}`;
         const link4 = document.createElement('a');
         link4.href = url4;
-        link4.target = '_blank';
         link4.click();
         break;
       case "myEvaluation":
@@ -147,7 +144,7 @@ const MainSider = ({
         children2.push(getItem("Khorflix", "khorflix"))
       }
       if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.sukhatv_access) {
-        children2.push(getItem("Sukha", "sukha"))
+        children2.push(getItem("SukhaTV", "sukha"))
       }
       if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.careerlab_access) {
         children2.push(getItem("Careerlab", "careerlab"))

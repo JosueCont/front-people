@@ -79,7 +79,7 @@ const SelectCompany = ({ ...props }) => {
   }, [props.user]);
 
   const getCopaniesList = async () => {
-    await WebApiPeople.getCompanys()
+    await WebApiPeople.getCompanys(props?.user?.id)
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
@@ -177,7 +177,7 @@ const SelectCompany = ({ ...props }) => {
             <Col span={23}>
               <Row justify={"space-between"}>
                 <Col xs={23} md={6} lg={6} xl={6}>
-                  <SelectCollaborator onChange={setCollaborator} />
+                  <SelectCollaborator showSearch={true} onChange={setCollaborator} />
                 </Col>
                 <Col xs={23} md={6} lg={6} xl={6} style={{ textAlign: "end" }}>
                   <Button

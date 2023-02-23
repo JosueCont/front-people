@@ -35,12 +35,24 @@ import { optionsStatusAsignament, optionsSourceType } from "../../../utils/const
 import ListItems from '../../../common/ListItems';
 import { valueToFilter } from '../../../utils/functions';
 import { popupWindow } from '../../../utils/constant';
-import { domainKuiz } from '../../../api/axiosApi';
 import jwtEncode from "jwt-encode";
 import { getCurrentURL } from '../../../utils/constant';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { useRouter } from 'next/router';
 import moment from 'moment';
+import {urlKuizBaseFront, typeHttp} from '../../../config/config'
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Front with Tenant
+const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
 const TabKhorEvaluations = ({
     loading,
@@ -188,7 +200,7 @@ const TabKhorEvaluations = ({
             apply_id: record.id
           }
           const token = jwtEncode(body, 'secret', 'HS256');
-          const url = `${domainKuiz}/?token=${token}`;
+          const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
           popupWindow(url)
         }else{
           message.error('Resultados no encontrados');

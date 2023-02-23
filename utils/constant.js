@@ -623,8 +623,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
 export const getHost = () => {
   if (typeof window !== "undefined") {
     let host = window.location.host.split(".");
-    if (host.length > 1) {
+    if (host.length > 1 && !host[0].includes('localhost') ) {
       return host[1];
+    } else {
+      return 'demo'
     }
   } else {
     return "";
@@ -698,4 +700,14 @@ export const InfonavitDiscountType = [
 export const TYPE_LOGS = {
   1: 'Log',
   2: 'Mov. Automáticos' // (Scrapper)
+}
+
+
+// Dashboard
+export const DASHBOARD_WIDGET_URLS = {
+  TOTAL_PEOPLE_IN_NODE: `/person/dashboard/`,
+  ANNIVERSARY_CURRENT_MONTH : `/person/dashboard/`,
+  BIRTHDAY_CURRENT_MONTH : `/person/dashboard/`,
+  PEOPLE_BY_GENDER : `/person/dashboard/`,
+  PEOPLE_BY_GENERATION : `/person/dashboard/`,
 }
