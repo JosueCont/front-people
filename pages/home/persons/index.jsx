@@ -1130,7 +1130,6 @@ const homeScreen = ({ ...props }) => {
       });
     }
     let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
-    console.log("Data a enviar",data)
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
       message.success("Asignado correctamente.");
