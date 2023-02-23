@@ -14,7 +14,8 @@ import Icon, {
   QuestionCircleOutlined,
   ApartmentOutlined,
   FunnelPlotOutlined,
-  SolutionOutlined
+  SolutionOutlined,
+  PieChartFilled
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -156,6 +157,8 @@ const MainSider = ({
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
     if (typeof window !== "undefined") {
+      // Dashboard
+      items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
       // Estrategia y planeación
       let children0 = [
         getItem("Empresas", "business"),
@@ -168,12 +171,9 @@ const MainSider = ({
         getItem("Grupos", "groups_people"),
       ];
       let children90 = [
-        getItem("Dashboard", "dashboard"),
         getItem("Empresa", "company", <></>, children0),
         getItem("Colaboradores", "people", <></>, children0101)
       ]
-
-     
       items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />, children90));
 
 

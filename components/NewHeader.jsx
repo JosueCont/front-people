@@ -31,6 +31,7 @@ import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
 import { getCurrentURL } from "../utils/constant";
 import ButtonWizardLight from "./payroll/ButtonWizardLight";
+import { userId } from "../libs/auth";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -41,6 +42,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const [person, setPerson] = useState();
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
+  const [infoCodeApps, setInfoCodeApps] = useState(null)
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -67,6 +69,22 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         .catch((error) => {
           console.log(error);
         });
+      const user_id = userId()
+      let codes_apps = await WebApiPeople.getCodesApps(user_id)
+      if (codes_apps['status'] == 200){
+        let verify_codes_apps = {}
+        console.log(props.userInfo)
+        if (codes_apps?.data?.sukhatv_code && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && props.userInfo?.is_sukhatv_admin){
+          verify_codes_apps['sukhatv_code'] = codes_apps?.data?.sukhatv_code || null
+        }
+        if (codes_apps?.data?.khorflix_code && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && props.userInfo?.is_khorflix_admin){
+          verify_codes_apps['khorflix_code'] = codes_apps?.data?.khorflix_code || null
+        }
+        if (codes_apps?.data?.concierge_code){
+          verify_codes_apps['concierge_code'] = codes_apps?.data?.concierge_code || null
+        }
+        setInfoCodeApps(verify_codes_apps)
+      }
     }
   };
 
@@ -173,7 +191,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                     (item) => item.app === "PAYROLL" && item.is_active
                 ) && (
                     <>
-                      <ButtonWizardLight/>
+                      <ButtonWizardLight data={infoCodeApps}/>
                     </>
 
 
@@ -266,14 +284,15 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col style={{ width: 'auto', textAlign: "end" }}>
               {person && (
                 <div
                   className={"pointer"}
                   style={{ float: "right" }}
                   key={"menu_user_" + props.currentKey}
                 >
-                  <Space size={"middle"}>
+                  <Space size={"large"}>
+                    <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span>
                     <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
@@ -382,6 +401,7 @@ const mapState = (state) => {
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     versionCfdi: state.fiscalStore.version_cfdi,
     userInfo: state.userStore.user,
+    applications: state.userStore.applications
   };
 };
 
