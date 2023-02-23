@@ -18,6 +18,7 @@ import {downLoadFileBlob, getDomain} from "../../utils/functions";
 import {API_URL_TENANT} from "../../config/config";
 
 const BIRTHDAY_CURRENT_MONTH = "BIRTHDAY_CURRENT_MONTH";
+moment.locale("es");
 const { Title } = Typography;
 const index = ({
     currentNode,
@@ -221,7 +222,10 @@ const index = ({
         <MainLayout currentKey={'jb_settings'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
             <Row style={{marginTop:50}}>
                 <Col>
-                    <Title level={1}>Dashboard</Title>
+                    <Title style={{marginBottom:0}} level={1}>{currentNode && currentNode.name}
+                    </Title>
+                    <p>{moment().format('LLL')}</p>
+
                 </Col>
             </Row>
             <Row gutter={[16]} style={{marginBottom:50}}>
