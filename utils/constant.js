@@ -623,8 +623,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
 export const getHost = () => {
   if (typeof window !== "undefined") {
     let host = window.location.host.split(".");
-    if (host.length > 1) {
+    if (host.length > 1 && !host[0].includes('localhost') ) {
       return host[1];
+    } else {
+      return 'demo'
     }
   } else {
     return "";
