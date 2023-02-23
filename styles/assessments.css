@@ -808,7 +808,7 @@ button.custom-btn {
 
 .items-to-list > div p{
     margin-bottom: 0px;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .items-to-list > div p:nth-child(2){
