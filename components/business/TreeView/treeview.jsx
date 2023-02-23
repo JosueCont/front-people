@@ -114,7 +114,7 @@ const NodeTreeView = ({ ...props }) => {
   }
 
   const Nodos = () => {
-    WebApiPeople.getCompanys()
+    WebApiPeople.getCompanys(props?.user?.id)
       .then((response) => {
         setBusiness([]);
         let bus = response.data.results.map((a) => {
@@ -468,6 +468,7 @@ const NodeTreeView = ({ ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions,
+    user: state.userStore.user,
   };
 };
 export default connect(mapState)(withAuthSync(NodeTreeView));
