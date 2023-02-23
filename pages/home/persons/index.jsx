@@ -69,6 +69,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
+import { ruleRequired } from "../../../utils/rules";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -85,6 +86,7 @@ const homeScreen = ({ ...props }) => {
   const [personsKeys, setPersonsKeys] = useState([]);
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
+  const [formAddImmediateSupervisor] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRefAsim = useRef(null);
 
@@ -101,8 +103,10 @@ const homeScreen = ({ ...props }) => {
   // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
   const [modalSynchronizeYNL, setModalSynchronizeYNL] = useState(false);
+  const [modalAddImmediateSupervisor, setModalAddImmediateSupervisor] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
+  const [personsToAddImmediateSupervisor, setPersonsToAddImmediateSupervisor] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
   const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
   let urlFilter = "/person/person/?";
@@ -602,6 +606,9 @@ const homeScreen = ({ ...props }) => {
             Sincronizar YNL
           </Menu.Item>
         )}
+        <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<SyncOutlined />}>
+          Asignar jefe inmediato
+        </Menu.Item>
       </Menu>
     );
   };
@@ -684,6 +691,15 @@ const homeScreen = ({ ...props }) => {
             Sincronizar con YNL
           </Menu.Item>
         )}
+        <Menu.Item
+          key="7"
+          icon={<SyncOutlined />}
+          onClick={ () => {
+            setPersonsToAddImmediateSupervisor([item]), setModalAddImmediateSupervisor(true);
+          }}
+        >
+          Asignar jefe inmediato
+        </Menu.Item>
       </Menu>
     );
   };
@@ -879,12 +895,21 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
+  const AlertAddImmediateSupervisor = () => (
+    <div>
+      <b>Colaboradores a asignar:</b>
+      <br /><br />
+      <ListElementsToAddImmediateSupervisor personsToAddImmediateSupervisor={personsToAddImmediateSupervisor} />
+    </div>
+  );
+
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
       setPersonsToSynchronizeYNL(selectedRows);
+      setPersonsToAddImmediateSupervisor(selectedRows)
     },
   };
 
@@ -922,6 +947,23 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
+  const ListElementsToAddImmediateSupervisor = ({ personsToAddImmediateSupervisor }) => {
+    return (
+      <div>
+        {personsToAddImmediateSupervisor.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
   const HandleCloseGroup = () => {
     setShowModalGroup(false);
     setModalCreateGroup(false);
@@ -929,6 +971,7 @@ const homeScreen = ({ ...props }) => {
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
     setPersonsToSynchronizeYNL([]);
+    setPersonsToAddImmediateSupervisor([]);
     setPersonsKeys([]);
     setItemPerson({});
   };
@@ -1062,6 +1105,29 @@ const homeScreen = ({ ...props }) => {
 
   const showModalSynchronizeYNL = () => {
     modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
+  };
+
+  const showModalAddImmediateSupervisor = () => {
+    personsToAddImmediateSupervisor.length > 0 ? setModalAddImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
+  };
+
+  const finishImmediateSupervisor = (value) =>{
+    let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
+    validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe") : assignedImmediateSupervisor(value.immediate_supervisor)
+  }
+
+  const assignedImmediateSupervisor = (immediate_supervisor) => {
+    let ids = null;
+    if (personsToAddImmediateSupervisor.length == 1) {
+      ids = personsToAddImmediateSupervisor[0].id;
+    } else if (personsToAddImmediateSupervisor.length > 0) {
+      personsToAddImmediateSupervisor.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
+    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
+    console.log("Data a enviar",data)
   };
 
   useEffect(() => {
@@ -1584,6 +1650,45 @@ const homeScreen = ({ ...props }) => {
           setVisible={()=>setPersonCfi(false)}
           node_id={props.currentNode?.id}
         />
+        <Modal title="Asignar jefe inmediato" closable={false} visible={modalAddImmediateSupervisor} footer={false} >
+          <Form
+            onFinish={finishImmediateSupervisor}
+            layout={"vertical"}
+            form={formAddImmediateSupervisor}
+          >
+            <Row>
+              <Col xs={24} md={24}>
+                <Form.Item name="immediate_supervisor" label="Jefe inmediato" rules={[ruleRequired]}>
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    allowClear={true}
+                    >
+                      { listPersons.length > 0 && listPersons.map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <AlertAddImmediateSupervisor/>
+            <Row gutter={[8,20]} justify="end">
+              <Col span={6}>
+                <Button style={{width:'100%'}} className="btn-filter" onClick={()=>{setModalAddImmediateSupervisor(false), formAddImmediateSupervisor.resetFields()}}>
+                  Cancelar
+                </Button>
+              </Col>
+              <Col span={6}>
+                <Button style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                  Asignar
+                </Button>
+              </Col>         
+            </Row>
+          </Form>
+          <br />
+        </Modal>
       </MainLayout>
     </>
   );
