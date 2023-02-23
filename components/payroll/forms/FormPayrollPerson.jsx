@@ -451,7 +451,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                 <Col lg={12} xs={22} md={12}>
                   <Form.Item
                     name="contract_type"
-                    label="Tipo de contratoss"
+                    label="Tipo de contrato"
                     rules={[ruleRequired]}
                   >
                     <Select

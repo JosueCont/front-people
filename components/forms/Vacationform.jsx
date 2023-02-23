@@ -9,15 +9,17 @@ import {
   Image,
   InputNumber,
   DatePicker,
+  Select
 } from "antd";
 import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
-import { getDifferenceDays } from "../../utils/functions";
+import { getDifferenceDays, getFullName } from "../../utils/functions";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import { connect } from "react-redux";
 
-const Vacationform = (props) => {
+const Vacationform = ({edit = false,...props}) => {
   const { Title } = Typography;
 
   const [formVacation] = Form.useForm();
@@ -25,6 +27,7 @@ const Vacationform = (props) => {
   const [availableDays, setAvailableDays] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState();
+  const [listPersons, setListPersons] = useState([]);
 
   const changePerson = async (value) => {
     if (value) {
@@ -37,6 +40,7 @@ const Vacationform = (props) => {
           dateOfAdmission: index.date_of_admission
             ? moment(index.date_of_admission).format("DD-MM-YYYY")
             : null,
+          immediate_supervisor: index?.immediate_supervisor ? index?.immediate_supervisor?.id : null,
         });
         formVacation.setFieldsValue({
           job: index.work_title ? index.work_title.job.name : null,
@@ -50,6 +54,7 @@ const Vacationform = (props) => {
         availableDays: null,
         dateOfAdmission: null,
         job: null,
+        immediate_supervisor:null
       });
       setUrlPhoto(null);
     }
@@ -66,8 +71,41 @@ const Vacationform = (props) => {
   };
 
   useEffect(() => {
+    if(props.currentNode){
+      getListPersons(props.currentNode.id)
+    }
+  }, [props.currentNode]);
+
+  const getListPersons = async (node_id) => {
+    let data = {
+      node: node_id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
+      console.log(error);
+    }
+  };
+
+  const validateImmediateSupervisor = (id) => ({
+    validator(rule, value) {
+      if (value != id) {
+        return Promise.resolve();
+      }
+      return Promise.reject("No se puede elegir al mismo usuario como jefe inmediato");
+    },
+  });
+
+  useEffect(() => {
     if (props.details) {
-      changePerson(props.details.collaborator.id);
+      // changePerson(props.details.collaborator.id);
       setStartDate(props.details.departure_date);
       setEndDate(props.details.return_date);
       setAvailableDays(props.details.collaborator.Available_days_vacation);
@@ -82,8 +120,8 @@ const Vacationform = (props) => {
         antiquity: props.details.collaborator
           ? props.details.collaborator.antiquity
           : null,
-        availableDays: props.details.collaborator
-          ? props.details.collaborator.Available_days_vacation
+        availableDays: props.details
+          ? props.details.available_days_vacation
           : null,
         dateOfAdmission: props.details.collaborator
           ? moment(props.details.collaborator.date_of_admission).format(
@@ -100,6 +138,10 @@ const Vacationform = (props) => {
           props.details && props.details.work_title
             ? props.details.collaborator.job.name
             : null,
+        immediate_supervisor:
+          props.details && props.details.immediate_supervisor
+          ? props.details.immediate_supervisor.id
+          : null,
       });
 
       setUrlPhoto(
@@ -160,7 +202,7 @@ const Vacationform = (props) => {
             <Col sm={24} md={12} lg={12}>
               <Form.Item rules={[ruleRequired]}>
                 <SelectCollaborator
-                  label="Empleado"
+                  label="Colaborador"
                   name="person"
                   onChange={changePerson}
                   showSearch={true}
@@ -227,6 +269,22 @@ const Vacationform = (props) => {
                 <Input readOnly />
               </Form.Item>
             </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item label="Jefe inmediato" name="immediate_supervisor" rules={[ruleRequired,validateImmediateSupervisor(props?.details?.collaborator?.id)]}>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  readOnly
+                  disabled={edit ? false : true}
+                  >
+                    { listPersons.length > 0 && listPersons.map(item => (
+                      <Select.Option value={item.id} key={item.id}>
+                        {getFullName(item)}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
             <Col span={20} offset={4}>
               <Title key="dats_gnrl" level={4} style={{ marginTop: 10 }}>
                 Información
@@ -268,4 +326,10 @@ const Vacationform = (props) => {
   );
 };
 
-export default Vacationform;
+const mapState = (state) => {
+  return {
+      currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(Vacationform);
