@@ -173,7 +173,7 @@ const index = ({
             <Card
                 title={
                     <span>
-                    <img src={'/images/boxparty.png'} width={35} style={{marginRight:10}}/>
+                    <img src={'/images/ballon.png'} width={35} style={{marginRight:10}}/>
                     Cumpleañeros del mes
                 </span>
                 }
@@ -190,8 +190,8 @@ const index = ({
                             renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
-                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } />: null}
-                                        title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name?item.first_name:''} ${item.flast_name?item.flast_name:''} ${item?.mlast_name?item?.mlast_name:''}`}</a>}
+                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
+                                        title={<p >{`${item.first_name?item.first_name:''} ${item.flast_name?item.flast_name:''} ${item?.mlast_name?item?.mlast_name:''}`}</p>}
                                         description={`Fecha de cumpleaños: ${moment(item.birth_date).format('DD/MM/YYYY')}`}
                                     />
                                 </List.Item>
