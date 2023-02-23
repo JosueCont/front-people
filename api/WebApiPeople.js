@@ -548,6 +548,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/setup/get-instance-codes/?person=${id}`, 'get')
   }
 
+  static khonnectSavePerson(data){
+    return WebApi.ApisType('/khonnect/save-person/', 'post', data)
+  }
+
 }
 
 export default WebApiPeople;
