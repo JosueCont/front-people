@@ -47,7 +47,13 @@ const MovementsIMSS=({ currentNode })=>{
 
     const columns = [
         {
+            title: 'ID',
+            width: 200,
+            dataIndex: 'id',
+        },
+        {
             title: 'Fecha de envío',
+            width: 200,
             dataIndex: 'date',
         },
         {
@@ -76,6 +82,9 @@ const MovementsIMSS=({ currentNode })=>{
                         break
                     case 4:
                         sts = "Procesado"
+                        break
+                    case 5:
+                        sts = "Error"
                         break
                     default:
                         sts = ""
@@ -120,6 +129,7 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Mensaje',
+            width: 300,
             dataIndex: 'message',
             render: (message) => message || "----"
         },
