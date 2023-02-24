@@ -28,17 +28,13 @@ const ModalExperience = ({
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
-        let category = itemToEdit.category?.id ?? null;
-        let sub_category = itemToEdit.sub_category?.id ?? null;
-        let competences = itemToEdit.competences?.length > 0
+        let values = {...itemToEdit};
+        values.category = itemToEdit.category?.id ?? null;
+        values.sub_category = itemToEdit.sub_category?.id ?? null;
+        values.competences = itemToEdit.competences?.length > 0
             ? itemToEdit.competences?.map(item => item.id)
             : [];
-        formExperience.setFieldsValue({
-            ...itemToEdit,
-            category,
-            sub_category,
-            competences
-        });
+        formExperience.setFieldsValue(values);
     },[itemToEdit])
 
     const onChangeCategory = (value) =>{
@@ -83,7 +79,7 @@ const ModalExperience = ({
         <MyModal
             title={title}
             visible={visible}
-            widthModal={800}
+            widthModal={700}
             close={onCloseModal}
             closable={!loading}
         >
@@ -168,7 +164,7 @@ const ModalExperience = ({
                         >
                             <Select
                                 mode='multiple'
-                                maxTagCount={1}
+                                maxTagCount={0}
                                 disabled={load_competences}
                                 loading={load_competences}
                                 placeholder='Seleccionar las competencias'

@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { DatePicker, Form, Row, Col, Button, Select} from 'antd';
+import { Form, Row, Col, Button, Card, Tooltip} from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
-    ArrowLeftOutlined
+    ArrowLeftOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
+import TagFilters from '../TagFilters';
+import FiltersHistory from './FiltersHistory';
+import { createFiltersJB, getValueFilter } from '../../../utils/functions';
 
 const SearchHistory = ({
     infoPublication = {},
@@ -20,39 +24,32 @@ const SearchHistory = ({
     } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const [formSearch] = Form.useForm();
-    const url = router?.asPath?.split('?')[0];
+    const [openModal, setOpenModal] = useState(false);
     const formatDate = 'DD-MM-YYYY';
 
-    useEffect(()=>{
-        let filters = {...router.query};
-        if(filters.start && filters.end){
-            filters.dates = [
-                moment(filters.start, formatDate),
-                moment(filters.end, formatDate)
-            ]
-        }
-        formSearch.setFieldsValue(filters);  
-    },[router.query])
+    const setFilters = (filters = {}) => router.replace({
+        pathname: `/jobbank/publications/history/${router.query?.id}`,
+        query: filters
+    }, undefined, {shallow: true});
 
-    const onFinish = (values) =>{
+    const onFinishSearch = (values) =>{
         let filters = {...newFilters};
-        if(values.dates){
-            filters['start'] = values.dates[0].format(formatDate);
-            filters['end'] = values.dates[1].format(formatDate);
-        }
-        if(values.account) filters['account'] = values.account;
-        router.replace({
-            pathname: url,
-            query: filters
-        }, undefined, {shallow: true});
+        filters['dates'] = values.dates
+            ? `${values.dates[0].format(formatDate)},${values.dates[1].format(formatDate)}`
+            : null;
+        filters['account'] = values.account ?? null;
+        let params = createFiltersJB(filters, ['id']);
+        setFilters(params)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        router.replace({
-            pathname: url,
-            query: newFilters
-        }, undefined, {shallow: true});
+        setFilters()
+    }
+
+    const closeModal = () =>{
+        setOpenModal(false)
+        formSearch.resetFields()
     }
 
     const actionBack = () =>{
@@ -62,63 +59,92 @@ const SearchHistory = ({
         })
     }
 
+    const setDates = () =>{
+        let dates = router.query?.dates.split(',');
+        return [moment(dates[0], formatDate), moment(dates[1], formatDate)];
+    }
+
+    const showModal = () =>{
+        let values = {...router.query};
+        values.dates = router.query?.dates ? setDates() : null;
+        formSearch.setFieldsValue(values);
+        setOpenModal(true)
+    }
+
+    const getAccount = (code) => getValueFilter({
+        value: code,
+        list: list_connections_options,
+        keyEquals: 'code'
+    })
+
+    const getDates = (dates) =>{
+        let values = dates.split(',');
+        let start = moment(values[0], formatDate).format(formatDate);
+        let end = moment(values[1], formatDate).format(formatDate);
+        return `${start} - ${end}`;
+    }
+
+    const listKeys = {
+        account: 'Cuenta',
+        dates: 'Fecha'
+    };
+
+    const listGets = {
+        account: getAccount,
+        dates: getDates
+    };
+
     return (
-        <Form
-            layout='inline'
-            onFinish={onFinish}
-            form={formSearch}
-            style={{width: '100%'}}
-        >
-            <Row align='middle' style={{width: '100%'}}>
-                <Col span={8} style={{display: 'flex'}}>
-                    <div className='title-history'>
-                        <p>{infoPublication?.vacant?.job_position}</p>
-                        <p>&nbsp;/&nbsp;{infoPublication?.profile?.name ?? 'Personalizado'}</p>
-                    </div>
-                </Col>
-                <Col span={16} className='content-end' style={{gap: 8}}>
-                    <Form.Item name='account' style={{margin:0}}>
-                        <Select
-                            allowClear
-                            showSearch
-                            disabled={load_connections_options}
-                            loading={load_connections_options}
-                            placeholder='Cuenta'
-                            notFoundContent='No se encontraron resultados'
-                            optionFilterProp='children'
-                            style={{width: '110px'}}
-                        >
-                            {list_connections_options.length > 0 && list_connections_options.map(item=> (
-                                <Select.Option value={item.code} key={item.code}>
-                                    {item.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name='dates' style={{margin:0}}>
-                        <DatePicker.RangePicker
-                            style={{width: '100%'}}
-                            placeholder={['Fecha inicio','Fecha final']}
-                            format='DD-MM-YYYY'
+        <>
+            <Card bodyStyle={{padding: 12}}>
+                <Row gutter={[8,8]}>
+                    <Col span={24}>
+                        <div span={24} className='title-action-content title-action-border'>
+                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                                {Object.keys(infoPublication).length > 0 ?
+                                    <>
+                                        {infoPublication?.vacant?.job_position}
+                                        &nbsp;/&nbsp;{infoPublication?.profile?.name ?? 'Personalizado'}
+                                    </>
+                                : <></>}
+                            </p>
+                            <div className='content-end' style={{gap: 8}}>
+                                <Tooltip title='Configurar filtros'>
+                                    <Button onClick={()=> showModal()}>
+                                        <SettingOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Limpiar filtros'>
+                                    <Button onClick={()=> deleteFilter()}>
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Button
+                                    onClick={()=> actionBack()}
+                                    icon={<ArrowLeftOutlined />}
+                                >
+                                    Regresar
+                                </Button>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <TagFilters
+                            listKeys={listKeys}
+                            listGets={listGets}
+                            deleteKeys={['id']}
+                            discardKeys={['id']}
                         />
-                    </Form.Item>
-                    <div span={6} style={{display: 'flex', gap: 8}}>
-                        <Button htmlType='submit'>
-                            <SearchOutlined />
-                        </Button>
-                        <Button onClick={()=> deleteFilter()}>
-                            <SyncOutlined />
-                        </Button>
-                        <Button
-                            onClick={()=> actionBack()}
-                            icon={<ArrowLeftOutlined />}
-                        >
-                            Regresar
-                        </Button>
-                    </div>
-                </Col>
-            </Row>
-        </Form>
+                    </Col>  
+                </Row>
+            </Card>
+            <FiltersHistory
+                visible={openModal}
+                close={closeModal}
+                formSearch={formSearch}
+                onFinish={onFinishSearch}
+            />
+        </>
     )
 }
 

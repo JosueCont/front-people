@@ -457,18 +457,19 @@ export const validateMaxLength = (e) =>{
   if(e.target.value.length >= e.target?.maxLength) e.preventDefault();
 }
 
-export const createFiltersJB = (obj = {}) =>{
-  let noValid = [undefined, null, '', ' '];
-  return Object.entries(obj).reduce((query, [key, val])=>{
-    if(noValid.includes(val)) return query;
+export const createFiltersJB = (obj = {}, discard = []) =>{
+  let noValid = [undefined, null, "", " "];
+  return Object.entries(obj).reduce((filters, [key, val])=>{
+    if(discard.includes(key)) return filters
+    if(noValid.includes(val)) return filters;
     let value = val.toString().trim();
-    return {...query, [key]: value}
+    return {...filters, [key]: value}
   }, {});
 }
 
 export const getFiltersJB = (obj = {}, discard = []) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
-    if(['size', ...discard].includes(key)) return query;
+    if(["size", ...discard].includes(key)) return query;
     if(key == "page"){
       const find_ = item => item[0] == "size";
       let result = Object.entries(obj).find(find_);
@@ -482,7 +483,7 @@ export const getFiltersJB = (obj = {}, discard = []) =>{
 
 export const deleteFiltersJb = (obj = {}, listDelete = []) =>{
   return Object.entries(obj).reduce((filters, [key, val]) =>{
-    if(listDelete.includes(key)) return filters;
+    if([...listDelete, "back"].includes(key)) return filters;
     return {...filters, [key]: val};
   }, {});
 }
