@@ -1648,7 +1648,7 @@ const homeScreen = ({ ...props }) => {
             <AlertAddImmediateSupervisor/>
             <Row gutter={[8,20]} justify="end">
               <Col span={6}>
-                <Button disabled={isLoadingImmediateSupervisor} style={{width:'100%'}} className="btn-filter" onClick={()=>{setModalAddImmediateSupervisor(false), formAddImmediateSupervisor.resetFields()}}>
+                <Button disabled={isLoadingImmediateSupervisor} style={{width:'100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1"}} className="btn-filter" onClick={()=>{setModalAddImmediateSupervisor(false), formAddImmediateSupervisor.resetFields()}}>
                   Cancelar
                 </Button>
               </Col>
