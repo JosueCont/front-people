@@ -24,10 +24,11 @@ const ModalPositions = ({
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
-        if(itemToEdit.end_date) itemToEdit.end_date = moment(itemToEdit.end_date);
-        if(itemToEdit.start_date) itemToEdit.start_date = moment(itemToEdit.start_date);
-        let sector = itemToEdit.sector?.id ?? null;
-        formPosition.setFieldsValue({...itemToEdit, sector});
+        let values = {...itemToEdit};
+        values.end_date = itemToEdit.end_date ? moment(itemToEdit.end_date) : null;
+        values.start_date = itemToEdit.start_date ? moment(itemToEdit.start_date) : null;
+        values.sector = itemToEdit.sector?.id ?? null;
+        formPosition.setFieldsValue(values);
     },[itemToEdit])
 
     const onCloseModal = () =>{
@@ -67,7 +68,7 @@ const ModalPositions = ({
         <MyModal
             title={title}
             visible={visible}
-            widthModal={800}
+            widthModal={700}
             close={onCloseModal}
             closable={!loading}
         >
@@ -126,7 +127,7 @@ const ModalPositions = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Form.Item
                             name='sector'
                             label='Sector'
