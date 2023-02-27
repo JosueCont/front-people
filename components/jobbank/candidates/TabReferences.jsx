@@ -24,8 +24,6 @@ import { popupPDF, downloadCustomFile } from '../../../utils/functions';
 import ListItems from '../../../common/ListItems';
 import ModalReferences from './ModalReferences';
 import { optionsStatusReferences } from '../../../utils/constant';
-// import ModalRejected from './ModalRejected';
-// import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 
 const TabReferences = ({
     action,
@@ -39,15 +37,10 @@ const TabReferences = ({
     const [infoReferences, setInfoReferences] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    // const [openModalReject, setOpenModalReject] = useState(false);
-    // const [visibleFooter, setVisibleFooter] = useState(true);
     const [itemToEdit, setItemToEdit] = useState({});
-    // const [itemToReject, setItemToReject] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    // const [msgHTML, setMsgHTML] = useState("<p></p>");
-    // const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [isReject, setIsReject] = useState(false);
-    const [useWithAction, setUseWithAction] = useState(true);
+    const [withAction, setWithAction] = useState(true);
     
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -128,25 +121,6 @@ const TabReferences = ({
         }
     }
 
-    // const actionRejectstatus = async () => {
-    //     try {
-    //         let body = {
-    //             status: 3,
-    //             file_name: itemToReject.file_name,
-    //             comments: msgHTML
-    //         }
-    //         await WebApiJobBank.updateReference(itemToReject.id, body);
-    //         message.success('Estatus actualizado');
-    //         getInfoReference(router.query.id);
-    //         setItemToEdit({})
-    //     } catch (error) {
-    //         console.log(error)
-    //         message.error('Estatus no actualizado');
-    //         setItemToEdit({})
-    //     }
-
-    // }
-
     const openModalEdit = (item)=>{
         setItemToEdit(item)
         setOpenModal(true)
@@ -156,20 +130,8 @@ const TabReferences = ({
     const openModalRemove = (item, withAcion = true) =>{
         setItemsToDelete([item])
         setOpenModalDelete(true)
-        setUseWithAction(withAcion)
+        setWithAction(withAcion)
     }
-
-    // const openReject = (item, visibleFooter) => {
-    //     setOpenModalReject(true)
-    //     setItemToReject(item)
-    //     if(visibleFooter) setVisibleFooter(false)
-    //     if(!item.comments) return;
-    //     setMsgHTML(item.comments);
-    //     let convert = convertFromHTML(item.comments);
-    //     let htmlMsg = ContentState.createFromBlockArray(convert);
-    //     let template = EditorState.createWithContent(htmlMsg);
-    //     setEditorState(template);
-    // }
 
     const closeModal = () =>{
         setOpenModal(false)
@@ -180,15 +142,8 @@ const TabReferences = ({
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
+        setWithAction(true)
     }
-
-    // const closeModalRejected = () => {
-    //     setOpenModalReject(false)
-    //     setMsgHTML('<p></p>');
-    //     setItemToReject({})
-    //     setEditorState(EditorState.createEmpty())
-    //     setVisibleFooter(true)
-    // }
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
@@ -260,7 +215,6 @@ const TabReferences = ({
                 value: item.value
             })),
             onFilter: (value, record) => record.status == value,
-            // filterSearch: true,
             render: (item) =>{
                 return(
                     <Space>
@@ -273,7 +227,7 @@ const TabReferences = ({
                             options={optionsStatusReferences}
                             onChange={(e) => actionStatus(e, item)}
                         />
-                        {item.status === 3 && (
+                        {item.status === 3 && item.comments && (
                             <Tooltip title='Ver motivo'>
                                 <EyeOutlined onClick={() => openModalRemove(item, false)}/>
                             </Tooltip>
@@ -329,28 +283,16 @@ const TabReferences = ({
                 actionForm={isEdit ? actionUpdate : actionCreate}
                 textSave={isEdit ? isReject ? 'Rechazar' : 'Actualizar' : 'Guardar'}
             />
-            {/* <ModalRejected 
-                title='Rechazo de archivo'
-                visible={openModalReject}
-                close ={ closeModalRejected }
-                itemToEdit ={ itemToReject }
-                setMsgHTML = { setMsgHTML }
-                setEditorState = {setEditorState}
-                editorState = { editorState }
-                actionForm = { actionRejectstatus }
-                textSave = {'Rechazar'}
-                viewFooter = {visibleFooter}
-            /> */}
             <ListItems
-                title={useWithAction ? '¿Estás seguro de eliminar este archivo?' : 'Motivo de rechazo'}
+                title={withAction ? '¿Estás seguro de eliminar este archivo?' : 'Motivo de rechazo'}
                 visible={openModalDelete}
                 keyTitle='file_name'
-                {...useWithAction ? {} : {keyDescription: 'comments'}}
-                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+                keyDescription={withAction ? '' : 'comments'}
+                textCancel={withAction ? 'Cancelar' : 'Cerrar'}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
-                useWithAction={useWithAction}
+                useWithAction={withAction}
             />
             
         </>
