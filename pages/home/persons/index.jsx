@@ -1095,7 +1095,6 @@ const homeScreen = ({ ...props }) => {
       message.success("Asignado correctamente.");
       setIsLoadingImmediateSupervisor(false);
       setModalAddImmediateSupervisor(false);
-      setPersonsToAddImmediateSupervisor([]);
       formAddImmediateSupervisor.resetFields();
       filterPersonName();
     })
