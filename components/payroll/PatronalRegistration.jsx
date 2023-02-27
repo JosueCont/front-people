@@ -14,7 +14,7 @@ import {
   Spin,
   DatePicker,
   ConfigProvider,
-  Select
+  Select, Alert
 } from "antd";
 import {
   CheckOutlined,
@@ -501,6 +501,14 @@ const ImssInformationNode = ({
           </Row>
           <Divider style={{ marginTop: "2px" }} />
           <AutomaticMovements hasInfonavit={(data)=>setHasCredentialInfonavit(data)} hasImss={(data)=>setHasCredentialIMSS(data)} patronalData={patronalData} />
+            <Alert
+                message=""
+                showIcon
+                description={
+                  <p>Las funcionalidades relacionadas a los movimientos automáticos de IMSS e INFONAVIT están sujetos a la disponibilidad de ambos servicios ya que son externos a nuestra plataforma.</p>
+                }
+                type="info"
+            />
           <Row>
             <Col>
               <Divider style={{ marginTop: "2px" }} />
@@ -558,9 +566,10 @@ const ImssInformationNode = ({
             {
               hasCredentialInfonavit &&
                 <>
+                  <Divider> <img src={'/images/logoinfonavit.png'} width={40}/> Movimientos de Infonavit</Divider>
                   <Row justify="space-between">
                     <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-                      Movimientos afiliatorios
+                       Movimientos afiliatorios
                     </Title>
                     <Button
                         onClick={()=>setModal(true)}

@@ -67,6 +67,11 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
     {
       title: "Servicio",
       key: 'service' ,
+      render: (service) => {
+        return <>
+          <img src={service === 'IMSS' ? '/images/logo_imss.png':'/images/logoinfonavit.png'} width={40} />
+        </>
+      },
       dataIndex: 'service'
     },
     {
