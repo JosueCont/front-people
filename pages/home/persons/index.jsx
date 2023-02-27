@@ -916,7 +916,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo_thumbnail} />
+                <Avatar src={p.photo_thumbnail ? p.photo_thumbnail : defaulPhoto} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
