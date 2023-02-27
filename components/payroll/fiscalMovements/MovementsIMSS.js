@@ -8,6 +8,7 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import UploadFile from "../../UploadFile";
 import { connect } from "react-redux";
+import moment from 'moment'
 
 const MovementsIMSS=({ currentNode })=>{
 
@@ -47,13 +48,9 @@ const MovementsIMSS=({ currentNode })=>{
 
     const columns = [
         {
-            title: 'ID',
-            width: 200,
-            dataIndex: 'id',
-        },
-        {
             title: 'Fecha de envío',
             width: 200,
+            render: (date) => moment(date,"DD/MM/YYYY hh:mm:ss").utc().format('DD/MM/YYYY hh:mm:ss') || "----",
             dataIndex: 'date',
         },
         {
@@ -101,7 +98,7 @@ const MovementsIMSS=({ currentNode })=>{
                 <div style={{ textAlign: 'center' }}>
                     {
                         receipt? (
-                            <a href={receipt}>
+                            <a href={receipt} target={'_blank'}>
                                 <DownloadOutlined />
                             </a>
                         ) : "----"
