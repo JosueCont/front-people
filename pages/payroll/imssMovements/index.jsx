@@ -90,7 +90,7 @@ const ImssMovements = ({ ...props }) => {
     setLoading(true);
     let data = new FormData();
     data.append("node", props.currentNode.id);
-    data.append("save_risk_premium", 783);
+    data.append("save_risk_premium", saveRiskPremium);
     data.append("patronal_registration", patronalSelected);
     data.append("File", file);
 
