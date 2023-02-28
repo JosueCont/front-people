@@ -552,6 +552,10 @@ class WebApiPeople {
     return WebApi.ApisType('/khonnect/save-person/', 'post', data)
   }
 
+  static assignedMassiveImmediateSupervisor(data){
+    return WebApi.ApisType(`/person/person/set-immediate-supervisor/`,"post",data)
+  } 
+
 }
 
 export default WebApiPeople;
