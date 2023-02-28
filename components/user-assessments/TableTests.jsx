@@ -22,7 +22,19 @@ import moment from "moment";
 import { BtnTest, ProgressTest } from "../validation/styled";
 import WebApiAssessment from "../../api/WebApiAssessment";
 import { useStatistics } from "../../utils/useStatistics";
-import { urlKuizBaseFront } from "../../config/config";
+import {urlKuizBaseFront, typeHttp} from '../../config/config'
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Front with Tenant
+const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
 
 const TableTests = ({user_profile, ...props}) => {
@@ -76,7 +88,7 @@ const TableTests = ({user_profile, ...props}) => {
             version: 'khorplus',
         }
         const token = jwtEncode(data, 'secret', 'HS256');
-        const url = `${urlKuizBaseFront}/?token=${token}`;
+        const url = `${urlKuizBaseFrontWithTenant}/?token=${token}`;
         // const url = `http://humand.localhost:3000/?token=${token}`;
         redirectTo(url)
     }
