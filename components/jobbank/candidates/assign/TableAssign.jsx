@@ -240,7 +240,7 @@ const TableAssign = ({
             title: "Grupo",
             ellipsis: true,
             render: (item) =>{
-                if(item.groups?.length <= 0) return <></>;
+                if(item.groups?.length <= 0) return null;
                 if(item.groups?.length == 1) return item.groups[0]?.name;
                 return (
                     <Space>
@@ -264,7 +264,7 @@ const TableAssign = ({
             title: "Fecha inicio",
             ellipsis: true,
             render: (item) => {
-                if(item.applys?.length <= 0) return <></>;
+                if(item.applys?.length <= 0) return null;
                 let date = item.applys[0]?.apply_date;
                 return date ? moment(date).format(formatTable) : null;
             }
@@ -273,7 +273,7 @@ const TableAssign = ({
             title: "Fecha fin",
             ellipsis: true,
             render: (item) => {
-                if(item.applys?.length <= 0) return <></>;
+                if(item.applys?.length <= 0) return null;
                 let date = item.applys[0]?.end_date;
                 return date ? moment(date).format(formatTable) : null;
             }
@@ -293,16 +293,15 @@ const TableAssign = ({
         {
             title: "Progreso",
             render: (item) =>{
-                if(item.applys?.length <= 0) return <></>;
-                // if(item.applys?.length > 1) return item.applys?.length;
-                let progress = item.applys[0]?.progress;
-                return progress ? `${progress}%`  : <></>;
+                if(item.applys?.length <= 0) return null;
+                let progress = `${item.applys[0]?.progress}`;
+                return progress ? `${progress}%`  : null;
             }
         },
         {
             title: "Historial",
             render: (item) =>{
-                if([0,1].includes(item.applys?.length)) return <></>;
+                if([0,1].includes(item.applys?.length)) return null;
                 return (
                     <Space>
                         <Tooltip title='Ver historial'>
@@ -324,8 +323,6 @@ const TableAssign = ({
         {
             title: "Acciones",
             render: (item) => {
-                // if(item.applys?.length <= 0) return <></>;
-                // if(item.applys?.length > 1) return item.applys?.length;
                 return (
                     <Dropdown overlay={() => menuItem(item)}>
                         <Button size="small">
