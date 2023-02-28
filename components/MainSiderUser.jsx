@@ -101,12 +101,13 @@ const MainSider = ({
         link4.click();
         break;
       case "myEvaluation":
-        const token5 = user.jwt_data.metadata.at(-1).token;
-        const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
-        const link5 = document.createElement('a');
-        link5.href = url5;
-        link5.target = '_blank';
-        link5.click();
+        // const token5 = user.jwt_data.metadata.at(-1).token;
+        // const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
+        // const link5 = document.createElement('a');
+        // link5.href = url5;
+        // link5.target = '_blank';
+        // link5.click();
+        router.push("/user/assessments/")
         break;
       default:
         router.push('#');
