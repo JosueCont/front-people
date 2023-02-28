@@ -371,12 +371,8 @@ const TableCandidates = ({
                         style={{color: '#1890ff', cursor: 'pointer'}}
                         onClick={()=> router.push({
                             pathname: '/jobbank/candidates/assign',
-                            query: {...router.query, id: item.id, person: item.user_person}
+                            query: {...router.query, person: item.user_person}
                         })}
-                        // onClick={()=> router.push({
-                        //     pathname: `/assessment/persons/${item?.user_person}`,
-                        //     query: {...router.query, back: 'candidates'}
-                        // })}
                     >
                         {getPercentGenJB(item?.person_assessment_list)}%
                     </span>

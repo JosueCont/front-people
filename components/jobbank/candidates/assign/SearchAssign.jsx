@@ -100,7 +100,8 @@ const SearchAssign = ({
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        setFilters()
+        let params = deleteFiltersJb({...router.query}, keepKeys);
+        setFilters(params)
     }
 
     return (

@@ -20,7 +20,7 @@ const AddorEditProfile = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deleteKeys = ['id', 'client'];
+    const deleteKeys = ['id','client','back'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;

@@ -21,7 +21,7 @@ const assign = () => {
     const [newFilters, setNewFilters] = useState({});
     const [infoCandidate, setInfoCandidate] = useState({});
     const keepKeys = ['name_assessment','status_apply','date_finish'];
-    const deleteKeys = ['id','person'];
+    const deleteKeys = ['person','back'];
     const formatFilter = "DD-MM-YYYY";
     const watchQuerys = [
         router.query?.name_assessment,
@@ -54,7 +54,6 @@ const assign = () => {
             let response = await WebApiAssessment.getUserListAssessments({person: id});
             let formatted = formatData(response.data);
             let results = onFilterEvaluations(formatted);
-            console.log("🚀 ~ file: assign.jsx:8763 ~ getEvaluations ~ results:", results)
             setEvaluations(orderData(results))
             setAllEvaluations(formatted)
             setLoading(false)

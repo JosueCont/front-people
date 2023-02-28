@@ -26,7 +26,7 @@ const AddOrEditVacancies = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deleteKeys = ['id', 'client', 'tab'];
+    const deleteKeys = ['id','client','tab','back'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
