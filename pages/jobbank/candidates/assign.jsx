@@ -82,19 +82,11 @@ const assign = () => {
     // }
 
     const getValues = (current) =>{
-        const map_ = item => ({
-            id: item.id,
-            apply_date: item.apply_date,
-            end_date: item.end_date,
-            progress: item.progress,
-            status: item.status,
-            is_last: item.is_last
-        });
         return{
             id: current.id,
             name: current.name,
             code: current.code,
-            applys: current.applys?.map(map_),
+            applys: current.applys,
             groups: current.group ? [current.group] : [],
             origins: current.origin ? [current.origin] : []
         }
