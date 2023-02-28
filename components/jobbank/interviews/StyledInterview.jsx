@@ -27,7 +27,7 @@ export const EvenTitle = styled.p`
     color: rgb(60,64,67);
     margin-bottom: 0px;
     font-weight: 400;
-    max-width: calc(100% - 140px);
+    max-width: ${({maxWidth}) => maxWidth ? `calc(100% - ${maxWidth}px)` : 'calc(100% - 140px)'};
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -54,14 +54,19 @@ export const BtnOption = styled.button`
     }
 `;
 
-export const BtnLink = styled.a`
-    background-color: rgb(3, 155, 229);
+export const BtnLink = styled.button`
+    background-color:  ${({canClick = true}) => canClick ? 'rgb(3, 155, 229)' : 'rgba(0, 0, 0, 0.25)'};
     color: #ffff;
     font-weight: 400;
     font-size: 14px;
     padding: 8px 16px;
     border-radius: 4px;
-    :hover{
+    border-width: 1px;
+    border-color: transparent;
+    cursor: ${({canClick = true}) => canClick ? 'pointer' : 'not-allowed'};
+    :hover,
+    :focus,
+    :active{
         opacity: 0.9;
         color: #ffff;
     }

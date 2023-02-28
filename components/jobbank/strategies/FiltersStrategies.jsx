@@ -60,7 +60,11 @@ const FiltersStrategies = ({
                             name='product__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por producto'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por producto'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>

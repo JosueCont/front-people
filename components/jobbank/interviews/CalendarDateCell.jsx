@@ -15,8 +15,8 @@ const CalendarDateCell = ({
     } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const format = 'YYYY-MM-DD';
-    const currentMonth = moment()?.month()+1;
-    const current = moment(value)?.format(format);
+    const currentMonth = moment()?.month() + 1;
+    const current = value.format(format);
     
     const formatDate = value => moment(value).format(format);
 
@@ -29,8 +29,10 @@ const CalendarDateCell = ({
     },[current, list_interviews])
 
     const getEquals = (item) =>{
-        let date = item?.all_data_response?.start?.dateTime;
-        let month = moment(date).format('MM');
+        let equals = moment().isAfter(value.format(format), 'day');
+        if(equals) return false;
+        let start = item?.all_data_response?.start?.dateTime;
+        let month = moment(start).format('MM');
         let monthQuery = router.query?.mth
             ? parseInt(router.query?.mth)
             : currentMonth;

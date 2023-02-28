@@ -32,7 +32,7 @@ const MainIndexJB = ({
     return (
         <MainLayout
             currentKey={pageKey}
-            defaultOpenKeys={["recruitmentSelection",'job_bank']}
+            defaultOpenKeys={["recruitmentSelection","job_bank"]}
         >
             <Breadcrumb>
                 <Breadcrumb.Item

@@ -52,7 +52,11 @@ const FiltersVacancies = ({
                             label='Nombre'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por nombre'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
