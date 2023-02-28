@@ -9,6 +9,7 @@ import {
   Col,
   Space,
   Spin,
+  Checkbox,
   message,
   Modal,
   Typography, Alert, Divider,
@@ -34,6 +35,7 @@ const ImssMovements = ({ ...props }) => {
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles] = useState([]);
   const [file, setFile] = useState(null);
+  const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   // useEffect(() => {
@@ -78,7 +80,6 @@ const ImssMovements = ({ ...props }) => {
         "Solicitud de Emisiones realizada con éxito, verifique mas tarde sus documentos"
       );
     } catch (error) {
-      console.error("Error", error);
       message.error("Error al pedir las emsiones. Intente más tarde");
     } finally {
       setLoading(false);
@@ -88,8 +89,8 @@ const ImssMovements = ({ ...props }) => {
   const importEBAEMAFiles = async () => {
     setLoading(true);
     let data = new FormData();
-
     data.append("node", props.currentNode.id);
+    data.append("save_risk_premium", 783);
     data.append("patronal_registration", patronalSelected);
     data.append("File", file);
 
@@ -100,7 +101,7 @@ const ImssMovements = ({ ...props }) => {
         getFiles();
       }
     } catch (error) {
-      console.log(rror.data);
+      message.error("La importación no se realizó, porfavor revise su archivo.");
     } finally {
       setLoading(false);
       setModalVisible(false);
@@ -255,11 +256,21 @@ const ImssMovements = ({ ...props }) => {
       >
         <Row justify="start">
           <Col span={24}>
-            <Text>
-              La importación de EMA/EBA puede ser solamente por período. Agrega
-              los archivos descargados del imss a una carpeta comprimida en
-              formato .zip
-            </Text>
+            <Alert
+                message=""
+                showIcon
+                description={
+                  <p>
+                    La importación de EMA/EBA puede ser solamente por período. Agrega
+                    los archivos descargados del imss a una carpeta comprimida en
+                    formato .zip
+                  </p>
+                }
+                type="warning"
+            />
+
+            <br/>
+            <Checkbox checked={saveRiskPremium} onChange={(e)=> setSaveRiskPremium(e.target.checked)}>Guardar prima de riesgo en la configuración de este registro patronal</Checkbox>
           </Col>
           <Col span={24} style={{ marginTop: 20 }}>
             <UploadFile
