@@ -20,17 +20,17 @@ const SearchPreselection = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersPreselection();
+    const { listKeys, listGets, listDefault } = useFiltersPreselection();
     const idVacant = router.query?.vacant ?? null;
     const match = router.query?.applyMatch ?? null;
 
-    const infoVacant = useMemo(()=>{
-        if(!idVacant) return [];
-        if(list_vacancies_options.length <=0) return [];
+    const defaultFilters = useMemo(()=>{
+        if(!idVacant) return {};
+        if(list_vacancies_options.length <= 0) return {};
         const find_ = item => item.id == idVacant;
         let result = list_vacancies_options.find(find_);
-        if(!result) return [];
-        return Object.entries({
+        if(!result) return {};
+        return {
             'Cliente': result?.customer?.name,
             'Vacante': result.job_position,
             'Género': listGets['gender'](result.gender) ?? 'N/A',
@@ -38,7 +38,7 @@ const SearchPreselection = ({
             'Aceptados': result.candidates_accepted,
             'En proceso': result.candidates_in_process,
             'Disponibles': result.available
-        });
+        };
     },[idVacant, list_vacancies_options])
 
     const showModal = () =>{
@@ -148,7 +148,7 @@ const SearchPreselection = ({
                             listKeys={listKeys}
                             listGets={listGets}
                             discardKeys={['vacant','applyMatch']}
-                            defaultFilters={infoVacant}
+                            defaultFilters={defaultFilters}
                         />
                     </Col>  
                 </Row>

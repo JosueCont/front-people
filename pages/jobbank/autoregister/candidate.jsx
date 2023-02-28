@@ -89,7 +89,8 @@ const candidate = ({
             console.log(e)
             setFetching(false);
             let error = e.response?.data?.email;
-            let msg = error
+            let txt = e.response?.data?.message;
+            let msg = txt ? txt : error
                 ? 'Este correo ya existe'
                 : router.query?.vacant
                 ? 'Postulación no registrada'

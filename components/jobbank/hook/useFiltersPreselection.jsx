@@ -29,7 +29,7 @@ export const useFiltersPreselection = () =>{
         study_level: 'Nivel de estudios',
         status_level_study: 'Estatus académico',
         last_job: 'Puesto',
-        age: 'Edad',
+        // age: 'Edad',
         language: 'Idioma',
         age_start: 'Edad mínima',
         age_end: 'Edad máxima'

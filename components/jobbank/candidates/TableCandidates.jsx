@@ -22,7 +22,7 @@ import { getCandidates } from '../../../redux/jobBankDuck';
 import { pdf } from '@react-pdf/renderer';
 import HighDirectionReport from './HighDirectionReport';
 import CandidateReport from './CandidateReport';
-import { copyContent } from '../../../utils/functions';
+import { copyContent, getPercentGenJB } from '../../../utils/functions';
 
 const TableCandidates = ({
     currentNode,
@@ -269,18 +269,7 @@ const TableCandidates = ({
             onError: () => message.error('Link de actualización no copiado')
         })
     }
-
-    const getPercentGen = (item) =>{
-        let assets = item?.person_assessment_list;
-        if(!assets || assets.length <= 0) return null;
-        let percent = 100 / (assets?.length * 100);
-        let progress = assets.reduce((acc, current) =>{
-            if(!current?.applys[0]) return acc;
-            return acc + current.applys[0]?.progress;
-        }, 0);
-        return (percent * progress).toFixed(2);
-    }
-
+    
     const menuTable = () => {
         return (
             <Menu>
@@ -374,17 +363,18 @@ const TableCandidates = ({
         {
             title: 'Evaluaciones',
             render: (item) =>{
+                // let valid = true;
                 let valid = item?.user_person
                     && item?.person_assessment_list?.length > 0;
                 return valid ? (
                     <span
                         style={{color: '#1890ff', cursor: 'pointer'}}
                         onClick={()=> router.push({
-                            pathname: `/assessment/persons/${item?.user_person}`,
-                            query: {...router.query, back: 'candidates'}
+                            pathname: '/jobbank/candidates/assign',
+                            query: {...router.query, person: item.user_person}
                         })}
                     >
-                        {getPercentGen(item)}%
+                        {getPercentGenJB(item?.person_assessment_list)}%
                     </span>
                 ) : <></>;
             }

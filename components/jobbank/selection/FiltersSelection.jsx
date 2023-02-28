@@ -35,7 +35,7 @@ const FiltersSelection = ({
             visible={visible}
             close={close}
             closable={!loading}
-            widthModal={700}
+            widthModal={500}
         >
             <Form
                 onFinish={onFinishSearch}
@@ -43,7 +43,7 @@ const FiltersSelection = ({
                 layout='vertical'
             >
                 <Row gutter={[16,0]}>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Form.Item
                             name='candidate'
                             label='Candidato'
@@ -65,7 +65,7 @@ const FiltersSelection = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Form.Item
                             label='Estatus'
                             name='status_process'
@@ -79,7 +79,7 @@ const FiltersSelection = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Form.Item
                             name='vacant'
                             label='Vacante'

@@ -59,7 +59,11 @@ const FiltersPreselection = ({
                             name='first_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por nombre'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -68,7 +72,11 @@ const FiltersPreselection = ({
                             name='last_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por apellidos'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por apellidos'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -77,7 +85,11 @@ const FiltersPreselection = ({
                             name='email__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por correo'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por correo'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -132,6 +144,8 @@ const FiltersPreselection = ({
                         >
                              <Input
                                 maxLength={200}
+                                allowClear
+                                className='input-with-clear'
                                 placeholder='Especifique el municipio'
                             />
                         </Form.Item>
@@ -178,10 +192,15 @@ const FiltersPreselection = ({
                             name='last_job'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Buscar por puesto'/>
+                            <Input
+                                maxLength={200}
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por puesto'
+                            />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item 
                             label='Edad'
                             name='age'
@@ -202,7 +221,7 @@ const FiltersPreselection = ({
                                 }}
                             />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item
                             label='Idioma'
