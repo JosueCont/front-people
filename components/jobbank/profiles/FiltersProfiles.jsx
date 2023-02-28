@@ -46,7 +46,11 @@ const FiltersProfiles = ({
                             name='name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por nombre'/>
+                            <Input
+                                className='input-with-clear'
+                                allowClear
+                                placeholder='Buscar por nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24}>

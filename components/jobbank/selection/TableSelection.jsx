@@ -21,6 +21,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalStatus from './ModalStatus';
+import { getPercentGenJB } from '../../../utils/functions';
 
 const TableSelection = ({
     currentUser,
@@ -125,17 +126,6 @@ const TableSelection = ({
         }
     }
 
-    const getPercentGen = (item) =>{
-        let assets = item.candidate?.person_assessment_list;
-        if(!assets || assets.length <= 0) return 0;
-        let percent = 100 / (assets?.length * 100);
-        let progress = assets.reduce((acc, current) =>{
-            if(!current?.applys[0]) return acc;
-            return acc + current.applys[0]?.progress;
-        }, 0);
-        return (percent * progress).toFixed(2);
-    }
-
     const menuTable = () => {
         return (
             <Menu>
@@ -237,7 +227,7 @@ const TableSelection = ({
                             query: {...router.query, back: 'selection'}
                         })}
                     >
-                        {getPercentGen(item)}%
+                        {getPercentGenJB(item.candidate?.person_assessment_list)}%
                     </span>
                 ) : <></>;
             }

@@ -30,6 +30,7 @@ const DetailsPreselection = ({
   const [loading, setLoading] = useState({});
   const [actionType, setActionType] = useState('');
   const [fetching, setFetching] = useState(false);
+  const [fetchingCliente, setFetchingCliente] = useState(false);
   const [currentKey, setCurrentKey] = useState('1');
   const [disableTab, setDisabledTab] = useState(true);
   const [infoSelection, setInfoSelection] = useState({})
@@ -114,18 +115,16 @@ const DetailsPreselection = ({
 
   const getAssesmets = async (id) => {
     try {
+      setFetchingCliente(true)
       let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id)
-
-      if(response.data.length > 0){
-        setAsignaments(response.data)
-      }
+      let results = response.data?.results ?? [];
+      setAsignaments(results)
+      setFetchingCliente(false)
     } catch (error) {
+      setFetchingCliente(false)
       console.log('Error', error)
     }
   }
-
-  
-  
 
   const actionBack = () =>{
       router.push({
@@ -237,16 +236,14 @@ const DetailsPreselection = ({
               forceRender
               key='2'
             >
-              <Spin spinning={fetching}>
-                <TabAsign 
-                  loading={ fetching }
-                  setLoading = { setFetching }
-                  assesments = { assesments }
-                  processSelection = { infoSelection?.id }
-                  asignaments = { asignaments }
-                  getAssesmets = { getAssesmets }
-                />
-              </Spin>
+              <TabAsign 
+                loading={ fetchingCliente }
+                setLoading = { setFetchingCliente }
+                assesments = { assesments }
+                processSelection = { infoSelection?.id }
+                asignaments = { asignaments }
+                getAssesmets = { getAssesmets }
+              />
             </Tabs.TabPane>
             <Tabs.TabPane
               tab='Evaluaciones KHOR+'

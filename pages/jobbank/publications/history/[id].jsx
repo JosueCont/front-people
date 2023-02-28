@@ -58,10 +58,12 @@ const index = ({
             let check_start = range && date >= range[0];
             let check_end = range && date <= range[1];
             let check_code = item.code_post == router.query?.account;
-            if(size == 2 && check_start && check_end && check_code) return true;
-            if(size == 1 && check_start && check_end) return true;
-            if(size == 1 && check_code) return true;
-            return false;
+            if(size == 1) return (check_start && check_end) || check_code;
+            return check_start && check_end && check_code;
+            // if(size == 2 && check_start && check_end && check_code) return true;
+            // if(size == 1 && check_start && check_end) return true;
+            // if(size == 1 && check_code) return true;
+            // return false;
         });
     }
 

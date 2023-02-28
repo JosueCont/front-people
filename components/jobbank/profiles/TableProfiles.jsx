@@ -81,13 +81,15 @@ const TableProfiles = ({
     }
 
     const openModalRemove = (item) =>{
-        setItemsToDelete([item])
+        let customer = getClient(item);
+        setItemsToDelete([{...item, customer}])
         setOpenModalDelete(true)
     }
 
     const openModalDuplicate = (item) =>{
+        let customer = getClient(item);
         setUseToCopy(true)
-        setItemsToDelete([item])
+        setItemsToDelete([{...item, customer}])
         setOpenModalDelete(true)
     }
 
@@ -117,8 +119,9 @@ const TableProfiles = ({
     const rowSelection = {
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
+            const map_ = item => ({...item, customer: getClient(item)});
             setItemsKeys(selectedRowKeys)
-            setItemsToDelete(selectedRows)
+            setItemsToDelete(selectedRows.map(map_));
         }
     }
 
@@ -230,6 +233,7 @@ const TableProfiles = ({
                 title={titleDelete}
                 visible={openModalDelete}
                 keyTitle='name'
+                keyDescription='customer'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={useToCopy ? actionDuplicate : actionDelete}

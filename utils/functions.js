@@ -559,3 +559,17 @@ export const downloadCustomFile = async ({
     console.log(e)
   }
 }
+
+export const getPercentGenJB = (assets) =>{
+  if(!assets || assets.length <= 0) return null;
+  let {codes, progress} = assets.reduce((acc, current) =>{
+    const some_ = item => item == current.code;
+    if(acc.codes?.some(some_)) return acc;
+    let codes = acc.codes ? [...acc.codes, current.code] : [];
+    if(!current?.applys[0]) return {...acc, codes};
+    let progress = acc.progress + current.applys[0]?.progress;
+    return {...acc, codes, progress};
+  }, {codes: [], progress: 0});
+  let percent = 100 / (codes?.length * 100);
+  return (percent * progress).toFixed(2);
+}

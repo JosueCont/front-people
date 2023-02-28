@@ -155,7 +155,8 @@ const TabAsign = ({
 
     const onFilter = ({ target: { value } }) =>{
         if(value.trim()){
-            const filter_ = item => valueToFilter(item.vacant_assessment?.name).includes(valueToFilter(value));
+            const filter_ = item => item.vacant_assessment?.source == 2
+                && valueToFilter(item.vacant_assessment?.name).includes(valueToFilter(value));
             let results = asignaments.filter(filter_);
             setSearchAsignaments(results)
             return;
@@ -227,6 +228,7 @@ const TabAsign = ({
                         rowKey='id'
                         size='small'
                         className='table-custom'
+                        loading={loading}
                         columns={ columns }
                         dataSource = { searchAsignaments }
                         pagination = {{

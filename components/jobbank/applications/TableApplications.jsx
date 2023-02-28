@@ -21,7 +21,7 @@ import {
 import { useRouter } from 'next/router';
 import { optionsStatusApplications } from '../../../utils/constant';
 import { getApplications, getApplicationsCandidates } from '../../../redux/jobBankDuck';
-import { downloadCustomFile } from '../../../utils/functions';
+import { downloadCustomFile, getPercentGenJB } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import moment from 'moment';
 
@@ -66,17 +66,6 @@ const TableApplications = ({
             let disabled = status == 1 ? false : !(item.value == status);
             return {...item, disabled}
         })
-    }
-
-    const getPercentGen = (item) =>{
-        let assets = item.candidate?.person_assessment_list;
-        if(!assets || assets.length <= 0) return null;
-        let percent = 100 / (assets?.length * 100);
-        let progress = assets.reduce((acc, current) =>{
-            if(!current?.applys[0]) return acc;
-            return acc + current.applys[0]?.progress;
-        }, 0);
-        return (percent * progress).toFixed(2);
     }
 
     const columns = [
@@ -149,7 +138,7 @@ const TableApplications = ({
                             query: {...router.query, back: 'applications'}
                         })}
                     >
-                        {getPercentGen(item)}%
+                        {getPercentGenJB(item.candidate?.person_assessment_list)}%
                     </span>
                 ) : <></>;
             }
