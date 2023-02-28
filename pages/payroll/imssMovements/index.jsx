@@ -11,7 +11,7 @@ import {
   Spin,
   message,
   Modal,
-  Typography, Alert,
+  Typography, Alert, Divider,
 } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainInter";
@@ -132,6 +132,7 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
+            <Divider> <img src={'/images/logo_imss.png'} width={40}/> Movimientos de IMSS</Divider>
             <Collapse defaultActiveKey={["1"]}>
               <Panel header="Movimientos IMSS" key="1">
                 <MovementsSection />
