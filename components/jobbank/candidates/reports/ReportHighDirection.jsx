@@ -9,7 +9,7 @@ import {
 } from '@react-pdf/renderer';
 import moment from 'moment';
 
-const HighDirectionReport = ({
+const ReportHighDirection = ({
     infoCandidate,
     infoEducation,
     infoPositions,
@@ -633,4 +633,4 @@ const HighDirectionReport = ({
     )
 }
 
-export default memo(HighDirectionReport);
+export default memo(ReportHighDirection);
