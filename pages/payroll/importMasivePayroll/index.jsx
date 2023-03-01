@@ -39,6 +39,7 @@ import GenericModal from "../../../components/modal/genericModal";
 import { getTypeTax } from "../../../redux/fiscalDuck";
 import _ from "lodash";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import { orange } from "@material-ui/core/colors";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -64,6 +65,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const [descriptionImport, setDescriptionImport] = useState(
     "Serás redireccionado al listado de empresas"
   );
+  const [importError, setImportError] = useState([]);
 
   const columns = [
     {
@@ -344,7 +346,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           setSuccessImport(false);
         }
 
-        setTitleMessage("Importación correcta");
+        // setTitleMessage("Importación correcta");
+        setInfoGenericModal();
         setDescriptionImport(text);
       } else {
         setSuccessImport(true);
@@ -361,35 +364,179 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     setLoading(false);
   };
 
+  const ProccessMessageIsValid = () => {
+    return (
+      <Col span={24}>
+        {importError.map((e) => (
+          <Row
+            style={{
+              padding: 10,
+              backgroundColor: "#fffbe6",
+              border: "1px solid #ffe58f",
+              borderRadius: 5,
+              marginBottom: 10,
+            }}
+          >
+            <Col span={24} style={{ fontWeight: "bold" }}>
+              RFC: {e.rfc}
+            </Col>
+            {e.calendars &&
+              e.calendars.map((c) => (
+                <Row>
+                  {c.patronal_registration && (
+                    <Col span={24} style={{ fontWeight: "bold" }}>
+                      Registro patronal: {c.patronal_registration}{" "}
+                    </Col>
+                  )}
+                  <ul>
+                    {c.errors &&
+                      c.errors.map((error) => <li span={24}>{error}</li>)}
+                  </ul>
+                </Row>
+              ))}
+          </Row>
+        ))}
+      </Col>
+    );
+  };
+
+  useEffect(() => {
+    if (importError && importError.length > 0) {
+    }
+  }, [importError]);
+
+  // const validateBeforeSubmit = () => {
+  //   xmlImport.companies.map((company1, i) => {
+  //     console.log(company1.patronal_registrations);
+  //   });
+  //   return false;
+  // };
   const validateBeforeSubmit = () => {
-    xmlImport.companies.map((company1, i) => {
-      console.log(company1.patronal_registrations);
+    let companies_errors = [];
+    xmlImport.companies.map((company) => {
+      let company_error = {
+        rfc: company.company.rfc,
+        calendars: [],
+      };
+      if (company.patronal_registrations) {
+        company.patronal_registrations.map((reg_pat) => {
+          let calendar = {
+            patronal_registration: reg_pat.patronal_registration,
+            errors: [],
+          };
+          if (reg_pat.periodicities && reg_pat.periodicities.length > 0) {
+            reg_pat.periodicities.map((periodicity) => {
+              if (periodicity.calendar) {
+                if (periodicity.calendar.name == "") {
+                  calendar.errors.push("Nombre es requerido");
+                }
+                if (periodicity.calendar.start_date == "") {
+                  calendar.errors.push("Fecha de inicio es requerido");
+                }
+                if (periodicity.calendar.type_tax == "") {
+                  calendar.errors.push("Tipo de impuesto es requerido");
+                }
+                if (periodicity.calendar.activation_date == "") {
+                  calendar.errors.push("Fecha de activación es requerido");
+                }
+                if (calendar.errors.length > 0)
+                  company_error.calendars.push(calendar);
+              } else {
+                calendar.errors.push("No se encontraron datos del calendario");
+                company_error.calendars.push(calendar);
+              }
+            });
+          } else {
+            calendar.errors.push("No se encontraron períodos de pagos");
+            company_error.calendars.push(calendar);
+          }
+        });
+      } else if (company.periodicities && company.periodicities.length > 0) {
+        let calendar = {
+          errors: [],
+        };
+        company.periodicities.map((periodicity) => {
+          if (periodicity.calendar) {
+            if (periodicity.calendar.name == "") {
+              calendar.errors.push("Nombre es requerido");
+            }
+            if (periodicity.calendar.start_date == "") {
+              calendar.errors.push("Fecha de inicio es requerido");
+            }
+            if (periodicity.calendar.activation_date == "") {
+              calendar.errors.push("Fecha de activación es requerido");
+            }
+            if (periodicity.calendar.type_tax == "") {
+              calendar.errors.push("Tipo de impuesto es requerido");
+            }
+            if (calendar.errors.length > 0)
+              company_error.calendars.push(calendar);
+          } else {
+            calendar.errors.push("Completa los datos del calendario");
+            company_error.calendars.push(calendar);
+          }
+        });
+      } else {
+        let calendar = {
+          errors: [],
+        };
+        calendar.errors.push("No se encontraron períodos de pagos");
+        company_error.calendars.push(calendar);
+      }
+
+      if (company_error.calendars.length > 0) {
+        companies_errors.push(company_error);
+      }
     });
-    return false;
+    if (companies_errors.length > 0) {
+      setImportError(companies_errors);
+      return false;
+    }
   };
 
   const saveImportPayrroll = async () => {
     if (files.length > 0) {
       const validated = validateBeforeSubmit();
-      // if (!validated) return;
-      setLoading(true);
-      let form_data = new FormData();
-      files.map((item) => {
-        form_data.append("File", item.originFileObj);
-      });
-      form_data.append("export", "False");
-      form_data.append("save", "True");
-      form_data.append("payroll", JSON.stringify(xmlImport));
-      form_data.append("person_id", props.user.id);
-      WebApiPayroll.importPayrollMasiveXml(form_data)
-        .then((response) => {
-          processResponseSave(response);
-        })
-        .catch((error) => {
-          message.error(messageError);
-          console.log(error);
-          setLoading(false);
+
+      if (!validated) {
+        setSuccessImport(false);
+        setTitleMessage("Campos faltantes");
+        setDescriptionImport("Complete los campos del calendario");
+        setVisibleMessageModal(true);
+      } else {
+        setLoading(true);
+        let form_data = new FormData();
+        files.map((item) => {
+          form_data.append("File", item.originFileObj);
         });
+        form_data.append("export", "False");
+        form_data.append("save", "True");
+        form_data.append("payroll", JSON.stringify(xmlImport));
+        form_data.append("person_id", props.user.id);
+
+        WebApiPayroll.importPayrollMasiveXml(form_data)
+          .then((response) => {
+            processResponseSave(response);
+          })
+          .catch((error) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.message
+            ) {
+              // setMessageModal(1, error.response.data.message);
+              // setGenericModal(true);
+
+              message.error(error.response.data.message);
+              // console.log(error);
+              setLoading(false);
+            }
+            // console.log("Except --> ", error.response.data.message);
+            message.error(messageError);
+            console.log(error);
+            setLoading(false);
+          });
+      }
     }
   };
 
@@ -760,7 +907,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           viewActionButtonCancell={successImport ? false : true}
         >
           <>
-            <Alert message={descriptionImport} type="info" />
+            {importError && importError.length > 0 ? (
+              <ProccessMessageIsValid />
+            ) : (
+              <>
+                <Row>
+                  <Col>RFC: asdsadas</Col>
+                </Row>
+                <Alert message={descriptionImport} type="info" />
+              </>
+            )}
           </>
         </GenericModal>
       )}
