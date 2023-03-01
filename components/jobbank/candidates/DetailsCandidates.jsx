@@ -17,7 +17,7 @@ import TabPositions from './TabPositions';
 import TabReferences from './TabReferences';
 
 //*Necesario para la libreria react-pdf
-const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
+const OptionsExpedient = dynamic(()=> import('./reports/OptionsExpedient'), { ssr: false });
 
 const DetailsCandidates = ({
     action,
@@ -32,24 +32,6 @@ const DetailsCandidates = ({
     const [infoEducation, setInfoEducation] = useState([]);
     const [infoExperience, setInfoExperience] = useState([]);
     const [infoPositions, setInfoPositions] = useState([]);
-    const [widthAndHeight, setWidthAndHeight] = useState({
-        width: 0,
-        height: 0
-    })
-    const image = currentNode?.image? currentNode.image : ''
-
-    useEffect(() => {
-        if(image){
-            const widthImage = new Image()
-            widthImage.src = image
-            widthImage.onload = () => {
-            setWidthAndHeight({
-                width: widthImage.width,
-                height: widthImage.height
-            })
-    }
-        }
-    },[image])
 
     const actionBack = () =>{
         let url = router.query?.back
@@ -91,13 +73,11 @@ const DetailsCandidates = ({
                     </p>
                     <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                         {action == 'edit' && (
-                            <Expedient
+                            <OptionsExpedient
                                 infoCandidate={infoCandidate}
                                 infoEducation={infoEducation}
                                 infoExperience={infoExperience}
                                 infoPositions={infoPositions}
-                                image = {image}
-                                widthAndHeight = {widthAndHeight}
                             />
                         )}
                         <Button

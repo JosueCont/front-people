@@ -17,8 +17,6 @@ const PDFReport = ({
   profilesSelected
 }) => {
 
-    console.log('profile', profilesSelected)
-
     const findPhoto = (id) => {
       let userSelected = user.find((us) => us.id === id)
       let photoUser = userSelected.photo? userSelected.photo : '/images/usuario.png'
@@ -153,6 +151,7 @@ const PDFReport = ({
           {
             data.length > 0 && data.map((row, index) => (
               <View
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
@@ -274,6 +273,7 @@ const PDFReport = ({
           {
             data.length > 0 && data.map((row, index) => (
               <View
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
@@ -386,6 +386,7 @@ const PDFReport = ({
           {
             data.length > 0 && data.map((row, index) => (
               <View
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
@@ -473,6 +474,7 @@ const PDFReport = ({
           {
             data.length > 0 && data.map((row, index) => (
               <View
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
