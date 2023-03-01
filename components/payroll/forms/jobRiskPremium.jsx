@@ -101,7 +101,7 @@ const JobRiskPremium = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <SelectFractions name={"rt_fraction"} rules={[ruleRequired]} />
+          <SelectFractions name={"rt_fraction"} />
         </Col>
       </Row>
     </Form>
