@@ -15,14 +15,17 @@ import {
     DownloadOutlined,
     LinkOutlined
 } from '@ant-design/icons';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
 import { pdf } from '@react-pdf/renderer';
-import HighDirectionReport from './HighDirectionReport';
-import CandidateReport from './CandidateReport';
 import { copyContent, getPercentGenJB } from '../../../utils/functions';
+
+//*Necesario para la libreria react-pdf
+const HighDirectionReport = dynamic(()=> import('./HighDirectionReport'), { ssr: false });
+const CandidateReport = dynamic(()=> import('./CandidateReport'), { ssr: false });
 
 const TableCandidates = ({
     currentNode,
