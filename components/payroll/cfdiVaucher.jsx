@@ -74,14 +74,14 @@ const CfdiVaucher = ({
   const getVoucherTypeStr=(type)=>{
    // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
      switch (type){
-       case 1:
-         return 'Aguinaldo';
-       case 2:
-         return 'Finiquito';
-       case 3:
-         return 'Liquidacion';
+       case 0:
+         return 'Ordinario';
+       // case 2:
+       //   return 'Finiquito';
+       // case 3:
+       //   return 'Liquidacion';
        default:
-         return 'Ordinaria'
+         return 'Extraordinario'
      }
   }
 
