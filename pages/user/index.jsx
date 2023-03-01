@@ -219,7 +219,7 @@ const index = ({
     ]
 
     return (
-        <MainLayout currentKey={'jb_settings'} defaultOpenKeys={["recruitmentSelection",'job_bank']}>
+        <MainLayout currentKey={'dashboard'} defaultOpenKeys={["dashboard",'dashboard']}>
             <Row style={{marginTop:50}}>
                 <Col>
                     <Title style={{marginBottom:0}} level={1}>{currentNode && currentNode.name}

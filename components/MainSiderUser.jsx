@@ -14,7 +14,8 @@ import Icon, {
   QuestionCircleOutlined,
   ApartmentOutlined,
   FunnelPlotOutlined,
-  SolutionOutlined
+  SolutionOutlined,
+  PieChartFilled
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -109,6 +110,9 @@ const MainSider = ({
         // link5.click();
         router.push("/user/assessments/")
         break;
+      case "dashboard":
+        router.push("/user")
+        break;
       default:
         router.push('#');
     }
@@ -128,6 +132,9 @@ const MainSider = ({
 
       // Reclutamiento y selección
       // items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
+
+      // Dashboard
+      items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
 
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
