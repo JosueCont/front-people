@@ -26,7 +26,7 @@ const ButtonDownloadConfronta=()=>{
         setLoading(true);
 
         let params = {
-            node : node,
+            node_id : node,
             patronal_registration : regPatronal &&  regPatronal[0].id
         }
 
