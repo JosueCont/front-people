@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
-import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
+// import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
 import {
     getCandidates,
     getMainCategories,
@@ -13,6 +14,8 @@ import {
 } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
+
+const TableCandidates = dynamic(()=> import('../../../components/jobbank/candidates/TableCandidates'), { ssr: false });
 
 const index = ({
     currentNode,
