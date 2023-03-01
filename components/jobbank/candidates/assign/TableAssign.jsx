@@ -225,13 +225,13 @@ const TableAssign = ({
                 let is_personal = item.origins?.some(some_);
                 return (
                     <>
-                        <Tooltip title={is_personal ? 'Personal' : 'Grupal'}>
-                            {is_personal
-                                ? <UserOutlined style={{color: '#ed6432'}}/>
-                                : <UsergroupAddOutlined style={{color: '#814cf2'}}/>
-                            }
-                        </Tooltip>
-                        <span style={{marginInlineStart: 5}}>{item.name}</span>
+                        {is_personal
+                            ? <UserOutlined title="Personal" style={{color: '#ed6432'}}/>
+                            : <UsergroupAddOutlined title="Grupal" style={{color: '#814cf2'}}/>
+                        }
+                        <span title={item.name} style={{marginInlineStart: 5}}>
+                            {item.name}
+                        </span>
                     </>
                 )
             }

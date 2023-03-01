@@ -128,7 +128,8 @@ const TabReferences = ({
     }
 
     const openModalRemove = (item, withAcion = true) =>{
-        setItemsToDelete([item])
+        let file = item.file ? item.file?.split('/')?.at(-1) : null;
+        setItemsToDelete([{...item, file}])
         setOpenModalDelete(true)
         setWithAction(withAcion)
     }
@@ -287,7 +288,7 @@ const TabReferences = ({
                 title={withAction ? '¿Estás seguro de eliminar este archivo?' : 'Motivo de rechazo'}
                 visible={openModalDelete}
                 keyTitle='file_name'
-                keyDescription={withAction ? '' : 'comments'}
+                keyDescription={withAction ? 'file' : 'comments'}
                 textCancel={withAction ? 'Cancelar' : 'Cerrar'}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}

@@ -80,7 +80,7 @@ const ModalConnection = ({
                 layout='vertical'
                 onFinish={onFinish}
                 initialValues={{
-                    is_valid: true,
+                    is_valid: false,
                     is_active: true,
                     name: null,
                     conection_type: null

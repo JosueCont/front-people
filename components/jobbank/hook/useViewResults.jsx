@@ -71,7 +71,7 @@ export const useViewResults = ({
             user_id: infoPerson.id,
             firstname: infoPerson.first_name,
             lastname: `${flast_name} ${mlast_name}`,
-            user_photo_url: infoPerson.photo,
+            user_photo_url: infoPerson.photo_thumbnail ?? infoPerson.photo,
             company_id: infoPerson.node,
         }
     }

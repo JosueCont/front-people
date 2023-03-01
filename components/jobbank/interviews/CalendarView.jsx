@@ -47,7 +47,9 @@ const CalendarView = ({
             message.success('Evento actualizado')
         } catch (e) {
             console.log(e)
-            message.error('Evento no actualizado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no actualizado';
+            message.error(msg)
         }
     }
 
@@ -60,7 +62,9 @@ const CalendarView = ({
             message.success('Evento eliminado')
         } catch (e) {
             console.log(e)
-            message.error('Evento no eliminado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no eliminado';
+            message.error(msg)
         }
     }
 
