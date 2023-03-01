@@ -26,8 +26,8 @@ const ButtonDownloadConfronta=()=>{
         setLoading(true);
 
         let params = {
-            node : node,
-            patronal_registration : regPatronal &&  regPatronal[0].id
+            node_id : parseInt(node),
+            patronal_registration_id : regPatronal &&  regPatronal[0].id
         }
 
         await downLoadFileBlob(

@@ -21,6 +21,11 @@ const index = ({
     const [infoHistory, setInfoHistory] = useState([]);
     const [newFilters, setNewFilters] = useState({});
     const deletekeys = ['id', 'dates', 'account'];
+    const watchQuerys = [
+        router.query?.id,
+        router.query?.dates,
+        router.query?.account
+    ];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
@@ -29,15 +34,13 @@ const index = ({
     },[router.query])
 
     useEffect(()=>{
-        if(currentNode){
-            getConnectionsOptions(currentNode.id, '&conection_type=1');
-        }
+        if(currentNode) getConnectionsOptions(currentNode.id, '&conection_type=1');
     },[currentNode])
 
     useEffect(()=>{
         if(!router.query?.id) return;
         getInfoHistory(router.query?.id)
-    },[router.query])
+    },[...watchQuerys])
 
     const getInfoHistory = async (id) =>{
         try {

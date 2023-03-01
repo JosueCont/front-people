@@ -45,7 +45,9 @@ const SearchInterviews = ({
             message.success('Evento registrado')
         }catch(e){
             console.log(e)
-            message.error('Evento no registrado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no registrado';
+            message.error(msg)
         }
     }
 

@@ -62,7 +62,7 @@ const DetailsMessages = ({
         setEditorState(EditorState.createWithContent(htmlMsg));
     },[infoNotification])
 
-    const getTemplateNotification = async (node, query) =>{
+    const getTemplateNotification = async (node, query = '') =>{
         try {
             let response = await WebApiJobBank.getTemplateNotification(node, query);
             setAllTemplate(response.data?.results)
@@ -87,7 +87,7 @@ const DetailsMessages = ({
         const some_ = item => item.status_process == values.status_process;
         let exist = allTemplate.some(some_);
         if(exist){
-            message.error('Notificación ya registrada');
+            message.error('Ya existe un mensaje para este proceso');
             setFetching(false)
             setLoading({})
             return;
@@ -109,7 +109,7 @@ const DetailsMessages = ({
         const filter_ = item => item.status_process == values.status_process;
         let exist = allTemplate.filter(filter_);
         if(exist?.length > 1){
-            message.error('Notificación ya registrada');
+            message.error('Ya existe un mensaje para este proceso');
             setFetching(false)
             return;
         }
