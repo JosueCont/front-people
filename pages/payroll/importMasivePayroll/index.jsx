@@ -910,12 +910,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
             {importError && importError.length > 0 ? (
               <ProccessMessageIsValid />
             ) : (
-              <>
-                <Row>
-                  <Col>RFC: asdsadas</Col>
-                </Row>
-                <Alert message={descriptionImport} type="info" />
-              </>
+              <Alert message={descriptionImport} type="info" />
             )}
           </>
         </GenericModal>

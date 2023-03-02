@@ -82,8 +82,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
   const [calculate, setCalculate] = useState(false);
-  const [totalSalary, setTotalSalary] = useState(null);
-  const [totalIsr, setTotalIsr] = useState(null);
+  // const [totalSalary, setTotalSalary] = useState(null);
+  // const [totalIsr, setTotalIsr] = useState(null);
   const [netPay, setNetPay] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
@@ -97,6 +97,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [personStamp, setPersonsStamp] = useState([]);
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [arrayCfdi, setArrayCfdi] = useState([]);
+  const [totalPerceptions, setTotalPerceptions] = useState(null);
+  const [totalDeductions, setTotalDeductions] = useState(null);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -535,8 +537,10 @@ const CalculatePayroll = ({ ...props }) => {
   }, [optionspPaymentCalendars]);
 
   const changeCalendar = (value) => {
-    setTotalSalary(null);
-    setTotalIsr(null);
+    // setTotalSalary(null);
+    // setTotalIsr(null);
+    setTotalPerceptions(null);
+    setTotalDeductions(null);
     setNetPay(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
     let period = calendar.periods.find((p) => p.active == true);
@@ -574,8 +578,10 @@ const CalculatePayroll = ({ ...props }) => {
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
-    setTotalSalary(null);
-    setTotalIsr(null);
+    // setTotalSalary(null);
+    // setTotalIsr(null);
+    setTotalPerceptions(null);
+    setTotalDeductions(null);
     setNetPay(null);
     setConsolidated(null);
   };
@@ -585,13 +591,22 @@ const CalculatePayroll = ({ ...props }) => {
     if (job) dataToSend.job = job;
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
+        let total_perceptions = 0;
+        let total_deductions = 0;
+        response.data.payroll.map((item) => {
+          total_perceptions += item.calculation.total_perceptions;
+          total_deductions += item.calculation.total_deductions;
+        });
+
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
         setCalculate(false);
-        setTotalSalary(response.data.total_salary);
-        setTotalIsr(response.data.total_isr);
-        setNetPay(response.data.total_pay);
+        // setTotalSalary(response.data.total_salary);
+        // setTotalIsr(response.data.total_isr);
+        setTotalPerceptions(total_perceptions);
+        setTotalDeductions(total_deductions);
+        setNetPay(total_perceptions - total_deductions);
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
         setPersonsStamp([]);
@@ -652,10 +667,6 @@ const CalculatePayroll = ({ ...props }) => {
       data.status = status_consolidated;
       data.person_edit = person_edit;
     }
-    console.log(
-      "🚀 ~ file: calculatePayroll.jsx:652 ~ Close Payroll ~     data",
-      data
-    );
     setGenericModal(false);
     setLoading(true);
     WebApiPayroll.closePayroll(data)
@@ -1061,18 +1072,26 @@ const CalculatePayroll = ({ ...props }) => {
   const importPayrollCaculate = (data) => {
     setLoading(true);
     setPayroll([]);
-    setTotalSalary(null);
-    setTotalIsr(null);
+    setTotalPerceptions(null);
+    setTotalDeductions(null);
     setNetPay(null);
     setConsolidated(null);
     WebApiPayroll.importPayrollCaculate(data)
       .then((response) => {
+        let total_perceptions = 0;
+        let total_deductions = 0;
+        response.data.payroll.map((item) => {
+          total_perceptions += item.calculation.total_perceptions;
+          total_deductions += item.calculation.total_deductions;
+        });
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
         setCalculate(false);
-        setTotalSalary(response.data.total_salary);
-        setNetPay(response.data.total_pay);
-        setTotalIsr(response.data.total_isr);
+        // setTotalSalary(response.data.total_salary);
+        setTotalPerceptions(total_perceptions);
+        setTotalDeductions(total_deductions);
+        setNetPay(total_perceptions - totalDeductions);
+        // setTotalIsr(response.data.total_isr);
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
         setPersonsStamp([]);
@@ -1642,24 +1661,69 @@ const CalculatePayroll = ({ ...props }) => {
                             : null
                         }
                       />
-                      {totalSalary != null && totalIsr != null ? (
-                        <Col sm={24} md={24} lg={24}>
+                      {totalPerceptions != null && totalDeductions != null ? (
+                        <Col span={24}>
                           <Row justify="end">
-                            <Col span={4} style={{ fontWeight: "bold" }}>
-                              <div>Total de sueldos:</div>
-                              <div>Total de ISR:</div>
-                              <div>Total a pagar:</div>
+                            <Col
+                              lg={6}
+                              md={8}
+                              sm={12}
+                              style={{ fontWeight: "bold" }}
+                            >
+                              <div>Total de Percepciones:</div>
                             </Col>
-                            <Col span={3} style={{ fontWeight: "bold" }}>
+                            <Col
+                              lg={4}
+                              md={5}
+                              sm={8}
+                              style={{ fontWeight: "bold" }}
+                            >
                               <div>
                                 <NumberFormat
                                   prefix={"$"}
-                                  number={totalSalary}
+                                  number={totalPerceptions}
                                 />
                               </div>
+                            </Col>
+                          </Row>
+                          <Row justify="end">
+                            <Col
+                              lg={6}
+                              md={8}
+                              sm={12}
+                              style={{ fontWeight: "bold" }}
+                            >
+                              <div>Total de Deducciones:</div>
+                            </Col>
+                            <Col
+                              lg={4}
+                              md={5}
+                              sm={8}
+                              style={{ fontWeight: "bold" }}
+                            >
                               <div>
-                                <NumberFormat prefix={"$"} number={totalIsr} />
+                                <NumberFormat
+                                  prefix={"$"}
+                                  number={totalDeductions}
+                                />
                               </div>
+                            </Col>
+                          </Row>
+                          <Row justify="end">
+                            <Col
+                              lg={6}
+                              md={8}
+                              sm={12}
+                              style={{ fontWeight: "bold" }}
+                            >
+                              <div>Total a pagar:</div>
+                            </Col>
+                            <Col
+                              lg={4}
+                              md={5}
+                              sm={8}
+                              style={{ fontWeight: "bold" }}
+                            >
                               <div>
                                 <NumberFormat prefix={"$"} number={netPay} />
                               </div>
