@@ -1334,6 +1334,7 @@ const homeScreen = ({ ...props }) => {
           setLoadingChangePassword(false)
           message.success("Cambio de contraseña exitoso");
           setIsOpenModalResetPassword(false)
+          formResetPassword.resetFields();
         }, 3000);
       }
     } catch (e) {
@@ -1743,7 +1744,7 @@ const homeScreen = ({ ...props }) => {
               <Col span={6}>
                 <Button disabled={loadingChangePassword} style={{width:'100%', opacity: loadingChangePassword ? "0.6" : "1"}} className="btn-filter" onClick={()=>{ setIsOpenModalResetPassword(false) }}>Cancelar</Button>
               </Col>
-              <Col span={10}>
+              <Col span={12}>
                 <Button className="btn-filter" style={{width:'100%'}} loading={loadingChangePassword} type="primary" htmlType="submit">Reestablecer contraseña</Button>
               </Col> 
             </Row>
