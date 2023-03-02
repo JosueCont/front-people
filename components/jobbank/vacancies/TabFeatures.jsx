@@ -57,7 +57,7 @@ const TabFeatures = ({
           label='Cliente'
           tooltip={hasEstrategy
             ? `Este campo no es posible actualizarlo,
-            ya que la vacante en encuentra asociada a una estrategia.
+            ya que la vacante se en encuentra asociada a una estrategia.
             ` : ''}
           rules={[ruleRequired]}
         >
