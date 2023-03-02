@@ -5,7 +5,7 @@ import React, {
     useCallback
 } from 'react';
 import esES from 'antd/lib/locale/es_ES';
-import MainLayout from '../../layout/MainInter';
+import MainInter from '../../layout/MainInter';
 import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
 import { verifyMenuNewForTenant } from '../../utils/functions';
@@ -30,7 +30,7 @@ const MainIndexJB = ({
     },[newFilters])
 
     return (
-        <MainLayout
+        <MainInter
             currentKey={pageKey}
             defaultOpenKeys={["recruitmentSelection","job_bank"]}
         >
@@ -56,7 +56,7 @@ const MainIndexJB = ({
                     {children}
                 </ConfigProvider>
             </div>
-        </MainLayout>
+        </MainInter>
     )
 }
   
