@@ -48,12 +48,9 @@ const SelectJob = ({
         >
           {options.map((item) => {
             return (
-              <>
                 <Option key={item.key} value={item.value}>
                   {item.label}
                 </Option>
-                ;
-              </>
             );
           })}
         </Select>

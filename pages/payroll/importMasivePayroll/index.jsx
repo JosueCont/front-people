@@ -346,8 +346,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           setSuccessImport(false);
         }
 
-        // setTitleMessage("Importación correcta");
-        setInfoGenericModal();
+        setTitleMessage("Importación correcta");
+        // setInfoGenericModal();
         setDescriptionImport(text);
       } else {
         setSuccessImport(true);
@@ -492,6 +492,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       setImportError(companies_errors);
       return false;
     }
+    return true;
   };
 
   const saveImportPayrroll = async () => {
@@ -519,19 +520,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
             processResponseSave(response);
           })
           .catch((error) => {
-            if (
-              error.response &&
-              error.response.data &&
-              error.response.data.message
-            ) {
-              // setMessageModal(1, error.response.data.message);
-              // setGenericModal(true);
-
-              message.error(error.response.data.message);
-              // console.log(error);
-              setLoading(false);
-            }
-            // console.log("Except --> ", error.response.data.message);
             message.error(messageError);
             console.log(error);
             setLoading(false);
@@ -910,12 +898,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
             {importError && importError.length > 0 ? (
               <ProccessMessageIsValid />
             ) : (
-              <>
-                <Row>
-                  <Col>RFC: asdsadas</Col>
-                </Row>
-                <Alert message={descriptionImport} type="info" />
-              </>
+              <Alert message={descriptionImport} type="info" />
             )}
           </>
         </GenericModal>

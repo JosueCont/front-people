@@ -4,30 +4,38 @@ import {DownloadOutlined} from "@ant-design/icons";
 import {Button} from "antd";
 import {downLoadFileBlob, getDomain} from "../../utils/functions";
 import {API_URL, API_URL_TENANT} from "../../config/config";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { useSelector } from 'react-redux';
-import axios from "axios";
-import { message } from "antd";
+import { message,Modal,Row,Col } from "antd";
+import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
+import { getPatronalRegistration } from "../../redux/catalogCompany";
 
-
-const ButtonDownloadConfronta=()=>{
+const ButtonDownloadConfronta=({getPatronalRegistration})=>{
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
-    const regPatronal = useSelector(state => state.catalogStore.cat_patronal_registration);
+    const [regPatronalSelected, setRegPatronalSelected] = useState(null)
+    const regPatronal = useSelector(state => state?.catalogStore?.cat_patronal_registration);
+
+    useEffect(()=>{
+        getPatronalRegistration()
+    },[])
+
+
+    useEffect(()=>{
+        if(regPatronal && regPatronal.length===1){
+            setRegPatronalSelected(regPatronal[0]?.id)
+        }
+    },[regPatronal])
 
     const downloadConfronta =async  () => {
         let node = localStorage.getItem('data');
-        //validamos si hay mas de un reg patronal
-        if(regPatronal && regPatronal.length>1){
-            setShowModal(true)
-            return
-        }
+
 
         setLoading(true);
 
         let params = {
             node_id : parseInt(node),
-            patronal_registration_id : regPatronal &&  regPatronal[0].id
+            patronal_registration_id : regPatronalSelected
         }
 
         await downLoadFileBlob(
@@ -42,38 +50,49 @@ const ButtonDownloadConfronta=()=>{
             setLoading(false);
         }, 1000)
 
-        // try {
-
-        //     let response = await axios.post(API_URL + '/payroll/confront', params)
-        //     const blob = new Blob([response.data]);
-        //     const link = document.createElement("a");
-        //     link.href = window.URL.createObjectURL(blob);
-        //     link.download = "Confronta.xlsx";
-        //     link.click();
-            
-        // } catch (e) {
-        //     let errorMessage = e.response?.data?.message || ""
-        //     if (errorMessage !== ""){
-        //      message.error(errorMessage)
-        //    }
-            
-        // } finally{
-        //     setLoading(false)
-        // }
-
     };
 
 
       return (
-          <Button
-              loading={loading}
-              icon={<DownloadOutlined />}
-              onClick={()=> downloadConfronta()}
-          >
-              Generar confronta
-          </Button>
+          <>
+              <Button
+                  loading={loading}
+                  icon={<DownloadOutlined />}
+                  onClick={()=> (regPatronal && regPatronal.length===1)?downloadConfronta():setShowModal(true)}
+              >
+                  Generar confronta
+              </Button>
+
+              <Modal title="Generar confronta"
+                     footer={[
+                         <Button key="cancel" type="primary" loading={loading} onClick={()=>setShowModal(false)}>
+                             Cancelar
+                         </Button>,
+                         <Button key="submit" type="primary" loading={loading} onClick={()=>downloadConfronta()}>
+                             Generar
+                         </Button>
+                     ]}
+                     visible={showModal}
+                     onCancel={()=>setShowModal(false)}
+              >
+                  <Row>
+                      <Col span={24}>
+                            <SelectPatronalRegistration onChange={(val)=> setRegPatronalSelected(val) }/>
+                      </Col>
+                  </Row>
+
+              </Modal>
+          </>
+
       )
 }
 
-
-export default ButtonDownloadConfronta;
+const mapState = (state) => {
+    return {
+        cat_patronal_registration: state.catalogStore.cat_patronal_registration,
+        errorData: state.catalogStore.errorData,
+    };
+};
+export default connect(mapState, { getPatronalRegistration })(
+    ButtonDownloadConfronta
+);
