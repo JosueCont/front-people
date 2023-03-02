@@ -150,8 +150,7 @@ const MainLayoutAdmin = ({
             requiredMark={false}
           >
             <Row justify="center">
-              <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.
-                Una vez realizado, serás redirigido al login para iniciar sesión con tu nueva contraseña</b></p>
+              <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.</b></p>
             </Row>
             <Row>
               <Col span={24}>

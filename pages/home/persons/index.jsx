@@ -1,7 +1,7 @@
 import { Breadcrumb, Table, Tooltip, Row, Col, Input, Select, Switch, Button, Form, Avatar, message, Modal, Menu, Dropdown, notification, Upload } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined } from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -30,7 +30,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
-import { ruleRequired } from "../../../utils/rules";
+import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -48,6 +48,7 @@ const homeScreen = ({ ...props }) => {
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const [formAddImmediateSupervisor] = Form.useForm();
+  const [formResetPassword] = Form.useForm();
   // const inputFileRef = useRef(null);
   // const inputFileRefAsim = useRef(null);
 
@@ -82,6 +83,10 @@ const homeScreen = ({ ...props }) => {
   const [addPersonCfi, setPersonCfi] = useState(false)
   const [listPersons, setListPersons] = useState([]);
   const [isLoadingImmediateSupervisor, setIsLoadingImmediateSupervisor] = useState(false);
+  const [isOpenModalResetPassword, setIsOpenModalResetPassword] = useState(false);
+  const [khonnectId, setKhonnectId] = useState("");
+  const [loadingChangePassword, setLoadingChangePassword] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -662,6 +667,15 @@ const homeScreen = ({ ...props }) => {
         >
           Asignar jefe inmediato
         </Menu.Item>
+        { isAdmin && (
+          <Menu.Item
+            key="8"
+            icon={<KeyOutlined />}
+            onClick={ () => { setIsOpenModalResetPassword(true), setKhonnectId(item.khonnect_id) }}
+          >
+            Reestablecer contraseña
+          </Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -1268,9 +1282,6 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDeactivate]);
 
-
-
-
   const menuExportTemplate = (
     <Menu>
       <Menu.Item
@@ -1305,6 +1316,48 @@ const homeScreen = ({ ...props }) => {
       )}
     </Menu>
   );
+
+  const onFinishChangePassword = (data) =>{
+    setLoadingChangePassword(true)
+    let dataToApi = {
+      khonnect_id: khonnectId,
+      password: data.passwordTwo,
+    }
+    data.passwordTwo === data.passwordOne ? changePasswordUser(dataToApi) : message.info("Confirme bien sus contraseñas")
+  }
+
+  const changePasswordUser = async (data) =>{
+    try {
+      let response = await WebApiPeople.validateChangePassword(data);
+      if(response.status == 200){
+        setTimeout(() => {
+          setLoadingChangePassword(false)
+          message.success("Cambio de contraseña exitoso");
+          setIsOpenModalResetPassword(false)
+        }, 3000);
+      }
+    } catch (e) {
+      message.error("Ocurrio un error intenta nuevamente");
+      formResetPassword.resetFields()
+      setLoadingChangePassword(false)
+      console.log(e)
+    }
+  }
+
+  const validatePassword = ({ getFieldValue }) => ({
+    validator(rule, value) {
+      if (!value || getFieldValue("passwordOne") === value) {
+        return Promise.resolve();
+      }
+      return Promise.reject("Las contraseñas no coinciden");
+    },
+  });
+
+  useEffect(() => {
+    if(props.user_store){
+      setIsAdmin(props.user_store.is_admin)
+    }
+  }, [props.user_store]);
 
   return (
     <>
@@ -1661,6 +1714,41 @@ const homeScreen = ({ ...props }) => {
           </Form>
           <br />
         </Modal>
+        <Modal title="Reestablecer contraseña" visible={isOpenModalResetPassword} closable={false} footer={false}>
+          <Form
+            form={formResetPassword}
+            onFinish={onFinishChangePassword}
+            layout={"vertical"}
+            requiredMark={false}
+          >
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  name="passwordOne"
+                  label="Contraseña nueva"
+                  rules={[ruleRequired, ruleWhiteSpace, validateSpaces, ruleMinPassword(6)]}
+                >
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                </Form.Item>
+                <Form.Item
+                  name="passwordTwo"
+                  label="Confirmar contraseña"
+                  rules={[ruleRequired, ruleWhiteSpace, validatePassword, validateSpaces, ruleMinPassword(6)]}
+                >
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={[8,20]} justify="end">
+              <Col span={6}>
+                <Button disabled={loadingChangePassword} style={{width:'100%', opacity: loadingChangePassword ? "0.6" : "1"}} className="btn-filter" onClick={()=>{ setIsOpenModalResetPassword(false) }}>Cancelar</Button>
+              </Col>
+              <Col span={10}>
+                <Button className="btn-filter" style={{width:'100%'}} loading={loadingChangePassword} type="primary" htmlType="submit">Reestablecer contraseña</Button>
+              </Col> 
+            </Row>
+          </Form>
+        </Modal>
       </MainLayout>
     </>
   );
@@ -1672,6 +1760,7 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
     applications: state.userStore.applications,
+    user_store: state.userStore.user
   };
 };
 
