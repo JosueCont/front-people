@@ -35,6 +35,7 @@ const OptionsReport = ({candidate = {}}) => {
     const downloadPDF = (urlBlob, type) =>{
         let names = {1: 'Reporte de', 2: 'Reporte de alta dirección'};
         let nameCandidate = `${candidate.first_name} ${candidate.last_name}`;
+        const link = document.createElement("a");
         link.href = urlBlob;
         link.download = `${names[type]} ${nameCandidate}`;
         link.target = "_blank";
