@@ -26,7 +26,8 @@ const MainLayoutUser = ({
   hideSearch,
   hideLogo = false,
   nómina = false,
-    pageTitle = "KHOR Plus",
+  pageTitle = "KHOR Plus",
+  autoregister = false,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -75,7 +76,7 @@ const MainLayoutUser = ({
       validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
-      if (props.config) props.companySelected(null, props.config);
+      if (props.config && !autoregister) props.companySelected(null, props.config);
     }
   }, [props.currentNode, props.config, props.userData]);
 
