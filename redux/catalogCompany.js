@@ -369,7 +369,9 @@ export const getBranches = (idCompany) => async (dispatch, getState) => {
 };
 
 export const getPatronalRegistration =
-  (idCompany) => async (dispatch, getState) => {
+  (idCompany=null) => async (dispatch, getState) => {
+
+    if (!idCompany) idCompany = userCompanyId();
     await WebApiPeople.getPatronalRegistration(idCompany)
       .then((response) => {
         dispatch({
@@ -378,6 +380,7 @@ export const getPatronalRegistration =
         });
       })
       .catch((error) => {
+        console.log(error)
         dispatch({
           type: PATRONAL_REGISTRATION,
           payload: { data: [], error: error },
