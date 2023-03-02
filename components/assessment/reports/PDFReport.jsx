@@ -8,6 +8,7 @@ import {
     PDFViewer,
 } from '@react-pdf/renderer';
 import moment from 'moment';
+import { getWork } from '../../../utils/functions';
 
 const PDFReport = ({
   user,
@@ -83,13 +84,9 @@ const PDFReport = ({
                   </Text>
                   <Text style={{ fontSize: 10, textAlign: 'left', marginTop: 5 }}>
                     {
-                      currentTab !== 'psp' ? 
-                        user[0].work_title ? 
-                          `${user[0].work_title.name}` 
-                        : 
-                          'N/A' 
-                      : 
-                      profilesSelected[0]? profilesSelected[0].description : 'N/A'
+                      currentTab !== 'psp'
+                        ? getWork(user[0])
+                        : profilesSelected[0]? profilesSelected[0].description : 'N/A'
                     }
                   </Text>
               </View>
