@@ -16,8 +16,9 @@ const SelectPatronalRegistration = ({
   const { Option } = Select;
   const [options, setOptions] = useState([]);
 
+
   useEffect(() => {
-    if (currentNode) getPatronalRegistration(currentNode.id);
+    getPatronalRegistration();
   }, []);
 
   useEffect(() => {
@@ -43,12 +44,9 @@ const SelectPatronalRegistration = ({
         >
           {options.map((item) => {
             return (
-              <>
                 <Option key={item.id} value={item.id}>
                   {item.code}
                 </Option>
-                ;
-              </>
             );
           })}
         </Select>
