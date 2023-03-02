@@ -183,7 +183,7 @@ const SelectCompany = ({ ...props }) => {
                 useRouter.push("intranet/publications_statistics");
                 break;
               default:
-                useRouter.push("/home/persons");
+                useRouter.push("/dashboard");
                 break;
             }
           }

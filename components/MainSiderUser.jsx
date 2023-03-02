@@ -14,7 +14,8 @@ import Icon, {
   QuestionCircleOutlined,
   ApartmentOutlined,
   FunnelPlotOutlined,
-  SolutionOutlined
+  SolutionOutlined,
+  PieChartFilled
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -101,12 +102,16 @@ const MainSider = ({
         link4.click();
         break;
       case "myEvaluation":
-        const token5 = user.jwt_data.metadata.at(-1).token;
-        const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
-        const link5 = document.createElement('a');
-        link5.href = url5;
-        link5.target = '_blank';
-        link5.click();
+        // const token5 = user.jwt_data.metadata.at(-1).token;
+        // const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
+        // const link5 = document.createElement('a');
+        // link5.href = url5;
+        // link5.target = '_blank';
+        // link5.click();
+        router.push("/user/assessments/")
+        break;
+      case "dashboard":
+        router.push("/user")
         break;
       default:
         router.push('#');
@@ -127,6 +132,9 @@ const MainSider = ({
 
       // Reclutamiento y selección
       // items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
+
+      // Dashboard
+      items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
 
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
