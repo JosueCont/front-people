@@ -56,11 +56,11 @@ const MainLayoutUser = ({
     } catch (error) {}
   }, []);
 
-  useEffect(() => {
-    if (isBrowser()) {
-      setMainLogo(window.sessionStorage.getItem("image"));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isBrowser()) {
+  //     setMainLogo(window.sessionStorage.getItem("image"));
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (logoNode && logoNode != "") {
@@ -68,11 +68,11 @@ const MainLayoutUser = ({
     } else if (props.currentNode) {
       setMainLogo(props.currentNode.image);
     }
-  }, [logoNode, companyName]);
+  }, [logoNode, companyName, props.currentNode]);
 
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {
-      setMainLogo(props.currentNode.image);
+      // setMainLogo(props.currentNode.image);
       validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {

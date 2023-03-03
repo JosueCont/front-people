@@ -200,7 +200,6 @@ const FormGeneral = ({
                 <Form.Item
                     name='state'
                     label='Estado'
-                    // rules={[rulePhone]}
                 >
                     <Select
                         allowClear
