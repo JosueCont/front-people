@@ -26,7 +26,8 @@ const MainLayoutUser = ({
   hideSearch,
   hideLogo = false,
   nómina = false,
-    pageTitle = "KHOR Plus",
+  pageTitle = "KHOR Plus",
+  autoregister = false,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -55,11 +56,11 @@ const MainLayoutUser = ({
     } catch (error) {}
   }, []);
 
-  useEffect(() => {
-    if (isBrowser()) {
-      setMainLogo(window.sessionStorage.getItem("image"));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isBrowser()) {
+  //     setMainLogo(window.sessionStorage.getItem("image"));
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (logoNode && logoNode != "") {
@@ -67,15 +68,15 @@ const MainLayoutUser = ({
     } else if (props.currentNode) {
       setMainLogo(props.currentNode.image);
     }
-  }, [logoNode, companyName]);
+  }, [logoNode, companyName, props.currentNode]);
 
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {
-      setMainLogo(props.currentNode.image);
+      // setMainLogo(props.currentNode.image);
       validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
-      if (props.config) props.companySelected(null, props.config);
+      if (props.config && !autoregister) props.companySelected(null, props.config);
     }
   }, [props.currentNode, props.config, props.userData]);
 
@@ -147,8 +148,7 @@ const MainLayoutUser = ({
               requiredMark={false}
             >
               <Row justify="center">
-                <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.
-                Una vez realizado, serás redirigido al login para iniciar sesión con tu nueva contraseña</b></p>
+                <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.</b></p>
               </Row>
               <Row>
                 <Col span={24}>

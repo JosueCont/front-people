@@ -214,7 +214,7 @@ const TableVacancies = ({
                             icon={<UserAddOutlined />}
                             onClick={()=> copyLinkPostulation(item)}
                         >
-                            Autopostulación
+                            Postulación
                         </Menu.Item>
                     </>
                 )}

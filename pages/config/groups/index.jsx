@@ -32,6 +32,7 @@ import {FormattedMessage} from "react-intl";
 import { getFiltersJB } from "../../../utils/functions";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
+import moment from 'moment'
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
@@ -109,7 +110,7 @@ useEffect(()=>{
     {
       title: "Fecha de creación",
       render: (item) => {
-        return <div>{item.timestamp}</div>;
+        return <div>{item.timestamp?moment(item.timestamp).format('DD/MM/YYYY'):''}</div>;
       },
     },
     {

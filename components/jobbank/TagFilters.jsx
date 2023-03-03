@@ -8,17 +8,17 @@ const TagFilters = ({
     listGets = {},
     deleteKeys = [],
     discardKeys = [],
-    defaultFilters = [],
+    defaultFilters = {},
 }) => {
 
     const router = useRouter();
-    const [tags, setTags] = useState([]);
+    const [tagFilters, SetTagFilters] = useState([]);
 
     useEffect(()=>{
-        setTags([])
+        SetTagFilters([])
         if(Object.keys(router.query).length <= 0) return;
         let filters = deleteFiltersJb({...router.query}, [...discardKeys, 'page','size']);
-        setTags(Object.entries(filters))
+        SetTagFilters(Object.entries(filters))
     },[router.query])
     
     const removeFilter = (key) =>{
@@ -31,14 +31,15 @@ const TagFilters = ({
 
     return (
         <div className='body-list-items scroll-bar'>
-            {(tags.length > 0 || defaultFilters.length > 0) ? (
+            {(tagFilters.length > 0 || Object.keys(defaultFilters).length > 0) ? (
                 <>
-                    {defaultFilters.length > 0 && defaultFilters.map(([key, val], idx)=> (
+                    {Object.keys(defaultFilters).length > 0
+                        && Object.entries(defaultFilters).map(([key, val], idx)=> (
                         <div className='item-list-row default' key={"record_"+idx}>
                             <p>{key}: {val}</p>
                         </div>
                     ))}
-                    {tags.length > 0 && tags.map(([key, val], idx) => (
+                    {tagFilters.length > 0 && tagFilters.map(([key, val], idx) => (
                         <div className='item-list-row normal' key={"item_"+idx}>
                             <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
                             <CloseOutlined onClick={()=> removeFilter(key)}/>

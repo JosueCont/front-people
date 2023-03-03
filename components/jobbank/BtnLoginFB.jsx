@@ -28,7 +28,8 @@ const BtnLoginFB = ({
     const onFail = (response) =>{
         let msgError = {
             'facebookNotLoaded': 'No fue posible iniciar facebook, actualizar la página',
-            'loginCancelled': 'Inicio de sesión cancelado/fallido'
+            'loginCancelled': 'Inicio de sesión cancelado/fallido',
+            'appIDVoid': 'Configuración incompleta',
         }
         message.error(msgError[response.status])
     }
@@ -47,6 +48,10 @@ const BtnLoginFB = ({
     }
 
     const validateLogin = () =>{
+        if(!appID){
+            onFail({status: 'appIDVoid'})
+            return;
+        }
         if (!window.FB){
             onFail({status: 'facebookNotLoaded'});
             return;

@@ -41,6 +41,8 @@ const FormFBIG = ({
     const btnSubmit = useRef(null);
     const [infoConfig, setInfoConfig] = useState({});
     const { formatData } = useInfoConnection();
+    const pageKey = 'page_access_token';
+    const userKey = 'user_access_token';
 
     const isInstagram = useMemo(()=>{
         return router.query?.code == 'IG'
@@ -48,11 +50,9 @@ const FormFBIG = ({
 
     const existPreConfig = useMemo(()=>{
         let current = infoConnection?.data_config ?? {};
-        let exist = infoConfig?.data_config ?? {};
-        let existKeys = Object.keys(current).length > 0;
-        let othersKeys = Object.keys(exist).length > 0; 
-        if(existKeys || infoConnection.data_config) return false;
-        if(!othersKeys || !infoConfig.data_config) return false;
+        let exist = infoConfig?.data_config ?? {}; 
+        if(current[pageKey] && current[userKey]) return false;
+        if(!exist[pageKey] && !exist[userKey]) return false;
         return true;
     },[infoConnection, infoConfig])
 
@@ -69,7 +69,11 @@ const FormFBIG = ({
 
     const setValuesForm = () =>{
         formConnection.resetFields();
-        let details = existPreConfig ? {...infoConnection, data_config: infoConfig.data_config} : infoConnection;
+        let details = existPreConfig
+            ? {...infoConnection,
+                data_config: infoConfig.data_config,
+                is_valid: infoConfig.is_valid,
+            } : infoConnection;
         let values = formatData(details);
         let name_file = infoConnection.default_image
             ? infoConnection.default_image.split('/').at(-1)

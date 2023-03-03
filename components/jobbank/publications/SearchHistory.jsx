@@ -103,8 +103,9 @@ const SearchHistory = ({
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
                                 {Object.keys(infoPublication).length > 0 ?
                                     <>
-                                        {infoPublication?.vacant?.job_position}
-                                        &nbsp;/&nbsp;{infoPublication?.profile?.name ?? 'Personalizado'}
+                                        {infoPublication?.vacant?.job_position} / <span style={{color: 'rgba(0,0,0,0.5)'}}>
+                                            {infoPublication?.profile?.name ?? 'Personalizado'}
+                                        </span>
                                     </>
                                 : <></>}
                             </p>

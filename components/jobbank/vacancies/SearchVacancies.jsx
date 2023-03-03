@@ -26,7 +26,7 @@ const SearchVacancies = ({
     const showModal = () =>{
         let filters = {...router.query};
         filters.status = router.query?.status ? parseInt(router.query.status) : null;
-        formSearch.setFieldsValue({...router.query});
+        formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
 

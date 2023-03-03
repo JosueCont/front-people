@@ -22,7 +22,7 @@ const BallEvent = styled.span`
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: rgb(3, 155, 229);
+    background-color: ${({expired}) => expired ? 'rgba(0, 0, 0, 0.25)' : 'rgb(3, 155, 229)'};
 `;
 
 const ItemEvent = styled(ContentNormal)`
@@ -158,11 +158,15 @@ const MonthDetails = ({
         let day = moment(record[0], formatDay).format(formatDay);
         return day == moment().format(formatDay);
     }
+    const expired = (event) =>{
+        let start = event?.all_data_response?.start?.dateTime;
+        return moment().isAfter(start, 'day');
+    }
 
     const ComponentEvent = ({event}) => (
         <ItemEvent className='event' gap={16} onClick={()=> showModalDetails(event)}>
             <ContentNormal gap={8}>
-                <BallEvent/>
+                <BallEvent expired={expired(event)}/>
                 <TextDescripcion>
                     {getDescription(event)}
                 </TextDescripcion>

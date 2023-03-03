@@ -1045,4 +1045,10 @@ div.preview-img-jb .ant-image-preview-mask{
     background-color: #ffff;
 }
 
+span.input-with-clear,
+span.input-with-clear:not(.ant-input-affix-wrapper-disabled):hover,
+span.input-with-clear:focus{
+    border: 1px solid black!important;
+}
+
 /* Termina diseño bolsa de trabajo */

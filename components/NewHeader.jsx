@@ -256,7 +256,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <Col>
               <Image
                 preview={false}
-                onClick={() => router.push("/home/persons")}
+                onClick={() => router.push("/dashboard")}
                 style={{
                   maxWidth: 100,
                   margin: "auto",
@@ -269,7 +269,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               />
               <Image
                 preview={false}
-                onClick={() => router.push("/home/persons")}
+                onClick={() => router.push("/dashboard")}
                 style={{
                   maxWidth: 100,
                   margin: "auto",

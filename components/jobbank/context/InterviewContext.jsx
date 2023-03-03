@@ -42,17 +42,17 @@ export const InterviewProvider = ({children}) =>{
             let response = await axios.get(`${url}${token.access_token}`);
             setEmailCreator(response.data?.email)
             if(response.data?.expires_in <= 0){
-                cookies.remove('token_gc')
+                // cookies.remove('token_gc')
                 return 'EXPIRED';
             };
             if(response.data?.expires_in <= 200){
-                cookies.remove('token_gc')
+                // cookies.remove('token_gc')
                 return 'DECLINED';
             };
             return response;
         } catch (e) {
             console.log(e)
-            cookies.remove('token_gc')
+            // cookies.remove('token_gc')
             return 'ERROR';
         }
     }
@@ -68,15 +68,7 @@ export const InterviewProvider = ({children}) =>{
             return;
         }
         let resp = await isValidToken(token, item);
-        if(resp == 'ERROR'){
-            notification.error({
-                message: 'Inicie sesión de nuevo',
-                description: 'No se pudo validar la sesión',
-                placement: 'topLeft'
-            });
-            return;
-        }
-        if(resp == 'EXPIRED'){
+        if(['EXPIRED','ERROR'].includes(resp)){
             notification.info({
                 message: 'Inicie sesión de nuevo',
                 description: 'La sessión actual ha expirado',
