@@ -154,10 +154,10 @@ const TableSelection = ({
                                     vacant: item.vacant.id,
                                 }
                                 if(user_person){
-                                    query.user_person = user_person
+                                    query.person = user_person
                                 }
                                 router.push({
-                                pathname: `/jobbank/selection/details`,
+                                pathname: `/jobbank/selection/edit`,
                                 query: query
                             })
                         }

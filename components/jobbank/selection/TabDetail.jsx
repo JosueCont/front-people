@@ -59,7 +59,7 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
         data.comments = msgHTML
 
         try {
-            await WebApiJobBank.updateProcessSelection(data.id, data)
+            await WebApiJobBank.updateProcessLog(data.id, data)
             getInfoVacant(id)
             message.success('Comentario Editado')
 
@@ -95,7 +95,7 @@ const TabDetail = ({ listComments, loading, setLoading, id, person, getInfoVacan
 
     const actionDelete = async () => {
         try {
-            let response = await WebApiJobBank.deleteProcessSelection(itemsToDelete.id)
+            let response = await WebApiJobBank.deleteProcessLog(itemsToDelete.id)
             getInfoVacant(id)
             message.success('Comentario eliminado')
             
