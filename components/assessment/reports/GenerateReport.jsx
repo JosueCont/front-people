@@ -298,7 +298,7 @@ const GenerateReport = ({
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
-        // link.download = nameFile;
+        link.download = nameFile;
         link.click();
         window.URL.revokeObjectURL(url);
     }
