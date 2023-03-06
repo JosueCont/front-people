@@ -1,10 +1,11 @@
 import React,{ useEffect, useState} from "react";
 import {  CalendarOutlined, UserOutlined } from '@ant-design/icons';
 
-import {  
-    Modal, Form, Row, Select, Typography, Input, Radio, 
-    List, Checkbox, Avatar, Col, Space,Button, message,
-    Spin, Steps} from "antd";
+import {
+    Modal, Form, Row, Select, Typography, Input, Radio,
+    List, Checkbox, Avatar, Col, Space, Button, message,
+    Spin, Steps, Alert
+} from "antd";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPayroll from "../../api/WebApiPayroll";
 
@@ -24,7 +25,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     useEffect(() => {
         getCalendars();
-        formCalendar.setFieldsValue({payment_calendar:null,search_person:null, add:null})
+        formCalendar.setFieldsValue({payment_calendar:null,search_person:null, add:1})
         setPeople([])
         setIdCalendar('')
         setCheck([]);
@@ -58,12 +59,15 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
         } catch (e) {
             setLoading(false);
             console.log('error',e)
+        }finally {
+            setLoading(false)
         }
     }
 
 
     const onChange = (e) => {
         const { value, checked } = e.target;
+
         if (checked) {
           setCheck(prev => [...prev, value]);
         } else {
@@ -72,14 +76,27 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
     }
 
     const handleValuesChange = (value) => {
-        if(value.payment_calendar){
-            formCalendar.setFieldsValue({add:null})
+
+        //Significa que se capturó el select de calendarios
+        if(value?.payment_calendar){
+            formCalendar.setFieldsValue({add:1})
             getPeopleCompany(value.payment_calendar,null);
             setIdCalendar(value.payment_calendar)
             setCurrentStep(1);
-        } 
-        //if(value.search_person) getPeopleCompany(idCalendar,value.search_person)
-        if(value.add) filterPeople(value.add)
+        }
+
+        // significa que cambió los radios
+        if(value?.add){
+            filterPeople(value.add)
+        }
+
+        //Significa que se capturó el search
+        if(value?.search_person){
+
+        }
+
+
+
     }
 
     const getPeopleCompany = async(id,search) => {
@@ -91,14 +108,19 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
             setFilterData(people.data.results)
         } catch (e) {
             console.log('error',e)
+        }finally {
+            setLoading(false)
         }
     }
 
     const filterPeople = (val) => {
        let newPeope;
-       if(val==1){
+       if(val===1){
+           newPeope = people;
+       }
+       else if(val===2){
             newPeope= people.filter((item) => {
-                if(item.payment_calendar?.id == '') return item.person
+                if(item.payment_calendar === null ) return item.person
             });
        }else{
          newPeope =people.filter((item) => {
@@ -160,7 +182,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                 <Spin tip="Cargando..." spinning={loading}>
                     <Steps style={{marginBottom:'25px',paddingRight:'50px'}} size="small" current={currentStep}>
                         <Steps.Step title="Seleccionar calendario" icon={<CalendarOutlined />}/>
-                        <Steps.Step title="Elegir persona" icon={<UserOutlined/>}/>
+                        <Steps.Step title="Elegir persona (s)" icon={<UserOutlined/>}/>
                     </Steps>
                             
                 <Form 
@@ -169,14 +191,13 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                     layout={'vertical'}
                     onValuesChange={handleValuesChange}
                     className="inputs_form_responsive">
-                    <Row >
-                        <div style={{display:'flex',flex:1, flexDirection:'column'}}>
-                            {/*<Typography.Title level={5}>Selecciona un calendario</Typography.Title>*/}
-                            <Form.Item 
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
                                 name="payment_calendar"
                                 label="Calendario de pago"
                                 rules={[ruleRequired]}>
-                                    <Select options={paymentCalendars}
+                                <Select options={paymentCalendars}
                                         showSearch
                                         filterOption={(input, option) =>
                                             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -184,61 +205,76 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                         notFoundContent={"No se encontraron resultados."}
                                         allowClear>
 
-                                    </Select>
+                                </Select>
                             </Form.Item>
-
-                        </div>
-                        <div style={{display:'flex',flex:3,flexDirection:'column'}}>
-                            <Form.Item name="search_person" style={{width:'300px', alignSelf:'center'}}>
+                            <Alert
+                                message={`Para asignar un calendario se debe considerar que las personas deben tener su 
+                                información básica de Nómina, si no aparece alguna persona por favor revise su información.`}
+                                type="warning"
+                                showIcon
+                                style={{marginBottom: 16}}
+                            />
+                        </Col>
+                        <Col span={12} style={{paddingTop:30,paddingLeft:30}}>
+                            <Form.Item name="search_person" style={{width:'100%', alignSelf:'center'}}>
                                 {/*<Input placeholder="Buscar" allowClear onChange={onChange} />*/}
-                                <Input.Search 
-                                    placeholder="Buscar" 
-                                    onSearch={() =>getPeopleCompany(idCalendar,formCalendar.getFieldsValue().search_person)} 
+                                <Input.Search
+                                    placeholder="Buscar"
+                                    onSearch={() =>getPeopleCompany(idCalendar,formCalendar.getFieldsValue().search_person)}
                                     enterButton disabled={people.length <=0}
                                 />
                             </Form.Item>
                             <Form.Item name='add'style={{alignSelf:'center'}}>
                                 <Radio.Group disabled={people.length <=0}>
-                                    <Radio value={1}>Nueva Asignación</Radio>
-                                    <Radio value={2}>Reasignación</Radio>
+                                    <Radio value={1}>Todos</Radio>
+                                    <Radio value={2}>Nueva Asignación</Radio>
+                                    <Radio value={3}>Reasignación</Radio>
                                 </Radio.Group>
                             </Form.Item>
-                            
+
                             {people.length > 0 ? (
                                 <>
 
-                                <List 
-                                    itemLayout="horizontal"
-                                    dataSource={filterData}
-                                    pagination={{
-                                        onChange: (page) => {
-                                        },
-                                        pageSize: 4,
-                                      }}
-                                    renderItem={(item,index) => (
-                                        <List.Item style={{margin:'0 20px' }}>
-                                                <Checkbox 
-                                                    onChange={onChange} 
-                                                    checked={check[index]==item.person.id}
-                                                    value={item.person.id} 
+                                    <List
+                                        itemLayout="horizontal"
+                                        dataSource={filterData}
+                                        pagination={{
+                                            onChange: (page) => {
+                                            },
+                                            pageSize: 4,
+                                        }}
+                                        renderItem={(item,index) => (
+                                            <List.Item style={{margin:'0 20px' }}>
+                                                <Checkbox
+                                                    onChange={onChange}
+                                                    checked={ check.find(element => element === item.person.id)}
+                                                    value={item.person.id}
                                                     style={{margin:'10px 20px'}}
                                                 />
-                                            <List.Item.Meta 
-                                                title={`${item.person.first_name} ${item.person.flast_name} ${item.person.mlast_name}`}
-                                                avatar={<Avatar src={defaulPhoto}></Avatar>}/> 
-                                        </List.Item>
-                                    )}>
+                                                <List.Item.Meta
+                                                    title={`${item.person.first_name} ${item.person.flast_name} ${item.person.mlast_name}`}
+                                                    />
+                                            </List.Item>
+                                        )}>
 
-                                </List> </>) : (
-                                    <Typography.Text 
-                                        style={{
-                                            display:'flex', 
-                                            alignSelf:'center',
-                                            margin:'0 20px', 
-                                            color:'gray'}}>
-                                                No se encontraron resultados
-                                    </Typography.Text>
-                                )}
+                                    </List> </>) : (
+                                <Typography.Text
+                                    style={{
+                                        display:'flex',
+                                        alignSelf:'center',
+                                        margin:'0 20px',
+                                        color:'gray'}}>
+                                    No se encontraron resultados
+                                </Typography.Text>
+                            )}
+                        </Col>
+                        <div style={{display:'flex',flex:1, flexDirection:'column'}}>
+                            {/*<Typography.Title level={5}>Selecciona un calendario</Typography.Title>*/}
+
+
+                        </div>
+                        <div style={{display:'flex',flex:3,flexDirection:'column'}}>
+
                         </div>
                     </Row>
                 </Form>
