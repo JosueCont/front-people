@@ -23,7 +23,8 @@ const GenerateReport = ({
     csvDataSource = [],
     setCsvDataSource,
     nameFile = '',
-    setNameFile
+    setNameFile,
+    listReports = []
 }) => {
 
     const [loadingExport, setLoadingExport] = useState(false);
@@ -226,6 +227,10 @@ const GenerateReport = ({
     }
 
     const generateExcelReport = () => {
+        if(listReports?.length <=0){
+            message.error('Generar el reporte');
+            return;
+        }
         setLoadingExport(true)
         const key = 'updatable';
         let columns = getColumns();
@@ -299,6 +304,10 @@ const GenerateReport = ({
     }
 
     const generatePDF = async () => {
+        if(listReports?.length <=0){
+            message.error('Generar el reporte');
+            return;
+        }
         const key = 'updatable';
         let columns = getColumns();
         let data = getDataReport();
@@ -311,6 +320,7 @@ const GenerateReport = ({
                 columns={columns}
                 data={data}
                 profilesSelected={profilesSelected}
+                listReports={listReports}
             />).toBlob();
             let url = window.URL.createObjectURL(resp);
             setTimeout(()=>{
@@ -323,7 +333,7 @@ const GenerateReport = ({
         } catch (e) {
             console.log(e)
             setTimeout(()=>{
-                setLoadingExport(true)
+                setLoadingExport(false)
                 message.error({content: 'PDF no generado', key});
             },2000)
         }

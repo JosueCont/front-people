@@ -72,13 +72,13 @@ const DetailsSelection = ({
                 >
                     <TabCustomer/>
                 </Tabs.TabPane>
-                <Tabs.TabPane
+                {/* <Tabs.TabPane
                     tab='Evaluaciones KHOR+'
                     forceRender
                     key='3'
                 >
                     <TabKHOR/>
-                </Tabs.TabPane>
+                </Tabs.TabPane> */}
             </Tabs>
         </DetailsCustom>
     )
