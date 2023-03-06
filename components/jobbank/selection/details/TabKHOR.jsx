@@ -59,7 +59,6 @@ const TabKHOR = () => {
     const getPerson = async (id) =>{
         try {
             let response = await WebApiPeople.getPerson(id);
-            console.log("🚀 ~ file: TabKHOR.jsx:62 ~ getPerson ~ response:", response)
             setInfoPerson(response.data)
         } catch (e) {
             console.log(e)
