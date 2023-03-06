@@ -128,7 +128,7 @@ const CfdiVaucher = ({
 
   const columns = [
     {
-      title: "Num. trabajador",
+      title: "Núm. trabajador",
       key: "collaborator",
       render: (item) => {
         return item.payroll_person.person.code;
