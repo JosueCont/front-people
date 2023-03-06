@@ -319,6 +319,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <NumericInput
                   key={item.type}
                   initValue={item.value}
+                  maxLength={15}
                   valueItem={(newValue) => {
                     item.value = Number(newValue);
                     setCalculate(true);
