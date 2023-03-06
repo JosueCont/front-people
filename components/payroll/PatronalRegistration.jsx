@@ -14,7 +14,7 @@ import {
   Spin,
   DatePicker,
   ConfigProvider,
-  Select
+  Select, Alert
 } from "antd";
 import {
   CheckOutlined,
@@ -390,11 +390,18 @@ const ImssInformationNode = ({
         patronal_registration: patronalData.id
       }
       const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
-      setLoading(false)
       if(syncMovements?.data?.message) message.success(syncMovements?.data?.message)
       else message.error('Hubo un problema, intentalo más tarde')
     } catch (e) {
-      console.log(e)
+      console.log(e?.response.data?.message)
+      if(e?.response.data?.message){
+        message.error(e?.response.data?.message)
+      }else{
+        message.error('Hubo un problema, intentalo más tarde')
+      }
+
+    }finally {
+      setLoading(false)
     }
   }
 
@@ -501,6 +508,14 @@ const ImssInformationNode = ({
           </Row>
           <Divider style={{ marginTop: "2px" }} />
           <AutomaticMovements hasInfonavit={(data)=>setHasCredentialInfonavit(data)} hasImss={(data)=>setHasCredentialIMSS(data)} patronalData={patronalData} />
+            <Alert
+                message=""
+                showIcon
+                description={
+                  <p>Las funcionalidades relacionadas a los movimientos automáticos de IMSS e INFONAVIT están sujetos a la disponibilidad de ambos servicios ya que son externos a nuestra plataforma.</p>
+                }
+                type="info"
+            />
           <Row>
             <Col>
               <Divider style={{ marginTop: "2px" }} />
@@ -558,9 +573,10 @@ const ImssInformationNode = ({
             {
               hasCredentialInfonavit &&
                 <>
+                  <Divider> <img src={'/images/logoinfonavit.png'} width={40}/> Movimientos de Infonavit</Divider>
                   <Row justify="space-between">
                     <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-                      Movimientos afiliatorios
+                       Movimientos afiliatorios
                     </Title>
                     <Button
                         onClick={()=>setModal(true)}
@@ -600,7 +616,7 @@ const ImssInformationNode = ({
             width='30%'
           >
             <Row justify="center">
-              <Col>
+              <Col span={24}>
                 <div style={{display:'flex', flexDirection:'column', marginBottom:'10px'}}>
                   <span>Fecha</span>
                   <DatePicker

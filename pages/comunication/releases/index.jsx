@@ -209,7 +209,7 @@ const Releases = ({ permissions, ...props }) => {
                       <Col>
                         <Form.Item
                           name="send_date"
-                          label="Fecha de envio"
+                          label="Fecha de envío"
                           key="send_date"
                         >
                           <RangePicker onChange={onchangeRange} locale = { locale }/>

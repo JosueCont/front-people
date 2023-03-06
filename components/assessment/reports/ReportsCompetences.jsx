@@ -1,28 +1,20 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useMemo} from 'react';
 import {
     Select,
-    Form,
     Col,
     Row,
     Table,
     Avatar,
-    Radio,
     Button,
     Tooltip,
     message,
-    Skeleton,
-    Dropdown,
-    Menu
 } from 'antd';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import {
-    CloseOutlined,
     UserOutlined,
     ProfileOutlined,
     EyeOutlined,
-    RadarChartOutlined,
-    ExportOutlined
 } from "@ant-design/icons";
 import ViewList from './ViewList';
 import {
@@ -30,17 +22,13 @@ import {
     getPhoto,
     getWork
 } from '../../../utils/functions';
-import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
-import { valueToFilter } from '../../../utils/functions';
 import _ from 'lodash';
-import { CSVLink } from "react-csv";
-import PDFReport from './PDFReport';
-import { pdf } from '@react-pdf/renderer';
-
 // Se renderiza en el navegador, donde existe el objeto windown.
 //Esta modificación es para la librería chartjs-plugin-zoom
 const ViewChart = dynamic(()=> import('./ViewChart'), { ssr: false });
+//Necesario para la libreria react-pdf
+const GenerateReport = dynamic(()=> import('./GenerateReport'), { ssr: false });
 
 const ReportsCompetences = ({
     persons_company,
@@ -50,6 +38,16 @@ const ReportsCompetences = ({
     currentKey,
     currentNode,
     general_config,
+    labelUser = 'Seleccionar usuario',
+    labelProfile = 'Seleccionar perfil',
+    showSelectProfile = true,
+    showChart = false,
+    showListUser = false,
+    showListProfile = false,
+    showCardProfile = false,
+    showCardUser = false,
+    showTitleProfile = false,
+    showTitleWork = false,
     ...props
 }) => {
 
@@ -90,21 +88,18 @@ const ReportsCompetences = ({
     ]
 
     const [usersSelected, setUsersSelected] = useState([]);
-    const [competencesSelected, setCompetencesSelected] = useState([]);
     const [profilesSelected, setProfilesSelected] = useState([]);
     const [listReports, setListReports] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingExport, setLoadingExport] = useState(false)
     const [openModal, setOpenModal] = useState();
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
     const [currentTab, setCurrentTab] = useState();
-    const [optionsPersons, setOptionsPersons] = useState([]);
-    const [optionsProfiles, setOptionsProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [openModalChart, setOpenModalChart] = useState(false);
     const [dataChart, setDataChart] = useState([]);
     const [typeReport, setTypeReport] = useState('p');
+    //Estados para excel
     const [csvHeaders, setCsvHeaders] = useState([])
     const [csvDataSource, setCsvDataSource ] = useState([])
     const [nameFile, setNameFile] = useState('')
@@ -117,17 +112,8 @@ const ReportsCompetences = ({
         }
     },[currentKey])
 
-    useEffect(()=>{
-        getOptionsPersons();
-    },[persons_company])
-
-    useEffect(()=>{
-        getOptionsProfiles();
-    },[profiles])
-
     const resetValues = () =>{
         setUsersSelected([])
-        setCompetencesSelected([])
         setProfilesSelected([])
         setListReports([])
         setIsUsers(false)
@@ -165,59 +151,11 @@ const ReportsCompetences = ({
         }
     }
 
-    const getOptionsPersons = () =>{
-        let options = [];
-        if(persons_company.length > 0){
-            persons_company.map(item =>{
-                options.push({
-                    key: item.id,
-                    value: item.id,
-                    label: getFullName(item)
-                })
-            })
-        }
-        setOptionsPersons(options);
-    }
-
-    const getOptionsProfiles = () =>{
-        let options = [];
-        if(profiles.length > 0){
-          profiles.map(item=>{
-            options.push({
-                key: item.id,
-                value: item.id,
-                label: item.name
-            })
-          })
-        }
-        setOptionsProfiles(options);
-    }
-
-    // const getOptionsCompetences = () =>{
-    //     let options = [];
-    //     if(competences.length > 0){
-    //         competences.map(item => {
-    //             let exist = competencesSelected.some(record => record.id === item.id)
-    //             if(!exist){
-    //                 options.push({
-    //                     key: item.id,
-    //                     value: item.id,
-    //                     label: item.name
-    //                 })
-    //             }
-    //         })
-    //     }
-    //     return options;
-    // }
-
     const sendProfile = (value) =>{
         if(currentTab == 'pps'){
-            let list = [];
-            value.map(item =>{
-                let profile = profiles.find(record => record.id === item);
-                list.push(profile);
-            })
-            setProfilesSelected(list);
+            const map_ = item => profiles.find(record => record.id == item);
+            let results = value.map(map_);
+            setProfilesSelected(results);
         }else{
             getObjProfile(value);
         }
@@ -230,12 +168,9 @@ const ReportsCompetences = ({
 
     const sendUser = (value) =>{
         if(['psp','psc'].includes(currentTab)){
-            let list = [];
-            value.map(item =>{
-                let user = persons_company.find(record => record.id === item);
-                list.push(user);
-            })
-            setUsersSelected(list);
+            const map_ = item => persons_company.find(record => record.id == item);
+            let results = value.map(map_);
+            setUsersSelected(results);
         }else{
             let user = persons_company.find(item => item.id === value);
             if(['pp','pps'].includes(currentTab)) sendProfileUser(user);
@@ -251,15 +186,6 @@ const ReportsCompetences = ({
             getObjProfile(user.work_title.job.skill_profile_id);
         }
     }
-
-    // const sendCompetence = (value) =>{
-    //     let exists = competencesSelected.some(item => item.id === value);
-    //     if(!exists){
-    //         let competence = competences.find(item => item.id == value);
-    //         let list = [...competencesSelected, competence];
-    //         setCompetencesSelected(list);
-    //     }
-    // }
 
     const getPropertiesSelectUser = () =>{
         if(['psp','psc'].includes(currentTab)){
@@ -413,8 +339,9 @@ const ReportsCompetences = ({
         setOpenModal(false)
     }
 
-    const getDescProfile = ({description}) =>{
-        return description ? description : 'N/A';
+    const getDescProfile = () =>{
+        let item = profilesSelected?.at(-1);
+        return item ? item?.description : 'N/A';
     }
 
     const getCompatibility = (item) =>{
@@ -437,16 +364,9 @@ const ReportsCompetences = ({
        return result.level_person
     }
 
-    const getProfile = (item) =>{
+    const getProfile = () =>{
+        let item = profilesSelected?.at(-1);
         return item ? item.name : 'Pendiente';
-    }
-
-    const getListData = () =>{
-        return isUsers ? usersSelected : profilesSelected;
-    }
-
-    const getSetListData = () =>{
-        return isUsers ? setUsersSelected : setProfilesSelected;
     }
 
     const findUser = (id) =>{
@@ -463,10 +383,6 @@ const ReportsCompetences = ({
         let user = findUser(id);
         let fullName = getFullName(user);
         return fullName;
-    }
-
-    const filterOptionSelect = (input, option) =>{
-        return valueToFilter(option.label).includes(valueToFilter(input))
     }
 
     const onChangeTable = ({current}) =>{
@@ -551,17 +467,6 @@ const ReportsCompetences = ({
             setDataChart(item);
         }
     }
-
-    // const getInfoType = () =>{
-    //     return currentTab == 'p'
-    //         ? 'El tipo de reporte actual se trata de seleccionar solo una persona.'
-    //         : currentTab == 'pp'
-    //         ? 'El tipo de reporte actual se trata de seleccionar una persona vs un perfil.'
-    //         : ['psp','psc'].includes(currentTab)
-    //         ? 'El tipo de reporte actual se trata de seleccionar varias personas vs un perfil.'
-    //         : currentTab == 'pps'
-    //         && 'El tipo de reporte actual se trata de seleccionar una persona vs varios perfiles.'
-    // }
 
     const columns_p = [
         {
@@ -736,401 +641,51 @@ const ReportsCompetences = ({
         return params;
     }
 
-    const generateExcelReport = () => {
-
-        setLoadingExport(true)
-
-        let columns = getColumns();
-        let data = getDataReport();
-        let rowReaders = []
-
-        console.log('Columns', columns)
-        console.log('Data', data)
-
-        try {
-            
-        
-
-        if(currentTab === 'p') {
-
-            let nameFile = usersSelected.length > 0 ? 
-                            `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
-                           : 'Demo.csv'
-            setNameFile(nameFile)
-
-            columns.forEach((col) => {
-                if(col.title === 'Competencia'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'competence.name'
-                    })
-                }
-                if(col.title === 'Nivel'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'level'
-                    })
-                }
-                if(col.title === 'Descripción'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'description'
-                    })
-                }
-                
-            })
-
-            setCsvDataSource(data)
-        }
-
-        if(currentTab === 'pp'){
-
-            let nameFile = usersSelected.length > 0 ? 
-                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}.csv`
-                           : 'Demo.csv'
-            setNameFile(nameFile)
-            
-            columns.forEach((col) => {
-                if(col.title === 'Competencia'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'name'
-                    })
-                }
-                if(col.title === 'Nivel persona'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'level_person'
-                    })
-                }
-                if(col.key === 'description_person'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'description_person'
-                    })
-                }
-                if(col.title === 'Nivel perfil'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'level_profile'
-                    })
-                }
-                if(col.key === 'description_profile'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'description_profile'
-                    })
-                }
-                if(col.title === 'Compatibilidad'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'compatibility'
-                    })
-                }
-                
-            })
-
-            setCsvDataSource(data)
-        }
-
-        if(currentTab === 'psp'){
-            let nameFile = profilesSelected.length > 0 ? `Personas Perfil - ${profilesSelected[0].name}.csv` : 'Demo.csv'
-            setNameFile(nameFile)
-
-            columns.forEach((col) => {
-                if(col.title === 'Persona'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'fullname'
-                    })
-                }
-                if(col.title === 'Compatibilidad'){
-
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'compatibility'
-                    })
-                }
-            })
-
-            let newData = data.map((row) => {
-                let obj = {
-                fullname: row.persons.fullName,
-                compatibility: row.profiles[0].compatibility}
-
-                return obj
-
-            })
-
-            setCsvDataSource(newData)
-
-            
-        }
-
-        if(currentTab === 'pps'){
-            let nameFile = usersSelected.length > 0 ? 
-            `Persona Perfiles - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}.csv`
-            : 'Demo.csv'
-           setNameFile(nameFile)
-
-           columns.forEach((col) => {
-                if(col.title === 'Perfil'){
-                    rowReaders.push({
-                        label: col.title,
-                        key: 'name'
-                    })
-                }
-
-                if(col.title === 'Compatibilidad'){
-                        rowReaders.push({
-                            label: col.title,
-                            key: 'compatibility'
-                        })
-                    }
-                })
-           
-            setCsvDataSource(data)
-
-        }
-
-        if(currentTab === 'psc'){ 
-
-            let nameFile = profilesSelected.length > 0 ? `Personas competencias - ${profilesSelected[0].name}.csv` : 'Demo.csv'
-            setNameFile(nameFile)
-            let newDatasource = []
-
-            rowReaders.push({
-                label: 'Persona',
-                key: 'fullname'
-            })
-
-            data?.length > 0  && data[0].profiles[0].competences.sort((a, b) => {
-                if (a.name > b.name) return 1;
-                if (a.name < b.name) return -1;
-                return 0;
-            }).forEach((com) => {
-                let exist = rowReaders.find((row) => row.key == com.name.substring(0,3).toUpperCase())
-                if(exist) {
-                    rowReaders.push({
-                        label: com.name.substring(0,4).toUpperCase() + ` (${com.level_profile})`,
-                        key: com.name.substring(0,4).toUpperCase()
-                    })
-                } else {
-                    rowReaders.push({
-                    label: com.name.substring(0,3).toUpperCase() + ` (${com.level_profile})`,
-                    key: com.name.substring(0,3).toUpperCase()
-                })
-                }
-
-            })
-
-            rowReaders.push({
-                label: 'Compatibilidad',
-                key: 'compatibility'
-            })
-
-            data.map((row) => {
-                
-                let object = {}
-                object['fullname'] = row.persons.fullName
-                object['compatibility'] = row.profiles[0].compatibility
-                let recuArray = row.profiles[0].competences
-
-                recuArray.sort((a, b) => {
-                    if (a.name > b.name) return 1;
-                    if (a.name < b.name) return -1;
-                    return 0;
-                })
-
-                let recuArrayV2 = recuArray.reduce((acc, current, index) => {
-
-                    let nameCom = acc[current.name.substring(0,3).toUpperCase()] !== undefined ?
-                                    current.name.substring(0,4).toUpperCase()
-                                : current.name.substring(0,3).toUpperCase()
-                    
-                    return{...acc, [nameCom] : current.level_person}
-                }, object)
-
-                newDatasource.push(recuArrayV2)
-                
-            })
-            
-            setCsvDataSource(newDatasource)
-            let nameCol = rowReaders.find((record) => record.key === 'fullname')
-            let nameComp = rowReaders.find((record) => record.key === 'compatibility')
-            let unOrderedColumns = rowReaders.filter((reg) => reg.key !== 'fullname' && reg.key !== 'compatibility')
-            let orderedColumns = unOrderedColumns.sort((a, b) => {
-                if (a.key > b.key) return 1;
-                if (a.key < b.key) return -1;
-                return 0;
-            })
-            let arr = []
-            arr.push(nameCol)
-            let newArr = [...arr, ...orderedColumns]
-            newArr.push(nameComp)
-            setCsvHeaders(newArr)
-        }
-
-        if(currentTab !== 'psc') setCsvHeaders(rowReaders)
-
-
-        setTimeout(() => {
-            csvLink.current.link.click()
-            message.success('Documento Generado')
-            setLoadingExport(false)
-        },[3000]) 
-
-    } catch (error) {
-         console.log('error', error)
-         setLoadingExport(false)
-    }
-
-    }
-
-    let MyDoc = ({user, columns, data }) => <PDFReport user={user} currentTab={currentTab} columns={columns} data={data} profilesSelected = {profilesSelected}/>
-
-    const linkTo = (url, download = false ) =>{
-        let nameFile = ''
-        if(currentTab === 'p'){
-            nameFile = usersSelected.length > 0 ? 
-            `Persona - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
-           : 'Demo'
-        }
-        if(currentTab === 'pp'){
-            nameFile = usersSelected.length > 0 ? 
-                            `Persona Perfil - ${usersSelected[0].first_name} ${usersSelected[0].flast_name} - ${profilesSelected[0].name}`
-                           : 'Demo'
-        }
-        if(currentTab === 'psp'){
-            nameFile = profilesSelected.length > 0 ? `Personas Perfil - ${profilesSelected[0].name}` : 'Demo'
-        }
-        if(currentTab === 'pps'){
-            nameFile = usersSelected.length > 0 ? 
-            `Persona Perfiles - ${usersSelected[0].first_name} ${usersSelected[0].flast_name}`
-            : 'Demo'
-        }
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_black";
-        if(download) link.download = nameFile;
-        link.click();
-    }
-
-
-    const generatePDF = async () => {
-        const key = 'updatable';
-        let columns = getColumns();
-        let data = getDataReport();
-
-        message.loading({content: 'Generando PDF...', key})
-        try {
-            let resp = await pdf(<MyDoc user={usersSelected} columns={columns} data={data} />).toBlob();
-            let url = URL.createObjectURL(resp);
-            setTimeout(()=>{
-                message.success({content: 'PDF generado', key})
-            }, 1000)
-            setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', true);
-            },2000)
-        } catch (e) {
-            console.log(e)
-            setTimeout(()=>{
-                setLoading(false)
-                message.error({content: 'PDF no generado', key});
-            },2000)
-        }
-    }
-    
-    const items = [
-        {
-            label: 'Excel',
-            key: 1,
-            onClick: () => {
-                generateExcelReport()
-            }
-        },
-        {
-            label: 'PDF',
-            key: 2,
-            onClick: () => {
-                generatePDF()
-            }
-        }
-
-    ]
-
-    const item = [
-        {
-            label: 'Excel',
-            key: 1,
-            onClick: () => {
-                generateExcelReport()
-            }
-        },
-    ]
-
-    const menuDropdown = (
-        <Menu items={currentTab !== 'psc'? items : item} />
-    )
-
     return (
         <div style={{margin: '20px'}}>
             <Row gutter={[24,24]}>
                 <Col span={24} className='content_header'>
                     <div className='content_inputs'>
                         <div className='content_inputs_element'>
-                            <p>
-                                {['psp','psc'].includes(currentTab) ? 
-                                    <span>Seleccionar usuarios</span> :
-                                    <span>Selecionar usuario</span>
-                                }
-                            </p>
+                            <p>{labelUser}</p>
                             <Select
                                 showSearch
-                                placeholder={'Seleccionar usuario'}
-                                notFoundContent={'No se encontraron resultados'}
-                                options={optionsPersons}
+                                placeholder='Seleccionar usuario'
+                                notFoundContent='No se encontraron resultados'
                                 {...getPropertiesSelectUser()}
                                 onChange={sendUser}
                                 loading={load_persons}
                                 style={{width: 200}}
-                                optionFilterProp={'children'}
-                                filterOption={filterOptionSelect}
-                            />
+                                optionFilterProp='children'
+                            >
+                                {persons_company.length > 0 && persons_company.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </div>
-                        {['pp','psc','psp','pps'].includes(currentTab) && (
+                        {showSelectProfile && (
                             <div className='content_inputs_element'>
-                                <p>
-                                    {currentTab == 'pps' ? 
-                                        <span>Seleccionar perfiles</span> :
-                                        <span>Selecionar perfil</span>
-                                    }
-                                </p>
+                                <p>{labelProfile}</p>
                                 <Select
                                     showSearch
-                                    placeholder={'Seleccionar perfil'}
-                                    notFoundContent={'No se encontraron resultados'}
-                                    options={optionsProfiles}
+                                    placeholder='Seleccionar perfil'
+                                    notFoundContent='No se encontraron resultados'
                                     {...getPropertiesSelectProfile()}
                                     loading={load_profiles}
                                     onChange={sendProfile}
                                     style={{width: 200}}
-                                    optionFilterProp={'children'}
-                                    filterOption={filterOptionSelect}
-                                />
+                                    optionFilterProp='children'
+                                >
+                                    {profiles.length > 0 && profiles.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         )}
-                        {/* <div className='content_inputs_element fade_in'>
-                            <p>Seleccionar competencias</p>
-                            <Select
-                                placeholder={'Seleccionar competencia'}
-                                notFoundContent={'No se encontraron resultados'}
-                                options={getOptionsCompetences()}
-                                value={null}
-                                onChange={sendCompetence}
-                                style={{width: 200}}
-                            />
-                        </div> */}
                         <Button
                             onClick={()=> validateParameters()}
                             style={{marginTop:'auto'}}
@@ -1146,31 +701,26 @@ const ReportsCompetences = ({
                         </Button>
                     </div>
                     <div className='content_inputs'>
-                            <div
-                                style={{alignItems:'center', marginTop: 30}}
-                                className='content_inputs_element'
-                            >   
-                                <Dropdown overlay={ menuDropdown }>
-                                    <Button
-                                        icon={<ExportOutlined />}
-                                        loading = {loadingExport}
-                                    >
-                                        Exportar a
-                                    </Button>
-                                </Dropdown>
-                                <CSVLink
-                                    headers={csvHeaders}
-                                    filename={nameFile}
-                                    data={csvDataSource}
-                                    ref={csvLink}
-                                    style={{
-                                    display: 'none'
-                                    }}
-                                >
-                                    Descargar
-                                </CSVLink>
-                            </div>
-                        {currentTab == 'pp' && (
+                        <div
+                            style={{alignItems:'center', marginTop: 30}}
+                            className='content_inputs_element'
+                        >   
+                            <GenerateReport
+                                currentTab={currentTab}
+                                getColumns={getColumns}
+                                getDataReport={getDataReport}
+                                profilesSelected={profilesSelected}
+                                usersSelected={usersSelected}
+                                csvHeaders={csvHeaders}
+                                setCsvHeaders={setCsvHeaders}
+                                csvDataSource={csvDataSource}
+                                setCsvDataSource={setCsvDataSource}
+                                nameFile={nameFile}
+                                setNameFile={setNameFile}
+                                listReports={listReports}
+                            />
+                        </div>
+                        {showChart && (
                             <div
                                 style={{alignItems:'center'}}
                                 className='content_inputs_element'
@@ -1182,7 +732,7 @@ const ReportsCompetences = ({
                                 />
                             </div>
                         )}
-                        {['psp','psc'].includes(currentTab) && (
+                        {showListUser && (
                             <div className='content_inputs_element'>
                                 <p>Ver listado</p>
                                 <Tooltip title='Personas seleccionadas' placement='bottom'>
@@ -1195,7 +745,7 @@ const ReportsCompetences = ({
                                 </Tooltip>
                             </div>
                         )}
-                        {currentTab == 'pps' && (
+                        {showListProfile && (
                             <div className='content_inputs_element'>
                                 <p>Ver listado</p>
                                 <Tooltip title='Perfiles seleccionados' placement='bottom'>
@@ -1208,42 +758,37 @@ const ReportsCompetences = ({
                                 </Tooltip>
                             </div>
                         )}
-                        {/* <div className='content_inputs_element'>
-                            <p>Reporte actual</p>
-                            <Tooltip title={getInfoType()} placement='topLeft'>
-                                <FcInfo size={30}/>
-                            </Tooltip>
-                        </div> */}
                     </div>
                 </Col>
-                {(usersSelected.length > 0 || profilesSelected.length > 0 ) && (
+                {((usersSelected.length > 0 && showCardUser)
+                    || (profilesSelected.length > 0 && showCardProfile)) && (
                     <Col span={24}>
                         <Row gutter={[24,24]}>
-                            {['p','pp','pps'].includes(currentTab) && usersSelected.length > 0 && (
+                            {showCardUser && usersSelected.length > 0 && (
                                 <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
                                     <div className='info_user'>
                                         <Avatar src={getPhoto(usersSelected.at(-1))} size={80}/>
                                         <div className='info_user_text'>
                                             <p>{getFullName(usersSelected.at(-1))}</p>
-                                            {currentTab == 'pp' && (
+                                            {showTitleProfile && (
                                                 <>
-                                                    <p>Perfil: <span>{getProfile(profilesSelected.at(-1))}</span></p>
+                                                    <p>Perfil: <span>{getProfile()}</span></p>
                                                     <p>Compatiblidad: <span>{getCompatibility(listReports.at(-1))}</span></p>
                                                 </>
                                             )}
-                                            {['p','pps'].includes(currentTab) && (
+                                            {showTitleWork && (
                                                 <p><span>{getWork(usersSelected.at(-1))}</span></p>
                                             )}
                                         </div>
                                     </div>
                                 </Col>
                             )}
-                            {['psp','psc'].includes(currentTab) && profilesSelected.length > 0 &&(
+                            {showCardProfile && profilesSelected.length > 0 &&(
                                 <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
                                     <div className='info_user'>
                                         <div className='info_user_text'>
-                                            <p>{getProfile(profilesSelected.at(-1))}</p>
-                                            <p><span>{getDescProfile(profilesSelected.at(-1))}</span></p>
+                                            <p>{getProfile()}</p>
+                                            <p><span>{getDescProfile()}</span></p>
                                         </div>
                                     </div>
                                 </Col>
@@ -1276,8 +821,8 @@ const ReportsCompetences = ({
                     visible={openModal}
                     isUsers={isUsers}
                     close={hideModalList}
-                    listData={getListData()}
-                    setListData={getSetListData()}
+                    listData={isUsers ? usersSelected : profilesSelected}
+                    setListData={isUsers ? setUsersSelected : setProfilesSelected}
                 />
             )}
             {openModalChart && (

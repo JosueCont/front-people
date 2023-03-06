@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { Row, Col, Spin, Card, Space, Table, Progress } from "antd";
+import { CustomBtn } from "./styledAssesments";
 
 export const Content = styled.div`
     display: flex;
@@ -40,4 +42,27 @@ export const ContentVerify = styled(ContentVertical)`
     & p:last-of-type{
         animation: fadein 1s ease-in alternate infinite;
     }
+`;
+
+export const ProgressTest = styled(Progress)`
+  @media screen and (max-width: 884px) {
+    & .ant-progress-outer {
+      display: none;
+    }
+  }
+`;
+
+export const BtnTest = styled(CustomBtn)`
+  & svg {
+    display: none;
+  }
+  @media screen and (max-width: 884px) {
+    width: 50px;
+    & span {
+      display: none;
+    }
+    svg {
+      display: block;
+    }
+  }
 `;

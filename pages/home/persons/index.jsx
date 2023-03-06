@@ -1,7 +1,7 @@
 import { Breadcrumb, Table, Tooltip, Row, Col, Input, Select, Switch, Button, Form, Avatar, message, Modal, Menu, Dropdown, notification, Upload } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined } from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -30,6 +30,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
+import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -46,6 +47,8 @@ const homeScreen = ({ ...props }) => {
   const [personsKeys, setPersonsKeys] = useState([]);
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
+  const [formAddImmediateSupervisor] = Form.useForm();
+  const [formResetPassword] = Form.useForm();
   // const inputFileRef = useRef(null);
   // const inputFileRefAsim = useRef(null);
 
@@ -62,8 +65,10 @@ const homeScreen = ({ ...props }) => {
   // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
   const [modalSynchronizeYNL, setModalSynchronizeYNL] = useState(false);
+  const [modalAddImmediateSupervisor, setModalAddImmediateSupervisor] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
+  const [personsToAddImmediateSupervisor, setPersonsToAddImmediateSupervisor] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
   const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
   let urlFilter = "/person/person/?";
@@ -77,6 +82,11 @@ const homeScreen = ({ ...props }) => {
   // const [wtSelct, setWtSelct] = useState(null);
   const [addPersonCfi, setPersonCfi] = useState(false)
   const [listPersons, setListPersons] = useState([]);
+  const [isLoadingImmediateSupervisor, setIsLoadingImmediateSupervisor] = useState(false);
+  const [isOpenModalResetPassword, setIsOpenModalResetPassword] = useState(false);
+  const [khonnectId, setKhonnectId] = useState("");
+  const [loadingChangePassword, setLoadingChangePassword] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -563,6 +573,9 @@ const homeScreen = ({ ...props }) => {
             Sincronizar YNL
           </Menu.Item>
         )}
+        <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
+          Asignar jefe inmediato
+        </Menu.Item>
       </Menu>
     );
   };
@@ -643,6 +656,24 @@ const homeScreen = ({ ...props }) => {
             }}
           >
             Sincronizar con YNL
+          </Menu.Item>
+        )}
+        <Menu.Item
+          key="7"
+          icon={<UserSwitchOutlined />}
+          onClick={ () => {
+            setPersonsToAddImmediateSupervisor([item]), setModalAddImmediateSupervisor(true);
+          }}
+        >
+          Asignar jefe inmediato
+        </Menu.Item>
+        { isAdmin && (
+          <Menu.Item
+            key="8"
+            icon={<KeyOutlined />}
+            onClick={ () => { setIsOpenModalResetPassword(true), setKhonnectId(item.khonnect_id) }}
+          >
+            Reestablecer contraseña
           </Menu.Item>
         )}
       </Menu>
@@ -840,12 +871,21 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
+  const AlertAddImmediateSupervisor = () => (
+    <div>
+      {personsToAddImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
+      <br /><br />
+      <ListElementsToAddImmediateSupervisor personsToAddImmediateSupervisor={personsToAddImmediateSupervisor} />
+    </div>
+  );
+
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
       setPersonsToSynchronizeYNL(selectedRows);
+      setPersonsToAddImmediateSupervisor(selectedRows)
     },
   };
 
@@ -883,6 +923,23 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
+  const ListElementsToAddImmediateSupervisor = ({ personsToAddImmediateSupervisor }) => {
+    return (
+      <div>
+        {personsToAddImmediateSupervisor.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail ? p.photo_thumbnail : defaulPhoto} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
   const HandleCloseGroup = () => {
     setShowModalGroup(false);
     setModalCreateGroup(false);
@@ -890,6 +947,7 @@ const homeScreen = ({ ...props }) => {
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
     setPersonsToSynchronizeYNL([]);
+    setPersonsToAddImmediateSupervisor([]);
     setPersonsKeys([]);
     setItemPerson({});
   };
@@ -1023,6 +1081,42 @@ const homeScreen = ({ ...props }) => {
 
   const showModalSynchronizeYNL = () => {
     modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
+  };
+
+  const showModalAddImmediateSupervisor = () => {
+    personsToAddImmediateSupervisor.length > 0 ? setModalAddImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
+  };
+
+  const finishImmediateSupervisor = (value) =>{
+    let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
+    validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe inmediato") : assignedImmediateSupervisor(value.immediate_supervisor)
+  }
+
+  const assignedImmediateSupervisor = (immediate_supervisor) => {
+    setIsLoadingImmediateSupervisor(true)
+    let ids = null;
+    if (personsToAddImmediateSupervisor.length == 1) {
+      ids = personsToAddImmediateSupervisor[0].id;
+    } else if (personsToAddImmediateSupervisor.length > 0) {
+      personsToAddImmediateSupervisor.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
+    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
+    WebApiPeople.assignedMassiveImmediateSupervisor(data)
+    .then((response) => {
+      message.success("Asignado correctamente.");
+      setIsLoadingImmediateSupervisor(false);
+      setModalAddImmediateSupervisor(false);
+      formAddImmediateSupervisor.resetFields();
+      filterPersonName();
+    })
+    .catch((error) => {
+      setIsLoadingImmediateSupervisor(false);
+      console.log(error);
+      message.error("Error al asignar");
+    });
   };
 
   useEffect(() => {
@@ -1188,9 +1282,6 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDeactivate]);
 
-
-
-
   const menuExportTemplate = (
     <Menu>
       <Menu.Item
@@ -1225,6 +1316,49 @@ const homeScreen = ({ ...props }) => {
       )}
     </Menu>
   );
+
+  const onFinishChangePassword = (data) =>{
+    setLoadingChangePassword(true)
+    let dataToApi = {
+      khonnect_id: khonnectId,
+      password: data.passwordTwo,
+    }
+    data.passwordTwo === data.passwordOne ? changePasswordUser(dataToApi) : message.info("Confirme bien sus contraseñas")
+  }
+
+  const changePasswordUser = async (data) =>{
+    try {
+      let response = await WebApiPeople.validateChangePassword(data);
+      if(response.status == 200){
+        setTimeout(() => {
+          setLoadingChangePassword(false)
+          message.success("Cambio de contraseña exitoso");
+          setIsOpenModalResetPassword(false)
+          formResetPassword.resetFields();
+        }, 3000);
+      }
+    } catch (e) {
+      message.error("Ocurrio un error intenta nuevamente");
+      formResetPassword.resetFields()
+      setLoadingChangePassword(false)
+      console.log(e)
+    }
+  }
+
+  const validatePassword = ({ getFieldValue }) => ({
+    validator(rule, value) {
+      if (!value || getFieldValue("passwordOne") === value) {
+        return Promise.resolve();
+      }
+      return Promise.reject("Las contraseñas no coinciden");
+    },
+  });
+
+  useEffect(() => {
+    if(props.user_store){
+      setIsAdmin(props.user_store.is_admin)
+    }
+  }, [props.user_store]);
 
   return (
     <>
@@ -1542,6 +1676,80 @@ const homeScreen = ({ ...props }) => {
           setVisible={() => setPersonCfi(false)}
           node_id={props.currentNode?.id}
         />
+        <Modal title="Asignar jefe inmediato" closable={false} visible={modalAddImmediateSupervisor} footer={false} >
+          <Form
+            onFinish={finishImmediateSupervisor}
+            layout={"vertical"}
+            form={formAddImmediateSupervisor}
+          >
+            <Row>
+              <Col xs={24} md={24}>
+                <Form.Item name="immediate_supervisor" label="Jefe inmediato" rules={[ruleRequired]}>
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    allowClear={true}
+                    >
+                      { listPersons.length > 0 && listPersons.map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <AlertAddImmediateSupervisor/>
+            <Row gutter={[8,20]} justify="end">
+              <Col span={6}>
+                <Button disabled={isLoadingImmediateSupervisor} style={{width:'100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1"}} className="btn-filter" onClick={()=>{setModalAddImmediateSupervisor(false), formAddImmediateSupervisor.resetFields()}}>
+                  Cancelar
+                </Button>
+              </Col>
+              <Col span={6}>
+                <Button loading={isLoadingImmediateSupervisor} style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                  Asignar
+                </Button>
+              </Col>         
+            </Row>
+          </Form>
+          <br />
+        </Modal>
+        <Modal title="Reestablecer contraseña" visible={isOpenModalResetPassword} closable={false} footer={false}>
+          <Form
+            form={formResetPassword}
+            onFinish={onFinishChangePassword}
+            layout={"vertical"}
+            requiredMark={false}
+          >
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  name="passwordOne"
+                  label="Contraseña nueva"
+                  rules={[ruleRequired, ruleWhiteSpace, validateSpaces, ruleMinPassword(6)]}
+                >
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                </Form.Item>
+                <Form.Item
+                  name="passwordTwo"
+                  label="Confirmar contraseña"
+                  rules={[ruleRequired, ruleWhiteSpace, validatePassword, validateSpaces, ruleMinPassword(6)]}
+                >
+                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={[8,20]} justify="end">
+              <Col span={6}>
+                <Button disabled={loadingChangePassword} style={{width:'100%', opacity: loadingChangePassword ? "0.6" : "1"}} className="btn-filter" onClick={()=>{ setIsOpenModalResetPassword(false) }}>Cancelar</Button>
+              </Col>
+              <Col span={12}>
+                <Button className="btn-filter" style={{width:'100%'}} loading={loadingChangePassword} type="primary" htmlType="submit">Reestablecer contraseña</Button>
+              </Col> 
+            </Row>
+          </Form>
+        </Modal>
       </MainLayout>
     </>
   );
@@ -1553,6 +1761,7 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
     applications: state.userStore.applications,
+    user_store: state.userStore.user
   };
 };
 

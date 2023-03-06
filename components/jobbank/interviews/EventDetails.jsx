@@ -17,6 +17,7 @@ import {
 } from './StyledInterview';
 import { copyContent } from '../../../utils/functions';
 import { InterviewContext } from '../context/InterviewContext';
+import { redirectTo } from '../../../utils/constant';
 
 const EventDetails = ({
     visible = false,
@@ -30,8 +31,7 @@ const EventDetails = ({
     const { googleCalendar } = useContext(InterviewContext);
 
     const getDescription = () =>{
-        let size = Object.keys(itemToDetail).length;
-        if(size <=0) return null;
+        if(Object.keys(itemToDetail).length <= 0) return null;
         let start = itemToDetail?.all_data_response?.start?.dateTime;
         let end = itemToDetail?.all_data_response?.end?.dateTime;
         if(!start || !end) return null;
@@ -60,15 +60,24 @@ const EventDetails = ({
         return `${accepted}${declined}${needs}`;
     }
 
+    const getCanAction = () =>{
+        if(Object.keys(itemToDetail).length <= 0) return false;
+        let start = itemToDetail?.all_data_response?.start?.dateTime;
+        if(!start) return false;
+        return !moment().isAfter(moment(start).format('YYYY-MM-DD'), 'day');
+    }
+
     const {
         guests,
         description,
-        // statistics
+        // statistics,
+        canAction
      } = useMemo(()=>{
         return {
             guests: getGuests(),
             description: getDescription(),
             // statistics: getStatistics(),
+            canAction: getCanAction()
         }
     },[itemToDetail])
 
@@ -103,38 +112,46 @@ const EventDetails = ({
             <ContentVertical gap={16}>
                 <ContentVertical>
                     <ContentBetween>
-                        <EvenTitle>{itemToDetail.all_data_response?.summary}</EvenTitle>
+                        <EvenTitle maxWidth={canAction ? 140 : 50}>
+                            {itemToDetail.all_data_response?.summary}
+                        </EvenTitle>
                         <ContentNormal gap={8}>
-                            <Tooltip title={googleCalendar.msg}>
-                                <BtnOption
-                                    canClick={googleCalendar.valid}
-                                    onClick={()=> googleCalendar.valid ? showModalForm() : {}}
-                                >
-                                    <MdOutlineEdit/>
-                                </BtnOption>
-                            </Tooltip>
-                            <Tooltip title={googleCalendar.msg}>
-                                <BtnOption
-                                    canClick={googleCalendar.valid}
-                                    onClick={()=> googleCalendar.valid ? showModalDelete() : {}}
-                                >
-                                    <VscTrash/>
-                                </BtnOption>
-                            </Tooltip>
+                            {canAction && (
+                               <>
+                                     <Tooltip title={googleCalendar.msg}>
+                                        <BtnOption
+                                            canClick={googleCalendar.valid}
+                                            onClick={()=> googleCalendar.valid ? showModalForm() : {}}
+                                        >
+                                            <MdOutlineEdit/>
+                                        </BtnOption>
+                                    </Tooltip>
+                                    <Tooltip title={googleCalendar.msg}>
+                                        <BtnOption
+                                            canClick={googleCalendar.valid}
+                                            onClick={()=> googleCalendar.valid ? showModalDelete() : {}}
+                                        >
+                                            <VscTrash/>
+                                        </BtnOption>
+                                    </Tooltip>
+                               </>
+                            )}
                             <BtnOption onClick={()=> close()}><MdOutlineClear/></BtnOption>
                         </ContentNormal>
                     </ContentBetween>
                     <TextDescripcion>{description}</TextDescripcion>
                 </ContentVertical>
-                <ContentVertical>
-                    <ContentBetween>
-                        <BtnLink target='_blank' href={itemToDetail?.all_data_response?.hangoutLink}>
-                            Unirse con Google Meet
-                        </BtnLink>
-                        <BtnOption onClick={()=> copyLink()}><VscCopy/></BtnOption>
-                    </ContentBetween>
-                    <TextDescripcion>{itemToDetail?.all_data_response?.hangoutLink}</TextDescripcion>
-                </ContentVertical>
+                {canAction && (
+                    <ContentVertical>
+                        <ContentBetween>
+                            <BtnLink onClick={()=> redirectTo(itemToDetail?.all_data_response?.hangoutLink, true)}>
+                                Unirse con Google Meet
+                            </BtnLink>
+                            <BtnOption onClick={()=> copyLink()}><VscCopy/></BtnOption>
+                        </ContentBetween>
+                        <TextDescripcion>{itemToDetail?.all_data_response?.hangoutLink}</TextDescripcion>
+                    </ContentVertical>
+                )}
                 {/* <ContentVertical>
                     <TextDescripcion>{itemToDetail?.process_selection?.vacant?.job_position}</TextDescripcion>
                     <TextDescripcion>

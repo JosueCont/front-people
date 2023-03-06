@@ -29,7 +29,8 @@ const MainLayout = ({
   hideSearch,
   hideLogo = false,
   nómina = false,
-    pageTitle = "KHOR Plus",
+  pageTitle = "KHOR Plus",
+  autoregister = false,
   ...props
 }) => {
   const { Title } = Typography;
@@ -73,7 +74,7 @@ const MainLayout = ({
     if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      if (props.config) props.companySelected(null, props.config);    
+      if (props.config && !autoregister) props.companySelected(null, props.config);    
     }
   }, [props.currentNode, props.config]);
 

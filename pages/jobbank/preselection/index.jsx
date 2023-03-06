@@ -47,7 +47,7 @@ const index = ({
     return(
         <MainIndexJB
             pageKey='jb_preselection'
-            extraBread={[{name: 'Preseleción'}]}
+            extraBread={[{name: 'Preselección'}]}
         >
             <SearchPreselection/>
             <TablePreselection/>

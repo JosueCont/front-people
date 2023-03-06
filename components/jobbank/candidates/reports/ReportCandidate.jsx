@@ -9,7 +9,7 @@ import {
 } from '@react-pdf/renderer';
 import moment from 'moment';
 
-const CandidateReport = ({
+const ReportCandidate = ({
     infoCandidate,
     infoEducation,
     infoExperience,
@@ -605,4 +605,4 @@ const CandidateReport = ({
     )
 }
 
-export default memo(CandidateReport);
+export default memo(ReportCandidate);

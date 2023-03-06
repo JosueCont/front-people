@@ -25,7 +25,8 @@ const DetailsCustom = ({
     setActionType,
     onlyOptions = false,
     showOptions = true,
-    borderTitle = false
+    borderTitle = false,
+    childrenIsTabs = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -106,7 +107,7 @@ const DetailsCustom = ({
                         </div>
                     )}
                 </Col>
-                <Col span={24}>
+                <Col span={24} className={childrenIsTabs ? 'tabs-vacancies' : ''}>
                     {children}
                 </Col>
                 {showOptions && (

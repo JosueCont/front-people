@@ -21,6 +21,11 @@ const index = ({
     const [infoHistory, setInfoHistory] = useState([]);
     const [newFilters, setNewFilters] = useState({});
     const deletekeys = ['id', 'dates', 'account'];
+    const watchQuerys = [
+        router.query?.id,
+        router.query?.dates,
+        router.query?.account
+    ];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
@@ -29,15 +34,13 @@ const index = ({
     },[router.query])
 
     useEffect(()=>{
-        if(currentNode){
-            getConnectionsOptions(currentNode.id, '&conection_type=1');
-        }
+        if(currentNode) getConnectionsOptions(currentNode.id, '&conection_type=1');
     },[currentNode])
 
     useEffect(()=>{
         if(!router.query?.id) return;
         getInfoHistory(router.query?.id)
-    },[router.query])
+    },[...watchQuerys])
 
     const getInfoHistory = async (id) =>{
         try {
@@ -58,10 +61,12 @@ const index = ({
             let check_start = range && date >= range[0];
             let check_end = range && date <= range[1];
             let check_code = item.code_post == router.query?.account;
-            if(size == 2 && check_start && check_end && check_code) return true;
-            if(size == 1 && check_start && check_end) return true;
-            if(size == 1 && check_code) return true;
-            return false;
+            if(size == 1) return (check_start && check_end) || check_code;
+            return check_start && check_end && check_code;
+            // if(size == 2 && check_start && check_end && check_code) return true;
+            // if(size == 1 && check_start && check_end) return true;
+            // if(size == 1 && check_code) return true;
+            // return false;
         });
     }
 

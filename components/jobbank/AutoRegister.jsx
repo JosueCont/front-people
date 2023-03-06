@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MainLayout from '../../layout/MainInter';
+import MainInter from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
@@ -29,14 +29,15 @@ const AutoRegister = ({
     }
 
     return (
-        <MainLayout
+        <MainInter
             hideMenu={true}
             onClickImage={false}
+            autoregister={true}
         >
             <ConfigProvider locale={esES}>
                 {children}
             </ConfigProvider>
-        </MainLayout>
+        </MainInter>
     )
 }
 

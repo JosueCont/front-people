@@ -48,19 +48,45 @@ const Index = ({
       <div className="container" style={{ width: "100%" }}>
         <Tabs activeKey={currentKey} onChange={(key) => setCurrentKey(key)} type="card">
             <TabPane tab="Persona" key="p">
-              <ReportsCompetences currentKey={currentKey}/>
+              <ReportsCompetences
+                showCardUser={true}
+                showSelectProfile={false}
+                showTitleWork={true}
+                currentKey={currentKey}
+              />
             </TabPane>
             <TabPane tab="Persona-Perfil" key="pp">
-              <ReportsCompetences currentKey={currentKey}/>
+              <ReportsCompetences
+                showCardUser={true}
+                showChart={true}
+                showTitleProfile={true}
+                currentKey={currentKey}
+              />
             </TabPane>
             <TabPane tab="Personas-Perfil" key="psp">
-              <ReportsCompetences currentKey={currentKey}/>
+              <ReportsCompetences
+                showListUser={true}
+                showCardProfile={true}
+                labelUser='Seleccionar usuarios'
+                currentKey={currentKey}
+              />
             </TabPane>
             <TabPane tab="Persona-Perfiles" key="pps">
-              <ReportsCompetences currentKey={currentKey}/>
+              <ReportsCompetences
+                showListProfile={true}
+                showCardUser={true}
+                showTitleWork={true}
+                labelProfile='Seleccionar perfiles'
+                currentKey={currentKey}
+              />
             </TabPane>
             <TabPane tab="Personas-Competencias" key="psc">
-              <ReportsCompetences currentKey={currentKey}/>
+              <ReportsCompetences
+                showListUser={true}
+                showCardProfile={true}
+                labelUser='Seleccionar usuarios'
+                currentKey={currentKey}
+              />
             </TabPane>
         </Tabs>
       </div>

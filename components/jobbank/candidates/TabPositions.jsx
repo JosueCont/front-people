@@ -113,20 +113,6 @@ const TabPositions = ({
         setItemsToDelete([])
     }
 
-    const menuTable = () => {
-        return (
-            <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<PlusOutlined/>}
-                    onClick={()=> setOpenModal(true)}
-                >
-                    Agregar
-                </Menu.Item>
-            </Menu>
-        );
-    };
-
     const menuItem = (item) => {
         return (
             <Menu>
@@ -168,7 +154,7 @@ const TabPositions = ({
             title: 'Fecha inicio',
             render: (item) =>{
                 return(
-                    <span>{item.start_date ? moment(item.start_date).format('DD-MM-YYYY') : ''}</span>
+                    <>{item.start_date ? moment(item.start_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : ''}</>
                 )
             }
         },
@@ -176,20 +162,11 @@ const TabPositions = ({
             title: 'Fecha finalización',
             render: (item) =>{
                 return(
-                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                    <>{item.end_date ? moment(item.end_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : ''}</>
                 )
             }
         },
         {
-            // title: ()=>{
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size='small'>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
             title: ()=> (
                 <Button size='small' onClick={()=> setOpenModal(true)}>
                     Agregar

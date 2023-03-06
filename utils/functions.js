@@ -483,7 +483,7 @@ export const getFiltersJB = (obj = {}, discard = []) =>{
 
 export const deleteFiltersJb = (obj = {}, listDelete = []) =>{
   return Object.entries(obj).reduce((filters, [key, val]) =>{
-    if([...listDelete, "back"].includes(key)) return filters;
+    if(listDelete.includes(key)) return filters;
     return {...filters, [key]: val};
   }, {});
 }
@@ -558,4 +558,18 @@ export const downloadCustomFile = async ({
   } catch (e) {
     console.log(e)
   }
+}
+
+export const getPercentGenJB = (assets) =>{
+  if(!assets || assets.length <= 0) return null;
+  let {codes, progress} = assets.reduce((acc, current) =>{
+    const some_ = item => item == current.code;
+    if(acc.codes?.some(some_)) return acc;
+    let codes = acc.codes ? [...acc.codes, current.code] : [];
+    if(!current?.applys[0]) return {...acc, codes};
+    let progress = acc.progress + current.applys[0]?.progress;
+    return {...acc, codes, progress};
+  }, {codes: [], progress: 0});
+  let percent = 100 / (codes?.length * 100);
+  return (percent * progress).toFixed(2);
 }

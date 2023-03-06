@@ -711,3 +711,10 @@ export const DASHBOARD_WIDGET_URLS = {
   PEOPLE_BY_GENDER : `/person/dashboard/`,
   PEOPLE_BY_GENERATION : `/person/dashboard/`,
 }
+
+export const optionsStatusApply = [
+  {value: '3', key: '3', label: 'Pendiente'},
+  {value: '0', key: '0', label: 'Iniciada'},
+  {value: '1', key: '1', label: 'En curso'},
+  {value: '2', key: '2', label: 'Finalizada'}
+]

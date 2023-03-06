@@ -15,8 +15,9 @@ const CalendarDateCell = ({
     } = useSelector(state => state.jobBankStore);
     const router = useRouter();
     const format = 'YYYY-MM-DD';
-    const currentMonth = moment()?.month()+1;
-    const current = moment(value)?.format(format);
+    const currentMonth = moment()?.month() + 1;
+    const current = value.format(format);
+    const expired = moment().isAfter(value, 'day');
     
     const formatDate = value => moment(value).format(format);
 
@@ -29,8 +30,8 @@ const CalendarDateCell = ({
     },[current, list_interviews])
 
     const getEquals = (item) =>{
-        let date = item?.all_data_response?.start?.dateTime;
-        let month = moment(date).format('MM');
+        let start = item?.all_data_response?.start?.dateTime;
+        let month = moment(start).format('MM');
         let monthQuery = router.query?.mth
             ? parseInt(router.query?.mth)
             : currentMonth;
@@ -42,7 +43,7 @@ const CalendarDateCell = ({
             {eventsDay.map((item, idx) => (
                 <EventInfo
                     key={item.id}
-                    equals={getEquals(item)}
+                    equals={expired ? false : getEquals(item)}
                     onClick={()=> showModalDetails(item)}
                 >
                     <p title={item?.all_data_response?.summary}>

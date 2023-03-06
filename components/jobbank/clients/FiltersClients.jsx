@@ -41,7 +41,12 @@ const FiltersClients = ({
                             name='name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Buscar por nombre'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                maxLength={200}
+                                placeholder='Buscar por nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={24}>

@@ -108,7 +108,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           {isAdmin && (
               <p
                 className="text-menu"
-                onClick={() => router.push("/home/persons")}
+                onClick={() => router.push("/dashboard")}
               >
                 <Text>Cambiar a la vista de Administrador</Text>
               </p>

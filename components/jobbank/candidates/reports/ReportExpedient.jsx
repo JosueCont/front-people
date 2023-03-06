@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo, useMemo } from 'react';
 import {
     View,
     Text,
@@ -8,8 +8,13 @@ import {
     PDFViewer,
 } from '@react-pdf/renderer';
 import moment from 'moment';
+import {
+    optionsStatusAcademic,
+    optionsLangVacant,
+    optionsDomainLang
+} from '../../../../utils/constant';
 
-const DocExpedient = ({
+const ReportExpedient = ({
     infoCandidate,
     infoEducation,
     infoExperience,
@@ -47,108 +52,23 @@ const DocExpedient = ({
         }
     },[infoCandidate])
 
+    const getLang = (lang) =>{
+        const find_ = item => item.value == lang;
+        let result = optionsLangVacant.find(find_);
+        return result.label;
+    }
 
-    const list_status = [
-        {
-            "value": 1,
-            "key": 1,
-            "label": "En curso"
-        },
-        {
-            "value": 2,
-            "key": 2,
-            "label": "Trunca"
-        },
-        {
-            "value": 3,
-            "key": 3,
-            "label": "Concluida"
-        }
-    ]
+    const getDomain = (dom) =>{
+        const find_ = item => item.value == dom;
+        let result = optionsDomainLang.find(find_);
+        return result.label;
+    }
 
-    const listLanguages = [
-        {
-            "value": 1,
-            "key": 1,
-            "label": "Inglés",
-            "children": [
-                {
-                    "value": 1,
-                    "key": 1,
-                    "label": "Básico"
-                },
-                {
-                    "value": 2,
-                    "key": 2,
-                    "label": "Intermedio"
-                },
-                {
-                    "value": 3,
-                    "key": 3,
-                    "label": "Avanzado"
-                },
-                {
-                    "value": 4,
-                    "key": 4,
-                    "label": "Experto"
-                }
-            ]
-        },
-        {
-            "value": 2,
-            "key": 2,
-            "label": "Francés",
-            "children": [
-                {
-                    "value": 1,
-                    "key": 1,
-                    "label": "Básico"
-                },
-                {
-                    "value": 2,
-                    "key": 2,
-                    "label": "Intermedio"
-                },
-                {
-                    "value": 3,
-                    "key": 3,
-                    "label": "Avanzado"
-                },
-                {
-                    "value": 4,
-                    "key": 4,
-                    "label": "Experto"
-                }
-            ]
-        },
-        {
-            "value": 3,
-            "key": 3,
-            "label": "Italiano",
-            "children": [
-                {
-                    "value": 1,
-                    "key": 1,
-                    "label": "Básico"
-                },
-                {
-                    "value": 2,
-                    "key": 2,
-                    "label": "Intermedio"
-                },
-                {
-                    "value": 3,
-                    "key": 3,
-                    "label": "Avanzado"
-                },
-                {
-                    "value": 4,
-                    "key": 4,
-                    "label": "Experto"
-                }
-            ]
-        }
-    ]
+    const getStatus = (inst) =>{
+        const find_ = item => item.value == inst.status;
+        let result = optionsStatusAcademic.find(find_);
+        return result.label;
+    }
 
     const SectionDetails = () => (
         <View>
@@ -161,12 +81,14 @@ const DocExpedient = ({
                     borderRadius: 8
                 }}
             >
-                <View style={{
+                <View
+                    style={{
                         display: 'flex',
                         flexWrap: 'wrap',
                         flexDirection: 'row',
                         padding: '6px 12px',
-                }}>
+                    }}
+                >
                     <View style={{flex: '0 0 50%' }}>
                         <Text style={{ fontSize: 10 }}>Nombre: {infoCandidate?.first_name}</Text>
                     </View>
@@ -206,35 +128,32 @@ const DocExpedient = ({
                         flexDirection: 'row',
                         padding: '6px 12px',
                         marginBottom: 10
-                }}
+                    }}
                 >
-                    <View style={{
-                        flex: '0 0 100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row', }}>
+                    <View 
+                        tyle={{
+                            flex: '0 0 100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            flexDirection: 'row'
+                        }}
+                    >
                         <Text style={{ fontSize: 10, marginRight: 15 }}>Idiomas: </Text>
-                        {
-                            infoCandidate?.languages.length > 0 &&
-
-                            infoCandidate.languages.map((lang) => (
-                                <Text 
-                                    key={lang.id} 
-                                    style={{
-                                        fontSize: 10,
-                                        padding: '3px 5px',
-                                        backgroundColor: '#FFF',
-                                        marginRight: 5,
-                                        borderRadius: 5
-                                    }}
-                                > 
-                                    { lang && listLanguages.find((lg) =>  lg.value === lang.lang ).label + ' ' } 
-                                    / 
-                                    { lang && ' ' + listLanguages.find((lg) => lg.value === lang.lang ).children.find((dom) => dom.value === lang.domain).label } 
-                                </Text>
-                            ))
-                        }
+                        {infoCandidate?.languages.length > 0 && infoCandidate.languages.map((lang) => (
+                            <Text 
+                                key={lang.id} 
+                                style={{
+                                    fontSize: 10,
+                                    padding: '3px 5px',
+                                    backgroundColor: '#FFF',
+                                    marginRight: 5,
+                                    borderRadius: 5
+                                }}
+                            > 
+                                {getLang(lang.lang)} / {getDomain(lang.domain)} 
+                            </Text>
+                        ))}
                     </View>
                 </View>
                 <View
@@ -250,9 +169,7 @@ const DocExpedient = ({
                     </View>
                     <View style={{flex: '0 0 100%', backgroundColor: '#FFF', padding: '6px 12px', border: '1px solid gray', borderRadius: 5, marginBottom: 10 }}>
                         <Text style={{ fontSize: 10 }}>
-                        {
-                            infoCandidate?.about_me
-                        }
+                            {infoCandidate?.about_me}
                         </Text>
                     </View>
                 </View>
@@ -303,11 +220,9 @@ const DocExpedient = ({
                         flexDirection: 'row',
                     }}
                 >
-                    {
-                        infoEducation?.length > 0 && infoEducation.map((inst) => (
-
+                    {infoEducation?.length > 0 && infoEducation.map((inst) => (
                         <View 
-                             key={inst.id}
+                            key={inst.id}
                             style={{ 
                                 backgroundColor: '#FFF',
                                 display: 'flex',
@@ -324,7 +239,7 @@ const DocExpedient = ({
                                 <Text style={{ fontSize: 10 }}> { inst?.specialitation_area } </Text>
                             </View>
                             <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst && list_status.find((sch) => sch.value == inst.status).label } </Text>
+                                <Text style={{ fontSize: 10 }}> { inst && getStatus(inst) } </Text>
                             </View>
                             <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
                                 <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY') } </Text>
@@ -333,9 +248,7 @@ const DocExpedient = ({
                                 <Text style={{ fontSize: 10 }}> { inst?.institution_name } </Text>
                             </View>
                         </View>
-                        ))
-                    }
-
+                    ))}
                 </View>
             </View>
         </View>
@@ -381,55 +294,49 @@ const DocExpedient = ({
                         flexDirection: 'row',
                     }}
                 >
-                    {
-                        infoExperience?.length > 0 && infoExperience.map((info) => (
-                            <>
-                           <View 
-                             key={info.id}
-                            style={{ 
-                                backgroundColor: '#FFF',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                flexDirection: 'row',
-                                borderRadius: 10,
-                                marginBottom: 5,
-                                flex: '0 0 70%',
-                                maxHeight: 12
-                            }}
-                        >
-                            <View style={{flex: '0 0 35%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { info?.category?.name } </Text>
+                    {infoExperience?.length > 0 && infoExperience.map((info) => (
+                        <>
+                            <View 
+                                key={info.id}
+                                style={{ 
+                                    backgroundColor: '#FFF',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    flexDirection: 'row',
+                                    borderRadius: 10,
+                                    marginBottom: 5,
+                                    flex: '0 0 70%',
+                                    maxHeight: 12
+                                }}
+                            >
+                                <View style={{flex: '0 0 35%', textAlign: 'center' }}>
+                                    <Text style={{ fontSize: 10 }}> { info?.category?.name } </Text>
+                                </View>
+                                <View style={{flex: '0 0 35%', textAlign: 'center' }}>
+                                    <Text style={{ fontSize: 10 }}>{ info?.sub_category?.name }</Text>
+                                </View>
+                                <View style={{flex: '0 0 30%', textAlign: 'center' }}>
+                                    <Text style={{ fontSize: 10 }}> { info?.experience_years } </Text>
+                                </View>
                             </View>
-                            <View style={{flex: '0 0 35%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}>{ info?.sub_category?.name }</Text>
-                            </View>
-                            <View style={{flex: '0 0 30%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { info?.experience_years } </Text>
-                            </View>
-                        </View>
-
-                        <View
-                            style={{ 
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                flexDirection: 'row',
-                                padding: '0px 6px',
-                                marginBottom: 5,
-                                flex: '0 0 30%'
-                            }}
-                        >
-                           {
-                                info?.competences?.length > 0 && info.competences.map((comp) => (
+                            <View
+                                style={{ 
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    flexDirection: 'row',
+                                    padding: '0px 6px',
+                                    marginBottom: 5,
+                                    flex: '0 0 30%'
+                                }}
+                            >
+                                {info?.competences?.length > 0 && info.competences.map((comp) => (
                                     <View key={comp.id} style={{ textAlign: 'center', backgroundColor: '#FFF', borderRadius: 10, marginRight: 3, marginBottom: 3 }}>
                                         <Text style={{ fontSize: 10 }}> { comp.name } </Text>
                                     </View>
-                                ))
-                           }
-                        </View>
+                                ))}
+                            </View>
                         </>
-                        ))
-
-                    }
+                    ))}
                 </View>
             </View>
         </View>
@@ -478,9 +385,7 @@ const DocExpedient = ({
                         flexDirection: 'row',
                     }}
                 >
-                    {
-                        infoPositions?.length > 0 && infoPositions.map((inst) => (
-
+                    {infoPositions?.length > 0 && infoPositions.map((inst) => (
                         <View 
                             key={inst.id}
                             style={{ 
@@ -508,9 +413,7 @@ const DocExpedient = ({
                                 <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY')} </Text>
                             </View>
                         </View>
-                        ))
-                    }
-
+                    ))}
                 </View>
             </View>
         </View>
@@ -520,11 +423,7 @@ const DocExpedient = ({
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
                 <Page size='LETTER' style={{padding: 24}} wrap={true}>
-                <View
-                    style={{
-                        marginBottom: 30,
-                    }}
-                >
+                <View style={{marginBottom: 30}}>
                     <View 
                         style={{
                             display: 'flex',
@@ -557,41 +456,18 @@ const DocExpedient = ({
                             />
                         </View>
                     </View>
-                    <View
-                        style={{
-                            textAlign: 'center'
-                        }}
-                    >
+                    <View style={{textAlign: 'center'}}>
                         <Text>Información del candidato</Text>
                     </View>
                 </View>
-                    <SectionDetails />
-                    <SectionEducation />
-                    <SectionExperience />
-                    <SectionUltimateJobs />
-                    
-                    {/* <View style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'wrap'
-                    }}>
-                        <View style={{
-                            flex: '0 0 40%',
-                            paddingRight: 6
-                        }}>
-                            <SectionEducation/>
-                        </View>
-                        <View style={{
-                            flex: '0 0 60%',
-                            paddingLeft: 6
-                        }}>
-                           <SectionExperience/>
-                        </View>
-                    </View> */}
+                <SectionDetails />
+                <SectionEducation />
+                <SectionExperience />
+                <SectionUltimateJobs />
                 </Page>
             </Document>
         // </PDFViewer>
     )
 }
 
-export default memo(DocExpedient);
+export default memo(ReportExpedient);
