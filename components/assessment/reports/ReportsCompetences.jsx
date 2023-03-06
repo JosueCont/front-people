@@ -717,6 +717,7 @@ const ReportsCompetences = ({
                                 setCsvDataSource={setCsvDataSource}
                                 nameFile={nameFile}
                                 setNameFile={setNameFile}
+                                listReports={listReports}
                             />
                         </div>
                         {showChart && (

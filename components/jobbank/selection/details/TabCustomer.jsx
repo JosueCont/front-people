@@ -50,7 +50,6 @@ const TabCustomer = () => {
             const filter_ = item => item.source == 2;
             setClientAssets(data.filter(filter_));
             setFetching(false)
-            console.log("🚀 ~ file: TabCustomer.jsx:40 ~ getEvaluationsVacant ~ response:", response)
         } catch (e) {
             console.log(e)
             setFetching(false)

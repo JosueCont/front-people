@@ -151,6 +151,13 @@ const TabFollow = () => {
         setItemsToDelete([])
     }
 
+    const getStatus = (item) =>{
+        const find_ = record => record.value == item.initial_status;
+        let result = optionsStatusSelection.find(find_);
+        if(!result) return null;
+        return result.label;
+    }
+
     const menuItem = (item) => {
         return (
             <Menu>
@@ -177,6 +184,14 @@ const TabFollow = () => {
             title: 'Comentario',
             dataIndex: 'comments',
             key: 'comments'
+        },
+        {
+            title: 'Estatus',
+            render: (item) =>{
+                return(
+                    <>{getStatus(item)}</>
+                )
+            }
         },
         {
             title: ()=>{
