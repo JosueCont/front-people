@@ -110,12 +110,12 @@ const integrationFactorsIndex = ({ ...props }) =>{
       render: (timestamp) => moment(timestamp).format('YYYY-MM-DD')
     },
     {
-      title: "Dias de aguinaldo",
+      title: "Días de aguinaldo",
       key: "bonus_days",
       dataIndex: "bonus_days"
     },
     {
-      title: "Numero de dias de vacaciones",
+      title: "Número de días de vacaciones",
       key: "vacations_days",
       dataIndex: "vacations_days"
     },
