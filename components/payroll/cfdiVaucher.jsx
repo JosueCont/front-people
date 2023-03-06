@@ -76,10 +76,12 @@ const CfdiVaucher = ({
      switch (type){
        case 0:
          return 'Ordinario';
-       // case 2:
-       //   return 'Finiquito';
-       // case 3:
-       //   return 'Liquidacion';
+       case 1:
+         return 'Aguinaldo';
+       case 2:
+         return 'Finiquito';
+       case 3:
+         return 'Liquidacion';
        default:
          return 'Extraordinario'
      }
@@ -158,7 +160,7 @@ const CfdiVaucher = ({
       title: "Tipo",
       key: "type_movement",
       render: (item) => {
-        return `${getVoucherTypeStr(item?.movement_type)}`;
+        return `${item?.movement_type===0?'Ordinario':'Extraordinario'}`;
       },
     },
     {
