@@ -16,7 +16,7 @@ const ReportHighDirection = ({
     image,
     widthAndHeight
 }) => {
-    const widthImage = widthAndHeight.width > 100 ? '100px' : widthAndHeight.width
+    const widthImage = widthAndHeight?.width > 100 ? '100px' : widthAndHeight?.width
 
 
     const list_status = [
@@ -374,7 +374,7 @@ const ReportHighDirection = ({
                     >
 
                     {
-                            infoCandidate?.languages.length > 0 &&
+                            infoCandidate?.languages?.length > 0 &&
 
                             infoCandidate.languages.map((lang) => (
 
@@ -587,7 +587,7 @@ const ReportHighDirection = ({
                                         "Cache-Control": "no-cache" }, 
                                     body: "" }} 
                                 style={{
-                                    width: widthAndHeight.width > widthAndHeight.height ? widthImage  : '30px',
+                                    width: widthAndHeight?.width > widthAndHeight?.height ? widthImage  : '30px',
                                     height: '30px',
                                 }}
                             />
