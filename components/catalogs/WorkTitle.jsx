@@ -284,11 +284,11 @@ const WorkTitle = ({ currentNode, ...props }) => {
           <Col lg={8} xs={22} md={12}>
             <SelectLevel textLabel={"Nivel"} rules={[ruleRequired]} />
           </Col>
-          <Col lg={8} xs={22} md={12}>
-            <Form.Item name="salary" label="Salario">
-              <Input prefix={"$"} type="number" min={0} defaultValue={0} />
-            </Form.Item>
-          </Col>
+          {/*<Col lg={8} xs={22} md={12}>*/}
+          {/*  <Form.Item name="salary" label="Salario">*/}
+          {/*    <Input prefix={"$"} type="number" min={0} defaultValue={0} />*/}
+          {/*  </Form.Item>*/}
+          {/*</Col>*/}
         </Row>
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>

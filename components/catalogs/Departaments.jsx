@@ -245,7 +245,7 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
           <Row gutter={20}>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-                <Input />
+                <Input maxLength={100} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} md={12}>
@@ -254,12 +254,12 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
                 label="Descripción"
                 rules={[ruleRequired]}
               >
-                <Input />
+                <Input maxLength={100} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="code" label="Código">
-                <Input />
+                <Input maxLength={100} />
               </Form.Item>
             </Col>
           </Row>

@@ -1277,7 +1277,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
-          <Breadcrumb.Item>Nominas extraordinarias</Breadcrumb.Item>
+          <Breadcrumb.Item>Nóminas extraordinarias</Breadcrumb.Item>
         </Breadcrumb>
         <div className="container" style={{ width: "100%" }}>
           <Row gutter={[10, 10]}>
