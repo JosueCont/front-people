@@ -120,18 +120,24 @@ const ReportExpedient = ({
         </View> 
     )
 
+    const RowTable = ({children, isLast = false}) => (
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: '#0000000f',
+            padding: '5px 10px',
+            borderBottom: '1px solid #d9d9d9',
+            borderBottomLeftRadius: isLast ? 8 : 0,
+            borderBottomRightRadius: isLast ? 8 : 0
+        }}>
+            {children}
+        </View>
+    )
+
     const BodyTable = ({data = [], cells = []}) => (
         <>
-            {data.length > 0 && data.map((item, index) => (
-                 <View key={`row_${index}`} style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    backgroundColor: '#0000000f',
-                    padding: '5px 10px',
-                    borderBottom: '1px solid #d9d9d9',
-                    borderBottomLeftRadius: data.length == (index + 1) ? 8 : 0,
-                    borderBottomRightRadius: data.length == (index + 1) ? 8 : 0
-                }}>
+            {data.length > 0 ? data.map((item, index) => (
+                <RowTable key={`row_${index}`} isLast={data.length == (index + 1)}>
                     {cells.map((record, idx) => (
                         <View key={`row_${index}_${idx}`} style={{
                             flex: `0 0 ${record.size}`,
@@ -145,9 +151,34 @@ const ReportExpedient = ({
                             </Text>
                         </View>
                     ))}
-                </View>
-            ))}
+                </RowTable>
+            )) : (
+                <RowTable isLast={true}>
+                    <Text style={{
+                        color: '#cccc',
+                        fontSize: 10,
+                        textAlign: 'center',
+                        width: '100%'
+                    }}>
+                        Sin información
+                    </Text>
+                </RowTable>
+            )}
         </>
+    )
+
+    const TagLang = ({children, isPlaceholder = false}) => (
+        <Text style={{
+            lineHeight: 1,
+            fontSize: 10,
+            padding: '3px 5px',
+            backgroundColor: '#ffff',
+            marginRight: 5,
+            borderRadius: 5,
+            color: isPlaceholder ? '#d9d9d9' : 'black'
+        }}> 
+            {children} 
+        </Text>
     )
 
     const SectionDetails = () => (
@@ -192,42 +223,40 @@ const ReportExpedient = ({
                     padding: '8px 12px'
                 }}>
                     <Text style={{ fontSize: 10, marginRight: 4}}>Idiomas:</Text>
-                    {infoCandidate?.languages?.length > 0 && infoCandidate.languages.map((item) => (
-                        <Text 
-                            key={item.id} 
-                            style={{
-                                lineHeight: 1,
-                                fontSize: 10,
-                                padding: '3px 5px',
-                                backgroundColor: '#FFF',
-                                marginRight: 5,
-                                borderRadius: 5
-                            }}
-                        > 
+                    {infoCandidate?.languages?.length > 0 ? infoCandidate.languages.map((item) => (
+                        <TagLang key={item.id}>
                             {getLang(item.lang)} / {getDomain(item.domain)} 
-                        </Text>
-                    ))}
+                        </TagLang>
+                    )) : (
+                        <TagLang isPlaceholder={true}>
+                            Ningún idioma seleccionado
+                        </TagLang>
+                    )}
                 </View>
                 <View style={{
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
                     flexDirection: 'row',
-                    paddingRight: '12px',
-                    paddingLeft: '12px',
-                    paddingBottom: '12px'
+                    padding: '0px 12px 12px'
                 }}>
-                    <View style={{flex: '0 0 100%', marginBottom: 8}}>
+                    <View style={{marginBottom: 8}}>
                         <Text style={{ fontSize: 10 }}>Acerca de tí:</Text>
                     </View>
                     <View style={{
                         backgroundColor: '#ffff',
                         padding: '6px',
                         border: '1px solid #d9d9d9',
-                        borderRadius: 5
+                        borderRadius: 5,
+                        width: '100%',
+                        minHeight: '30px',
                     }}>
-                        <Text style={{fontSize: 10}}>
-                            {infoCandidate?.about_me}
+                        <Text style={{
+                            fontSize: 10,
+                            color: infoCandidate?.about_me ? 'black' : '#d9d9d9',
+                            textAlign: infoCandidate?.about_me ? 'left' : 'center'
+                        }}>
+                            {infoCandidate?.about_me ? infoCandidate?.about_me : 'Sin información'}
                         </Text>
                     </View>
                 </View>
