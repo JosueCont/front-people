@@ -119,6 +119,7 @@ const LoginForm = ({
         .then(function (response) {
           if (response.status === 200) {
             data_token = response["data"]["token"];
+            localStorage.setItem('token',data_token)
             let token = jwt_decode(response.data.token);
             if (setKhonnectId) {
               setKhonnectId(token.user_id);

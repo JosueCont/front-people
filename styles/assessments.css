@@ -1051,4 +1051,9 @@ span.input-with-clear:focus{
     border: 1px solid black!important;
 }
 
+.highlight-text {
+    background-color: #ffc069;
+    padding: 0px;
+}
+
 /* Termina diseño bolsa de trabajo */

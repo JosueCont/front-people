@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { Table, Row, Col, Menu, Dropdown, Button, message } from 'antd';
+import { Table, Row, Col, Menu, Dropdown, Button, message, Input } from 'antd';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import { optionsStatusAsignament, optionsSourceType } from '../../../../utils/constant';
 import { SearchOutlined, EllipsisOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import ModalCustomer from './ModalCustomer';
 import ListItems from '../../../../common/ListItems';
+import { valueToFilter } from '../../../../utils/functions';
 
 const TabCustomer = () => {
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
-    const [vacantAssets, setVacantAssests] = useState([]);
+    const [vacantAssets, setVacantAssets] = useState([]);
+    const [vacantAssetsCopy, setVacantAssetsCopy] = useState([]);
     const [clientAssets, setClientAssets] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -34,7 +36,8 @@ const TabCustomer = () => {
             setLoading(true)
             let response = await WebApiJobBank.getVacancyAssesmentCandidateVacancy(id);
             let data = response?.data?.results ?? [];
-            setVacantAssests(data)
+            setVacantAssets(data)
+            setVacantAssetsCopy(data)
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -128,6 +131,17 @@ const TabCustomer = () => {
 
     const isEdit = useMemo(()=> Object.keys(itemToEdit).length > 0, [itemToEdit]);
 
+    const onFilter = ({target: {value}}) =>{
+        if(!value.trim()){
+            setVacantAssets(vacantAssetsCopy)
+            return;
+        }
+        let name = valueToFilter(value);
+        const filter_ = item => valueToFilter(item?.vacant_assessment?.name).includes(name);
+        let results = vacantAssetsCopy.filter(filter_);
+        setVacantAssets(results)
+    }
+
     const menuItem = (item) => {
         return (
             <Menu>
@@ -203,7 +217,14 @@ const TabCustomer = () => {
 
     return (
         <>
-            <Row gutter={[0,24]}>
+            <Row gutter={[0,16]}>
+                <Col span={24}>
+                    <Input
+                        allowClear
+                        placeholder='Buscar por evaluación'
+                        onChange={onFilter}
+                    />
+                </Col>
                 <Col span={24}>
                     <Table
                         rowKey='id'
