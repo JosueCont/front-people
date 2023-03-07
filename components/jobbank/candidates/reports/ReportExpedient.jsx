@@ -23,8 +23,10 @@ const ReportExpedient = ({
     widthAndHeight
 }) => {
 
+    const formatNeed = 'DD-MM-YYYY';
+    const formatRecive = 'YYYY-MM-DD';
     const [marginTop, setMarginTop ] = useState(80)
-    const widthImage = widthAndHeight.width > 100 ? '100px' : widthAndHeight.width
+    const widthImage = widthAndHeight?.width > 100 ? '100px' : widthAndHeight?.width
 
     useEffect(() => {
         if(infoCandidate && infoCandidate.about_me && infoCandidate.about_me.length > 0){
@@ -70,400 +72,290 @@ const ReportExpedient = ({
         return result.label;
     }
 
-    const SectionDetails = () => (
-        <View>
-            <View style={{ marginBottom: 10}}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Datos generales</Text>
-            </View>
-            <View
-                style={{
-                    backgroundColor: '#E9E9E9',
-                    borderRadius: 8
-                }}
-            >
-                <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Nombre: {infoCandidate?.first_name}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Apellidos: {infoCandidate?.last_name}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de nacimiento: {infoCandidate?.birthdate? moment(infoCandidate?.birthdate).format('DD-MM-YYYY'): ''}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Correo electrónico: {infoCandidate?.email}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Celular: {infoCandidate?.cell_phone}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Teléfono fijo: {infoCandidate?.telephone}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Estado: {infoCandidate?.state?.name}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Municipio: {infoCandidate?.municipality}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Dirección: {infoCandidate?.street_address}</Text>
-                    </View>
-                    <View style={{flex: '0 0 50%' }}>
-                        <Text style={{ fontSize: 10 }}>Código postal: {infoCandidate?.postal_code}</Text>
-                    </View>
-                    <View style={{ flex: '0 0 100%', borderBottom: '1px solid rgb(17 24 39)', marginTop: 20, marginBottom: 10 }}></View>
+    const FieldCandidate = ({name = '', value = ''}) =>(
+        <View style={{flex: '0 0 50%', fontSize: 10, marginBottom: 2}}>
+            <Text>{name}: <Text style={{color: 'rgba(0,0,0,0.5)'}}>{value}</Text></Text>
+        </View>
+    )
+
+    const cleanKey = (key = '') =>{
+        let withoutSpace = key.includes(' ') ? key?.replace(/\s/g,'') : key;
+        return withoutSpace.includes(',') ? withoutSpace.split(',') : [withoutSpace];
+    }
+
+    const accessValue = (key = '', item) =>{
+        let keysArray = cleanKey(key);
+        return keysArray.reduce((acc, current) =>{
+            if(!acc) return null;
+            return acc[current] ?? null;
+        }, item)
+    }
+
+    const getValue = (key, item) =>{
+        if(!key.trim()) return null;
+        return accessValue(key, item);
+    }
+
+    const HeaderTable = ({fields = []}) =>(
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            padding: '5px 10px',
+            borderBottom: '1px solid #d9d9d9',
+            backgroundColor: '#E9E9E9',
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8
+        }}>
+            {fields.map((item, index) => (
+                <View key={index} style={{
+                    flex: `0 0 ${item.size}`,
+                    borderRight: item.border ? item.border : '1px solid #d9d9d9',
+                    paddingLeft: item.pleft ? item.pleft : 5
+                }}>
+                    <Text style={{fontSize: 10}}>
+                        {item.name}
+                    </Text>
                 </View>
-                <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                        marginBottom: 10
-                    }}
-                >
-                    <View 
-                        tyle={{
-                            flex: '0 0 100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            flexDirection: 'row'
-                        }}
-                    >
-                        <Text style={{ fontSize: 10, marginRight: 15 }}>Idiomas: </Text>
-                        {infoCandidate?.languages.length > 0 && infoCandidate.languages.map((lang) => (
-                            <Text 
-                                key={lang.id} 
-                                style={{
-                                    fontSize: 10,
-                                    padding: '3px 5px',
-                                    backgroundColor: '#FFF',
-                                    marginRight: 5,
-                                    borderRadius: 5
-                                }}
-                            > 
-                                {getLang(lang.lang)} / {getDomain(lang.domain)} 
+            ))}
+        </View> 
+    )
+
+    const BodyTable = ({data = [], cells = []}) => (
+        <>
+            {data.length > 0 && data.map((item, index) => (
+                 <View key={`row_${index}`} style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    backgroundColor: '#0000000f',
+                    padding: '5px 10px',
+                    borderBottom: '1px solid #d9d9d9',
+                    borderBottomLeftRadius: data.length == (index + 1) ? 8 : 0,
+                    borderBottomRightRadius: data.length == (index + 1) ? 8 : 0
+                }}>
+                    {cells.map((record, idx) => (
+                        <View key={`row_${index}_${idx}`} style={{
+                            flex: `0 0 ${record.size}`,
+                            paddingLeft: record.pleft ? record.pleft: 5
+                        }}>
+                            <Text style={{ fontSize: 10, textAlign: record.center ? 'center':  'left'}}>
+                                {typeof record.key == 'function'
+                                    ? record.key(item)
+                                    : getValue(record.key, item)
+                                }
                             </Text>
-                        ))}
-                    </View>
+                        </View>
+                    ))}
                 </View>
-                <View
-                   style={{
-                       display: 'flex',
-                       flexWrap: 'wrap',
-                       flexDirection: 'row',
-                       padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 100%', marginBottom: 10 }}>
+            ))}
+        </>
+    )
+
+    const SectionDetails = () => (
+        <>
+            <View style={{ marginBottom: 8}}>
+                <Text style={{fontSize: 14, fontWeight: 'bold'}}>Datos generales</Text>
+            </View>
+            <View style={{
+                backgroundColor: '#E9E9E9',
+                borderRadius: 8,
+                border: '1px solid #d9d9d9'
+            }}>
+                <View style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    flexDirection: 'row',
+                    padding: '12px',
+                    borderBottom: '1px solid #d9d9d9'
+                }}>
+                    <FieldCandidate name='Nombre' value={infoCandidate?.first_name}/>
+                    <FieldCandidate name='Apellidos' value={infoCandidate?.last_name}/>
+                    <FieldCandidate
+                        name='Fecha de nacimiento'
+                        value={infoCandidate?.birthdate
+                            ? moment(infoCandidate.birthdate, formatRecive).format(formatNeed)
+                            : null
+                        }
+                    />
+                    <FieldCandidate name='Correo electrónico' value={infoCandidate?.email}/>
+                    <FieldCandidate name='Celular' value={infoCandidate?.cell_phone}/>
+                    <FieldCandidate name='Teléfono fijo' value={infoCandidate?.telephone}/>
+                    <FieldCandidate name='Estado' value={infoCandidate?.state?.name}/>
+                    <FieldCandidate name='Municipio' value={infoCandidate?.municipality}/>
+                    <FieldCandidate name='Dirección' value={infoCandidate?.street_address}/>
+                    <FieldCandidate name='Código postal' value={infoCandidate?.postal_code}/>
+                </View>
+                <View style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    padding: '8px 12px'
+                }}>
+                    <Text style={{ fontSize: 10, marginRight: 4}}>Idiomas:</Text>
+                    {infoCandidate?.languages?.length > 0 && infoCandidate.languages.map((item) => (
+                        <Text 
+                            key={item.id} 
+                            style={{
+                                lineHeight: 1,
+                                fontSize: 10,
+                                padding: '3px 5px',
+                                backgroundColor: '#FFF',
+                                marginRight: 5,
+                                borderRadius: 5
+                            }}
+                        > 
+                            {getLang(item.lang)} / {getDomain(item.domain)} 
+                        </Text>
+                    ))}
+                </View>
+                <View style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    paddingRight: '12px',
+                    paddingLeft: '12px',
+                    paddingBottom: '12px'
+                }}>
+                    <View style={{flex: '0 0 100%', marginBottom: 8}}>
                         <Text style={{ fontSize: 10 }}>Acerca de tí:</Text>
                     </View>
-                    <View style={{flex: '0 0 100%', backgroundColor: '#FFF', padding: '6px 12px', border: '1px solid gray', borderRadius: 5, marginBottom: 10 }}>
-                        <Text style={{ fontSize: 10 }}>
+                    <View style={{
+                        backgroundColor: '#ffff',
+                        padding: '6px',
+                        border: '1px solid #d9d9d9',
+                        borderRadius: 5
+                    }}>
+                        <Text style={{fontSize: 10}}>
                             {infoCandidate?.about_me}
                         </Text>
                     </View>
                 </View>
             </View>
-        </View>
+        </>
     )
 
+
     const SectionEducation = () => (
-        <View style={{ marginTop: 20 }}>
-            <View style={{ marginBottom: 10}}>
+        <>
+            <View style={{ marginBottom: 8, marginTop: 16}}>
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Educación</Text>
             </View>
-            <View
-                style={{
-                    backgroundColor: '#E9E9E9',
-                    borderRadius: 8
-                }}
-            >
-                <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Escolaridad</Text>
-                    </View>
-                    <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Carrera</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Estatus</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Fecha de finalización</Text>
-                    </View>
-                    <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Nombre de la institucion</Text>
-                    </View>
-                </View>
-                <View
-                    style={{
-                        padding: '6px 12px',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                    }}
-                >
-                    {infoEducation?.length > 0 && infoEducation.map((inst) => (
-                        <View 
-                            key={inst.id}
-                            style={{ 
-                                backgroundColor: '#FFF',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                flexDirection: 'row',
-                                borderRadius: 10,
-                                marginBottom: 5
-                            }}
-                        >
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.study_level?.name } </Text>
-                            </View>
-                            <View style={{flex: '0 0 15%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.specialitation_area } </Text>
-                            </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst && getStatus(inst) } </Text>
-                            </View>
-                            <View style={{flex: '0 0 20%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY') } </Text>
-                            </View>
-                            <View style={{flex: '0 0 30%', border: '1px solid', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.institution_name } </Text>
-                            </View>
-                        </View>
-                    ))}
-                </View>
-            </View>
-        </View>
+            <HeaderTable fields={[
+                {name: 'Escolaridad', size: '23%', pleft: '0px'},
+                {name: 'Carrera', size: '23%'},
+                {name: 'Estatus', size: '12%'},
+                {name: 'Fecha fin', size: '12%'},
+                {name: 'Institución', size: '30%', border: 'none'}
+            ]} />
+            <BodyTable
+                data={infoEducation}
+                cells={[
+                    {size: '23%', key: 'study_level, name', pleft: '0px'},
+                    {size: '23%', key: 'specialitation_area'},
+                    {size: '12%', key: getStatus},
+                    {size: '12%', key: e => e?.end_date
+                        ? moment(e.end_date, formatRecive).format(formatNeed)
+                        : null
+                    },
+                    {size: '30%', key: 'institution_name'}
+                ]}
+            />
+        </>
     )
 
     const SectionExperience = () => (
-        <View style={{ marginTop: 20 }}>
-            <View style={{ marginBottom: 10}}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Experiencia y especialización</Text>
+        <>
+            <View style={{ marginBottom: 8, marginTop: 16}}>
+                <Text style={{fontSize: 14, fontWeight: 'bold'}}>Experiencia y especialización</Text>
             </View>
-            <View
-                style={{
-                    backgroundColor: '#E9E9E9',
-                    borderRadius: 8
-                }}
-            >
-                <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Categoría</Text>
-                    </View>
-                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Subcategoría</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Años de experiencia</Text>
-                    </View>
-                    <View style={{flex: '0 0 30%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10 }}>Competencias</Text>
-                    </View>
-                </View>
-                <View
-                    style={{
-                        padding: '6px 12px',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                    }}
-                >
-                    {infoExperience?.length > 0 && infoExperience.map((info) => (
-                        <>
-                            <View 
-                                key={info.id}
-                                style={{ 
-                                    backgroundColor: '#FFF',
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    flexDirection: 'row',
-                                    borderRadius: 10,
-                                    marginBottom: 5,
-                                    flex: '0 0 70%',
-                                    maxHeight: 12
-                                }}
-                            >
-                                <View style={{flex: '0 0 35%', textAlign: 'center' }}>
-                                    <Text style={{ fontSize: 10 }}> { info?.category?.name } </Text>
-                                </View>
-                                <View style={{flex: '0 0 35%', textAlign: 'center' }}>
-                                    <Text style={{ fontSize: 10 }}>{ info?.sub_category?.name }</Text>
-                                </View>
-                                <View style={{flex: '0 0 30%', textAlign: 'center' }}>
-                                    <Text style={{ fontSize: 10 }}> { info?.experience_years } </Text>
-                                </View>
-                            </View>
-                            <View
-                                style={{ 
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    flexDirection: 'row',
-                                    padding: '0px 6px',
-                                    marginBottom: 5,
-                                    flex: '0 0 30%'
-                                }}
-                            >
-                                {info?.competences?.length > 0 && info.competences.map((comp) => (
-                                    <View key={comp.id} style={{ textAlign: 'center', backgroundColor: '#FFF', borderRadius: 10, marginRight: 3, marginBottom: 3 }}>
-                                        <Text style={{ fontSize: 10 }}> { comp.name } </Text>
-                                    </View>
-                                ))}
-                            </View>
-                        </>
-                    ))}
-                </View>
-            </View>
-        </View>
+            <HeaderTable fields={[
+                {name: 'Categoría', size: '25%', pleft: '0px'},
+                {name: 'Subcategoría', size: '25%'},
+                {name: 'Años de exp.', size: '13%'},
+                {name: 'Competencias', size: '37%', border: 'none'}
+            ]} />
+            <BodyTable
+                data={infoExperience}
+                cells={[
+                    {size: '25%', key: 'category, name', pleft: '0px'},
+                    {size: '25%', key: 'sub_category, name'},
+                    {size: '13%', key: 'experience_years', center: true},
+                    {size: '37%', key: e => e.competences?.length > 0
+                        ? e.competences?.map(item => item.name).join(', ')
+                        : null
+                    }
+                ]}
+            />
+        </>
     )
 
     const SectionUltimateJobs = () => (
-        <View style={{ marginTop: marginTop }}>
-            <View style={{ marginBottom: 10}}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }} >Últimos puestos</Text>
+        <>
+            <View style={{ marginTop: 16, marginBottom: 8}}>
+                <Text style={{fontSize: 14,fontWeight: 'bold'}} >Últimos puestos</Text>
             </View>
-            <View
-                style={{
-                    backgroundColor: '#E9E9E9',
-                    borderRadius: 8
-                }}
-            >
-                <View
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        padding: '6px 12px',
-                    }}
-                >
-                    <View style={{flex: '0 0 15%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10, }}>Puesto</Text>
-                    </View>
-                    <View style={{flex: '0 0 15%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10, }}>Empresa</Text>
-                    </View>
-                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10, }}>Sector</Text>
-                    </View>
-                    <View style={{flex: '0 0 20%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10, }}>Fecha de inicio</Text>
-                    </View>
-                    <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                        <Text style={{ fontSize: 10, }}>Fecha de finalización</Text>
-                    </View>
-                </View>
-                <View
-                    style={{
-                        padding: '6px 12px',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                    }}
-                >
-                    {infoPositions?.length > 0 && infoPositions.map((inst) => (
-                        <View 
-                            key={inst.id}
-                            style={{ 
-                                backgroundColor: '#FFF',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                flexDirection: 'row',
-                                borderRadius: 10,
-                                marginBottom: 5
-                            }}
-                        >
-                            <View style={{flex: '0 0 15%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.position_name } </Text>
-                            </View>
-                            <View style={{flex: '0 0 15%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.company } </Text>
-                            </View>
-                            <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.sector?.name } </Text>
-                            </View>
-                            <View style={{flex: '0 0 20%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.start_date && moment(inst.start_date).format('DD-MM-YYYY') } </Text>
-                            </View>
-                            <View style={{flex: '0 0 25%', textAlign: 'center' }}>
-                                <Text style={{ fontSize: 10 }}> { inst?.end_date && moment(inst.end_date).format('DD-MM-YYYY')} </Text>
-                            </View>
-                        </View>
-                    ))}
-                </View>
+            <HeaderTable fields={[
+                {name: 'Puesto', size: '20%', pleft: '0px'},
+                {name: 'Empresa', size: '28%'},
+                {name: 'Sector', size: '28%'},
+                {name: 'Fecha inicio', size: '12%'},
+                {name: 'Fecha fin', size: '12%', border: 'none'}
+            ]} />
+             <BodyTable
+                data={infoPositions}
+                cells={[
+                    {size: '20%', key: 'position_name', pleft: '0px'},
+                    {size: '28%', key: 'company'},
+                    {size: '28%', key: 'sector, name'},
+                    {size: '12%', key: e => e?.start_date
+                        ? moment(e.start_date, formatRecive).format(formatNeed)
+                        : null
+                    },
+                    {size: '12%', key: e => e?.end_date
+                        ? moment(e.end_date, formatRecive).format(formatNeed)
+                        : null
+                    }
+                ]}
+            />
+        </>
+    )
+
+
+    const HeaderExpediente = () => (
+        <>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 8
+            }}>
+                <Image 
+                    src='/images/LogoKhorconnect_1.png'
+                    style={{width: 'auto', height: 30, marginRight: 8}}
+                />
+                {image && (
+                    <Image
+                        src={image}
+                        style={{width: 'auto', height: 30}}
+                    />
+                )}
             </View>
-        </View>
+            <View style={{textAlign: 'center'}}>
+                <Text>Información del candidato</Text>
+            </View>
+        </>
     )
 
     return (
         // <PDFViewer showToolbar={false} style={{width: '100%', minHeight: '100vh'}}>
             <Document title='Expediente'>
                 <Page size='LETTER' style={{padding: 24}} wrap={true}>
-                <View style={{marginBottom: 30}}>
-                    <View 
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                            marginBottom: 12,
-                        }}
-                    >
-                        <View style={{ flex:'0 0 95px', marginRight: 20 }}>
-                            <Image 
-                                src={'/images/LogoKhorconnect_1.png'}
-                                style={{
-                                    width: '95px',
-                                    height: '30px',
-                                }}
-                            />
-                        </View>
-                        <View style={{ flex:'0 0 auto' }}>
-                            <Image 
-                                src={{ 
-                                    uri: image, 
-                                    method: "GET", 
-                                    headers: { 
-                                        "Cache-Control": "no-cache" }, 
-                                    body: "" }} 
-                                style={{
-                                    width: widthAndHeight.width > widthAndHeight.height ? widthImage  : '30px',
-                                    height: '30px',
-                                }}
-                            />
-                        </View>
-                    </View>
-                    <View style={{textAlign: 'center'}}>
-                        <Text>Información del candidato</Text>
-                    </View>
-                </View>
-                <SectionDetails />
-                <SectionEducation />
-                <SectionExperience />
-                <SectionUltimateJobs />
+                    <HeaderExpediente/>
+                    <SectionDetails />
+                    <SectionEducation />
+                    <SectionExperience />
+                    <SectionUltimateJobs />
                 </Page>
             </Document>
         // </PDFViewer>
