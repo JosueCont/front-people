@@ -18,6 +18,7 @@ import TabReferences from './TabReferences';
 
 //*Necesario para la libreria react-pdf
 const OptionsExpedient = dynamic(()=> import('./reports/OptionsExpedient'), { ssr: false });
+// const ReportExpedient = dynamic(()=> import('./reports/ReportExpedient'), { ssr: false });
 
 const DetailsCandidates = ({
     action,
@@ -177,6 +178,18 @@ const DetailsCandidates = ({
                                 type='3'
                             />
                         </Tabs.TabPane>
+                        {/* <Tabs.TabPane
+                            tab='Expediente'
+                            forceRender
+                            key='8'
+                        >
+                            <ReportExpedient
+                                infoCandidate={infoCandidate}
+                                infoEducation={infoEducation}
+                                infoExperience={infoExperience}
+                                infoPositions={infoPositions}
+                            />
+                        </Tabs.TabPane> */}
                     </Tabs>    
                 </Col>
             </Row>
