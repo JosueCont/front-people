@@ -30,7 +30,7 @@ const PayrollReport = ({ permissions, ...props }) => {
 
   const columns = [
     {
-      title: "Num. trabajador",
+      title: "Núm. trabajador",
       width: 1,
       render: (payroll) => {
         return <>{payroll.payroll_person.person.code}</>;

@@ -279,6 +279,7 @@ const NodeTreeView = ({ ...props }) => {
 
   const modalCreateUpdate = (value) => {
     formBusiness.resetFields();
+    setImageUrl(null)
     setCreup(value.bool);
     if (value.parent > 0 && value.bool === false) {
       formBusiness.setFieldsValue({
@@ -303,6 +304,11 @@ const NodeTreeView = ({ ...props }) => {
           parent: value.parent,
           description: value.edit.description,
         });
+
+        if(value.edit?.node?.image){
+          setImageUrl(value.edit?.node?.image)
+        }
+
       }
     }
     visibleCreate ? setVisibleCreate(false) : setVisibleCreate(true);
