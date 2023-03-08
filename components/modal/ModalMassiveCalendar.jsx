@@ -8,6 +8,7 @@ import {
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPayroll from "../../api/WebApiPayroll";
+import {getFiltersJB} from "../../utils/functions";
 
 const {Text} = Typography
 
@@ -20,6 +21,9 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
     const [check, setCheck] = useState([]);
     const [loading,setLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [countItemsForPagination, setCountItemsForPagination] = useState(0)
+
     const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -67,7 +71,6 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     const onChange = (e) => {
         const { value, checked } = e.target;
-
         if (checked) {
           setCheck(prev => [...prev, value]);
         } else {
@@ -99,13 +102,16 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     }
 
-    const getPeopleCompany = async(id,search) => {
+    const getPeopleCompany = async(id,search,page=1) => {
         try {
+            setCurrentPage(page)
             setLoading(true);
-            const people = await WebApiPayroll.getPeople({id,search});
+            const filterStr = getFiltersJB({page})
+            const people = await WebApiPayroll.getPeople(id,search,filterStr);
             if(people.data.results.length > 0) setLoading(false)
             setPeople(people.data.results);
             setFilterData(people.data.results)
+            setCountItemsForPagination(people.data.count)
         } catch (e) {
             console.log('error',e)
         }finally {
@@ -130,6 +136,13 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
        setCheck([])
        setFilterData(newPeope)
     };
+
+    const onChangePagination=(page)=>{
+        let calendar_id=formCalendar.getFieldValue('payment_calendar');
+        let search = formCalendar.getFieldsValue().search_person
+        console.log(calendar_id)
+        getPeopleCompany(calendar_id,search, page)
+    }
 
     const sendClose = () => {
         formCalendar.submit();
@@ -214,14 +227,16 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                 showIcon
                                 style={{marginBottom: 16}}
                             />
+                            <p>Num de personas encontradas: {countItemsForPagination}</p>
                         </Col>
                         <Col span={12} style={{paddingTop:30,paddingLeft:30}}>
                             <Form.Item name="search_person" style={{width:'100%', alignSelf:'center'}}>
                                 {/*<Input placeholder="Buscar" allowClear onChange={onChange} />*/}
                                 <Input.Search
                                     placeholder="Buscar"
-                                    onSearch={() =>getPeopleCompany(idCalendar,formCalendar.getFieldsValue().search_person)}
-                                    enterButton disabled={people.length <=0}
+                                    allowClear={false}
+                                    onSearch={() =>getPeopleCompany(idCalendar,formCalendar.getFieldsValue().search_person,1)}
+                                    enterButton
                                 />
                             </Form.Item>
                             <Form.Item name='add'style={{alignSelf:'center'}}>
@@ -237,14 +252,18 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
                                     <List
                                         itemLayout="horizontal"
+                                        style={{padding:0,margin:0}}
                                         dataSource={filterData}
                                         pagination={{
                                             onChange: (page) => {
+                                                onChangePagination(page)
                                             },
-                                            pageSize: 4,
+                                            pageSize: 10,
+                                            total:countItemsForPagination ?? 0,
+                                            current:currentPage
                                         }}
                                         renderItem={(item,index) => (
-                                            <List.Item style={{margin:'0 20px' }}>
+                                            <List.Item >
                                                 <Checkbox
                                                     onChange={onChange}
                                                     checked={ check.find(element => element === item.person.id)}
@@ -257,7 +276,8 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                             </List.Item>
                                         )}>
 
-                                    </List> </>) : (
+                                    </List>
+                                </>) : (
                                 <Typography.Text
                                     style={{
                                         display:'flex',
