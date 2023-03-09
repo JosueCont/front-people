@@ -102,11 +102,11 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     }
 
-    const getPeopleCompany = async(id,search,page=1) => {
+    const getPeopleCompany = async(id,search,page=1,filter_type=1) => {
         try {
             setCurrentPage(page)
             setLoading(true);
-            const filterStr = getFiltersJB({page})
+            const filterStr = getFiltersJB({page,filter_type})
             const people = await WebApiPayroll.getPeople(id,search,filterStr);
             if(people.data.results.length > 0) setLoading(false)
             setPeople(people.data.results);
@@ -120,28 +120,17 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
     }
 
     const filterPeople = (val) => {
-       let newPeope;
-       if(val===1){
-           newPeope = people;
-       }
-       else if(val===2){
-            newPeope= people.filter((item) => {
-                if(item.payment_calendar === null ) return item.person
-            });
-       }else{
-         newPeope =people.filter((item) => {
-            if(item.payment_calendar?.id) return item.person
-        });
-       }
+        let calendar_id=formCalendar.getFieldValue('payment_calendar');
+        let search = formCalendar.getFieldsValue().search_person
+        getPeopleCompany(calendar_id,search, 1,val)
        setCheck([])
-       setFilterData(newPeope)
     };
 
     const onChangePagination=(page)=>{
         let calendar_id=formCalendar.getFieldValue('payment_calendar');
-        let search = formCalendar.getFieldsValue().search_person
-        console.log(calendar_id)
-        getPeopleCompany(calendar_id,search, page)
+        let search = formCalendar.getFieldsValue().search_person;
+        let filter_type=formCalendar.getFieldsValue().add;
+        getPeopleCompany(calendar_id,search, page,filter_type)
     }
 
     const sendClose = () => {
@@ -240,7 +229,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                 />
                             </Form.Item>
                             <Form.Item name='add'style={{alignSelf:'center'}}>
-                                <Radio.Group disabled={people.length <=0}>
+                                <Radio.Group >
                                     <Radio value={1}>Todos</Radio>
                                     <Radio value={2}>Nueva Asignación</Radio>
                                     <Radio value={3}>Reasignación</Radio>
