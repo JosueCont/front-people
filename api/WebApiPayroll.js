@@ -323,9 +323,9 @@ class WebApiPayroll {
     );
   }
 
-  static getPeople({id,search}){
+  static getPeople(id,search,filter=null){
     return WebApi.ApisType(
-      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search :''}`,
+      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search :''}${filter != null ? filter :''}`,
       'get'
     );
   }

@@ -1,8 +1,8 @@
 import React,{useEffect,useState} from "react";
-import { Table,Spin } from "antd";
+import {Table, Spin, Button} from "antd";
 import WebApiPeople from "../../api/WebApiPeople";
 import moment from 'moment';
-import {  FilePdfOutlined, FileExcelOutlined } from '@ant-design/icons';
+import {FilePdfOutlined, FileExcelOutlined, SyncOutlined} from '@ant-design/icons';
 
 const WithHoldingNotice = ({patronalData}) => {
     const [loading,setLoading] = useState(false);
@@ -55,17 +55,26 @@ const WithHoldingNotice = ({patronalData}) => {
 
 
     return(
-        <Spin tip="Cargando..." spinning={loading}>
+        <>
+            <Button
+                onClick={getnotices}
+            >
+                <SyncOutlined spin={loading} />
+            </Button>
+
+            <Spin tip="Cargando..." spinning={loading}>
             <Table
                 columns={columns}
                 dataSource={data}
                 pagination={{showSizeChanger:true}}
                 locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : message,
+                    emptyText: loading
+                        ? "Cargando..."
+                        : message,
                 }}/>
         </Spin>
+        </>
+
     )
 } 
 
