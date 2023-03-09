@@ -111,6 +111,7 @@ const SelectCompany = ({ ...props }) => {
                 sessionStorage.setItem("number", response.data.id);
               let data = response.data.nodes.filter((a) => a.active);
               setDataList(data);
+              setIsLoadCompany(false)
             } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
