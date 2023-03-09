@@ -292,7 +292,7 @@ const MainSider = ({
       let children7 = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
-        // getItem("Roles de administrador", "config_roles"),
+        getItem("Roles de administrador", "config_roles"),
         getItem("Asignar empresa", "asign"),
       ];
       let children8 = [

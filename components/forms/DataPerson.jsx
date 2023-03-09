@@ -714,6 +714,8 @@ const DataPerson = ({
                     <Select
                       allowClear
                       showSearch
+                      disabled={load_admin_roles_options}
+                      loading={load_admin_roles_options}
                       placeholder='Seleccionar una opción'
                       notFoundContent='No se encontraron resultados'
                       optionFilterProp='children'

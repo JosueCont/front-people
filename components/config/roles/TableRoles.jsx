@@ -60,7 +60,8 @@ const TableRoles = ({
     }
 
     const openModalRemove = (item) =>{
-        // setWithAction(item?.persons?.length <= 0)
+        let with_action = item?.people_with_profile?.length <=0;
+        setWithAction(with_action)
         setWithAction(true)
         setItemsToDelete([item])
         setOpenModalDelete(true)
@@ -109,6 +110,12 @@ const TableRoles = ({
             title: 'Rol',
             dataIndex: 'name',
             key: 'name'
+        },
+        {
+            title: 'No. permisos',
+            render: (item) =>{
+                return <>{item?.module_perm?.length ?? 0}</>
+            }
         },
         {
             title: 'Estatus',

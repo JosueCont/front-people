@@ -470,8 +470,7 @@ export const getAdminRolesOptions = (node, query = '') => async (dispatch) =>{
   try {
     let params = `&paginate=0${query}`;
     let response = await WebApiPeople.getAdminRoles(node, params);
-    console.log("🚀 ~ file: catalogCompany.js:473 ~ getAdminRolesOptions ~ response:", response)
-    dispatch({...typeFunction, payload: response.data.results})
+    dispatch({...typeFunction, payload: response.data})
   } catch (e) {
     console.log(e)
     dispatch(typeFunction)
