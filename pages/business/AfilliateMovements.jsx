@@ -1,8 +1,8 @@
 import React,{useEffect,useState} from "react";
-import { Table,Spin } from "antd";
+import {Table, Spin, Button} from "antd";
 import WebApiPeople from "../../api/WebApiPeople";
 import moment from 'moment';
-import {  FileExcelOutlined } from '@ant-design/icons';
+import {  FileExcelOutlined, SyncOutlined } from '@ant-design/icons';
 
 const AfilliateMovements = ({node, id}) => {
     const [loading,setLoading] = useState(false);
@@ -42,7 +42,7 @@ const AfilliateMovements = ({node, id}) => {
             let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}`;
             const movements = await WebApiPeople.afilliateMovements(url);
             setLoading(false)
-            setData(movements?.data?.results)
+            processData(movements?.data?.results)
         } catch (e) {
             setData([])
             console.log('error',e)
@@ -51,8 +51,22 @@ const AfilliateMovements = ({node, id}) => {
         }
     }
 
+
+    const processData=(results)=>{
+       let arr =  _.orderBy(results, ['period'], ['desc']);
+        setData(arr)
+    }
+
+
     return(
         <>
+
+            <Button
+                onClick={getAfilliateMovements}
+            >
+                <SyncOutlined spin={loading} />
+            </Button>
+
             <Spin tip="Cargando..." spinning={loading}>
                 <Table
                     columns={columns}

@@ -235,7 +235,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   label="Vacaciones pendientes"
                   rules={[ruleRequired]}
                 >
-                  <Input type="number" maxLength={11} disabled={!editable} />
+                  <Input type="number" maxLength={11} />
                 </Form.Item>
               </Col>
 

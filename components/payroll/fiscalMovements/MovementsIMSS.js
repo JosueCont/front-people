@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import {UploadOutlined, DownloadOutlined, SyncOutlined} from '@ant-design/icons';
 import { API_URL_TENANT, API_URL } from "../../../config/config";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { Table, Button, Upload, Row, Col, message, Modal } from 'antd';
@@ -216,17 +216,17 @@ const MovementsIMSS=({ currentNode })=>{
                           importar
                         </Button>
                     </Col> */}
-                    {/* <Col span={7}>*/}
-                    {/*    <Button */}
-                    {/*      onClick={ () => {*/}
-                    {/*        getMovements(true)*/}
-                    {/*      } */}
-                    {/*    }*/}
-                    {/*      disabled = { patronalSelected?  false : true }*/}
-                    {/*    >*/}
-                    {/*        Sincronizar*/}
-                    {/*    </Button>*/}
-                    {/*</Col>*/}
+                     <Col span={7}>
+                        <Button
+                          onClick={ () => {
+                            getMovements(false)
+                          }
+                        }
+                          disabled = { patronalSelected?  false : true }
+                        >
+                            <SyncOutlined spin={loading} />
+                        </Button>
+                    </Col>
                 </Col>
             </Row>
 
