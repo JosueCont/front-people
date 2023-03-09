@@ -28,6 +28,11 @@ const PDFReport = ({
             : '/images/usuario.png';
     }
 
+    const getCompatibility = () =>{
+        let value = listReports[0]?.profiles[0]?.compatibility;
+        return value ? value !== "N/A" ? value?.toFixed(2) + "%" : value : null;
+    }
+
     const SectionProfileCard = () => (
         <View style={{
             display: 'flex',
@@ -100,10 +105,7 @@ const PDFReport = ({
                         marginTop: 3,
                         color: 'rgba(0,0,0,0.5)'
                     }}>
-                        Compatibilidad: {listReports[0]?.profiles[0]?.compatibility
-                            ? listReports[0]?.profiles[0]?.compatibility.toFixed(2) + "%"
-                            : null
-                        }
+                        Compatibilidad: {getCompatibility()}
                     </Text>
                 </View>
             )}
@@ -131,7 +133,8 @@ const PDFReport = ({
                 <View style={{
                     flex: `0 0 10%`,
                     borderRight: '1px solid #d9d9d9',
-                    paddingLeft: 5
+                    // paddingLeft: 5,
+                    textAlign: 'center'
                 }}>
                     <Text style={{fontSize: 10}}>{columns[1].title}</Text>
                 </View>
@@ -166,7 +169,7 @@ const PDFReport = ({
                                 {row.competence.name}
                             </Text>
                         </View>
-                        <View style={{flex: '0 0 10%', paddingLeft: 5}}>
+                        <View style={{flex: '0 0 10%', textAlign: 'center'}}>
                             <Text style={{ fontSize: 10 }}>
                                 {row.level}
                             </Text>
@@ -203,7 +206,8 @@ const PDFReport = ({
                 <View style={{
                     flex: `0 0 10%`,
                     borderRight: '1px solid #d9d9d9',
-                    paddingLeft: 5,
+                    // paddingLeft: 5,
+                    textAlign: 'center'
                 }}>
                     <Text style={{fontSize: 10}}>{columns[1].title}</Text>
                 </View>
@@ -217,7 +221,8 @@ const PDFReport = ({
                 <View style={{
                     flex: `0 0 9%`,
                     borderRight: '1px solid #d9d9d9',
-                    paddingLeft: 5
+                    // paddingLeft: 5
+                    textAlign: 'center'
                 }}>
                     <Text style={{fontSize: 10}}>{ columns[3].title }</Text>
                 </View>
@@ -230,7 +235,8 @@ const PDFReport = ({
                 </View>
                 <View style={{
                     flex: `0 0 10%`,
-                    paddingLeft: 5
+                    // paddingLeft: 5
+                    textAlign: 'center'
                 }}>
                     <Text style={{fontSize: 10}}>{ columns[5].title }</Text>
                 </View>
@@ -259,7 +265,7 @@ const PDFReport = ({
                                 {row.name}
                             </Text>
                         </View>
-                        <View style={{flex: '0 0 10%', paddingLeft: 5}}>
+                        <View style={{flex: '0 0 10%', textAlign: 'center'}}>
                             <Text style={{ fontSize: 10 }}>
                                 {row.level_person}
                             </Text>
@@ -269,7 +275,7 @@ const PDFReport = ({
                                 {row.description_person}
                             </Text>
                         </View>
-                        <View style={{flex: '0 0 9%', paddingLeft: 5}}>
+                        <View style={{flex: '0 0 9%', textAlign: 'center'}}>
                             <Text style={{ fontSize: 10 }}>
                                 {row.level_profile}
                             </Text>
@@ -279,9 +285,9 @@ const PDFReport = ({
                                 {row.description_profile}
                             </Text>
                         </View>
-                        <View style={{flex: '0 0 10%', paddingLeft: 5}}>
+                        <View style={{flex: '0 0 10%', textAlign: 'center'}}>
                             <Text style={{ fontSize: 10 }}>
-                                {row.compatibility !== 'N/A'? row.compatibility.toFixed(2) + '%' : 'N/A'}
+                                {row.compatibility !== 'N/A'? row.compatibility?.toFixed(2) + '%' : 'N/A'}
                             </Text>
                         </View>
                     </View>
@@ -363,7 +369,7 @@ const PDFReport = ({
                     </View>
                     <View style={{flex: '0 0 30%', paddingLeft: 5, justifyContent: 'center'}}>
                         <Text style={{ fontSize: 10 }}>
-                            { row.profiles[0].compatibility !== 'N/A'? row.profiles[0].compatibility.toFixed(2) + '%' : 'N/A'}
+                            { row.profiles[0].compatibility !== 'N/A'? row.profiles[0]?.compatibility?.toFixed(2) + '%' : 'N/A'}
                         </Text>
                     </View>
                 </View>
@@ -423,7 +429,7 @@ const PDFReport = ({
                     </View>
                     <View style={{flex: '0 0 25%', paddingLeft: 5}}>
                         <Text style={{ fontSize: 10 }}>
-                            {row.compatibility !== 'N/A'? row.compatibility.toFixed(2) + '%' : 'N/A'}
+                            {row.compatibility !== 'N/A'? row.compatibility?.toFixed(2) + '%' : 'N/A'}
                         </Text>
                     </View>
                 </View>
