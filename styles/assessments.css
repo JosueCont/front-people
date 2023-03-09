@@ -360,11 +360,22 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.tabs-vacancies > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
-    padding-top: 24px;
-    border-top: 3px solid #f0f0f0;
+.tabs-vacancies:not(.mode1) > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
     transition: all 0.5s;
 }
+
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding: 12px 16px;
+}
+
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-content{
+    background-color: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 0px 0px 10px 10px;
+}
+
 .tabs-vacancies > .ant-tabs-card > .ant-tabs-nav::before {
     display: none;
 }
@@ -372,14 +383,38 @@
     background: transparent;
     border-color: transparent;
 }
-.tabs-vacancies > .ant-tabs-card .ant-tabs-tab-active {
+
+.tabs-vacancies:not(.mode1) > .ant-tabs-card .ant-tabs-tab-active {
     background: #f0f0f0;
     border-color: #f0f0f0;
     transition: all 0.5s;
 }
-.tabs-vacancies .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
-.tabs-vacancies .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-tab-active {
+    background-color: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-bottom-color: transparent;
+    transition: all 0.5s;
+}
+
+.tabs-vacancies:not(.mode1) .ant-tabs-card.ant-tabs-top > .ant-tabs-nav div.ant-tabs-tab-active,
+.tabs-vacancies:not(.mode1) .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav div.ant-tabs-tab-active{
     border-bottom-color: #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > .ant-tabs-nav div.ant-tabs-tab-active,
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > div > .ant-tabs-nav div.ant-tabs-tab-active {
+    border-right-color: #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > .ant-tabs-nav .ant-tabs-tab:not(.ant-tabs-tab-active):first-child,
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > div > .ant-tabs-nav .ant-tabs-tab:not(.ant-tabs-tab-active):first-child {
+    border-top: 1px solid #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-left > .ant-tabs-content-holder
+> .ant-tabs-content > .ant-tabs-tabpane, .ant-tabs-left > div
+> .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+    padding-left: 12px;
 }
 
 .tab-vacancies-btns{

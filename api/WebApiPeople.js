@@ -554,7 +554,33 @@ class WebApiPeople {
 
   static assignedMassiveImmediateSupervisor(data){
     return WebApi.ApisType(`/person/person/set-immediate-supervisor/`,"post",data)
-  } 
+  }
+
+  //Roles de administrador
+
+  static getModulesPermissions(){
+    return WebApi.ApisType('/security/khorplus-module-with-perm/', 'get')
+  }
+
+  static getAdminRoles(node, query){
+    return WebApi.ApisType(`/security/administrator-profile/?node=${node}${query}`, 'get')
+  }
+
+  static getInfoAdminRole(id){
+    return WebApi.ApisType(`/security/administrator-profile/${id}/`, 'get')
+  }
+
+  static createAdminRole(data){
+    return WebApi.ApisType('/security/administrator-profile/', 'post', data)
+  }
+
+  static updateAdminRole(id, data){
+    return WebApi.ApisType(`/security/administrator-profile/${id}/`, 'patch', data)
+  }
+
+  static deleteAdminRole(id){
+    return WebApi.ApisType(`/security/administrator-profile/${id}/`, 'delete')
+  }
 
 }
 

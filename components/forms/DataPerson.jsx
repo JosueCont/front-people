@@ -52,6 +52,8 @@ const DataPerson = ({
   config,
   person = null,
   setPerson,
+  list_admin_roles_options,
+  load_admin_roles_options,
   ...props
 }) => {
   const { Title } = Typography;
@@ -73,6 +75,8 @@ const DataPerson = ({
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
   const [listPersons, setListPersons] = useState([]);
+  //
+  const isAdmin = Form.useWatch('is_admin', formPerson);
 
   useEffect(() => {
     setPersonWT(person.id);
@@ -127,7 +131,8 @@ const DataPerson = ({
       is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
       immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
-      is_admin: person.is_admin
+      is_admin: person.is_admin,
+      // rol: person.rol?.id
     });
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
@@ -162,7 +167,7 @@ const DataPerson = ({
       });
 
       if (person.is_admin)
-      setIsActiveAdmin(person.is_admin)
+      // setIsActiveAdmin(person.is_admin)
       formPerson.setFieldsValue({
         is_admin: person.is_admin,
       });
@@ -207,6 +212,7 @@ const DataPerson = ({
     value.id = person.id;
     value.is_active = isActive;
     if (value.node) delete value["node"];
+    // if (!value.is_admin) value.rol == null;
     if (value.department) delete value["department"];
     value.groups && value.groups
       ? (value.groups = [value.groups])
@@ -300,9 +306,9 @@ const DataPerson = ({
       });
   };
 
-  const changeStatusAdmin = async (value) => {
-    setIsActiveAdmin(value)
-  };
+  // const changeStatusAdmin = async (value) => {
+  //   setIsActiveAdmin(value)
+  // };
 
   const onChangeIngPlatform = (date, dateString) => {
     setDateIngPlatform(dateString);
@@ -688,6 +694,39 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
+              {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
+              <Form.Item
+                  name="is_admin"
+                  label="Es admin"
+                >
+                  <Select
+                    placeholder='Seleccionar una opción'
+                    options={[
+                      {value: true, key: true, label: 'Sí'},
+                      {value: false, key: false, label: 'No'}
+                    ]}
+                  />
+                </Form.Item>
+              </Col>}
+              {/* {isAdmin && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item name='rol' label='Rol'>
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder='Seleccionar una opción'
+                      notFoundContent='No se encontraron resultados'
+                      optionFilterProp='children'
+                    >
+                      {list_admin_roles_options.length > 0 && list_admin_roles_options.map(item => (
+                        <Select.Option value={item.id} key={item.id} disabled={!item.is_active}>
+                          {item.name} {!item.is_active ? '/ No disponible' : ''}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )} */}
             </Row>
             <Row gutter={20}>
               <hr />
@@ -767,7 +806,7 @@ const DataPerson = ({
                   currentNode={currentNode}
                 />
               </Col>
-              {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
+              {/* {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
               <Form.Item
                   name="is_admin"
                   label="Es admin"
@@ -779,7 +818,7 @@ const DataPerson = ({
                     unCheckedChildren="No"
                   />
                 </Form.Item>
-                </Col>}
+                </Col>} */}
             </Row>
           </Col>
         </Row>
@@ -802,6 +841,8 @@ const mapState = (state) => {
     cat_groups: state.catalogStore.cat_groups,
     people_company: state.catalogStore.people_company,
     user: state.userStore.user,
+    list_admin_roles_options: state.catalogStore.list_admin_roles_options,
+    load_admin_roles_options: state.catalogStore.load_admin_roles_options
   };
 };
 
