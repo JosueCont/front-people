@@ -9,19 +9,30 @@ import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import { getAdminRolesOptions } from "../../../redux/catalogCompany";
 
-const EmployeeDetailPage = (...props) => {
+const EmployeeDetailPage = ({
+  config,
+  currentNode,
+  getAdminRolesOptions,
+  ...props
+}) => {
   const router = useRouter();
   const [person, setPerson] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (router.query.id) getPerson(router.query.id);
-  }, [router.query]);
+  // useEffect(() => {
+  //   if (router.query.id) getPerson(router.query.id);
+  // }, [router.query]);
+
+  useEffect(()=>{
+    if(!currentNode) return;
+    getAdminRolesOptions(currentNode.id)
+  },[currentNode])
 
   useEffect(() => {
-    if (router.query.id) getPerson(router.query.id)
-  }, [router.query.id])
+    if (router.query?.id) getPerson(router.query.id)
+  }, [router.query?.id])
 
   const getPerson = async (data) => {
     try {
@@ -61,7 +72,7 @@ const EmployeeDetailPage = (...props) => {
           {person ? (
             <DetailPerson
               setPerson={setPerson}
-              config={props[0].config}
+              config={config}
               person={person}
               setLoading={setLoading}
             />
@@ -83,4 +94,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(withAuthSync(EmployeeDetailPage));
+export default connect(mapState, {getAdminRolesOptions})(withAuthSync(EmployeeDetailPage));

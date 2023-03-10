@@ -58,6 +58,7 @@ const MainSider = ({
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
+      config_roles: "/config/roles",
       releases: "/comunication/releases",
       events: "/comunication/events",
       reports: "/reports",
@@ -208,6 +209,7 @@ const MainSider = ({
       children = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Roles de administrador", "config_roles"),
         getItem("Asignar empresa", "asign"),
       ];
       items.push(
