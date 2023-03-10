@@ -98,7 +98,7 @@ const TableRoles = ({
     const titleDelete = useMemo(()=>{
         if(withAction) return '¿Estás seguro de eliminar este rol?';
         if(asList) return 'Personas asignadas';
-        return 'Este rol no se puede eliminar, ya se que encuentra asignado';
+        return 'Este rol no se puede eliminar, ya que se encuentra asignado';
     },[withAction, asList])
 
     const menuItem = (item) => {
