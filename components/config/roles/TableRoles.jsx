@@ -6,7 +6,10 @@ import {
     DeleteOutlined,
     EditOutlined,
     DownloadOutlined,
-    LinkOutlined
+    LinkOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import {
     Table,
@@ -14,7 +17,10 @@ import {
     Menu,
     Dropdown,
     message,
-    Switch
+    Switch,
+    Space,
+    Tag,
+    Tooltip
 } from 'antd';
 import { useRouter } from 'next/router';
 import WebApiPeople from '../../../api/WebApiPeople';
@@ -31,6 +37,7 @@ const TableRoles = ({
 
     const router = useRouter();
     const [withAction, setWithAction] = useState(true);
+    const [asList, setAsList] = useState(false);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
@@ -60,9 +67,8 @@ const TableRoles = ({
     }
 
     const openModalRemove = (item) =>{
-        let with_action = item?.people_with_profile?.length <=0;
+        let with_action = item?.people_with_profile?.length <= 0;
         setWithAction(with_action)
-        setWithAction(true)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
@@ -71,6 +77,14 @@ const TableRoles = ({
         setOpenModalDelete(false)
         setWithAction(true)
         setItemsToDelete([])
+        setAsList(false)
+    }
+
+    const showModalList = (item) =>{
+        setAsList(true)
+        setWithAction(false)
+        setOpenModalDelete(true)
+        setItemsToDelete(item.people_with_profile)
     }
 
     const onChangePage = ({current}) =>{
@@ -81,6 +95,12 @@ const TableRoles = ({
         })
     }
 
+    const titleDelete = useMemo(()=>{
+        if(withAction) return '¿Estás seguro de eliminar este rol?';
+        if(asList) return 'Personas asignadas';
+        return 'Este rol no se puede eliminar, ya se que encuentra asignado';
+    },[withAction, asList])
+
     const menuItem = (item) => {
         return (
             <Menu>
@@ -88,7 +108,7 @@ const TableRoles = ({
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
-                        pathname: `/config/roles/edit`,
+                        pathname: '/config/roles/edit',
                         query:{...router.query, id: item.id }
                     })}
                 >
@@ -115,6 +135,25 @@ const TableRoles = ({
             title: 'No. permisos',
             render: (item) =>{
                 return <>{item?.module_perm?.length ?? 0}</>
+            }
+        },
+        {
+            title: 'Personas asignadas',
+            render: (item) =>{
+                let size = item?.people_with_profile?.length;
+                return (
+                    <Space>
+                        <Tooltip title={size > 0 ? 'Ver personas' : ''}>
+                            {size > 0 ?  <EyeOutlined onClick={()=>showModalList(item)}/> : <EyeInvisibleOutlined />}
+                        </Tooltip>
+                        <Tag icon={<UserOutlined style={{color: size > 0 ? '#52c41a' : ''}}/>}
+                            style={{fontSize: '14px'}}
+                            color={size ? 'green' : ''}
+                        >
+                            {size ?? 0}
+                        </Tag>
+                    </Space>
+                )
             }
         },
         {
@@ -168,13 +207,10 @@ const TableRoles = ({
                 }}
             />
             <ListItems
-                title={withAction
-                    ? '¿Estás seguro de eliminar este rol?'
-                    : `Este rol no se puede eliminar, ya que se encuentra asignado.`
-                }
+                title={titleDelete}
                 visible={openModalDelete}
-                keyTitle='name'
-                // keyDescription='email'
+                keyTitle={asList ? ['first_name','flast_name','mlast_name'] : 'name'}
+                keyDescription={asList ? 'email' : ''}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
