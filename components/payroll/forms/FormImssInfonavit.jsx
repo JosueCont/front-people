@@ -112,8 +112,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     if (updateInfonavit) {
       formInfonavitManual.setFieldsValue({
         folio: updateInfonavit.folio,
-        start_date: moment(updateInfonavit.start_date),
-        start_date_movement: moment(updateInfonavit.start_date_movement),
+        start_date: updateInfonavit.start_date
+          ? moment(updateInfonavit.start_date)
+          : null,
+        start_date_movement: updateInfonavit.start_date_movement
+          ? moment(updateInfonavit.start_date_movement)
+          : null,
         number: updateInfonavit.number,
         type: updateInfonavit.type,
         status: updateInfonavit.status,
@@ -299,7 +303,9 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         message.success("Editado Exitosamente")) ||
         message.success("Agregado Exitosamente");
     } catch (error) {
-      message.error("Error al guardar");
+      if (error?.response?.data?.message)
+        message.error(error.response.data.message);
+      else message.error(messageError);
     } finally {
       setLoadingModal(false);
       onModalCancel();
