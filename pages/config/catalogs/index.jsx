@@ -34,27 +34,14 @@ import {FormattedMessage} from "react-intl";
 import React from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
+import MainIndexConfig from "../../../components/config/MainConfig";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
 
   return (
     <>
-      <MainLayout currentKey={["catalogs"]} defaultOpenKeys={["utilities","config"]}>
-        <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item
-            className={"pointer"}
-            onClick={() => Router.push({ pathname: "/home/persons/" })}
-          >
-            Inicio
-          </Breadcrumb.Item>
-          {verifyMenuNewForTenant() && 
-            <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
-          }
-          <Breadcrumb.Item>Configuración</Breadcrumb.Item>
-          <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
-        </Breadcrumb>
-
+      <MainIndexConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
         <div
           className="site-layout-background"
           style={{ minHeight: 380, height: "100%" }}
@@ -271,7 +258,7 @@ const configBusiness = ({ ...props }) => {
             </>
           </Card>
         </div>
-      </MainLayout>
+      </MainIndexConfig>
     </>
   );
 };

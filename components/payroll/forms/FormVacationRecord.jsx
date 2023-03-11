@@ -25,7 +25,8 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
   const [updateRegister, setUpdateRegister] = useState(null);
   const [loadingTable, setLoadingTable] = useState(false);
   const [vacationsRecord, setVacationsRecord] = useState([]);
-  const [editable, setEditable] = useState(false);
+  const [editVacation, setEditVacation] = useState(false);
+  const [editBonus, setEditBonus] = useState(false);
 
   const colVacations = [
     {
@@ -67,7 +68,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                 <Tooltip title={item.is_active ? "Editar" : "Ver"}>
                   {/* Solo se muestra editar si el registro es activo y la prima vacacional
                    se paga al disfrute las vacaciones*/}
-                  {item.is_active && item.vacation_bonus_payment == 2 ? (
+                  {item.is_active ? (
                     <EditOutlined
                       style={{ fontSize: "20px" }}
                       onClick={() => setUpdateRegister(item)}
@@ -117,13 +118,14 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
         vacations_premium_pay: updateRegister.vacations_premium_pay,
         vacations_premium_pending: updateRegister.vacations_premium_pending,
       });
-      if (
-        updateRegister.is_active &&
-        updateRegister.vacation_bonus_payment == 2
-      ) {
-        setEditable(true);
+      setEditVacation(updateRegister.is_active);
+
+      if (updateRegister.vacation_bonus_payment == 1) {
+        setEditBonus(false);
+      } else if (updateRegister.is_active) {
+        setEditBonus(true);
       } else {
-        setEditable(false);
+        setEditBonus(false);
       }
     }
   }, [updateRegister]);
@@ -235,7 +237,11 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   label="Vacaciones pendientes"
                   rules={[ruleRequired]}
                 >
-                  <Input type="number" maxLength={11} />
+                  <Input
+                    type="number"
+                    maxLength={11}
+                    disabled={!editVacation}
+                  />
                 </Form.Item>
               </Col>
 
@@ -267,7 +273,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                     min={0}
                     type="number"
                     maxLength={2}
-                    disabled={!editable}
+                    disabled={!editBonus}
                   />
                 </Form.Item>
               </Col>
@@ -282,7 +288,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   Cancelar
                 </Button>
               </Col>
-              {editable && (
+              {(editBonus || editVacation) && (
                 <Form.Item>
                   <Button
                     loading={loadingForm}
