@@ -146,10 +146,10 @@ export const doCompanySelectedCatalog =
         //dispatch(getReasonSeparation(idCompany));
         //dispatch(getLaborRelation(idCompany));
         //dispatch(getTreatment(idCompany));
-        dispatch(getDocumentType(idCompany));
+        //dispatch(getDocumentType(idCompany));
         dispatch(getDepartmets(idCompany));
         dispatch(getJobs(idCompany));
-        dispatch(getPersonType(idCompany));
+        //dispatch(getPersonType(idCompany));
         dispatch(getPeopleCompany(idCompany));
         dispatch(getLevel(idCompany));
         dispatch(getWorkTitle(idCompany));
