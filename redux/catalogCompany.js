@@ -168,16 +168,16 @@ export const doCompanySelectedCatalog =
       if (!idCompany) idCompany = userCompanyId();
       if (idCompany) {
         dispatch(getRelationship(idCompany));
-        dispatch(getJobRiskClass(idCompany));
-        dispatch(getFractions(idCompany));
-        dispatch(getExperienceType(idCompany));
-        dispatch(getReasonSeparation(idCompany));
-        dispatch(getLaborRelation(idCompany));
-        dispatch(getTreatment(idCompany));
-        dispatch(getDocumentType(idCompany));
+        //dispatch(getJobRiskClass(idCompany));
+        //dispatch(getFractions(idCompany));
+        //dispatch(getExperienceType(idCompany));
+        //dispatch(getReasonSeparation(idCompany));
+        //dispatch(getLaborRelation(idCompany));
+        //dispatch(getTreatment(idCompany));
+        //dispatch(getDocumentType(idCompany));
         dispatch(getDepartmets(idCompany));
         dispatch(getJobs(idCompany));
-        dispatch(getPersonType(idCompany));
+        //dispatch(getPersonType(idCompany));
         dispatch(getPeopleCompany(idCompany));
         dispatch(getLevel(idCompany));
         dispatch(getWorkTitle(idCompany));
@@ -439,7 +439,8 @@ export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
     });
 };
 
-export const getFractions = (idCompany) => async (dispatch, getState) => {
+export const getFractions = (idCompany=null) => async (dispatch, getState) => {
+  if(!idCompany) idCompany = userCompanyId();
   await WebApiPeople.getFractions(idCompany)
     .then((response) => {
       dispatch({

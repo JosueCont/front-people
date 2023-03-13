@@ -128,6 +128,25 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
     } else saveRegister(url, value);
   };
 
+
+  useEffect(()=>{
+    currentNode && getData()
+  },[currentNode?.id])
+
+
+  const getData=async ()=>{
+    resetForm();
+    setLoading(true)
+    try{
+      await props.getDocumentType(currentNode.id)
+    }catch (e){
+
+    }finally {
+      setLoading(false)
+    }
+
+  }
+
   const saveRegister = async (url, data) => {
     data.node = currentNode.id;
     setLoading(true);
