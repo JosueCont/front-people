@@ -604,7 +604,7 @@ const DataPerson = ({
                 <Form.Item
                   name="immediate_supervisor"
                   label="Jefe inmediato"
-                  rules={[validateImmediateSupervisor(person.id)]}
+                  // rules={[validateImmediateSupervisor(person.id)]}
                 >
                   <Select
                     showSearch
