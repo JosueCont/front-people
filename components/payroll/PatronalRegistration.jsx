@@ -458,7 +458,7 @@ const ImssInformationNode = ({
                   patronalData && patronalData.patronal_registration
                 }
                 form={formPatronal}
-                currentNodeId={currentNode.id}
+                currentNodeId={currentNode && currentNode.id}
                 imssDelegation={patronalData && patronalData.imss_delegation}
               />
               <Row>

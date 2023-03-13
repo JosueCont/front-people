@@ -183,6 +183,10 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
     setDeleted(data);
   };
 
+  useEffect(()=>{
+    props.getPersonType(currentNode.id)
+  },[])
+
   useEffect(() => {
     if (deleted.id) {
       Modal.confirm({

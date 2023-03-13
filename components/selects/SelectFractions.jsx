@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
+import {getFractions} from "../../redux/catalogCompany";
 const { Option } = Select;
 const SelectFractions = ({
   disabled,
   viewLabel = true,
   rules = [],
   size = "middle",
+  getFractions,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
+
+  useEffect(()=>{
+    getFractions()
+  },[])
 
   useEffect(() => {
     setOptions([]);
@@ -66,4 +72,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectFractions);
+export default connect(mapState,{getFractions})(SelectFractions);

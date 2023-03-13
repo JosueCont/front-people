@@ -281,6 +281,7 @@ const personDetailForm = () => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
+    debugger;
     getValueSelects();
     nodeId = userCompanyId();
     if (router.query.id) {
