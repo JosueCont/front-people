@@ -270,7 +270,13 @@ const Vacationform = ({edit = false,...props}) => {
               </Form.Item>
             </Col>
             <Col sm={24} md={12} lg={12}>
-              <Form.Item label="Jefe inmediato" name="immediate_supervisor" rules={[ruleRequired,validateImmediateSupervisor(props?.details?.collaborator?.id)]}>
+              <Form.Item
+                label="Jefe inmediato"
+                name="immediate_supervisor"
+                rules={[
+                  ruleRequired,
+                  // validateImmediateSupervisor(props?.details?.collaborator?.id)
+                ]}>
                 <Select
                   showSearch
                   optionFilterProp="children"
