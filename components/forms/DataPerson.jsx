@@ -698,7 +698,7 @@ const DataPerson = ({
               {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
               <Form.Item
                   name="is_admin"
-                  label="Es admin"
+                  label="¿Es administrador?"
                 >
                   <Select
                     placeholder='Seleccionar una opción'

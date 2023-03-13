@@ -38,6 +38,8 @@ const FormPerson = ({
   currentNode,
   close,
   listPersons=[],
+  list_admin_roles_options,
+  load_admin_roles_options,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -46,6 +48,7 @@ const FormPerson = ({
   const [jobSelected, setJobSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrrollActive, setPayrrollActive] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const onFinish = (value) => {
     if (date !== "") {
@@ -61,6 +64,7 @@ const FormPerson = ({
       else delete value["groups"];
       if (currentNode) value.node = currentNode.id;
       else value.node = node;
+      value.is_admin = isAdmin;
       createPerson(value);
     }
   };
@@ -236,20 +240,29 @@ const FormPerson = ({
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col lg={20} xs={24} style={{ padding: "10px" }}>
-                  {config &&
-                    config.applications &&
-                    config.applications.find(
+                <Col lg={24} xs={24} style={{ padding: "10px"}}>
+                  <Space>
+                    {config &&
+                      config.applications &&
+                      config.applications.find(
                       (item) => item.app === "PAYROLL" && item.is_active
                     ) && (
-                      <>
-                        {"Crear usuario "}
+                      <Space>
+                        <span>Crear usuario</span>
                         <Switch
                           checked={payrrollActive}
                           onChange={(value) => setPayrrollActive(value)}
                         />
-                      </>
+                      </Space>
                     )}
+                     <Space>
+                        <span>¿Es administrador?</span>
+                        <Switch
+                          checked={isAdmin}
+                          onChange={(e) => setIsAdmin(e)}
+                        />
+                      </Space>
+                  </Space>
                 </Col>
 
                 {payrrollActive && (
@@ -284,6 +297,31 @@ const FormPerson = ({
                         <Input.Password type="text" />
                       </Form.Item>
                     </Col>
+                    {isAdmin && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name='administrator_profile'
+                          label='Rol'
+                          rules={[ruleRequired]}
+                        >
+                          <Select
+                            allowClear
+                            showSearch
+                            disabled={load_admin_roles_options}
+                            loading={load_admin_roles_options}
+                            placeholder='Seleccionar una opción'
+                            notFoundContent='No se encontraron resultados'
+                            optionFilterProp='children'
+                          >
+                            {list_admin_roles_options.length > 0 && list_admin_roles_options.map(item => (
+                              <Select.Option value={item.id} key={item.id} disabled={!item.is_active}>
+                                {item.name} {!item.is_active ? '/ No disponible' : ''}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    )}
                     {config.intranet_enabled && (
                       <Col lg={8} xs={24}>
                         <Form.Item
@@ -296,9 +334,9 @@ const FormPerson = ({
                         </Form.Item>
                       </Col>
                     )}
-                    <Col lg={8} xs={24}>
+                    {/* <Col lg={8} xs={24}>
                       <SelectGroup viewLabel={true} />
-                    </Col>
+                    </Col> */}
                     {config.applications.find(
                     (item) => item.app === "SUKHATV" && item.is_active
                     )  && (
@@ -384,7 +422,10 @@ const FormPerson = ({
 };
 
 const mapState = (state) => {
-  return {};
+  return {
+    list_admin_roles_options: state.catalogStore.list_admin_roles_options,
+    load_admin_roles_options: state.catalogStore.load_admin_roles_options
+  };
 };
 
 export default connect(mapState, { getPeopleCompany, getWorkTitle })(
