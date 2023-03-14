@@ -272,6 +272,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
+        console.log("DATA IMPORT ->", response.data);
         setXmlImport(response.data);
         processResume(response.data);
       })
@@ -413,6 +414,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   // };
   const validateBeforeSubmit = () => {
     let companies_errors = [];
+    console.log("Errors->", companies_errors);
     xmlImport.companies.map((company) => {
       let company_error = {
         rfc: company.company.rfc,
