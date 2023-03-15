@@ -198,7 +198,9 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     } else {
       WebApiPayroll.saveIMSSInfonavit(values)
         .then((response) => {
-          message.success("Guardado exitosamente");
+          message.success(
+            "Guardado exitosamente, revise la sección de Movimientos IMSS"
+          );
           setLoadingTable(false);
           localUserCredit();
         })
