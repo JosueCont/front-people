@@ -247,6 +247,7 @@ const WorkTitle = ({ currentNode = null, ...props }) => {
       );
       resetForm();
       getWorkTitles();
+      setDeleted({});
       message.success(messageDeleteSuccess);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message)
