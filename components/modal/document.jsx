@@ -9,11 +9,12 @@ import {
 } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { getDocumentType } from "../../redux/catalogCompany";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 import axiosApi from "../../api/axiosApi";
 
-const documentModal = ({ person_id, node, ...props }) => {
+const documentModal = ({ person_id, node,getDocumentType, ...props }) => {
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -24,6 +25,10 @@ const documentModal = ({ person_id, node, ...props }) => {
     props.close(false);
     form.resetFields();
   };
+
+  useEffect(()=>{
+    getDocumentType(node)
+  },[])
 
   const selectedFile = (file) => {
     if (file.target.files.length > 0) {
@@ -152,4 +157,4 @@ const mapState = (state) => {
   return { cat_document_type: state.catalogStore.cat_document_type };
 };
 
-export default connect(mapState)(documentModal);
+export default connect(mapState,{getDocumentType})(documentModal);

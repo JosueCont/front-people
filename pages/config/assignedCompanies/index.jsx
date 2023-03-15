@@ -12,7 +12,8 @@ import {
   Spin,
   Divider,
   message,
-  ConfigProvider
+  ConfigProvider,
+  Card
 } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -26,6 +27,7 @@ import { messageError, messageSaveSuccess } from "../../../utils/constant";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
+import MainIndexConfig from "../../../components/config/MainConfig";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -150,24 +152,8 @@ const SelectCompany = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["asign"]} defaultOpenKeys={["utilities","config"]}>
-      <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home/persons" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        {verifyMenuNewForTenant() && 
-          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
-        }
-        <Breadcrumb.Item>Configuración</Breadcrumb.Item>
-        <Breadcrumb.Item>Asignar empresa</Breadcrumb.Item>
-      </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
+    <MainIndexConfig pageKey="asign" extraBread={[{name: 'Asignar empresa'}]}>
+      <Card>
         <Spin tip="Cargando..." spinning={loading}>
           <Row justify={"center"}>
             <Col span={23}>
@@ -210,8 +196,8 @@ const SelectCompany = ({ ...props }) => {
             </Col>
           </Row>
         </Spin>
-      </div>
-    </MainLayout>
+      </Card>
+    </MainIndexConfig>
   );
 };
 

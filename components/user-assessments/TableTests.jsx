@@ -68,8 +68,8 @@ const TableTests = ({user_profile, ...props}) => {
     }
 
     const getFieldDate = (item) =>{
-        let endDate = item.apply?.end_date;
-        let applyDate = item.apply?.apply_date;
+        let endDate = item?.apply[0]?.end_date;
+        let applyDate = item?.apply[0]?.apply_date;
         let selectDate = endDate ? endDate : applyDate;
         return moment(selectDate).format('DD/MM/YYYY hh:mm a');
     }
