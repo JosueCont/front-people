@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
+import {getJobRiskClass} from "../../redux/catalogCompany";
 const { Option } = Select;
 const SelectJobRisk = ({
   disabled,
   viewLabel = true,
   rules = [],
   size = "middle",
+  getJobRiskClass,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
+
+  useEffect(()=>{
+        getJobRiskClass()
+  },[])
 
   useEffect(() => {
     setOptions([]);
@@ -69,4 +75,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectJobRisk);
+export default connect(mapState,{getJobRiskClass})(SelectJobRisk);

@@ -112,8 +112,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     if (updateInfonavit) {
       formInfonavitManual.setFieldsValue({
         folio: updateInfonavit.folio,
-        start_date: moment(updateInfonavit.start_date),
-        start_date_movement: moment(updateInfonavit.start_date_movement),
+        start_date: updateInfonavit.start_date
+          ? moment(updateInfonavit.start_date)
+          : null,
+        start_date_movement: updateInfonavit.start_date_movement
+          ? moment(updateInfonavit.start_date_movement)
+          : null,
         number: updateInfonavit.number,
         type: updateInfonavit.type,
         status: updateInfonavit.status,
@@ -167,7 +171,7 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     }
   }, [isNewRegister]);
 
-  const formImmssInfonavitAct = (values) => {
+  const formImmssInfonavitAct = async (values) => {
     setLoadingTable(true);
 
     values.person = person_id;
@@ -178,33 +182,27 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
     // values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    :  ""
     // funcion WEB API
 
-    if (isEdit) {
-      WebApiPayroll.editIMSSInfonavit(updateCredit.id, values)
-        .then((response) => {
-          message.success("Editado exitosamente");
-          setLoadingTable(false);
-          // setIsEdit(false);
-        })
-        .catch((error) => {
-          if (error?.response?.data?.message) {
-            message.error(error?.response?.data?.message);
-            setLoadingTable(false);
-          } else message.error(messageError);
-        });
-    } else {
-      WebApiPayroll.saveIMSSInfonavit(values)
-        .then((response) => {
-          message.success("Guardado exitosamente");
-          setLoadingTable(false);
-          localUserCredit();
-        })
-        .catch(async (error) => {
-          if (error?.response?.data?.message) {
-            message.error(error?.response?.data?.message);
-            setLoadingTable(false);
-          } else message.error(messageError);
-          setLoadingTable(false);
-        });
+    try {
+      if (isEdit) {
+        const res = await WebApiPayroll.editIMSSInfonavit(
+          updateCredit.id,
+          values
+        );
+        message.success("Editado exitosamente");
+      } else {
+        const res = await WebApiPayroll.saveIMSSInfonavit(values);
+
+        message.success(
+          "Guardado exitosamente, revise la sección de Movimientos IMSS"
+        );
+        localUserCredit();
+      }
+      setLoadingTable(false);
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        message.error(error?.response?.data?.message);
+        setLoadingTable(false);
+      } else message.error(messageError);
     }
   };
 
@@ -299,7 +297,9 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
         message.success("Editado Exitosamente")) ||
         message.success("Agregado Exitosamente");
     } catch (error) {
-      message.error("Error al guardar");
+      if (error?.response?.data?.message)
+        message.error(error.response.data.message);
+      else message.error(messageError);
     } finally {
       setLoadingModal(false);
       onModalCancel();
