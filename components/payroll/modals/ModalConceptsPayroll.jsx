@@ -21,6 +21,7 @@ import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { departureMotive } from "../../../utils/constant";
+import moment from "moment";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -36,6 +37,7 @@ const ModalConceptsPayroll = ({
   payrollType,
   extraOrdinary = false,
   movementType = null,
+  payment_period = null,
   ...props
 }) => {
   const [departureForm] = Form.useForm();
@@ -139,6 +141,8 @@ const ModalConceptsPayroll = ({
     props.other_payments_int,
     visible,
   ]);
+
+  useEffect(() => {}, [payment_period]);
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -383,6 +387,16 @@ const ModalConceptsPayroll = ({
     setVisible(false);
   };
 
+  const disablePeriod = (current) => {
+    let start_date = moment(payment_period.start_date);
+    let end_date = moment(payment_period.end_date);
+
+    // Validamos que la fecha esté dentro del rango del periodo
+    if (current >= start_date && end_date.add(1, "days") >= current)
+      return false;
+    return true;
+  };
+
   return (
     <Modal
       visible={visible}
@@ -535,6 +549,7 @@ const ModalConceptsPayroll = ({
                     placeholder="Fecha de salida."
                     onChange={(value, d) => setDepartureDate(d)}
                     locale={locale}
+                    disabledDate={disablePeriod}
                   />
                 </Col>
                 <Col span={8}>
