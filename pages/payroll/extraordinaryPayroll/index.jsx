@@ -1630,6 +1630,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           setLoading={setLoading}
           sendCalculatePayroll={setPayrollCalculate}
           movementType={movementType}
+          payment_period={periodSelected}
         />
       )}
       {genericModal && (
