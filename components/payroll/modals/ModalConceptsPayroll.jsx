@@ -551,6 +551,15 @@ const ModalConceptsPayroll = ({
                     locale={locale}
                     disabledDate={disablePeriod}
                   />
+
+                  <Alert
+                      message="Importante"
+                      description="Elige una fecha dentro del periodo seleccionado."
+                      type="warning"
+                      showIcon
+                      style={{ marginBottom: 10 }}
+                  />
+
                 </Col>
                 <Col span={8}>
                   <Select
