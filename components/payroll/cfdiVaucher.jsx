@@ -75,7 +75,7 @@ const CfdiVaucher = ({
    // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
      switch (type){
        case 0:
-         return 'Ordinario';
+         return 'Ordinaria';
        case 1:
          return 'Aguinaldo';
        case 2:
