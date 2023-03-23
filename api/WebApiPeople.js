@@ -584,6 +584,14 @@ class WebApiPeople {
   static getWorkTitles(node) {
     return WebApi.ApisType(`/business/work-title/?node=${node}`, "get");
   }
+
+  static deleteAffiliatedMovements(data) {
+    return WebApi.ApisType(
+      `/business/delete-affiliated-movements/`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPeople;
