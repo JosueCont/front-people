@@ -122,7 +122,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     if (idPaymentCalendar) {
       getPaymentCalendar();
       setLocked(true);
-    }else{
+    } else {
       formPaymentCalendar.setFieldsValue({
         belongs_to: BelongTo[0].value,
       });
@@ -194,7 +194,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
-        setBenefits(item.benefits)
+        setBenefits(item.benefits);
         setSelectPeriodicity(item.periodicity.id);
         if (item.belongs_to) {
           setPolitics(true);
@@ -217,7 +217,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const savePaymentCalendar = async (data) => {
-    setLoading(true)
+    setLoading(true);
     await WebApiPayroll.createPaymentCalendar(data)
       .then((response) => {
         setLoading(false);
@@ -236,10 +236,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const updatePaymentCalendar = async (data) => {
-    setLoading(true)
+    setLoading(true);
     WebApiPayroll.updatePaymentCalendar(data)
       .then((response) => {
-        setLoading(false)
+        setLoading(false);
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
@@ -268,9 +268,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setPeriod(dateString);
   };
   const formFinish = (value) => {
-    if(benefits == null) value.benefits = 'ley'
+    if (benefits == null) value.benefits = "ley";
     else value.benefits = benefits;
-    
+
     value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
@@ -278,8 +278,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = paymentSaturday;
     value.payment_sunday = paymentSunday;
-    if(!value.group_fixed_concept){
-      value.group_fixed_concept=null;
+    if (!value.group_fixed_concept) {
+      value.group_fixed_concept = null;
     }
 
     if (startDate) {
@@ -326,7 +326,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   const RenderChecks = ({ data }) => {
     return data.map((item, i) => {
-      if(item.name != 'import_issues'){
+      if (item.name != "import_issues") {
         return (
           <Col lg={6} xs={22} md={12}>
             <Form.Item
@@ -345,7 +345,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             </Form.Item>
           </Col>
         );
-
       }
     });
   };
@@ -409,7 +408,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           <Title style={{ fontSize: "20px" }}>
             {paymentCalendar && paymentCalendar.locked
               ? `Calendario: ${paymentCalendar.name}`
-              : idPaymentCalendar ? 'Editar calendario' :"Nuevo calendario"}
+              : idPaymentCalendar
+              ? "Editar calendario"
+              : "Nuevo calendario"}
           </Title>
         </Row>
         <Form
@@ -474,7 +475,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             </Col>
             <Col lg={8} xs={22}>
               <SelectTypeTax
-                  rules={[ruleRequired]}
+                rules={[ruleRequired]}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
@@ -579,7 +580,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  disabledDate={disablePeriod}
+                  // disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -647,7 +648,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  disabledDate={disablePeriod}
+                  // disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -695,7 +696,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                     label="Pertenece a "
                     rules={[ruleRequired]}
                   >
-                    <Select maxLength={100} options={BelongTo}  disabled/>
+                    <Select maxLength={100} options={BelongTo} disabled />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22}>
@@ -724,8 +725,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                  <SelectIntegrationFactors 
-                    benefit='benefits' 
+                  <SelectIntegrationFactors
+                    benefit="benefits"
                     chengeBenefit={selectBenefit}
                   />
                 </Col>
