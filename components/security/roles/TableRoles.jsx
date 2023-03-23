@@ -90,7 +90,7 @@ const TableRoles = ({
     const onChangePage = ({current}) =>{
         let filters = {...router.query, page: current};
         router.replace({
-            pathname: '/config/roles',
+            pathname: '/security/roles',
             query: filters
         })
     }
@@ -108,7 +108,7 @@ const TableRoles = ({
                     key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
-                        pathname: '/config/roles/edit',
+                        pathname: '/security/roles/edit',
                         query:{...router.query, id: item.id }
                     })}
                 >

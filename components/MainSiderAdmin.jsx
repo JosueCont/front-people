@@ -15,7 +15,8 @@ import Icon, {
   ApartmentOutlined,
   FunnelPlotOutlined,
   SolutionOutlined,
-  PieChartFilled
+  PieChartFilled,
+  SafetyCertificateOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -63,13 +64,15 @@ const MainSider = ({
     const pathRoutes = {
       dashboard: "/dashboard",
       business: "/business",
-      asign: "/config/assignedCompanies",
+      // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
-      config_roles: "/config/roles",
+      // config_roles: "/config/roles",
+      security_roles: "/security/roles",
+      security_assign: "/security/assign",
       releases: "/comunication/releases",
       events: "/comunication/events",
       reports: "/reports",
@@ -293,7 +296,7 @@ const MainSider = ({
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
         // getItem("Roles de administrador", "config_roles"),
-        getItem("Asignar empresa", "asign"),
+        // getItem("Asignar empresa", "asign"),
       ];
       let children8 = [
         // getItem("Carga masiva de personas", "bulk_upload"),
@@ -308,6 +311,13 @@ const MainSider = ({
 
 
       items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />, children4))
+
+      let subSecurity = [
+        getItem("Roles de administrador", "security_roles"),
+        getItem("Asignar empresa", "security_assign")
+      ];
+
+      items.push(getItem("Seguridad","security", <SafetyCertificateOutlined />, subSecurity))
     }
 
     return items;

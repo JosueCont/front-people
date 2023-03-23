@@ -106,7 +106,7 @@ const DetailsRoles = ({
 
     const actionBack = () =>{
         router.push({
-            pathname: '/config/roles',
+            pathname: '/security/roles',
             query: newFilters
         })
     }
@@ -120,7 +120,7 @@ const DetailsRoles = ({
 
     const actionEdit = (id) =>{
         router.push({
-            pathname: '/config/roles/edit',
+            pathname: '/security/roles/edit',
             query: {...router.query, id}
         })
     }

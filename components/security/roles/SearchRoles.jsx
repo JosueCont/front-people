@@ -26,7 +26,7 @@ const SearchRoles = () => {
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/config/roles',
+        pathname: '/security/roles',
         query: filters
     }, undefined, {shallow: true});
 
@@ -70,7 +70,7 @@ const SearchRoles = () => {
                                     </Button>
                                 </Tooltip>
                                 <Button onClick={()=> router.push({
-                                    pathname: '/config/roles/add',
+                                    pathname: '/security/roles/add',
                                     query: router.query
                                 })}>
                                     Agregar
