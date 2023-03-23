@@ -1526,7 +1526,7 @@ const homeScreen = ({ ...props }) => {
                 </Row>
 
               </div>
-              <Row span={22} gutter={[5, 10]}>
+              <Row span={24} style={{marginBottom:12}}>
                 {permissions.export_csv_person && (
                   <Col lg={6} sm={12} xl={5} xxl={3}>
                     <Button
@@ -1608,7 +1608,9 @@ const homeScreen = ({ ...props }) => {
                     <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
                   </Col>
                 }
-                <Col lg={6} sm={12} xl={5} xxl={4}>
+              </Row>
+              <Row span={24}>
+                <Col lg={6} sm={12} xl={6} xxl={4}>
                   <Button
                     //size="middle"
                     icon={<UserAddOutlined />}
@@ -1619,7 +1621,7 @@ const homeScreen = ({ ...props }) => {
 
                 </Col>
 
-                <Col lg={6} sm={12} xl={5} xxl={5}>
+                <Col lg={6} sm={12} xl={6} xxl={5}>
                   <Button
                     //size="middle"
                     icon={<DownloadOutlined />}
