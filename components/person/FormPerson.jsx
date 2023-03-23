@@ -255,13 +255,13 @@ const FormPerson = ({
                         />
                       </Space>
                     )}
-                     <Space>
+                     {/* <Space>
                         <span>¿Es administrador?</span>
                         <Switch
                           checked={isAdmin}
                           onChange={(e) => setIsAdmin(e)}
                         />
-                      </Space>
+                      </Space> */}
                   </Space>
                 </Col>
 
@@ -297,7 +297,7 @@ const FormPerson = ({
                         <Input.Password type="text" />
                       </Form.Item>
                     </Col>
-                    {isAdmin && (
+                    {/* {isAdmin && (
                       <Col lg={8} xs={24}>
                         <Form.Item
                           name='administrator_profile'
@@ -321,7 +321,10 @@ const FormPerson = ({
                           </Select>
                         </Form.Item>
                       </Col>
-                    )}
+                    )} */}
+                    <Col lg={8} xs={24}>
+                      <SelectGroup viewLabel={true} />
+                    </Col>
                     {config.intranet_enabled && (
                       <Col lg={8} xs={24}>
                         <Form.Item
@@ -334,9 +337,6 @@ const FormPerson = ({
                         </Form.Item>
                       </Col>
                     )}
-                    {/* <Col lg={8} xs={24}>
-                      <SelectGroup viewLabel={true} />
-                    </Col> */}
                     {config.applications.find(
                     (item) => item.app === "SUKHATV" && item.is_active
                     )  && (
