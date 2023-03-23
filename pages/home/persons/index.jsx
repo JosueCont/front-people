@@ -739,6 +739,19 @@ const homeScreen = ({ ...props }) => {
     setLoading(false);
   };
 
+  //// EXPORT VACATION REPORT
+  const exportVacationReport = () => {
+    setLoading(true);
+    filter(formFilter.getFieldsValue());
+    downLoadFileBlob(
+      `${getDomain(API_URL_TENANT)}/person/person/export-vacation-report/`,
+      "reporteVacaciones.xlsx",
+      "POST",
+      filters
+    );
+    setLoading(false);
+  };
+
   const importPersonFileExtend = async (e) => {
     let formData = new FormData();
     //formData.append("File", e);
@@ -1513,9 +1526,9 @@ const homeScreen = ({ ...props }) => {
                 </Row>
 
               </div>
-              <Row span={22} gutter={[5, 10]}>
+              <Row span={24} style={{marginBottom:12}}>
                 {permissions.export_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                  <Col lg={6} sm={12} xl={5} xxl={3}>
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -1527,7 +1540,7 @@ const homeScreen = ({ ...props }) => {
                 )}
 
                 {permissions.import_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                  <Col lg={6} sm={12} xl={5} xxl={3}>
                     <Upload
                       {...{
                         showUploadList: false,
@@ -1563,7 +1576,7 @@ const homeScreen = ({ ...props }) => {
                   </Col>
                 )}
 
-                <Col lg={6} sm={12} xl={5} xxl={3}>
+                <Col lg={6} sm={12} xl={5} xxl={3} style={{display:"inline-flex"}}>
                   <Button
                     icon={<DownloadOutlined />}
                     onClick={() =>
@@ -1595,7 +1608,9 @@ const homeScreen = ({ ...props }) => {
                     <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
                   </Col>
                 }
-                <Col lg={6} sm={12} xl={5} xxl={3}>
+              </Row>
+              <Row span={24}>
+                <Col lg={6} sm={12} xl={6} xxl={4}>
                   <Button
                     //size="middle"
                     icon={<UserAddOutlined />}
@@ -1606,8 +1621,15 @@ const homeScreen = ({ ...props }) => {
 
                 </Col>
 
-
-
+                <Col lg={6} sm={12} xl={6} xxl={5}>
+                  <Button
+                    //size="middle"
+                    icon={<DownloadOutlined />}
+                    onClick={() => exportVacationReport()}
+                  >
+                    Descargar reporte vacaciones
+                  </Button>
+                </Col>
               </Row>
 
               <Table

@@ -378,6 +378,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
           console.log(error);
           message.error(messageError);
         });
+      const res = await props.getGroupFixedConcept(currentNode.id)
     } catch (error) {
       console.log(error);
     }
