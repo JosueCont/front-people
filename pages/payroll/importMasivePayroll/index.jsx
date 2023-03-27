@@ -519,8 +519,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         form_data.append("payroll", JSON.stringify(xmlImport));
         form_data.append("person_id", props.user.id);
 
-        // console.log("Sending...", xmlImport);
-
         WebApiPayroll.importPayrollMasiveXml(form_data)
           .then((response) => {
             processResponseSave(response);
