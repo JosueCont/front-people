@@ -216,7 +216,6 @@ const Vacationform = ({edit = false,...props}) => {
                 label="Puesto"
                 name="job"
                 readOnly
-                rules={[ruleRequired]}
               >
                 <Input readOnly />
               </Form.Item>
@@ -291,21 +290,7 @@ const Vacationform = ({edit = false,...props}) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={20} offset={4}>
-              <Title key="dats_gnrl" level={4} style={{ marginTop: 10 }}>
-                Información
-              </Title>
-            </Col>
-            <Col sm={24} md={12} lg={12}>
-              <Form.Item label="Fecha de ingreso" name="dateOfAdmission">
-                <Input readOnly />
-              </Form.Item>
-            </Col>
-            <Col sm={24} md={12} lg={12}>
-              <Form.Item label="Antigüedad" name="antiquity">
-                <Input readOnly />
-              </Form.Item>
-            </Col>
+
             <Col span={24} style={{ textAlign: "right" }}>
               <Button
                 key="cancel"

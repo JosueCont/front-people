@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
-import MainIndexConfig from '../../../components/config/MainConfig';
-import SearchRoles from '../../../components/config/roles/SearchRoles';
-import TableRoles from '../../../components/config/roles/TableRoles';
+import MainIndexSecurity from '../../../components/security/MainIndexSecurity';
+import SearchRoles from '../../../components/security/roles/SearchRoles';
+import TableRoles from '../../../components/security/roles/TableRoles';
 import { getAdminRoles } from '../../../redux/catalogCompany';
 import { getFiltersJB } from '../../../utils/functions';
 
@@ -23,13 +23,13 @@ const index = ({
     },[currentNode, router.query])
 
     return (
-        <MainIndexConfig
-            pageKey='config_roles'
+        <MainIndexSecurity
+            pageKey='security_roles'
             extraBread={[{name: 'Roles de administrador'}]}
         >
             <SearchRoles/>
             <TableRoles/>
-        </MainIndexConfig>
+        </MainIndexSecurity>
     )
 }
 

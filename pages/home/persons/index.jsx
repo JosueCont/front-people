@@ -31,8 +31,12 @@ import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
+import { getAdminRolesOptions } from "../../../redux/catalogCompany";
 
-const homeScreen = ({ ...props }) => {
+const homeScreen = ({
+  getAdminRolesOptions,
+  ...props
+}) => {
   const route = useRouter();
 
   const [person, setPerson] = useState([]);
@@ -94,6 +98,11 @@ const homeScreen = ({ ...props }) => {
       permissions;
     }, 5000);
   }, [props.permissions]);
+
+  useEffect(()=>{
+    if(!props.currentNode) return;
+    getAdminRolesOptions(props.currentNode?.id)
+  },[props.currentNode])
 
   // useEffect(() => {
   //   if (props.currentNode) {
@@ -733,6 +742,19 @@ const homeScreen = ({ ...props }) => {
     downLoadFileBlob(
       `${getDomain(API_URL_TENANT)}/person/person/export_person/`,
       "Personas.xlsx",
+      "POST",
+      filters
+    );
+    setLoading(false);
+  };
+
+  //// EXPORT VACATION REPORT
+  const exportVacationReport = () => {
+    setLoading(true);
+    filter(formFilter.getFieldsValue());
+    downLoadFileBlob(
+      `${getDomain(API_URL_TENANT)}/person/person/export-vacation-report/`,
+      "reporteVacaciones.xlsx",
       "POST",
       filters
     );
@@ -1513,9 +1535,9 @@ const homeScreen = ({ ...props }) => {
                 </Row>
 
               </div>
-              <Row span={22} gutter={[5, 10]}>
+              <Row span={24} style={{marginBottom:12}}>
                 {permissions.export_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                  <Col lg={6} sm={12} xl={5} xxl={3}>
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -1527,7 +1549,7 @@ const homeScreen = ({ ...props }) => {
                 )}
 
                 {permissions.import_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3} >
+                  <Col lg={6} sm={12} xl={5} xxl={3}>
                     <Upload
                       {...{
                         showUploadList: false,
@@ -1563,7 +1585,7 @@ const homeScreen = ({ ...props }) => {
                   </Col>
                 )}
 
-                <Col lg={6} sm={12} xl={5} xxl={3}>
+                <Col lg={6} sm={12} xl={5} xxl={3} style={{display:"inline-flex"}}>
                   <Button
                     icon={<DownloadOutlined />}
                     onClick={() =>
@@ -1595,7 +1617,9 @@ const homeScreen = ({ ...props }) => {
                     <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
                   </Col>
                 }
-                <Col lg={6} sm={12} xl={5} xxl={3}>
+              </Row>
+              <Row span={24}>
+                <Col lg={6} sm={12} xl={6} xxl={4}>
                   <Button
                     //size="middle"
                     icon={<UserAddOutlined />}
@@ -1606,8 +1630,15 @@ const homeScreen = ({ ...props }) => {
 
                 </Col>
 
-
-
+                <Col lg={6} sm={12} xl={6} xxl={5}>
+                  <Button
+                    //size="middle"
+                    icon={<DownloadOutlined />}
+                    onClick={() => exportVacationReport()}
+                  >
+                    Descargar reporte vacaciones
+                  </Button>
+                </Col>
               </Row>
 
               <Table
@@ -1765,4 +1796,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setDataUpload })(withAuthSync(homeScreen));
+export default connect(mapState, { setDataUpload, getAdminRolesOptions })(withAuthSync(homeScreen));

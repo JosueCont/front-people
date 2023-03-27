@@ -27,7 +27,7 @@ import { messageError, messageSaveSuccess } from "../../../utils/constant";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
-import MainIndexConfig from "../../../components/config/MainConfig";
+import MainIndexSecurity from "../../../components/security/MainIndexSecurity";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -152,7 +152,7 @@ const SelectCompany = ({ ...props }) => {
   };
 
   return (
-    <MainIndexConfig pageKey="asign" extraBread={[{name: 'Asignar empresa'}]}>
+    <MainIndexSecurity pageKey="security_assign" extraBread={[{name: 'Asignar empresa'}]}>
       <Card>
         <Spin tip="Cargando..." spinning={loading}>
           <Row justify={"center"}>
@@ -166,12 +166,12 @@ const SelectCompany = ({ ...props }) => {
                   <SelectCollaborator showSearch={true} onChange={setCollaborator} />
                 </Col>
                 <Col xs={23} md={6} lg={6} xl={6} style={{ textAlign: "end" }}>
-                  <Button
-                    onClick={() => route.push("/home/persons")}
+                  {/* <Button
+                    onClick={() => route.push("/security/assign")}
                     key="cancel"
                   >
                     Regresar
-                  </Button>
+                  </Button> */}
                   <Button
                     key="save"
                     type="primary"
@@ -197,7 +197,7 @@ const SelectCompany = ({ ...props }) => {
           </Row>
         </Spin>
       </Card>
-    </MainIndexConfig>
+    </MainIndexSecurity>
   );
 };
 

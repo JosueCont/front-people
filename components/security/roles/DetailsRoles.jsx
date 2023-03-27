@@ -106,7 +106,7 @@ const DetailsRoles = ({
 
     const actionBack = () =>{
         router.push({
-            pathname: '/config/roles',
+            pathname: '/security/roles',
             query: newFilters
         })
     }
@@ -120,7 +120,7 @@ const DetailsRoles = ({
 
     const actionEdit = (id) =>{
         router.push({
-            pathname: '/config/roles/edit',
+            pathname: '/security/roles/edit',
             query: {...router.query, id}
         })
     }
@@ -188,11 +188,7 @@ const DetailsRoles = ({
                         </Form>
                     </Col>
                     <Col span={24}>
-                        <Skeleton
-                            active
-                            paragraph={{rows: 7}}
-                            loading={load_modules_permissions}
-                        >
+                        <Skeleton active loading={load_modules_permissions}>
                             {list_modules_permissions?.length > 0 ? (
                                 <div className='tabs-vacancies mode1'>
                                     <Tabs type='card'>
@@ -203,7 +199,7 @@ const DetailsRoles = ({
                                                 key={idx+1}
                                             >
                                                 <PermissionsFields
-                                                    permissions={item.perms}
+                                                    module={item}
                                                     checkedPermissions={checkedPermissions}
                                                     setCheckedPermissions={setCheckedPermissions}
                                                 />

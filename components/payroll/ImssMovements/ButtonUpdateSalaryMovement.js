@@ -48,7 +48,12 @@ const ButtonUpdateSalaryMovement = ({
     console.log("payroll person", payrollPerson);
     try {
       const res = await WebApiPayroll.setSalaryModification(req);
-      message.success("Actualizado correctamente");
+      if (generateMovement)
+        message.success(
+          "Actualizado correctamente, revise la sección de Movimientos IMSS"
+        );
+      else message.success("Actualizado correctamente");
+
       setShowModal(false);
       onRefresh();
     } catch (e) {

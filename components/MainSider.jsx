@@ -12,6 +12,7 @@ import Icon, {
   BankOutlined,
   SettingOutlined,
   QuestionCircleOutlined,
+  SafetyCertificateOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
@@ -52,13 +53,15 @@ const MainSider = ({
     const pathRoutes = {
       dashboard: "/dashboard",
       business: "/business",
-      asign: "/config/assignedCompanies",
+      // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
-      config_roles: "/config/roles",
+      // config_roles: "/config/roles",
+      security_roles: "/security/roles",
+      security_assign: "/security/assign",
       releases: "/comunication/releases",
       events: "/comunication/events",
       reports: "/reports",
@@ -209,8 +212,8 @@ const MainSider = ({
       children = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
-        getItem("Roles de administrador", "config_roles"),
-        getItem("Asignar empresa", "asign"),
+        // getItem("Roles de administrador", "config_roles"),
+        // getItem("Asignar empresa", "asign"),
       ];
       items.push(
           getItem("Configuración", "config", <SettingOutlined />, children)
@@ -315,6 +318,13 @@ const MainSider = ({
           );
         }
       }
+
+      let subSecurity = [
+        getItem("Roles de administrador", "security_roles"),
+        getItem("Asignar empresa", "security_assign")
+      ];
+
+      items.push(getItem("Seguridad","security", <SafetyCertificateOutlined />, subSecurity))
     }
 
     return items;
