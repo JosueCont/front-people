@@ -18,7 +18,9 @@ const initialData = {
   general_config: null,
   applications: {},
   persons_company: [],
-  load_persons: false
+  load_persons: false,
+  info_current_rol: {},
+  load_current_rol: false
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -33,6 +35,7 @@ const USER = "USER";
 const PERMISSIONS = "PERMISSIONS";
 const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
+const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -63,6 +66,11 @@ const webReducer = (state = initialData, action) => {
         ...state,
         persons_company: action.payload,
         load_persons: action.fetching
+      }
+    case GET_CURRENT_ROL:
+      return {...state,
+        info_current_rol: action.payload,
+        load_current_rol: action.fetching
       }
     default:
       return state;
@@ -164,9 +172,10 @@ export const setUser = () => async (dispatch, getState) => {
     let jwt = JSON.parse(jsCookie.get("token"));
     let response = await WebApiPeople.personForKhonnectId({ id: jwt.user_id });
     dispatch({ type: USER, payload: response.data });
-    dispatch(
-      setUserPermissions(response.data.jwt_data.perms, response.data.is_admin)
-    );
+    dispatch(setUserPermissions(response.data.jwt_data.perms, response.data.is_admin));
+    let have_rol = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
+    if(!(response.data?.is_admin && have_rol)) return;
+    dispatch(getCurrentRol(response?.data?.administrator_profile?.id))
     return true;
   } catch (error) {
     return false;
@@ -207,3 +216,15 @@ export const getPersonsCompany = (data) => async (dispatch, getState) => {
     console.log(error);
   }
 };
+
+export const getCurrentRol = (id_rol) => async (dispatch) =>{
+  const typeFunction = { type: GET_CURRENT_ROL, payload: {}, fetching: false};
+  dispatch({...typeFunction, fetching: true})
+  try {
+    let response = await WebApiPeople.getInfoAdminRole(id_rol);
+    dispatch({...typeFunction, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}
