@@ -137,16 +137,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             >
               <Text>Editar perfil</Text>
             </p>
-
-            { verifyMenuNewForTenant() && verify_view_user() &&
-              <p
-              className="text-menu"
-              onClick={() => router.push("/user")}
-
-            >
-              <Text>Cambiar a la vista de Usuario</Text>
-            </p>}
-
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p
                 className="text-menu"
@@ -157,12 +147,22 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             )} */}
 
             {pathname !== "/select-company" && (
-              <p
-                className="text-menu"
-                onClick={() => router.push("/select-company")}
-              >
-                <Text>Cambiar de empresa</Text>
-              </p>
+              <>
+                {verifyMenuNewForTenant() && verify_view_user() &&
+                  <p
+                  className="text-menu"
+                  onClick={() => router.push("/user")}
+    
+                >
+                  <Text>Cambiar a la vista de Usuario</Text>
+                </p>}
+                <p
+                  className="text-menu"
+                  onClick={() => router.push("/select-company")}
+                >
+                  <Text>Cambiar de empresa</Text>
+                </p>
+              </>
             )}
 
             {props.config &&
