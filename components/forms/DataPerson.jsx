@@ -132,7 +132,7 @@ const DataPerson = ({
       patronal_registration: null,
       immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
       is_admin: person.is_admin,
-      // rol: person.rol?.id
+      administrator_profile: person?.administrator_profile?.id ?? null
     });
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
@@ -212,7 +212,8 @@ const DataPerson = ({
     value.id = person.id;
     value.is_active = isActive;
     if (value.node) delete value["node"];
-    // if (!value.is_admin) value.rol == null;
+    //La validación se realiza desde back
+    // if (!value.is_admin) value.administrator_profile = null;
     if (value.department) delete value["department"];
     value.groups && value.groups
       ? (value.groups = [value.groups])
@@ -697,7 +698,7 @@ const DataPerson = ({
               {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
               <Form.Item
                   name="is_admin"
-                  label="Es admin"
+                  label="¿Es administrador?"
                 >
                   <Select
                     placeholder='Seleccionar una opción'
@@ -708,9 +709,13 @@ const DataPerson = ({
                   />
                 </Form.Item>
               </Col>}
-              {/* {isAdmin && (
+              {isAdmin && (
                 <Col lg={8} xs={24} md={12}>
-                  <Form.Item name='rol' label='Rol'>
+                  <Form.Item
+                    name='administrator_profile'
+                    label='Rol'
+                    rules={[ruleRequired]}
+                  >
                     <Select
                       allowClear
                       showSearch
@@ -728,7 +733,7 @@ const DataPerson = ({
                     </Select>
                   </Form.Item>
                 </Col>
-              )} */}
+              )}
             </Row>
             <Row gutter={20}>
               <hr />

@@ -1,5 +1,5 @@
 import React from 'react';
-import AddOrEditRoles from '../../../components/config/roles/AddOrEditRoles';
+import AddOrEditRoles from '../../../components/security/roles/AddOrEditRoles';
 
 const edit = () => {
     return (

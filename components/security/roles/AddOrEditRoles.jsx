@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import MainIndexConfig from '../MainConfig';
+import MainIndexSecurity from '../MainIndexSecurity';
 import DetailsRoles from './DetailsRoles';
 import { connect } from 'react-redux';
 import { getModulesPermissions } from '../../../redux/catalogCompany';
@@ -28,13 +28,13 @@ const AddOrEditRoles = ({
     },[])
 
     const ExtraBread = [
-        {name: 'Roles de administrador', URL: '/config/roles'},
+        {name: 'Roles de administrador', URL: '/security/roles'},
         {name: action == 'add' ? 'Nuevo' : 'Expediente'}
     ]
 
     return (
-        <MainIndexConfig
-            pageKey='config_roles'
+        <MainIndexSecurity
+            pageKey='security_roles'
             extraBread={ExtraBread}
             newFilters={newFilters}
         >
@@ -42,7 +42,7 @@ const AddOrEditRoles = ({
                 action={action}
                 newFilters={newFilters}
             />
-        </MainIndexConfig>
+        </MainIndexSecurity>
     )
 }
 
