@@ -14,6 +14,7 @@ import {
   Statistic,
   Select,
   Space,
+  Switch,
 } from "antd";
 import {
   DollarCircleOutlined,
@@ -40,6 +41,7 @@ import { getTypeTax } from "../../../redux/fiscalDuck";
 import _ from "lodash";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import { orange } from "@material-ui/core/colors";
+import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -517,6 +519,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         form_data.append("payroll", JSON.stringify(xmlImport));
         form_data.append("person_id", props.user.id);
 
+        // console.log("Sending...", xmlImport);
+
         WebApiPayroll.importPayrollMasiveXml(form_data)
           .then((response) => {
             processResponseSave(response);
@@ -579,6 +583,20 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           }}
         />
       </Form.Item>
+    );
+  };
+
+  const UseInternalConcept = ({ use = false }) => {
+    return (
+      <Switch
+        defaultChecked={use}
+        checkedChildren="Si"
+        unCheckedChildren="No"
+        onChange={(value) => {
+          xmlImport.companies[companySelect].company.use_internal_concepts =
+            value;
+        }}
+      />
     );
   };
 
@@ -770,6 +788,17 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                 </Col>
                               </>
                             )}
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="Usar conceptos del sistema">
+                                <UseInternalConcept
+                                  use={
+                                    xmlImport.companies[companySelect]
+                                      .use_internal_concepts
+                                  }
+                                  name={"internal_concept"}
+                                />
+                              </Form.Item>
+                            </Col>
                           </Row>
                         </Form>
                       </Col>
