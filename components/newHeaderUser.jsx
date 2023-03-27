@@ -66,8 +66,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
           setPerson(response.data);
-          let have_role = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
-          if ((response.data?.is_admin && have_role)|| localStorage.getItem('is_admin')){
+          // let have_role = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
+          if (response.data?.is_admin || localStorage.getItem('is_admin')){
             setIsAdmin(true)
           }
           // setIsAdmin(localStorage.getItem('is_admin'));
