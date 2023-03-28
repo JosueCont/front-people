@@ -273,7 +273,7 @@ const businessForm = ({ currentNode, ...props }) => {
                 props.permissions.edit &&
                 props.config.nomina_enabled && (
                   <Col className="gutter-row" span={6}>
-                    <Link href={`/business/${item.id}`}>
+                    <Link href={`/business/companies/${item.id}`}>
                       <Tooltip title="Configuración">
                         <SettingOutlined />
                       </Tooltip>

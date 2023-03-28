@@ -235,7 +235,7 @@ const CfdiVaucher = ({
               )
             )}
 
-            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"} key={"#3d78b9"}>
+            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
               <FilePdfTwoTone
                   onClick={() => downloadReceipt(item)}
                   style={{ fontSize: "25px" }}

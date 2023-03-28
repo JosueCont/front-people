@@ -1,6 +1,6 @@
 import React from "react";
-import BusinessForm from "../../components/business/BusinessForm";
-import { withAuthSync } from "../../libs/auth";
+import BusinessForm from "../../../components/business/BusinessForm";
+import { withAuthSync } from "../../../libs/auth";
 
 const Business = () => {
   return <BusinessForm />;
