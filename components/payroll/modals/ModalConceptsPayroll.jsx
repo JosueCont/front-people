@@ -296,6 +296,7 @@ const ModalConceptsPayroll = ({
               return;
             }
           });
+
         const obj = {
           person_id: person_id,
           perceptions: perceptions,
@@ -316,11 +317,20 @@ const ModalConceptsPayroll = ({
         const obj = {
           person_id: item.person.id,
           perceptions: item.perceptions,
-          deductions: item.deductions?.filter(
-            (item) => item.type != "001" && item.type != "002"
-          ),
-          other_payments: item.otherPayments,
+          other_payments: item.otherPayments ? item.otherPayments : [],
         };
+        // cuando la nomina está cerrada, devolvemos todas las deducciones
+        if (
+          item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open == false
+        ) {
+          obj.deductions = item.deductions;
+        } else {
+          obj.deductions = item.deductions?.filter(
+            (item) => item.type != "001" && item.type != "002"
+          );
+        }
+
         if (extraOrdinary) {
           if (item.three_months_compensantion)
             obj.twenty_day_compensantion = item.three_months_compensantion;
@@ -553,13 +563,12 @@ const ModalConceptsPayroll = ({
                   />
 
                   <Alert
-                      message="Importante"
-                      description="Elige una fecha dentro del periodo seleccionado."
-                      type="warning"
-                      showIcon
-                      style={{ marginBottom: 10 }}
+                    message="Importante"
+                    description="Elige una fecha dentro del periodo seleccionado."
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: 10 }}
                   />
-
                 </Col>
                 <Col span={8}>
                   <Select
