@@ -31,8 +31,12 @@ import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
+import { getAdminRolesOptions } from "../../../redux/catalogCompany";
 
-const homeScreen = ({ ...props }) => {
+const homeScreen = ({
+  getAdminRolesOptions,
+  ...props
+}) => {
   const route = useRouter();
 
   const [person, setPerson] = useState([]);
@@ -94,6 +98,11 @@ const homeScreen = ({ ...props }) => {
       permissions;
     }, 5000);
   }, [props.permissions]);
+
+  useEffect(()=>{
+    if(!props.currentNode) return;
+    getAdminRolesOptions(props.currentNode?.id)
+  },[props.currentNode])
 
   // useEffect(() => {
   //   if (props.currentNode) {
@@ -1787,4 +1796,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setDataUpload })(withAuthSync(homeScreen));
+export default connect(mapState, { setDataUpload, getAdminRolesOptions })(withAuthSync(homeScreen));

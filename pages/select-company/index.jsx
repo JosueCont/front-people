@@ -98,6 +98,7 @@ const SelectCompany = ({ ...props }) => {
           .catch((error) => {
             return;
           });
+        // let have_role = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
         setAdmin(response.data.is_admin);
         sessionStorage.setItem("tok", response.data.id);
         if (response.data.is_admin) {
@@ -115,7 +116,7 @@ const SelectCompany = ({ ...props }) => {
             } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              setCompanySelect(response.data.nodes[0], response.data.is_admin);
+              setCompanySelect(response.data.nodes[0], response.data);
             }
         }
         setLoading(false);
@@ -152,7 +153,8 @@ const SelectCompany = ({ ...props }) => {
       });
   };
 
-  const setCompanySelect = async (item, is_admin_people) => {
+  const setCompanySelect = async (item, info_user) => {
+    // let have_role = Object.keys(info_user?.administrator_profile ?? {}).length > 0;
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     localStorage.setItem("data", item.id);
@@ -163,17 +165,10 @@ const SelectCompany = ({ ...props }) => {
         if (router.query.company) {
           if (router.query.type) {
             setIsLoadCompany(false);
-
-            switch (router.query.type) {
-              case "admin":
-                localStorage.setItem("is_admin", true);
-                useRouter.push("/dashboard");
-                break;
-              case "user":
-                localStorage.setItem("is_admin", false);
-                useRouter.push("/user");
-                break;
-            }
+            let is_admin = router.query?.type == "admin";
+            let url = is_admin ? "/dashboard" : "/user";
+            localStorage.setItem("is_admin", is_admin);
+            useRouter.push(url)
           } else {
             setIsLoadCompany(false);
             switch (router.query.app) {
@@ -189,7 +184,7 @@ const SelectCompany = ({ ...props }) => {
             }
           }
         } else {
-          if (is_admin_people || admin) {
+          if (info_user?.is_admin || admin) {
             useRouter.push("/dashboard");
           } else {
             useRouter.push("/user");
