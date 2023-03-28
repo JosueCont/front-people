@@ -366,6 +366,12 @@ const ImssInformationNode = ({
       if (syncData?.data?.message) message.success(syncData?.data?.message);
     } catch (e) {
       console.log(e);
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error.response?.data?.message) {
+        msg = error.response?.data?.message;
+      }
+      message.error(msg);
+
     } finally {
       setLoading(false);
     }
@@ -438,9 +444,10 @@ const ImssInformationNode = ({
   useEffect(() => {
     if (bimester && year) {
       const date = new Date();
-      let month = date.getMonth();
+      let month = date.getMonth()+1;
       let currYear = date.getFullYear();
-      if (year.year() <= currYear && parseInt(bimester) <= getBimester(month))
+      let bimesterCalculated =getBimester(month);
+      if (year.year() <= currYear && parseInt(bimester) <= bimesterCalculated)
         setDisabledSave(false);
       else if (year.year() < currYear) setDisabledSave(false);
       else setDisabledSave(true);
