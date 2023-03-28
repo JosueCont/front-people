@@ -30,7 +30,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
 
   const colVacations = [
     {
-      title: "periodo",
+      title: "Periodo",
       dataIndex: "period",
       key: "period",
     },

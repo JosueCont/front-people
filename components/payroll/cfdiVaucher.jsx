@@ -88,12 +88,11 @@ const CfdiVaucher = ({
   }
 
   const downloadReceipt = async (data) => {
-    console.log(data)
     let req = {
-      person_id: data?.payroll_person?.person?.id,
-      payment_period_id: data?.payment_period?.id,
-      receipt_type: getVoucherTypeStr(data.movement_type)
-
+      cfdi_id: data?.id
+      // person_id: data?.payroll_person?.person?.id,
+      // payment_period_id: data?.payment_period?.id,
+      // receipt_type: getVoucherTypeStr(data.movement_type)
     }
 
     try {
