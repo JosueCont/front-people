@@ -42,7 +42,7 @@ const ButtonWizardLight=({data=null})=>{
     const steps = [
         {
             title: '1. Información fiscal de empresa',
-            description: <a style={styles.links} href={'/business'} target={'_blank'}> Ir a configurar <ArrowRightOutlined /></a>,
+            description: <a style={styles.links} href={'/business/companies'} target={'_blank'}> Ir a configurar <ArrowRightOutlined /></a>,
         },
         {
             title: '2. Información de Registro Patronal',

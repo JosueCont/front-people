@@ -154,7 +154,7 @@ const businessForm = ({ currentNode, ...props }) => {
     WebApiPeople.createNode(data)
       .then(function (response) {
         if (response.status === 200) {
-          Router.push("/business");
+          Router.push("/business/companies");
         }
         setIsModalVisible(false);
         setLoading(false);

@@ -41,7 +41,7 @@ const BankAccountsDetails = () => {
   const [permissions, setPermissions] = useState({});
 
   const onCancel = () => {
-    route.push("/incapacity");
+    route.push("/comunication/requests/incapacity");
   };
 
   const getDetails = async () => {
