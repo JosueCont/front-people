@@ -54,7 +54,7 @@ const CardItem = styled(Card)`
         display: flex;
         align-items: center;
         padding: 8px 0px;
-        & p{
+        & p {
             margin-bottom: 0px;
             color: rgba(0,0,0,.85);
             font-weight: 600;
@@ -68,6 +68,7 @@ const CardItem = styled(Card)`
     }
     & .ant-card-body{
         display: flex;
+        justify-content: ${({jc}) => jc ? jc : 'flex-start'};
         align-items: ${({ai}) => ai ? ai : 'center'};
         flex-direction: ${({fd}) => fd ? fd : 'row'};
         padding: ${({pd}) => pd ? pd : '8px 24px'};
@@ -78,10 +79,6 @@ const CardItem = styled(Card)`
         margin: auto;
         font-size: 2rem;
         color: rgba(0,0,0,0.3)
-    }
-    & canvas{
-        height: 80%!important;
-        width: auto!important;
     }
 `;
 
@@ -134,10 +131,13 @@ const Dashboard = () => {
 
     const WidgetTotalPeople=()=>{
         return (
-            <CardItem title={<>
-                <img src='/images/people.png'/>
-                <p>Total de personas</p>
-            </>}>
+            <CardItem
+                title={<>
+                    <img src='/images/people.png'/>
+                    <p>Total de personas</p>
+                </>}
+                extra={<a onClick={()=> router.push(`/home/persons/`)}>Ver</a>}
+            >
                 { totalPerson
                     ? <Title
                         style={{cursor:'pointer', marginBottom: 0}}
@@ -166,7 +166,7 @@ const Dashboard = () => {
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
-                                            avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
+                                            avatar={<Avatar size='large' src={item?.photo_thumbnail ? item?.photo_thumbnail : '/images/profile-sq.jpg'}/>}
                                             title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
                                             description={`Aniversario: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
                                         />
@@ -196,7 +196,7 @@ const Dashboard = () => {
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
-                                            avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size='large'/> : null}
+                                            avatar={<Avatar size='large' src={item?.photo_thumbnail ? item?.photo_thumbnail : '/images/profile-sq.jpg'}/>}
                                             title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
                                             description={`Fecha de cumpleaños: ${moment(item.birth_date).format('DD/MM/YYYY')}`}
                                         />
@@ -231,14 +231,14 @@ const Dashboard = () => {
 
         return (
             <CardInfo>
-                <CardItem fd='column' hg='100%' title={<>
+                <CardItem jc='center' fd='column' hg='100%' title={<>
                     <img src='/images/people.png'/>
                     <p>Generaciones</p>
                 </>}>
-                    {peopleByGenenation ? <>
+                    {peopleByGenenation ? <div className="card-chart">
                             <ChartDoughnut data={peopleByGenenation} />
                             <p style={{marginBottom: 0, marginTop: 24}}>Predominante: {maximunGeneration}</p>
-                        </>  : <ReloadOutlined className="card-load"  spin />
+                        </div>  : <ReloadOutlined className="card-load"  spin />
                     }
                 </CardItem>
             </CardInfo>
