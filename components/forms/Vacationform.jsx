@@ -273,7 +273,10 @@ const Vacationform = ({edit = false,...props}) => {
                 label="Jefe inmediato"
                 name="immediate_supervisor"
                 rules={[
-                  ruleRequired,
+                 {
+                  required: true,
+                  message: "Este campo es requerido, esta información la puedes asignar desde el expediente de la persona",
+                }
                   // validateImmediateSupervisor(props?.details?.collaborator?.id)
                 ]}>
                 <Select

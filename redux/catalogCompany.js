@@ -285,6 +285,7 @@ export const getJobs = (idCompany) => async (dispatch, getState) => {
 
 export const getPersonType = (idCompany) => async (dispatch, getState) => {
   try {
+    if (!idCompany) idCompany = userCompanyId();
     let response = await WebApiPeople.getPersontype(idCompany);
     dispatch({
       type: PERSON_TYPE,
