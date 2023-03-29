@@ -8,7 +8,8 @@ import {
     Button,
     List,
     Statistic,
-    Avatar
+    Avatar,
+    Empty
 } from "antd";
 import { useSelector } from "react-redux";
 import {
@@ -50,13 +51,18 @@ const CardInfo = styled(ContentVertical)`
 
 const CardItem = styled(Card)`
     height: ${({hg}) => hg ? hg : '50%'};
+    & .ant-card-extra{
+        padding: 0px;
+        font-size: 16px;
+        font-weight: 600;
+    }
     & .ant-card-head-title{
         display: flex;
         align-items: center;
         padding: 8px 0px;
         & p {
             margin-bottom: 0px;
-            color: rgba(0,0,0,.85);
+            color: rgba(0,0,0,0.85);
             font-weight: 600;
             font-size: 18px;
         }
@@ -153,16 +159,20 @@ const Dashboard = () => {
     const WidgetAniversaryPeople=()=>{
         return (
             <CardInfo>
-                <CardItem hg='100%' title={<>
-                    <img src='/images/newyearparty.png'/>
-                    <p>Aniversarios</p>
-                </>}>
+                <CardItem hg='100%'
+                    title={<>
+                        <img src='/images/newyearparty.png'/>
+                        <p>Aniversarios</p>
+                    </>}
+                    extra={<>{aniversaryPeople?.length ?? 0}</>}
+                >
                     {aniversaryPeople ?
                         <CardScroll className="scroll-bar">
                             <List
                                 size="small"
                                 itemLayout="horizontal"
                                 dataSource={aniversaryPeople}
+                                locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>}}
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
@@ -183,16 +193,20 @@ const Dashboard = () => {
     const WidgetBirthDayPeople=()=>{
         return (
            <CardInfo>
-                <CardItem hg='100%' pd='16px 0px' title={<>
-                    <img src='/images/ballon.png'/>
-                    <p>Cumpleaños del mes</p>
-                </>}>
+                <CardItem hg='100%' pd='16px 0px'
+                    title={<>
+                        <img src='/images/ballon.png'/>
+                        <p>Cumpleaños del mes</p>
+                    </>}
+                    extra={<span className="txt-extra">{birthDayPeople?.length ?? 0}</span>}
+                >
                     {birthDayPeople ?
                         <CardScroll className="scroll-bar">
                             <List
                                 size="small"
                                 itemLayout="horizontal"
                                 dataSource={birthDayPeople}
+                                locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>}}
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
