@@ -359,7 +359,7 @@ const Dashboard = () => {
                         <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>
                     </div>
                     <ContentCards>
-                        <CardInfo gap={24} bg='transparent'>
+                        <CardInfo gap={24}>
                             <WidgetTotalPeople/>
                             <WidgetPeopleByGender/>
                         </CardInfo>
