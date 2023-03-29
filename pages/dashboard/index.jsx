@@ -159,7 +159,7 @@ const Dashboard = () => {
     const WidgetAniversaryPeople=()=>{
         return (
             <CardInfo>
-                <CardItem hg='100%'
+                <CardItem hg='100%' pd='16px 0px'
                     title={<>
                         <img src='/images/newyearparty.png'/>
                         <p>Aniversarios</p>
@@ -198,7 +198,7 @@ const Dashboard = () => {
                         <img src='/images/ballon.png'/>
                         <p>Cumpleaños del mes</p>
                     </>}
-                    extra={<span className="txt-extra">{birthDayPeople?.length ?? 0}</span>}
+                    extra={<>{birthDayPeople?.length ?? 0}</>}
                 >
                     {birthDayPeople ?
                         <CardScroll className="scroll-bar">
