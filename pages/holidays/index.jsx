@@ -17,6 +17,8 @@ import {
   PlusOutlined,
   EyeOutlined,
   SyncOutlined,
+  DesktopOutlined,
+  MobileOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import SelectDepartment from "../../components/selects/SelectDepartment";
@@ -356,6 +358,15 @@ const Holidays = (props) => {
                     }
                   />
                   <Column
+                      title="Solicitado desde"
+                      key="created_from"
+                      render={(status, record) =>
+                          record.created_from === 2
+                              ? <span><DesktopOutlined style={{color:'blue', fontWeight:'bolder',fontSize:20}} /> Web</span>
+                              : <span><MobileOutlined style={{color:'orange', fontWeight:'bolder',fontSize:20}} /> App concierge</span>
+                      }
+                  />
+                  <Column
                     title="Acciones"
                     key="actions"
                     render={(text, record) => (
@@ -365,7 +376,7 @@ const Holidays = (props) => {
                           key={"goDetails_" + record.id}
                           onClick={() => GotoDetails(record)}
                         />
-                        {permissions.edit && record.status == 1 ? (
+                        {permissions.edit && record.status === 1 && record.created_from === 2 ? (
                           <EditOutlined
                             className="icon_actions"
                             key={"edit_" + record.id}
