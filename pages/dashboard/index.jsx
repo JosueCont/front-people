@@ -89,7 +89,6 @@ const CardItem = styled(Card)`
 `;
 
 const CardScroll = styled.div`
-    height: 100%;
     max-height: 100%;
     overflow-y: auto;
     width: 100%;
@@ -134,6 +133,10 @@ const Dashboard = () => {
         }
     },[])
 
+    const Void = (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>
+    )
+
 
     const WidgetTotalPeople=()=>{
         return (
@@ -159,7 +162,8 @@ const Dashboard = () => {
     const WidgetAniversaryPeople=()=>{
         return (
             <CardInfo>
-                <CardItem hg='100%' pd='16px 0px'
+                <CardItem jc='center' hg='100%' pd='16px 0px'
+                    ai={aniversaryPeople?.length > 0 ? 'flex-start' : 'center'}
                     title={<>
                         <img src='/images/newyearparty.png'/>
                         <p>Aniversarios</p>
@@ -172,7 +176,7 @@ const Dashboard = () => {
                                 size="small"
                                 itemLayout="horizontal"
                                 dataSource={aniversaryPeople}
-                                locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>}}
+                                locale={{emptyText: Void}}
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
@@ -193,7 +197,8 @@ const Dashboard = () => {
     const WidgetBirthDayPeople=()=>{
         return (
            <CardInfo>
-                <CardItem hg='100%' pd='16px 0px'
+                <CardItem jc='center' hg='100%' pd='16px 0px'
+                    ai={birthDayPeople?.length > 0 ? 'flex-start' : 'center'}
                     title={<>
                         <img src='/images/ballon.png'/>
                         <p>Cumpleaños del mes</p>
@@ -205,8 +210,8 @@ const Dashboard = () => {
                             <List
                                 size="small"
                                 itemLayout="horizontal"
-                                dataSource={birthDayPeople}
-                                locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>}}
+                                dataSource={birthDayPeople.slice(1,2)}
+                                locale={{emptyText: Void}}
                                 renderItem={(item) => (
                                     <List.Item>
                                         <List.Item.Meta
@@ -245,13 +250,19 @@ const Dashboard = () => {
 
         return (
             <CardInfo>
-                <CardItem jc='center' fd='column' hg='100%' title={<>
+                <CardItem jc='center' hg='100%' title={<>
                     <img src='/images/people.png'/>
                     <p>Generaciones</p>
                 </>}>
                     {peopleByGenenation ? <div className="card-chart">
-                            <ChartDoughnut data={peopleByGenenation} />
-                            <p style={{marginBottom: 0, marginTop: 24}}>Predominante: {maximunGeneration}</p>
+                           {peopleByGenenation.data?.some(item => item > 0) ? (
+                                <>
+                                    <ChartDoughnut data={peopleByGenenation} />
+                                    <p style={{marginBottom: 0, marginTop: 24, textAlign: 'center'}}>
+                                        Predominante: {maximunGeneration}
+                                    </p>
+                                </>
+                           ): Void }
                         </div>  : <ReloadOutlined className="card-load"  spin />
                     }
                 </CardItem>
