@@ -62,7 +62,6 @@ const ProfileForm = () => {
         try {
             setLoading(true)
             let response = await WebApiPeople.getPerson(id)
-            console.log("🚀 ~ file: ProfileForm.jsx:65 ~ getInfoUser ~ response:", response)
             setInfoUser(response.data)
             setImgUser(response.data?.photo)
             setLoading(false)
