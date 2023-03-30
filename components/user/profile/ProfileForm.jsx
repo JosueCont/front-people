@@ -17,6 +17,7 @@ import {
     ArrowLeftOutlined,
     PlusOutlined, LoadingOutlined
 } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPersonType from '../../selects/SelectPersonType';
@@ -27,6 +28,7 @@ import { curpFormat, nameLastname, rfcFormat, ruleRequired } from '../../../util
 
 const ProfileForm = () => {
 
+    const router = useRouter();
     const getUser = state => state.userStore.user;
     const currentUser = useSelector(getUser);
     const [formUser] = Form.useForm();
@@ -145,7 +147,11 @@ const ProfileForm = () => {
     return (
         <ProfileCard
             title={<><h3>Información personal</h3></>}
-            extra={<Button icon={<ArrowLeftOutlined/>}>Regresar</Button>}
+            extra={
+                <Button onClick={()=> router.push('/user')} icon={<ArrowLeftOutlined/>}>
+                    Regresar
+                </Button>
+            }
         >
             <Spin spinning={loading}>
                 <Space direction='vertical' size={[8,16]} style={{width: '100%'}}>
