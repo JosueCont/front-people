@@ -292,7 +292,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col>
               {person && (
                 <div
                   className={"pointer"}
