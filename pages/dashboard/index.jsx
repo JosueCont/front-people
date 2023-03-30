@@ -210,7 +210,7 @@ const Dashboard = () => {
                             <List
                                 size="small"
                                 itemLayout="horizontal"
-                                dataSource={birthDayPeople.slice(1,2)}
+                                dataSource={birthDayPeople}
                                 locale={{emptyText: Void}}
                                 renderItem={(item) => (
                                     <List.Item>
