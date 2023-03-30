@@ -11,6 +11,7 @@ import SelectFractions from "../../selects/SelectFractions";
 import { monthsName } from "../../../utils/constant";
 import { generateYear } from "../../../utils/functions";
 import { PercentageOutlined } from "@ant-design/icons";
+import {getJobRiskClass} from "../../../redux/catalogCompany";
 
 const JobRiskPremium = ({
   node,
@@ -18,11 +19,16 @@ const JobRiskPremium = ({
   cat_job_risk,
   cat_fractions,
   jobRisk = null,
+  getJobRiskClass,
   pushed,
   ...props
 }) => {
   const [jobRiskSelected, setJobRiskSelected] = useState(null);
   const [percent, setPercent] = useState(null);
+
+  useEffect(()=>{
+    getJobRiskClass()
+  },[])
 
   useEffect(() => {
     if (jobRiskSelected) {
@@ -101,7 +107,7 @@ const JobRiskPremium = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <SelectFractions name={"rt_fraction"} rules={[ruleRequired]} />
+          <SelectFractions name={"rt_fraction"} />
         </Col>
       </Row>
     </Form>
@@ -115,4 +121,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(JobRiskPremium);
+export default connect(mapState,{getJobRiskClass})(JobRiskPremium);

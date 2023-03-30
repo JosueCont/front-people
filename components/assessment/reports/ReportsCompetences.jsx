@@ -1,25 +1,20 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useMemo} from 'react';
 import {
     Select,
-    Form,
     Col,
     Row,
     Table,
     Avatar,
-    Radio,
     Button,
     Tooltip,
     message,
-    Skeleton
 } from 'antd';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 import {
-    CloseOutlined,
     UserOutlined,
     ProfileOutlined,
     EyeOutlined,
-    RadarChartOutlined
 } from "@ant-design/icons";
 import ViewList from './ViewList';
 import {
@@ -27,13 +22,13 @@ import {
     getPhoto,
     getWork
 } from '../../../utils/functions';
-import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
-import { valueToFilter } from '../../../utils/functions';
-
+import _ from 'lodash';
 // Se renderiza en el navegador, donde existe el objeto windown.
 //Esta modificación es para la librería chartjs-plugin-zoom
 const ViewChart = dynamic(()=> import('./ViewChart'), { ssr: false });
+//Necesario para la libreria react-pdf
+const GenerateReport = dynamic(()=> import('./GenerateReport'), { ssr: false });
 
 const ReportsCompetences = ({
     persons_company,
@@ -43,6 +38,16 @@ const ReportsCompetences = ({
     currentKey,
     currentNode,
     general_config,
+    labelUser = 'Seleccionar usuario',
+    labelProfile = 'Seleccionar perfil',
+    showSelectProfile = true,
+    showChart = false,
+    showListUser = false,
+    showListProfile = false,
+    showCardProfile = false,
+    showCardUser = false,
+    showTitleProfile = false,
+    showTitleWork = false,
     ...props
 }) => {
 
@@ -83,7 +88,6 @@ const ReportsCompetences = ({
     ]
 
     const [usersSelected, setUsersSelected] = useState([]);
-    const [competencesSelected, setCompetencesSelected] = useState([]);
     const [profilesSelected, setProfilesSelected] = useState([]);
     const [listReports, setListReports] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -91,12 +95,15 @@ const ReportsCompetences = ({
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
     const [currentTab, setCurrentTab] = useState();
-    const [optionsPersons, setOptionsPersons] = useState([]);
-    const [optionsProfiles, setOptionsProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [openModalChart, setOpenModalChart] = useState(false);
     const [dataChart, setDataChart] = useState([]);
     const [typeReport, setTypeReport] = useState('p');
+    //Estados para excel
+    const [csvHeaders, setCsvHeaders] = useState([])
+    const [csvDataSource, setCsvDataSource ] = useState([])
+    const [nameFile, setNameFile] = useState('')
+    const csvLink = useRef()
 
     useEffect(()=>{
         if(currentTab !== currentKey){
@@ -105,21 +112,15 @@ const ReportsCompetences = ({
         }
     },[currentKey])
 
-    useEffect(()=>{
-        getOptionsPersons();
-    },[persons_company])
-
-    useEffect(()=>{
-        getOptionsProfiles();
-    },[profiles])
-
     const resetValues = () =>{
         setUsersSelected([])
-        setCompetencesSelected([])
         setProfilesSelected([])
         setListReports([])
         setIsUsers(false)
         setColumnsMany(columns_many)
+        setCsvDataSource([])
+        setCsvHeaders([])
+        setNameFile('')
     }
 
     const getReportCompetences = async (data) =>{
@@ -150,59 +151,11 @@ const ReportsCompetences = ({
         }
     }
 
-    const getOptionsPersons = () =>{
-        let options = [];
-        if(persons_company.length > 0){
-            persons_company.map(item =>{
-                options.push({
-                    key: item.id,
-                    value: item.id,
-                    label: getFullName(item)
-                })
-            })
-        }
-        setOptionsPersons(options);
-    }
-
-    const getOptionsProfiles = () =>{
-        let options = [];
-        if(profiles.length > 0){
-          profiles.map(item=>{
-            options.push({
-                key: item.id,
-                value: item.id,
-                label: item.name
-            })
-          })
-        }
-        setOptionsProfiles(options);
-    }
-
-    // const getOptionsCompetences = () =>{
-    //     let options = [];
-    //     if(competences.length > 0){
-    //         competences.map(item => {
-    //             let exist = competencesSelected.some(record => record.id === item.id)
-    //             if(!exist){
-    //                 options.push({
-    //                     key: item.id,
-    //                     value: item.id,
-    //                     label: item.name
-    //                 })
-    //             }
-    //         })
-    //     }
-    //     return options;
-    // }
-
     const sendProfile = (value) =>{
         if(currentTab == 'pps'){
-            let list = [];
-            value.map(item =>{
-                let profile = profiles.find(record => record.id === item);
-                list.push(profile);
-            })
-            setProfilesSelected(list);
+            const map_ = item => profiles.find(record => record.id == item);
+            let results = value.map(map_);
+            setProfilesSelected(results);
         }else{
             getObjProfile(value);
         }
@@ -215,12 +168,9 @@ const ReportsCompetences = ({
 
     const sendUser = (value) =>{
         if(['psp','psc'].includes(currentTab)){
-            let list = [];
-            value.map(item =>{
-                let user = persons_company.find(record => record.id === item);
-                list.push(user);
-            })
-            setUsersSelected(list);
+            const map_ = item => persons_company.find(record => record.id == item);
+            let results = value.map(map_);
+            setUsersSelected(results);
         }else{
             let user = persons_company.find(item => item.id === value);
             if(['pp','pps'].includes(currentTab)) sendProfileUser(user);
@@ -236,15 +186,6 @@ const ReportsCompetences = ({
             getObjProfile(user.work_title.job.skill_profile_id);
         }
     }
-
-    // const sendCompetence = (value) =>{
-    //     let exists = competencesSelected.some(item => item.id === value);
-    //     if(!exists){
-    //         let competence = competences.find(item => item.id == value);
-    //         let list = [...competencesSelected, competence];
-    //         setCompetencesSelected(list);
-    //     }
-    // }
 
     const getPropertiesSelectUser = () =>{
         if(['psp','psc'].includes(currentTab)){
@@ -324,25 +265,31 @@ const ReportsCompetences = ({
         generateColumns()
         getReportProfile()
     }
+    
+    const subTitle = (item, subs = 3) => {  return  item?.competence?.name.substring(0, subs).toUpperCase() }
 
     const generateColumns = () =>{
         let info_columns = profilesSelected?.at(-1).competences;
         let list_columns = [...columns_many];
         info_columns.map((item, idx) =>{
+            let title = subTitle(item)
+            let exist = list_columns.some(record => record.comp == title)
+            if(exist) title = subTitle(item, title.length + 1)
             list_columns.push({
                 title: ()=>{
                     return (
                         <Tooltip title={item.competence?.name}>
-                            <span>{item.competence?.name.substring(0,3).toUpperCase()} ({item.level})</span>
+                            <span>{title} ({item.level})</span>
                         </Tooltip>
                     )
                 },
+                comp: title,
                 width: 30,
                 align: 'center',
                 show: true,
                 render: (record) =>{
                     return (
-                        <span>{getLevelPerson(record, idx)}</span>
+                        <span>{getLevelPerson(record, item?.competence?.id)}</span>
                     )
                 }
             })
@@ -392,8 +339,9 @@ const ReportsCompetences = ({
         setOpenModal(false)
     }
 
-    const getDescProfile = ({description}) =>{
-        return description ? description : 'N/A';
+    const getDescProfile = () =>{
+        let item = profilesSelected?.at(-1);
+        return item ? item?.description : 'N/A';
     }
 
     const getCompatibility = (item) =>{
@@ -406,20 +354,19 @@ const ReportsCompetences = ({
             : 'Pendiente';
     }
 
-    const getLevelPerson = ({profiles}, index) =>{
-        return profiles ? profiles?.at(-1).competences[index]?.level_person : 'N/A';
+    const getLevelPerson = (record, id) =>{
+       if(!id) return 'N/A'
+       const find_ = item => item.id == id
+       let profiles = record?.profiles?.at(-1).competences
+       if(!profiles) return 'N/A'
+       let result = profiles.find(find_)
+       if(!result) return 'N/A'
+       return result.level_person
     }
 
-    const getProfile = (item) =>{
+    const getProfile = () =>{
+        let item = profilesSelected?.at(-1);
         return item ? item.name : 'Pendiente';
-    }
-
-    const getListData = () =>{
-        return isUsers ? usersSelected : profilesSelected;
-    }
-
-    const getSetListData = () =>{
-        return isUsers ? setUsersSelected : setProfilesSelected;
     }
 
     const findUser = (id) =>{
@@ -436,10 +383,6 @@ const ReportsCompetences = ({
         let user = findUser(id);
         let fullName = getFullName(user);
         return fullName;
-    }
-
-    const filterOptionSelect = (input, option) =>{
-        return valueToFilter(option.label).includes(valueToFilter(input))
     }
 
     const onChangeTable = ({current}) =>{
@@ -524,17 +467,6 @@ const ReportsCompetences = ({
             setDataChart(item);
         }
     }
-
-    // const getInfoType = () =>{
-    //     return currentTab == 'p'
-    //         ? 'El tipo de reporte actual se trata de seleccionar solo una persona.'
-    //         : currentTab == 'pp'
-    //         ? 'El tipo de reporte actual se trata de seleccionar una persona vs un perfil.'
-    //         : ['psp','psc'].includes(currentTab)
-    //         ? 'El tipo de reporte actual se trata de seleccionar varias personas vs un perfil.'
-    //         : currentTab == 'pps'
-    //         && 'El tipo de reporte actual se trata de seleccionar una persona vs varios perfiles.'
-    // }
 
     const columns_p = [
         {
@@ -715,58 +647,45 @@ const ReportsCompetences = ({
                 <Col span={24} className='content_header'>
                     <div className='content_inputs'>
                         <div className='content_inputs_element'>
-                            <p>
-                                {['psp','psc'].includes(currentTab) ? 
-                                    <span>Seleccionar usuarios</span> :
-                                    <span>Selecionar usuario</span>
-                                }
-                            </p>
+                            <p>{labelUser}</p>
                             <Select
                                 showSearch
-                                placeholder={'Seleccionar usuario'}
-                                notFoundContent={'No se encontraron resultados'}
-                                options={optionsPersons}
+                                placeholder='Seleccionar usuario'
+                                notFoundContent='No se encontraron resultados'
                                 {...getPropertiesSelectUser()}
                                 onChange={sendUser}
                                 loading={load_persons}
                                 style={{width: 200}}
-                                optionFilterProp={'children'}
-                                filterOption={filterOptionSelect}
-                            />
+                                optionFilterProp='children'
+                            >
+                                {persons_company.length > 0 && persons_company.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </div>
-                        {['pp','psc','psp','pps'].includes(currentTab) && (
+                        {showSelectProfile && (
                             <div className='content_inputs_element'>
-                                <p>
-                                    {currentTab == 'pps' ? 
-                                        <span>Seleccionar perfiles</span> :
-                                        <span>Selecionar perfil</span>
-                                    }
-                                </p>
+                                <p>{labelProfile}</p>
                                 <Select
                                     showSearch
-                                    placeholder={'Seleccionar perfil'}
-                                    notFoundContent={'No se encontraron resultados'}
-                                    options={optionsProfiles}
+                                    placeholder='Seleccionar perfil'
+                                    notFoundContent='No se encontraron resultados'
                                     {...getPropertiesSelectProfile()}
                                     loading={load_profiles}
                                     onChange={sendProfile}
                                     style={{width: 200}}
-                                    optionFilterProp={'children'}
-                                    filterOption={filterOptionSelect}
-                                />
+                                    optionFilterProp='children'
+                                >
+                                    {profiles.length > 0 && profiles.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         )}
-                        {/* <div className='content_inputs_element fade_in'>
-                            <p>Seleccionar competencias</p>
-                            <Select
-                                placeholder={'Seleccionar competencia'}
-                                notFoundContent={'No se encontraron resultados'}
-                                options={getOptionsCompetences()}
-                                value={null}
-                                onChange={sendCompetence}
-                                style={{width: 200}}
-                            />
-                        </div> */}
                         <Button
                             onClick={()=> validateParameters()}
                             style={{marginTop:'auto'}}
@@ -782,7 +701,26 @@ const ReportsCompetences = ({
                         </Button>
                     </div>
                     <div className='content_inputs'>
-                        {currentTab == 'pp' && (
+                        <div
+                            style={{alignItems:'center', marginTop: 30}}
+                            className='content_inputs_element'
+                        >   
+                            <GenerateReport
+                                currentTab={currentTab}
+                                getColumns={getColumns}
+                                getDataReport={getDataReport}
+                                profilesSelected={profilesSelected}
+                                usersSelected={usersSelected}
+                                csvHeaders={csvHeaders}
+                                setCsvHeaders={setCsvHeaders}
+                                csvDataSource={csvDataSource}
+                                setCsvDataSource={setCsvDataSource}
+                                nameFile={nameFile}
+                                setNameFile={setNameFile}
+                                listReports={listReports}
+                            />
+                        </div>
+                        {showChart && (
                             <div
                                 style={{alignItems:'center'}}
                                 className='content_inputs_element'
@@ -794,7 +732,7 @@ const ReportsCompetences = ({
                                 />
                             </div>
                         )}
-                        {['psp','psc'].includes(currentTab) && (
+                        {showListUser && (
                             <div className='content_inputs_element'>
                                 <p>Ver listado</p>
                                 <Tooltip title='Personas seleccionadas' placement='bottom'>
@@ -807,7 +745,7 @@ const ReportsCompetences = ({
                                 </Tooltip>
                             </div>
                         )}
-                        {currentTab == 'pps' && (
+                        {showListProfile && (
                             <div className='content_inputs_element'>
                                 <p>Ver listado</p>
                                 <Tooltip title='Perfiles seleccionados' placement='bottom'>
@@ -820,42 +758,37 @@ const ReportsCompetences = ({
                                 </Tooltip>
                             </div>
                         )}
-                        {/* <div className='content_inputs_element'>
-                            <p>Reporte actual</p>
-                            <Tooltip title={getInfoType()} placement='topLeft'>
-                                <FcInfo size={30}/>
-                            </Tooltip>
-                        </div> */}
                     </div>
                 </Col>
-                {(usersSelected.length > 0 || profilesSelected.length > 0 ) && (
+                {((usersSelected.length > 0 && showCardUser)
+                    || (profilesSelected.length > 0 && showCardProfile)) && (
                     <Col span={24}>
                         <Row gutter={[24,24]}>
-                            {['p','pp','pps'].includes(currentTab) && usersSelected.length > 0 && (
+                            {showCardUser && usersSelected.length > 0 && (
                                 <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
                                     <div className='info_user'>
                                         <Avatar src={getPhoto(usersSelected.at(-1))} size={80}/>
                                         <div className='info_user_text'>
                                             <p>{getFullName(usersSelected.at(-1))}</p>
-                                            {currentTab == 'pp' && (
+                                            {showTitleProfile && (
                                                 <>
-                                                    <p>Perfil: <span>{getProfile(profilesSelected.at(-1))}</span></p>
+                                                    <p>Perfil: <span>{getProfile()}</span></p>
                                                     <p>Compatiblidad: <span>{getCompatibility(listReports.at(-1))}</span></p>
                                                 </>
                                             )}
-                                            {['p','pps'].includes(currentTab) && (
+                                            {showTitleWork && (
                                                 <p><span>{getWork(usersSelected.at(-1))}</span></p>
                                             )}
                                         </div>
                                     </div>
                                 </Col>
                             )}
-                            {['psp','psc'].includes(currentTab) && profilesSelected.length > 0 &&(
+                            {showCardProfile && profilesSelected.length > 0 &&(
                                 <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
                                     <div className='info_user'>
                                         <div className='info_user_text'>
-                                            <p>{getProfile(profilesSelected.at(-1))}</p>
-                                            <p><span>{getDescProfile(profilesSelected.at(-1))}</span></p>
+                                            <p>{getProfile()}</p>
+                                            <p><span>{getDescProfile()}</span></p>
                                         </div>
                                     </div>
                                 </Col>
@@ -888,8 +821,8 @@ const ReportsCompetences = ({
                     visible={openModal}
                     isUsers={isUsers}
                     close={hideModalList}
-                    listData={getListData()}
-                    setListData={getSetListData()}
+                    listData={isUsers ? usersSelected : profilesSelected}
+                    setListData={isUsers ? setUsersSelected : setProfilesSelected}
                 />
             )}
             {openModalChart && (

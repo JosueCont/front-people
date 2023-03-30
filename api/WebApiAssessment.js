@@ -1,6 +1,18 @@
 import Axios from "axios";
-import { API_ASSESSMENT } from "../config/config";
+import { API_ASSESSMENT, typeHttp } from "../config/config";
 import WebApi from "./webApi";
+
+let tenant = "demo";
+
+if (process.browser) {
+  let splitDomain = window.location.hostname.split(".");
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+    tenant = splitDomain[0];
+  }
+}
+
+// Set url Kuiz Base Api with Tenant
+const urlKuizBaseApiWithTenant = `${typeHttp}://${tenant}.${API_ASSESSMENT}`
 
 class WebApiAssessment {
   static getGroupsAssessments(data) {
@@ -92,6 +104,13 @@ class WebApiAssessment {
       "get"
     );
   }
+
+  static getAssignListPersonal(data){
+    return WebApi.ApisType(
+      `/person/person-assessments/user-assignments-list/`, 'post', data
+    )
+  }
+
   static getAssignByGroup(id, queryParam, type) {
     return WebApi.ApisType(
       `/person/group-person-assessment/?group_person=${id}${queryParam}${type}`,
@@ -130,46 +149,46 @@ class WebApiAssessment {
     );
   }
   static assessmentSections(id) {
-    return Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
+    return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/section/?assessment=${id}`);
   }
   static assessmentQuestions(id) {
-    return Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${id}`);
+    return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/question/?section=${id}`);
   }
   static assessmentDelete(id) {
-    return Axios.delete(`${API_ASSESSMENT}/assessments/assessment/${id}`);
+    return Axios.delete(`${urlKuizBaseApiWithTenant}/assessments/assessment/${id}`);
   }
   static assessmentStatus(id, data) {
-    return Axios.patch(`${API_ASSESSMENT}/assessments/assessment/${id}/`, data);
+    return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/assessment/${id}/`, data);
   }
   static createSection(data) {
-    return Axios.post(API_ASSESSMENT + "/assessments/section/", data);
+    return Axios.post(urlKuizBaseApiWithTenant + "/assessments/section/", data);
   }
   static updateSection(id, data) {
-    return Axios.patch(`${API_ASSESSMENT}/assessments/section/${id}/`, data);
+    return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/section/${id}/`, data);
   }
   static deleteSection(id) {
-    return Axios.delete(`${API_ASSESSMENT}/assessments/section/${id}`);
+    return Axios.delete(`${urlKuizBaseApiWithTenant}/assessments/section/${id}`);
   }
   static createQuestion(data) {
-    return Axios.post(API_ASSESSMENT + "/assessments/question/", data);
+    return Axios.post(urlKuizBaseApiWithTenant + "/assessments/question/", data);
   }
   static updateQuestion(id, data) {
-    return Axios.patch(`${API_ASSESSMENT}/assessments/question/${id}/`, data);
+    return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/question/${id}/`, data);
   }
   static deleteQuestion(id) {
-    return Axios.delete(`${API_ASSESSMENT}/assessments/question/${id}`);
+    return Axios.delete(`${urlKuizBaseApiWithTenant}/assessments/question/${id}`);
   }
   static createAnswer(data) {
-    return Axios.post(API_ASSESSMENT + "/assessments/answer/", data);
+    return Axios.post(urlKuizBaseApiWithTenant + "/assessments/answer/", data);
   }
   static updateAnswer(id, data) {
-    return Axios.patch(`${API_ASSESSMENT}/assessments/answer/${id}/`, data);
+    return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/answer/${id}/`, data);
   }
   static getAnswer(id) {
-    return Axios.get(`${API_ASSESSMENT}/assessments/question/${id}/`);
+    return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/question/${id}/`);
   }
   static deleteAnswer(id) {
-    return Axios.delete(`${API_ASSESSMENT}/assessments/answer/${id}/`);
+    return Axios.delete(`${urlKuizBaseApiWithTenant}/assessments/answer/${id}/`);
   }
   static getAssessmentsByPerson(data) {
     return WebApi.ApisType(
@@ -179,28 +198,28 @@ class WebApiAssessment {
     );
   }
   static getAssessmentResults(data) {
-    return Axios.post(`${API_ASSESSMENT}/sittings/assessment-results`, data);
+    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/assessment-results`, data);
   }
   static getCompetences (node) {
-    return Axios.get(`${API_ASSESSMENT}/sittings/competences/?competencenode__node_id=${node}`)
+    return Axios.get(`${urlKuizBaseApiWithTenant}/sittings/competences/?competencenode__node_id=${node}`)
   }
   static getProfiles (node, query) {
-    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node_id=${node}${query}`)
+    return Axios.get(`${urlKuizBaseApiWithTenant}/sittings/skills-profile/?node_id=${node}${query}`)
   }
   static addProfile (data) {
-    return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/`, data)
+    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/skills-profile/`, data)
   }
   static editProfile (id, data){
-    return Axios.patch(`${API_ASSESSMENT}/sittings/skills-profile/${id}/`, data)
+    return Axios.patch(`${urlKuizBaseApiWithTenant}/sittings/skills-profile/${id}/`, data)
   }
   static deleteProfile (data) {
-    return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/delete_by_ids/`, data)
+    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/skills-profile/delete_by_ids/`, data)
   }
   static getReportCompetences (data) {
-    return Axios.post(`${API_ASSESSMENT}/sittings/competence-report/`, data)
+    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/competence-report/`, data)
   }
   static getReportProfiles (data){
-    return Axios.post(`${API_ASSESSMENT}/sittings/profiles-report/`, data)
+    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/profiles-report/`, data)
   }
 
   //Asignaciones por persona

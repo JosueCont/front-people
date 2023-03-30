@@ -27,7 +27,7 @@ export const EvenTitle = styled.p`
     color: rgb(60,64,67);
     margin-bottom: 0px;
     font-weight: 400;
-    max-width: calc(100% - 140px);
+    max-width: ${({maxWidth}) => maxWidth ? `calc(100% - ${maxWidth}px)` : 'calc(100% - 140px)'};
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -54,14 +54,19 @@ export const BtnOption = styled.button`
     }
 `;
 
-export const BtnLink = styled.a`
-    background-color: rgb(3, 155, 229);
+export const BtnLink = styled.button`
+    background-color:  ${({canClick = true}) => canClick ? 'rgb(3, 155, 229)' : 'rgba(0, 0, 0, 0.25)'};
     color: #ffff;
     font-weight: 400;
     font-size: 14px;
     padding: 8px 16px;
     border-radius: 4px;
-    :hover{
+    border-width: 1px;
+    border-color: transparent;
+    cursor: ${({canClick = true}) => canClick ? 'pointer' : 'not-allowed'};
+    :hover,
+    :focus,
+    :active{
         opacity: 0.9;
         color: #ffff;
     }
@@ -71,7 +76,7 @@ export const TextDescripcion = styled.p`
     font-size: 14px;
     margin-bottom: 0px;
     color: ${({isTitle}) => isTitle ? 'rgb(60,64,67)' : 'rgb(95,99,104)'};
-    font-weight: 400;
+    font-weight: ${({weight}) => weight ?? 400};
     line-height: 1.2;
 `;
 
@@ -92,29 +97,33 @@ export const StatusGuest = styled.span`
 `;
 
 
-export const EventInfo = styled.div`
-    width: 100%;
-    background-color: #ffff;
-    border-radius: 12px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    border: 1px solid rgb(3, 155, 229);
-    transition: 0.5s background-color ease;
-    & p {
-        font-size: 12px;
+export const EventInfo = styled.div(({
+    equals
+}) =>{
+    let color = equals ? 'rgb(3, 155, 229)' : 'rgba(0, 0, 0, 0.25)';
+    return css`
         width: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-bottom: 0px;
-        color:rgb(3, 155, 229);
-        transition: 0.5s color ease;
-    }
-    :hover, :focus-within{
-        background-color: rgb(3, 155, 229);
-        & p, span{
-            color: #ffff;
+        background-color: #ffff;
+        border-radius: 12px;
+        padding: 2px 6px;
+        border: ${`1px solid ${color}`};
+        transition: 0.5s background-color ease;
+        & p {
+            font-size: 12px;
+            width: 100%;
+            max-width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin-bottom: 0px;
+            color: ${color};
+            transition: 0.5s color ease;
         }
-    }
-`;
+        :hover, :focus-within{
+            background-color: ${color};
+            & p, span{
+                color: #ffff;
+            }
+        }
+    `
+});

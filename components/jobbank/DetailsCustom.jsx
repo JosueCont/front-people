@@ -25,7 +25,8 @@ const DetailsCustom = ({
     setActionType,
     onlyOptions = false,
     showOptions = true,
-    borderTitle = false
+    borderTitle = false,
+    childrenIsTabs = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -48,7 +49,7 @@ const DetailsCustom = ({
             {action == 'add' && !isAutoRegister ? (
                 <>
                     <button
-                        htmlType='submit'
+                        type='submit'
                         form={idForm}
                         ref={btnSave}
                         style={{display:'none'}}
@@ -88,25 +89,27 @@ const DetailsCustom = ({
     )
 
     return !onlyOptions ? (
-        <Card>
+        <Card bodyStyle={{padding: '18px'}}>
             <Row gutter={[16,16]}>
-                <Col span={24} className={`title-action-content ${borderTitle ? 'title-action-border' : ''}`}>
-                    <p className='title-action-text'>
-                        {titleCard}
-                    </p>
-                    {!isAutoRegister && (
-                        <div className='content-end' style={{gap: 8}}>
-                            <ExtraActions/>
-                            <Button
-                                onClick={()=> actionBack()}
-                                icon={<ArrowLeftOutlined />}
-                            >
-                                Regresar
-                            </Button>
-                        </div>
-                    )}
-                </Col>
                 <Col span={24}>
+                    <div className={`title-action-content ${borderTitle ? 'title-action-border' : ''}`}>
+                        <p className='title-action-text'>
+                            {titleCard}
+                        </p>
+                        {!isAutoRegister && (
+                            <div className='content-end' style={{gap: 8}}>
+                                <ExtraActions/>
+                                <Button
+                                    onClick={()=> actionBack()}
+                                    icon={<ArrowLeftOutlined />}
+                                >
+                                    Regresar
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </Col>
+                <Col span={24} className={childrenIsTabs ? 'tabs-vacancies' : ''}>
                     {children}
                 </Col>
                 {showOptions && (

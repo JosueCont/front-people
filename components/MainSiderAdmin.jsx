@@ -14,7 +14,9 @@ import Icon, {
   QuestionCircleOutlined,
   ApartmentOutlined,
   FunnelPlotOutlined,
-  SolutionOutlined
+  SolutionOutlined,
+  PieChartFilled,
+  SafetyCertificateOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -60,13 +62,17 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
+      dashboard: "/dashboard",
       business: "/business",
-      asign: "/config/assignedCompanies",
+      // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
+      // config_roles: "/config/roles",
+      security_roles: "/security/roles",
+      security_assign: "/security/assign",
       releases: "/comunication/releases",
       events: "/comunication/events",
       reports: "/reports",
@@ -85,6 +91,7 @@ const MainSider = ({
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
+      systemLog: "/log/LogSystem",
       intranet_groups: "/intranet/groups",
       intranet_configuration: "/intranet/config",
       publications_statistics: "/intranet/publications_statistics",
@@ -120,7 +127,6 @@ const MainSider = ({
           link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
         }
         // link1.href = "https://admin.demo.sukhatv.com/";
-        link1.target = '_blank';
         link1.click();
         break;
       case "khorflix":
@@ -128,7 +134,6 @@ const MainSider = ({
         const link2 = document.createElement('a');
         link2.href = `https://admin.${getCurrentURL(true, true)}.${urlKhorflx}/validation?token=${token2}`;
         // link1.href = "https://admin.demo.sukhatv.com/";
-        link2.target = '_blank';
         link2.click();
         break;
 
@@ -156,6 +161,8 @@ const MainSider = ({
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
     if (typeof window !== "undefined") {
+      // Dashboard
+      items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
       // Estrategia y planeación
       let children0 = [
         getItem("Empresas", "business"),
@@ -171,8 +178,6 @@ const MainSider = ({
         getItem("Empresa", "company", <></>, children0),
         getItem("Colaboradores", "people", <></>, children0101)
       ]
-
-     
       items.push(getItem("Estrategia y planeación", "strategyPlaning", <ApartmentOutlined />, children90));
 
 
@@ -245,7 +250,7 @@ const MainSider = ({
         children2.push(getItem("Khorflix", "khorflix"))
       }
       if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.is_sukhatv_admin) {
-        children2.push(getItem("Sukha", "sukha"))
+        children2.push(getItem("SukhaTV", "sukha"))
       }
       if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.is_careerlab_admin) {
         children2.push(getItem("Careerlab", "careerlab"))
@@ -290,20 +295,29 @@ const MainSider = ({
       let children7 = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
-        getItem("Asignar empresa", "asign"),
+        // getItem("Roles de administrador", "config_roles"),
+        // getItem("Asignar empresa", "asign"),
       ];
       let children8 = [
-        getItem("Carga masiva de personas", "bulk_upload"),
-        getItem("Carga de documentos", "documentsLog"),
+        // getItem("Carga masiva de personas", "bulk_upload"),
+        // getItem("Carga de documentos", "documentsLog"),
+        getItem("Log de sistema", "systemLog"),
       ];
       let children4 = [
-        getItem("Registro de errores", "uploads",  <></>, children8 ),
+        getItem("Registro de log", "uploads",  <></>, children8 ),
         getItem("Configuración", "config",  <></>, children7),
         getItem("Reportes", "reports")
       ]
 
 
       items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />, children4))
+
+      let subSecurity = [
+        getItem("Roles de administrador", "security_roles"),
+        getItem("Asignar empresa", "security_assign")
+      ];
+
+      items.push(getItem("Seguridad","security", <SafetyCertificateOutlined />, subSecurity))
     }
 
     return items;

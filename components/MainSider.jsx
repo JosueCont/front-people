@@ -12,6 +12,7 @@ import Icon, {
   BankOutlined,
   SettingOutlined,
   QuestionCircleOutlined,
+  SafetyCertificateOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
@@ -50,13 +51,17 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
+      dashboard: "/dashboard",
       business: "/business",
-      asign: "/config/assignedCompanies",
+      // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
+      // config_roles: "/config/roles",
+      security_roles: "/security/roles",
+      security_assign: "/security/assign",
       releases: "/comunication/releases",
       events: "/comunication/events",
       reports: "/reports",
@@ -75,6 +80,7 @@ const MainSider = ({
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
+      systemLog: "/log/LogSystem",
       intranet_groups: "/intranet/groups",
       intranet_configuration: "/intranet/config",
       publications_statistics: "/intranet/publications_statistics",
@@ -108,6 +114,7 @@ const MainSider = ({
       // Menú Empresas
       if (props?.permissions?.company?.view) {
         let children = [
+          getItem("Dashboard", "dashboard"),
           getItem("Empresas", "business"),
           getItem("Prestaciones", "integrationFactors")
         ];
@@ -205,7 +212,8 @@ const MainSider = ({
       children = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
-        getItem("Asignar empresa", "asign"),
+        // getItem("Roles de administrador", "config_roles"),
+        // getItem("Asignar empresa", "asign"),
       ];
       items.push(
           getItem("Configuración", "config", <SettingOutlined />, children)
@@ -214,11 +222,12 @@ const MainSider = ({
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
         let children = [
-          getItem("Carga masiva de personas", "bulk_upload"),
-          getItem("Carga de documentos", "documentsLog"),
+          // getItem("Carga masiva de personas", "bulk_upload"),
+          // getItem("Carga de documentos", "documentsLog"),
+          getItem("Log de sistema", "systemLog"),
         ];
         items.push(
-          getItem("Registro de errores", "uploads", <BugOutlined />, children)
+          getItem("Registro de logs", "uploads", <BugOutlined />, children)
         );
       }
 
@@ -309,6 +318,13 @@ const MainSider = ({
           );
         }
       }
+
+      let subSecurity = [
+        getItem("Roles de administrador", "security_roles"),
+        getItem("Asignar empresa", "security_assign")
+      ];
+
+      items.push(getItem("Seguridad","security", <SafetyCertificateOutlined />, subSecurity))
     }
 
     return items;

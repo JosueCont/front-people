@@ -21,6 +21,7 @@ import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { departureMotive } from "../../../utils/constant";
+import moment from "moment";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -36,6 +37,7 @@ const ModalConceptsPayroll = ({
   payrollType,
   extraOrdinary = false,
   movementType = null,
+  payment_period = null,
   ...props
 }) => {
   const [departureForm] = Form.useForm();
@@ -139,6 +141,8 @@ const ModalConceptsPayroll = ({
     props.other_payments_int,
     visible,
   ]);
+
+  useEffect(() => {}, [payment_period]);
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -292,6 +296,7 @@ const ModalConceptsPayroll = ({
               return;
             }
           });
+
         const obj = {
           person_id: person_id,
           perceptions: perceptions,
@@ -312,11 +317,20 @@ const ModalConceptsPayroll = ({
         const obj = {
           person_id: item.person.id,
           perceptions: item.perceptions,
-          deductions: item.deductions?.filter(
-            (item) => item.type != "001" && item.type != "002"
-          ),
-          other_payments: item.otherPayments,
+          other_payments: item.otherPayments ? item.otherPayments : [],
         };
+        // cuando la nomina está cerrada, devolvemos todas las deducciones
+        if (
+          item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open == false
+        ) {
+          obj.deductions = item.deductions;
+        } else {
+          obj.deductions = item.deductions?.filter(
+            (item) => item.type != "001" && item.type != "002"
+          );
+        }
+
         if (extraOrdinary) {
           if (item.three_months_compensantion)
             obj.twenty_day_compensantion = item.three_months_compensantion;
@@ -381,6 +395,16 @@ const ModalConceptsPayroll = ({
     setMotiveDeparture(null);
     setDepartureDate("");
     setVisible(false);
+  };
+
+  const disablePeriod = (current) => {
+    let start_date = moment(payment_period.start_date);
+    let end_date = moment(payment_period.end_date);
+
+    // Validamos que la fecha esté dentro del rango del periodo
+    if (current >= start_date && end_date.add(1, "days") >= current)
+      return false;
+    return true;
   };
 
   return (
@@ -535,6 +559,15 @@ const ModalConceptsPayroll = ({
                     placeholder="Fecha de salida."
                     onChange={(value, d) => setDepartureDate(d)}
                     locale={locale}
+                    disabledDate={disablePeriod}
+                  />
+
+                  <Alert
+                    message="Importante"
+                    description="Elige una fecha dentro del periodo seleccionado."
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: 10 }}
                   />
                 </Col>
                 <Col span={8}>

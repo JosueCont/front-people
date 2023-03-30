@@ -14,7 +14,8 @@ import Icon, {
   QuestionCircleOutlined,
   ApartmentOutlined,
   FunnelPlotOutlined,
-  SolutionOutlined
+  SolutionOutlined,
+  PieChartFilled
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -75,7 +76,6 @@ const MainSider = ({
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link1 = document.createElement('a');
         link1.href = url1;
-        link1.target = '_blank';
         link1.click();
         break;
       case "khorflix":
@@ -84,7 +84,6 @@ const MainSider = ({
         // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
         const link2 = document.createElement('a');
         link2.href = url2;
-        link2.target = '_blank';
         link2.click();
         break;
       case "careerlab":
@@ -100,16 +99,19 @@ const MainSider = ({
         const url4 = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token4}`;
         const link4 = document.createElement('a');
         link4.href = url4;
-        link4.target = '_blank';
         link4.click();
         break;
       case "myEvaluation":
-        const token5 = user.jwt_data.metadata.at(-1).token;
-        const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
-        const link5 = document.createElement('a');
-        link5.href = url5;
-        link5.target = '_blank';
-        link5.click();
+        // const token5 = user.jwt_data.metadata.at(-1).token;
+        // const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
+        // const link5 = document.createElement('a');
+        // link5.href = url5;
+        // link5.target = '_blank';
+        // link5.click();
+        router.push("/user/assessments/")
+        break;
+      case "dashboard":
+        router.push("/user")
         break;
       default:
         router.push('#');
@@ -131,6 +133,9 @@ const MainSider = ({
       // Reclutamiento y selección
       // items.push(getItem("Reclutamiento y selección", "recruitmentSelection", <FunnelPlotOutlined />))
 
+      // Dashboard
+      items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
+
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
       items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
@@ -147,7 +152,7 @@ const MainSider = ({
         children2.push(getItem("Khorflix", "khorflix"))
       }
       if (props?.applications && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && user?.sukhatv_access) {
-        children2.push(getItem("Sukha", "sukha"))
+        children2.push(getItem("SukhaTV", "sukha"))
       }
       if (props?.applications && (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && user?.careerlab_access) {
         children2.push(getItem("Careerlab", "careerlab"))

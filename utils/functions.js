@@ -375,7 +375,7 @@ export const UserPermissions = (permits = null, is_admin = false) => {
 
 export const getDomain = (api) => {
   try {
-    let tenat = window.location.hostname.split(".")[0];
+    let tenat = !window.location.hostname.split(".")[0].includes('localhost') ? window.location.hostname.split(".")[0] : 'demo';
     return `${tenat}.${api}`;
   } catch (error) {
     return "error";
@@ -457,18 +457,19 @@ export const validateMaxLength = (e) =>{
   if(e.target.value.length >= e.target?.maxLength) e.preventDefault();
 }
 
-export const createFiltersJB = (obj = {}) =>{
-  let noValid = [undefined, null, '', ' '];
-  return Object.entries(obj).reduce((query, [key, val])=>{
-    if(noValid.includes(val)) return query;
+export const createFiltersJB = (obj = {}, discard = []) =>{
+  let noValid = [undefined, null, "", " "];
+  return Object.entries(obj).reduce((filters, [key, val])=>{
+    if(discard.includes(key)) return filters
+    if(noValid.includes(val)) return filters;
     let value = val.toString().trim();
-    return {...query, [key]: value}
+    return {...filters, [key]: value}
   }, {});
 }
 
-export const getFiltersJB = (obj = {}) =>{
+export const getFiltersJB = (obj = {}, discard = []) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
-    if(key == "size") return query;
+    if(["size", ...discard].includes(key)) return query;
     if(key == "page"){
       const find_ = item => item[0] == "size";
       let result = Object.entries(obj).find(find_);
@@ -557,4 +558,18 @@ export const downloadCustomFile = async ({
   } catch (e) {
     console.log(e)
   }
+}
+
+export const getPercentGenJB = (assets) =>{
+  if(!assets || assets.length <= 0) return null;
+  let {codes, progress} = assets.reduce((acc, current) =>{
+    const some_ = item => item == current.code;
+    if(acc.codes?.some(some_)) return acc;
+    let codes = acc.codes ? [...acc.codes, current.code] : [];
+    if(!current?.applys[0]) return {...acc, codes};
+    let progress = acc.progress + current.applys[0]?.progress;
+    return {...acc, codes, progress};
+  }, {codes: [], progress: 0});
+  let percent = 100 / (codes?.length * 100);
+  return (percent * progress).toFixed(2);
 }

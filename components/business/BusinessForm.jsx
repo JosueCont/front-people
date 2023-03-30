@@ -214,7 +214,7 @@ const businessForm = ({ currentNode, ...props }) => {
 
   const getCopaniesList = async () => {
     setBusiness([]);
-    await WebApiPeople.getCompanys()
+    await WebApiPeople.getCompanys(props?.user?.id,null)
       .then((response) => {
         setBusiness(response.data.results);
         setLoading(false);
@@ -302,18 +302,18 @@ const businessForm = ({ currentNode, ...props }) => {
                   )}
                 </Col>
               )}
-              <Col style={{ zIndex: 1 }} className="gutter-row" span={6}>
-                <Clipboard
-                  text={
-                    window.location.origin + "/ac/urn/" + item.permanent_code
-                  }
-                  tooltipView={false}
-                  border={false}
-                  type={"button"}
-                  msg={"Copiado en portapapeles"}
-                  tooltipTitle={"Copiar link de auto registro"}
-                />
-              </Col>
+              {/*<Col style={{ zIndex: 1 }} className="gutter-row" span={6}>*/}
+              {/*  <Clipboard*/}
+              {/*    text={*/}
+              {/*      window.location.origin + "/ac/urn/" + item.permanent_code*/}
+              {/*    }*/}
+              {/*    tooltipView={false}*/}
+              {/*    border={false}*/}
+              {/*    type={"button"}*/}
+              {/*    msg={"Copiado en portapapeles"}*/}
+              {/*    tooltipTitle={"Copiar link de auto registro"}*/}
+              {/*  />*/}
+              {/*</Col>*/}
             </Row>
           </div>
         );

@@ -12,19 +12,21 @@ import {
     DeleteOutlined,
     EditOutlined,
     PlusOutlined,
-    DownloadOutlined
+    DownloadOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
 import ModalEducation from './ModalEducation';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ListItems from '../../../common/ListItems';
 import moment from 'moment';
-import { downloadCustomFile } from '../../../utils/functions';
+import { downloadCustomFile, popupPDF } from '../../../utils/functions';
+import { redirectTo } from '../../../utils/constant';
 
 const TabSchool = ({
     action,
     setInfoEducation,
-    infoEducation
+    infoEducation = []
 }) => {
 
     const router = useRouter();
@@ -33,13 +35,16 @@ const TabSchool = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
-    const noValid = [undefined, null, '', ' '];
 
-    infoEducation?.length > 0 && infoEducation.sort((a,b) => {
-        if (a.study_level.name > b.study_level.name) return 1;
-        if (a.study_level.name < b.study_level.name) return -1;
-        return 0;
-    })
+    const infoEducationOrder = useMemo(()=>{
+        let data = [...infoEducation];
+        if(data?.length <=0) return [];
+        return data.sort((a,b) => {
+            if (a.study_level.name > b.study_level.name) return 1;
+            if (a.study_level.name < b.study_level.name) return -1;
+            return 0;
+        })
+    },[infoEducation])
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -52,7 +57,6 @@ const TabSchool = ({
             setLoading(true);
             let response = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
             setInfoEducation(response.data);
-            console.log('Response', response.data)
             setLoading(false);
         } catch (e) {
             console.log(e)
@@ -60,25 +64,11 @@ const TabSchool = ({
         }
     }
 
-    const createData = (obj) => {
-        let dataEducation = new FormData();
-
-        dataEducation.append('candidate', router.query.id)
-
-        Object.entries(obj).map(([key, val]) => {
-            let value = noValid.includes(val) ? "" : val;
-            dataEducation.append(key, value);
-        })
-
-        return dataEducation
-    }
-
     const actionCreate = async (values) =>{
-        let data = createData(values)
         try {
             setLoading(true);
-            // let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.createCandidateEducation(data);
+            values.append('candidate', router.query?.id);
+            await WebApiJobBank.createCandidateEducation(values);
             message.success('Educación registrada');
             getInfoEducation(router.query.id);
         } catch (e) {
@@ -89,11 +79,10 @@ const TabSchool = ({
     }
 
     const actionUpdate = async (values) =>{
-        let data = createData(values)
         try {
             setLoading(true)
-            // let body = {...values, candidate: router.query.id};
-            await WebApiJobBank.updateCandidateEducation(itemToEdit.id, data);
+            values.append('candidate', router.query?.id);
+            await WebApiJobBank.updateCandidateEducation(itemToEdit.id, values);
             message.success('Educación actualizada');
             getInfoEducation(router.query.id);
         } catch (e) {
@@ -147,20 +136,6 @@ const TabSchool = ({
         return result.label;
     }
 
-    const menuTable = () => {
-        return (
-            <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<PlusOutlined/>}
-                    onClick={()=> setOpenModal(true)}
-                >
-                    Agregar
-                </Menu.Item>
-            </Menu>
-        );
-    };
-
     const menuItem = (item) => {
         return (
             <Menu>
@@ -178,21 +153,32 @@ const TabSchool = ({
                 >
                     Eliminar
                 </Menu.Item>
-                {
-                    !noValid.includes(item.file) && 
-
-                    <Menu.Item
-                        key='3'
-                        icon={<DownloadOutlined/>}
-                        onClick={()=> downloadCustomFile({
-                            url: item.file,
-                            name: item.file?.split('/')?.at(-1)
-                        })}
-                    >
-                        Descargar
-                    </Menu.Item>
-                }
-
+                {(item.url_file || item.file) && (
+                    <>
+                        <Menu.Divider/>
+                        {item.url_file && (
+                            <Menu.Item
+                                key='4'
+                                icon={<EyeOutlined />}
+                                onClick = {()=> redirectTo(item.url_file, true)}
+                            >
+                                Ver certificado
+                            </Menu.Item>
+                        )}
+                        {item.file && (
+                            <Menu.Item
+                                key='3'
+                                icon={<DownloadOutlined/>}
+                                onClick={()=> downloadCustomFile({
+                                    url: item.file,
+                                    name: item.file?.split('/')?.at(-1)
+                                })}
+                            >
+                                Descargar certificado
+                            </Menu.Item>
+                        )}
+                    </>
+                )}
             </Menu>
         );
     };
@@ -213,15 +199,23 @@ const TabSchool = ({
             title: 'Estatus',
             render: (item) =>{
                 return(
-                    <span>{getStatus(item)}</span>
+                    <>{getStatus(item)}</>
                 )
+            }
+        },
+        {
+            title: 'Certificado',
+            render: (item) =>{
+                return item.file ? (
+                    <>{item.file?.split('/').at(-1)}</>
+                ) : <></>;
             }
         },
         {
             title: 'Fecha finalización',
             render: (item) =>{
                 return(
-                    <span>{item.end_date ? moment(item.end_date).format('DD-MM-YYYY') : ''}</span>
+                    <>{item.end_date ? moment(item.end_date, 'YY-MM-DD').format('DD-MM-YYYY') : ''}</>
                 )
             }
         },
@@ -253,7 +247,7 @@ const TabSchool = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                dataSource={infoEducation}
+                dataSource={infoEducationOrder}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
                     : 'No se encontraron resultados'

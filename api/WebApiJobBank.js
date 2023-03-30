@@ -282,6 +282,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/calendar-events/?node=${node}${query}`, 'get')
     }
 
+    static getDetailInterview(id, headers){
+        return axiosApi.get(`/job-bank/calendar-events/${id}/`, {headers});
+    }
+
     static createInterview(data, headers){
         // return WebApi.ApisType('/job-bank/calendar-events/', 'post', data);
         return axiosApi.post('/job-bank/calendar-events/', data, {headers});
@@ -499,6 +503,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/notification/${id}/`, 'put', data);
     }
 
+    static updateTemplateStatus(id, data){
+        return WebApi.ApisType(`/job-bank/notification/${id}/`, 'patch', data);
+    }
+
     static deleteTemplateNotification(id){
         return WebApi.ApisType(`/job-bank/notification/${id}/`, 'delete');
     }
@@ -509,13 +517,25 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/notification-tags/?node=${node}${query}`, 'get')
     }
 
-    static deleteProcessSelection(id){
-        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'delete')
+    //LOGS DE PROCESO
+
+    static getProcessLog(id){
+        return WebApi.ApisType(`/job-bank/selection-process-log/?process=${id}`, 'get');
     }
 
-    static updateProcessSelection(id, values){
-        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', values)
+    static createProcessLog(data){
+        return WebApi.ApisType(`/job-bank/selection-process-log/`, 'post', data);
     }
+
+    static deleteProcessLog(id){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'delete');
+    }
+
+    static updateProcessLog(id, data){
+        return WebApi.ApisType(`/job-bank/selection-process-log/${id}/`, 'patch', data);
+    }
+
+    //EVALUACIONES VACANTE
 
     static getVacancyAssesmentCandidateVacancy(id){
         return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/?candidate_vacancy=${id}`, 'get')
@@ -530,7 +550,7 @@ class WebApiJobBank {
     }
     
     static editVacancyAssesmentCandidateVacancy(id, values){
-        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'patch', values)
+        return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'put', values)
     }
 }
 

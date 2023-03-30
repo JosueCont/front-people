@@ -26,6 +26,7 @@ const MainLayoutAdmin = ({
   hideLogo = false,
   nómina = false,
   pageTitle = "KHOR Plus",
+  autoregister = false,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -34,7 +35,6 @@ const MainLayoutAdmin = ({
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
-  const [changePassword, setChangePassword] = useState(true);
   const [isOpenModalChangePassword, setIsOpenModalChangePassword] = useState(false);
   const [khonnectId, setKhonnectId] = useState("");
   const [disabledButtonSend, setDisabledButtonSend] = useState(false);
@@ -58,11 +58,11 @@ const MainLayoutAdmin = ({
     } catch (error) {}
   }, []);
 
-  useEffect(() => {
-    if (isBrowser()) {
-      setMainLogo(window.sessionStorage.getItem("image"));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isBrowser()) {
+  //     setMainLogo(window.sessionStorage.getItem("image"));
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (logoNode && logoNode != "") {
@@ -70,21 +70,32 @@ const MainLayoutAdmin = ({
     } else if (props.currentNode) {
       setMainLogo(props.currentNode.image);
     }
-  }, [logoNode, companyName]);
+  }, [logoNode, companyName, props.currentNode]);
 
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {
-      setMainLogo(props.currentNode.image);
-      setChangePassword(props.userData.status_first_change_password)
+      // setMainLogo(props.currentNode.image);
+      validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
-      if (props.config) props.companySelected(null, props.config);
+      if (props.config && !autoregister) props.companySelected(null, props.config);
     }
   }, [props.currentNode, props.config, props.userData]);
 
-  useEffect(() => {
-    changePassword ? setIsOpenModalChangePassword(false) : setIsOpenModalChangePassword(true);
-  }, [changePassword]);
+  const validateShowModal = (showModal, changePassword) =>{
+    let localStateChangedPassword = window.sessionStorage.getItem("requestChangePassword")
+    if(showModal){
+      if(!changePassword){
+        if(localStateChangedPassword == null){
+          setIsOpenModalChangePassword(true)
+        }
+      }else{
+        setIsOpenModalChangePassword(false)
+      }
+    }else{
+      setIsOpenModalChangePassword(false)
+    }
+  }
 
   const closeEvents = () => {
     setShowEvents(false);
@@ -103,12 +114,14 @@ const MainLayoutAdmin = ({
     try {
       let response = await WebApiPeople.validateChangePassword(data);
       if(response.status == 200){
-        setDisabledButtonSend(false)
-        message.success("Cambio de contraseña exitoso");
-        setIsOpenModalChangePassword(false)
         setTimeout(() => {
-          logoutAuth();
-        }, 2000);
+          if(isBrowser()){
+            window.sessionStorage.setItem("requestChangePassword", "changed")
+          }
+          setDisabledButtonSend(false)
+          message.success("Cambio de contraseña exitoso");
+          setIsOpenModalChangePassword(false)
+        }, 3000);
       }
     } catch (e) {
       message.error("Ocurrio un error intenta nuevamente");
@@ -138,8 +151,7 @@ const MainLayoutAdmin = ({
             requiredMark={false}
           >
             <Row justify="center">
-              <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.
-                Una vez realizado, serás redirigido al login para iniciar sesión con tu nueva contraseña</b></p>
+              <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.</b></p>
             </Row>
             <Row>
               <Col span={24}>
@@ -160,7 +172,7 @@ const MainLayoutAdmin = ({
               </Col>
             </Row>
             <Row justify="end">
-              <Button disabled={disabledButtonSend} type="primary" htmlType="submit">Cambiar contraseña</Button>
+              <Button loading={disabledButtonSend} type="primary" htmlType="submit">Cambiar contraseña</Button>
             </Row>
           </Form>
         </div>

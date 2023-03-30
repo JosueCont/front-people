@@ -29,6 +29,7 @@ const SearchInterviews = ({
 
     const urlDefault = '/jobbank/interviews';
     const router = useRouter();
+    const discardKeys = ['year','type','view','mth'];
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
@@ -44,7 +45,9 @@ const SearchInterviews = ({
             message.success('Evento registrado')
         }catch(e){
             console.log(e)
-            message.error('Evento no registrado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no registrado';
+            message.error(msg)
         }
     }
 
@@ -84,7 +87,7 @@ const SearchInterviews = ({
                     <Col span={24}>
                         <div className='title-action-content title-action-border'>
                             <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
-                                Listado de eventos
+                                Eventos
                             </p>
                             <div className='content-end' style={{gap: 8}}>
                                 <Tooltip title='Configurar filtros'>
@@ -132,7 +135,7 @@ const SearchInterviews = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
-                            deleteKeys={['month','year']}
+                            discardKeys={discardKeys}
                         />
                     </Col>  
                 </Row>

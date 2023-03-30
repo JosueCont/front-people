@@ -12,7 +12,8 @@ import {
   Spin,
   Divider,
   message,
-  ConfigProvider
+  ConfigProvider,
+  Card
 } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -26,6 +27,7 @@ import { messageError, messageSaveSuccess } from "../../../utils/constant";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
+import MainIndexSecurity from "../../../components/security/MainIndexSecurity";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -79,7 +81,7 @@ const SelectCompany = ({ ...props }) => {
   }, [props.user]);
 
   const getCopaniesList = async () => {
-    await WebApiPeople.getCompanys()
+    await WebApiPeople.getCompanys(props?.user?.id)
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
@@ -150,24 +152,8 @@ const SelectCompany = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["asign"]} defaultOpenKeys={["utilities","config"]}>
-      <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home/persons" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        {verifyMenuNewForTenant() && 
-          <Breadcrumb.Item>Utilidades-Configuración</Breadcrumb.Item>
-        }
-        <Breadcrumb.Item>Configuración</Breadcrumb.Item>
-        <Breadcrumb.Item>Asignar empresa</Breadcrumb.Item>
-      </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
+    <MainIndexSecurity pageKey="security_assign" extraBread={[{name: 'Asignar empresa'}]}>
+      <Card>
         <Spin tip="Cargando..." spinning={loading}>
           <Row justify={"center"}>
             <Col span={23}>
@@ -177,15 +163,15 @@ const SelectCompany = ({ ...props }) => {
             <Col span={23}>
               <Row justify={"space-between"}>
                 <Col xs={23} md={6} lg={6} xl={6}>
-                  <SelectCollaborator onChange={setCollaborator} />
+                  <SelectCollaborator showSearch={true} onChange={setCollaborator} />
                 </Col>
                 <Col xs={23} md={6} lg={6} xl={6} style={{ textAlign: "end" }}>
-                  <Button
-                    onClick={() => route.push("/home/persons")}
+                  {/* <Button
+                    onClick={() => route.push("/security/assign")}
                     key="cancel"
                   >
                     Regresar
-                  </Button>
+                  </Button> */}
                   <Button
                     key="save"
                     type="primary"
@@ -210,8 +196,8 @@ const SelectCompany = ({ ...props }) => {
             </Col>
           </Row>
         </Spin>
-      </div>
-    </MainLayout>
+      </Card>
+    </MainIndexSecurity>
   );
 };
 

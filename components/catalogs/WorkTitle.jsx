@@ -11,7 +11,7 @@ import {
   message,
   Modal,
   Tag,
-  ConfigProvider
+  ConfigProvider,
 } from "antd";
 import {
   DeleteOutlined,
@@ -31,10 +31,10 @@ import {
 } from "../../utils/constant";
 import { getWorkTitle } from "../../redux/catalogCompany";
 import WebApiPeople from "../../api/WebApiPeople";
-import SelectWorkTitle from "../selects/SelectWorkTitle";
+// import SelectWorkTitle from "../selects/SelectWorkTitle";
 import esES from "antd/lib/locale/es_ES";
 
-const WorkTitle = ({ currentNode, ...props }) => {
+const WorkTitle = ({ currentNode = null, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
@@ -42,6 +42,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [id, setId] = useState("");
+  const [workTitles, setWorktitles] = useState([]);
 
   const columns = [
     {
@@ -128,19 +129,33 @@ const WorkTitle = ({ currentNode, ...props }) => {
     setId("");
   };
 
-  const onFinishForm = (value, url) => {
+  useEffect(() => {
+    if (currentNode) getWorkTitles();
+  }, [currentNode]);
 
+  const getWorkTitles = async () => {
+    try {
+      const res = await WebApiPeople.getWorkTitles(currentNode.id);
+      setWorktitles(res.data.results);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      message.error(messageError);
+    }
+  };
+
+  const onFinishForm = (value, url) => {
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
-    if(!(value?.name && value.name.trim())){
-      form.setFieldsValue({name:undefined})
-      value.name=undefined
+    if (!(value?.name && value.name.trim())) {
+      form.setFieldsValue({ name: undefined });
+      value.name = undefined;
     }
 
-    if(value.name===undefined){
-      form.validateFields()
-      return
+    if (value.name === undefined) {
+      form.validateFields();
+      return;
     }
 
     if (edit) {
@@ -154,19 +169,14 @@ const WorkTitle = ({ currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      await WebApiPeople.createRegisterCatalogs("/business/work-title/", data);
-      props
-        .getWorkTitle(currentNode.id)
-        .then((response) => {
-          resetForm();
-          message.success(messageSaveSuccess);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(error);
-          message.error(messageError);
-        });
+      const res = await WebApiPeople.createRegisterCatalogs(
+        "/business/work-title/",
+        data
+      );
+      resetForm();
+      getWorkTitles();
+      message.success(messageSaveSuccess);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -190,23 +200,15 @@ const WorkTitle = ({ currentNode, ...props }) => {
   const updateRegister = async (url, value) => {
     value.node = currentNode.id;
     try {
-      await WebApiPeople.updateRegisterCatalogs(
+      const res = await WebApiPeople.updateRegisterCatalogs(
         `/business/work-title/${id}/`,
         value
       );
-      props
-        .getWorkTitle(currentNode.id)
-        .then((response) => {
-          setId("");
-          resetForm();
-          message.success(messageUpdateSuccess);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(error);
-          message.error(messageError);
-        });
+      setId("");
+      resetForm();
+      getWorkTitles();
+      message.success(messageUpdateSuccess);
+      setLoading(false);
     } catch (error) {
       setId("");
       setEdit(false);
@@ -240,18 +242,13 @@ const WorkTitle = ({ currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      await WebApiPeople.deleteRegisterCatalogs(deleted.url + `${deleted.id}/`);
-      props
-        .getWorkTitle(currentNode.id)
-        .then((response) => {
-          resetForm();
-          message.success(messageDeleteSuccess);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(error);
-          message.error(messageError);
-        });
+      const res = await WebApiPeople.deleteRegisterCatalogs(
+        deleted.url + `${deleted.id}/`
+      );
+      resetForm();
+      getWorkTitles();
+      setDeleted({});
+      message.success(messageDeleteSuccess);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message)
         message.error(error.response.data.message);
@@ -284,11 +281,11 @@ const WorkTitle = ({ currentNode, ...props }) => {
           <Col lg={8} xs={22} md={12}>
             <SelectLevel textLabel={"Nivel"} rules={[ruleRequired]} />
           </Col>
-          <Col lg={8} xs={22} md={12}>
-            <Form.Item name="salary" label="Salario">
-              <Input prefix={"$"} type="number" min={0} defaultValue={0} />
-            </Form.Item>
-          </Col>
+          {/*<Col lg={8} xs={22} md={12}>*/}
+          {/*  <Form.Item name="salary" label="Salario">*/}
+          {/*    <Input prefix={"$"} type="number" min={0} defaultValue={0} />*/}
+          {/*  </Form.Item>*/}
+          {/*</Col>*/}
         </Row>
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
@@ -303,16 +300,16 @@ const WorkTitle = ({ currentNode, ...props }) => {
       </Form>
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
-        <Table
-          columns={columns}
-          dataSource={props.cat_work_title}
-          pagination={{showSizeChanger:true}}
-          locale={{
-            emptyText: loading
-              ? "Cargando..."
-              : "No se encontraron resultados.",
-          }}
-        />
+          <Table
+            columns={columns}
+            dataSource={workTitles}
+            pagination={{ showSizeChanger: true }}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
+          />
         </ConfigProvider>
       </Spin>
     </>
@@ -320,7 +317,9 @@ const WorkTitle = ({ currentNode, ...props }) => {
 };
 
 const mapState = (state) => {
-  return { cat_work_title: state.catalogStore.cat_work_title };
+  return {
+    // cat_work_title: state.catalogStore.cat_work_title,
+  };
 };
 
 export default connect(mapState, { getWorkTitle })(WorkTitle);

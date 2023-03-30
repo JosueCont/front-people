@@ -5,7 +5,9 @@ import {
     Menu,
     Button,
     message,
-    Select
+    Select,
+    Space,
+    Tooltip
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -37,6 +39,8 @@ const TabReferences = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [isReject, setIsReject] = useState(false);
+    const [withAction, setWithAction] = useState(true);
     
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -78,6 +82,7 @@ const TabReferences = ({
             values.append('upload_date', date)
             values.append('registration_date', date)
             values.append('uploaded_by', currentUser.id)
+            values.append('comments', '')
             await WebApiJobBank.createReferences(values)
             message.success({content: 'Archivo guardado', key})
             getInfoReference(router.query.id);
@@ -100,6 +105,11 @@ const TabReferences = ({
     }
 
     const actionStatus = async (value, item) =>{
+        if(value == 3){
+            openModalEdit({...item, status: value})
+            setIsReject(true)
+            return;
+        }
         try {
             let body = {file_name: item.file_name, status: value};
             await WebApiJobBank.updateReference(item.id, body);
@@ -114,30 +124,29 @@ const TabReferences = ({
     const openModalEdit = (item)=>{
         setItemToEdit(item)
         setOpenModal(true)
+        setIsReject(false)
     }
 
-    const openModalRemove = (item) =>{
-        setItemsToDelete([item])
+    const openModalRemove = (item, withAcion = true) =>{
+        let file = item.file ? item.file?.split('/')?.at(-1) : null;
+        setItemsToDelete([{...item, file}])
         setOpenModalDelete(true)
+        setWithAction(withAcion)
     }
 
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
+        setIsReject(false)
     }
 
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
+        setWithAction(true)
     }
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit]);
-
-    // const onChangePage = (e1, e2, e3) =>{
-    //     console.log('e1--------->', e1)
-    //     console.log('e2----------->', e2)
-    //     console.log('e3---------->', e3)
-    // }
 
     const menuItem = (item) => {
         return (
@@ -207,18 +216,24 @@ const TabReferences = ({
                 value: item.value
             })),
             onFilter: (value, record) => record.status == value,
-            // filterSearch: true,
             render: (item) =>{
                 return(
-                    <Select
-                        size='small'
-                        style={{width: 101}}
-                        defaultValue={item.status}
-                        value={item.status}
-                        placeholder='Estatus'
-                        options={optionsStatusReferences}
-                        onChange={(e) => actionStatus(e, item)}
-                    />
+                    <Space>
+                        <Select
+                            size='small'
+                            style={{width: 105}}
+                            defaultValue={item.status}
+                            value={item.status}
+                            placeholder='Estatus'
+                            options={optionsStatusReferences}
+                            onChange={(e) => actionStatus(e, item)}
+                        />
+                        {item.status === 3 && item.comments && (
+                            <Tooltip title='Ver motivo'>
+                                <EyeOutlined onClick={() => openModalRemove(item, false)}/>
+                            </Tooltip>
+                        )}
+                    </Space>
                 )
             }
         },
@@ -250,7 +265,6 @@ const TabReferences = ({
                 size='small'
                 columns={columns}
                 loading={loading}
-                // onChange={onChangePage}
                 dataSource={infoReferences}
                 locale={{ emptyText: loading
                     ? 'Cargando...'
@@ -262,21 +276,26 @@ const TabReferences = ({
                 }}
             />
             <ModalReferences
-                title={isEdit ? 'Actualizar archivo' : 'Agregar archivo'}
+                title={isEdit ? isReject ? 'Rechazar archivo' : 'Actualizar archivo' : 'Agregar archivo'}
                 visible={openModal}
                 close={closeModal}
                 itemToEdit={itemToEdit}
+                isReject={isReject}
                 actionForm={isEdit ? actionUpdate : actionCreate}
-                textSave={isEdit ? 'Actualizar' : 'Guardar'}
+                textSave={isEdit ? isReject ? 'Rechazar' : 'Actualizar' : 'Guardar'}
             />
             <ListItems
-                title='¿Estás seguro de eliminar este archivo?'
+                title={withAction ? '¿Estás seguro de eliminar este archivo?' : 'Motivo de rechazo'}
                 visible={openModalDelete}
                 keyTitle='file_name'
+                keyDescription={withAction ? 'file' : 'comments'}
+                textCancel={withAction ? 'Cancelar' : 'Cerrar'}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
                 actionConfirm={actionDelete}
+                useWithAction={withAction}
             />
+            
         </>
     )
 }

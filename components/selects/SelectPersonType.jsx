@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
+import {getPersonType} from "../../redux/catalogCompany";
 const { Option } = Select;
 const SelectPersonType = ({ isDisabled=false, ...props }) => {
   const [personType, setPersonType] = useState([]);
@@ -14,6 +15,10 @@ const SelectPersonType = ({ isDisabled=false, ...props }) => {
       setPersonType(cats);
     }
   }, [props.cat_person_type]);
+
+  useEffect(()=>{
+    props.getPersonType()
+  },[])
 
   return (
     <Form.Item name="person_type" label={props.label ? props.label : null}>
@@ -45,4 +50,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectPersonType);
+export default connect(mapState,{getPersonType})(SelectPersonType);

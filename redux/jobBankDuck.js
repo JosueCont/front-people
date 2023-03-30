@@ -456,7 +456,8 @@ export const getCandidatesOptions = (node) => async (dispatch) =>{
     const typeFunction = {type: GET_CANDIDATES_OPTIONS, payload: [], fetching: false};
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getCandidates(node, '&paginate=0');
+        let params = '&type=single&paginate=0';
+        let response = await WebApiJobBank.getCandidates(node, params);
         dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)
@@ -616,7 +617,7 @@ export const getPreselection = (node, query = '', page = 1, size = 10) => async 
             setTimeout(()=>{ dispatch(typeFunction) }, 1000);
             return;
         }
-        let response = await WebApiJobBank.getCandidates(node, query);
+        let response = await WebApiJobBank.getCandidates(node, `&is_active=true${query}`);
         dispatch({...typeFunction, payload: response.data});
     } catch (e) {
         console.log(e)

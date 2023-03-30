@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MainLayout from '../../layout/MainInter';
+import MainInter from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
+import esES from 'antd/lib/locale/es_ES';
+import { ConfigProvider } from 'antd';
 
 const AutoRegister = ({
     children,
@@ -27,12 +29,15 @@ const AutoRegister = ({
     }
 
     return (
-        <MainLayout
+        <MainInter
             hideMenu={true}
             onClickImage={false}
+            autoregister={true}
         >
-            {children}
-        </MainLayout>
+            <ConfigProvider locale={esES}>
+                {children}
+            </ConfigProvider>
+        </MainInter>
     )
 }
 

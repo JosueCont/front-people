@@ -32,12 +32,9 @@ const SelectGender = ({
         >
           {genders.map((item) => {
             return (
-              <>
                 <Option key={item.value} value={item.value}>
                   {item.label}
                 </Option>
-                ;
-              </>
             );
           })}
         </Select>

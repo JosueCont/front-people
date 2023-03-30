@@ -1,4 +1,5 @@
 import axiosApi from "./axiosApi";
+import {DASHBOARD_WIDGET_URLS} from '../utils/constant'
 
 class WebApi {
   static ApisType = (url, method = "post", params = {}) => {
@@ -28,8 +29,8 @@ class WebApi {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
 
-  static getCompanys() {
-    return WebApi.ApisType(`/business/node/?active=true`, "get");
+  static getCompanys(personId=null) {
+    return WebApi.ApisType(`/business/node/?active=true${personId?`&person=${personId}`:''}`, "get");
   }
 
   static getCompany(data) {
@@ -182,6 +183,18 @@ class WebApi {
   static updateGeneralDataPerson(id, data) {
     return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
   }
+
+  static getSystemLog(type=null,page=1,search,_url){
+    let url =_url ? _url :  `/business/eventLog/?page=${page}${type ? `&type=${type}`:''}${search ? `&search=${search}`:''}`;
+    return WebApi.ApisType(url, "get");
+  }
+
+
+  static getDashboardDataWidget(widget= null, params='' ){
+    let url = DASHBOARD_WIDGET_URLS[widget]
+    return WebApi.ApisType(`${url}${params}`, "get");
+  }
+
 }
 
 export default WebApi;

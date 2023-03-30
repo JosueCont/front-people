@@ -17,6 +17,8 @@ import {
   PlusOutlined,
   EyeOutlined,
   SyncOutlined,
+  DesktopOutlined,
+  MobileOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import SelectDepartment from "../../components/selects/SelectDepartment";
@@ -24,7 +26,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
-import { verifyMenuNewForTenant } from "../../utils/functions";
+import { verifyMenuNewForTenant, getFullName } from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 
 const Holidays = (props) => {
@@ -35,6 +37,7 @@ const Holidays = (props) => {
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [permissions, setPermissions] = useState({});
+  const [listPersons, setListPersons] = useState([]);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -53,7 +56,8 @@ const Holidays = (props) => {
   const getAllHolidays = async (
     collaborator = null,
     department = null,
-    status = null
+    status = null,
+    immediate_supervisor = null,
   ) => {
     setLoading(true);
 
@@ -66,6 +70,9 @@ const Holidays = (props) => {
     }
     if (department) {
       url += `&department__id=${department}`;
+    }
+    if(immediate_supervisor){
+      url += `&immediate_supervisor=${immediate_supervisor}`;
     }
 
     WebApiPeople.getVacationRequest(url)
@@ -92,18 +99,37 @@ const Holidays = (props) => {
 
   const filterHolidays = async (values) => {
     setSearching(true);
-    getAllHolidays(values.collaborator, values.department, values.status);
+    getAllHolidays(values.collaborator, values.department, values.status, values.immediate_supervisor);
   };
 
   useEffect(() => {
     if (props.currentNode) {
       getAllHolidays();
+      getListPersons(props.currentNode.id)
     }
   }, [route, props.currentNode]);
 
   const resetFilter = () => {
     form.resetFields();
     getAllHolidays();
+  };
+
+  const getListPersons = async (node_id) => {
+    let data = {
+      node: node_id
+    }
+    try {
+      let response = await WebApiPeople.filterPerson(data);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setListPersons([]);
+      console.log(error);
+    }
   };
 
   return (
@@ -131,7 +157,7 @@ const Holidays = (props) => {
         {permissions.view ? (
           <>
             <div className="top-container-border-radius">
-              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+              <Row justify="space-between" style={{ paddingBottom: 10 }}>
                 <Col span={24}>
                   <Form
                     name="filter"
@@ -146,15 +172,33 @@ const Holidays = (props) => {
                         <SelectCollaborator
                             style={{width:'100%'}}
                           name="collaborator"
+                          showSearch={true}
                         />
                       </Col>
-
                       <Col md={8} xs={12}>
+                        <Form.Item
+                          name="immediate_supervisor"
+                          label="Jefe inmediato"
+                        >
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            allowClear={true}
+                            >
+                              { listPersons.length > 0 && listPersons.map(item => (
+                                <Select.Option value={item.id} key={item.id}>
+                                  {getFullName(item)}
+                                </Select.Option>
+                              ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      {/* <Col md={6} xs={12}>
                         <SelectDepartment
                           name="department"
                           companyId={props.currentNode}
                         />
-                      </Col>
+                      </Col> */}
                       <Col md={8} xs={12}>
                         <Form.Item
                           key="estatus_filter"
@@ -170,6 +214,8 @@ const Holidays = (props) => {
                           />
                         </Form.Item>
                       </Col>
+                    </Row>
+                    <Row style={{marginTop:"24px"}} gutter={8} justify="end">
                       <Col md={4} xs={12} >
                         <Tooltip
                             title="Filtrar"
@@ -192,7 +238,7 @@ const Holidays = (props) => {
                         </Button>
                         </Tooltip>
                       </Col>
-                      <Col md={4} xs={12} style={{ display: "flex" }}>
+                      <Col md={4} xs={12}>
                         <Tooltip
                           title="Limpiar filtros"
                           color={"#3d78b9"}
@@ -206,12 +252,11 @@ const Holidays = (props) => {
                           </Button>
                         </Tooltip>
                       </Col>
-                      <Col md={4} xs={12}>
+                      <Col md={5} xs={12}>
                         {permissions.create && (
                             <Button
                                 style={{
                                   background: "#fa8c16",
-                                  fontWeight: "bold",
                                   color: "white",
                                   width:'100%',
                                   marginTop: "auto",
@@ -220,7 +265,7 @@ const Holidays = (props) => {
                                 key="btn_new"
                             >
                               <PlusOutlined />
-                              Agregar vacaciones
+                              Agregar solicitud
                             </Button>
                         )}
                       </Col>
@@ -265,11 +310,11 @@ const Holidays = (props) => {
                       </>
                     )}
                   />
-                  <Column
+                  {/* <Column
                     title="Departamentos"
                     dataIndex="department"
                     key="department"
-                  />
+                  /> */}
                   <Column
                     title="Días solicitados"
                     dataIndex="days_requested"
@@ -280,10 +325,25 @@ const Holidays = (props) => {
                     dataIndex="available_days"
                     key="available_days"
                     render={(days, record) =>
-                      record.collaborator
-                        ? record.collaborator.Available_days_vacation
+                      record
+                        ? record?.available_days_vacation
                         : null
                     }
+                  />
+                  <Column
+                    dataIndex="immediate_supervisor"
+                    key="id"
+                    title="Jefe inmediato"
+                    render={(immediate_supervisor, record) => (
+                      <>
+                        { immediate_supervisor 
+                          ?
+                          getFullName(immediate_supervisor)
+                          :
+                          null
+                          }
+                      </>
+                    )}
                   />
                   <Column
                     title="Estatus"
@@ -298,6 +358,15 @@ const Holidays = (props) => {
                     }
                   />
                   <Column
+                      title="Solicitado desde"
+                      key="created_from"
+                      render={(status, record) =>
+                          record.created_from === 2
+                              ? <span><DesktopOutlined style={{color:'blue', fontWeight:'bolder',fontSize:20}} /> Web</span>
+                              : <span><MobileOutlined style={{color:'orange', fontWeight:'bolder',fontSize:20}} /> App concierge</span>
+                      }
+                  />
+                  <Column
                     title="Acciones"
                     key="actions"
                     render={(text, record) => (
@@ -307,7 +376,7 @@ const Holidays = (props) => {
                           key={"goDetails_" + record.id}
                           onClick={() => GotoDetails(record)}
                         />
-                        {permissions.edit && record.status == 1 ? (
+                        {permissions.edit && record.status === 1 && record.created_from === 2 ? (
                           <EditOutlined
                             className="icon_actions"
                             key={"edit_" + record.id}

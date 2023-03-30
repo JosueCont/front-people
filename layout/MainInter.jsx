@@ -10,6 +10,7 @@ const MainLayoutInter = ({
   onClickImage,
   hideSearch,
   hideLogo,
+  autoregister = false,
   ...props
 }) => {
 
@@ -24,11 +25,16 @@ const MainLayoutInter = ({
             hideLogo={hideLogo}
             hideSearch={hideSearch}
             onClickImage={onClickImage}
+            autoregister={autoregister}
         >
             {props.children}
         </MainLayoutAdmin>
         :
-        <MainLayout currentKey={currentKey} defaultOpenKeys={defaultOpenKeys}>
+        <MainLayout
+          currentKey={currentKey}
+          defaultOpenKeys={defaultOpenKeys}
+          autoregister={autoregister}
+        >
             {props.children}
         </MainLayout>
       }

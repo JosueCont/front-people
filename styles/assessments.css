@@ -360,11 +360,22 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.tabs-vacancies > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
-    padding-top: 24px;
-    border-top: 3px solid #f0f0f0;
+.tabs-vacancies:not(.mode1) > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
     transition: all 0.5s;
 }
+
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding: 12px 16px;
+}
+
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-content{
+    background-color: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 0px 0px 10px 10px;
+}
+
 .tabs-vacancies > .ant-tabs-card > .ant-tabs-nav::before {
     display: none;
 }
@@ -372,14 +383,38 @@
     background: transparent;
     border-color: transparent;
 }
-.tabs-vacancies > .ant-tabs-card .ant-tabs-tab-active {
+
+.tabs-vacancies:not(.mode1) > .ant-tabs-card .ant-tabs-tab-active {
     background: #f0f0f0;
     border-color: #f0f0f0;
     transition: all 0.5s;
 }
-.tabs-vacancies .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
-.tabs-vacancies .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+.tabs-vacancies.mode1 > .ant-tabs-card .ant-tabs-tab-active {
+    background-color: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-bottom-color: transparent;
+    transition: all 0.5s;
+}
+
+.tabs-vacancies:not(.mode1) .ant-tabs-card.ant-tabs-top > .ant-tabs-nav div.ant-tabs-tab-active,
+.tabs-vacancies:not(.mode1) .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav div.ant-tabs-tab-active{
     border-bottom-color: #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > .ant-tabs-nav div.ant-tabs-tab-active,
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > div > .ant-tabs-nav div.ant-tabs-tab-active {
+    border-right-color: #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > .ant-tabs-nav .ant-tabs-tab:not(.ant-tabs-tab-active):first-child,
+.tabs-vacancies .ant-tabs-card.ant-tabs-left > div > .ant-tabs-nav .ant-tabs-tab:not(.ant-tabs-tab-active):first-child {
+    border-top: 1px solid #f0f0f0;
+}
+
+.tabs-vacancies .ant-tabs-left > .ant-tabs-content-holder
+> .ant-tabs-content > .ant-tabs-tabpane, .ant-tabs-left > div
+> .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+    padding-left: 12px;
 }
 
 .tab-vacancies-btns{
@@ -808,7 +843,7 @@ button.custom-btn {
 
 .items-to-list > div p{
     margin-bottom: 0px;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .items-to-list > div p:nth-child(2){
@@ -850,7 +885,15 @@ div.calendar-header{
 }
 
 div.calendar-header.border-card{
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+div.calendar-interviews.open .ant-picker-panel{
+    display: block;
+}
+
+div.calendar-interviews.close .ant-picker-panel{
+    display: none;
 }
 
 div.calendar-interviews .ant-picker-panel .ant-picker-body th {
@@ -1035,6 +1078,17 @@ div.preview-img-jb .ant-image-preview-mask{
 
 .custom-label-form .label-options.revert .anticon:hover{
     background-color: #ffff;
+}
+
+span.input-with-clear,
+span.input-with-clear:not(.ant-input-affix-wrapper-disabled):hover,
+span.input-with-clear:focus{
+    border: 1px solid black!important;
+}
+
+.highlight-text {
+    background-color: #ffc069;
+    padding: 0px;
 }
 
 /* Termina diseño bolsa de trabajo */

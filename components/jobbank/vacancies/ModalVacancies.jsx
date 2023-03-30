@@ -8,6 +8,13 @@ import {
     ruleRequired,
     ruleURL
 } from '../../../utils/rules';
+import {
+    EllipsisOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    EyeOutlined
+  } from '@ant-design/icons';
 import { convertToRaw, EditorState, Modifier } from "draft-js";
 import dynamic from 'next/dynamic';
 import draftToHtml from "draftjs-to-html";
@@ -111,7 +118,7 @@ const ModalVacancies = ({
                             rules={[ruleRequired]}
                         >
                           <Select 
-                            placeholder='selecciona una opción' 
+                            placeholder='Selecciona una opción' 
                             onChange={(e) => { 
                                 setOptionKey(e)
                                 onchangeSource(e)
@@ -135,7 +142,7 @@ const ModalVacancies = ({
                                 label='Grupo de evaluaciones'
                                 rules={[ruleRequired]}
                             >
-                                <Select placeholder='Selecciona una evaluación' mode='multiple'>
+                                <Select placeholder='Selecciona una evaluación' mode='multiple' showArrow={true}>
                                     {
                                         evaluationsGroup.length > 0 && evaluationsGroup.map((eva) => (
                                             <Select.Option key={eva.people_group_assessment_id} value={eva.people_group_assessment_id}>
@@ -151,7 +158,7 @@ const ModalVacancies = ({
                             <Form.Item
                                 name='url'
                                 label='URL'
-                                rules={[ruleRequired, ruleURL]}
+                                rules={[ ruleURL]}
                             >
                                 <Input
                                     placeholder='Url del sitio'

@@ -72,7 +72,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (props.catHiringRegime) {
       let data = props.catHiringRegime.map((item) => {
         return {
-          label: item.description,
+          label: item.code !== "02" ? item.description : "Sueldos",
           value: item.id,
         };
       });
@@ -264,12 +264,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
 
   /* Events */
   const onChangeLastDayPaid = (date, dateString) => {
-    if(date){
-      setLastDayPaid(moment(date).format('YYYY-MM-DD'));
-    }else{
-      setLastDayPaid(null)
+    if (date) {
+      setLastDayPaid(moment(date).format("YYYY-MM-DD"));
+    } else {
+      setLastDayPaid(null);
     }
-
   };
   const selectCalendar = (value) => {
     if (value) {
@@ -307,19 +306,22 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
-      if(value.last_day_paid){
-        value.last_day_paid = moment(lastDayPaid).format('YYYY-MM-DD');
-      }else{ value.last_day_paid = moment().format('YYYY-MM-DD'); }
-
+      if (value.last_day_paid) {
+        value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
+      } else {
+        value.last_day_paid = moment().format("YYYY-MM-DD");
+      }
 
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);
     } else {
       value.person = person.id;
-      if(value.last_day_paid){
-        value.last_day_paid = moment(lastDayPaid).format('YYYY-MM-DD');
-      }else{ value.last_day_paid = moment().format('YYYY-MM-DD'); }
+      if (value.last_day_paid) {
+        value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
+      } else {
+        value.last_day_paid = moment().format("YYYY-MM-DD");
+      }
       value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
     }
@@ -451,7 +453,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                 <Col lg={12} xs={22} md={12}>
                   <Form.Item
                     name="contract_type"
-                    label="Tipo de contratoss"
+                    label="Tipo de contrato"
                     rules={[ruleRequired]}
                   >
                     <Select
@@ -578,7 +580,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22} md={12}>
-                  <Form.Item name="last_day_paid" rules={[ruleRequired]} label="Último día de pago">
+                  <Form.Item
+                    name="last_day_paid"
+                    rules={[ruleRequired]}
+                    label="Último día de pago"
+                  >
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChangeLastDayPaid}

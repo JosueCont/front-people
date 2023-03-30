@@ -21,6 +21,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalStatus from './ModalStatus';
+import { getPercentGenJB } from '../../../utils/functions';
 
 const TableSelection = ({
     currentUser,
@@ -146,9 +147,9 @@ const TableSelection = ({
                     key='4'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
-                        pathname: `/jobbank/selection/details`,
-                        query:{...router.query, id: item.id, vacant: item.vacant.id }
-                    })} 
+                        pathname: '/jobbank/selection/edit',
+                        query: {...router.query, id: item.id, vacant: item.vacant?.id}
+                    })}
                 >
                     Editar
                 </Menu.Item>
@@ -200,6 +201,24 @@ const TableSelection = ({
             dataIndex: ['vacant', 'job_position'],
             key: ['vacant', 'job_position'],
             ellipsis: true,
+        },
+        {
+            title: 'Evaluaciones',
+            render: (item) =>{
+                let valid = item.candidate?.user_person
+                    && item.candidate?.person_assessment_list?.length > 0;
+                return valid ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/candidates/assign',
+                            query: {...router.query, person: item.candidate?.user_person, back: 'selection'}
+                        })}
+                    >
+                        {getPercentGenJB(item.candidate?.person_assessment_list)}%
+                    </span>
+                ) : <></>;
+            }
         },
         {
             title: 'Estatus',

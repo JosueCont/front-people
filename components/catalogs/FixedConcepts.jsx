@@ -378,6 +378,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
           console.log(error);
           message.error(messageError);
         });
+      const res = await props.getGroupFixedConcept(currentNode.id)
     } catch (error) {
       console.log(error);
     }
@@ -389,7 +390,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     { value: 3, label: "Veces salario" },
   ];
   const based_on = [
-    { value: 1, label: "Salario" },
+    { value: 1, label: "Periodo" },
     { value: 2, label: "Dias trabajados" },
   ];
   const type_salary = [

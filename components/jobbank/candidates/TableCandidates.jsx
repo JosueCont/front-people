@@ -15,14 +15,15 @@ import {
     DownloadOutlined,
     LinkOutlined
 } from '@ant-design/icons';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
-import { pdf } from '@react-pdf/renderer';
-import HighDirectionReport from './HighDirectionReport';
-import CandidateReport from './CandidateReport';
-import { copyContent } from '../../../utils/functions';
+import { copyContent, getPercentGenJB } from '../../../utils/functions';
+
+//*Necesario para la libreria react-pdf
+const OptionsReport = dynamic(()=> import('./reports/OptionsReport'), { ssr: false });
 
 const TableCandidates = ({
     currentNode,
@@ -38,26 +39,7 @@ const TableCandidates = ({
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [useToDelete, setUseToDelete] = useState(true);
-    const [widthAndHeight, setWidthAndHeight] = useState({
-        width: 0,
-        height: 0
-    })
-    const image = currentNode?.image? currentNode.image : ''
-
-    useEffect(() => {
-        if(image){
-            const widthImage = new Image()
-            widthImage.src = image
-            widthImage.onload = () => {
-            setWidthAndHeight({
-                width: widthImage.width,
-                height: widthImage.height
-            })
-    }
-        }
-    },[image])
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
@@ -83,113 +65,6 @@ const TableCandidates = ({
             console.log(e)
             let msg = checked ? 'Candidato no activado' : 'Candidato no desactivado';
             message.error(msg);
-        }
-    }
-
-    const MyDoc = ({ infoCandidate, infoEducation, infoPositions }) =>
-        <HighDirectionReport
-            infoCandidate={infoCandidate}
-            infoEducation={ infoEducation}
-            infoPositions={infoPositions}
-            image = { image }
-            widthAndHeight = {widthAndHeight}
-            
-        />
-    const NyCandidateReport = ({infoCandidate, infoEducation, infoExperience, infoPositions, }) => 
-
-    <CandidateReport
-        infoCandidate={infoCandidate}
-        infoEducation={ infoEducation}
-        infoExperience = { infoExperience }
-        infoPositions={ infoPositions}
-        image = { image }
-        widthAndHeight = {widthAndHeight}
-    />
-    
-
-    const linkTo = (url, download = false, nameCandidate, type ) =>{
-
-        let nameFile = nameCandidate !== ''? 
-                            type === 1?
-                                `Reporte de alta dirección ${nameCandidate}`
-                            :
-                                `Reporte de ${nameCandidate}`
-                        : 
-                            'demo'
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_black";
-        if(download) link.download = nameFile;
-        link.click();
-    }
-
-    const generatePDF = async (id, download) =>{
-        if(!id) return
-        const key = 'updatable';
-        message.loading({content: 'Generando PDF...', key});
-        try {
-            setLoading(true)
-            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
-            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
-            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
-            let infoCan = responseInfo.data || {}
-            let infoEducation = responseEdu.data || []
-            let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
-            let resp = await pdf(<MyDoc infoCandidate={infoCan} infoEducation = {infoEducation} infoPositions = {infoPositions}/>).toBlob();
-            let url = URL.createObjectURL(resp);
-            setTimeout(()=>{
-                setLoading(false);
-                message.success({content: 'PDF generado', key})
-            }, 1000)
-            setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate, 1);
-            },2000)
-        } catch (e) {
-            console.log(e)
-            setTimeout(()=>{
-                setLoading(false)
-                message.error({content: 'PDF no generado', key});
-            },2000)
-        }
-    }
-
-    const generateReportCandidate = async (id, download) => {
-        if(!id) return
-        const key = 'updatable';
-        message.loading({content: 'Generando PDF...', key});
-        try {
-            setLoading(true)
-            let responseInfo = await WebApiJobBank.getInfoCandidate(id);
-            let responseEdu = await WebApiJobBank.getCandidateEducation(id, '&paginate=0');
-            let responsePos = await WebApiJobBank.getCandidateLastJob(id, '&paginate=0')
-            let responseExp = await WebApiJobBank.getCandidateExperience(id, '&paginate=0')
-            let infoCan = responseInfo.data || {}
-            let infoEducation = responseEdu.data || []
-            let infoExp = responseExp.data || []
-            let infoPositions = responsePos.data || []
-            let nameCandidate = `${infoCan.first_name} ${infoCan.last_name}`
-            let resp = await pdf(
-                                <NyCandidateReport 
-                                    infoCandidate={infoCan} 
-                                    infoEducation = {infoEducation} 
-                                    infoExperience  = { infoExp } 
-                                    infoPositions = {infoPositions}
-                                />).toBlob();
-            let url = URL.createObjectURL(resp);
-            setTimeout(()=>{
-                setLoading(false);
-                message.success({content: 'PDF generado', key})
-            }, 1000)
-            setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download, nameCandidate, 2);
-            },2000)
-        } catch (e) {
-            console.log(e)
-            setTimeout(()=>{
-                setLoading(false)
-                message.error({content: 'PDF no generado', key});
-            },2000)
         }
     }
 
@@ -269,7 +144,7 @@ const TableCandidates = ({
             onError: () => message.error('Link de actualización no copiado')
         })
     }
-
+    
     const menuTable = () => {
         return (
             <Menu>
@@ -318,20 +193,7 @@ const TableCandidates = ({
                 >
                     Eliminar
                 </Menu.Item>
-                <Menu.SubMenu title="Descargar reporte" icon={<DownloadOutlined />}>
-                    <Menu.Item
-                        key='4'
-                        onClick={() => generatePDF(item.id, true)}
-                    >
-                        Reporte alta dirección
-                    </Menu.Item>
-                    <Menu.Item
-                        key='5'
-                        onClick={() => { generateReportCandidate(item.id, true) }}
-                    >
-                        Reporte de candidato
-                    </Menu.Item>
-                </Menu.SubMenu>
+                <OptionsReport key='6' candidate={item}/>
             </Menu>
         );
     };
@@ -361,6 +223,25 @@ const TableCandidates = ({
             key: 'cell_phone'
         },
         {
+            title: 'Evaluaciones',
+            render: (item) =>{
+                // let valid = true;
+                let valid = item?.user_person
+                    && item?.person_assessment_list?.length > 0;
+                return valid ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/candidates/assign',
+                            query: {...router.query, person: item.user_person}
+                        })}
+                    >
+                        {getPercentGenJB(item?.person_assessment_list)}%
+                    </span>
+                ) : <></>;
+            }
+        },
+        {
             title: 'Estatus',
             render: (item) =>{
                 return(
@@ -379,7 +260,7 @@ const TableCandidates = ({
             title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -388,7 +269,7 @@ const TableCandidates = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>

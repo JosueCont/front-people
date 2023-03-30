@@ -66,7 +66,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             personName = personName + " " + response.data.mlast_name;
           response.data.fullName = personName;
           setPerson(response.data);
-          if (response.data.is_admin || localStorage.getItem('is_admin')){
+          // let have_role = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
+          if (response.data?.is_admin || localStorage.getItem('is_admin')){
             setIsAdmin(true)
           }
           // setIsAdmin(localStorage.getItem('is_admin'));
@@ -110,7 +111,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           {isAdmin && (
               <p
                 className="text-menu"
-                onClick={() => router.push("/home/persons")}
+                onClick={() => router.push("/dashboard")}
               >
                 <Text>Cambiar a la vista de Administrador</Text>
               </p>
@@ -293,7 +294,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col>
               {person && (
                 <div
                   className={"pointer"}
@@ -301,6 +302,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
+                  <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span>
                   <Dropdown overlay={<CardApps is_admin={false}/>} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
@@ -408,7 +410,7 @@ const mapState = (state) => {
   return {
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     versionCfdi: state.fiscalStore.version_cfdi,
-    userInfo: state.userStore.user,
+    userInfo: state.userStore.user
   };
 };
 

@@ -220,6 +220,7 @@ const LendingConfig = (props) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.loanconfigure,
+    currentNode: state.userStore.current_node
   };
 };
 

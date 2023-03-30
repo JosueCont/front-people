@@ -7,6 +7,7 @@ const NumericInput = ({
   initValue = 0,
   placeholder = "Monto",
   disabled = false,
+  maxLength=25,
   ...props
 }) => {
   const [value, setValue] = useState(0);
@@ -29,7 +30,7 @@ const NumericInput = ({
         }
       }}
       placeholder={placeholder}
-      maxLength={25}
+      maxLength={maxLength}
       onBlur={(e) => {
         const { value: blurValue } = e.target;
         if (blurValue === "" || Number(blurValue) === 0) {

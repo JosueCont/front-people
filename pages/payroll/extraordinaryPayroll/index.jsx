@@ -587,7 +587,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   Total deducciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  <NumberFormat prefix={"$"} number={data.isr} />
+                  {/* <NumberFormat prefix={"$"} number={data.isr} /> */}
+                  <NumberFormat prefix={"$"} number={data.total_deductions} />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -1276,7 +1277,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
-          <Breadcrumb.Item>Nominas extraordinarias</Breadcrumb.Item>
+          <Breadcrumb.Item>Nóminas extraordinarias</Breadcrumb.Item>
         </Breadcrumb>
         <div className="container" style={{ width: "100%" }}>
           <Row gutter={[10, 10]}>
@@ -1629,6 +1630,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           setLoading={setLoading}
           sendCalculatePayroll={setPayrollCalculate}
           movementType={movementType}
+          payment_period={periodSelected}
         />
       )}
       {genericModal && (

@@ -1,17 +1,27 @@
 import {useState} from "react";
-import {Button, Modal, Steps, Row, Col, Alert} from "antd";
+import {Button, Modal, Steps, Row, Col, Alert, Timeline, Typography} from "antd";
 const { Step } = Steps;
 import {
     ArrowRightOutlined,
     InfoCircleOutlined
 } from "@ant-design/icons";
-const ButtonWizardLight=()=>{
+const { Paragraph } = Typography;
+const ButtonWizardLight=({data=null})=>{
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenSystem, setIsModalOpenSystem] = useState(false);
     const description  = "hola"
+
+    const imgKhorflix = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khorflix.png";
+
+    const imgSukhaTv = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/sukha.png";
 
     const showModal = () => {
         setIsModalOpen(true);
+    };
+
+    const showModalSystem = () => {
+        setIsModalOpenSystem(true);
     };
 
 
@@ -20,6 +30,12 @@ const ButtonWizardLight=()=>{
     };
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+    const handleOkSystem = () => {
+        setIsModalOpenSystem(false);
+    };
+    const handleCancelSystem = () => {
+        setIsModalOpenSystem(false);
     };
 
 
@@ -79,6 +95,40 @@ const ButtonWizardLight=()=>{
                      </Col>
                  </Row>
               </Modal>
+              {data &&
+              <div>
+                <br/>
+                <Button type="primary" onClick={showModalSystem}>
+                    <InfoCircleOutlined /> Información de sistema
+                </Button>
+              </div>}
+              {data && <Modal title=" Información de acceso a los sistemas" width={400} visible={isModalOpenSystem} onOk={handleOkSystem} onCancel={handleCancelSystem}>
+                 <Row>
+                     <Col span={24}>
+
+
+                         <br/>
+                         <Timeline>
+                            {data?.concierge_code &&<Timeline.Item dot={<img src={imgSukhaTv} width={30}/>}>Concierge: <b><Paragraph copyable>{data.concierge_code}</Paragraph></b></Timeline.Item>}
+                            {data?.khorflix_code && <Timeline.Item dot={<img src={imgKhorflix} width={30}/>}>Khorflix: <b><Paragraph copyable>{data.khorflix_code}</Paragraph></b></Timeline.Item>}
+                            {data?.sukhatv_code &&<Timeline.Item dot={<img src={imgSukhaTv} width={30}/>}>Sukha TV: <b><Paragraph copyable>{data.sukhatv_code}</Paragraph></b></Timeline.Item>}
+                        </Timeline>
+                         <Alert
+                             message=""
+                             showIcon
+                             description={
+                                 <p>Los códigos mostrados, son los que se solicitan en las respectivas aplicaciones</p>
+                             }
+                             type="info"
+                         />
+
+
+
+
+
+                     </Col>
+                 </Row>
+              </Modal>}
           </>
 
       )

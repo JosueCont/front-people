@@ -28,6 +28,14 @@ const initialData = {
   errorData: null,
   cat_branches: [],
   cat_patronal_registration: [],
+  list_modules_permissions: [],
+  load_modules_permissions: false,
+  list_admin_roles: {},
+  load_admin_roles: false,
+  list_admin_roles_options: [],
+  load_admin_roles_options: false,
+  config_page: 1,
+  config_filters: ""
 };
 
 const RELATIONSHIP = "RELATIONSHIP";
@@ -53,6 +61,9 @@ const TAGS = "TAGS";
 const ACCOUNT = "ACCOUNT";
 const BRANCHES = "BRANCHES";
 const PATRONAL_REGISTRATION = "PATRONAL_REGISTRATION";
+const GET_MODULES_PERMISSIONS = "GET_MODULES_PERMISSIONS";
+const GET_ADMIN_ROLES = "GET_ADMIN_ROLES";
+const GET_ADMIN_ROLES_OPTIONS = "GET_ADMIN_ROLES_OPTIONS";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -128,6 +139,23 @@ const webReducer = (state = initialData, action) => {
         cat_fractions: action.payload.data,
         errorData: action.payload?.error,
       };
+    case GET_MODULES_PERMISSIONS:
+      return {...state,
+        list_modules_permissions: action.payload,
+        load_modules_permissions: action.fetching
+      }
+    case GET_ADMIN_ROLES:
+      return {...state,
+        list_admin_roles: action.payload,
+        load_admin_roles: action.fetching,
+        config_page: action.page,
+        config_filters: action.query
+      }
+    case GET_ADMIN_ROLES_OPTIONS:
+      return {...state,
+        list_admin_roles_options: action.payload,
+        load_admin_roles_options: action.fetching
+      }
     default:
       return state;
   }
@@ -140,16 +168,16 @@ export const doCompanySelectedCatalog =
       if (!idCompany) idCompany = userCompanyId();
       if (idCompany) {
         dispatch(getRelationship(idCompany));
-        dispatch(getJobRiskClass(idCompany));
-        dispatch(getFractions(idCompany));
-        dispatch(getExperienceType(idCompany));
-        dispatch(getReasonSeparation(idCompany));
-        dispatch(getLaborRelation(idCompany));
-        dispatch(getTreatment(idCompany));
-        dispatch(getDocumentType(idCompany));
+        //dispatch(getJobRiskClass(idCompany));
+        //dispatch(getFractions(idCompany));
+        //dispatch(getExperienceType(idCompany));
+        //dispatch(getReasonSeparation(idCompany));
+        //dispatch(getLaborRelation(idCompany));
+        //dispatch(getTreatment(idCompany));
+        //dispatch(getDocumentType(idCompany));
         dispatch(getDepartmets(idCompany));
         dispatch(getJobs(idCompany));
-        dispatch(getPersonType(idCompany));
+        //dispatch(getPersonType(idCompany));
         dispatch(getPeopleCompany(idCompany));
         dispatch(getLevel(idCompany));
         dispatch(getWorkTitle(idCompany));
@@ -257,6 +285,7 @@ export const getJobs = (idCompany) => async (dispatch, getState) => {
 
 export const getPersonType = (idCompany) => async (dispatch, getState) => {
   try {
+    if (!idCompany) idCompany = userCompanyId();
     let response = await WebApiPeople.getPersontype(idCompany);
     dispatch({
       type: PERSON_TYPE,
@@ -369,7 +398,9 @@ export const getBranches = (idCompany) => async (dispatch, getState) => {
 };
 
 export const getPatronalRegistration =
-  (idCompany) => async (dispatch, getState) => {
+  (idCompany=null) => async (dispatch, getState) => {
+
+    if (!idCompany) idCompany = userCompanyId();
     await WebApiPeople.getPatronalRegistration(idCompany)
       .then((response) => {
         dispatch({
@@ -378,6 +409,7 @@ export const getPatronalRegistration =
         });
       })
       .catch((error) => {
+        console.log(error)
         dispatch({
           type: PATRONAL_REGISTRATION,
           payload: { data: [], error: error },
@@ -408,7 +440,8 @@ export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
     });
 };
 
-export const getFractions = (idCompany) => async (dispatch, getState) => {
+export const getFractions = (idCompany=null) => async (dispatch, getState) => {
+  if(!idCompany) idCompany = userCompanyId();
   await WebApiPeople.getFractions(idCompany)
     .then((response) => {
       dispatch({
@@ -420,3 +453,40 @@ export const getFractions = (idCompany) => async (dispatch, getState) => {
       dispatch({ type: FRACTIONS, payload: { data: [], error: error } });
     });
 };
+
+export const getAdminRoles = (node, query = '', page = 1) => async (dispatch) =>{
+  const typeFunction = { type: GET_ADMIN_ROLES, payload: {}, fetching: false, query, page};
+  dispatch({...typeFunction, fetching: true})
+  try {
+    let response = await WebApiPeople.getAdminRoles(node, query);
+    dispatch({...typeFunction, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}
+
+export const getAdminRolesOptions = (node, query = '') => async (dispatch) =>{
+  const typeFunction = { type: GET_ADMIN_ROLES_OPTIONS, payload: [], fetching: false};
+  dispatch({...typeFunction, fetching: true})
+  try {
+    let params = `&paginate=0${query}`;
+    let response = await WebApiPeople.getAdminRoles(node, params);
+    dispatch({...typeFunction, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}
+
+export const getModulesPermissions = () => async (dispatch) =>{
+  const typeFunction = { type: GET_MODULES_PERMISSIONS, payload: [], fetching: false};
+  dispatch({...typeFunction, fetching: true})
+  try {
+    let response = await WebApiPeople.getModulesPermissions();
+    dispatch({...typeFunction, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}

@@ -1,5 +1,4 @@
 import WebApi from "./webApi";
-import { getJobRisk } from "../redux/catalogCompany";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -10,8 +9,13 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
 
-  static getCompanys() {
-    return WebApi.ApisType(`/business/node/?active=true`, "get");
+  static getCompanys(personId = null, active = true) {
+    return WebApi.ApisType(
+      `/business/node/?${active !== null ? `active=${active}` : ""}${
+        personId ? `&person=${personId}` : ""
+      }`,
+      "get"
+    );
   }
 
   static getCompany(data) {
@@ -426,21 +430,15 @@ class WebApiPeople {
   }
 
   static forceListEbaAndEmaFiles(data) {
-    return WebApi.ApisType(
-      'business/document/', "post", data
-    )
+    return WebApi.ApisType("business/document/", "post", data);
   }
 
   static importEMAandEvaFiles(data) {
-    return WebApi.ApisType(
-      'payroll/import-emissions', "post", data
-    )
+    return WebApi.ApisType("payroll/import-emissions", "post", data);
   }
 
   static importAfiliateMovement(data) {
-    return WebApi.ApisType(
-      'payroll/affiliate-movements', "post", data
-    )
+    return WebApi.ApisType("payroll/affiliate-movements", "post", data);
   }
 
   static getJobRiskClass(node) {
@@ -468,23 +466,19 @@ class WebApiPeople {
   static getCredentials(site, patronal_registrartion) {
     return WebApi.ApisType(
       `/business/scraper-config/${site}/${patronal_registrartion}/`,
-      'get'
-    )
+      "get"
+    );
   }
 
   static deleteCredentials(site, patronal_registrartion) {
     return WebApi.ApisType(
       `/business/scraper-config/${site}/${patronal_registrartion}/`,
-      'delete'
-    )
+      "delete"
+    );
   }
 
-  static addNewCredentials(data){
-    return WebApi.ApisType(
-      '/business/scraper-config/',
-      'post',
-      data
-    )
+  static addNewCredentials(data) {
+    return WebApi.ApisType("/business/scraper-config/", "post", data);
   }
 
   static patronalRegistration(data) {
@@ -506,45 +500,98 @@ class WebApiPeople {
     return WebApi.ApisType(url, "post", data);
   }
 
-  static afilliateMovements(data){
+  static afilliateMovements(data) {
+    return WebApi.ApisType(`/business/document/${data}`, "get");
+  }
+
+  static getWithHoldingNotice(data) {
+    return WebApi.ApisType(`/payroll/retention-notice${data}`, "get");
+  }
+
+  static withHoldingNotice(data) {
+    return WebApi.ApisType("/payroll/retention-notice", "post", data);
+  }
+
+  static syncUpAfilliateMovements(data) {
     return WebApi.ApisType(
-      `/business/document/${data}`,
-      'get'
-    );
-  }
-
-  static getWithHoldingNotice(data){
-    return WebApi.ApisType(`/payroll/retention-notice${data}`,'get');
-  }
-
-  static withHoldingNotice(data){
-    return WebApi.ApisType('/payroll/retention-notice','post',data);
-  }
-
-  static syncUpAfilliateMovements(data){
-    return WebApi.ApisType(
-      '/payroll/infonavit-affiliate-movements',
-      'post',
+      "/payroll/infonavit-affiliate-movements",
+      "post",
       data
     );
   }
 
-  static sendFilesToAddPerson(data){
+  static sendFilesToAddPerson(data) {
+    return WebApi.ApisType("/business/add-person-from-cif/", "post", data);
+  }
+
+  static validateKhor(data) {
+    return WebApi.ApisType(`/external-services/khor/sso/`, "post", data);
+  }
+
+  static validateChangePassword(data) {
+    return WebApi.ApisType(`/person/change-password/`, "post", data);
+  }
+
+  static getCodesApps(id) {
+    return WebApi.ApisType(`/setup/get-instance-codes/?person=${id}`, "get");
+  }
+
+  static khonnectSavePerson(data) {
+    return WebApi.ApisType("/khonnect/save-person/", "post", data);
+  }
+
+  static assignedMassiveImmediateSupervisor(data) {
     return WebApi.ApisType(
-      '/business/add-person-from-cif/',
-      'post',
+      `/person/person/set-immediate-supervisor/`,
+      "post",
       data
     );
   }
 
-  static validateKhor(data){
-    return WebApi.ApisType(`/external-services/khor/sso/`,"post",data)
-  }  
+  //Roles de administrador
 
-  static validateChangePassword(data){
-    return WebApi.ApisType(`/person/change-password/`,"post",data)
-  }  
+  static getModulesPermissions() {
+    return WebApi.ApisType("/security/khorplus-module-with-perm/", "get");
+  }
 
+  static getAdminRoles(node, query) {
+    return WebApi.ApisType(
+      `/security/administrator-profile/?node=${node}${query}`,
+      "get"
+    );
+  }
+
+  static getInfoAdminRole(id) {
+    return WebApi.ApisType(`/security/administrator-profile/${id}/`, "get");
+  }
+
+  static createAdminRole(data) {
+    return WebApi.ApisType("/security/administrator-profile/", "post", data);
+  }
+
+  static updateAdminRole(id, data) {
+    return WebApi.ApisType(
+      `/security/administrator-profile/${id}/`,
+      "patch",
+      data
+    );
+  }
+
+  static deleteAdminRole(id) {
+    return WebApi.ApisType(`/security/administrator-profile/${id}/`, "delete");
+  }
+
+  static getWorkTitles(node) {
+    return WebApi.ApisType(`/business/work-title/?node=${node}`, "get");
+  }
+
+  static deleteAffiliatedMovements(data) {
+    return WebApi.ApisType(
+      `/business/delete-affiliated-movements/`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPeople;

@@ -17,7 +17,8 @@ import TabPositions from './TabPositions';
 import TabReferences from './TabReferences';
 
 //*Necesario para la libreria react-pdf
-const Expedient = dynamic(()=> import('./Expedient'), { ssr: false });
+const OptionsExpedient = dynamic(()=> import('./reports/OptionsExpedient'), { ssr: false });
+// const ReportExpedient = dynamic(()=> import('./reports/ReportExpedient'), { ssr: false });
 
 const DetailsCandidates = ({
     action,
@@ -32,28 +33,13 @@ const DetailsCandidates = ({
     const [infoEducation, setInfoEducation] = useState([]);
     const [infoExperience, setInfoExperience] = useState([]);
     const [infoPositions, setInfoPositions] = useState([]);
-    const [widthAndHeight, setWidthAndHeight] = useState({
-        width: 0,
-        height: 0
-    })
-    const image = currentNode?.image? currentNode.image : ''
-
-    useEffect(() => {
-        if(image){
-            const widthImage = new Image()
-            widthImage.src = image
-            widthImage.onload = () => {
-            setWidthAndHeight({
-                width: widthImage.width,
-                height: widthImage.height
-            })
-    }
-        }
-    },[image])
 
     const actionBack = () =>{
+        let url = router.query?.back
+            ? `/jobbank/${router.query?.back}`
+            : '/jobbank/candidates';
         router.push({
-            pathname: '/jobbank/candidates',
+            pathname: url,
             query: newFilters
         })
     }
@@ -88,13 +74,11 @@ const DetailsCandidates = ({
                     </p>
                     <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                         {action == 'edit' && (
-                            <Expedient
+                            <OptionsExpedient
                                 infoCandidate={infoCandidate}
                                 infoEducation={infoEducation}
                                 infoExperience={infoExperience}
                                 infoPositions={infoPositions}
-                                image = {image}
-                                widthAndHeight = {widthAndHeight}
                             />
                         )}
                         <Button
@@ -122,6 +106,7 @@ const DetailsCandidates = ({
                                 newFilters={newFilters}
                                 setInfoCandidate={setInfoCandidate}
                                 infoCandidate={infoCandidate}
+                                actionBack={actionBack}
                             />
                         </Tabs.TabPane>
                         <Tabs.TabPane
@@ -193,6 +178,18 @@ const DetailsCandidates = ({
                                 type='3'
                             />
                         </Tabs.TabPane>
+                        {/* <Tabs.TabPane
+                            tab='Expediente'
+                            forceRender
+                            key='8'
+                        >
+                            <ReportExpedient
+                                infoCandidate={infoCandidate}
+                                infoEducation={infoEducation}
+                                infoExperience={infoExperience}
+                                infoPositions={infoPositions}
+                            />
+                        </Tabs.TabPane> */}
                     </Tabs>    
                 </Col>
             </Row>

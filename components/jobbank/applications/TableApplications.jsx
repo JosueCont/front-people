@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {
     Table,
@@ -7,7 +7,8 @@ import {
     Dropdown,
     message,
     Switch,
-    Select
+    Select,
+    Tooltip
 } from 'antd';
 import {
     EllipsisOutlined,
@@ -20,7 +21,7 @@ import {
 import { useRouter } from 'next/router';
 import { optionsStatusApplications } from '../../../utils/constant';
 import { getApplications, getApplicationsCandidates } from '../../../redux/jobBankDuck';
-import { downloadCustomFile } from '../../../utils/functions';
+import { downloadCustomFile, getPercentGenJB } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import moment from 'moment';
 
@@ -46,7 +47,9 @@ const TableApplications = ({
             message.success(msg);
         } catch (e) {
             console.log(e)
-            message.error('Estatus no actualizado');
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Estatus no actualizado';
+            message.error(msg);
         }
     }
 
@@ -68,13 +71,15 @@ const TableApplications = ({
     const columns = [
         {
             title: 'Candidato',
+            ellipsis: true,
             render: (item) =>{
                 return item?.candidate ? (
                     <span
+                        className='ant-table-cell-ellipsis'
                         style={{color: '#1890ff', cursor: 'pointer'}}
                         onClick={()=> router.push({
                             pathname: '/jobbank/candidates/edit',
-                            query: {...router.query, id: item.candidate?.id}
+                            query: {...router.query, id: item.candidate?.id, back: 'applications'}
                         })}
                     >
                         {item.candidate?.first_name} {item.candidate?.last_name}
@@ -99,10 +104,11 @@ const TableApplications = ({
             render: (item) =>{
                 return item.vacant?.job_position ? (
                     <span
+                        className='ant-table-cell-ellipsis'
                         style={{color: '#1890ff', cursor: 'pointer'}}
                         onClick={()=> router.push({
                             pathname: '/jobbank/vacancies/edit',
-                            query: {...router.query, id: item.vacant?.id}
+                            query: {...router.query, id: item.vacant?.id, back: 'applications'}
                         })}
                     >
                         {item.vacant?.job_position}
@@ -112,6 +118,7 @@ const TableApplications = ({
         },
         {
             title: 'Fecha de registro',
+            ellipsis: true,
             render: (item) =>{
                 return(
                     <>{moment(item.registration_date).format('DD-MM-YYYY hh:mm a')}</>
@@ -119,7 +126,26 @@ const TableApplications = ({
             }
         },
         {
+            title: 'Evaluaciones',
+            render: (item) =>{
+                let valid = item.candidate?.user_person
+                    && item.candidate?.person_assessment_list?.length > 0;
+                return valid ? (
+                    <span
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/candidates/assign',
+                            query: {...router.query, person: item.candidate?.user_person, back: 'applications'}
+                        })}
+                    >
+                        {getPercentGenJB(item.candidate?.person_assessment_list)}%
+                    </span>
+                ) : <></>;
+            }
+        },
+        {
             title: 'Estatus',
+            width: 130,
             render: (item) =>{
                 return(
                     <Select
@@ -136,18 +162,21 @@ const TableApplications = ({
         },
         {
             title: 'Acciones',
-            // width: 105,
+            width: 80,
+            align: 'center',
             render: (item) =>{
                 return(
-                    <span
-                        style={{color: '#1890ff', cursor: 'pointer'}}
-                        onClick={()=> downloadCustomFile({
-                            name: item.candidate?.cv?.split('/')?.at(-1),
-                            url: item.candidate.cv
-                        })}
-                    >
-                        Descargar CV
-                    </span>
+                    <Tooltip title='Descargar CV'>
+                        <Button
+                            size='small'
+                            onClick={()=> downloadCustomFile({
+                                name: item.candidate?.cv?.split('/')?.at(-1),
+                                url: item.candidate.cv
+                            })}
+                        >
+                            <DownloadOutlined/>
+                        </Button>
+                    </Tooltip>
                 )   
             }
         }

@@ -496,11 +496,11 @@ export const optionsStatusSelection = [
 ];
 
 export const optionsStatusAsignament = [
-  { value: 1, key: 1, label: 'Asignada' },
-  { value: 2, key: 2, label: 'Enviada' },
-  { value: 3, key: 3, label: 'Finalizada' },
-  { value: 4, key: 4, label: 'No finalizada'}
-]
+  { value: 1, key: 1, label: "Asignada" },
+  { value: 2, key: 2, label: "Enviada" },
+  { value: 3, key: 3, label: "Finalizada" },
+  { value: 4, key: 4, label: "No finalizada" },
+];
 
 export const optionsTypeNotify = [
   { value: 0, key: 0, label: "Informativa" },
@@ -539,35 +539,35 @@ export const optionsDomainLang = [
 ];
 
 export const optionsTypeConnection = [
-  {value: 1, key: 1, label: 'Publicaciones'},
-  {value: 2, key: 2, label: 'Notificaciones'},
-  {value: 3, key: 3, label: 'Agenda'}
+  { value: 1, key: 1, label: "Publicaciones" },
+  { value: 2, key: 2, label: "Notificaciones" },
+  { value: 3, key: 3, label: "Agenda" },
 ];
 
 export const optionsConnectionsJB = [
-  {label: 'Facebook', value: 'FB', key: 'FB', type: 1},
-  {label: 'Instagram', value: 'IG', key: 'IG', type: 1},
-  {label: 'Linkedin', value: 'LK', key: 'LK', type: 1, disabled: true},
-  {label: 'WhatsApp', value: 'WP', key: 'WP', type: 2},
-  {label: 'Google Calendar', value: 'GC', key: 'GC', type: 3}
+  { label: "Facebook", value: "FB", key: "FB", type: 1 },
+  { label: "Instagram", value: "IG", key: "IG", type: 1 },
+  { label: "Linkedin", value: "LK", key: "LK", type: 1, disabled: true },
+  { label: "WhatsApp", value: "WP", key: "WP", type: 2 },
+  { label: "Google Calendar", value: "GC", key: "GC", type: 3 },
 ];
 
 export const optionsSourceType = [
-  {label: 'Khor', value: 1, key: 1},
-  {label: 'Cliente', value: 2, key: 2},
-]
+  { label: "Khor", value: 1, key: 1 },
+  { label: "Cliente", value: 2, key: 2 },
+];
 
 export const optionsStatusReferences = [
-  {value: 1, key: 1, label: 'Pendiente'},
-  {value: 2, key: 2, label: 'Aprobado'},
-  {value: 3, key: 3, label: 'Rechazado'}
-]
+  { value: 1, key: 1, label: "Pendiente" },
+  { value: 2, key: 2, label: "Aprobado" },
+  { value: 3, key: 3, label: "Rechazado" },
+];
 
 export const optionsStatusApplications = [
-  {value: 1, key: 1, label: 'Pendiente'},
-  {value: 2, key: 2, label: 'Aprobado'},
-  {value: 3, key: 3, label: 'No aprobado'}
-]
+  { value: 1, key: 1, label: "Pendiente" },
+  { value: 2, key: 2, label: "Aprobado" },
+  { value: 3, key: 3, label: "No aprobado" },
+];
 
 // es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
 export const FACTOR_SDI = 1.0452;
@@ -623,8 +623,10 @@ export const getCurrentURL = (tenant = false, getTenant = false) => {
 export const getHost = () => {
   if (typeof window !== "undefined") {
     let host = window.location.host.split(".");
-    if (host.length > 1) {
+    if (host.length > 1 && !host[0].includes('localhost') ) {
       return host[1];
+    } else {
+      return 'demo'
     }
   } else {
     return "";
@@ -690,6 +692,29 @@ export const CareerlabAccess = [
 
 export const InfonavitDiscountType = [
   { value: 1, label: "Por porcentaje" },
-  { value: 2, label: "Cuota fija (CF)" },
-  { value: 3, label: "Veces de salario mínimo (VSM)" },
+  { value: 2, label: "Cuota fija mensual en Pesos" },
+  { value: 3, label: "Cuota fija mensual en VSM" },
 ];
+
+// LOG (Tipos de log)
+export const TYPE_LOGS = {
+  1: 'Log',
+  2: 'Mov. Automáticos' // (Scrapper)
+}
+
+
+// Dashboard
+export const DASHBOARD_WIDGET_URLS = {
+  TOTAL_PEOPLE_IN_NODE: `/person/dashboard/`,
+  ANNIVERSARY_CURRENT_MONTH : `/person/dashboard/`,
+  BIRTHDAY_CURRENT_MONTH : `/person/dashboard/`,
+  PEOPLE_BY_GENDER : `/person/dashboard/`,
+  PEOPLE_BY_GENERATION : `/person/dashboard/`,
+}
+
+export const optionsStatusApply = [
+  {value: '3', key: '3', label: 'Pendiente'},
+  {value: '0', key: '0', label: 'Iniciada'},
+  {value: '1', key: '1', label: 'En curso'},
+  {value: '2', key: '2', label: 'Finalizada'}
+]

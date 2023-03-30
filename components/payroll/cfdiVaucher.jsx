@@ -26,7 +26,7 @@ import { connect } from "react-redux";
 import SelectPaymentCalendar from "../../components/selects/SelectPaymentCalendar";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import WebApiPayroll from "../../api/WebApiPayroll";
-import { messageError } from "../../utils/constant";
+import {messageError, TYPE_LOGS} from "../../utils/constant";
 import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
@@ -56,10 +56,26 @@ const CfdiVaucher = ({
   const [valuesFilter, setValuesFilter] = useState(null);
   const [lenData, setLenData] = useState(0);
   const [page, setPage] = useState(1);
+  const [dataTypesLog, setDataTypesLog] = useState([]);
+
+
+  useEffect(() => {
+    let _dataTypes = []
+    for (const property in TYPE_LOGS) {
+      _dataTypes.push({
+        label:TYPE_LOGS[property],
+        value: property
+      })
+    }
+    setDataTypesLog(_dataTypes)
+  }, []);
+
 
   const getVoucherTypeStr=(type)=>{
    // 1 aguinaldo,2 finiquito , 3 liquidacion, 0 ordinaria
      switch (type){
+       case 0:
+         return 'Ordinaria';
        case 1:
          return 'Aguinaldo';
        case 2:
@@ -67,17 +83,16 @@ const CfdiVaucher = ({
        case 3:
          return 'Liquidacion';
        default:
-         return 'Ordinaria'
+         return 'Extraordinario'
      }
   }
 
   const downloadReceipt = async (data) => {
-    console.log(data)
     let req = {
-      person_id: data?.payroll_person?.person?.id,
-      payment_period_id: data?.payment_period?.id,
-      receipt_type: getVoucherTypeStr(data.movement_type)
-
+      cfdi_id: data?.id
+      // person_id: data?.payroll_person?.person?.id,
+      // payment_period_id: data?.payment_period?.id,
+      // receipt_type: getVoucherTypeStr(data.movement_type)
     }
 
     try {
@@ -112,7 +127,7 @@ const CfdiVaucher = ({
 
   const columns = [
     {
-      title: "Num. trabajador",
+      title: "Núm. trabajador",
       key: "collaborator",
       render: (item) => {
         return item.payroll_person.person.code;
@@ -144,7 +159,7 @@ const CfdiVaucher = ({
       title: "Tipo",
       key: "type_movement",
       render: (item) => {
-        return `${getVoucherTypeStr(item?.movement_type)}`;
+        return `${item?.movement_type===0?'Ordinario':'Extraordinario'}`;
       },
     },
     {
@@ -307,17 +322,21 @@ const CfdiVaucher = ({
 
   const onFinish = (value, new_page) => {
     setValuesFilter(value);
-
     setLoading(true);
     let url = `&node=${props.currentNode.id}`;
-    if (value.calendar && value.calendar != "")
+    if (value.calendar && value.calendar !== "")
       url = url + `&calendar=${value.calendar}`;
-    if (value.period && value.period != "")
+    if (value.period && value.period !== "")
       url = url + `&period=${value.period}`;
-    if (value.person && value.person != "")
+    if (value.person && value.person !== "")
       url = url + `&person=${value.person}`;
+    let type = value.movement_type;
+    if (type && type !== "")
+      url = url + `&movement_type=${value.movement_type}`;
+
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
-    getVoucher(url, new_page);
+    if(!new_page) setCurrentPage(1)
+    getVoucher(url, new_page?new_page:1);
   };
 
   const getVoucher = (data, new_page) => {
@@ -346,6 +365,8 @@ const CfdiVaucher = ({
   const clearFilter = () => {
     form.resetFields();
     setPeriods([]);
+    setCurrentPage(1)
+    setPage(1)
     setCalendarSelect(null);
     setCfdis([]);
     getVoucher("");
@@ -355,7 +376,7 @@ const CfdiVaucher = ({
     let periodos = [];
     if (calendarSelect && props.payment_calendar.length > 0) {
       periodos = props.payment_calendar.find(
-        (item) => item.id == calendarSelect
+        (item) => item.id === calendarSelect
       ).periods;
       setPeriods(
         periodos
@@ -392,6 +413,26 @@ const CfdiVaucher = ({
               onFinish={onFinish}
             >
               <Row gutter={[10]}>
+                <Col md={3}>
+                  <Form.Item name="movement_type" label="Tipo de nómina">
+                    <Select
+                        placeholder="Todos"
+                        style={{ width: '100%' }}
+                        allowClear
+                        options={[
+                          {
+                            label:'Ordinario',
+                            value:'0'
+                          },
+                          {
+                            label:'Extraordinario',
+                            value:'4'
+                          },
+                        ]}
+                    />
+                  </Form.Item>
+
+                </Col>
                 <Col>
                   <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendarSelect(value)}
@@ -412,7 +453,7 @@ const CfdiVaucher = ({
                   </Col>
                 )}
                 <Col>
-                  <SelectCollaborator name="person" style={{ width: 250 }} />
+                  <SelectCollaborator  showSearch={true} name="person" style={{ width: 250 }} />
                 </Col>
                 {!calendarSelect && (
                   <Col>

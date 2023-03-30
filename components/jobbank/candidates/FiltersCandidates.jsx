@@ -60,7 +60,11 @@ const FiltersCandidates = ({
                             name='first_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por nombre'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por nombre'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -69,7 +73,11 @@ const FiltersCandidates = ({
                             name='last_name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por apellidos'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por apellidos'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -78,7 +86,11 @@ const FiltersCandidates = ({
                             name='email__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input placeholder='Buscar por correo'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por correo'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -87,7 +99,11 @@ const FiltersCandidates = ({
                             name='cell_phone'
                             rules={[onlyNumeric]}
                         >
-                            <Input placeholder='Buscar por teléfono'/>
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por teléfono'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -110,7 +126,12 @@ const FiltersCandidates = ({
                             name='last_job'
                             rules={[ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Buscar por puesto'/>
+                            <Input
+                                maxLength={200}
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Buscar por puesto'
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -209,6 +230,8 @@ const FiltersCandidates = ({
                         >
                              <Input
                                 maxLength={200}
+                                allowClear
+                                className='input-with-clear'
                                 placeholder='Especifique el municipio'
                             />
                         </Form.Item>

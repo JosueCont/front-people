@@ -1,21 +1,23 @@
 import React, { useState, useMemo, useContext, useCallback } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { useRouter } from 'next/router';
 import { Calendar, Spin, message } from 'antd';
 import CalendarHeader from './CalendarHeader';
 import CalendarDateCell from './CalendarDateCell';
 import CalendarMonthCell from './CalendarMonthCell';
 import EventDetails from './EventDetails';
+import MonthDetails from './MonthDetails';
 import EventForm from './EventForm';
 import ListItems from '../../../common/ListItems';
-import moment from 'moment';
 import { getInterviews } from '../../../redux/jobBankDuck';
 import { InterviewContext } from '../context/InterviewContext';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 //Formato para la semana
-const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
-const monthsShort = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
-moment.updateLocale('es_ES', { weekdaysMin, monthsShort });
+// const weekdaysMin = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SAB'];
+// const monthsShort = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+// moment.updateLocale('es_ES', { weekdaysMin, monthsShort });
 
 const CalendarView = ({
     currentNode,
@@ -26,6 +28,8 @@ const CalendarView = ({
     getInterviews
 }) => {
 
+    const router = useRouter();
+    const currentMonth = moment()?.month()+1;
     const [openModalDetail, setOpenModalDetail] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -43,7 +47,9 @@ const CalendarView = ({
             message.success('Evento actualizado')
         } catch (e) {
             console.log(e)
-            message.error('Evento no actualizado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no actualizado';
+            message.error(msg)
         }
     }
 
@@ -56,7 +62,9 @@ const CalendarView = ({
             message.success('Evento eliminado')
         } catch (e) {
             console.log(e)
-            message.error('Evento no eliminado')
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Evento no eliminado';
+            message.error(msg)
         }
     }
 
@@ -92,19 +100,39 @@ const CalendarView = ({
         setOpenModalDetail(true)
     }
 
+    const disabledDate = (value) =>{
+        let type = router.query?.type ?? 'month';
+        if(type == 'year') return false;
+        let mth = value.format('MM');
+        let current = router.query?.mth
+            ? parseInt(router.query?.mth)
+            : currentMonth;
+        return parseInt(mth) != current;
+    }
+
+    const classOpen = useMemo(()=>{
+        let valid = router.query?.view == 'calendar' || !router.query?.view;
+        return valid ? 'open' : 'close';
+    },[router.query?.view])
+
     const getHeader = e => <CalendarHeader {...e}/>;
     const getCell = e => <CalendarDateCell {...{showModalDetails, value: e}}/>;
-    const getMonth = e => <CalendarMonthCell {...e}/>;
+    const getMonth = e => <CalendarMonthCell date={e}/>;
 
     return (
         <>
             <Spin spinning={load_interviews}>
                 <Calendar
-                    className='calendar-interviews'
+                    className={`calendar-interviews ${classOpen}`}
                     headerRender={getHeader}
                     dateCellRender={getCell}
                     monthCellRender={getMonth}
+                    mode={router.query?.type ?? 'month'}
+                    disabledDate={disabledDate}
                 />
+                {router.query?.view == 'schedule' &&
+                    <MonthDetails showModalDetails={showModalDetails}/>
+                }
             </Spin>
             <EventDetails
                 itemToDetail={itemToDetail}

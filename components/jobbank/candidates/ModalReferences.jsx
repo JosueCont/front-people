@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Row, Col, Form, Select, Input, Button, DatePicker } from 'antd';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
-import { useSelector } from 'react-redux';
 import MyModal from '../../../common/MyModal';
 import FileUpload from '../FileUpload';
+import { optionsStatusReferences } from '../../../utils/constant';
 
 const ModalReferences = ({
     title = '',
@@ -11,7 +11,8 @@ const ModalReferences = ({
     itemToEdit = {},
     visible = false,
     textSave = 'Guardar',
-    actionForm = () =>{}
+    actionForm = () =>{},
+    isReject = false
 }) => {
 
     const [formReference] = Form.useForm();
@@ -29,6 +30,8 @@ const ModalReferences = ({
     const createData = (values) =>{
         let reference = new FormData();
         reference.append('file_name', values.file_name)
+        reference.append('status', values.status)
+        reference.append('comments', values.comments)
         if(file.length > 0) reference.append('file', file[0]);
         return reference;
     }
@@ -61,37 +64,70 @@ const ModalReferences = ({
                 form={formReference}
                 layout='vertical'
                 onFinish={onFinish}
+                initialValues={{
+                    status: 1,
+                    comments: ""
+                }}
             >
                 <Row gutter={[24,0]}>
-                    <Col span={24}>
+                    <Col span={24} style={{display: isReject ? 'none' : 'block'}}>
                         <Form.Item
                             name='file_name'
                             label='Nombre'
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Input maxLength={200} placeholder='Nombre'/>
+                            <Input
+                                maxLength={200}
+                                placeholder='Nombre'
+                            />
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
-                        <FileUpload
-                            label='Archivo'
-                            keyName='file_read'
-                            tooltip={`Archivos permitidos: ${typeFile.join(', ')}`}
-                            isRequired={true}
-                            revertColor={true}
-                            setFile={setFile}
-                            typeFile={typeFile}
-                            disabled={Object.keys(itemToEdit).length > 0}
-                            setNameFile={e => formReference.setFieldsValue({
-                                file_read: e
-                            })}
-                        />
+                    <Col span={12} style={{display: 'none'}}>
+                        <Form.Item name='status' label='Estatus'>
+                            <Select
+                                allowClear
+                                placeholder='Seleccionar una opción'
+                                options={optionsStatusReferences}
+                            />
+                        </Form.Item>
+                    </Col>
+                    {!isReject && (
+                        <Col span={24}>
+                            <FileUpload
+                                label='Archivo'
+                                keyName='file_read'
+                                tooltip={`Archivos permitidos: ${typeFile.join(', ')}`}
+                                isRequired={true}
+                                revertColor={true}
+                                setFile={setFile}
+                                typeFile={typeFile}
+                                hideOptions={Object.keys(itemToEdit).length > 0}
+                                disabled={Object.keys(itemToEdit).length > 0}
+                                setNameFile={e => formReference.setFieldsValue({
+                                    file_read: e
+                                })}
+                            />
+                        </Col>
+                    )}
+                    <Col span={24} style={{display: isReject ? 'block' : 'none'}}>
+                        <Form.Item
+                            name='comments'
+                            label='Comentario'
+                        >
+                            <Input.TextArea
+                                placeholder='Especificar el motivo'
+                                autoSize={{
+                                    minRows: 7,
+                                    maxRows: 7
+                                }}
+                            />
+                        </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
                         <Button htmlType='submit' loading={loading}>
                             {textSave}
-                        </Button>
+                        </Button> 
                     </Col>
                 </Row>
             </Form>

@@ -295,10 +295,10 @@ const DetailPerson = ({
 
           <TabPane
             tab={
-              <Tooltip title="Cambiar contraseña">
+              <Tooltip title="Usuario">
                 <div className="container-title-tab">
                   <KeyOutlined />
-                  <div className="text-title-tab">Cambiar contraseña</div>
+                  <div className="text-title-tab">Usuario</div>
                 </div>
               </Tooltip>
             }
@@ -307,6 +307,7 @@ const DetailPerson = ({
             <FormChangePassword
               config={config}
               khonnectId={person.khonnect_id}
+              person_user={person}
             />
           </TabPane>
 

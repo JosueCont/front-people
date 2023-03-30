@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "antd";
 import { messageError } from "../../../utils/constant";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { ruleRequired } from "../../../utils/rules";
 
@@ -25,10 +25,12 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
   const [updateRegister, setUpdateRegister] = useState(null);
   const [loadingTable, setLoadingTable] = useState(false);
   const [vacationsRecord, setVacationsRecord] = useState([]);
+  const [editVacation, setEditVacation] = useState(false);
+  const [editBonus, setEditBonus] = useState(false);
 
   const colVacations = [
     {
-      title: "periodo",
+      title: "Periodo",
       dataIndex: "period",
       key: "period",
     },
@@ -63,11 +65,20 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                 offset={1}
                 style={{ padding: "0px 20px" }}
               >
-                <Tooltip title="Editar">
-                  <EditOutlined
-                    style={{ fontSize: "20px" }}
-                    onClick={() => setUpdateRegister(item)}
-                  />
+                <Tooltip title={item.is_active ? "Editar" : "Ver"}>
+                  {/* Solo se muestra editar si el registro es activo y la prima vacacional
+                   se paga al disfrute las vacaciones*/}
+                  {item.is_active ? (
+                    <EditOutlined
+                      style={{ fontSize: "20px" }}
+                      onClick={() => setUpdateRegister(item)}
+                    />
+                  ) : (
+                    <EyeOutlined
+                      style={{ fontSize: "20px" }}
+                      onClick={() => setUpdateRegister(item)}
+                    />
+                  )}
                 </Tooltip>
               </Col>
             </Row>
@@ -107,6 +118,15 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
         vacations_premium_pay: updateRegister.vacations_premium_pay,
         vacations_premium_pending: updateRegister.vacations_premium_pending,
       });
+      setEditVacation(updateRegister.is_active);
+
+      if (updateRegister.vacation_bonus_payment == 1) {
+        setEditBonus(false);
+      } else if (updateRegister.is_active) {
+        setEditBonus(true);
+      } else {
+        setEditBonus(false);
+      }
     }
   }, [updateRegister]);
 
@@ -217,7 +237,11 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   label="Vacaciones pendientes"
                   rules={[ruleRequired]}
                 >
-                  <Input type="number" maxLength={11} />
+                  <Input
+                    type="number"
+                    maxLength={11}
+                    disabled={!editVacation}
+                  />
                 </Form.Item>
               </Col>
 
@@ -245,7 +269,12 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   label="Prima vacacional pendiente"
                   rules={[ruleRequired]}
                 >
-                  <Input min={0} type="number" maxLength={2} />
+                  <Input
+                    min={0}
+                    type="number"
+                    maxLength={2}
+                    disabled={!editBonus}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -259,11 +288,17 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
                   Cancelar
                 </Button>
               </Col>
-              <Form.Item>
-                <Button loading={loadingForm} type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Form.Item>
+              {(editBonus || editVacation) && (
+                <Form.Item>
+                  <Button
+                    loading={loadingForm}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Guardar
+                  </Button>
+                </Form.Item>
+              )}
             </Row>
           </Form>
         )}

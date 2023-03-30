@@ -45,19 +45,24 @@ import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import { getFullName } from "../../utils/functions";
 
 const DataPerson = ({
   currentNode,
   config,
   person = null,
   setPerson,
+  list_admin_roles_options,
+  load_admin_roles_options,
   ...props
 }) => {
   const { Title } = Typography;
+  let filters = { node: "" };
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
   const [photo, setPhoto] = useState(null);
   const [isActive, setIsActive] = useState(false);
+  const [isActiveAdmin, setIsActiveAdmin] = useState(false);
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
@@ -69,11 +74,36 @@ const DataPerson = ({
   );
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
+  const [listPersons, setListPersons] = useState([]);
+  //
+  const isAdmin = Form.useWatch('is_admin', formPerson);
 
   useEffect(() => {
     setPersonWT(person.id);
     setFormPerson(person);
   }, [person]);
+
+  useEffect(() => {
+    if(currentNode){
+      filters.node = currentNode.id
+      filterPersonName(filters)
+    }
+  }, [currentNode]);
+
+  const filterPersonName = async (node_id) => {
+    try {
+      let response = await WebApiPeople.filterPerson(node_id);
+      setListPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setListPersons(persons);
+    } catch (error) {
+      setPerson([]);
+      console.log(error);
+    }
+  };
 
   const setFormPerson = (person) => {
     setPersonWT(false);
@@ -100,6 +130,9 @@ const DataPerson = ({
       careerlab_access: person.careerlab_access,
       is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
+      immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
+      is_admin: person.is_admin,
+      administrator_profile: person?.administrator_profile?.id ?? null
     });
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
@@ -133,6 +166,12 @@ const DataPerson = ({
         register_date: moment(person.timestamp),
       });
 
+      if (person.is_admin)
+      // setIsActiveAdmin(person.is_admin)
+      formPerson.setFieldsValue({
+        is_admin: person.is_admin,
+      });
+
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
         formPerson.setFieldsValue({
@@ -151,6 +190,15 @@ const DataPerson = ({
     setIsActive(person.is_active);
   };
 
+  const validateImmediateSupervisor = (id) => ({
+    validator(rule, value) {
+      if (value != id) {
+        return Promise.resolve();
+      }
+      return Promise.reject("No se puede elegir al mismo usuario como jefe inmediato");
+    },
+  });
+
   const onFinishPerson = (value) => {
     if (value.patronal_registration === undefined) {
       value.patronal_registration = null;
@@ -164,10 +212,13 @@ const DataPerson = ({
     value.id = person.id;
     value.is_active = isActive;
     if (value.node) delete value["node"];
+    //La validación se realiza desde back
+    // if (!value.is_admin) value.administrator_profile = null;
     if (value.department) delete value["department"];
     value.groups && value.groups
       ? (value.groups = [value.groups])
       : delete value["groups"];
+    value.immediate_supervisor != undefined ? value.immediate_supervisor : null;
     updatePerson(value);
   };
 
@@ -256,6 +307,10 @@ const DataPerson = ({
       });
   };
 
+  // const changeStatusAdmin = async (value) => {
+  //   setIsActiveAdmin(value)
+  // };
+
   const onChangeIngPlatform = (date, dateString) => {
     setDateIngPlatform(dateString);
   };
@@ -275,6 +330,77 @@ const DataPerson = ({
         <Row justify="center">
           <Col lg={22}>
             <Row gutter={20}>
+              <Col lg={0} md={12} xs={24} xl={12}>
+                <Spin tip="Cargando..." spinning={loadImge}>
+                  <div
+                    style={
+                      photo
+                        ? {
+                            width: "120px",
+                            height: "120px",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignContent: "center",
+                            textAlign: "center",
+                          }
+                        : {}
+                    }
+                  >
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      showUploadList={false}
+                      accept={'.jpg,.png'}
+                      onChange={upImage}
+                    >
+                      {photo ? (
+                        <div
+                          className="frontImage"
+                          style={
+                            photo
+                              ? {
+                                  width: "120px",
+                                  height: "120px",
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  borderRadius: "10px",
+                                  textAlign: "center",
+                                  alignContent: "center",
+                                }
+                              : {}
+                          }
+                        >
+                          <img
+                            className="img"
+                            src={photo}
+                            alt="avatar"
+                            preview={false}
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              borderRadius: "11px",
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                  </div>
+                </Spin>
+              </Col>
+            </Row>
+            <Row gutter={20}>
+              <Col lg={8} xs={24}>
+                <Switch
+                  checked={isActive}
+                  onClick={changeStatus}
+                  checkedChildren="Activo"
+                  unCheckedChildren="Inactivo"
+                />
+              </Col>
+            </Row>
+            <Row gutter={20}>
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
                 <Col lg={8} xs={12}>
@@ -285,6 +411,20 @@ const DataPerson = ({
               )}
               <Col lg={8} xs={12}>
                 <SelectPersonType label="Tipo de persona" />
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="date_of_admission"
+                  label="Fecha de ingreso laboral"
+                >
+                  <DatePicker
+                    locale={locale}
+                    onChange={onChangeDateAdmission}
+                    format={"DD-MM-YYYY"}
+                    readOnly
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
               </Col>
               <Col lg={6} md={0} xs={0} xl={0}>
                 <Spin tip="Cargando..." spinning={loadImge}>
@@ -366,88 +506,6 @@ const DataPerson = ({
                 >
                   <Input />
                 </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Row justify="center">
-                  <Col lg={0} md={12} xs={24} xl={12}>
-                    <Spin tip="Cargando..." spinning={loadImge}>
-                      <div
-                        style={
-                          photo
-                            ? {
-                                width: "120px",
-                                height: "120px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                alignContent: "center",
-                                textAlign: "center",
-                              }
-                            : {}
-                        }
-                      >
-                        <Upload
-                          name="avatar"
-                          listType="picture-card"
-                          showUploadList={false}
-                          onChange={upImage}
-                        >
-                          {photo ? (
-                            <div
-                              className="frontImage"
-                              style={
-                                photo
-                                  ? {
-                                      width: "120px",
-                                      height: "120px",
-                                      display: "flex",
-                                      flexWrap: "wrap",
-                                      borderRadius: "10px",
-                                      textAlign: "center",
-                                      alignContent: "center",
-                                    }
-                                  : {}
-                              }
-                            >
-                              <img
-                                className="img"
-                                src={photo}
-                                alt="avatar"
-                                preview={false}
-                                style={{
-                                  width: "120px",
-                                  height: "120px",
-                                  borderRadius: "11px",
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            uploadButton
-                          )}
-                        </Upload>
-                      </div>
-                    </Spin>
-                  </Col>
-                  <Col lg={24} md={12} xs={24} xl={12}>
-                    <Form.Item
-                      name="date_of_admission"
-                      label="Fecha de ingreso laboral"
-                    >
-                      <DatePicker
-                        locale={locale}
-                        onChange={onChangeDateAdmission}
-                        format={"DD-MM-YYYY"}
-                        readOnly
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
-                    <Switch
-                      checked={isActive}
-                      onClick={changeStatus}
-                      checkedChildren="Activo"
-                      unCheckedChildren="Inactivo"
-                    />
-                  </Col>
-                </Row>
               </Col>
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
@@ -542,6 +600,25 @@ const DataPerson = ({
                   />
                 </Form.Item>
               </Col>
+              <Col lg={8} xs={24} md={12}>
+                <Form.Item
+                  name="immediate_supervisor"
+                  label="Jefe inmediato"
+                  // rules={[validateImmediateSupervisor(person.id)]}
+                >
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    allowClear={true}
+                    >
+                      { listPersons.length > 0 && listPersons.map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Col>
               {config && config.intranet_enabled && (
                 <Col lg={8} xs={24} md={12}>
                   <Form.Item
@@ -618,6 +695,45 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
+              {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
+              <Form.Item
+                  name="is_admin"
+                  label="¿Es administrador?"
+                >
+                  <Select
+                    placeholder='Seleccionar una opción'
+                    options={[
+                      {value: true, key: true, label: 'Sí'},
+                      {value: false, key: false, label: 'No'}
+                    ]}
+                  />
+                </Form.Item>
+              </Col>}
+              {/* {isAdmin && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name='administrator_profile'
+                    label='Rol'
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      allowClear
+                      showSearch
+                      disabled={load_admin_roles_options}
+                      loading={load_admin_roles_options}
+                      placeholder='Seleccionar una opción'
+                      notFoundContent='No se encontraron resultados'
+                      optionFilterProp='children'
+                    >
+                      {list_admin_roles_options.length > 0 && list_admin_roles_options.map(item => (
+                        <Select.Option value={item.id} key={item.id} disabled={!item.is_active}>
+                          {item.name} {!item.is_active ? '/ No disponible' : ''}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )} */}
             </Row>
             <Row gutter={20}>
               <hr />
@@ -697,6 +813,19 @@ const DataPerson = ({
                   currentNode={currentNode}
                 />
               </Col>
+              {/* {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
+              <Form.Item
+                  name="is_admin"
+                  label="Es admin"
+                >
+                  <Switch
+                    checked={isActiveAdmin}
+                    onClick={changeStatusAdmin}
+                    checkedChildren="Si"
+                    unCheckedChildren="No"
+                  />
+                </Form.Item>
+                </Col>} */}
             </Row>
           </Col>
         </Row>
@@ -719,6 +848,8 @@ const mapState = (state) => {
     cat_groups: state.catalogStore.cat_groups,
     people_company: state.catalogStore.people_company,
     user: state.userStore.user,
+    list_admin_roles_options: state.catalogStore.list_admin_roles_options,
+    load_admin_roles_options: state.catalogStore.load_admin_roles_options
   };
 };
 

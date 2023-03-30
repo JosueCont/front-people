@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import {UploadOutlined, DownloadOutlined, SyncOutlined} from '@ant-design/icons';
 import { API_URL_TENANT, API_URL } from "../../../config/config";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { Table, Button, Upload, Row, Col, message, Modal } from 'antd';
@@ -8,6 +8,7 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import UploadFile from "../../UploadFile";
 import { connect } from "react-redux";
+import moment from 'moment'
 
 const MovementsIMSS=({ currentNode })=>{
 
@@ -48,6 +49,8 @@ const MovementsIMSS=({ currentNode })=>{
     const columns = [
         {
             title: 'Fecha de envío',
+            width: 200,
+            render: (date) => moment(date,"DD/MM/YYYY hh:mm:ss").utc().format('DD/MM/YYYY hh:mm:ss') || "----",
             dataIndex: 'date',
         },
         {
@@ -77,6 +80,9 @@ const MovementsIMSS=({ currentNode })=>{
                     case 4:
                         sts = "Procesado"
                         break
+                    case 5:
+                        sts = "Error"
+                        break
                     default:
                         sts = ""
                         break
@@ -92,7 +98,7 @@ const MovementsIMSS=({ currentNode })=>{
                 <div style={{ textAlign: 'center' }}>
                     {
                         receipt? (
-                            <a href={receipt}>
+                            <a href={receipt} target={'_blank'}>
                                 <DownloadOutlined />
                             </a>
                         ) : "----"
@@ -120,6 +126,7 @@ const MovementsIMSS=({ currentNode })=>{
         },
         {
             title: 'Mensaje',
+            width: 300,
             dataIndex: 'message',
             render: (message) => message || "----"
         },
@@ -210,14 +217,14 @@ const MovementsIMSS=({ currentNode })=>{
                         </Button>
                     </Col> */}
                      <Col span={7}>
-                        <Button 
+                        <Button
                           onClick={ () => {
-                            getMovements(true)
-                          } 
+                            getMovements(false)
+                          }
                         }
                           disabled = { patronalSelected?  false : true }
                         >
-                            Sincronizar
+                            <SyncOutlined spin={loading} />
                         </Button>
                     </Col>
                 </Col>
