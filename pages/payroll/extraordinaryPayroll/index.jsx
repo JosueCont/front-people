@@ -1047,7 +1047,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
               ? router.push({
-                  pathname: `/business/${props.currentNode.id}`,
+                  pathname: `/business/companies/${props.currentNode.id}`,
                   query: {
                     tab: 2,
                   },

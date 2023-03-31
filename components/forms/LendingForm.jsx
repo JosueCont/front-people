@@ -345,7 +345,7 @@ const Lendingform = (props) => {
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
           <Button
-            onClick={() => route.push("/lending")}
+            onClick={() => route.push("/comunication/requests/lending")}
             key="cancel"
             style={{ padding: "0 30px", marginBottom: 5 }}
           >
