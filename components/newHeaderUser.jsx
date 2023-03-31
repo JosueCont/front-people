@@ -105,7 +105,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-
+          <p className="text-menu" onClick={() => router.push("/user/profile")}>
+              <Text>Mi perfil</Text>
+            </p>
           {isAdmin && (
               <p
                 className="text-menu"
@@ -292,7 +294,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col>
               {person && (
                 <div
                   className={"pointer"}

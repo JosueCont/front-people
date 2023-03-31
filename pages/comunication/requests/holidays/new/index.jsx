@@ -20,6 +20,7 @@ const HolidaysNew = () => {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
+    values["created_from"] = 2;// 2 es que se hizo desde la web
     setSending(true);
     WebApiPeople.saveVacationRequest(values)
       .then(function (response) {
