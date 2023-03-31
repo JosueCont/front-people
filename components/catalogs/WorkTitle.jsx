@@ -91,13 +91,6 @@ const WorkTitle = ({ currentNode = null, ...props }) => {
       },
     },
     {
-      title: "Salario",
-      key: "Salario",
-      render: (item) => {
-        return `$ ${item.salary}`;
-      },
-    },
-    {
       title: "Acciones",
       render: (item) => {
         return (
