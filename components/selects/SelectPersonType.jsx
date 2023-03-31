@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import {getPersonType} from "../../redux/catalogCompany";
 const { Option } = Select;
-const SelectPersonType = ({ ...props }) => {
+const SelectPersonType = ({ isDisabled=false, ...props }) => {
   const [personType, setPersonType] = useState([]);
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const SelectPersonType = ({ ...props }) => {
   return (
     <Form.Item name="person_type" label={props.label ? props.label : null}>
       <Select
+        disabled={isDisabled}
         // options={personType}
         placeholder="Tipo de persona"
         showSearch
