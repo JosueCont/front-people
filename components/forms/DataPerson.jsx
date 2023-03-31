@@ -709,7 +709,7 @@ const DataPerson = ({
                   />
                 </Form.Item>
               </Col>}
-              {/* {isAdmin && (
+              {isAdmin && (
                 <Col lg={8} xs={24} md={12}>
                   <Form.Item
                     name='administrator_profile'
@@ -733,7 +733,7 @@ const DataPerson = ({
                     </Select>
                   </Form.Item>
                 </Col>
-              )} */}
+              )}
             </Row>
             <Row gutter={20}>
               <hr />
