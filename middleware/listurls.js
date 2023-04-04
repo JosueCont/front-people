@@ -1,6 +1,7 @@
-import jobbank from './jobbank';
-import assessments from './assessments';
-import user from './user';
+import jobbank from './modules/jobbank';
+import assessments from './modules/assessments';
+import user from './modules/user';
+import payroll from './modules/payroll';
 
 export const ignoreURLS = [
     '/',
@@ -14,5 +15,6 @@ export const ignoreURLS = [
 export const mapURLS = {
     'jobbank': jobbank,
     'assessments': assessments,
-    'user': user
+    'user': user,
+    'payroll': payroll
 }
