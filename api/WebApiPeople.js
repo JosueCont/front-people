@@ -178,7 +178,10 @@ class WebApiPeople {
   }
 
   static getCatalogs(model, data) {
-    return WebApi.ApisType(`/business/${model}/?node=${data}`, "get");
+    let nodeStr = 'node'
+    if(model==='level') nodeStr = 'node__id'
+
+    return WebApi.ApisType(`/business/${model}/?${nodeStr}=${data}`, "get");
   }
 
   static updateRegisterCatalogs(url, data) {
