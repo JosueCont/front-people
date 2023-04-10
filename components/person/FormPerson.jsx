@@ -79,6 +79,8 @@ const FormPerson = ({
         message.success("Agregado correctamente");
         form.resetFields();
         setLoading(false);
+        setPayrrollActive(false)
+        setIsAdmin(false)
         close(false);
       })
       .catch((error) => {
@@ -101,7 +103,6 @@ const FormPerson = ({
     close(false);
     form.resetFields();
   };
-
   
   const disabledDate = (current) => {
     return current && moment(current).startOf('day') > moment().startOf('day');
@@ -251,17 +252,22 @@ const FormPerson = ({
                         <span>Crear usuario</span>
                         <Switch
                           checked={payrrollActive}
-                          onChange={(value) => setPayrrollActive(value)}
+                          onChange={(e) =>{
+                            if(!e) setIsAdmin(false);
+                            setPayrrollActive(e)
+                          }}
                         />
                       </Space>
                     )}
-                     {/* <Space>
+                     {payrrollActive && (
+                      <Space>
                         <span>¿Es administrador?</span>
                         <Switch
                           checked={isAdmin}
                           onChange={(e) => setIsAdmin(e)}
                         />
-                      </Space> */}
+                      </Space>
+                     )}
                   </Space>
                 </Col>
 
@@ -297,7 +303,7 @@ const FormPerson = ({
                         <Input.Password type="text" />
                       </Form.Item>
                     </Col>
-                    {/* {isAdmin && (
+                    {isAdmin && (
                       <Col lg={8} xs={24}>
                         <Form.Item
                           name='administrator_profile'
@@ -321,10 +327,10 @@ const FormPerson = ({
                           </Select>
                         </Form.Item>
                       </Col>
-                    )} */}
-                    <Col lg={8} xs={24}>
+                    )}
+                    {/* <Col lg={8} xs={24}>
                       <SelectGroup viewLabel={true} />
-                    </Col>
+                    </Col> */}
                     {config.intranet_enabled && (
                       <Col lg={8} xs={24}>
                         <Form.Item
