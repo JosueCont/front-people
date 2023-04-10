@@ -33,12 +33,12 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
     head.appendChild(link);
   }, []);
 
-  // useLayoutEffect(() => {
-  //   try {
-  //     const user = Cookies.get("token");
-  //     if (user) router.push("/select-company");
-  //   } catch (error) {}
-  // }, []);
+  useLayoutEffect(() => {
+    try {
+      const user = Cookies.get("token");
+      if (user) router.push("/select-company");
+    } catch (error) {}
+  }, []);
 
   useLayoutEffect(() => {
     if (props.config) {

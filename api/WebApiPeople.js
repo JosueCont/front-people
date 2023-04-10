@@ -557,10 +557,6 @@ class WebApiPeople {
     return WebApi.ApisType("/security/khorplus-module-with-perm/", "get");
   }
 
-  static getPermissionsModules(query){
-    return WebApi.ApisType(`/security/module-perm/${query}`, "get");
-  }
-
   static getAdminRoles(node, query) {
     return WebApi.ApisType(
       `/security/administrator-profile/?node=${node}${query}`,
@@ -587,8 +583,6 @@ class WebApiPeople {
   static deleteAdminRole(id) {
     return WebApi.ApisType(`/security/administrator-profile/${id}/`, "delete");
   }
-
-  //Termina roles de administrador
 
   static getWorkTitles(node) {
     return WebApi.ApisType(`/business/work-title/?node=${node}`, "get");
