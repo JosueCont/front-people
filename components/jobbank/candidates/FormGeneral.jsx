@@ -305,12 +305,12 @@ const FormGeneral = ({
             <Col span={24}>
                 <Form.Item
                     name='about_me'
-                    label='Acerca de ti'
+                    label='Comentarios'
                     rules={[ruleWhiteSpace]}
                 >
                     <Input.TextArea
                         disabled={onlyRead}
-                        placeholder='Acerca de ti'
+                        placeholder='Comentarios'
                         autoSize={{
                             minRows: 5,
                             maxRows: 5,
