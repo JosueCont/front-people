@@ -173,9 +173,10 @@ export const setUser = () => async (dispatch, getState) => {
     let response = await WebApiPeople.personForKhonnectId({ id: jwt.user_id });
     dispatch({ type: USER, payload: response.data });
     dispatch(setUserPermissions(response.data.jwt_data.perms, response.data.is_admin));
-    let have_rol = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
+    let profile = response?.data?.administrator_profile;
+    let have_rol = profile ? Object.keys(profile).length > 0 : false;
     if(!(response.data?.is_admin && have_rol)) return;
-    dispatch(getCurrentRol(response?.data?.administrator_profile?.id))
+    dispatch(getCurrentRol(profile.id))
     return true;
   } catch (error) {
     return false;
