@@ -157,11 +157,11 @@ header.ant-layout-header
   border-radius: 10px;
 }
 
-/* .formPermission .ant-input-number-disabled,
+.formPermission .ant-input-number-disabled,
 .ant-input-disabled {
-  background-color: #fff !important;
-  color: #000 !important;
-} */
+  /* background-color: #fff !important; */
+  /* color: #000 !important; */
+}
 
 .formFilterReports .ant-col .ant-form-item {
   margin-bottom: 0% !important;
@@ -209,15 +209,12 @@ header.ant-layout-header
   background-color: #95de64;
 }
 .notAllowed {
-  height: 100vh;
-  width: 50%;
-  margin-left: 25%;
+  height: calc(100vh - 100px);
   background-image: url("../public/images/Recurso3.png");
   background-position: "center";
   background-position-x: center;
-  background-position-y: center;
   background-repeat: no-repeat;
-  background-size: 50%;
+  background-size: contain;
 }
 .Error404 {
   height: calc(100vh);

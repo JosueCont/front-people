@@ -88,7 +88,7 @@ const LoginForm = ({
           });
         })
         .catch((err) => {
-          console.log(err);
+          console.log(error);
         });
     } catch (error) {
       console.log(error);
