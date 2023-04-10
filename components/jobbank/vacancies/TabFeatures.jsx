@@ -121,7 +121,8 @@ const TabFeatures = ({
           name='num_project'
           label='Número de proyecto'
         >
-          <InputNumber
+          <Input maxLength={100} placeholder='Número de proyecto'/>
+          {/* <InputNumber
             type='number'
             controls={false}
             maxLength={9}
@@ -134,7 +135,7 @@ const TabFeatures = ({
               width: '100%',
               border: '1px solid black'
             }}
-          />
+          /> */}
         </Form.Item>
       </Col>
       <Col xs={24} md={12} xl={8} xxl={6}>
