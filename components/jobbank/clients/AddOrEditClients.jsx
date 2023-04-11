@@ -14,7 +14,7 @@ const AddOrEditClients = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deleteKeys = ['id', 'tab'];
+    const deleteKeys = ['id', 'tab', 'back'];
 
     useEffect(()=>{
         if(Object.keys(router.query).length <= 0) return;
