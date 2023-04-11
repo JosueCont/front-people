@@ -146,6 +146,21 @@ const ModalPositions = ({
                             </Select>
                         </Form.Item>
                     </Col>
+                    <Col span={24}>
+                        <Form.Item
+                            name='main_responsibilities'
+                            label='Principales responsabilidades'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Principales responsabilidades y logros en el puesto'
+                                autoSize={{
+                                    minRows: 5,
+                                    maxRows: 5,
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
                         <Button htmlType='submit' loading={loading}>
