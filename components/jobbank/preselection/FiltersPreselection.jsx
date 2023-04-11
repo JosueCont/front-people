@@ -160,7 +160,7 @@ const FiltersPreselection = ({
                                 showSearch
                                 disabled={load_scholarship}
                                 loading={load_scholarship}
-                                placeholder='Selecionar una opción'
+                                placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                                 onChange={onChangeLevel}

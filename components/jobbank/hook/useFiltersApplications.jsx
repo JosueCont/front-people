@@ -9,12 +9,15 @@ export const useFiltersApplications = () =>{
         list_applications_candidates,
         load_applications_candidates,
         list_vacancies_options,
-        load_vacancies_options
+        load_vacancies_options,
+        list_clients_options,
+        load_clients_options
     } = useSelector(state => state.jobBankStore);
     const format = 'DD-MM-YYYY';
 
     const listKeys = {
         candidate: 'Candidato',
+        vacant__customer: 'Cliente',
         vacant: 'Vacante',
         status: 'Estatus',
         date: 'Fecha',
@@ -24,6 +27,11 @@ export const useFiltersApplications = () =>{
         value: id,
         list: list_applications_candidates,
         keyShow: e => `${e?.first_name} ${e.last_name}`
+    })
+
+    const getCustomer = (id) => getValueFilter({
+        value: id,
+        list: list_clients_options
     })
 
     const getVacant = (id) => getValueFilter({
@@ -48,6 +56,7 @@ export const useFiltersApplications = () =>{
 
     const listGets = {
         candidate: getCandidate,
+        vacant__customer: getCustomer,
         vacant: getVacant,
         status: getStatus,
         date: getDate

@@ -241,7 +241,7 @@ const ReportExpedient = ({
                     padding: '0px 12px 12px'
                 }}>
                     <View style={{marginBottom: 8}}>
-                        <Text style={{ fontSize: 10 }}>Acerca de tí:</Text>
+                        <Text style={{ fontSize: 10 }}>Comentarios:</Text>
                     </View>
                     <View style={{
                         backgroundColor: '#ffff',
