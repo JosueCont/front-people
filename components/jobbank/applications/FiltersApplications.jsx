@@ -90,7 +90,7 @@ const FiltersApplications = ({
                                 showSearch
                                 disabled={optionsVacant.length <= 0}
                                 loading={load_vacancies_options}
-                                placeholder='Selecionar una opción'
+                                placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
