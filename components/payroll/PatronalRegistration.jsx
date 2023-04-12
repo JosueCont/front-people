@@ -14,7 +14,8 @@ import {
   Spin,
   DatePicker,
   ConfigProvider,
-  Select, Alert
+  Select,
+  Alert,
 } from "antd";
 import {
   CheckOutlined,
@@ -40,13 +41,12 @@ import AutomaticMovements from "../business/AutomaticMovements";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
-import moment from 'moment'
+import moment from "moment";
 import esES from "antd/lib/locale/es_ES";
 import WithHoldingNotice from "../../pages/business/WithHoldingNotice";
 import AfilliateMovements from "../../pages/business/AfilliateMovements";
 import GenericModal from "../modal/genericModal";
 const { Option } = Select;
-
 
 const ImssInformationNode = ({
   node_id = null,
@@ -79,11 +79,13 @@ const ImssInformationNode = ({
 
   const [loadingData, setLoadingData] = useState(false);
   const [bimester, setBimester] = useState(null);
-  const [year, setYear] = useState('');
+  const [year, setYear] = useState("");
   const [modal, setModal] = useState(false);
 
-  const [hasCredentialInfonavit, setHasCredentialInfonavit] = useState(false)
-  const [hasCredentialIMSS, setHasCredentialIMSS] = useState(false)
+  const [hasCredentialInfonavit, setHasCredentialInfonavit] = useState(false);
+  const [hasCredentialIMSS, setHasCredentialIMSS] = useState(false);
+  const [disabledBimester, setDisabledBimester] = useState(true);
+  const [disabeldSave, setDisabledSave] = useState(true);
 
   const columns = [
     {
@@ -106,10 +108,12 @@ const ImssInformationNode = ({
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <EditOutlined onClick={() => {
-                  console.log('patronal',item)
-                  editRegister(item, "td")
-                }} />
+                <EditOutlined
+                  onClick={() => {
+                    console.log("patronal", item);
+                    editRegister(item, "td");
+                  }}
+                />
               </Col>
 
               <Col className="gutter-row" offset={1}>
@@ -237,7 +241,6 @@ const ImssInformationNode = ({
     let jobRiskData = formJobRisk.getFieldValue();
     jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent);
 
-
     const data = {
       node: currentNode.id,
       patronal: formPatronal.getFieldsValue(),
@@ -246,12 +249,12 @@ const ImssInformationNode = ({
       jobRisk: jobRiskData,
     };
 
-    try{
-      if(formPatronal.getFieldValue('setup_period')){
-        let date = formPatronal.getFieldValue('setup_period');
-        data.patronal.setup_period = date.year()
+    try {
+      if (formPatronal.getFieldValue("setup_period")) {
+        let date = formPatronal.getFieldValue("setup_period");
+        data.patronal.setup_period = date.year();
       }
-    }catch (e){}
+    } catch (e) {}
     saveRegister(data);
   };
 
@@ -331,7 +334,9 @@ const ImssInformationNode = ({
       subsidy_reimbursement_agreement: item?.subsidy_reimbursement_agreement,
       phone: item?.phone,
       id: item?.id,
-      setup_period:item?.setup_period ?  moment().year(parseInt(item?.setup_period)) : null,
+      setup_period: item?.setup_period
+        ? moment().year(parseInt(item?.setup_period))
+        : null,
       type_contribution: item?.type_contribution,
       geograp_area: item?.geograp_area,
       imss_delegation: item?.imss_delegation,
@@ -350,306 +355,385 @@ const ImssInformationNode = ({
     });
   };
 
-  const syncUpData = async() => {
+  const syncUpData = async () => {
     try {
       setLoading(true);
       let dataSend = {
-        patronal_registration_id:patronalData.id,
-        node_id:dataPatronalRegistration[0].node
+        patronal_registration_id: patronalData.id,
+        node_id: dataPatronalRegistration[0].node,
       };
       const syncData = await WebApiPeople.withHoldingNotice(dataSend);
-      if(syncData?.data?.message) message.success(syncData?.data?.message)
+      if (syncData?.data?.message) message.success(syncData?.data?.message);
     } catch (e) {
-      console.log(e)
-    }finally {
+      console.log(e);
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error.response?.data?.message) {
+        msg = error.response?.data?.message;
+      }
+      message.error(msg);
+
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   const getOptions = () => {
     let options = [];
-    let period= 1;
-    for(period; period<=6; period++){
+    let period = 1;
+    for (period; period <= 6; period++) {
       options.push(
         <Option key={period.toString()} value={`0${period.toString()}`}>
           0{period}
         </Option>
-      )
+      );
     }
     return options;
-  }
+  };
 
-  const verifyPeriod = async() => {
+  const verifyPeriod = async () => {
     try {
       setModal(false);
       setLoading(true);
-      let period =moment(year).format('YYYY').slice(2,4).concat(bimester);
+      let period = moment(year).format("YYYY").slice(2, 4).concat(bimester);
       let data = {
         period,
         node: dataPatronalRegistration[0].node,
-        patronal_registration: patronalData.id
-      }
+        patronal_registration: patronalData.id,
+      };
       const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
-      if(syncMovements?.data?.message) message.success(syncMovements?.data?.message)
-      else message.error('Hubo un problema, intentalo más tarde')
+      if (syncMovements?.data?.message)
+        message.success(syncMovements?.data?.message);
+      else message.error("Hubo un problema, intentalo más tarde");
     } catch (e) {
-      console.log(e?.response.data?.message)
-      if(e?.response.data?.message){
-        message.error(e?.response.data?.message)
-      }else{
-        message.error('Hubo un problema, intentalo más tarde')
+      console.log(e?.response.data?.message);
+      if (e?.response.data?.message) {
+        message.error(e?.response.data?.message);
+      } else {
+        message.error("Hubo un problema, intentalo más tarde");
       }
-
-    }finally {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  const changeYear = (value) => {
+    if (value) {
+      setYear(value);
+      setDisabledBimester(false);
+    } else {
+      setDisabledBimester(true);
+      setBimester(null);
+    }
+  };
+
+  const changeBimester = (value) => {
+    if (value) {
+      setBimester(value);
+    }
+  };
+
+  const getBimester = (month) => {
+    if (month == 1 || month == 2) return 1;
+    if (month == 3 || month == 4) return 2;
+    if (month == 4 || month == 6) return 3;
+    if (month == 7 || month == 8) return 4;
+    if (month == 9 || month == 10) return 5;
+    if (month == 11 || month == 12) return 6;
+  };
+
+  useEffect(() => {
+    if (bimester && year) {
+      const date = new Date();
+      let month = date.getMonth()+1;
+      let currYear = date.getFullYear();
+      let bimesterCalculated =getBimester(month);
+      if (year.year() <= currYear && parseInt(bimester) <= bimesterCalculated)
+        setDisabledSave(false);
+      else if (year.year() < currYear) setDisabledSave(false);
+      else setDisabledSave(true);
+    } else {
+      setDisabledSave(true);
+    }
+  }, [year, bimester]);
 
   return (
     <>
-    <Spin spinning={loading}>
-      <Row style={{ marginBottom: "15px" }} justify="end">
-        {!disabledSwitch && (
-          <>
-            <Button onClick={onChange}>Agregar Registro Patronal</Button>
-          </>
+      <Spin spinning={loading}>
+        <Row style={{ marginBottom: "15px" }} justify="end">
+          {!disabledSwitch && (
+            <>
+              <Button onClick={onChange}>Agregar Registro Patronal</Button>
+            </>
+          )}
+        </Row>
+        {visibleTable && (
+          <Spin spinning={loadingData}>
+            <ConfigProvider locale={esES}>
+              <Table
+                dataSource={dataPatronalRegistration}
+                columns={columns}
+                pagination={{
+                  showSizeChanger: true,
+                }}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+              />
+            </ConfigProvider>
+          </Spin>
         )}
-      </Row>
-      {visibleTable && (
-        <Spin spinning={loadingData}>
-          <ConfigProvider locale={esES}>
-            <Table
-              dataSource={dataPatronalRegistration}
-              columns={columns}
-              pagination={{
-                showSizeChanger:true
-              }}
-              locale={{
-                emptyText: loading
-                  ? "Cargando..."
-                  : "No se encontraron resultados.",
-              }}
-            />
-          </ConfigProvider>
-        </Spin>
-      )}
-      {!visibleTable && (
-        <>
-          <Row justify="end">
-            <Button onClick={resetForms} style={{ marginRight: "5px" }}>
-              Cancelar
-            </Button>
-            <Button onClick={saveForms} >
-              Guardar
-            </Button>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Row>
-                <Title style={{ fontSize: "15px" }}>
-                  {isEdit
-                    ? "Editar Registro Patronal"
-                    : "Nuevo Registro Patronal"}
-                </Title>
-              </Row>
-              <Divider style={{ marginTop: "2px" }} />
-              <FormPatronalRegistration
-                patronalRegistration={
-                  patronalData && patronalData.patronal_registration
-                }
-                form={formPatronal}
-                currentNodeId={currentNode && currentNode.id}
-                imssDelegation={patronalData && patronalData.imss_delegation}
-              />
-              <Row>
-                <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
-              </Row>
-              <Divider style={{ marginTop: "2px" }} />
-              <FormFiscalAddress
-                fiscalAddress={patronalData && patronalData.fiscal_address}
-                form={formAddress}
-              />
-              <Row>
-                <Title style={{ fontSize: "15px" }}>
-                  Prima de riesgo laboral
-                </Title>
-              </Row>
-              <Divider style={{ marginTop: "2px" }} />
-              <JobRiskPremium
-                jobRisk={patronalData && patronalData.job_risk_premium}
-                form={formJobRisk}
-              />
-              <Row>
-                <Title style={{ fontSize: "15px" }}>Representante legal</Title>
-              </Row>
-              <Divider style={{ marginTop: "2px" }} />
-              <LegalRepresentative
-                legalRepresentative={
-                  patronalData && patronalData.legal_representative
-                }
-                form={formLegalRep}
-              />
-            </Col>
-          </Row>
-          <Row justify="end" style={{ marginTop: 20, marginBottom: 20 }}>
-            <Button onClick={resetForms} style={{ marginRight: "5px" }}>
-              Cancelar
-            </Button>
-            <Button onClick={saveForms} form="formGeneric" htmlType="submit">
-              Guardar
-            </Button>
-          </Row>
-              
-          { isEdit ? (<>
-          <Row>
-            <Title style={{ fontSize: "15px" }} >
-              Configuracíon de movimientos automáticos
-            </Title>
-          </Row>
-          <Divider style={{ marginTop: "2px" }} />
-          <AutomaticMovements hasInfonavit={(data)=>setHasCredentialInfonavit(data)} hasImss={(data)=>setHasCredentialIMSS(data)} patronalData={patronalData} />
-            <Alert
-                message=""
-                showIcon
-                description={
-                  <p>Las funcionalidades relacionadas a los movimientos automáticos de IMSS e INFONAVIT están sujetos a la disponibilidad de ambos servicios ya que son externos a nuestra plataforma.</p>
-                }
-                type="info"
-            />
-          <Row>
-            <Col>
-              <Divider style={{ marginTop: "2px" }} />
-              <div style={{ width: "100%" }}>
-                {acceptAgreement && (
-                  <Form layout={"vertical"} form={form}>
-                    <Col
-                      style={{
-                        marginBottom: "15px",
-                        marginLeft: "15px",
-                        width: "50%",
-                      }}
-                    >
-                      <Form.Item name="passcer">
-                        <Input.Password
-                          type="password"
-                          placeholder="Contraseña"
-                          maxLength={12}
-                          onChange={(value) =>
-                            validatedPass(value.target.value)
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col lg={12} xs={22}>
-                      <UploadFile
-                        textButton={"Cargar certificado"}
-                        setFile={setCertificate}
-                        validateExtension={".cer"}
-                        showList={true}
-                      />
-                    </Col>
-                    <Col lg={12} xs={22}>
-                      <UploadFile
-                        textButton={"Firma electronica"}
-                        setFile={setKey}
-                        validateExtension={".cer"}
-                        showList={true}
-                      />
-                    </Col>
-                    <Row justify="end">
-                      <Button
-                        disabled={password && certificate && key ? false : true}
-                        onClick={() => uploadCsds()}
-                      >
-                        Guardar certificados
-                      </Button>
-                    </Row>
-                  </Form>
-                )}
-              </div>
-            </Col>
-          </Row>
+        {!visibleTable && (
+          <>
+            <Row justify="end">
+              <Button onClick={resetForms} style={{ marginRight: "5px" }}>
+                Cancelar
+              </Button>
+              <Button onClick={saveForms}>Guardar</Button>
+            </Row>
+            <Row>
+              <Col span={24}>
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>
+                    {isEdit
+                      ? "Editar Registro Patronal"
+                      : "Nuevo Registro Patronal"}
+                  </Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <FormPatronalRegistration
+                  patronalRegistration={
+                    patronalData && patronalData.patronal_registration
+                  }
+                  form={formPatronal}
+                  currentNodeId={currentNode && currentNode.id}
+                  imssDelegation={patronalData && patronalData.imss_delegation}
+                />
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <FormFiscalAddress
+                  fiscalAddress={patronalData && patronalData.fiscal_address}
+                  form={formAddress}
+                />
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>
+                    Prima de riesgo laboral
+                  </Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <JobRiskPremium
+                  jobRisk={patronalData && patronalData.job_risk_premium}
+                  form={formJobRisk}
+                />
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>
+                    Representante legal
+                  </Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <LegalRepresentative
+                  legalRepresentative={
+                    patronalData && patronalData.legal_representative
+                  }
+                  form={formLegalRep}
+                />
+              </Col>
+            </Row>
+            <Row justify="end" style={{ marginTop: 20, marginBottom: 20 }}>
+              <Button onClick={resetForms} style={{ marginRight: "5px" }}>
+                Cancelar
+              </Button>
+              <Button onClick={saveForms} form="formGeneric" htmlType="submit">
+                Guardar
+              </Button>
+            </Row>
 
-            {
-              hasCredentialInfonavit &&
-                <>
-                  <Divider> <img src={'/images/logoinfonavit.png'} width={40}/> Movimientos de Infonavit</Divider>
-                  <Row justify="space-between">
-                    <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-                       Movimientos afiliatorios
-                    </Title>
-                    <Button
-                        onClick={()=>setModal(true)}
+            {isEdit ? (
+              <>
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>
+                    Configuracíon de movimientos automáticos
+                  </Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <AutomaticMovements
+                  hasInfonavit={(data) => setHasCredentialInfonavit(data)}
+                  hasImss={(data) => setHasCredentialIMSS(data)}
+                  patronalData={patronalData}
+                />
+                <Alert
+                  message=""
+                  showIcon
+                  description={
+                    <p>
+                      Las funcionalidades relacionadas a los movimientos
+                      automáticos de IMSS e INFONAVIT están sujetos a la
+                      disponibilidad de ambos servicios ya que son externos a
+                      nuestra plataforma.
+                    </p>
+                  }
+                  type="info"
+                />
+                <Row>
+                  <Col>
+                    <Divider style={{ marginTop: "2px" }} />
+                    <div style={{ width: "100%" }}>
+                      {acceptAgreement && (
+                        <Form layout={"vertical"} form={form}>
+                          <Col
+                            style={{
+                              marginBottom: "15px",
+                              marginLeft: "15px",
+                              width: "50%",
+                            }}
+                          >
+                            <Form.Item name="passcer">
+                              <Input.Password
+                                type="password"
+                                placeholder="Contraseña"
+                                maxLength={12}
+                                onChange={(value) =>
+                                  validatedPass(value.target.value)
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={12} xs={22}>
+                            <UploadFile
+                              textButton={"Cargar certificado"}
+                              setFile={setCertificate}
+                              validateExtension={".cer"}
+                              showList={true}
+                            />
+                          </Col>
+                          <Col lg={12} xs={22}>
+                            <UploadFile
+                              textButton={"Firma electronica"}
+                              setFile={setKey}
+                              validateExtension={".cer"}
+                              showList={true}
+                            />
+                          </Col>
+                          <Row justify="end">
+                            <Button
+                              disabled={
+                                password && certificate && key ? false : true
+                              }
+                              onClick={() => uploadCsds()}
+                            >
+                              Guardar certificados
+                            </Button>
+                          </Row>
+                        </Form>
+                      )}
+                    </div>
+                  </Col>
+                </Row>
+
+                {hasCredentialInfonavit && (
+                  <>
+                    <Divider>
+                      {" "}
+                      <img src={"/images/logoinfonavit.png"} width={40} />{" "}
+                      Movimientos de Infonavit
+                    </Divider>
+                    <Row justify="space-between">
+                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
+                        Movimientos afiliatorios
+                      </Title>
+                      <Button
+                        onClick={() => setModal(true)}
                         form="formGeneric"
                         htmlType="submit"
-                        style={{marginBottom:'20px'}}>
-                      Sincronizar / Solicitar
-                    </Button>
-                  </Row>
-                  <Divider style={{ marginTop: "2px" }} />
-                  <AfilliateMovements id={patronalData.id} node={dataPatronalRegistration[0].node}/>
+                        style={{ marginBottom: "20px" }}
+                      >
+                        Sincronizar / Solicitar
+                      </Button>
+                    </Row>
+                    <Divider style={{ marginTop: "2px" }} />
+                    <AfilliateMovements
+                      id={patronalData.id}
+                      node={dataPatronalRegistration[0].node}
+                    />
 
-                  <Row justify="space-between">
-                    <Title style={{ fontSize: "15px",paddingTop:'10px' }}>
-                      Avisos de retenciones
-                    </Title>
-                    <Button
+                    <Row justify="space-between">
+                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
+                        Avisos de retenciones
+                      </Title>
+                      <Button
                         onClick={syncUpData}
                         form="formGeneric"
                         htmlType="submit"
-                        style={{marginBottom:'20px'}}>
-                      Sincronizar / Solicitar
-                    </Button>
+                        style={{ marginBottom: "20px" }}
+                      >
+                        Sincronizar / Solicitar
+                      </Button>
+                    </Row>
+
+                    <Divider style={{ marginTop: "2px" }} />
+                    <WithHoldingNotice
+                      patronalData={dataPatronalRegistration[0]}
+                    />
+                  </>
+                )}
+
+                <GenericModal
+                  visible={modal}
+                  setVisible={() => setModal(false)}
+                  title="Solicitar movimientos"
+                  actionButton={() => verifyPeriod()}
+                  width="30%"
+                  disabledSave={disabeldSave}
+                >
+                  <Row justify="center">
+                    <Col span={24}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <span>Año</span>
+                        <DatePicker
+                          style={{ width: "100%", marginBottom: "10px" }}
+                          onChange={changeYear}
+                          picker="year"
+                          moment={"YYYY"}
+                          disabledDate={(currentDate) =>
+                            currentDate.year() > new Date().getFullYear()
+                          }
+                          placeholder="Selecciona año"
+                          locale={locale}
+                        />
+
+                        <span>Bimestre</span>
+                        <Select
+                          size="middle"
+                          key={"period"}
+                          disabled={disabledBimester}
+                          val={bimester}
+                          onChange={changeBimester}
+                          allowClear
+                          notFoundContent={"No se encontraron resultados."}
+                          showSearch
+                          optionFilterProp="children"
+                          placeholder="Selecciona bimestre"
+                        >
+                          {getOptions()}
+                        </Select>
+                      </div>
+                    </Col>
                   </Row>
-
-                  <Divider style={{ marginTop: "2px" }} />
-                  <WithHoldingNotice patronalData={dataPatronalRegistration[0]}/>
-
-                </>
-            }
-
-          <GenericModal 
-            visible={modal}
-            setVisible={() => setModal(false)}
-            title='Solicitar movimientos'
-            actionButton={() => verifyPeriod()}
-            width='30%'
-          >
-            <Row justify="center">
-              <Col span={24}>
-                <div style={{display:'flex', flexDirection:'column', marginBottom:'10px'}}>
-                  <span>Fecha</span>
-                  <DatePicker
-                      style={{ width: "100%", marginBottom:'10px' }}
-                      onChange={(value) => setYear(value)}
-                      picker="year"
-                      moment={"YYYY"}
-                      disabledDate={(currentDate) => currentDate.year() > new Date().getFullYear() }
-                      placeholder="Selecciona año"
-                      locale={locale}
-                  />       
-
-                  <span>Bimestre</span>
-                  <Select
-                    size="middle"
-                    key={"period"}
-                    disabled={false}
-                    val={bimester}
-                    onChange={(value) => setBimester(value) }
-                    allowClear
-                    notFoundContent={"No se encontraron resultados."}
-                    showSearch
-                    optionFilterProp="children"
-                    placeholder="Selecciona bimestre"
-                  >{getOptions()}</Select>
-                </div>
-              </Col>
-            </Row>
-          </GenericModal>
-          </>) : null}
-        </>
-      )}
-    </Spin>
+                </GenericModal>
+              </>
+            ) : null}
+          </>
+        )}
+      </Spin>
     </>
   );
 };

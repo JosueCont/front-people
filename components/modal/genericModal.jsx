@@ -12,6 +12,7 @@ const GenericModal = ({
   closeButton = "Cancelar",
   maskClosable = true,
   viewActionButtonCancell = true,
+  disabledSave = false,
 }) => {
   return (
     <Modal
@@ -37,6 +38,7 @@ const GenericModal = ({
                 htmlType="button"
                 onClick={actionButton}
                 style={{ paddingLeft: 50, paddingRight: 50 }}
+                disabled={disabledSave}
               >
                 {titleActionButton}
               </Button>

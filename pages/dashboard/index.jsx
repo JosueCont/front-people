@@ -8,7 +8,8 @@ import {
     Button,
     List,
     Statistic,
-    Avatar
+    Avatar,
+    Empty
 } from "antd";
 import { useSelector } from "react-redux";
 import {
@@ -18,6 +19,7 @@ import {
     RobotOutlined
 } from "@ant-design/icons";
 import { css, Global } from "@emotion/core";
+import styled from "@emotion/styled";
 import { Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import {withAuthSync} from "../../libs/auth";
@@ -26,7 +28,71 @@ import {useRouter} from "next/router";
 import moment from 'moment'
 import _ from 'lodash'
 import ChartDoughnut from "../../components/dashboards-cards/ChartDoughnut";
-moment.locale("es");
+moment.locale("es-Mx");
+
+const ContentVertical = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${({gap}) => gap ? `${gap}px` : '8px'};
+`;
+
+const ContentCards = styled.div`
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-auto-rows: 165px;
+    grid-auto-flow: dense;
+`;
+
+const CardInfo = styled(ContentVertical)`
+    border-radius: 10px;
+    grid-row: span 2;
+`;
+
+const CardItem = styled(Card)`
+    height: ${({hg}) => hg ? hg : '50%'};
+    & .ant-card-extra{
+        padding: 0px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    & .ant-card-head-title{
+        display: flex;
+        align-items: center;
+        padding: 8px 0px;
+        & p {
+            margin-bottom: 0px;
+            color: rgba(0,0,0,0.85);
+            font-weight: 600;
+            font-size: 18px;
+        }
+        & img{
+            width: auto;
+            height: 32px;
+            margin-inline-end: 8px;
+        }
+    }
+    & .ant-card-body{
+        display: flex;
+        justify-content: ${({jc}) => jc ? jc : 'flex-start'};
+        align-items: ${({ai}) => ai ? ai : 'center'};
+        flex-direction: ${({fd}) => fd ? fd : 'row'};
+        padding: ${({pd}) => pd ? pd : '8px 24px'};
+        height: calc(100% - 49px);
+        max-height: calc(100% - 49px);
+    }
+    & .card-load{
+        margin: auto;
+        font-size: 2rem;
+        color: rgba(0,0,0,0.3)
+    }
+`;
+
+const CardScroll = styled.div`
+    max-height: 100%;
+    overflow-y: auto;
+    width: 100%;
+`;
 
 const { Title } = Typography;
 
@@ -67,98 +133,100 @@ const Dashboard = () => {
         }
     },[])
 
+    const Void = (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>
+    )
+
 
     const WidgetTotalPeople=()=>{
         return (
-            <Card
-                title={
-                    <span>
-                    <img src={'/images/people.png'} width={40} style={{marginRight:10}}/>
-                    Total de personas
-                </span>
-                }
+            <CardItem
+                title={<>
+                    <img src='/images/people.png'/>
+                    <p>Total de personas</p>
+                </>}
                 extra={<a onClick={()=> router.push(`/home/persons/`)}>Ver</a>}
-                style={{
-                    width: '100%',
-                    minHeight:185
-                }}
             >
-                {
-                    totalPerson ? <Title style={{cursor:'pointer'}} onClick={()=>router.push(`/home/persons/`) } level={1}>{totalPerson}</Title> : <ReloadOutlined  spin />
+                { totalPerson
+                    ? <Title
+                        style={{cursor:'pointer', marginBottom: 0}}
+                        onClick={()=>router.push(`/home/persons/`)}
+                        level={1}>
+                    {totalPerson}
+                    </Title> : <ReloadOutlined className="card-load" spin />
                 }
-            </Card>
+            </CardItem> 
         )
     }
 
     const WidgetAniversaryPeople=()=>{
         return (
-            <Card
-                title={
-                    <span>
-                    <img src={'/images/newyearparty.png'} width={40} style={{marginRight:10}}/>
-                    Aniversarios
-                </span>
-                }
-                style={{
-                    width: '100%',
-                    minHeight:185
-                }}
-            >
-                {
-                    aniversaryPeople ?<div>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={aniversaryPeople}
-                            renderItem={(item) => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
-                                        title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
-                                        description={`Aniversario: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
-                                    />
-                                </List.Item>
-                            )}
-                        />
-                        {/*<Button>Ver todos</Button>*/}
-                    </div>  : <ReloadOutlined  spin />
-                }
-            </Card>
+            <CardInfo>
+                <CardItem jc='center' hg='100%' pd='16px 0px'
+                    ai={aniversaryPeople?.length > 0 ? 'flex-start' : 'center'}
+                    title={<>
+                        <img src='/images/newyearparty.png'/>
+                        <p>Aniversarios</p>
+                    </>}
+                    extra={<>{aniversaryPeople?.length ?? 0}</>}
+                >
+                    {aniversaryPeople ?
+                        <CardScroll className="scroll-bar">
+                            <List
+                                size="small"
+                                itemLayout="horizontal"
+                                dataSource={aniversaryPeople}
+                                locale={{emptyText: Void}}
+                                renderItem={(item) => (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={<Avatar size='large' src={item?.photo_thumbnail ? item?.photo_thumbnail : '/images/profile-sq.jpg'}/>}
+                                            title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
+                                            description={`Aniversario: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
+                        </CardScroll>  : <ReloadOutlined className="card-load" spin />
+                    }
+                </CardItem>
+            </CardInfo>
         )
     }
 
     const WidgetBirthDayPeople=()=>{
         return (
-            <Card
-                title={
-                <span>
-                    <img src={'/images/ballon.png'} width={40} style={{marginRight:10}}/>
-                    Cumpleañeros del mes
-                </span>
-                }
-                style={{
-                    width: '100%',
-                    minHeight:185
-                }}
-            >
-                {
-                    birthDayPeople ?<div>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={birthDayPeople}
-                            renderItem={(item) => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={item?.photo_thumbnail ? <Avatar src={item?.photo_thumbnail  } size={'large'} />: null}
-                                        title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
-                                        description={`Fecha de cumpleaños: ${moment(item.birth_date).format('DD/MM/YYYY')}`}
-                                    />
-                                </List.Item>
-                            )}
-                        />
-                        {/*<Button>Ver todos</Button>*/}
-                    </div>  : <ReloadOutlined  spin />
-                }
-            </Card>
+           <CardInfo>
+                <CardItem jc='center' hg='100%' pd='16px 0px'
+                    ai={birthDayPeople?.length > 0 ? 'flex-start' : 'center'}
+                    title={<>
+                        <img src='/images/ballon.png'/>
+                        <p>Cumpleaños del mes</p>
+                    </>}
+                    extra={<>{birthDayPeople?.length ?? 0}</>}
+                >
+                    {birthDayPeople ?
+                        <CardScroll className="scroll-bar">
+                            <List
+                                size="small"
+                                itemLayout="horizontal"
+                                dataSource={birthDayPeople}
+                                locale={{emptyText: Void}}
+                                renderItem={(item) => (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={<Avatar size='large' src={item?.photo_thumbnail ? item?.photo_thumbnail : '/images/profile-sq.jpg'}/>}
+                                            title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
+                                            description={`Fecha de cumpleaños: ${moment(item.birth_date).format('DD/MM/YYYY')}`}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
+                        </CardScroll>
+                    : <ReloadOutlined className="card-load" spin />
+                    }
+                </CardItem>
+           </CardInfo>
         )
     }
 
@@ -181,62 +249,53 @@ const Dashboard = () => {
             };
 
         return (
-            <Card
-                title={
-                    <span>
-                    <img src={'/images/people.png'} width={35} style={{marginRight:10}}/>
-                    Generaciones
-                </span>
-                }
-                style={{
-                    width: '100%',
-                    minHeight:185
-                }}
-            >
-                {
-                    peopleByGenenation ?<div>
-                        <ChartDoughnut data={peopleByGenenation} />
-                        <p>Predominante: {maximunGeneration}</p>
-                        {/*<Button>Ver todos</Button>*/}
-                    </div>  : <ReloadOutlined  spin />
-                }
-            </Card>
+            <CardInfo>
+                <CardItem jc='center' hg='100%' title={<>
+                    <img src='/images/people.png'/>
+                    <p>Generaciones</p>
+                </>}>
+                    {peopleByGenenation ? <div className="card-chart">
+                           {peopleByGenenation.data?.some(item => item > 0) ? (
+                                <>
+                                    <ChartDoughnut data={peopleByGenenation} />
+                                    <p style={{marginBottom: 0, marginTop: 24, textAlign: 'center'}}>
+                                        Predominante: {maximunGeneration}
+                                    </p>
+                                </>
+                           ): Void }
+                        </div>  : <ReloadOutlined className="card-load"  spin />
+                    }
+                </CardItem>
+            </CardInfo>
         )
     }
 
 
     const WidgetPeopleByGender=()=>{
         return (
-            <Card
-                title={
-                    <span>
-                    <img src={'/images/bygender.png'} width={40} style={{marginRight:10}}/>
-                    Por género
-                </span>
+            <CardItem title={<>
+                <img src='/images/bygender.png'/>
+                <p>Género</p>
+            </>}>
+                {peopleByGender ?
+                    <>
+                        <Statistic
+                            style={{marginInlineEnd: 24}}
+                            prefix={<ManOutlined style={{color:'#2351FC'}} />}
+                            title="Masculino"
+                            value={peopleByGender['Masculino']}
+                        />
+                        <Statistic
+                            style={{marginInlineEnd: 24}}
+                            prefix={<WomanOutlined 
+                            style={{color:'#EC23FC'}}/>}
+                            title="Femenino"
+                            value={peopleByGender['Femenino']}
+                        />
+                        <Statistic title="Otro" value={peopleByGender['Otro']} />
+                    </>  : <ReloadOutlined className="card-load"  spin />
                 }
-                style={{
-                    width: '100%',
-                    minHeight:185
-                }}
-            >
-                {
-                    peopleByGender ?
-                        <Row gutter={16}>
-                       <Col span={8}>
-                           <Statistic prefix={<ManOutlined style={{color:'#2351FC'}}  />} title="Masculino" value={peopleByGender['Masculino']} />
-                       </Col>
-                        <Col span={8}>
-                            <Statistic prefix={<WomanOutlined  style={{color:'#EC23FC'}}   />} title="Femenino" value={peopleByGender['Femenino']} />
-                        </Col>
-                        <Col span={8}>
-                            <Statistic title="Otro" value={peopleByGender['Otro']} />
-                        </Col>
-
-
-                        {/*<Button>Ver todos</Button>*/}
-                    </Row>  : <ReloadOutlined  spin />
-                }
-            </Card>
+            </CardItem>
         )
     }
 
@@ -318,42 +377,22 @@ const Dashboard = () => {
     return (
         <>
 
-            <Global
-                styles={css`
-                .div-main-layout{
-                    padding-left: 30px !important;
-                    padding-right: 0px !important;
-                    padding-top: 0px !important;
-                }
-            `}
-            />
-
             <MainLayout currentKey={["dashboard"]}>
-                <Row style={{marginTop:50}}>
-                    <Col>
+                <ContentVertical>
+                    <div>
                         <Title style={{marginBottom:0}} level={1}>{company && company.name}</Title>
-                        <p>{moment().format('LLL')}</p>
-                    </Col>
-                </Row>
-                <Row gutter={[16]} style={{marginBottom:50}}>
-                    <Col md={8} sm={12}>
-                        <WidgetTotalPeople/>
-                        <br/>
-                        <WidgetPeopleByGender/>
-                    </Col>
-                    <Col md={8} sm={12}>
+                        <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>
+                    </div>
+                    <ContentCards>
+                        <CardInfo gap={24}>
+                            <WidgetTotalPeople/>
+                            <WidgetPeopleByGender/>
+                        </CardInfo>
                         <WidgetAniversaryPeople/>
-                    </Col>
-                    <Col md={8} sm={12}>
-                        <WidgetBirthDayPeople/>
-                    </Col>
-                </Row>
-                <Row gutter={[16]} style={{marginBottom:50}}>
-
-                    <Col md={8} sm={12}>
                         <WidgetGeneracionalPeople/>
-                    </Col>
-                </Row>
+                        <WidgetBirthDayPeople/>
+                    </ContentCards>
+                </ContentVertical>
             </MainLayout>
         </>
     )

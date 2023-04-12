@@ -141,8 +141,11 @@ const DetailsClients = ({
     }
 
     const actionBack = () =>{
+        let url = router.query?.back
+            ? `/jobbank/${router.query?.back}`
+            : '/jobbank/clients';
         router.push({
-            pathname: '/jobbank/clients',
+            pathname: url,
             query: newFilters
         })
     }

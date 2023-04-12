@@ -88,12 +88,11 @@ const CfdiVaucher = ({
   }
 
   const downloadReceipt = async (data) => {
-    console.log(data)
     let req = {
-      person_id: data?.payroll_person?.person?.id,
-      payment_period_id: data?.payment_period?.id,
-      receipt_type: getVoucherTypeStr(data.movement_type)
-
+      cfdi_id: data?.id
+      // person_id: data?.payroll_person?.person?.id,
+      // payment_period_id: data?.payment_period?.id,
+      // receipt_type: getVoucherTypeStr(data.movement_type)
     }
 
     try {
@@ -235,7 +234,7 @@ const CfdiVaucher = ({
               )
             )}
 
-            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"} key={"#3d78b9"}>
+            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
               <FilePdfTwoTone
                   onClick={() => downloadReceipt(item)}
                   style={{ fontSize: "25px" }}

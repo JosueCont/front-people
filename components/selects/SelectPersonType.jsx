@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
+import {getPersonType} from "../../redux/catalogCompany";
 const { Option } = Select;
-const SelectPersonType = ({ ...props }) => {
+const SelectPersonType = ({ isDisabled=false, ...props }) => {
   const [personType, setPersonType] = useState([]);
 
   useEffect(() => {
@@ -15,9 +16,14 @@ const SelectPersonType = ({ ...props }) => {
     }
   }, [props.cat_person_type]);
 
+  useEffect(()=>{
+    props.getPersonType()
+  },[])
+
   return (
     <Form.Item name="person_type" label={props.label ? props.label : null}>
       <Select
+        disabled={isDisabled}
         // options={personType}
         placeholder="Tipo de persona"
         showSearch
@@ -44,4 +50,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectPersonType);
+export default connect(mapState,{getPersonType})(SelectPersonType);

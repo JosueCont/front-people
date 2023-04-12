@@ -178,7 +178,10 @@ class WebApiPeople {
   }
 
   static getCatalogs(model, data) {
-    return WebApi.ApisType(`/business/${model}/?node=${data}`, "get");
+    let nodeStr = 'node'
+    if(model==='level') nodeStr = 'node__id'
+
+    return WebApi.ApisType(`/business/${model}/?${nodeStr}=${data}`, "get");
   }
 
   static updateRegisterCatalogs(url, data) {
@@ -583,6 +586,14 @@ class WebApiPeople {
 
   static getWorkTitles(node) {
     return WebApi.ApisType(`/business/work-title/?node=${node}`, "get");
+  }
+
+  static deleteAffiliatedMovements(data) {
+    return WebApi.ApisType(
+      `/business/delete-affiliated-movements/`,
+      "post",
+      data
+    );
   }
 }
 

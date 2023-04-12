@@ -22,7 +22,7 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabEvaluations from './TabEvaluations';
 import TabRecruitment from './TabRecruitment';
-import WebApiJobBank from '../../../api/WebApiJobBank';;
+import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useInfoVacancy } from '../hook/useInfoVacancy';
 
 const DetailsVacancies = ({

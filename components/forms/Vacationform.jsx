@@ -32,11 +32,12 @@ const Vacationform = ({edit = false,...props}) => {
   const changePerson = async (value) => {
     if (value) {
       let index = await getCollaborator(value);
+      debugger;
       if (index) {
-        setAvailableDays(index.Available_days_vacation);
+        setAvailableDays(index.available_days_vacation);
         formVacation.setFieldsValue({
           antiquity: index.antiquity,
-          availableDays: index.Available_days_vacation,
+          availableDays: index.available_days_vacation,
           dateOfAdmission: index.date_of_admission
             ? moment(index.date_of_admission).format("DD-MM-YYYY")
             : null,
@@ -108,7 +109,8 @@ const Vacationform = ({edit = false,...props}) => {
       // changePerson(props.details.collaborator.id);
       setStartDate(props.details.departure_date);
       setEndDate(props.details.return_date);
-      setAvailableDays(props.details.collaborator.Available_days_vacation);
+      debugger;
+      setAvailableDays(props.details.available_days_vacation);
       formVacation.setFieldsValue({
         person: props.details.collaborator
           ? props.details.collaborator.id
@@ -205,6 +207,7 @@ const Vacationform = ({edit = false,...props}) => {
                   label="Colaborador"
                   name="person"
                   onChange={changePerson}
+                  isDisabled={edit ? true : false}
                   showSearch={true}
                   placeholder={"Seleccione"}
                   // setAllPersons={setAllPersons}
@@ -230,7 +233,7 @@ const Vacationform = ({edit = false,...props}) => {
                   key="departure_date"
                   style={{ width: "100%" }}
                   onChange={changeDepartureDate}
-                  disabled={availableDays > 0 ? false : true}
+                  //disabled={availableDays > 0 ? false : true}
                   locale = { locale }
                 />
               </Form.Item>
@@ -273,14 +276,16 @@ const Vacationform = ({edit = false,...props}) => {
                 label="Jefe inmediato"
                 name="immediate_supervisor"
                 rules={[
-                  ruleRequired,
+                 {
+                  required: true,
+                  message: "Este campo es requerido, esta información la puedes asignar desde el expediente de la persona",
+                }
                   // validateImmediateSupervisor(props?.details?.collaborator?.id)
                 ]}>
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  readOnly
-                  disabled={edit ? false : true}
+                  disabled={true}
                   >
                     { listPersons.length > 0 && listPersons.map(item => (
                       <Select.Option value={item.id} key={item.id}>

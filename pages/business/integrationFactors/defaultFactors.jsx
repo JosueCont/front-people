@@ -79,7 +79,7 @@ const defaultFactors = () => {
     <Spin spinning = { loading }>
       <MainLayout
         currentKey={["integrationFactors"]}
-        defaultOpenKeys={["company"]}
+        defaultOpenKeys={["strategyPlaning","company"]}
       >
               <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item

@@ -30,7 +30,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
 
   const colVacations = [
     {
-      title: "periodo",
+      title: "Periodo",
       dataIndex: "period",
       key: "period",
     },
@@ -96,8 +96,13 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
     setLoadingTable(true);
     try {
       let response = await WebApiPayroll.getVacationsRecord(person_id);
+      let data = response?.data?.results
+      let arr = []
+      if(data && data.length>0){
+        arr = data.filter(item => item.is_active);
+      }
       //   console.log("🚀 ~ getVacationsRecors ~ response", response);
-      setVacationsRecord(response.data.results);
+      setVacationsRecord(arr);
     } catch (error) {
       console.log(error);
     } finally {

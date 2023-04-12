@@ -73,8 +73,8 @@ const LogSystem = ({ ...props }) => {
     setLoading(true)
     try{
       const res = await WebApi.getSystemLog(type,null,search,url);
-      setLenData(res.data.count);
-      setLog(res.data.results)
+      setLenData(res?.data?.count);
+      setLog(res?.data?.results)
       setNextURL(null)
       setPrevURL(null)
       if(res?.data?.next){
@@ -114,6 +114,11 @@ const LogSystem = ({ ...props }) => {
       key: "module",
     },
     {
+      title: "Función",
+      dataIndex: "function",
+      key: "function",
+    },
+    {
       title: "Generado por",
       key: "person_name",
       render: (row) => {
@@ -126,21 +131,16 @@ const LogSystem = ({ ...props }) => {
     },
     {
       title: "Tipo",
+      dataIndex: "type",
       key: "type",
-      render: (row) => {
-        return (
-          <div>
-            {TYPE_LOGS[row.type]}
-          </div>
-        );
-      },
     },
     {
-      title: "Detalle de solicitud",
+      title: "Detalle de solicitud/respuesta",
       key: "detailrequest",
       render: (row) => {
+        let data = row?.data?.response ? row?.data?.response:row?.data;
         return (
-            <Text code>{row?.data && JSON.stringify(row.data)}</Text>
+            <Text code>{JSON.stringify(data)}</Text>
         );
       },
     },
@@ -188,12 +188,7 @@ const LogSystem = ({ ...props }) => {
                       name="type"
 
                   >
-                    <Select
-                        style={{ width: '100%' }}
-                        allowClear
-                        placeholder={'Todos'}
-                        options={dataTypesLog}
-                    />
+                    <Input/>
                   </Form.Item>
                 </Col>
                 {/*<Col md={6}>*/}
@@ -232,6 +227,7 @@ const LogSystem = ({ ...props }) => {
               key="tableDocumentLog"
               pagination={false}
               loading={loading}
+              scroll={{ x: 1500 }}
               columns={columns}
               locale={{
                 emptyText: loading

@@ -109,7 +109,7 @@ const GeneralData = ({ node_id, ...props }) => {
         <Col lg={20} xs={22} offset={1} justify={"end"}>
           <Row justify={"end"}>
             <Col offset={1}>
-              <Button type="danger" onClick={() => router.push("/business")}>
+              <Button type="danger" onClick={() => router.push("/business/companies")}>
                 Cancelar
               </Button>
             </Col>
