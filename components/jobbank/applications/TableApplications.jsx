@@ -99,6 +99,24 @@ const TableApplications = ({
             key: ['candidate','cell_phone']
         },
         {
+            title: 'Cliente',
+            ellipsis: true,
+            render: (item) =>{
+                return item.vacant?.customer?.name ? (
+                    <span
+                        className='ant-table-cell-ellipsis'
+                        style={{color: '#1890ff', cursor: 'pointer'}}
+                        onClick={()=> router.push({
+                            pathname: '/jobbank/clients/edit',
+                            query: {...router.query, id: item.vacant?.customer?.id, back: 'applications'}
+                        })}
+                    >
+                        {item.vacant?.customer?.name}
+                    </span>
+                ) : <></>;
+            }
+        },
+        {
             title: 'Vacante',
             ellipsis: true,
             render: (item) =>{
