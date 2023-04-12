@@ -782,7 +782,9 @@ const DataPerson = ({
                 <Form.Item
                   name="curp"
                   label="CURP"
-                  rules={[ruleRequired, curpFormat]}
+                  rules={[config.applications.find(
+                      (item) => item.app === "PAYROLL" && item.is_active
+                  ) ? ruleRequired :{}, curpFormat]}
                 >
                   <Input maxLength={18} />
                 </Form.Item>
@@ -791,7 +793,9 @@ const DataPerson = ({
                 <Form.Item
                   name="rfc"
                   label="RFC"
-                  rules={[ruleRequired, rfcFormat]}
+                  rules={[config.applications.find(
+                      (item) => item.app === "PAYROLL" && item.is_active
+                  ) ? ruleRequired :{}, rfcFormat]}
                 >
                   <Input maxLength={13} />
                 </Form.Item>
