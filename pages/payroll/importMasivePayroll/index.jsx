@@ -391,6 +391,18 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       Registro patronal: {c.patronal_registration}{" "}
                     </Col>
                   )}
+                  <Col span={24} style={{}}>
+                    Calendario:{" "}
+                    {c.periodicity_type == "03"
+                      ? "Catorcenal"
+                      : c.periodicity_type == "04"
+                      ? "Quincenal"
+                      : c.periodicity_type == "05"
+                      ? "Mensual"
+                      : "Otra periocidad"}
+                    {""}
+                  </Col>
+
                   <ul>
                     {c.errors &&
                       c.errors.map((error) => <li span={24}>{error}</li>)}
@@ -424,12 +436,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       };
       if (company.patronal_registrations) {
         company.patronal_registrations.map((reg_pat) => {
-          let calendar = {
-            patronal_registration: reg_pat.patronal_registration,
-            errors: [],
-          };
           if (reg_pat.periodicities && reg_pat.periodicities.length > 0) {
             reg_pat.periodicities.map((periodicity) => {
+              let calendar = {
+                patronal_registration: reg_pat.patronal_registration,
+                errors: [],
+              };
+              calendar.periodicity_type = periodicity.periodicity_code;
+              calendar.errors = [];
               if (periodicity.calendar) {
                 if (periodicity.calendar.name == "") {
                   calendar.errors.push("Nombre es requerido");
@@ -451,15 +465,21 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
               }
             });
           } else {
+            let calendar = {
+              patronal_registration: reg_pat.patronal_registration,
+              errors: [],
+            };
             calendar.errors.push("No se encontraron períodos de pagos");
             company_error.calendars.push(calendar);
           }
         });
       } else if (company.periodicities && company.periodicities.length > 0) {
-        let calendar = {
-          errors: [],
-        };
         company.periodicities.map((periodicity) => {
+          let calendar = {
+            errors: [],
+          };
+          calendar.periodicity_type = periodicity.periodicity_code;
+          calendar.errors = [];
           if (periodicity.calendar) {
             if (periodicity.calendar.name == "") {
               calendar.errors.push("Nombre es requerido");
@@ -496,6 +516,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       setImportError(companies_errors);
       return false;
     }
+    setImportError([]);
     return true;
   };
 
