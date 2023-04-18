@@ -559,7 +559,7 @@ const ModalConceptsPayroll = ({
                     placeholder="Fecha de salida."
                     onChange={(value, d) => setDepartureDate(d)}
                     locale={locale}
-                    disabledDate={disablePeriod}
+                    // disabledDate={disablePeriod}
                   />
 
                   <Alert
