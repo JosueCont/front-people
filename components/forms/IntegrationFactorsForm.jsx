@@ -196,7 +196,6 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
                 rules={[ruleRequired]}
               >
                 <InputNumber
-                  max={30}
                   min={1}
                   style={{ width: "100%" }}
                   onFocus={clearErrors}
@@ -224,7 +223,6 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
                 rules={[ruleRequired]}
               >
                 <InputNumber
-                  max={30}
                   min={1}
                   style={{ width: "100%" }}
                   onFocus={clearErrors}
