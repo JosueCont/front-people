@@ -683,7 +683,12 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
         sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
-          message.error(messageError);
+          if (error.response?.data?.message) {
+            message.error(error.response.data.message);
+          } else {
+            message.error(messageError);
+          }
+          // message.error(messageError);
           console.log(error);
         }, 1000);
       });
@@ -934,8 +939,12 @@ const CalculatePayroll = ({ ...props }) => {
           sendCalculatePayroll({ payment_period: periodSelected.id });
         })
         .catch((error) => {
+          if (error.response?.data?.message) {
+            message.error(error.response.data.message);
+          } else {
+            message.error(messageError);
+          }
           setLoading(false);
-          message.error(messageError);
         });
     } else {
       setLoading(false);
