@@ -172,14 +172,12 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
         {/* BÚSQUEDA */}
         <Row>
             <Col span={18}>
-                <Form form={form} scrollToFirstError onFinish={onSearch}>
-                    <Row>
-                        <Col span={16}>
+                <ConfigProvider locale={esES}>
+                    <Form form={form} scrollToFirstError onFinish={onSearch}>
+                        <div style={{display: "flex", justifyContent:'flex-start', gap:8, flexWrap:'wrap'}}>
                             <Form.Item name="name" label="Filtrar">
                                 <DatePicker onChange={onYearChange} picker="year" placeholder={'seleccione un año'} />
                             </Form.Item>
-                        </Col>
-                        <Col span={8}>
                             <div style={{ float: "left", marginLeft: "5px" }}>
                                 <Form.Item>
                                     <Button htmlType="submit">
@@ -194,9 +192,9 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
                                     </Button>
                                 </Form.Item>
                             </div>
-                        </Col>
-                    </Row>
-                </Form>
+                        </div>
+                    </Form>
+                </ConfigProvider>
             </Col>
 
             <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>

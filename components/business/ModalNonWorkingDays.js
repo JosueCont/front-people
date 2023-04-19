@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, DatePicker, Form, message, Row, Space} from "antd";
+import {Button, Col, ConfigProvider, DatePicker, Form, message, Row, Space} from "antd";
 import MyModal from "../../common/MyModal";
 import {ruleRequired} from "../../utils/rules";
 import {CustomInput} from "../assessment/groups/Styled";
 import moment from "moment";
 import webApiPeople from "../../api/WebApiPeople";
+import esES from "antd/lib/locale/es_ES";
 
 const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, onSave}) =>{
     const [form] = Form.useForm();
@@ -74,52 +75,57 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
             title={title}
             visible={visible}
             close={onCancel}
-            widthModal={600}
+            widthModal={650}
         >
-            <Form
-                onFinish={onFinish}
-                form={form}
-                requiredMark={false}
-                layout={"vertical"}
-            >
-                <Row gutter={16}>
-                    <Col span={24}>
-                        <Form.Item
-                            name={"date"}
-                            label={"Fecha"}
-                            style={{ width: '100%' }}
-                            rules={[ruleRequired]}
-                        >
-                            <DatePicker format={'DD-MM-YYYY'} style={{ width: '100%' }} disabledDate={disabledDates} placeholder={'seleccione una fecha'} />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                    <Row gutter={[25, 16]}>
-                    <Col span={24}>
-                        <Form.Item
-                            name={"description"}
-                            label={"Descripción"}
-                        >
-                            <CustomInput
-                                maxLength={50}
-                                allowClear={true}
-                                placeholder="Ingresa una descripción"
-                            />
-                        </Form.Item>
-                    </Col>
-                </Row>
+            <ConfigProvider locale={esES}>
+                <Form
+                    onFinish={onFinish}
+                    onFinishFailed={(errorInfo) => {
+                        console.log('Failed:', errorInfo);
+                    }}
+                    form={form}
+                    requiredMark={false}
+                    layout={"vertical"}
+                >
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item
+                                name={"date"}
+                                label={"Fecha"}
+                                style={{ width: '100%' }}
+                                rules={[ruleRequired]}
+                            >
+                                <DatePicker format={'DD-MM-YYYY'} style={{ width: '100%' }} disabledDate={disabledDates} placeholder={'seleccione una fecha'} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                        <Row gutter={[25, 16]}>
+                        <Col span={24}>
+                            <Form.Item
+                                name={"description"}
+                                label={"Descripción"}
+                            >
+                                <CustomInput
+                                    maxLength={100}
+                                    allowClear={true}
+                                    placeholder="Ingresa una descripción"
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
 
-                <Row align={"end"}>
-                    <Space>
-                        <Button key="back" onClick={onCancel}>
-                            Cancelar
-                        </Button>
-                        <Button htmlType="submit" loading={loading}>
-                            Guardar
-                        </Button>
-                    </Space>
-                </Row>
-            </Form>
+                    <Row align={"end"}>
+                        <Space>
+                            <Button key="back" onClick={onCancel}>
+                                Cancelar
+                            </Button>
+                            <Button htmlType="submit" loading={loading}>
+                                Guardar
+                            </Button>
+                        </Space>
+                    </Row>
+                </Form>
+            </ConfigProvider>
         </MyModal>
     )
 }
