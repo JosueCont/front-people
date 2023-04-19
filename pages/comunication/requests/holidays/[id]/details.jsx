@@ -10,7 +10,7 @@ import {
   Form,
   Input,
   Modal,
-  Select,
+  Select, message,
 } from "antd";
 import MainLayout from "../../../../../layout/MainInter";
 import { useRouter } from "next/router";
@@ -24,6 +24,7 @@ import { API_URL } from "../../../../../config/config";
 import { connect } from "react-redux";
 import WebApiPeople from "../../../../../api/WebApiPeople";
 import { verifyMenuNewForTenant, getFullName } from "../../../../../utils/functions";
+import webApiPeople from "../../../../../api/WebApiPeople";
 
 const HolidaysDetails = (props) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -47,6 +48,7 @@ const HolidaysDetails = (props) => {
   const [permissions, setPermissions] = useState({});
   const [listPersons, setListPersons] = useState([]);
   const [immediateSupervisor, setImmediateSupervisor] = useState(null);
+  const [status, setStatus] = useState(null)
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -99,6 +101,7 @@ const HolidaysDetails = (props) => {
         setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
         setAvailableDays(data.available_days_vacation);
         setImmediateSupervisor(data.immediate_supervisor.id)
+        setStatus(data.status)
 
         if (data.collaborator && data.collaborator.first_name) {
           setFisrtName(data.collaborator.first_name);
@@ -184,6 +187,46 @@ const HolidaysDetails = (props) => {
         });
     }
   };
+
+
+  const onCancelRequest = () => {
+    confirm({
+      title: "¿Está seguro de cancelar la siguiente solicitud aprobada de vacaciones?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Sí, cancelar",
+      cancelText: "Cancelar",
+      onOk() {
+        cancelRequest()
+      },
+    })
+  }
+
+  const cancelRequest = async()=>{
+
+    try{
+      setSending(true)
+      let data = {
+        khonnect_id: json.user_id,
+        id: id,
+      }
+      let response = await webApiPeople.vacationCancelRequest(data)
+
+      Modal.success({
+        keyboard: false,
+        maskClosable: false,
+        content: response.data.message,
+        okText: "Aceptar",
+        onOk() {
+          route.push("/comunication/requests/holidays");
+        },
+      });
+
+      setSending(false)
+    }catch (e) {
+      console.log(e)
+      setSending(false)
+    }
+  }
 
   useEffect(() => {
     getDetails();
@@ -274,7 +317,7 @@ const HolidaysDetails = (props) => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject_vacation && (
+                {permissions.reject_vacation && status !== 2 && (
                   <Button
                     key="reject"
                     type="primary"
@@ -285,7 +328,7 @@ const HolidaysDetails = (props) => {
                     Rechazar
                   </Button>
                 )}
-                {permissions.approve_vacation && (
+                {permissions.approve_vacation && status !== 2 && (
                   <Button
                     className={"btn-success"}
                     key="save"
@@ -296,6 +339,17 @@ const HolidaysDetails = (props) => {
                   >
                     Aprobar
                   </Button>
+                )}
+                {status === 2 && (
+                    <Button
+                        key="reject"
+                        type="primary"
+                        danger
+                        onClick={onCancelRequest}
+                        style={{ padding: "0 50px", margin: "10px" }}
+                    >
+                      Cancelar solicitud
+                    </Button>
                 )}
               </Col>
             </Row>

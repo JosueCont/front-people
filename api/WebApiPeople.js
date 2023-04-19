@@ -379,6 +379,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
 
+  static vacationCancelRequest(data) {
+    return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
+  }
+
   static informationNode(data) {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
