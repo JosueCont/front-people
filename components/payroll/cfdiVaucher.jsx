@@ -11,6 +11,7 @@ import {
   Button,
   Col,
   Dropdown,
+  Space,
   Form,
   Input,
   Menu,
@@ -333,6 +334,8 @@ const CfdiVaucher = ({
     let type = value.movement_type;
     if (type && type !== "")
       url = url + `&movement_type=${value.movement_type}`;
+    if (value.uuid && value.uuid !== "")
+      url = url + `&uuid=${value.uuid}`;
 
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
     if(!new_page) setCurrentPage(1)
@@ -413,7 +416,7 @@ const CfdiVaucher = ({
               onFinish={onFinish}
             >
               <Row gutter={[10]}>
-                <Col md={3}>
+                <Col md={3} xs={12}>
                   <Form.Item name="movement_type" label="Tipo de nómina">
                     <Select
                         placeholder="Todos"
@@ -431,9 +434,8 @@ const CfdiVaucher = ({
                         ]}
                     />
                   </Form.Item>
-
                 </Col>
-                <Col>
+                <Col md={3} xs={12}>
                   <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendarSelect(value)}
                     name="calendar"
@@ -441,7 +443,7 @@ const CfdiVaucher = ({
                   />
                 </Col>
                 {calendarSelect && (
-                  <Col>
+                  <Col md={3} xs={12}>
                     <Form.Item name="period" label="Periodo">
                       <Select
                         options={periods}
@@ -452,11 +454,11 @@ const CfdiVaucher = ({
                     </Form.Item>
                   </Col>
                 )}
-                <Col>
-                  <SelectCollaborator  showSearch={true} name="person" style={{ width: 250 }} />
+                <Col md={3} xs={12}>
+                  <SelectCollaborator  showSearch={true} name="person" style={{width:'100%'}}  />
                 </Col>
                 {!calendarSelect && (
-                  <Col>
+                  <Col md={3} xs={12}>
                     <SelectYear
                       size="middle"
                       name={"year"}
@@ -465,40 +467,46 @@ const CfdiVaucher = ({
                     />
                   </Col>
                 )}
-                <Col style={{ display: "flex" }}>
-                  <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      key="buttonFilter"
-                      htmlType="submit"
-                      loading={loading}
-                    >
-                      <SearchOutlined />
-                    </Button>
-                  </Tooltip>
+                <Col md={3} xs={12}>
+                  <Form.Item name="uuid" label="UUID">
+                  <Input allowClear placeholder={'UUID'} />
+                  </Form.Item>
                 </Col>
-                <Col style={{ display: "flex" }}>
-                  <Tooltip
-                    title="Limpiar filtro"
-                    color={"#3d78b9"}
-                    key={"#3d78b9"}
-                  >
-                    <Button
-                      onClick={clearFilter}
-                      style={{
-                        fontWeight: "bold",
-                        marginTop: "auto",
-                      }}
-                      key="buttonClearFilter"
+                <Col style={{ display: "flex" }} md={3} xs={12}>
+                  <Space style={{paddingTop:30}}>
+                    <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
+                      <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={loading}
+                      >
+                        <SearchOutlined />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip
+                        title="Limpiar filtro"
+                        color={"#3d78b9"}
+                        key={"#3d78b9"}
                     >
-                      <ClearOutlined />
-                    </Button>
-                  </Tooltip>
+                      <Button
+                          onClick={clearFilter}
+                          style={{
+                            fontWeight: "bold",
+                            marginTop: "auto",
+                          }}
+                          key="buttonClearFilter"
+                      >
+                        <ClearOutlined />
+                      </Button>
+                    </Tooltip>
+                  </Space>
+
                 </Col>
               </Row>
             </Form>
