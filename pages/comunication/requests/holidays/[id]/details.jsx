@@ -191,7 +191,7 @@ const HolidaysDetails = (props) => {
 
   const onCancelRequest = () => {
     confirm({
-      title: "¿Está seguro de cancelar la siguiente solicitud de vacaciones?",
+      title: "¿Está seguro de cancelar la siguiente solicitud aprobada de vacaciones?",
       icon: <ExclamationCircleOutlined />,
       okText: "Sí, cancelar",
       cancelText: "Cancelar",
@@ -348,7 +348,7 @@ const HolidaysDetails = (props) => {
                         onClick={onCancelRequest}
                         style={{ padding: "0 50px", margin: "10px" }}
                     >
-                      Cancelar
+                      Cancelar solicitud
                     </Button>
                 )}
               </Col>
