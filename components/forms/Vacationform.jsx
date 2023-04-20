@@ -9,7 +9,7 @@ import {
   Image,
   InputNumber,
   DatePicker,
-  Select
+  Select, message
 } from "antd";
 import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
@@ -18,6 +18,7 @@ import { ruleRequired } from "../../utils/rules";
 import { getDifferenceDays, getFullName } from "../../utils/functions";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { connect } from "react-redux";
+import webApiPeople from "../../api/WebApiPeople";
 
 const Vacationform = ({edit = false,...props}) => {
   const { Title } = Typography;
@@ -26,13 +27,16 @@ const Vacationform = ({edit = false,...props}) => {
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [availableDays, setAvailableDays] = useState(null);
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState();
+  const [endDate, setEndDate] = useState(null);
   const [listPersons, setListPersons] = useState([]);
+  const [nonWorkingDays, setNonWorkingDays] = useState(null)
+  const [nonWorkingWeekDays, setNonWorkingWeekDays] = useState(null)
+  const [daysToRequest, setDaysToRequest] = useState(0)
 
   const changePerson = async (value) => {
     if (value) {
       let index = await getCollaborator(value);
-      debugger;
+     // debugger;
       if (index) {
         setAvailableDays(index.available_days_vacation);
         formVacation.setFieldsValue({
@@ -74,6 +78,8 @@ const Vacationform = ({edit = false,...props}) => {
   useEffect(() => {
     if(props.currentNode){
       getListPersons(props.currentNode.id)
+      getNonWorkingDays(props.currentNode.id)
+      getWorkingWeekDays(props.currentNode.id)
     }
   }, [props.currentNode]);
 
@@ -109,7 +115,7 @@ const Vacationform = ({edit = false,...props}) => {
       // changePerson(props.details.collaborator.id);
       setStartDate(props.details.departure_date);
       setEndDate(props.details.return_date);
-      debugger;
+     // debugger;
       setAvailableDays(props.details.available_days_vacation);
       formVacation.setFieldsValue({
         person: props.details.collaborator
@@ -138,7 +144,7 @@ const Vacationform = ({edit = false,...props}) => {
           : null,
         job:
           props.details && props.details.work_title
-            ? props.details.collaborator.job.name
+            ? props.details.work_title.job.name
             : null,
         immediate_supervisor:
           props.details && props.details.immediate_supervisor
@@ -156,31 +162,95 @@ const Vacationform = ({edit = false,...props}) => {
 
   const changeDepartureDate = (date, dateString) => {
     setStartDate(dateString);
-    props.onChangeDepartureDate(date, dateString);
-  };
-  const changeEndDate = (date, dateString) => {
-    setEndDate(dateString);
-    props.onChangeReturnDate(date, dateString);
+
+    setEndDate(null)
+    setDaysToRequest(0)
+    formVacation.setFieldsValue({
+      return_date: '',
+      days_requested: ''
+    })
   };
 
-  const sumDays = (days) => {
-    if (days && availableDays > 0 && startDate && days <= availableDays) {
-      let date = new Date(startDate);
-      date.setDate(date.getDate() + (days - 1));
-      let end_date = date.toISOString().substring(0, 10);
-      changeEndDate(end_date, end_date.toString());
+  const onEndDateChange = (date, dateString) => {
+    getWorkingDaysFromRange(startDate, dateString)
+  }
+
+  // Recupera el número de días laborables entre un rango de fecha especificado
+  const getWorkingDaysFromRange = async (start, end) =>{
+    try{
+      let params = {
+        node_id: props.currentNode.id,
+        start_date: moment(start).format('YYYY-MM-DD'),
+        end_date: moment(end).format('YYYY-MM-DD')
+      }
+      let response = await webApiPeople.getWorkingDaysFromRange(params)
+      const total_days = response.data.total_days
+
+      setEndDate(end)
+      setDaysToRequest(total_days)
 
       formVacation.setFieldsValue({
-        return_date: moment(end_date, "YYYY-MM-DD"),
-      });
-    } else {
-      formVacation.setFieldsValue({
-        return_date: null,
-      });
+        return_date: moment(end),
+        days_requested: total_days,
+      })
+
+      if(total_days > availableDays){
+        message.error('Los días solicitados no deben ser mayor a los días diponibles.')
+      }
+    }catch (e) {
+      console.log(e)
     }
-  };
+  }
 
-  return (
+  const getNonWorkingDays = async (node_id) =>{
+    try{
+      let params = {
+        node: node_id,
+        limit: 1000,
+      }
+
+      let response = await webApiPeople.getNonWorkingDays(params)
+      const data = response.data
+
+      let dates = data.results.map(e => e.date)
+      setNonWorkingDays(dates)
+    }catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getWorkingWeekDays = async (node_id) =>{
+    try{
+      let response = await webApiPeople.getWorkingWeekDays(node_id)
+      const data = response.data
+      const workingWeekDays = data.results.length > 0 ? data.results[0] : []
+
+      // Obtenemos los días no laborables de la semana
+      let _days = []
+      Object.keys(workingWeekDays).forEach(key => {
+        if(workingWeekDays[key] === false){
+          _days.push(key)
+        }
+      })
+      setNonWorkingWeekDays(_days)
+    }catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getDisabledStartDates = (current) =>{
+    return nonWorkingWeekDays.includes(moment(current).locale('en').format('dddd').toLowerCase())
+          || nonWorkingDays.includes(moment(current).format('YYYY-MM-DD'))
+  }
+
+  const getDisabledEndDates = (current) => {
+    let _minDate =  moment()
+    return current < moment(startDate)
+        ||nonWorkingWeekDays.includes(moment(current).locale('en').format('dddd').toLowerCase())
+        || nonWorkingDays.includes(moment(current).format('YYYY-MM-DD'))
+  }
+
+  return (<>{nonWorkingWeekDays && nonWorkingDays ?
     <Form form={formVacation} layout="vertical" onFinish={props.onFinish}>
       <Row>
         <Col span={20} offset={4}>
@@ -233,8 +303,9 @@ const Vacationform = ({edit = false,...props}) => {
                   key="departure_date"
                   style={{ width: "100%" }}
                   onChange={changeDepartureDate}
-                  //disabled={availableDays > 0 ? false : true}
+                  disabled={availableDays <= 0}
                   locale = { locale }
+                  disabledDate = {getDisabledStartDates}
                 />
               </Form.Item>
             </Col>
@@ -247,7 +318,9 @@ const Vacationform = ({edit = false,...props}) => {
                 <DatePicker
                   key="return_date"
                   style={{ width: "100%" }}
-                  disabled={true}
+                  onChange={onEndDateChange}
+                  disabled={!startDate}
+                  disabledDate = {getDisabledEndDates}
                 />
               </Form.Item>
             </Col>
@@ -261,8 +334,9 @@ const Vacationform = ({edit = false,...props}) => {
                   min={1}
                   max={availableDays}
                   style={{ width: "100%" }}
-                  onChange={sumDays}
-                  disabled={availableDays > 0 ? false : true}
+                  // onChange={sumDays}
+                  /*disabled={availableDays > 0 ? false : true}*/
+                    disabled={true}
                 />
               </Form.Item>
             </Col>
@@ -311,6 +385,7 @@ const Vacationform = ({edit = false,...props}) => {
                 loading={props.sending}
                 type="primary"
                 style={{ padding: "0 50px", margin: "0 0 0 10px" }}
+                disabled={availableDays <= 0 || daysToRequest === 0 || daysToRequest > availableDays }
               >
                 {props.edit ? "Actualizar" : "Guardar"}
               </Button>
@@ -319,7 +394,7 @@ const Vacationform = ({edit = false,...props}) => {
         </Col>
       </Row>
     </Form>
-  );
+ :null }</>);
 };
 
 const mapState = (state) => {

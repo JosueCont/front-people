@@ -1,17 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, ConfigProvider, DatePicker, Form, message, Row, Space} from "antd";
+import {Button, Col, ConfigProvider, DatePicker, Form, Input, message, Row, Space} from "antd";
 import MyModal from "../../common/MyModal";
 import {ruleRequired} from "../../utils/rules";
 import {CustomInput} from "../assessment/groups/Styled";
 import moment from "moment";
 import webApiPeople from "../../api/WebApiPeople";
 import esES from "antd/lib/locale/es_ES";
+import {trim} from "lodash/string";
+
+const { TextArea } = Input;
 
 const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, onSave}) =>{
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const disabledDates = (current) => {
-        return current && current < moment().endOf('day');
+        //return current && current < moment().endOf('day');
     }
 
     const onFinish = async (values) => {
@@ -19,7 +22,7 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
         let data = {
             node: node_id,
             date: values.date.format('YYYY-MM-DD'),
-            description: values.description || ''
+            description: trim(values.description) || ''
         }
         if(nonWorkingDay){
             await updateItem(data)
@@ -75,7 +78,7 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
             title={title}
             visible={visible}
             close={onCancel}
-            widthModal={650}
+            widthModal={450}
         >
             <ConfigProvider locale={esES}>
                 <Form
@@ -105,11 +108,7 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
                                 name={"description"}
                                 label={"Descripción"}
                             >
-                                <CustomInput
-                                    maxLength={100}
-                                    allowClear={true}
-                                    placeholder="Ingresa una descripción"
-                                />
+                                <TextArea rows={4} placeholder="Ingresa una descripción" maxLength={250} allowClear={true} />
                             </Form.Item>
                         </Col>
                     </Row>
