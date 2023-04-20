@@ -600,6 +600,7 @@ class WebApiPeople {
     );
   }
 
+  /*** WORKING/NON-WORKING DAYS ***/
   static getNonWorkingDays({node, offset= 0, limit= 10, year = ''}) {
     let _URL = `/business/non-working-day/?node=${node}`
     _URL += offset && offset > 0 ? `&offset=${offset}` : ''
@@ -610,7 +611,6 @@ class WebApiPeople {
     return WebApi.ApisType(_URL, "get");
   }
 
-  /*** WORKING/NON-WORKING DAYS ***/
   static createNonWorkingDay(data) {
     return WebApi.ApisType(`/business/non-working-day/`, "post", data);
   }
@@ -633,6 +633,10 @@ class WebApiPeople {
 
   static updateWorkingWeekDay(id, data) {
     return WebApi.ApisType(`/business/working-week-day/${id}/`, "put", data);
+  }
+
+  static getWorkingDaysFromRange(data) {
+    return WebApi.ApisType(`/business/get-working-days-from-range-date/`, "post", data);
   }
 
 }

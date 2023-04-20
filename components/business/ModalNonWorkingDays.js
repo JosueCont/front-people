@@ -11,7 +11,7 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const disabledDates = (current) => {
-        return current && current < moment().endOf('day');
+        //return current && current < moment().endOf('day');
     }
 
     const onFinish = async (values) => {
