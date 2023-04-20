@@ -10,16 +10,14 @@ import { verifyMenuNewForTenant } from "../../../../../utils/functions";
 const HolidaysNew = () => {
   const route = useRouter();
   const [sending, setSending] = useState(false);
-  const [departure_date, setDepartureDate] = useState(null);
-  const [return_date, setReturnDate] = useState(null);
 
   const onCancel = () => {
     route.push("/comunication/requests/holidays");
   };
 
   const saveRequest = async (values) => {
-    values["departure_date"] = departure_date;
-    values["return_date"] = return_date;
+    values["departure_date"] = values["departure_date"].format('YYYY-MM-DD')
+    values["return_date"] = values["return_date"].format('YYYY-MM-DD')
     values["created_from"] = 2;// 2 es que se hizo desde la web
     setSending(true);
     WebApiPeople.saveVacationRequest(values)
@@ -35,14 +33,6 @@ const HolidaysNew = () => {
         console.log(error);
         setSending(false);
       });
-  };
-
-  const onChangeDepartureDate = (date, dateString) => {
-    setDepartureDate(dateString);
-  };
-
-  const onChangeReturnDate = (date, dateString) => {
-    setReturnDate(dateString);
   };
 
   return (
@@ -75,8 +65,6 @@ const HolidaysNew = () => {
               details={null}
               onFinish={saveRequest}
               sending={sending}
-              onChangeDepartureDate={onChangeDepartureDate}
-              onChangeReturnDate={onChangeReturnDate}
               onCancel={onCancel}
             />
           </Col>
