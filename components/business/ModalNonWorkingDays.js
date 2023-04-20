@@ -6,6 +6,7 @@ import {CustomInput} from "../assessment/groups/Styled";
 import moment from "moment";
 import webApiPeople from "../../api/WebApiPeople";
 import esES from "antd/lib/locale/es_ES";
+import {trim} from "lodash/string";
 
 const { TextArea } = Input;
 
@@ -21,7 +22,7 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
         let data = {
             node: node_id,
             date: values.date.format('YYYY-MM-DD'),
-            description: values.description || ''
+            description: trim(values.description) || ''
         }
         if(nonWorkingDay){
             await updateItem(data)
