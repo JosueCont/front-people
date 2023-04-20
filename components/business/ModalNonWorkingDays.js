@@ -108,11 +108,6 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
                                 label={"Descripción"}
                             >
                                 <TextArea rows={4} placeholder="Ingresa una descripción" maxLength={250} allowClear={true} />
-                                {/*<CustomInput
-                                    maxLength={100}
-                                    allowClear={true}
-                                    placeholder="Ingresa una descripción"
-                                />*/}
                             </Form.Item>
                         </Col>
                     </Row>
