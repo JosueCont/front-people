@@ -271,7 +271,7 @@ const businessForm = ({ currentNode, ...props }) => {
             <Row gutter={24}>
               {props.permissions &&
                 props.permissions.edit &&
-                props.config.nomina_enabled && (
+                  (
                   <Col className="gutter-row" span={6}>
                     <Link href={`/business/companies/${item.id}`}>
                       <Tooltip title="Configuración">

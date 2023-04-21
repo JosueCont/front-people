@@ -65,16 +65,18 @@ const ModalConceptsPayroll = ({
       if (payrollType === "046") {
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
-            item.perception_type.is_assimilated &&
-            item.perception_type.code !== "046"
+            item.apply_assimilated &&
+            item.perception_type.code !== "046" &&
+            item.node != null
         );
         props.deductions_int = props.deductions_int.filter(
           (item) =>
-            item.deduction_type.is_assimilated &&
-            item.deduction_type.code !== "002"
+            item.apply_assimilated &&
+            item.deduction_type.code !== "002" &&
+            item.node != null
         );
         props.other_payments_int = props.other_payments_int.filter(
-          (item) => item.other_type_payment.is_assimilated
+          (item) => item.apply_assimilated && item.node != null
         );
       } else {
         props.perceptions_int = props.perceptions_int.filter(
