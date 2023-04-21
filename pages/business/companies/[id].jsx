@@ -17,10 +17,13 @@ const ConfigCompany = ({ ...props }) => {
   const [company, setCompany] = useState();
   const { Title } = Typography;
   const { TabPane } = Tabs;
-  const [activeKey, setActiveKey] = useState("2");
+  const [activeKey, setActiveKey] = useState(props.config && props.config.nomina_enabled ? "2" : "1");
 
   useEffect(() => {
-    if (router.query.tab) setActiveKey(String(router.query.tab));
+    if (router.query.tab) {
+      let tab  = String(router.query.tab) === "2" && props.config && !props.config.nomina_enabled ? "1" :  String(router.query.tab)
+      setActiveKey(tab);
+    }
     if (router.query.id)
       WebApiPeople.getCompany(router.query.id)
         .then(function (response) {
@@ -73,9 +76,11 @@ const ConfigCompany = ({ ...props }) => {
             onChange={(value) => setActiveKey(value)}
             activeKey={activeKey}
           >
-            <TabPane tab="Información fiscal" key={"2"}>
-              <FiscalInformationNode node_id={company && company.id} />
-            </TabPane>
+            { props.config && props.config.nomina_enabled &&
+              <TabPane tab="Información fiscal" key={"2"}>
+                <FiscalInformationNode node_id={company && company.id} />
+              </TabPane>
+            }
             <TabPane tab="General" key={"1"}>
               <GeneralData node_id={company && company.id} />
             </TabPane>
