@@ -58,7 +58,7 @@ const PreviewBulkUpload = ({ ...props }) => {
         return item.status && item.status !== "Exists" ? (
           <CheckCircleTwoTone twoToneColor="#52c41a" />
         ) : (
-          <CloseCircleTwoTone twoToneColor="#eb2f96" />
+          <p>Pendiente</p>
         );
       },
     },
@@ -92,7 +92,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           setDataUpload(response.data.data);
           setTemplateType(response.data.type);
           setLoading(false);
-          message.success("Excel importado correctamente.");
+          //message.success("Excel importado correctamente.");
         })
         .catch((e) => {
           setLoading(false);

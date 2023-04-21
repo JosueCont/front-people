@@ -454,6 +454,10 @@ header.ant-layout-header
   color: var(--fontSecondaryColor) !important;
 }
 
+.ant-btn[disabled]{
+  opacity: 0.8;
+}
+
 .text-link {
   font-weight: 500;
   text-decoration: underline;

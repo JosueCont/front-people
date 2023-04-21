@@ -1,4 +1,23 @@
-import { Breadcrumb, Table, Tooltip, Row, Col, Input, Select, Switch, Button, Form, Avatar, message, Modal, Menu, Dropdown, notification, Upload } from "antd";
+import {
+  Breadcrumb,
+  Table,
+  Tooltip,
+  Row,
+  Col,
+  Input,
+  Select,
+  Switch,
+  Button,
+  Form,
+  Avatar,
+  message,
+  Modal,
+  Menu,
+  Dropdown,
+  notification,
+  Upload,
+  Space
+} from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
 import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined } from "@ant-design/icons";
@@ -1536,108 +1555,93 @@ const homeScreen = ({
 
               </div>
               <Row span={24} style={{marginBottom:12}}>
-                {permissions.export_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3}>
+                <Col span={24}>
+                  <div style={{display: "flex", justifyContent:'flex-start', gap:8, flexWrap:'wrap'}}>
+                    {permissions.export_csv_person && (
+                        <Button
+                          type="primary"
+                          icon={<DownloadOutlined />}
+                          onClick={() => exportPersons()}
+                        >
+                          Descargar personas
+                        </Button>
+                    )}
+
+                    {permissions.import_csv_person && (
+                        <Upload
+                          {...{
+                            showUploadList: false,
+                            beforeUpload: (file) => {
+                              const isXlsx = file.name.includes(".xlsx");
+                              if (!isXlsx) {
+                                message.error(`${file.name} no es un xlsx.`);
+                              }
+                              return isXlsx || Upload.LIST_IGNORE;
+                            },
+                            onChange(info) {
+                              const { status } = info.file;
+                              if (status !== "uploading") {
+                                if (info.fileList.length > 0) {
+                                  importPersonFileExtend(
+                                    info.fileList[0].originFileObj
+                                  );
+                                  info.file = null;
+                                  info.fileList = [];
+                                }
+                              }
+                            },
+                          }}
+                        >
+                          <Button
+                            //size="middle"
+                            icon={<UploadOutlined />}
+                          >
+                            Importar personas
+                          </Button>
+                        </Upload>
+
+                    )}
                     <Button
-                      type="primary"
                       icon={<DownloadOutlined />}
-                      onClick={() => exportPersons()}
+                      onClick={() =>
+                        downLoadFileBlob(
+                          `${getDomain(
+                            API_URL_TENANT
+                          )}/person/person/generate_template/?type=1`,
+                          "platilla_personas.xlsx",
+                          "GET"
+                        )
+                      }
                     >
-                      Descargar personas
+                      Descargar plantilla
                     </Button>
-                  </Col>
-                )}
 
-                {permissions.import_csv_person && (
-                  <Col lg={6} sm={12} xl={5} xxl={3}>
-                    <Upload
-                      {...{
-                        showUploadList: false,
-                        beforeUpload: (file) => {
-                          const isXlsx = file.name.includes(".xlsx");
-                          if (!isXlsx) {
-                            message.error(`${file.name} no es un xlsx.`);
-                          }
-                          return isXlsx || Upload.LIST_IGNORE;
-                        },
-                        onChange(info) {
-                          const { status } = info.file;
-                          if (status !== "uploading") {
-                            if (info.fileList.length > 0) {
-                              importPersonFileExtend(
-                                info.fileList[0].originFileObj
-                              );
-                              info.file = null;
-                              info.fileList = [];
-                            }
-                          }
-                        },
-                      }}
-                    >
-                      <Button
-                        //size="middle"
-                        icon={<UploadOutlined />}
-                      >
-                        Importar personas
-                      </Button>
-                    </Upload>
-
-                  </Col>
-                )}
-
-                <Col lg={6} sm={12} xl={5} xxl={3} style={{display:"inline-flex"}}>
-                  <Button
-                    icon={<DownloadOutlined />}
-                    onClick={() =>
-                      downLoadFileBlob(
-                        `${getDomain(
-                          API_URL_TENANT
-                        )}/person/person/generate_template/?type=1`,
-                        "platilla_personas.xlsx",
-                        "GET"
-                      )
+                    {props.config && props.config.nomina_enabled &&
+                        <ButtonDownloadConfronta />
                     }
-                  >
-                    Descargar plantilla
-                  </Button>
 
-                </Col>
-                {props.config && props.config.nomina_enabled &&
-                  <Col lg={6} sm={12} xl={5} xxl={3}>
-                    <ButtonDownloadConfronta />
-                  </Col>
-                }
+                    {/*{props.config && props.config.nomina_enabled &&*/}
+                    {/*    <ButtonMovements node={props.currentNode}/>*/}
+                    {/*}*/}
 
-                {/*{props.config && props.config.nomina_enabled &&*/}
-                {/*    <ButtonMovements node={props.currentNode}/>*/}
-                {/*}*/}
-
-                {props.config && props.config.nomina_enabled &&
-                  <Col lg={6} sm={12} xl={4} xxl={3}>
-                    <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
-                  </Col>
-                }
-              </Row>
-              <Row span={24}>
-                <Col lg={6} sm={12} xl={6} xxl={4}>
-                  <Button
-                    //size="middle"
-                    icon={<UserAddOutlined />}
-                    onClick={() => setPersonCfi(true)}
-                  >
-                    Agregar persona usando CIF
-                  </Button>
-
-                </Col>
-
-                <Col lg={6} sm={12} xl={6} xxl={5}>
-                  <Button
-                    //size="middle"
-                    icon={<DownloadOutlined />}
-                    onClick={() => exportVacationReport()}
-                  >
-                    Descargar reporte vacaciones
-                  </Button>
+                    {props.config && props.config.nomina_enabled &&
+                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
+                    }
+                    <Button
+                      //size="middle"
+                      icon={<UserAddOutlined />}
+                      onClick={() => setPersonCfi(true)}
+                    >
+                      Agregar persona usando CIF
+                    </Button>
+                    <Button
+                      //size="middle"
+                      icon={<DownloadOutlined />}
+                      onClick={() => exportVacationReport()}
+                    >
+                      Descargar reporte vacaciones
+                    </Button>
+                  </div>
                 </Col>
               </Row>
 
