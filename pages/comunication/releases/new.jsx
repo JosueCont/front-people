@@ -1,35 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import MainLayout from "../../../layout/MainInter";
-import {
-  Row,
-  Col,
-  Typography,
-  Breadcrumb,
-  Button,
-  Form,
-  Input,
-  Select,
-  notification,
-  Upload,
-  Switch,
-} from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { useRouter } from "next/router";
+import {Breadcrumb, Button, Col, Form, Input, notification, Row, Select, Typography, Upload,} from "antd";
+import {PlusOutlined} from "@ant-design/icons";
+import {useRouter} from "next/router";
 import cookie from "js-cookie";
-import Axios from "axios";
 import axiosApi from '../../../api/axiosApi';
-import { API_URL } from "../../../config/config";
 import FormItemHTMLPlace from "../../../components/draft";
 
-import { withAuthSync } from "../../../libs/auth";
-import SelectJob from "../../../components/selects/SelectJob";
-import SelectDepartment from "../../../components/selects/SelectDepartment";
-import SelectPersonType from "../../../components/selects/SelectPersonType";
-import { ruleRequired } from "../../../utils/rules";
-import { typeMessage } from "../../../utils/constant";
-import { verifyMenuNewForTenant } from "../../../utils/functions";
-import SelectGender from "../../../components/selects/SelectGender";
-import { connect } from "react-redux";
+import {withAuthSync} from "../../../libs/auth";
+import {ruleRequired} from "../../../utils/rules";
+import {typeMessage} from "../../../utils/constant";
+import {verifyMenuNewForTenant} from "../../../utils/functions";
+import {connect} from "react-redux";
 
 const Newrelease = ({ ...props }) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -215,48 +197,48 @@ const Newrelease = ({ ...props }) => {
                   </div>
                 </Upload>
                 <input
-                  ref={inputFileRef}
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(e) => selectedFile(e)}
+                    ref={inputFileRef}
+                    type="file"
+                    style={{display: "none"}}
+                    onChange={(e) => selectedFile(e)}
                 />
               </Form.Item>
             </Col>
 
-            <Col span={24}>
-              <Title level={3} key="segmentacion">
-                Segmentación
-              </Title>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="send_to_all"
-                label="Enviar a todos"
-                labelAlign="left"
-              >
-                <Switch value={false} />
-              </Form.Item>
-            </Col>
+            {/*<Col span={24}>*/}
+            {/*  <Title level={3} key="segmentacion">*/}
+            {/*    Segmentación*/}
+            {/*  </Title>*/}
+            {/*</Col>*/}
+            {/*<Col span={24}>*/}
+            {/*  <Form.Item*/}
+            {/*    name="send_to_all"*/}
+            {/*    label="Enviar a todos"*/}
+            {/*    labelAlign="left"*/}
+            {/*  >*/}
+            {/*    <Switch value={false} />*/}
+            {/*  </Form.Item>*/}
+            {/*</Col>*/}
 
-            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectDepartment name={"target_department"} viewLabel={false} />
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectJob name={"target_job"} viewLabel={false} />
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectPersonType />
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectGender />
-            </Col>
+            {/*<Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+            {/*  <SelectDepartment name={"target_department"} viewLabel={false} />*/}
+            {/*</Col>*/}
+            {/*<Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+            {/*  <SelectJob name={"target_job"} viewLabel={false} />*/}
+            {/*</Col>*/}
+            {/*<Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+            {/*  <SelectPersonType />*/}
+            {/*</Col>*/}
+            {/*<Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+            {/*  <SelectGender />*/}
+            {/*</Col>*/}
 
-            <Col span={24} style={{ textAlign: "right" }}>
+            <Col span={24} style={{textAlign: "right"}}>
               <Button
-                key="cancel"
-                onClick={() => onCancel()}
-                disabled={sending}
-                style={{ padding: "0 50px", margin: "0 10px" }}
+                  key="cancel"
+                  onClick={() => onCancel()}
+                  disabled={sending}
+                  style={{padding: "0 50px", margin: "0 10px"}}
               >
                 Cancelar
               </Button>
