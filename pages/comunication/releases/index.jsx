@@ -1,33 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import MainLayout from "../../../layout/MainInter";
-import {
-  Tooltip,
-  Row,
-  Col,
-  Table,
-  Breadcrumb,
-  Button,
-  Form,
-  Select,
-  DatePicker,
-  ConfigProvider
-} from "antd";
-import { SearchOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
+import {Breadcrumb, Button, Col, ConfigProvider, DatePicker, Form, Row, Select, Table, Tooltip} from "antd";
+import {EyeOutlined, PlusOutlined, SearchOutlined, SyncOutlined} from "@ant-design/icons";
 import moment from "moment-timezone";
 import axiosApi from '../../../api/axiosApi';
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import cookie from "js-cookie";
-import { EyeOutlined } from "@ant-design/icons";
-import SelectCollaborator from "../../../components/selects/SelectCollaborator";
-
-import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
-import { connect } from "react-redux";
+import SelectCollaborator from "../../../components/selects/SelectCollaborator";
+
+import {withAuthSync} from "../../../libs/auth";
+import {connect} from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import { verifyMenuNewForTenant } from "../../../utils/functions";
+import {verifyMenuNewForTenant} from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 
 const Releases = ({ permissions, ...props }) => {
@@ -56,7 +42,7 @@ const Releases = ({ permissions, ...props }) => {
     dateTwo = null
   ) => {
     setLoading(true);
-    let url = `/noticenter/notification/?`;
+    let url = `/noticenter/notification/?showAll=true&`;
     if (created_by) {
       url += `created_by__id=${created_by}&`;
     }
@@ -80,8 +66,9 @@ const Releases = ({ permissions, ...props }) => {
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       };
       let response = await axiosApi.get(url);
+      console.log(response.data)
       let data = response.data;
-      setList(data.results);
+      setList(data)
     } catch (e) {
       console.log(e);
     } finally {
@@ -304,39 +291,54 @@ const Releases = ({ permissions, ...props }) => {
                     }
                   />
                   <Column
-                    title="Categoría"
-                    dataIndex="category"
-                    key="cat"
-                    render={(text, record) => (text == 1 ? "Aviso" : "Noticia")}
+                      title="Categoría"
+                      dataIndex="category"
+                      key="cat"
+                      render={(text, record) => (text == 1 ? "Aviso" : "Noticia")}
                   />
                   <Column
-                    title="Fecha de envío"
-                    dataIndex="timestamp"
-                    key="date"
-                    render={(text, record) =>
-                      moment(text).format("DD / MM / YYYY")
-                    }
+                      title="Fecha de inicio"
+                      dataIndex="start_date"
+                      key="date"
+                      render={(text, record) =>
+                          moment(text).format("DD/MM/YYYY")
+                      }
                   />
                   <Column
-                    title="Recibieron"
-                    key="recibieron"
-                    render={(text, record) => (
-                      <GoToUserNotifications
-                        key={"goUser" + record.id}
-                        notification_id={record.id}
-                      />
-                    )}
+                      title="Fecha de fin"
+                      dataIndex="end_date"
+                      key="date"
+                      render={(text, record) =>
+                          moment(text).format("DD/MM/YYYY")
+                      }
+                  />
+                  <Column
+                      title="Recibieron"
+                      key="recibieron"
+                      render={(text, record) => (
+                          <GoToUserNotifications
+                              key={"goUser" + record.id}
+                              notification_id={record.id}
+                          />
+                      )}
                   />
                   <Column
                     title="Acciones"
                     key="action"
                     render={(text, record) => (
-                      <>
-                        <EyeOutlined
-                          key={"goDetails_" + record.id}
-                          onClick={() => GotoDetails(record)}
-                        />
-                      </>
+                        <div style={{flex: 1, flexDirection: 'row'}}>
+
+                          <EyeOutlined
+                              key={"goDetails_" + record.id}
+                              onClick={() => GotoDetails(record)}
+                              style={{marginRight: 10}}
+                          />
+
+                          <EyeOutlined
+                              key={"goDetails_" + record.id}
+                              onClick={() => GotoDetails(record)}
+                          />
+                        </div>
                     )}
                   />
                 </Table>
