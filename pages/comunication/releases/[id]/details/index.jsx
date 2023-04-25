@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Button, Typography, Breadcrumb, Table } from "antd";
-import { FileTextOutlined } from "@ant-design/icons";
+import React, {useEffect, useState} from "react";
+import {Breadcrumb, Button, Col, Row, Typography} from "antd";
+import {FileTextOutlined} from "@ant-design/icons";
 import MainLayout from "../../../../../layout/MainInter";
-import { Global, css } from "@emotion/core";
-import { useRouter } from "next/router";
-import { withAuthSync } from "../../../../../libs/auth";
-import { API_URL } from "../../../../../config/config";
+import {css, Global} from "@emotion/core";
+import {useRouter} from "next/router";
+import {withAuthSync} from "../../../../../libs/auth";
 import axiosApi from './../../../../../api/axiosApi';
-import Axios from "axios";
-import { verifyMenuNewForTenant } from "../../../../../utils/functions";
+import {verifyMenuNewForTenant} from "../../../../../utils/functions";
 
 const Details = () => {
   const { Title, Text } = Typography;
@@ -166,79 +164,79 @@ const Details = () => {
                       <Text strong>Mensaje:</Text>
                     </Col>
                     <Col
-                      xs={24}
-                      sm={24}
-                      md={14}
-                      lg={19}
-                      xl={19}
-                      className={"py-10"}
-                      dangerouslySetInnerHTML={{ __html: details.message }}
+                        xs={24}
+                        sm={24}
+                        md={14}
+                        lg={19}
+                        xl={19}
+                        className={"py-10"}
+                        dangerouslySetInnerHTML={{__html: details.message}}
                     ></Col>
                   </Row>
                 </Col>
-                <Col span={24}>
-                  <Title level={3}>Segmentación</Title>
-                </Col>
-                <Col span={24}>
-                  <Row>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <Row>
-                        <Col span={10} className={"py-10"}>
-                          <Text strong>Empresa:</Text>
-                        </Col>
-                        <Col span={14} className={"py-10"}>
-                          {details && details.target_company
-                            ? details.target_company.name
-                            : null}
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col span={10} className={"py-10"}>
-                          <Text strong>Puesto de trabajo:</Text>
-                        </Col>
-                        <Col span={14} className={"py-10"}>
-                          {details && details.target_job
-                            ? details.target_job.name
-                            : null}
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <Row>
-                        <Col span={10} className={"py-10"}>
-                          <Text strong>Tipo de persona:</Text>
-                        </Col>
-                        <Col span={14} className={"py-10"}>
-                          {details && details.target_person_type
-                            ? details.target_person_type.name
-                            : null}
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col span={10} className={"py-10"}>
-                          <Text strong>Género:</Text>
-                        </Col>
-                        <Col span={14} className={"py-10"}>
-                          <TextGender id_gender={details.target_gender} />
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Table
-                    columns={colFile}
-                    dataSource={files}
-                    locale={{
-                      emptyText: loading
-                        ? "Cargando..."
-                        : "No se encontraron resultados.",
-                    }}
-                  />
-                </Col>
+                {/*<Col span={24}>*/}
+                {/*  <Title level={3}>Segmentación</Title>*/}
+                {/*</Col>*/}
+                {/*<Col span={24}>*/}
+                {/*  <Row>*/}
+                {/*    <Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+                {/*      <Row>*/}
+                {/*        <Col span={10} className={"py-10"}>*/}
+                {/*          <Text strong>Empresa:</Text>*/}
+                {/*        </Col>*/}
+                {/*        <Col span={14} className={"py-10"}>*/}
+                {/*          {details && details.target_company*/}
+                {/*            ? details.target_company.name*/}
+                {/*            : null}*/}
+                {/*        </Col>*/}
+                {/*      </Row>*/}
+                {/*      <Row>*/}
+                {/*        <Col span={10} className={"py-10"}>*/}
+                {/*          <Text strong>Puesto de trabajo:</Text>*/}
+                {/*        </Col>*/}
+                {/*        <Col span={14} className={"py-10"}>*/}
+                {/*          {details && details.target_job*/}
+                {/*            ? details.target_job.name*/}
+                {/*            : null}*/}
+                {/*        </Col>*/}
+                {/*      </Row>*/}
+                {/*    </Col>*/}
+                {/*    <Col xs={24} sm={24} md={12} lg={12} xl={12}>*/}
+                {/*      <Row>*/}
+                {/*        <Col span={10} className={"py-10"}>*/}
+                {/*          <Text strong>Tipo de persona:</Text>*/}
+                {/*        </Col>*/}
+                {/*        <Col span={14} className={"py-10"}>*/}
+                {/*          {details && details.target_person_type*/}
+                {/*            ? details.target_person_type.name*/}
+                {/*            : null}*/}
+                {/*        </Col>*/}
+                {/*      </Row>*/}
+                {/*      <Row>*/}
+                {/*        <Col span={10} className={"py-10"}>*/}
+                {/*          <Text strong>Género:</Text>*/}
+                {/*        </Col>*/}
+                {/*        <Col span={14} className={"py-10"}>*/}
+                {/*          <TextGender id_gender={details.target_gender} />*/}
+                {/*        </Col>*/}
+                {/*      </Row>*/}
+                {/*    </Col>*/}
+                {/*  </Row>*/}
+                {/*  <Table*/}
+                {/*    columns={colFile}*/}
+                {/*    dataSource={files}*/}
+                {/*    locale={{*/}
+                {/*      emptyText: loading*/}
+                {/*        ? "Cargando..."*/}
+                {/*        : "No se encontraron resultados.",*/}
+                {/*    }}*/}
+                {/*  />*/}
+                {/*</Col>*/}
 
-                <Col span={24} style={{ textAlign: "right" }}>
+                <Col span={24} style={{textAlign: "right"}}>
                   <Button
-                    onClick={() => route.push("/comunication/releases")}
-                    style={{ padding: "0 50px", margin: "0 10px" }}
+                      onClick={() => route.push("/comunication/releases")}
+                      style={{padding: "0 50px", margin: "0 10px"}}
                   >
                     Regresar
                   </Button>
