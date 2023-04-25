@@ -335,23 +335,23 @@ const Releases = ({permissions, ...props}) => {
                                             }
                                         />
                                         <Column
-                                            title="Fecha de fin"
+                                            title="Fecha vigencia"
                                             dataIndex="end_date"
                                             key="date"
                                             render={(text, record) =>
                                                 moment(text).format("DD/MM/YYYY")
                                             }
                                         />
-                                        <Column
-                                            title="Recibieron"
-                                            key="recibieron"
-                                            render={(text, record) => (
-                                                <GoToUserNotifications
-                                                    key={"goUser" + record.id}
-                                                    notification_id={record.id}
-                                                />
-                                            )}
-                                        />
+                                        {/*<Column*/}
+                                        {/*    title="Recibieron"*/}
+                                        {/*    key="recibieron"*/}
+                                        {/*    render={(text, record) => (*/}
+                                        {/*        <GoToUserNotifications*/}
+                                        {/*            key={"goUser" + record.id}*/}
+                                        {/*            notification_id={record.id}*/}
+                                        {/*        />*/}
+                                        {/*    )}*/}
+                                        {/*/>*/}
                                         <Column
                                             title="Acciones"
                                             key="action"

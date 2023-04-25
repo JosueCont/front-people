@@ -189,7 +189,7 @@ const Newrelease = ({...props}) => {
 
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                             <Form.Item
-                                label="Fecha"
+                                label="Fecha inicio"
                                 name="date_1"
                                 rules={[
                                     {
@@ -211,7 +211,7 @@ const Newrelease = ({...props}) => {
 
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                             <Form.Item
-                                label="Fecha"
+                                label="Fecha vigencia"
                                 name="date_2"
                                 rules={[
                                     {
