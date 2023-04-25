@@ -80,6 +80,17 @@ const HolidaysDetails = (props) => {
     setMessage(value.target.value);
   };
 
+  const optionStatus = [
+    { value: 1, label: "Pendiente" },
+    { value: 2, label: "Aprobada" },
+    { value: 3, label: "Rechazada" },
+    { value: 4, label: "Cancelada" },
+  ];
+
+  function findStatusLabel (value) {
+    return optionStatus.filter(item => item.value === value).map(item => item.label)
+  }
+
   const getListPersons = async (node_id) => {
     let data = {
       node: node_id
@@ -311,6 +322,9 @@ const HolidaysDetails = (props) => {
               </Col>
               <Col xs={24} md={18} lg={18} offset={1}>
                 <Form layout={"vertical"}>
+                  <Form.Item label="Estatus">
+                    <Input value={findStatusLabel(status)} readOnly />
+                  </Form.Item>
                   <Form.Item label="Días solicitados">
                     <Input value={daysRequested} readOnly />
                   </Form.Item>
