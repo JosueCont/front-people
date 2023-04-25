@@ -51,6 +51,7 @@ const Holidays = (props) => {
     { value: 1, label: "Pendiente", key: "opt_1" },
     { value: 2, label: "Aprobado", key: "opt_2" },
     { value: 3, label: "Rechazado", key: "opt_3" },
+    { value: 4, label: "Cancelada", key: "opt_4" },
   ];
 
   const getAllHolidays = async (
