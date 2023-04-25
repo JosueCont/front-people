@@ -36,6 +36,7 @@ const HolidaysDetails = (props) => {
   const { confirm } = Modal;
 
   const [visibleModalReject, setVisibleModalReject] = useState(false);
+  const [visibleModalCancel, setVisibleModalCancel] = useState(false);
   const [daysRequested, setDaysRequested] = useState(null);
   const [departureDate, setDepartureDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
@@ -67,6 +68,11 @@ const HolidaysDetails = (props) => {
 
   const rejectCancel = () => {
     setVisibleModalReject(false);
+    setMessage(null);
+  };
+
+  const cancelCancel = () => {
+    setVisibleModalCancel(false);
     setMessage(null);
   };
 
@@ -147,6 +153,33 @@ const HolidaysDetails = (props) => {
     }
   };
 
+  const cancelRequest = async () => {
+    if (json) {
+      let values = {
+        khonnect_id: json.user_id,
+        id: id,
+        comment: message,
+      };
+      WebApiPeople.vacationCancelRequest(values)
+        .then(function (response) {
+          setVisibleModalReject(false);
+          Modal.success({
+            keyboard: false,
+            maskClosable: false,
+            content: "Solicitud cancelada",
+            okText: "Aceptar",
+            onOk() {
+              route.push("/comunication/requests/holidays");
+            },
+          });
+          setMessage(null);
+        })
+        .catch(function (error) {
+          console.log(e);
+        });
+    }
+  };
+
   const showMoalapprove = () => {
     confirm({
       title: "¿Está seguro de aprobar la siguiente solicitud de vacaciones?",
@@ -189,19 +222,19 @@ const HolidaysDetails = (props) => {
   };
 
 
-  const onCancelRequest = () => {
+  const onReOpenRequest = () => {
     confirm({
-      title: "¿Está seguro de cancelar la siguiente solicitud aprobada de vacaciones?",
+      title: "¿Está seguro de reabrir la siguiente solicitud aprobada de vacaciones?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Sí, cancelar",
+      okText: "Sí, reabrir",
       cancelText: "Cancelar",
       onOk() {
-        cancelRequest()
+        reOpenRequest()
       },
     })
   }
 
-  const cancelRequest = async()=>{
+  const reOpenRequest = async()=>{
 
     try{
       setSending(true)
@@ -209,7 +242,7 @@ const HolidaysDetails = (props) => {
         khonnect_id: json.user_id,
         id: id,
       }
-      let response = await webApiPeople.vacationCancelRequest(data)
+      let response = await webApiPeople.vacationReOpenRequest(data)
 
       Modal.success({
         keyboard: false,
@@ -317,7 +350,18 @@ const HolidaysDetails = (props) => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject_vacation && status !== 2 && (
+                {permissions.reject_vacation && status === 1 && (
+                  <Button
+                    key="reject"
+                    type="primary"
+                    danger
+                    onClick={() => setVisibleModalCancel(true)}
+                    style={{ padding: "0 50px", margin: "10px" }}
+                  >
+                    Cancelar solicitud
+                  </Button>
+                )}
+                {permissions.reject_vacation && status === 1 && (
                   <Button
                     key="reject"
                     type="primary"
@@ -325,10 +369,10 @@ const HolidaysDetails = (props) => {
                     onClick={() => setVisibleModalReject(true)}
                     style={{ padding: "0 50px", margin: "10px" }}
                   >
-                    Rechazar
+                    Rechazar solicitud
                   </Button>
                 )}
-                {permissions.approve_vacation && status !== 2 && (
+                {permissions.approve_vacation && status === 1 && (
                   <Button
                     className={"btn-success"}
                     key="save"
@@ -337,7 +381,7 @@ const HolidaysDetails = (props) => {
                     style={{ padding: "0 50px", margin: "10px" }}
                     loading={sending}
                   >
-                    Aprobar
+                    Aprobar solicitud
                   </Button>
                 )}
                 {status === 2 && (
@@ -345,10 +389,10 @@ const HolidaysDetails = (props) => {
                         key="reject"
                         type="primary"
                         danger
-                        onClick={onCancelRequest}
+                        onClick={onReOpenRequest}
                         style={{ padding: "0 50px", margin: "10px" }}
                     >
-                      Cancelar solicitud
+                      Reabrir solicitud
                     </Button>
                 )}
               </Col>
@@ -379,6 +423,33 @@ const HolidaysDetails = (props) => {
         ]}
         onOk={rejectRequest}
         onCancel={rejectCancel}
+      >
+        <Text>Comentarios</Text>
+        <TextArea rows="4" onChange={onChangeMessage} />
+      </Modal>
+      <Modal
+        title="Cancelar solicitud de vacaciones"
+        visible={visibleModalCancel}
+        footer={[
+          <Button
+            key="back"
+            onClick={cancelCancel}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Cerrar
+          </Button>,
+          <Button
+            key="submit_modal"
+            type="primary"
+            loading={sending}
+            onClick={cancelRequest}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Cancelar solicitud
+          </Button>,
+        ]}
+        onOk={cancelRequest}
+        onCancel={cancelCancel}
       >
         <Text>Comentarios</Text>
         <TextArea rows="4" onChange={onChangeMessage} />

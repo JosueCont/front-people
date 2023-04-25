@@ -354,6 +354,8 @@ const Holidays = (props) => {
                         ? "Pendiente"
                         : status === 2
                         ? "Aprobado"
+                        : status === 4
+                        ? "Cancelada"
                         : "Rechazado"
                     }
                   />
