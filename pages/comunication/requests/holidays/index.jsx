@@ -354,10 +354,10 @@ const Holidays = (props) => {
                       status === 1
                         ? "Pendiente"
                         : status === 2
-                        ? "Aprobado"
+                        ? "Aprobada"
                         : status === 4
                         ? "Cancelada"
-                        : "Rechazado"
+                        : "Rechazada"
                     }
                   />
                   <Column
