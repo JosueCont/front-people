@@ -331,10 +331,10 @@ const HolidaysDetails = (props) => {
                   <Form.Item label="Días disponibles">
                     <Input value={availableDays} readOnly />
                   </Form.Item>
-                  <Form.Item label="Fecha de salida">
+                  <Form.Item label="Fecha inicio">
                     <Input value={departureDate} readOnly />
                   </Form.Item>
-                  <Form.Item label="Fecha de regreso">
+                  <Form.Item label="Fecha fin">
                     <Input value={returnDate} readOnly />
                   </Form.Item>
                   <Form.Item label="Jefe inmediato">
