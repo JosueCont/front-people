@@ -331,7 +331,13 @@ const Releases = ({permissions, ...props}) => {
                                             dataIndex="start_date"
                                             key="date"
                                             render={(text, record) =>
+                                                <>
+                                                { text ?
                                                 moment(text).format("DD/MM/YYYY")
+                                                :
+                                                null
+                                                }
+                                                </>
                                             }
                                         />
                                         <Column
@@ -339,7 +345,15 @@ const Releases = ({permissions, ...props}) => {
                                             dataIndex="end_date"
                                             key="date"
                                             render={(text, record) =>
+                                                {
+                                                <>
+                                                { text ?
                                                 moment(text).format("DD/MM/YYYY")
+                                                :
+                                                null
+                                                }
+                                                </>
+                                                }
                                             }
                                         />
                                         {/*<Column*/}
