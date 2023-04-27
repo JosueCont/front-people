@@ -10,7 +10,7 @@ import {
   Form,
   Input,
   Modal,
-  Select,
+  Select, message,
 } from "antd";
 import MainLayout from "../../../../../layout/MainInter";
 import { useRouter } from "next/router";
@@ -24,6 +24,7 @@ import { API_URL } from "../../../../../config/config";
 import { connect } from "react-redux";
 import WebApiPeople from "../../../../../api/WebApiPeople";
 import { verifyMenuNewForTenant, getFullName } from "../../../../../utils/functions";
+import webApiPeople from "../../../../../api/WebApiPeople";
 
 const HolidaysDetails = (props) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -35,6 +36,7 @@ const HolidaysDetails = (props) => {
   const { confirm } = Modal;
 
   const [visibleModalReject, setVisibleModalReject] = useState(false);
+  const [visibleModalCancel, setVisibleModalCancel] = useState(false);
   const [daysRequested, setDaysRequested] = useState(null);
   const [departureDate, setDepartureDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
@@ -47,6 +49,7 @@ const HolidaysDetails = (props) => {
   const [permissions, setPermissions] = useState({});
   const [listPersons, setListPersons] = useState([]);
   const [immediateSupervisor, setImmediateSupervisor] = useState(null);
+  const [status, setStatus] = useState(null)
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -68,9 +71,25 @@ const HolidaysDetails = (props) => {
     setMessage(null);
   };
 
+  const cancelCancel = () => {
+    setVisibleModalCancel(false);
+    setMessage(null);
+  };
+
   const onChangeMessage = (value) => {
     setMessage(value.target.value);
   };
+
+  const optionStatus = [
+    { value: 1, label: "Pendiente" },
+    { value: 2, label: "Aprobada" },
+    { value: 3, label: "Rechazada" },
+    { value: 4, label: "Cancelada" },
+  ];
+
+  function findStatusLabel (value) {
+    return optionStatus.filter(item => item.value === value).map(item => item.label)
+  }
 
   const getListPersons = async (node_id) => {
     let data = {
@@ -99,6 +118,7 @@ const HolidaysDetails = (props) => {
         setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
         setAvailableDays(data.available_days_vacation);
         setImmediateSupervisor(data.immediate_supervisor.id)
+        setStatus(data.status)
 
         if (data.collaborator && data.collaborator.first_name) {
           setFisrtName(data.collaborator.first_name);
@@ -131,6 +151,33 @@ const HolidaysDetails = (props) => {
             keyboard: false,
             maskClosable: false,
             content: "Vacaciones rechazadas",
+            okText: "Aceptar",
+            onOk() {
+              route.push("/comunication/requests/holidays");
+            },
+          });
+          setMessage(null);
+        })
+        .catch(function (error) {
+          console.log(e);
+        });
+    }
+  };
+
+  const cancelRequest = async () => {
+    if (json) {
+      let values = {
+        khonnect_id: json.user_id,
+        id: id,
+        comment: message,
+      };
+      WebApiPeople.vacationCancelRequest(values)
+        .then(function (response) {
+          setVisibleModalReject(false);
+          Modal.success({
+            keyboard: false,
+            maskClosable: false,
+            content: "Solicitud cancelada",
             okText: "Aceptar",
             onOk() {
               route.push("/comunication/requests/holidays");
@@ -185,6 +232,46 @@ const HolidaysDetails = (props) => {
     }
   };
 
+
+  const onReOpenRequest = () => {
+    confirm({
+      title: "¿Está seguro de reabrir la siguiente solicitud aprobada de vacaciones?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Sí, reabrir",
+      cancelText: "Cancelar",
+      onOk() {
+        reOpenRequest()
+      },
+    })
+  }
+
+  const reOpenRequest = async()=>{
+
+    try{
+      setSending(true)
+      let data = {
+        khonnect_id: json.user_id,
+        id: id,
+      }
+      let response = await webApiPeople.vacationReOpenRequest(data)
+
+      Modal.success({
+        keyboard: false,
+        maskClosable: false,
+        content: response.data.message,
+        okText: "Aceptar",
+        onOk() {
+          route.push("/comunication/requests/holidays");
+        },
+      });
+
+      setSending(false)
+    }catch (e) {
+      console.log(e)
+      setSending(false)
+    }
+  }
+
   useEffect(() => {
     getDetails();
   }, [route]);
@@ -235,16 +322,19 @@ const HolidaysDetails = (props) => {
               </Col>
               <Col xs={24} md={18} lg={18} offset={1}>
                 <Form layout={"vertical"}>
+                  <Form.Item label="Estatus">
+                    <Input value={findStatusLabel(status)} readOnly />
+                  </Form.Item>
                   <Form.Item label="Días solicitados">
                     <Input value={daysRequested} readOnly />
                   </Form.Item>
                   <Form.Item label="Días disponibles">
                     <Input value={availableDays} readOnly />
                   </Form.Item>
-                  <Form.Item label="Fecha de salida">
+                  <Form.Item label="Fecha inicio">
                     <Input value={departureDate} readOnly />
                   </Form.Item>
-                  <Form.Item label="Fecha de regreso">
+                  <Form.Item label="Fecha fin">
                     <Input value={returnDate} readOnly />
                   </Form.Item>
                   <Form.Item label="Jefe inmediato">
@@ -274,7 +364,18 @@ const HolidaysDetails = (props) => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject_vacation && (
+                {permissions.reject_vacation && status === 1 && (
+                  <Button
+                    key="reject"
+                    type="primary"
+                    danger
+                    onClick={() => setVisibleModalCancel(true)}
+                    style={{ padding: "0 50px", margin: "10px" }}
+                  >
+                    Cancelar solicitud
+                  </Button>
+                )}
+                {permissions.reject_vacation && status === 1 && (
                   <Button
                     key="reject"
                     type="primary"
@@ -282,10 +383,10 @@ const HolidaysDetails = (props) => {
                     onClick={() => setVisibleModalReject(true)}
                     style={{ padding: "0 50px", margin: "10px" }}
                   >
-                    Rechazar
+                    Rechazar solicitud
                   </Button>
                 )}
-                {permissions.approve_vacation && (
+                {permissions.approve_vacation && status === 1 && (
                   <Button
                     className={"btn-success"}
                     key="save"
@@ -294,8 +395,19 @@ const HolidaysDetails = (props) => {
                     style={{ padding: "0 50px", margin: "10px" }}
                     loading={sending}
                   >
-                    Aprobar
+                    Aprobar solicitud
                   </Button>
+                )}
+                {status === 2 && (
+                    <Button
+                        key="reject"
+                        type="primary"
+                        danger
+                        onClick={onReOpenRequest}
+                        style={{ padding: "0 50px", margin: "10px" }}
+                    >
+                      Reabrir solicitud
+                    </Button>
                 )}
               </Col>
             </Row>
@@ -325,6 +437,33 @@ const HolidaysDetails = (props) => {
         ]}
         onOk={rejectRequest}
         onCancel={rejectCancel}
+      >
+        <Text>Comentarios</Text>
+        <TextArea rows="4" onChange={onChangeMessage} />
+      </Modal>
+      <Modal
+        title="Cancelar solicitud de vacaciones"
+        visible={visibleModalCancel}
+        footer={[
+          <Button
+            key="back"
+            onClick={cancelCancel}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Cerrar
+          </Button>,
+          <Button
+            key="submit_modal"
+            type="primary"
+            loading={sending}
+            onClick={cancelRequest}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Cancelar solicitud
+          </Button>,
+        ]}
+        onOk={cancelRequest}
+        onCancel={cancelCancel}
       >
         <Text>Comentarios</Text>
         <TextArea rows="4" onChange={onChangeMessage} />

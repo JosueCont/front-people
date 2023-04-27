@@ -379,6 +379,14 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
 
+  static vacationCancelRequest(data) {
+    return WebApi.ApisType(`/person/vacation/cancel-request/`, "post", data);
+  }
+
+  static vacationReOpenRequest(data) {
+    return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
+  }
+
   static informationNode(data) {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
@@ -595,6 +603,46 @@ class WebApiPeople {
       data
     );
   }
+
+  /*** WORKING/NON-WORKING DAYS ***/
+  static getNonWorkingDays({node, offset= 0, limit= 10, year = ''}) {
+    let _URL = `/business/non-working-day/?node=${node}`
+    _URL += offset && offset > 0 ? `&offset=${offset}` : ''
+   // _URL += offset && offset >= 1 ? `&offset=${offset}` : '&offset=1'
+    _URL += limit && limit >= 1 ? `&limit=${limit}` : '&limit=10'
+    _URL += year && year !== '' ? `&date__year=${year}` : ''
+
+    return WebApi.ApisType(_URL, "get");
+  }
+
+  static createNonWorkingDay(data) {
+    return WebApi.ApisType(`/business/non-working-day/`, "post", data);
+  }
+
+  static updateNonWorkingDay(id, data) {
+    return WebApi.ApisType(`/business/non-working-day/${id}/`, "put", data);
+  }
+
+  static deleteNonWorkingDay(id) {
+    return WebApi.ApisType(`/business/non-working-day/${id}/`, "delete");
+  }
+
+  static getWorkingWeekDays(node) {
+    return WebApi.ApisType(`/business/working-week-day/?node=${node}`, "get");
+  }
+
+  static createWorkingWeekDay(data) {
+    return WebApi.ApisType(`/business/working-week-day/`, "post", data);
+  }
+
+  static updateWorkingWeekDay(id, data) {
+    return WebApi.ApisType(`/business/working-week-day/${id}/`, "put", data);
+  }
+
+  static getWorkingDaysFromRange(data) {
+    return WebApi.ApisType(`/business/get-working-days-from-range-date/`, "post", data);
+  }
+
 }
 
 export default WebApiPeople;
