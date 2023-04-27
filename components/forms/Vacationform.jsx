@@ -320,6 +320,7 @@ const Vacationform = ({edit = false,...props}) => {
                   style={{ width: "100%" }}
                   onChange={onEndDateChange}
                   disabled={!startDate}
+                  locale = { locale }
                   disabledDate = {getDisabledEndDates}
                 />
               </Form.Item>
