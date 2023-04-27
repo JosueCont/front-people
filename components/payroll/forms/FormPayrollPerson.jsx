@@ -214,6 +214,8 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
           payment_type: 0,
         })
 
+        setBankDisabled(true)
+
       });
   };
 
