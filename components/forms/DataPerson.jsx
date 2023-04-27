@@ -632,7 +632,7 @@ const DataPerson = ({
               <Col lg={8} xs={24} md={12}>
                 <SelectGroup viewLabel={true} required={false} />
               </Col>
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "SUKHATV" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
@@ -641,7 +641,7 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "SUKHATV" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
@@ -653,7 +653,7 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
@@ -662,7 +662,7 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
@@ -674,7 +674,7 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "CAREERLAB" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
@@ -686,7 +686,7 @@ const DataPerson = ({
                   </Form.Item>
                 </Col>
               )}
-              {config.applications.find(
+              {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
                 <Col lg={8} xs={24} md={12}>
