@@ -20,7 +20,8 @@ const initialData = {
   persons_company: [],
   load_persons: false,
   info_current_rol: {},
-  load_current_rol: false
+  load_current_rol: false,
+  lang: 'es-mx'
 };
 
 const LOADING_WEB = "LOADING_WEB";
