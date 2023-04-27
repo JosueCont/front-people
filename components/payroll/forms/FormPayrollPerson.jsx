@@ -182,8 +182,40 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
         setLoading(false);
       })
       .catch((e) => {
+        // si no hay datos de nomina de la persona entonces hacemos que se seleccione datos estaticos (sugeridos)
         setLoading(false);
-        console.log(e);
+
+        if(props.catJourneyType){
+          // se elige Tipo jornada Diurna
+          let workingDay = props.catJourneyType.find((ele) => ele.code == '01');
+          formPayrollPerson.setFieldsValue({
+            type_working_day: workingDay?.id,
+          })
+        }
+
+        if(props.catContracType){
+          // se elige Tipo de contrato "Contrato de trabajo por tiempo indeterminado"
+          let contractType = props.catContracType.find((ele) => ele.code == '01');
+          formPayrollPerson.setFieldsValue({
+            contract_type: contractType?.id,
+          })
+        }
+
+        if(props.catHiringRegime){
+          // se elige Tipo de régimen de contratación "Sueldos"
+          let contractType = props.catHiringRegime.find((ele) => ele.code == '02');
+          formPayrollPerson.setFieldsValue({
+            hiring_regime_type: contractType?.id,
+          })
+        }
+
+        /// Forma de pago "Efectivo"
+        formPayrollPerson.setFieldsValue({
+          payment_type: 0,
+        })
+
+        setBankDisabled(true)
+
       });
   };
 
