@@ -9,12 +9,13 @@ import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
-import { getAdminRolesOptions } from "../../../redux/catalogCompany";
+import { getAdminRolesOptions, getWorkTitle, getDepartmets, getJobs } from "../../../redux/catalogCompany";
 
 const EmployeeDetailPage = ({
   config,
   currentNode,
   getAdminRolesOptions,
+  getWorkTitle, getDepartmets, getJobs,
   ...props
 }) => {
   const router = useRouter();
@@ -28,6 +29,9 @@ const EmployeeDetailPage = ({
   useEffect(()=>{
     if(!currentNode) return;
     getAdminRolesOptions(currentNode.id)
+    getWorkTitle(currentNode.id)
+    getDepartmets(currentNode.id)
+    getJobs(currentNode.id)
   },[currentNode])
 
   useEffect(() => {
