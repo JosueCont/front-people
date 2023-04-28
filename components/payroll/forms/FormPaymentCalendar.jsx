@@ -711,7 +711,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Col lg={8} xs={22}>
                   <Form.Item
                     name="calculation_employment_subsidy"
-                    label="Cálculo de subsicio al empleo"
+                    label="Cálculo de subsidio al empleo"
                     rules={[ruleRequired]}
                   >
                     <Select
