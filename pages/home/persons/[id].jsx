@@ -98,4 +98,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, {getAdminRolesOptions})(withAuthSync(EmployeeDetailPage));
+export default connect(mapState, {getAdminRolesOptions,getWorkTitle, getDepartmets, getJobs})(withAuthSync(EmployeeDetailPage));

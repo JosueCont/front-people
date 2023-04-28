@@ -181,18 +181,17 @@ const LoginForm = ({
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
+
           {
-            props?.config?.concierge_logo &&<p style={{textAlign:'center'}}> <img
+              generalConfig?.concierge_logo ? <p style={{textAlign:'center'}}> <img
                 className={"logoKhor"}
                 src={
-                  props?.config?.concierge_logo
-                      ? props.config.concierge_logo
-                      : "/images/iU_Khorplus.png"
+                  generalConfig?.concierge_logo
                 }
                 width={200}
                 alt=""
             />
-              </p>
+              </p>: <br/>
           }
 
           <Form.Item>

@@ -272,7 +272,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "5%",
       },
       {
-        title: "Grabado",
+        title: "Gravado",
         key: "taxed_amount",
         dataIndex: "taxed_amount",
         width: "15%",
