@@ -21,6 +21,7 @@ import {
   MobileOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import moment from "moment-timezone";
 import SelectDepartment from "../../../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../../../libs/auth";
@@ -51,6 +52,7 @@ const Holidays = (props) => {
     { value: 1, label: "Pendiente", key: "opt_1" },
     { value: 2, label: "Aprobado", key: "opt_2" },
     { value: 3, label: "Rechazado", key: "opt_3" },
+    { value: 4, label: "Cancelada", key: "opt_4" },
   ];
 
   const getAllHolidays = async (
@@ -316,11 +318,27 @@ const Holidays = (props) => {
                     key="department"
                   /> */}
                   <Column
-                    title="Días solicitados"
+                    title="Núm. Días"
                     dataIndex="days_requested"
                     key="days_requested"
                   />
                   <Column
+                    title="Fecha inicio"
+                    dataIndex="departure_date"
+                    key="departure_date"
+                    render={(text, record) =>
+                      moment(text).format("DD/MM/YYYY")
+                  }
+                  />
+                  <Column
+                    title="Fecha fin"
+                    dataIndex="return_date"
+                    key="return_date"
+                    render={(text, record) =>
+                      moment(text).format("DD/MM/YYYY")
+                  }
+                  />
+                  {/* <Column
                     title="Días disponibles"
                     dataIndex="available_days"
                     key="available_days"
@@ -329,7 +347,7 @@ const Holidays = (props) => {
                         ? record?.available_days_vacation
                         : null
                     }
-                  />
+                  /> */}
                   <Column
                     dataIndex="immediate_supervisor"
                     key="id"
@@ -353,8 +371,10 @@ const Holidays = (props) => {
                       status === 1
                         ? "Pendiente"
                         : status === 2
-                        ? "Aprobado"
-                        : "Rechazado"
+                        ? "Aprobada"
+                        : status === 4
+                        ? "Cancelada"
+                        : "Rechazada"
                     }
                   />
                   <Column

@@ -7,7 +7,7 @@ import "../styles/calendar.css";
 import "../styles/payroll.css";
 import "../styles/assessments.css";
 import "../styles/menu.css";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { langMessages } from "../lang/messages";
 import { IntlProvider } from "react-intl";
 import React from "react";
@@ -26,13 +26,14 @@ import generateStore from "../redux/store";
 // });
 
 const store = generateStore();
+
 function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <IntlProvider
-        locale={"es-mx"}
+        locale={store.getState().userStore.lang}
         defaultLocale="es-mx"
-        messages={langMessages["es-mx"]}
+        messages={langMessages[store.getState().userStore.lang]}
       >
         <Component {...pageProps} />
       </IntlProvider>

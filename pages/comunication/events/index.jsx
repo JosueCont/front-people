@@ -1,41 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
+import React, {useEffect, useState} from "react";
 import MainLayout from "../../../layout/MainInter";
 import {
-  Row,
-  Col,
-  Table,
   Breadcrumb,
-  Tooltip,
-  Form,
-  Select,
   Button,
+  Col,
+  ConfigProvider,
+  DatePicker,
+  Form,
+  Input,
   message,
   Modal,
+  Row,
+  Select,
   Spin,
-  Input,
-  DatePicker,
-  ConfigProvider
+  Table,
+  Tooltip
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import moment from "moment";
 
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
   ExclamationCircleOutlined,
+  PlusOutlined,
   SearchOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../../libs/auth";
-import axios from "axios";
-import { API_URL } from "../../../config/config";
+import {withAuthSync} from "../../../libs/auth";
 import jsCookie from "js-cookie";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import axiosApi from "../../../api/axiosApi";
-import { verifyMenuNewForTenant } from "../../../utils/functions"
+import {verifyMenuNewForTenant} from "../../../utils/functions"
 import esES from "antd/lib/locale/es_ES";
 
 const Events = ({ permissions, ...props }) => {
@@ -280,17 +277,18 @@ const Events = ({ permissions, ...props }) => {
                       <>
                         {permissions.edit && (
                           <a
-                            onClick={() =>
-                              route.push({
-                                pathname: "/comunication/events/detail",
-                                query: { type: "edit", id: record.id },
-                              })
-                            }
+                              onClick={() => {
+                                  console.log(record.id, 2284)
+                                  route.push({
+                                      pathname: "/comunication/events/detail",
+                                      query: {type: "edit", id: record.id},
+                                  })
+                              }}
                           >
-                            <EditOutlined
-                              className="icon_actions"
-                              key={"edit_" + record.id}
-                            />
+                              <EditOutlined
+                                  className="icon_actions"
+                                  key={"edit_" + record.id}
+                              />
                           </a>
                         )}
                         {permissions.delete && (

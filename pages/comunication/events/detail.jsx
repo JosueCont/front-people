@@ -1,34 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/router";
 import {
-  Layout,
   Breadcrumb,
-  Row,
+  Button,
   Col,
   DatePicker,
-  Space,
-  Typography,
+  Divider,
   Form,
   Input,
-  Select,
-  Button,
-  Divider,
-  TimePicker,
-  Spin,
+  Layout,
   message,
+  Row,
+  Select,
+  Space,
+  Spin,
+  TimePicker,
+  Typography,
 } from "antd";
 
 import MainLayout from "../../../layout/MainInter";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import moment from "moment";
-import { withAuthSync } from "../../../libs/auth";
-import axios from "axios";
+import {withAuthSync} from "../../../libs/auth";
 import TextArea from "antd/lib/input/TextArea";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import axiosApi from "../../../api/axiosApi";
-import { verifyMenuNewForTenant } from "../../../utils/functions"
+import {verifyMenuNewForTenant} from "../../../utils/functions"
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -181,13 +178,15 @@ const addEvent = ({ ...props }) => {
   };
 
   useEffect(() => {
+
+    console.log(router.query)
     if (props.currentNode) {
       getPersons();
       getNodes();
       let type = router.query.type;
       if (type === "edit") {
         setEdit(true);
-        getEvent(props.currentNode.id);
+        getEvent(router.query.id);
       } else {
         setEdit(false);
       }

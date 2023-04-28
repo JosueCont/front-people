@@ -388,9 +388,9 @@ export const salaryDays = [
 export const PaymentTypes = [
   { value: 0, label: "Efectivo" },
   { value: 1, label: "Cheques" },
-  { value: 3, label: "Transferencias" },
-  { value: 30, label: "Anticipo" },
-  { value: 99, label: "Por definir" },
+  { value: 3, label: "Transferencias" }
+  // { value: 30, label: "Anticipo" },
+  // { value: 99, label: "Por definir" },
 ];
 
 export const BelongTo = [
