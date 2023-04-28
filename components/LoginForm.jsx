@@ -182,7 +182,7 @@ const LoginForm = ({
           onFinish={onFinish}
         >
           {
-            props?.config?.concierge_logo &&<p style={{textAlign:'center'}}> <img
+            <p style={{textAlign:'center'}}> <img
                 className={"logoKhor"}
                 src={
                   props?.config?.concierge_logo

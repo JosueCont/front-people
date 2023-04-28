@@ -297,9 +297,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
                   <img
                     className={"logoKhor"}
                     src={
-                      props?.config?.concierge_logo
-                        ? props.config.concierge_logo
-                        : "/images/iU_Khorplus.png"
+                      "/images/iU_Khorplus.png"
                     }
                     width={200}
                     alt=""
