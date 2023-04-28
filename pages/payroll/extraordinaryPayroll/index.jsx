@@ -400,7 +400,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         ),
       },
       {
-        title: "Grabado",
+        title: "Gravado",
         key: "taxed_amount",
         dataIndex: "taxed_amount",
         width: "15%",
