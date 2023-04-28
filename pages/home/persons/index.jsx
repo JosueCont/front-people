@@ -1607,7 +1607,7 @@ const homeScreen = ({
                         downLoadFileBlob(
                           `${getDomain(
                             API_URL_TENANT
-                          )}/person/person/generate_template/?type=1`,
+                          )}/person/person/generate_template/?type=1&node_id=${props?.currentNode?.id}`,
                           "platilla_personas.xlsx",
                           "GET"
                         )
