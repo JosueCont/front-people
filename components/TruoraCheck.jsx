@@ -57,14 +57,13 @@ const TruoraCheck = ({person, ...props}) => {
 
     const ScoreIndicator = ({scoreItem}) => {
       let color = "none";
-      console.log('scoreItem',scoreItem)
-      console.log('valuesColors',valuesColors)
+      
       valuesColors.map((item) => {
         if(item.values.includes(Math.trunc(scoreItem?.score*10))){
           color = item.color
         }
       })
-      console.log('color',color)
+      
       return (
           <Avatar style={{ backgroundColor: color, margin:'auto' }} icon={Math.trunc(scoreItem?.score*10)} />
       )
@@ -78,7 +77,7 @@ const TruoraCheck = ({person, ...props}) => {
         setLoading(true);
         await WebApiPeople.CreateTruoraRequest(person.id)
         .then((response) => {
-            console.log('response===>', response)
+            
             if (response.status == 201){
               getBackgroundCheck_details()
             }
@@ -92,7 +91,7 @@ const TruoraCheck = ({person, ...props}) => {
     }
 
     const getBackgroundCheckFile = async () =>{
-      console.log('person',person)
+      
       downLoadFileBlob(
         `${getDomain(
           API_URL_TENANT
@@ -119,20 +118,22 @@ const TruoraCheck = ({person, ...props}) => {
         }); */
     }
 
+    
+    
+
     const getBackgroundCheck_details = async () =>{
         await WebApiPeople.GetTruoraRequest(person.id)
         .then((response) => {
           if(response.status == 201){
-            console.log('details',response.data)
             setLoading(false);
-            setShowDetails(true)
-            console.log('response.data.check',response.data.check)
+            
             setCheckDetails(response.data.check)
+            setShowDetails(true)
           }
             
         })
         .catch((error) => {
-            console.log('first', error.message)
+            
             setLoading(false);
             setShowDetails(false)
         });
@@ -252,7 +253,7 @@ const TruoraCheck = ({person, ...props}) => {
             <Title style={{ fontSize: "20px", marginBottom:0 }}>BackGround Check By Truora</Title>
             {showDetails && 
               <Text>
-                Fecha de ultima actualización { moment(checkDetails.creation_date).format("DD/MM/yyyy HH:mm:ss")}
+                Fecha de ultima actualización { checkDetails['creation_date'] ? moment(checkDetails['creation_date']).format("DD/MM/yyyy"): ''}
               </Text>
             }
           </Col>
@@ -301,7 +302,7 @@ const TruoraCheck = ({person, ...props}) => {
                   </Title>   
                   <Divider style={{ marginTop:10, marginBottom:10 }}  />
                   <Text>Id de la consulta</Text>
-                  <Title level={5} style={{ margin:0 }}>
+                  <Title level={5} style={{ margin:0, fontSize:10 }}>
                       {checkDetails?.check_id}
                     </Title>
                 

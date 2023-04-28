@@ -23,7 +23,7 @@ import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import FormVacationRecord from "../payroll/forms/FormVacationRecord";
 import TruoraCheck from '../TruoraCheck';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BankOutlined,
   BookOutlined,
@@ -45,6 +45,7 @@ import {
 import { useRouter } from "next/router";
 import Router from "next/router";
 import WebApiPeople from "../../api/WebApiPeople";
+import { connect } from "react-redux";
 
 const DetailPerson = ({
   config,
@@ -312,24 +313,23 @@ const DetailPerson = ({
               person_user={person}
             />
           </TabPane>
-          <TabPane
-            tab={
-              <Tooltip title="Usuario">
-                <div className="container-title-tab">
-                  <SecurityScanOutlined />
-                  <div className="text-title-tab">Truora</div>
-                </div>
-              </Tooltip>
-            }
-            key="tab_14"
-          >
-            <TruoraCheck person={person} />
-            {/* <FormChangePassword
-              config={config}
-              khonnectId={person.khonnect_id}
-              person_user={person}
-            /> */}
-          </TabPane>
+
+          {
+            (props?.applications && (_.has(props.applications, "troura") && props.applications["troura"].active)) &&
+            <TabPane
+              tab={
+                <Tooltip title="Usuario">
+                  <div className="container-title-tab">
+                    <SecurityScanOutlined />
+                    <div className="text-title-tab">Truora</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_14"
+            >
+              <TruoraCheck person={person} />
+            </TabPane>
+          }
 
           {deletePerson && (
             <TabPane
@@ -381,4 +381,10 @@ const DetailPerson = ({
   );
 };
 
-export default DetailPerson;
+const mapState = (state) => {
+  return {
+    applications: state.userStore.applications,
+  };
+};
+
+export default connect(mapState)(DetailPerson);
