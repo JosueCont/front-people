@@ -639,6 +639,18 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/get-working-days-from-range-date/`, "post", data);
   }
 
+  static CreateTruoraRequest(id){
+    return WebApi.ApisType(`/person/person/${id}/add_background_check/`, "post",{});
+  }
+
+  static GetTruoraRequest(id){
+    return WebApi.ApisType(`/person/person/${id}/get_background_check/`, "get");
+  }
+
+  static GetTruoraFile(id){
+    return WebApi.ApisType(`/person/person/${id}/get_background_check_file/`, "get");
+  }
+
 }
 
 export default WebApiPeople;

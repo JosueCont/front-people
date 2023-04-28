@@ -22,6 +22,7 @@ import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import FormVacationRecord from "../payroll/forms/FormVacationRecord";
+import TruoraCheck from '../TruoraCheck';
 import { useState } from "react";
 import {
   BankOutlined,
@@ -39,6 +40,7 @@ import {
   MedicineBoxOutlined,
   ArrowLeftOutlined,
   CalendarOutlined,
+  SecurityScanOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -309,6 +311,24 @@ const DetailPerson = ({
               khonnectId={person.khonnect_id}
               person_user={person}
             />
+          </TabPane>
+          <TabPane
+            tab={
+              <Tooltip title="Usuario">
+                <div className="container-title-tab">
+                  <SecurityScanOutlined />
+                  <div className="text-title-tab">Truora</div>
+                </div>
+              </Tooltip>
+            }
+            key="tab_14"
+          >
+            <TruoraCheck person={person} />
+            {/* <FormChangePassword
+              config={config}
+              khonnectId={person.khonnect_id}
+              person_user={person}
+            /> */}
           </TabPane>
 
           {deletePerson && (
