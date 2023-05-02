@@ -1144,7 +1144,7 @@ const homeScreen = ({
         else ids = a.id;
       });
     }
-    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
+    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
       message.success("Asignado correctamente.");
