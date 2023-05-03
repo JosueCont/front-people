@@ -686,7 +686,7 @@ const ImssInformationNode = ({
                   title="Solicitar movimientos"
                   actionButton={() => verifyPeriod()}
                   width="30%"
-                  disabledSave={disabeldSave}
+                  //disabledSave={disabeldSave}
                 >
                   <Row justify="center">
                     <Col span={24}>
