@@ -21,11 +21,11 @@ const SelectPersonType = ({ isDisabled=false, ...props }) => {
   },[])
 
   return (
-    <Form.Item name="person_type" label={props.label ? props.label : null}>
+    <Form.Item name="person_type" label={props.label ? props.label : "Tipo de persona"}>
       <Select
         disabled={isDisabled}
         // options={personType}
-        placeholder="Tipo de persona"
+        // placeholder="Tipo de persona"
         showSearch
         optionFilterProp="children"
       >

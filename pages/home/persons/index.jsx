@@ -933,14 +933,14 @@ const homeScreen = ({
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
-        {personsDelete.map((p) => {
+        {personsDelete.map((p,i) => {
           return (
-            <>
+            <div key={i}>
               <Row style={{ marginBottom: 15 }}>
                 <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
-            </>
+            </div>
           );
         })}
       </div>
@@ -1144,7 +1144,7 @@ const homeScreen = ({
         else ids = a.id;
       });
     }
-    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
+    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
       message.success("Asignado correctamente.");
@@ -1241,9 +1241,29 @@ const homeScreen = ({
     }
   }, [route, props.currentNode]);
 
+  const validatePersonTodelete=(personsToDelete = [])=>{
+    // Validamos si no estoy tratando de eliminarme a mi mismo
+    let isValid = true;
+    if(personsToDelete && personsToDelete.length>0){
+      let myPerson = personsToDelete.find((p)=> p.id === props?.user_store?.id);
+      console.log('personsToDelete===>',personsToDelete,myPerson)
+      if(myPerson){
+        isValid = false;
+      }else{
+        isValid = true;
+      }
+    }
+    return isValid;
+  }
+
   const deletePerson = () => {
     let ids = null;
-    if (personsToDelete.length == 1) {
+    let isValid = validatePersonTodelete(personsToDelete);
+    if(!isValid){
+      message.error('No se puede completar esta acción, verifique que no se encuentre su usuario en la lista de personas a eliminar.')
+      return;
+    }
+    if (personsToDelete.length === 1) {
       setStringToDelete(
         "Eliminar usuario " +
         personsToDelete[0].first_name +
