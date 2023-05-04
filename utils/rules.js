@@ -24,36 +24,36 @@ export const ruleMaxArray = (max) => {
 
 export const ruleWhiteSpace = {
   whitespace: true,
-  message: 'Este campo no puede estar vacío'
-}
+  message: "Este campo no puede estar vacío",
+};
 
-export const ruleMinAge = (min)  => {
-  return{
-    type: 'number',
+export const ruleMinAge = (min) => {
+  return {
+    type: "number",
     min: min,
-    message: `Edad mínima mayor o igual a ${min}`
-  }
-}
+    message: `Edad mínima mayor o igual a ${min}`,
+  };
+};
 
-export const ruleMaxAge = (max) =>{
-  return{
-    type: 'number',
+export const ruleMaxAge = (max) => {
+  return {
+    type: "number",
     max: max,
-    message: `Edad máxima menor o igual a ${max}`
-  }
-}
+    message: `Edad máxima menor o igual a ${max}`,
+  };
+};
 
 export const ruleMaxPhoneNumber = (max) => {
-  return{
+  return {
     max: max,
-    message: `se necesita un numero de teléfono de ${max} digitos`
-  }
-}
+    message: `se necesita un numero de teléfono de ${max} digitos`,
+  };
+};
 
 export const ruleURL = {
-  type: 'url',
-  message: 'Ingrese una url válida'
-}
+  type: "url",
+  message: "Ingrese una url válida",
+};
 
 export const rulePhone = {
   pattern: /^[0-9]{0,10}$/,
@@ -76,32 +76,29 @@ export const twoDigit = {
 };
 
 export const expMonths = {
-  validator(_, value){
+  validator(_, value) {
+    let number = toInteger(value);
 
-    let number = toInteger(value)
-
-    if(number >= 1 && number <= 12 ) {
-      return Promise.resolve()
+    if (number >= 1 && number <= 12) {
+      return Promise.resolve();
     } else {
-      return Promise.reject('Se necesita un numero entre 01 y 12')
+      return Promise.reject("Se necesita un numero entre 01 y 12");
     }
-    
-  }
-}
+  },
+};
 
 export const expYear = {
-  validator(_, value){
+  validator(_, value) {
+    let year = parseInt(value);
+    let currentYear = parseInt(moment().format("YY"));
 
-    let year = parseInt(value)
-    let currentYear = parseInt(moment().format('YY'))
-
-    if(year >= currentYear){
-      return Promise.resolve()
-    }  else {
-      return Promise.reject('Año no válido')
+    if (year >= currentYear) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject("Año no válido");
     }
-  }
-}
+  },
+};
 
 export const treeDecimal = {
   pattern: /^\d+(?:\.\d{1,3})?$/,
@@ -113,22 +110,28 @@ export const fourDecimal = {
   message: "El campo no puede tener más de cuatro decimales",
 };
 
+export const twoDecimal = {
+  pattern: /^\d+(?:\.\d{1,2})?$/,
+  message: "El campo no puede tener más de dos decimales",
+};
+
 // export const numCommaAndDot = {
 //   pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
 //   message: 'Ingrese un valor y/o formato válido'
 // }
 
 export const numCommaAndDot = () => ({
-  validator(_, value){
+  validator(_, value) {
     if (!value) return Promise.resolve();
-    let num = parseFloat(value.replaceAll(',',''));
+    let num = parseFloat(value.replaceAll(",", ""));
     let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/;
-    if(isNaN(num)) return Promise.reject('Ingrese un valor numérico');
-    if(!pattern.test(value)) return Promise.reject('Ingrese un formato válido');
-    if(num < 1) return Promise.reject('Ingrese un valor mayor o igual a 1');
+    if (isNaN(num)) return Promise.reject("Ingrese un valor numérico");
+    if (!pattern.test(value))
+      return Promise.reject("Ingrese un formato válido");
+    if (num < 1) return Promise.reject("Ingrese un valor mayor o igual a 1");
     return Promise.resolve();
-  }
-})
+  },
+});
 
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 
@@ -155,18 +158,18 @@ export const nameLastname = {
 };
 
 export const ruleMinPassword = (min) => {
-  return{
+  return {
     min: min,
-    message: `La contraseña debe de tener mínimo ${min} carácteres`
-  }
-}
+    message: `La contraseña debe de tener mínimo ${min} carácteres`,
+  };
+};
 
 export const validateSpaces = {
-  validator(_, value){
-    if(value.includes(" ")){
-      return Promise.reject('No están permitidos los espacios')
+  validator(_, value) {
+    if (value.includes(" ")) {
+      return Promise.reject("No están permitidos los espacios");
     } else {
-      return Promise.resolve()
+      return Promise.resolve();
     }
-  }
-}
+  },
+};
