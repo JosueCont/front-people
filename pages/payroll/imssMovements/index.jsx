@@ -25,6 +25,7 @@ import UploadFile from "../../../components/UploadFile";
 import MovementsSection from "../../../components/payroll/ImssMovements/MovementsSection";
 import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
+import { useRouter } from "next/router";
 const { Text } = Typography;
 
 const ImssMovements = ({ ...props }) => {
@@ -37,10 +38,18 @@ const ImssMovements = ({ ...props }) => {
   const [file, setFile] = useState(null);
   const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
+
+  useEffect(() => {
+    if(router?.query?.regPatronal){
+      setPatronalSelected(router?.query?.regPatronal)
+    }
+
+  },[router.query])
 
   useEffect(() => {
     if (file) {
@@ -51,12 +60,12 @@ const ImssMovements = ({ ...props }) => {
   }, [file]);
 
   useEffect(() => {
-    patronalSelected && getFiles();
-  }, [patronalSelected]);
+    patronalSelected && props?.currentNode?.id && getFiles();
+  }, [patronalSelected, props?.currentNode?.id]);
 
   const getFiles = () => {
     setLoading(true);
-    WebApiPeople.listEbaAndEmaFiles(props.currentNode.id, patronalSelected)
+    WebApiPeople.listEbaAndEmaFiles(props?.currentNode?.id, patronalSelected)
       .then((response) => {
         setFiles(response.data.results);
         setLoading(false);
@@ -136,7 +145,7 @@ const ImssMovements = ({ ...props }) => {
             <Divider> <img src={'/images/logo_imss.png'} width={40}/> Movimientos de IMSS</Divider>
             <Collapse defaultActiveKey={["1"]}>
               <Panel header="Movimientos IMSS" key="1">
-                <MovementsSection />
+                <MovementsSection regPatronalProps={router?.query?.regPatronal} />
 
                 {/*<Collapse
                   expandIcon={({ isActive }) => (
