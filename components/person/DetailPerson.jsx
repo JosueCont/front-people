@@ -47,6 +47,8 @@ import Router from "next/router";
 import WebApiPeople from "../../api/WebApiPeople";
 import { connect } from "react-redux";
 
+/** */
+
 const DetailPerson = ({
   config,
   person,

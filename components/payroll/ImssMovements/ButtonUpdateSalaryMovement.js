@@ -10,13 +10,20 @@ import {
   message,
   Spin,
   Switch,
+  Row,
+  Col,
 } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { fourDecimal, onlyNumeric, ruleRequired } from "../../../utils/rules";
+import {
+  fourDecimal,
+  onlyNumeric,
+  ruleRequired,
+  twoDecimal,
+} from "../../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -24,7 +31,7 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 const ButtonUpdateSalaryMovement = ({
   person,
   node,
-  payrollPerson,
+  payrollPerson = null,
   onRefresh,
   ...props
 }) => {
@@ -33,6 +40,7 @@ const ButtonUpdateSalaryMovement = ({
   const [form] = Form.useForm();
   const user = useSelector((state) => state.userStore.user);
   const [generateMovement, setGenerateMovement] = useState(false);
+  const [changeSdi, setChangeSdi] = useState(false);
 
   const onFinish = (values) => {
     let req = { ...values };
@@ -45,7 +53,6 @@ const ButtonUpdateSalaryMovement = ({
 
   const changeSalary = async (req) => {
     setLoading(true);
-    console.log("payroll person", payrollPerson);
     try {
       const res = await WebApiPayroll.setSalaryModification(req);
       if (generateMovement)
@@ -76,14 +83,35 @@ const ButtonUpdateSalaryMovement = ({
     if (payrollPerson?.daily_salary) {
       form.setFieldsValue({
         new_salary: payrollPerson?.daily_salary,
+        new_sdi: payrollPerson?.integrated_daily_salary,
         date_updated: moment(),
       });
     }
   }, [payrollPerson]);
 
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current <= moment().endOf("day");
+  // const disabledDate = (current) => {
+  //   // Can not select days before today and today
+  //   return current && current <= moment().endOf("day");
+  // };
+
+  const onchageSdi = () => {
+    if (!changeSdi == false) {
+      form.setFieldsValue({
+        new_sdi: payrollPerson?.integrated_daily_salary,
+      });
+    }
+    setChangeSdi(!changeSdi);
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+    form.setFieldsValue({
+      change_sdi: false,
+      generate_movement: false,
+    });
+
+    setGenerateMovement(false);
+    setChangeSdi(false);
   };
 
   return (
@@ -93,7 +121,7 @@ const ButtonUpdateSalaryMovement = ({
         loading={loading}
         icon={<CalendarOutlined />}
         type="link"
-        onClick={() => setShowModal(true)}
+        onClick={openModal}
       >
         Programar actualización de salario diario
       </Button>
@@ -113,36 +141,78 @@ const ButtonUpdateSalaryMovement = ({
             name="control-hooks"
             onFinish={onFinish}
           >
-            <Form.Item
-              name="generate_movement"
-              label="Generar movimiento IMSS?"
-            >
-              <Switch
-                checkedChildren={<CheckOutlined />}
-                unCheckedChildren={<CloseOutlined />}
-                onChange={() => setGenerateMovement(!generateMovement)}
-              />
-            </Form.Item>
+            <Row>
+              <Col span={12}>
+                <Form.Item
+                  name="generate_movement"
+                  label="Generar movimiento IMSS?"
+                  initialValue={false}
+                  valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                    onChange={() => setGenerateMovement(!generateMovement)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="change_sdi"
+                  label="¿Modificar SDI?"
+                  initialValue={false}
+                  valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                    onChange={onchageSdi}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
             <Form.Item
               name="new_salary"
               label="Nuevo salario diario"
               rules={[
                 ruleRequired,
                 fourDecimal,
-                {
-                  message: "Este monto debe ser diferente al salario actual",
-                  validator: (_, value) => {
-                    // if (value!==payrollPerson?.daily_salary && value>=payrollPerson?.daily_salary) {
-                    if (value !== payrollPerson?.daily_salary) {
-                      return Promise.resolve();
-                    } else {
-                      return Promise.reject();
-                    }
-                  },
-                },
+                // {
+                //   message: "Este monto debe ser diferente al salario actual",
+                //   validator: (_, value) => {
+                //     // if (value!==payrollPerson?.daily_salary && value>=payrollPerson?.daily_salary) {
+                //     if (value !== payrollPerson?.daily_salary) {
+                //       return Promise.resolve();
+                //     } else {
+                //       return Promise.reject();
+                //     }
+                //   },
+                // },
               ]}
             >
               <Input />
+            </Form.Item>
+            <Form.Item
+              name="new_sdi"
+              label="Salario diario Integrado"
+              rules={[
+                ruleRequired,
+                twoDecimal,
+                // {
+                //   message: "Este monto debe ser diferente al salario actual",
+                //   validator: (_, value) => {
+                //     // if (value!==payrollPerson?.daily_salary && value>=payrollPerson?.daily_salary) {
+                //     if (value !== payrollPerson?.new_sdi) {
+                //       return Promise.resolve();
+                //     } else {
+                //       return Promise.reject();
+                //     }
+                //   },
+                // },
+              ]}
+            >
+              <Input disabled={!changeSdi} />
             </Form.Item>
             <Form.Item
               name="date_updated"
