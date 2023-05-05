@@ -179,7 +179,7 @@ const DetailPerson = ({
               <Tooltip title="IMSS">
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS</div>
+                  <div className="text-title-tab">IMSS / INFONAVIT</div>
                 </div>
               </Tooltip>
             }
@@ -349,7 +349,7 @@ const DetailPerson = ({
             >
 
               {
-                  (props.userStore.id === person.id) ? <p>No puedes eliminar tu usuario</p> : <Row style={{ padding: "2%" }}>
+                  (props?.userStore?.id === person.id) ? <p>No puedes eliminar tu usuario</p> : <Row style={{ padding: "2%" }}>
                     <Col>
                       <p>Al eliminar a una persona perderá todos los datos relacionados a
                         ella de manera permanente.</p>

@@ -783,6 +783,7 @@ const homeScreen = ({
   const importPersonFileExtend = async (e) => {
     let formData = new FormData();
     //formData.append("File", e);
+    formData.append("types",[1]) //TODO agregar el envío solo po rdefault Es por mientras para no fallar GDZUL
     formData.append("excel_person_file", e);
     formData.append("node_id", props.currentNode.id);
     formData.append("saved_by", userSession.user_id);

@@ -14,6 +14,7 @@ import {
   message,
   Divider,
   Tooltip,
+  Alert,
   Space,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
@@ -35,6 +36,7 @@ import {
   onlyNumeric,
   ruleRequired,
 } from "../../../utils/rules";
+import Link from "next/link";
 
 const FormImssInfonavit = ({ person, person_id = null, node }) => {
   const { Title } = Typography;
@@ -484,9 +486,9 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
   return (
     <>
       <Spin tip="Cargando..." spinning={loadingIMSS}>
-        <Row>
-          <Title style={{ fontSize: "20px" }}>IMSS</Title>
-        </Row>
+          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20}/> IMSS</Divider>
+        <br/>
+
         <Form
           layout="vertical"
           form={formImssInfonavit}
@@ -572,6 +574,12 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
                   maxLength={10}
                 />
               </Form.Item>
+
+              <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
+                <a style={{color:'blue'}}>
+                  <div>Ver movimientos IMSS</div>
+                </a>
+              </Link>
             </Col>
             {/* <Col lg={6} xs={22} offset={1}>
               <Form.Item
@@ -600,10 +608,10 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
 
         <Divider />
 
+        <Divider orientation="left"> <img src={"/images/logoinfonavit.png"} width={20} /> INFONAVIT</Divider>
+
+        <br/>
         <Row justify="space-between">
-          <Title style={{ fontSize: "20px", marginBottom: 20 }}>
-            INFONAVIT
-          </Title>
           <div>
             <Space>
               <Button
