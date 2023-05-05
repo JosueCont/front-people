@@ -13,7 +13,7 @@ import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
 const { Title } = Typography;
 
 
-const MovementsSection=({getMovementsIMSS,...props})=>{
+const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
 
     const [form] = Form.useForm();
     const regPatronal = Form.useWatch('patronal_registration', form);
@@ -32,6 +32,12 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
         }
 
     },[node?.id, regPatronal])
+
+    useEffect(()=>{
+        if(regPatronalProps){
+           form.setFieldsValue({patronal_registration: regPatronalProps})
+        }
+    },[regPatronalProps])
 
 
     const tabs = [
