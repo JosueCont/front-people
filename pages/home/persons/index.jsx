@@ -14,7 +14,9 @@ import {
   Modal,
   Menu,
   Dropdown,
+  Divider,
   notification,
+  Checkbox,
   Upload,
   Space
 } from "antd";
@@ -63,6 +65,7 @@ const homeScreen = ({
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [modalCreateGroup, setModalCreateGroup] = useState(false);
   const [showModalGroup, setShowModalGroup] = useState(false);
+  const [showModalImportPersons, setShowModalImportPersons] = useState(false);
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [showModalAssigns, setShowModalAssigns] = useState(false);
@@ -71,6 +74,7 @@ const homeScreen = ({
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const [formAddImmediateSupervisor] = Form.useForm();
+  const [formImportPeople] = Form.useForm();
   const [formResetPassword] = Form.useForm();
   // const inputFileRef = useRef(null);
   // const inputFileRefAsim = useRef(null);
@@ -782,8 +786,20 @@ const homeScreen = ({
 
   const importPersonFileExtend = async (e) => {
     let formData = new FormData();
+
+    let types = [1]
+
+    /*
+    1 = Quiero que lea intranet
+    2 = Quiero que lea nomina/timbrado
+    3 = Quiero que lea imss
+    */
+
+    let imss = formImportPeople.getFieldValue('types_imss') ? [3]: [];
+    let timbrado = formImportPeople.getFieldValue('types_stamp') ? [2] : [];
+
     //formData.append("File", e);
-    formData.append("types",[1]) //TODO agregar el envío solo po rdefault Es por mientras para no fallar GDZUL
+    formData.append("types",[1,...imss,...timbrado,0])
     formData.append("excel_person_file", e);
     formData.append("node_id", props.currentNode.id);
     formData.append("saved_by", userSession.user_id);
@@ -1588,7 +1604,7 @@ const homeScreen = ({
                         </Button>
                     )}
 
-                    {permissions.import_csv_person && (
+                    {permissions.import_csv_person && props.config && !props.config.nomina_enabled && (
                         <Upload
                           {...{
                             showUploadList: false,
@@ -1622,6 +1638,17 @@ const homeScreen = ({
                         </Upload>
 
                     )}
+
+                    {
+                        permissions.import_csv_person && props?.config && props?.config?.nomina_enabled && (
+                            <Button
+                                icon={<DownloadOutlined />}
+                                onClick={()=>setShowModalImportPersons(true)}
+                            >
+                              Importar personas
+                            </Button>
+                        )
+                    }
                     <Button
                       icon={<DownloadOutlined />}
                       onClick={() =>
@@ -1629,7 +1656,7 @@ const homeScreen = ({
                           `${getDomain(
                             API_URL_TENANT
                           )}/person/person/generate_template/?type=1&node_id=${props?.currentNode?.id}`,
-                          "platilla_personas.xlsx",
+                          "plantilla_personas.xlsx",
                           "GET"
                         )
                       }
@@ -1732,6 +1759,79 @@ const homeScreen = ({
           setVisible={() => setPersonCfi(false)}
           node_id={props.currentNode?.id}
         />
+
+        <Modal title={'Importar personas'} closable={false} footer={false} visible={showModalImportPersons}>
+            <p>Selecciona los datos que estas por importar</p>
+
+          <Form
+            form={formImportPeople}
+            initialValues={{ types_imss: true, types_stamp : true }}
+            layout="inline"
+          >
+            <Form.Item
+                name="types_imss"
+                valuePropName="checked"
+            >
+              <Checkbox>IMSS</Checkbox>
+            </Form.Item>
+
+            <Form.Item
+                name="types_stamp"
+                valuePropName="checked"
+            >
+              <Checkbox>Timbrado</Checkbox>
+            </Form.Item>
+
+            <Form.Item
+                name="types_stamp"
+                valuePropName="checked"
+            >
+              <Upload
+                  {...{
+                    showUploadList: false,
+                    beforeUpload: (file) => {
+                      const isXlsx = file.name.includes(".xlsx");
+                      if (!isXlsx) {
+                        message.error(`${file.name} no es un xlsx.`);
+                      }
+                      return isXlsx || Upload.LIST_IGNORE;
+                    },
+                    onChange(info) {
+                      const { status } = info.file;
+                      if (status !== "uploading") {
+                        if (info.fileList.length > 0) {
+                          importPersonFileExtend(
+                              info.fileList[0].originFileObj
+                          );
+                          info.file = null;
+                          info.fileList = [];
+                        }
+                      }
+                    },
+                  }}
+              >
+                <Button
+                    //size="middle"
+                    icon={<UploadOutlined />}
+                >
+                  Importar personas
+                </Button>
+              </Upload>
+            </Form.Item>
+
+
+          </Form>
+
+
+
+
+          <Divider/>
+
+            <Button onClick={()=>setShowModalImportPersons(false) }>Cerrar</Button>
+
+
+        </Modal>
+
         <Modal title="Asignar jefe inmediato" closable={false} visible={modalAddImmediateSupervisor} footer={false} >
           <Form
             onFinish={finishImmediateSupervisor}
