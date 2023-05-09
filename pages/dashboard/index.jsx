@@ -12,6 +12,7 @@ import {
     Empty
 } from "antd";
 import { useSelector } from "react-redux";
+import {injectIntl, FormattedMessage} from "react-intl";
 import {
     ReloadOutlined,
     ManOutlined,
@@ -28,6 +29,7 @@ import {useRouter} from "next/router";
 import moment from 'moment'
 import _ from 'lodash'
 import ChartDoughnut from "../../components/dashboards-cards/ChartDoughnut";
+import ButtonChangeLang from "../../components/ButtonChangeLang/ButtonChangeLang";
 moment.locale("es-Mx");
 
 const ContentVertical = styled.div`
@@ -103,7 +105,7 @@ const BIRTHDAY_CURRENT_MONTH = "BIRTHDAY_CURRENT_MONTH";
 const PEOPLE_BY_GENDER = "PEOPLE_BY_GENDER";
 const PEOPLE_BY_GENERATION = "PEOPLE_BY_GENERATION";
 
-const Dashboard = () => {
+const Dashboard = ({intl, ...props}) => {
 
 
     const router = useRouter();
@@ -134,7 +136,7 @@ const Dashboard = () => {
     },[])
 
     const Void = (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se encontraron resultados"/>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<FormattedMessage id={'nodata'} />}/>
     )
 
 
@@ -143,9 +145,9 @@ const Dashboard = () => {
             <CardItem
                 title={<>
                     <img src='/images/people.png'/>
-                    <p>Total de personas</p>
+                    <p><FormattedMessage id={'dashboard.birthdaymonth'}/></p>
                 </>}
-                extra={<a onClick={()=> router.push(`/home/persons/`)}>Ver</a>}
+                extra={<a onClick={()=> router.push(`/home/persons/`)}><FormattedMessage id={'view'}/></a>}
             >
                 { totalPerson
                     ? <Title
@@ -166,7 +168,7 @@ const Dashboard = () => {
                     ai={aniversaryPeople?.length > 0 ? 'flex-start' : 'center'}
                     title={<>
                         <img src='/images/newyearparty.png'/>
-                        <p>Aniversarios</p>
+                        <p><FormattedMessage id={'dashboard.anniversary'}/></p>
                     </>}
                     extra={<>{aniversaryPeople?.length ?? 0}</>}
                 >
@@ -182,7 +184,7 @@ const Dashboard = () => {
                                         <List.Item.Meta
                                             avatar={<Avatar size='large' src={item?.photo_thumbnail ? item?.photo_thumbnail : '/images/profile-sq.jpg'}/>}
                                             title={<a onClick={()=> router.push(`/home/persons/${item.id}`)}>{`${item.first_name} ${item.flast_name} ${item?.mlast_name}`}</a>}
-                                            description={`Aniversario: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
+                                            description={`${intl.formatMessage({id:'aniversary'})}: ${moment(item.date_of_admission).format('DD/MM/YYYY')}`}
                                         />
                                     </List.Item>
                                 )}
@@ -201,7 +203,7 @@ const Dashboard = () => {
                     ai={birthDayPeople?.length > 0 ? 'flex-start' : 'center'}
                     title={<>
                         <img src='/images/ballon.png'/>
-                        <p>Cumpleaños del mes</p>
+                        <p><FormattedMessage id={'dashboard.birthdaymonth'}/></p>
                     </>}
                     extra={<>{birthDayPeople?.length ?? 0}</>}
                 >
@@ -252,14 +254,14 @@ const Dashboard = () => {
             <CardInfo>
                 <CardItem jc='center' hg='100%' title={<>
                     <img src='/images/people.png'/>
-                    <p>Generaciones</p>
+                    <p><FormattedMessage id={'generations'} /></p>
                 </>}>
                     {peopleByGenenation ? <div className="card-chart">
                            {peopleByGenenation.data?.some(item => item > 0) ? (
                                 <>
                                     <ChartDoughnut data={peopleByGenenation} />
                                     <p style={{marginBottom: 0, marginTop: 24, textAlign: 'center'}}>
-                                        Predominante: {maximunGeneration}
+                                        <FormattedMessage id={'dashboard.predominant'}/> : {maximunGeneration}
                                     </p>
                                 </>
                            ): Void }
@@ -275,24 +277,24 @@ const Dashboard = () => {
         return (
             <CardItem title={<>
                 <img src='/images/bygender.png'/>
-                <p>Género</p>
+                <p><FormattedMessage id={'gender'}/></p>
             </>}>
                 {peopleByGender ?
                     <>
                         <Statistic
                             style={{marginInlineEnd: 24}}
                             prefix={<ManOutlined style={{color:'#2351FC'}} />}
-                            title="Masculino"
+                            title={<FormattedMessage id={'male'}/>}
                             value={peopleByGender['Masculino']}
                         />
                         <Statistic
                             style={{marginInlineEnd: 24}}
                             prefix={<WomanOutlined 
                             style={{color:'#EC23FC'}}/>}
-                            title="Femenino"
+                            title={<FormattedMessage id={'female'}/>}
                             value={peopleByGender['Femenino']}
                         />
-                        <Statistic title="Otro" value={peopleByGender['Otro']} />
+                        <Statistic title={<FormattedMessage id={'other'}/>} value={peopleByGender['Otro']} />
                     </>  : <ReloadOutlined className="card-load"  spin />
                 }
             </CardItem>
@@ -319,22 +321,6 @@ const Dashboard = () => {
                     console.log(res.data)
                     if(res.data){
                         let dataD = {...res.data};
-                    //     datasets: [
-                    //         {
-                    //             label: '# of Votes',
-                    //             data: [12, 19, 3, 5, 2, 3],
-                    //             backgroundColor: [
-                    //                 'rgba(255, 99, 132, 1)',
-                    //                 'rgba(54, 162, 235, 1)',
-                    //                 'rgba(255, 206, 86, 1)',
-                    //                 'rgba(75, 192, 192, 1)',
-                    //                 'rgba(153, 102, 255, 1)',
-                    //                 'rgba(255, 159, 64, 1)',
-                    //             ],
-                    //             borderWidth: 1,
-                    //         },
-                    //     ],
-                    // };
                         dataD.datasets= [
                             {
                                 label: '# of Votes',
@@ -382,6 +368,7 @@ const Dashboard = () => {
                     <div>
                         <Title style={{marginBottom:0}} level={1}>{company && company.name}</Title>
                         <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>
+                        {/*<ButtonChangeLang/>*/}
                     </div>
                     <ContentCards>
                         <CardInfo gap={24}>
@@ -398,4 +385,4 @@ const Dashboard = () => {
     )
 }
 
-export default withAuthSync(Dashboard);
+export default injectIntl(withAuthSync(Dashboard));

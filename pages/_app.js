@@ -14,6 +14,7 @@ import React from "react";
 // import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 import generateStore from "../redux/store";
+import { useSelector } from "react-redux";
 
 // Sentry.init({
 //     dsn: "https://77f01f611a4844f6bb16e2fa9369c2bc@sentry.hiumanlab.com/7",
@@ -28,11 +29,11 @@ import generateStore from "../redux/store";
 const store = generateStore();
 
 function App({ Component, pageProps }) {
+
   return (
     <Provider store={store}>
       <IntlProvider
         locale={store.getState().userStore.lang}
-        defaultLocale="es-mx"
         messages={langMessages[store.getState().userStore.lang]}
       >
         <Component {...pageProps} />
