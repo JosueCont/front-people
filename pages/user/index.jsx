@@ -228,14 +228,14 @@ const index = ({
 
                 </Col>
             </Row>
-            <Row gutter={[16]} style={{marginBottom:50}}>
-                <Col md={8} xs={24}>
+            <Row gutter={[16, 16]} style={{marginBottom:50}}>
+                <Col lg={8} md={12} sm={12} xs={24}>
                     <WidgetBirthDayPeople/>
                 </Col>
 
                 {
                     vouchers &&
-                    <Col md={8} xs={24}>
+                    <Col lg={8} md={12} sm={12} xs={24}>
                         <WidgetPayrollVoucher/>
                     </Col>
                 }
