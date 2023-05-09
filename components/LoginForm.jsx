@@ -181,9 +181,21 @@ const LoginForm = ({
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
+
+          {
+              generalConfig?.concierge_logo ? <p style={{textAlign:'center'}}> <img
+                className={"logoKhor"}
+                src={
+                  generalConfig?.concierge_logo
+                }
+                width={200}
+                alt=""
+            />
+              </p>: <br/>
+          }
+
           <Form.Item>
-            <p className={"login-form-title"}>A new people management system</p>
-            <p className={"form-subtitle"}>Inicio de sesión</p>
+            <p className={"login-form-title"}>Inicio de sesión</p>
           </Form.Item>
           <Form.Item
             name="email"

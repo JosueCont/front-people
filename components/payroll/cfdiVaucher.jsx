@@ -5,6 +5,7 @@ import {
   SearchOutlined,
   StopOutlined,
   EllipsisOutlined,
+  FileTextOutlined
 } from "@ant-design/icons";
 import {
   Alert,
@@ -202,6 +203,17 @@ const CfdiVaucher = ({
       render: (item) => {
         return (
           <>
+
+
+            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
+              <FilePdfTwoTone
+                  twoToneColor="#34495E"
+                  onClick={() => downloadReceipt(item)}
+                  style={{ fontSize: "25px" }}
+              />
+            </Tooltip>
+
+
             {item.id_facturama ? (
               <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
                 <FileTextTwoTone
@@ -219,8 +231,9 @@ const CfdiVaucher = ({
               )
             )}
             {item.id_facturama ? (
-              <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
+              <Tooltip title="PDF timbrado" color={"#3d78b9"} key={"#3d78b9"}>
                 <FilePdfTwoTone
+                  twoToneColor="#C0392B"
                   onClick={() => downLoadFile(item, 2)}
                   style={{ fontSize: "25px" }}
                 />
@@ -235,12 +248,29 @@ const CfdiVaucher = ({
               )
             )}
 
-            <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
-              <FilePdfTwoTone
-                  onClick={() => downloadReceipt(item)}
-                  style={{ fontSize: "25px" }}
-              />
-            </Tooltip>
+
+
+
+
+            {item?.extraordinary_stamp_id && (
+                <Tooltip title="XML indemnización" color={"#f68f49"} key={"#c27e51"}>
+                  <FileTextTwoTone
+                      twoToneColor="#f68f49"
+                      onClick={() => downLoadFile(item, 1, item?.extraordinary_stamp_id)}
+                      style={{ fontSize: "25px" }}
+                  />
+                </Tooltip>)
+            }
+
+            {item?.extraordinary_stamp_id && (
+                <Tooltip title="PDF indemnización" color={"#f68f49"} key={"#c27e51"}>
+                  <FilePdfTwoTone
+                      twoToneColor="#C0392B"
+                      onClick={() => downLoadFile(item, 2, item?.extraordinary_stamp_id)}
+                      style={{ fontSize: "25px" }}
+                  />
+                </Tooltip>)
+            }
 
 
             {!viewFilter && (
@@ -294,12 +324,19 @@ const CfdiVaucher = ({
     }
   }, [router.query]);
 
-  const downLoadFile = (item, file) => {
+  const downLoadFile = (item, type_file, extraordinary_stamp_id=null ) => {
     let data = {
       type_request: 3,
-      type_file: file,
-      id_facturama: item.id_facturama,
+      type_file: type_file
     };
+
+
+    if(!extraordinary_stamp_id){
+      data.id_facturama = item.id_facturama
+    }else{
+      data.extraordinary_stamp_id =  extraordinary_stamp_id
+    }
+
     let url = `${getDomain(
       API_URL_TENANT
     )}/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`;
@@ -308,7 +345,7 @@ const CfdiVaucher = ({
       url,
       `${item.payroll_person.person.rfc}_${item.payment_period.start_date}_${
         item.payment_period.end_date
-      }.${file == 1 ? "xml" : "pdf"}`,
+      }.${type_file == 1 ? "xml" : "pdf"}`,
       "POST",
       data
     );

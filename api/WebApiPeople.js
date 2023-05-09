@@ -380,6 +380,10 @@ class WebApiPeople {
   }
 
   static vacationCancelRequest(data) {
+    return WebApi.ApisType(`/person/vacation/cancel-request/`, "post", data);
+  }
+
+  static vacationReOpenRequest(data) {
     return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
   }
 
@@ -637,6 +641,18 @@ class WebApiPeople {
 
   static getWorkingDaysFromRange(data) {
     return WebApi.ApisType(`/business/get-working-days-from-range-date/`, "post", data);
+  }
+
+  static CreateTruoraRequest(id){
+    return WebApi.ApisType(`/person/person/${id}/add_background_check/`, "post",{});
+  }
+
+  static GetTruoraRequest(id){
+    return WebApi.ApisType(`/person/person/${id}/get_background_check/`, "get");
+  }
+
+  static GetTruoraFile(id){
+    return WebApi.ApisType(`/person/person/${id}/get_background_check_file/`, "get");
   }
 
 }

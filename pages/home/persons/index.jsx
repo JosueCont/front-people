@@ -14,7 +14,9 @@ import {
   Modal,
   Menu,
   Dropdown,
+  Divider,
   notification,
+  Checkbox,
   Upload,
   Space
 } from "antd";
@@ -63,6 +65,7 @@ const homeScreen = ({
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [modalCreateGroup, setModalCreateGroup] = useState(false);
   const [showModalGroup, setShowModalGroup] = useState(false);
+  const [showModalImportPersons, setShowModalImportPersons] = useState(false);
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [showModalAssigns, setShowModalAssigns] = useState(false);
@@ -71,6 +74,7 @@ const homeScreen = ({
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const [formAddImmediateSupervisor] = Form.useForm();
+  const [formImportPeople] = Form.useForm();
   const [formResetPassword] = Form.useForm();
   // const inputFileRef = useRef(null);
   // const inputFileRefAsim = useRef(null);
@@ -782,7 +786,20 @@ const homeScreen = ({
 
   const importPersonFileExtend = async (e) => {
     let formData = new FormData();
+
+    let types = [1]
+
+    /*
+    1 = Quiero que lea intranet
+    2 = Quiero que lea nomina/timbrado
+    3 = Quiero que lea imss
+    */
+
+    let imss = formImportPeople.getFieldValue('types_imss') ? [3]: [];
+    let timbrado = formImportPeople.getFieldValue('types_stamp') ? [2] : [];
+
     //formData.append("File", e);
+    formData.append("types",[1,...imss,...timbrado,0])
     formData.append("excel_person_file", e);
     formData.append("node_id", props.currentNode.id);
     formData.append("saved_by", userSession.user_id);
@@ -933,14 +950,14 @@ const homeScreen = ({
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
-        {personsDelete.map((p) => {
+        {personsDelete.map((p,i) => {
           return (
-            <>
+            <div key={i}>
               <Row style={{ marginBottom: 15 }}>
                 <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
-            </>
+            </div>
           );
         })}
       </div>
@@ -1144,7 +1161,7 @@ const homeScreen = ({
         else ids = a.id;
       });
     }
-    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids }
+    let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
       message.success("Asignado correctamente.");
@@ -1241,9 +1258,29 @@ const homeScreen = ({
     }
   }, [route, props.currentNode]);
 
+  const validatePersonTodelete=(personsToDelete = [])=>{
+    // Validamos si no estoy tratando de eliminarme a mi mismo
+    let isValid = true;
+    if(personsToDelete && personsToDelete.length>0){
+      let myPerson = personsToDelete.find((p)=> p.id === props?.user_store?.id);
+      console.log('personsToDelete===>',personsToDelete,myPerson)
+      if(myPerson){
+        isValid = false;
+      }else{
+        isValid = true;
+      }
+    }
+    return isValid;
+  }
+
   const deletePerson = () => {
     let ids = null;
-    if (personsToDelete.length == 1) {
+    let isValid = validatePersonTodelete(personsToDelete);
+    if(!isValid){
+      message.error('No se puede completar esta acción, verifique que no se encuentre su usuario en la lista de personas a eliminar.')
+      return;
+    }
+    if (personsToDelete.length === 1) {
       setStringToDelete(
         "Eliminar usuario " +
         personsToDelete[0].first_name +
@@ -1567,7 +1604,7 @@ const homeScreen = ({
                         </Button>
                     )}
 
-                    {permissions.import_csv_person && (
+                    {permissions.import_csv_person && props.config && !props.config.nomina_enabled && (
                         <Upload
                           {...{
                             showUploadList: false,
@@ -1601,14 +1638,25 @@ const homeScreen = ({
                         </Upload>
 
                     )}
+
+                    {
+                        permissions.import_csv_person && props?.config && props?.config?.nomina_enabled && (
+                            <Button
+                                icon={<DownloadOutlined />}
+                                onClick={()=>setShowModalImportPersons(true)}
+                            >
+                              Importar personas
+                            </Button>
+                        )
+                    }
                     <Button
                       icon={<DownloadOutlined />}
                       onClick={() =>
                         downLoadFileBlob(
                           `${getDomain(
                             API_URL_TENANT
-                          )}/person/person/generate_template/?type=1`,
-                          "platilla_personas.xlsx",
+                          )}/person/person/generate_template/?type=1&node_id=${props?.currentNode?.id}`,
+                          "plantilla_personas.xlsx",
                           "GET"
                         )
                       }
@@ -1711,6 +1759,79 @@ const homeScreen = ({
           setVisible={() => setPersonCfi(false)}
           node_id={props.currentNode?.id}
         />
+
+        <Modal title={'Importar personas'} closable={false} footer={false} visible={showModalImportPersons}>
+            <p>Selecciona los datos que estas por importar</p>
+
+          <Form
+            form={formImportPeople}
+            initialValues={{ types_imss: true, types_stamp : true }}
+            layout="inline"
+          >
+            <Form.Item
+                name="types_imss"
+                valuePropName="checked"
+            >
+              <Checkbox>IMSS</Checkbox>
+            </Form.Item>
+
+            <Form.Item
+                name="types_stamp"
+                valuePropName="checked"
+            >
+              <Checkbox>Timbrado</Checkbox>
+            </Form.Item>
+
+            <Form.Item
+                name="types_stamp"
+                valuePropName="checked"
+            >
+              <Upload
+                  {...{
+                    showUploadList: false,
+                    beforeUpload: (file) => {
+                      const isXlsx = file.name.includes(".xlsx");
+                      if (!isXlsx) {
+                        message.error(`${file.name} no es un xlsx.`);
+                      }
+                      return isXlsx || Upload.LIST_IGNORE;
+                    },
+                    onChange(info) {
+                      const { status } = info.file;
+                      if (status !== "uploading") {
+                        if (info.fileList.length > 0) {
+                          importPersonFileExtend(
+                              info.fileList[0].originFileObj
+                          );
+                          info.file = null;
+                          info.fileList = [];
+                        }
+                      }
+                    },
+                  }}
+              >
+                <Button
+                    //size="middle"
+                    icon={<UploadOutlined />}
+                >
+                  Importar personas
+                </Button>
+              </Upload>
+            </Form.Item>
+
+
+          </Form>
+
+
+
+
+          <Divider/>
+
+            <Button onClick={()=>setShowModalImportPersons(false) }>Cerrar</Button>
+
+
+        </Modal>
+
         <Modal title="Asignar jefe inmediato" closable={false} visible={modalAddImmediateSupervisor} footer={false} >
           <Form
             onFinish={finishImmediateSupervisor}

@@ -175,7 +175,7 @@ const MainSider = ({
       ]
       let children0101 = [
         getItem("Personas", "persons"),
-        getItem("Grupos", "groups_people"),
+        getItem("Grupos de personas", "groups_people"),
       ];
       let children90 = [
         getItem("Empresa", "company", <></>, children0),

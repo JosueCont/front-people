@@ -22,7 +22,8 @@ import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import FormVacationRecord from "../payroll/forms/FormVacationRecord";
-import { useState } from "react";
+import TruoraCheck from '../TruoraCheck';
+import { useEffect, useState } from "react";
 import {
   BankOutlined,
   BookOutlined,
@@ -39,10 +40,12 @@ import {
   MedicineBoxOutlined,
   ArrowLeftOutlined,
   CalendarOutlined,
+  SecurityScanOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
 import WebApiPeople from "../../api/WebApiPeople";
+import { connect } from "react-redux";
 
 const DetailPerson = ({
   config,
@@ -69,8 +72,9 @@ const DetailPerson = ({
   };
 
   const deletePersons = (data) => {
-    WebApiPeople.deletePerson
-      .then((response) => {
+    WebApiPeople.deletePerson({
+      persons_id: person.id,
+    }).then((response) => {
         setLoading(false);
         showModal();
         message.success("Eliminado correctamente.");
@@ -84,12 +88,13 @@ const DetailPerson = ({
 
   const deleteRegister = () => {
     if (deleted.api == "deleteBankAcc") deleteBankAcc(deleted.id);
-    if (deleted.api == "deletePerson") deletePersons();
+    if (deleted.api == "deletePerson") deletePersons(deleted.id);
     if (deleted.api == "deletePhone") deletePhone(deleted.id);
     if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
     if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
     if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
+
 
   const getNewFilters = () => {
     let newFilters = { ...router.query };
@@ -172,7 +177,7 @@ const DetailPerson = ({
               <Tooltip title="IMSS">
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS</div>
+                  <div className="text-title-tab">IMSS / INFONAVIT</div>
                 </div>
               </Tooltip>
             }
@@ -311,6 +316,23 @@ const DetailPerson = ({
             />
           </TabPane>
 
+          {
+            (props?.applications && (_.has(props.applications, "troura") && props.applications["troura"].active)) &&
+            <TabPane
+              tab={
+                <Tooltip title="Usuario">
+                  <div className="container-title-tab">
+                    <SecurityScanOutlined />
+                    <div className="text-title-tab">Truora</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_14"
+            >
+              <TruoraCheck person={person} />
+            </TabPane>
+          }
+
           {deletePerson && (
             <TabPane
               tab={
@@ -323,25 +345,29 @@ const DetailPerson = ({
               }
               key="tab_11"
             >
-              Al eliminar a una persona perderá todos los datos relacionados a
-              ella de manera permanente.
-              <Row style={{ padding: "2%" }}>
-                <Col>
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<WarningOutlined />}
-                    onClick={() =>
-                      setDeleteRegister({
-                        id: "",
-                        api: "deletePerson",
-                      })
-                    }
-                  >
-                    Eliminar persona
-                  </Button>
-                </Col>
-              </Row>
+
+              {
+                  (props?.userStore?.id === person.id) ? <p>No puedes eliminar tu usuario</p> : <Row style={{ padding: "2%" }}>
+                    <Col>
+                      <p>Al eliminar a una persona perderá todos los datos relacionados a
+                        ella de manera permanente.</p>
+                      <Button
+                          type="primary"
+                          danger
+                          icon={<WarningOutlined />}
+                          onClick={() =>
+                              setDeleteRegister({
+                                id: person.id,
+                                api: "deletePerson",
+                              })
+                          }
+                      >
+                        Eliminar persona
+                      </Button>
+                    </Col>
+                  </Row>
+              }
+
             </TabPane>
           )}
         </Tabs>
@@ -361,4 +387,11 @@ const DetailPerson = ({
   );
 };
 
-export default DetailPerson;
+const mapState = (state) => {
+  return {
+    applications: state.userStore.applications,
+    userStore: state.userStore.user,
+  };
+};
+
+export default connect(mapState)(DetailPerson);
