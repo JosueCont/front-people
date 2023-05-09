@@ -220,7 +220,7 @@ const index = ({
 
     return (
         <MainLayout currentKey={'dashboard'} defaultOpenKeys={["dashboard",'dashboard']}>
-            <Row style={{marginTop:50}}>
+            <Row>
                 <Col>
                     <Title style={{marginBottom:0}} level={1}>{currentNode && currentNode.name}
                     </Title>
@@ -228,14 +228,14 @@ const index = ({
 
                 </Col>
             </Row>
-            <Row gutter={[16]} style={{marginBottom:50}}>
-                <Col md={8} xs={24}>
+            <Row gutter={[16, 16]} style={{marginBottom:50}}>
+                <Col xl={8} lg={12} md={12} sm={12} xs={24}>
                     <WidgetBirthDayPeople/>
                 </Col>
 
                 {
                     vouchers &&
-                    <Col md={8} xs={24}>
+                    <Col xl={8} lg={12} md={12} sm={12} xs={24}>
                         <WidgetPayrollVoucher/>
                     </Col>
                 }
