@@ -135,6 +135,7 @@ export const ContentVertical = styled.div`
     display: flex;
     flex-direction: column;
     gap: ${({gap}) => gap};
+  overflow: hidden;
 `;
 
 export const ContentStart = styled.div`
@@ -202,7 +203,9 @@ export const CustomBtn = styled(Button)(({
     bg = "#1f2733",
     cl = "white",
     wd = "100%",
-    br = "50px"
+    br = "50px",
+    scale = true,
+    cursor = 'pointer'
 })=>{
     return css`
         display: flex;
@@ -214,10 +217,11 @@ export const CustomBtn = styled(Button)(({
         border-radius: ${br};
         width: ${wd};
         gap: 5px;
+        cursor: ${cursor};
         :hover{
             background: ${bg};
             color: ${cl};
-            transform: scale(1.05);
+            transform: scale(${(scale ? 1.05 : 1)});
         }
         :focus{
             background: ${bg};
