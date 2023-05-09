@@ -312,6 +312,12 @@ const DataPerson = ({
       });
   };
 
+  const setFormatEmail = (val) => {
+    formPerson.setFieldsValue({
+      email: val.target.value.toLowerCase()
+    })
+  }
+
   // const changeStatusAdmin = async (value) => {
   //   setIsActiveAdmin(value)
   // };
@@ -751,9 +757,9 @@ const DataPerson = ({
                 <Form.Item
                   name="email"
                   label="Dirección de e-mail"
-                  rules={[{ required:true,  type: "email", message: "Ingresa un email valido" }]}
+                  rules={[{type: "email", message: "Ingresa un email valido" }]}
                 >
-                  <Input />
+                  <Input onChange={setFormatEmail} />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
