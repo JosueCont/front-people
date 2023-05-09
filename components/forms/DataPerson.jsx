@@ -236,6 +236,11 @@ const DataPerson = ({
       })
       .catch((error) => {
         message.error("Error al actualizar, intente de nuevo.");
+        if(error?.response?.data?.message === "Este email ya se encuentra registrado" ){
+          formPerson.setFields([
+            { name: 'email', errors: [error.response.data.message] },
+          ])
+        }
         setLoading(false);
       });
   };
@@ -748,7 +753,7 @@ const DataPerson = ({
                   label="Dirección de e-mail"
                   rules={[{ message: "Ingresa un email" }]}
                 >
-                  <Input disabled />
+                  <Input />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
