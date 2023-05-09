@@ -757,7 +757,7 @@ const DataPerson = ({
                 <Form.Item
                   name="email"
                   label="Dirección de e-mail"
-                  rules={[{type: "email", message: "Ingresa un email valido" }]}
+                  rules={[{type: "email", message: "Ingresa una dirección de e-mail válida" }]}
                 >
                   <Input onChange={setFormatEmail} />
                 </Form.Item>
