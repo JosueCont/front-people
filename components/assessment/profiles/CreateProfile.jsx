@@ -168,7 +168,6 @@ const CreatePerfil = ({
     const onChangeLevel = (item, val) =>{
         let record = {competence: item.id, level: val};
         let newList = {...levelCompetence, [item.id]: record};
-        console.log(newList)
         setLevelCompetence(newList)
     }
 
