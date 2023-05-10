@@ -145,7 +145,7 @@ const Dashboard = ({intl, ...props}) => {
             <CardItem
                 title={<>
                     <img src='/images/people.png'/>
-                    <p><FormattedMessage id={'dashboard.birthdaymonth'}/></p>
+                    <p><FormattedMessage id={'dashboard.totalpeople'}/></p>
                 </>}
                 extra={<a onClick={()=> router.push(`/home/persons/`)}><FormattedMessage id={'view'}/></a>}
             >
