@@ -1,5 +1,5 @@
-import {esmx} from './esmx'
-import {enus} from './enus'
+import {esmx} from './esmx/esmx'
+import {enus} from './enus/enus'
 
 export const langMessages = {
     'es-mx':esmx,
