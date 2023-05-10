@@ -10,6 +10,7 @@ import FiscalInformationNode from "../../../components/payroll/FiscalInformation
 import PatronalRegistration from "../../../components/payroll/PatronalRegistration";
 import NonWorkingDays from "../../../components/business/NonWorkingDays";
 import WorkingDays from "../../../components/business/WorkingDays";
+import UiStore from "../../../components/business/UiStore";
 
 const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
@@ -89,6 +90,9 @@ const ConfigCompany = ({ ...props }) => {
             </TabPane>
             <TabPane tab="Días laborables" key={"4"}>
               <WorkingDays node_id={company && company.id} />
+            </TabPane>
+            <TabPane tab="UI Store" key={"5"}>
+              <UiStore  node_id={company && company.id} />
             </TabPane>
             {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />

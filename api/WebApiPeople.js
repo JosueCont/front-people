@@ -655,6 +655,14 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${id}/get_background_check_file/`, "get");
   }
 
+  static GetUiStoreId(node){
+    return WebApi.ApisType(`/business/node-iuss-configurations/${node}`, "get")
+  }
+
+  static CreateUiStoreId(data){
+    return WebApi.ApisType('/business/node-iuss-configurations/', "post", data)
+  }
+
 }
 
 export default WebApiPeople;
