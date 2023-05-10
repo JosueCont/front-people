@@ -9,12 +9,12 @@ import {
     Form,
     Space,
     message,
-    Select
+    Select, Popover, Tooltip
 } from 'antd';
 import {
-  SearchOutlined,
-  PlusCircleOutlined,
-  CloseOutlined
+    SearchOutlined,
+    PlusCircleOutlined,
+    CloseOutlined, InfoCircleOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import { valueToFilter } from '../../../utils/functions';
@@ -203,25 +203,40 @@ const CreatePerfil = ({
             title: 'Level',
             width: 80,
             render: (item) =>{
+                let _levelOptions = item.levels.map(e => ({key: e.level, value: e.level, label: `${e.level}`}))
                 return(
                     <Select
                         size='small'
-                        options={optionsLevel}
+                        options={_levelOptions}
                         placeholder={'Nivel'}
                         value={getLevel(item)}
                         onChange={(val)=> onChangeLevel(item, val)}
-                        style={{width:70}}
+                        style={{width:60}}
                     />
                 )
             }
         },
         {
             title: 'Acciones',
-            width: 40,
+            width: 60,
             render: (item, record, index) =>{
-                return (
+                let selectedLevel = getLevel(item) ? item.levels.find(e => e.level === getLevel(item)) : null
+                return (<Space>
+                    {selectedLevel &&
+                        <Tooltip
+                            placement="bottomRight"
+                            title={<>
+                                <b>{item.name} (Nivel {selectedLevel.level}):</b><br/>
+                                <div className={'tooltip-scroll-content'}>
+                                    {selectedLevel.description}
+                                </div>
+                            </>}
+                            trigger="click">
+                        <InfoCircleOutlined/>
+                        </Tooltip>
+                    }
                     <CloseOutlined onClick={()=>deleteCompetence(item, index)}/>
-                )
+            </Space>)
             }
         },
     ]
