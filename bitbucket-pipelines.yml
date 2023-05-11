@@ -23,6 +23,7 @@ pipelines:
                 COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker build -t front-people .'
       - step:
           name: "Deploy"
+          deployment: Kiuberto Cloud
           script:
             - pipe: atlassian/ssh-run:0.3.1
               variables:
