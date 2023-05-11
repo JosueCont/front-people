@@ -22,7 +22,7 @@ import {
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined } from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined, SendOutlined } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -69,6 +69,7 @@ const homeScreen = ({
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [showModalAssigns, setShowModalAssigns] = useState(false);
+  const [showModalSendIUSS, setShowModalSendIUSS ] = useState(false)
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [namePerson, setNamePerson] = useState("");
@@ -95,6 +96,7 @@ const homeScreen = ({
   const [modalAddImmediateSupervisor, setModalAddImmediateSupervisor] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
+  const [personsToSendUIStore, setPersonsToSendUIStore ] = useState([])
   const [personsToAddImmediateSupervisor, setPersonsToAddImmediateSupervisor] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
   const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
@@ -605,6 +607,9 @@ const homeScreen = ({
             Sincronizar YNL
           </Menu.Item>
         )}
+        <Menu.Item key="8" icon={<SendOutlined />}>
+          Enviar a UI Store
+        </Menu.Item>
         <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
@@ -942,6 +947,7 @@ const homeScreen = ({
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
+      setPersonsToSendUIStore(selectedRows)
       setPersonsToSynchronizeYNL(selectedRows);
       setPersonsToAddImmediateSupervisor(selectedRows)
     },
