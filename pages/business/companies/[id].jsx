@@ -19,6 +19,9 @@ const ConfigCompany = ({ ...props }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
   const [activeKey, setActiveKey] = useState(props.config && props.config.nomina_enabled ? "2" : "1");
+  const applications = props && props.config && props.config.applications || []
+  // Revisa que este habilitada la aplicación IUSS y este activa. si esta activa se mostrará el tab de UI Store
+  let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
 
   useEffect(() => {
     if (router.query.tab) {
@@ -36,6 +39,8 @@ const ConfigCompany = ({ ...props }) => {
           console.log(error);
         });
   }, [router.query]);
+
+  console.log('Props config', applications)
 
   return (
     <MainLayout currentKey={["business"]} defaultOpenKeys={["strategyPlaning","company"]}>
@@ -91,9 +96,14 @@ const ConfigCompany = ({ ...props }) => {
             <TabPane tab="Días laborables" key={"4"}>
               <WorkingDays node_id={company && company.id} />
             </TabPane>
-            <TabPane tab="UI Store" key={"5"}>
-              <UiStore  node_id={company && company.id} />
-            </TabPane>
+            {
+              enableStore &&
+
+              <TabPane tab="UI Store" key={"5"}>
+                <UiStore  node_id={company && company.id} />
+              </TabPane>
+            }
+
             {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />
             </TabPane> */}
