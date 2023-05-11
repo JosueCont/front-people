@@ -10,7 +10,7 @@ pipelines:
                 SERVER: $DEV_SERVER_IP
                 SSH_KEY: $DEV_SSH_KEY
                 MODE: 'command'
-                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && git pull'
+                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && sudo git pull'
       - step:
           name: "Build"
           script:
