@@ -172,7 +172,7 @@ export const setDataUpload = (data) => async (dispatch, getState) => {
   }
 };
 
-export const changeLanguage = (lang=null) => async (dispatch, getState) => {
+export const changeLanguage = (lang='es-mx') => async (dispatch, getState) => {
   try {
     if(!lang){
       lang = localStorage.getItem("userLang");
