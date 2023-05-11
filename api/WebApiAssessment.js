@@ -29,6 +29,10 @@ class WebApiAssessment {
     return WebApi.ApisType(`/person/group-assessments/?node=${id}`, "get");
   }
 
+  static uploadMassiveGroups(data) {
+    return WebApi.ApisType(`/person/group-assessments/upload_massive/`, "post", data);
+  }
+
 
 
   static getListSurveys(nodeId, queryParam = "") {
