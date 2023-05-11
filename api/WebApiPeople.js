@@ -656,11 +656,15 @@ class WebApiPeople {
   }
 
   static GetUiStoreId(node){
-    return WebApi.ApisType(`/business/node-iuss-configurations/${node}`, "get")
+    return WebApi.ApisType(`/business/node-iuss-configuration/?node=${node}`, "get")
   }
 
   static CreateUiStoreId(data){
-    return WebApi.ApisType('/business/node-iuss-configurations/', "post", data)
+    return WebApi.ApisType('/business/node-iuss-configuration/', "post", data)
+  }
+
+  static UpdateUiStoreId(data){
+    return WebApi.ApisType(`/business/node-iuss-configuration/${data.id}/`, "put", data)
   }
 
 }
