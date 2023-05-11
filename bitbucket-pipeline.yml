@@ -1,0 +1,43 @@
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: "Update"
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $DEV_SERVER_USER
+                SERVER: $DEV_SERVER_IP
+                SSH_KEY: $DEV_SSH_KEY
+                MODE: 'command'
+                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && git pull'
+      - step:
+          name: "Build"
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $DEV_SERVER_USER
+                SERVER: $DEV_SERVER_IP
+                SSH_KEY: $DEV_SSH_KEY
+                MODE: 'command'
+                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker build -t front-people .'
+      - step:
+          name: "Deploy"
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $DEV_SERVER_USER
+                SERVER: $DEV_SERVER_IP
+                SSH_KEY: $DEV_SSH_KEY
+                MODE: 'command'
+                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker stop front-people || true && docker rm front-people || true && docker run -d -p 3006:3006 --restart always --name front-people front-people'
+      - step:
+          name: "Garbage collector"
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $DEV_SERVER_USER
+                SERVER: $DEV_SERVER_IP
+                SSH_KEY: $DEV_SSH_KEY
+                MODE: 'command'
+                COMMAND: 'yes | docker image prune -a'
