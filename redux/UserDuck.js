@@ -37,6 +37,7 @@ const PERMISSIONS = "PERMISSIONS";
 const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
+const CHANGE_LANG = "CHANGE_LANG";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -62,6 +63,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, permissions: action.payload };
     case APPLICATIONS:
       return { ...state, applications: action.payload };
+    case CHANGE_LANG:
+      return { ...state, lang: action.payload };
     case PERSONS_COMPANY:
       return {
         ...state,
@@ -122,6 +125,7 @@ export const showLoading = (data) => async (dispatch, getState) => {
 
 export const companySelected = (data, config) => async (dispatch, getState) => {
   try {
+
     if (!data) data = await userCompanyId();
     if (data && config) {
       let response = await WebApiPeople.getCompany(data);
@@ -167,6 +171,22 @@ export const setDataUpload = (data) => async (dispatch, getState) => {
     return false;
   }
 };
+
+export const changeLanguage = (lang='es-mx') => async (dispatch, getState) => {
+  try {
+    if(!lang){
+      lang = localStorage.getItem("userLang");
+    }else{
+      localStorage.setItem('userLang',lang)
+    }
+
+    dispatch({ type: CHANGE_LANG, payload: lang });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 
 export const setUser = () => async (dispatch, getState) => {
   try {

@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Tooltip, Input, Tag} from "antd";
+import {Card, Row, Col, Tooltip, Input, Tag, Grid} from "antd";
 import { redirectTo, getCurrentURL } from "../../utils/constant";
 import { ClearOutlined } from "@ant-design/icons";
 import { valueToFilter } from "../../utils/functions";
 import { useRouter } from "next/router";
-import {BsArrowLeft, BsPlayCircleFill, BsFillSkipEndCircleFill, BsFillCheckCircleFill} from "react-icons/bs";
+import {
+    BsArrowLeft,
+    BsPlayCircleFill,
+    BsFillSkipEndCircleFill,
+    BsFillCheckCircleFill,
+    BsCheckCircleFill
+} from "react-icons/bs";
 import { connect } from "react-redux";
 import jwtEncode from "jwt-encode";
 import moment from "moment";
@@ -36,10 +42,12 @@ if (process.browser) {
 // Set url Kuiz Base Front with Tenant
 const urlKuizBaseFrontWithTenant = `${typeHttp}://${tenant}.${urlKuizBaseFront}`
 
+const { useBreakpoint } = Grid;
 
 const TableTests = ({user_profile, ...props}) => {
 
     const router = useRouter();
+    const screens = useBreakpoint();
     moment.locale('es-mx');
     const { generalPercent } = useStatistics();
     const [lisAssessments, setListAssessments] = useState([]);
@@ -152,11 +160,22 @@ const TableTests = ({user_profile, ...props}) => {
                         item?.apply[0]?.progress == 100 ||
                         item?.apply[0]?.status == 2
                     ) ? (
-                        <div
-                            style={{background:'#F99543', width:150, borderRadius:10, textAlign:'center', color:'white' }}
+            /*           <div
+                            style={{background:'#F99543', maxWidth:150, borderRadius:10, textAlign:'center', color:'white' }}
                         >
                             Completado
-                        </div>
+                        </div>*/
+
+                        <BtnTest
+                            size={'small'}
+                            bg={'#F99543!important'}
+                            wd={'150px'}
+                            scale={false}
+                            icon={<BsCheckCircleFill/>}
+                            cursor={'auto'}
+                        >
+                            Completado
+                        </BtnTest>
                     ):(
                         <BtnTest
                             size={'small'}

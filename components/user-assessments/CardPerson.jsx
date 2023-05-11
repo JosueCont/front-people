@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { FileDoneOutlined, FileSyncOutlined } from "@ant-design/icons";
-import { Card, Row, Col, Avatar, Button}  from 'antd';
+import {Card, Row, Col, Avatar, Button, Grid} from 'antd';
 import { MdEmail } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
 import { useUser } from '../../utils/useUser';
@@ -13,6 +13,7 @@ import {
     ContentVertical,
     Title2,
     CustomCard } from '../validation/styledAssesments';
+const { useBreakpoint } = Grid;
 
 const CardPerson = ({...props}) => {
     const defaulPhoto =
@@ -20,10 +21,12 @@ const CardPerson = ({...props}) => {
 
     const { user } = useUser();
     const { toAnswer, completed } = useStatistics();
+    const screens = useBreakpoint();
 
   return (
     <Row gutter={[24,24]} align={'middle'}>
-        <Col xs={24} sm={24} md={24} lg={14} xl={14}>
+        {screens.sm && screens.md &&
+        <Col xs={24} sm={24} md={24} lg={24} xl={12} xxl={14}>
             <CustomCard
               loading={false}
               bordered={false}
@@ -56,7 +59,8 @@ const CardPerson = ({...props}) => {
               </Row>
             </CustomCard>
         </Col>
-        <Col xs={12} sm={12} md={12} lg={5} xl={5}>
+        }
+        <Col xs={24} sm={12} md={12} lg={12} xl={6} xxl={5}>
           <CardGeneric
             title={'Evaluaciones completadas'}
             icon={<FileDoneOutlined />}
@@ -64,7 +68,7 @@ const CardPerson = ({...props}) => {
             numcard={completed}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={5} xl={5}>
+        <Col xs={24} sm={12} md={12} lg={12} xl={6} xxl={5}>
           <CardGeneric
             title={'Evaluaciones por contestar'}
             icon={<FileSyncOutlined />}
