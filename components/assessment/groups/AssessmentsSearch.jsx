@@ -14,15 +14,18 @@ import {
     Divider,
     Typography,
     Spin,
+    Tooltip,
 } from "antd";
 import {
     SearchOutlined,
     PlusOutlined,
     SyncOutlined,
-    UploadOutlined
+    UploadOutlined,
+    DownloadOutlined
 } from "@ant-design/icons";
 import AssessmentsGroup from "./AssessmentsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import { API_URL } from "../../../config/config";
 
 
 const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
@@ -147,9 +150,12 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                 </Col>
                 <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Space>
-                        <Button onClick={() => openMassiveForm()} >
-                            <UploadOutlined /> Cargar archivo
-                        </Button>
+                        <Tooltip title="Descargar layout para carga masiva">
+                            <Button href={`${API_URL}/static/PERFILES CON PRUEBAS Y NIVELES DE COMPETENCIAS.xlsx`}  icon={<DownloadOutlined />} />    
+                        </Tooltip>
+                        <Tooltip title="Cargar archivo">
+                            <Button onClick={() => openMassiveForm()} icon={<UploadOutlined />} />    
+                        </Tooltip>
                         {permissions.create && (
                             <Button
                                 onClick={() => HandleCreateGroup()}
