@@ -116,6 +116,8 @@ const homeScreen = ({
   const [khonnectId, setKhonnectId] = useState("");
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const applications = props && props.config && props.config.applications || []
+  let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -607,9 +609,12 @@ const homeScreen = ({
             Sincronizar YNL
           </Menu.Item>
         )}
-        <Menu.Item key="8" icon={<SendOutlined />}>
-          Enviar a UI Store
-        </Menu.Item>
+        {
+          enableStore && 
+          <Menu.Item key="8" onClick={() => showModalUISS()} icon={<SendOutlined />}>
+            Enviar a UI Store
+          </Menu.Item>
+        }
         <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
@@ -684,6 +689,18 @@ const homeScreen = ({
         >
           Descargar carta de renuncia
         </Menu.Item>
+        {
+          enableStore && 
+          <Menu.Item key="8" 
+            icon={<SendOutlined />}
+            onClick={() => {
+              setPersonsToSendUIStore([item]),
+              showModalUISS()
+            }}
+          >
+            Enviar a UI Store
+          </Menu.Item>
+        }
         {showSynchronizeYNL && (
           <Menu.Item
             key="6"
@@ -934,6 +951,15 @@ const homeScreen = ({
     </div>
   );
 
+  const AlertSentToUiStore = () => (
+    <div>
+      Las siguientes personas serán creadas en UI Store, ¿Desea continuar?
+      <br />
+      <br />
+      <ListElementsSendToUiStore personsToSendUIStore={personsToSendUIStore} />
+    </div>
+  );
+
   const AlertAddImmediateSupervisor = () => (
     <div>
       {personsToAddImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
@@ -986,6 +1012,23 @@ const homeScreen = ({
       </div>
     );
   };
+
+  const ListElementsSendToUiStore = ({ personsToSendUIStore }) => {
+    return (
+      <div>
+        {personsToSendUIStore.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );    
+  }
 
   const ListElementsToAddImmediateSupervisor = ({ personsToAddImmediateSupervisor }) => {
     return (
@@ -1147,6 +1190,10 @@ const homeScreen = ({
     modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
   };
 
+  const showModalUISS = () => {
+    showModalSendIUSS? setShowModalSendIUSS(false) : setShowModalSendIUSS(true)
+  }
+
   const showModalAddImmediateSupervisor = () => {
     personsToAddImmediateSupervisor.length > 0 ? setModalAddImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
   };
@@ -1205,6 +1252,67 @@ const homeScreen = ({
       setModalSynchronizeYNL(false);
     }
   }, [modalSynchronizeYNL]);
+
+  const sendToUIStore = () => {
+    let arrayPersons = []
+    let objPerson = {}
+
+    const resetObj = () => {
+      objPerson = {}
+    }
+
+    if(personsToSendUIStore.length == 1){
+      let person = personsToSendUIStore[0]
+      objPerson.external_id = person.khonnect_id
+      objPerson.first_name = person.first_name
+      objPerson.last_name = person.flast_name + ' ' + person.mlast_name
+      // objPerson.company_id
+      objPerson.email = person.email
+      objPerson.image_url = person.photo
+      objPerson.gender = person.gender
+      arrayPersons.push(objPerson)
+      resetObj()
+
+    } else {
+
+      personsToSendUIStore.forEach((person) => {
+        objPerson.external_id = person.khonnect_id
+        objPerson.first_name = person.first_name
+        objPerson.last_name = person.flast_name + ' ' + person.mlast_name
+        // objPerson.company_id
+        objPerson.email = person.email
+        objPerson.image_url = person.photo
+        objPerson.gender = person.gender
+        arrayPersons.push(objPerson)
+        resetObj()
+      })
+    }
+
+    console.log('Array id object', arrayPersons)
+
+  }
+
+  useEffect(() => {
+    if(showModalSendIUSS && personsToSendUIStore.length > 0){
+      Modal.confirm({
+        title: 'Enviar a UI Store',
+        icon: <SendOutlined />,
+        content: <AlertSentToUiStore />,
+        okText: 'Sí, enviar',
+        cancelText: "Cancelar ",
+        okButtonProps: {
+          danger: true,
+        },
+        onOk: () => {
+          sendToUIStore()
+        },
+        onCancel: () => {
+          setShowModalSendIUSS(false)
+        }
+        
+      })
+    }
+  },[showModalSendIUSS])
 
   useEffect(() => {
     if (Object.keys(route.query).length === 0) {
