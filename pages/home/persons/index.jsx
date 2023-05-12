@@ -604,17 +604,17 @@ const homeScreen = ({
         {/*<Menu.Item key="3" onClick={() => handleDeactivate()}>*/}
         {/*  Desactivar*/}
         {/*</Menu.Item>*/}
-        {showSynchronizeYNL && (
-          <Menu.Item key="6" onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
-            Sincronizar YNL
-          </Menu.Item>
-        )}
         {
           enableStore && 
           <Menu.Item key="8" onClick={() => showModalUISS()} icon={<SendOutlined />}>
             Enviar a UI Store
           </Menu.Item>
         }
+        {showSynchronizeYNL && (
+          <Menu.Item key="6" onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
+            Sincronizar YNL
+          </Menu.Item>
+        )}
         <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
@@ -691,7 +691,7 @@ const homeScreen = ({
         </Menu.Item>
         {
           enableStore && 
-          <Menu.Item key="8" 
+          <Menu.Item key="9" 
             icon={<SendOutlined />}
             onClick={() => {
               setPersonsToSendUIStore([item]),
@@ -1019,7 +1019,7 @@ const homeScreen = ({
         {personsToSendUIStore.map((p) => {
           return (
             <>
-              <Row style={{ marginBottom: 15 }}>
+              <Row key={p.id} style={{ marginBottom: 15 }}>
                 <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
@@ -1254,41 +1254,38 @@ const homeScreen = ({
   }, [modalSynchronizeYNL]);
 
   const sendToUIStore = () => {
-    let arrayPersons = []
-    let objPerson = {}
-
-    const resetObj = () => {
-      objPerson = {}
-    }
+    
+    let arrayIds = null
 
     if(personsToSendUIStore.length == 1){
-      let person = personsToSendUIStore[0]
-      objPerson.external_id = person.khonnect_id
-      objPerson.first_name = person.first_name
-      objPerson.last_name = person.flast_name + ' ' + person.mlast_name
-      // objPerson.company_id
-      objPerson.email = person.email
-      objPerson.image_url = person.photo
-      objPerson.gender = person.gender
-      arrayPersons.push(objPerson)
-      resetObj()
-
+      let idPerson = personsToSendUIStore[0].id
+      arrayIds = [idPerson]
     } else {
-
-      personsToSendUIStore.forEach((person) => {
-        objPerson.external_id = person.khonnect_id
-        objPerson.first_name = person.first_name
-        objPerson.last_name = person.flast_name + ' ' + person.mlast_name
-        // objPerson.company_id
-        objPerson.email = person.email
-        objPerson.image_url = person.photo
-        objPerson.gender = person.gender
-        arrayPersons.push(objPerson)
-        resetObj()
-      })
+      let arr = personsToSendUIStore.map((person) => person.id)
+      arrayIds = arr
     }
 
-    console.log('Array id object', arrayPersons)
+    let data = {
+      node_id: props.currentNode.id,
+      persons_id: arrayIds
+    }
+    console.log('Persons', data)
+
+    setLoading(true)
+
+    WebApiPeople.CreateUIStoreUsers(data)
+    .then((res) => {
+      message.success('Usuarios enviados correctamente')
+    })
+    .catch((e) => {
+      message.error('Error al enviar usuarios')
+    })
+    .finally(() => {
+      setShowModalSendIUSS(false)
+      setPersonsToSendUIStore([])
+      getListPersons()
+      setLoading(false)
+    })
 
   }
 
