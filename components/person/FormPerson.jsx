@@ -37,7 +37,7 @@ const FormPerson = ({
   setPerson = null,
   currentNode,
   close,
-  listPersons=[],
+  listPersons = [],
   list_admin_roles_options,
   load_admin_roles_options,
   ...props
@@ -49,10 +49,10 @@ const FormPerson = ({
   const [loading, setLoading] = useState(false);
   const [payrrollActive, setPayrrollActive] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  
+
   const onFinish = (value) => {
     if (date !== "") {
-      value.birth_date = date;
+      value.birth_date = moment(date, "YYY-MM-DD");
     }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
@@ -102,10 +102,9 @@ const FormPerson = ({
     form.resetFields();
   };
 
-  
   const disabledDate = (current) => {
-    return current && moment(current).startOf('day') > moment().startOf('day');
-  }
+    return current && moment(current).startOf("day") > moment().startOf("day");
+  };
 
   return (
     <>
@@ -122,9 +121,9 @@ const FormPerson = ({
         <Form
           initialValues={{
             intranet_access: false,
-            immediate_supervisor: null
+            immediate_supervisor: null,
           }}
-          layout={'vertical'}
+          layout={"vertical"}
           onFinish={onFinish}
           form={form}
         >
@@ -170,40 +169,52 @@ const FormPerson = ({
                 )}
 
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired, nameLastname]} label='Nombre' name="first_name">
+                  <Form.Item
+                    rules={[ruleRequired, nameLastname]}
+                    label="Nombre"
+                    name="first_name"
+                  >
                     <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired,nameLastname]} label='Apellido paterno' name="flast_name">
+                  <Form.Item
+                    rules={[ruleRequired, nameLastname]}
+                    label="Apellido paterno"
+                    name="flast_name"
+                  >
                     <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[nameLastname]} label='Apellido materno' name="mlast_name">
-                    <Input type="text"  />
+                  <Form.Item
+                    rules={[nameLastname]}
+                    label="Apellido materno"
+                    name="mlast_name"
+                  >
+                    <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item name="gender" label='Género'>
-                    <Select options={genders}  />
+                  <Form.Item name="gender" label="Género">
+                    <Select options={genders} />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item 
-                    label='Fecha de nacimiento' >
+                  <Form.Item label="Fecha de nacimiento">
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChange}
-                      moment={"YYYY-MM-DD"}
-                      disabledDate={ disabledDate }
-                      locale = { locale }
+                      format={"DD-MM-YYYY"}
+                      // moment={"YYYY-MM-DD"}
+                      disabledDate={disabledDate}
+                      locale={locale}
                       placeholder={""}
                     />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item name="code" label='Núm. empleado'>
+                  <Form.Item name="code" label="Núm. empleado">
                     <Input type="text" />
                   </Form.Item>
                 </Col>
@@ -211,7 +222,7 @@ const FormPerson = ({
                   <Form.Item
                     rules={[ruleEmail, payrrollActive && ruleRequired]}
                     name="email"
-                    label='Email'
+                    label="Email"
                   >
                     <Input
                       type="email"
@@ -224,38 +235,33 @@ const FormPerson = ({
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item
-                    name="immediate_supervisor"
-                    label='Jefe inmediato'
-                  >
-                    <Select
-                    showSearch
-                    optionFilterProp="children"
-                    >
-                      { listPersons.length > 0 && listPersons.map(item => (
-                        <Select.Option value={item.id} key={item.id}>
-                          {getFullName(item)}
-                        </Select.Option>
-                      ))}
+                  <Form.Item name="immediate_supervisor" label="Jefe inmediato">
+                    <Select showSearch optionFilterProp="children">
+                      {listPersons.length > 0 &&
+                        listPersons.map((item) => (
+                          <Select.Option value={item.id} key={item.id}>
+                            {getFullName(item)}
+                          </Select.Option>
+                        ))}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col lg={24} xs={24} style={{ padding: "10px"}}>
+                <Col lg={24} xs={24} style={{ padding: "10px" }}>
                   <Space>
                     {config &&
                       config.applications &&
                       config.applications.find(
-                      (item) => item.app === "PAYROLL" && item.is_active
-                    ) && (
-                      <Space>
-                        <span>Crear usuario</span>
-                        <Switch
-                          checked={payrrollActive}
-                          onChange={(value) => setPayrrollActive(value)}
-                        />
-                      </Space>
-                    )}
-                     {/* <Space>
+                        (item) => item.app === "PAYROLL" && item.is_active
+                      ) && (
+                        <Space>
+                          <span>Crear usuario</span>
+                          <Switch
+                            checked={payrrollActive}
+                            onChange={(value) => setPayrrollActive(value)}
+                          />
+                        </Space>
+                      )}
+                    {/* <Space>
                         <span>¿Es administrador?</span>
                         <Switch
                           checked={isAdmin}
@@ -268,13 +274,17 @@ const FormPerson = ({
                 {payrrollActive && (
                   <>
                     <Col lg={8} xs={24}>
-                      <Form.Item rules={[ruleRequired]} label='Contraseña' name="password">
+                      <Form.Item
+                        rules={[ruleRequired]}
+                        label="Contraseña"
+                        name="password"
+                      >
                         <Input.Password type="text" />
                       </Form.Item>
                     </Col>
                     <Col lg={8} xs={24}>
                       <Form.Item
-                      label='Confirmar contraseña'
+                        label="Confirmar contraseña"
                         rules={[
                           ruleRequired,
                           ({ getFieldValue }) => ({
@@ -328,7 +338,7 @@ const FormPerson = ({
                     {config.intranet_enabled && (
                       <Col lg={8} xs={24}>
                         <Form.Item
-                          label='Acceso a Khor Connect'
+                          label="Acceso a Khor Connect"
                           key="itemAccessIntranet"
                           name="intranet_access"
                           rules={[ruleRequired]}
@@ -338,60 +348,60 @@ const FormPerson = ({
                       </Col>
                     )}
                     {config.applications.find(
-                    (item) => item.app === "SUKHATV" && item.is_active
-                    )  && (
+                      (item) => item.app === "SUKHATV" && item.is_active
+                    ) && (
                       <Col lg={8} xs={24}>
                         <Form.Item
-                          label='Acceso a Sukha'
+                          label="Acceso a Sukha"
                           key="itemAccessSukha"
                           name="sukhatv_access"
-                          rules={[ruleRequired]}  
-                          >
-                          <SelectAccessSukha/>
+                          rules={[ruleRequired]}
+                        >
+                          <SelectAccessSukha />
                         </Form.Item>
                       </Col>
                     )}
                     {config.applications.find(
-                    (item) => item.app === "SUKHATV" && item.is_active
-                    )  && (
-                    <Col lg={8} xs={24}>
-                      <Form.Item
-                          label='¿Es administrador SukhaTV?'
+                      (item) => item.app === "SUKHATV" && item.is_active
+                    ) && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          label="¿Es administrador SukhaTV?"
                           key="itemAccessSukhaAdmin"
                           name="is_sukhatv_admin"
                           rules={[ruleRequired]}
-                      >
-                        <SelectAccessSukha/>
-                      </Form.Item>
-                    </Col>
-                    )}
-                    {config.applications.find(
-                    (item) => item.app === "KHORFLIX" && item.is_active
-                    )  && (
-                      <Col lg={8} xs={24}>
-                        <Form.Item
-                          label='Acceso a Khorflix'
-                          key="itemAccessKhorflix"
-                          name="khorflix_access"
-                          rules={[ruleRequired]}  
-                          >
-                          <SelectAccessKhorflix/>
+                        >
+                          <SelectAccessSukha />
                         </Form.Item>
                       </Col>
                     )}
                     {config.applications.find(
-                    (item) => item.app === "KHORFLIX" && item.is_active
-                    )  && (
-                    <Col lg={8} xs={24}>
-                      <Form.Item
-                          label='¿Es administrador Khorflix?'
+                      (item) => item.app === "KHORFLIX" && item.is_active
+                    ) && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          label="Acceso a Khorflix"
+                          key="itemAccessKhorflix"
+                          name="khorflix_access"
+                          rules={[ruleRequired]}
+                        >
+                          <SelectAccessKhorflix />
+                        </Form.Item>
+                      </Col>
+                    )}
+                    {config.applications.find(
+                      (item) => item.app === "KHORFLIX" && item.is_active
+                    ) && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          label="¿Es administrador Khorflix?"
                           key="itemAccessKhorflixAdmin"
                           name="is_khorflix_admin"
                           rules={[ruleRequired]}
-                      >
-                        <SelectAccessKhorflix/>
-                      </Form.Item>
-                    </Col>
+                        >
+                          <SelectAccessKhorflix />
+                        </Form.Item>
+                      </Col>
                     )}
                   </>
                 )}
@@ -424,7 +434,7 @@ const FormPerson = ({
 const mapState = (state) => {
   return {
     list_admin_roles_options: state.catalogStore.list_admin_roles_options,
-    load_admin_roles_options: state.catalogStore.load_admin_roles_options
+    load_admin_roles_options: state.catalogStore.load_admin_roles_options,
   };
 };
 

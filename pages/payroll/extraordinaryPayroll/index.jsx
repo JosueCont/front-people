@@ -230,35 +230,35 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         </>
       ),
     },
-    {
-      title: "",
-      className: "cursor_pointer",
-      render: (item) => (
-        <>
-          {consolidated && item.payroll_cfdi_person && (
-            <div>
-              <Tooltip placement="top" title="Comprobante de pago">
-                <Button
-                  size="small"
-                  onClick={() => {
-                    console.log(item);
-                    downloadReceipt({
-                      person_id: item.person.id,
-                      payment_period_id: periodSelected.id,
-                      receipt_type: getVoucherTypeStr(
-                        item?.payroll_cfdi_person?.movement_type
-                      ),
-                    });
-                  }}
-                >
-                  <FilePdfOutlined />
-                </Button>
-              </Tooltip>
-            </div>
-          )}
-        </>
-      ),
-    },
+    // {
+    //   title: "",
+    //   className: "cursor_pointer",
+    //   render: (item) => (
+    //     <>
+    //       {consolidated && item.payroll_cfdi_person && (
+    //         <div>
+    //           <Tooltip placement="top" title="Comprobante de pago">
+    //             <Button
+    //               size="small"
+    //               onClick={() => {
+    //                 console.log(item);
+    //                 downloadReceipt({
+    //                   person_id: item.person.id,
+    //                   payment_period_id: periodSelected.id,
+    //                   receipt_type: getVoucherTypeStr(
+    //                     item?.payroll_cfdi_person?.movement_type
+    //                   ),
+    //                 });
+    //               }}
+    //             >
+    //               <FilePdfOutlined />
+    //             </Button>
+    //           </Tooltip>
+    //         </div>
+    //       )}
+    //     </>
+    //   ),
+    // },
     {
       key: "actions",
       className: "cell-actions",
