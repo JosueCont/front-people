@@ -43,14 +43,27 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null,...props})=>{
     const [value, setValue] = useState();
     const arrayDates = []
 
+    const validateData=()=>{
+        let maxData = concept.value // el valor máximo que puede tener un concepto
+        let currentValueData = 0;
+
+        arrayDates.forEach((e)=>{
+            debugger;
+            currentValueData = currentValueData + parseInt(e.value);
+        })
+        console.log(concept, currentValueData)
+    }
+
     const onChange=(dates)=>{
+
         if(dates){
+            //validateData()
             let datesArray =dates?.join(",")?.split(',');
             let lastElement = datesArray[datesArray.length - 1];
             let objDate = {date:lastElement,value:1}
             if(withData){
                 let value = prompt(`Agregar valor para la fecha ${lastElement}`, 1)
-                objDate.value=Number.isInteger(value)?value:1;
+                objDate.value=Number.isInteger(parseInt(value))?parseInt(value):1;
             }
             arrayDates.push(objDate)
             props.onChangeData(arrayDates)

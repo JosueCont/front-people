@@ -702,7 +702,7 @@ const ModalConceptsPayroll = ({
                       <DatePickerHoliDays
                           withData={record.code==='P118' || record.code==='P119'}
                           concept={record}
-                          onChangeData={(dates)=>record.date=dates}
+                          onChangeData={(dates)=>record.dates=dates}
                           multiple={true} />
                   ): 'No aplica'}
                 />
