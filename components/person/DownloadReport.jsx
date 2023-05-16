@@ -45,10 +45,12 @@ const DownloadReport = ({
                 callBack(response.data)
             },1000)
         } catch (e) {
-            setTimeout(()=>{
-                message.error({content: 'Información no obtenida', key})
-            },2000)
             console.log(e)
+            let error = e?.response?.data?.message;
+            let msg = error ? error : 'Información no obtenida';
+            setTimeout(()=>{
+                message.error({content: msg, key})
+            },2000)
         }
     }
 

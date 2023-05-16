@@ -244,15 +244,9 @@ const OptionsExport = ({
         message.loading({content: 'Generando Excel...', key})
         try {
             setLoading(true)
-            let name = getName();
-            console.log("🚀 ~ file: OptionsExport.jsx:226 ~ generateExcel ~ name:", name)
-            let columns = getColumns();
-            console.log("🚀 ~ file: OptionsExport.jsx:228 ~ generateExcel ~ columns:", columns)
-            let source = await getData(2);
-            console.log("🚀 ~ file: OptionsExport.jsx:230 ~ generateExcel ~ source:", source)
-            setFileName(name)
-            setCsvHeaders(columns)
-            setCsvData(source)
+            setFileName(getName())
+            setCsvHeaders(getColumns())
+            setCsvData(await getData(2))
             setTimeout(() => {
                 message.success({content: 'Excel generado', key})
                 setLoading(false)
