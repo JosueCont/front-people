@@ -51,6 +51,7 @@ import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
 import { getAdminRolesOptions } from "../../../redux/catalogCompany";
+import DownloadReport from "../../../components/person/DownloadReport";
 
 const homeScreen = ({
   getAdminRolesOptions,
@@ -640,6 +641,7 @@ const homeScreen = ({
                 Asignar evaluaciones
               </Menu.Item>
             )}
+            <DownloadReport person={item}/>
           </>
         )}
         {permissions.edit && (

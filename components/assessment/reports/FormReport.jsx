@@ -1,0 +1,683 @@
+import React, { useState, useEffect, useMemo, useRef, memo} from 'react';
+import { getFullName, getWork } from '../../../utils/functions';
+import { useSelector } from 'react-redux';
+import { Form, Row, Col, Select, Button, Table, message, Tooltip} from 'antd';
+import { ruleRequired } from '../../../utils/rules';
+import WebApiAssessment from '../../../api/WebApiAssessment';
+import dynamic from 'next/dynamic';
+import {
+    UserOutlined,
+    ProfileOutlined,
+    EyeOutlined,
+} from '@ant-design/icons';
+import ViewList from './ViewList';
+import ModalPP from './ModalPP';
+
+const OptionsExport = dynamic(()=> import('./ReportPDF/OptionsExport'), {ssr: false});
+const ReportPDF = dynamic(()=> import('./ReportPDF/ReportPDF'), {ssr: false});
+const ViewChart = dynamic(()=> import('./ViewChart'), { ssr: false });
+
+const FormReport = ({
+    typeReport,
+    infoReport,
+    setInfoReport,
+    loading,
+    setLoading,
+    columnsMany,
+    setColumnsMany,
+    columns_many,
+    // Props para validaciones
+    showChart = false,
+    showSelectProfile = true,
+    showTitleProfile = false,
+    showTitleWork = true,
+    multiUser = false,
+    multiProfile = false
+}) => {
+
+    const {
+        persons_company,
+        load_persons
+    } = useSelector(state => state.userStore);
+    const {
+        profiles,
+        load_profiles
+    } = useSelector(state => state.assessmentStore);
+    const {
+        current_node,
+        general_config
+    } = useSelector(state => state.userStore);
+
+    const [formReport] = Form.useForm();
+
+    const [isUsers, setIsUsers] = useState(false);
+    const [openModalList, setOpenModalList] = useState(false);
+
+    const [openModalInfo, setOpenModalInfo] = useState(false);
+    const [itemInfo, setItemInfo] = useState({});
+
+    const [openModalChart, setOpenModalChart] = useState(false);
+    const [dataChart, setDataChart] = useState([]);
+    const [typeChart, setTypeChart] = useState('p');
+    
+    const [values, setValues] = useState({});
+
+    const user = Form.useWatch('user_id', formReport);
+    const profile = Form.useWatch('profile_id', formReport);
+
+    useEffect(()=>{
+        formReport.resetFields()
+        setValues({})
+    },[typeReport])
+
+    // useEffect(()=>{
+    //     if(Object.keys(values).length <=0) return;
+    //     const map_ = item => item.id;
+    //     let user_id = values?.selectedUser
+    //         ? Array.isArray(values.selectedUser)
+    //         ? values.selectedUser.map(map_)
+    //         : values.selectedUser?.id : null;
+    //     let profile_id = values?.selectedProfile
+    //         ? Array.isArray(values.selectedProfile)
+    //         ? values.selectedProfile?.map(map_)
+    //         : values?.selectedProfile.id : null;
+    //     let data = {user_id, profile_id};
+    //     formReport.setFieldsValue(data)
+    // },[values])
+
+    const getUser = (user_id) =>{
+        if(!user_id) return multiUser ? [] : {};
+        const find_ = item => item.id == user_id;
+        const filter_ = item => user_id.includes(item.id);
+        let result = multiUser
+            ? persons_company.filter(filter_)
+            : persons_company.find(find_);
+        if(!result) return multiUser ? [] : {};
+        return result;
+    }
+
+    const getProfile = (profile_id) =>{
+        if(!profile_id) return multiProfile ? [] : {};
+        const find_ = item => item.id == profile_id;
+        const filter_ = item => profile_id.includes(item.id);
+        let result = multiProfile
+            ? profiles.filter(filter_)
+            : profiles.find(find_);
+        if(!result) return multiProfile ? [] : {};
+        return result;
+    }
+
+    // Se actualiza según el valor del formulario
+    const currentUser = useMemo(() =>{
+        return getUser(user);
+    },[user])
+
+    //Se actualiza según el valor del formulario
+    const currentProfile = useMemo(()=>{
+        return getProfile(profile);
+    },[profile])
+
+    const getReportCompetences = async (values) =>{
+        setLoading(true)
+        try {
+            let body = {
+                node_id: current_node?.id,
+                user_id: values.user_id,
+                calculation_type: general_config?.calculation_type
+            }
+            let response = await WebApiAssessment.getReportCompetences(body);
+            setInfoReport(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            setInfoReport([])
+            setValues({})
+            let error = e.response?.data?.message;
+            let msg = error ? error : 'Informacióon no obtenida';
+            message.error(msg)
+            console.log(e)
+        }
+    }
+
+    const getReportProfiles = async (values) =>{
+        setLoading(true)
+        try {
+            const filter_ = item => values.user_id?.includes(item.id);
+            const map_ = item => ({id: item.id, fullName: getFullName(item)});
+            const find_ = item => item.id == values.user_id;
+            let body = {
+                profiles: Array.isArray(values.profile_id)
+                    ? values.profile_id : [values.profile_id],
+                users: Array.isArray(values.user_id)
+                    ? persons_company.filter(filter_).map(map_)
+                    : [persons_company.find(find_)].map(map_),
+                calculation_type: general_config?.calculation_type,
+                node_id: current_node?.id
+            }
+            let response = await WebApiAssessment.getReportProfiles(body);
+            setInfoReport(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            setInfoReport([])
+            setValues({})
+            message.error('Información no obtenida')
+            console.log(e)
+        }
+    }
+    
+    const subTitle = (item, subs = 3) => item?.competence?.name.substring(0, subs).toUpperCase();
+    const generateColumns = () =>{
+        let info_columns = currentProfile?.competences;
+        let list_columns = [...columns_many];
+        info_columns.map((item, idx) =>{
+            let title = subTitle(item);
+            let exist = list_columns.some(record => record.comp == title)
+            if(exist) title = subTitle(item, title.length + 1)
+            list_columns.push({
+                title: ()=> (
+                    <Tooltip title={item.competence?.name}>
+                        <span>{title} ({item.level})</span>
+                    </Tooltip>
+                ),
+                comp: title,
+                name: `${item.competence.name} (${item.level})`,
+                nested: [item.competence.id, 'level_person'],
+                width: 35,
+                align: 'center',
+                show: true,
+                render: (record) =>{
+                    return (
+                        <>{getLevelPerson(record, item?.competence?.id)}</>
+                    )
+                }
+            })
+        })
+        list_columns.push({
+            title: 'Compatibilidad',
+            width: 50,
+            align: 'center',
+            show: true,
+            nested: ['profiles','compatibility'],
+            render: (record) =>{
+                let compatibility = record?.profiles?.at(-1)?.compatibility;
+                if(compatibility == 'N/A') return compatibility;
+                return (
+                    <a style={{color: '#1890ff'}}
+                        onClick={()=> showInfo(record)}
+                    >{typeof compatibility == "string"
+                        ? compatibility : `${compatibility?.toFixed(2)}%`}
+                    </a>
+                )
+            }
+        })
+        list_columns.push({
+            title: 'Ver gráfica',
+            width: 50,
+            align: 'center',
+            show: true,
+            render: (record) =>{
+                let compatibility = record?.profiles?.at(-1)?.compatibility;
+                if(compatibility == 'N/A') return <></>;
+                return <EyeOutlined onClick={()=> showChartIndividual(record)}/>;
+            }
+        })
+        let newList = list_columns.filter(item=> item.show);
+        setColumnsMany(newList)
+    }
+
+    const getValues = (values) =>{
+        let selectedUser = getUser(values?.user_id);
+        let selectedProfile = getProfile(values?.profile_id);
+        setValues({selectedUser, selectedProfile})
+    }
+
+    const onFinish = (values) =>{
+        const list = {
+            'p': getReportCompetences,
+            'pp': getReportProfiles,
+            'psp': getReportProfiles,
+            'pps': getReportProfiles,
+            'psc': (e)=>{
+                generateColumns()
+                getReportProfiles(e)
+            }
+        }
+        list[typeReport](values)
+        getValues(values)
+    }
+
+    const onReset = () => {
+        formReport.resetFields()
+        setLoading(false)
+        setInfoReport([])
+        setValues({})
+    }
+
+    const getCompatibility = (item) =>{
+        return item 
+            ? item.profiles
+            ? typeof item.profiles.at(-1).compatibility == "string"
+            ? item.profiles.at(-1).compatibility
+            : `${item.profiles.at(-1).compatibility.toFixed(2)}%`
+            : 'Pendiente'
+            : 'Pendiente';
+    }
+
+    const getWorkById = (id) =>{
+        let user = persons_company.find(item => item.id == id);
+        return getWork(user);
+    }
+
+    const getLevelPerson = (record, id) =>{
+        if(!id) return 'N/A'
+        const find_ = item => item.id == id
+        let profiles = record?.profiles?.at(-1).competences
+        if(!profiles) return 'N/A'
+        let result = profiles.find(find_)
+        if(!result) return 'N/A'
+        return result.level_person
+    }
+
+    const showModalList = (isUsers = false) =>{
+        setIsUsers(isUsers)
+        setOpenModalList(true)
+    }
+
+    const closeModalList = () =>{
+        setIsUsers(false)
+        setOpenModalList(false)
+    }
+
+    const showChartIndividual = (item) =>{
+        if(typeReport == 'pps'){
+            let fullName = infoReport?.at(-1)?.persons?.fullName;
+            let data = {persons: {fullName}, profiles: [item]};
+            setDataChart([data]);
+        } else setDataChart([item]);
+        setTypeChart('pp')
+        setOpenModalChart(true)
+    }
+
+    const showInfo = (item) =>{
+        if(typeReport == 'pps'){
+            let fullName = infoReport?.at(-1)?.persons?.fullName;
+            let data = {persons: {fullName}, profiles: [item]};
+            setItemInfo(data);
+        } else setItemInfo(item);
+        setOpenModalInfo(true)
+    }
+
+    const closeInfo = () =>{
+        setItemInfo({})
+        setOpenModalInfo(false)
+    }
+
+    const columns_p = [
+        {
+            title: 'Competencia',
+            dataIndex: ['competence','name'],
+            key: ['competence','name']
+        },
+        {
+            title: 'Nivel',
+            dataIndex: 'level',
+            align: 'center',
+            render: (item) => item == 0 ? 'N/A' : item
+        },
+        {
+            title: 'Descripción',
+            dataIndex: 'description',
+            render: (item) => item || 'N/A'
+        },
+    ]
+
+    const columns_pp = [
+        {
+            title: 'Competencia',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Nivel persona',
+            dataIndex: 'level_person',
+            key: 'level_person',
+            align: 'center'
+        },
+        {
+            title: 'Descripción',
+            dataIndex: 'description_person',
+            render: (item) => item || 'N/A'
+        },
+        {
+            title: 'Nivel perfil',
+            dataIndex: 'level_profile',
+            key: 'level_profile',
+            align: 'center',
+        },
+        {
+            title: 'Descripción',
+            dataIndex: 'description_profile',
+            render: (item) => item || 'N/A'
+        },
+        {
+            title: 'Compatibilidad',
+            dataIndex: 'compatibility',
+            align: 'center',
+            render: (item) => typeof(item) == "string"
+                ? item : `${item?.toFixed(2)}%`
+        }
+    ]
+
+    const columns_psp = [
+        {
+            title: 'Persona',
+            dataIndex: ['persons','fullName'],
+            key: ['persons','fullName']
+        },
+        {
+            title: 'Compatibilidad',
+            nested: ['profiles','compatibility'],
+            render: (item) =>{
+                let compatibility = item?.profiles?.at(-1)?.compatibility;
+                if(compatibility == 'N/A') return compatibility;
+                return (
+                    <a style={{color: '#1890ff'}}
+                        onClick={()=> showInfo(item)}
+                    >{typeof compatibility == "string"
+                        ? compatibility : `${compatibility?.toFixed(2)}%`}
+                    </a>
+                )
+            }
+        },
+        {
+            title: 'Ver gráfica',
+            render: (item) =>{
+                let compatibility = item?.profiles?.at(-1)?.compatibility;
+                if(compatibility == 'N/A') return <></>;
+                return <EyeOutlined onClick={()=> showChartIndividual(item)}/>;
+            }
+        }
+    ]
+
+    const columns_pps = [
+        {
+            title: 'Perfil',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Compatibilidad',
+            dataIndex: 'compatibility',
+            render: (item) =>{
+                if(item == 'N/A') return item;
+                return (
+                    <a style={{color: '#1890ff'}}
+                        onClick={()=> showInfo(item)}
+                    >
+                        {typeof item == "string" ? item: `${item?.toFixed(2)}%`}
+                    </a>
+                )
+            }
+        },
+        {
+            title: 'Ver gráfica',
+            render: (item) =>{
+                if(item?.compatibility == 'N/A') return <></>;
+                return <EyeOutlined onClick={()=> showChartIndividual(item)}/>;
+            }
+        }
+    ]
+
+    const list_columns = {
+        'p': columns_p,
+        'pp': columns_pp,
+        'psp': columns_psp,
+        'pps': columns_pps,
+        'psc': columnsMany
+    }
+
+    const data_report = {
+        'pp': [...infoReport]?.at(-1)?.profiles?.at(-1)?.competences,
+        'pps': [...infoReport]?.at(-1)?.profiles
+    }
+
+    const getPropSelect = (valid) => {
+        if(!valid) return {};
+        return {
+            mode: 'multiple',
+            maxTagCount: 'responsive',
+        };
+    }
+
+    return (
+        <>
+            <Row style={{padding: 16}}>
+                <Col span={24}>
+                    <Row justify='space-between'>
+                        <Col span={showSelectProfile ? 16 : 10}>
+                            <Form
+                                form={formReport}
+                                onFinish={onFinish}
+                                layout='vertical'
+                            >
+                                <Row style={{width: '100%'}}>
+                                    <Col span={24} style={{display: 'flex', gap: 16}}>
+                                        <Form.Item
+                                            label={multiUser ? 'Usuarios' : 'Usuario'}
+                                            name='user_id'
+                                            style={{flex: '1'}}
+                                            rules={[ruleRequired]}
+                                        >
+                                            <Select
+                                                showSearch
+                                                {...getPropSelect(multiUser)}
+                                                disabled={load_persons}
+                                                loading={load_persons}
+                                                placeholder='Seleccionar una opción'
+                                                notFoundContent='No se encontraron resultados'
+                                                optionFilterProp='children'
+                                            >
+                                                {persons_company.length > 0 && persons_company.map(item => (
+                                                    <Select.Option value={item.id} key={item.id}>
+                                                        {getFullName(item)}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
+                                        </Form.Item>
+                                        {showSelectProfile && (
+                                            <Form.Item
+                                                label={multiProfile ? 'Perfiles' : 'Perfil'}
+                                                name='profile_id'
+                                                style={{flex: '1'}}
+                                                rules={[ruleRequired]}
+                                            >
+                                                <Select
+                                                    showSearch
+                                                    {...getPropSelect(multiProfile)}
+                                                    disabled={load_profiles}
+                                                    loading={load_profiles}
+                                                    placeholder='Seleccionar una opción'
+                                                    notFoundContent='No se encontraron resultados'
+                                                    optionFilterProp='children'
+                                                >
+                                                    {profiles.length > 0 && profiles.map(item => (
+                                                        <Select.Option value={item.id} key={item.id}>
+                                                            {item.name}
+                                                        </Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        )}
+                                        <Form.Item style={{marginTop: 'auto'}}>
+                                            <Button
+                                                loading={loading}
+                                                htmlType='submit'
+                                            >
+                                                Generar
+                                            </Button>
+                                        </Form.Item>
+                                        <Form.Item style={{marginTop: 'auto'}}>
+                                            <Button
+                                                disabled={loading}
+                                                htmlType='button'
+                                                onClick={()=> onReset()}
+                                            >
+                                                Reiniciar
+                                            </Button>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                        <Col style={{display: 'flex', gap: 16}}>
+                            <OptionsExport
+                                infoReport={infoReport}
+                                typeReport={typeReport}
+                                currentUser={values?.selectedUser}
+                                currentProfile={values?.selectedProfile}
+                                columns={list_columns[typeReport]}
+                                dataSource={data_report[typeReport] ?? infoReport}
+                                disabled={loading || infoReport?.length <=0}
+                            />
+                            {/* {typeReport == 'pp' && (
+                                <Button
+                                    disabled={infoReport?.length <=0}
+                                    icon={<EyeOutlined />}
+                                    onClick={()=> showModalChart()}
+                                >
+                                    Ver gráfica
+                                </Button>
+                            )} */}
+                            {multiUser && (
+                                <Button
+                                    icon={<UserOutlined />}
+                                    disabled={currentUser?.length <= 0}
+                                    onClick={()=> showModalList(true)}
+                                    style={{marginTop: 'auto', marginBottom: 24}}
+                                >
+                                    Usuarios ({currentUser?.length})
+                                </Button>
+                            )}
+                            {multiProfile && (
+                                <Button
+                                    icon={<ProfileOutlined />}
+                                    disabled={currentProfile?.length <= 0}
+                                    onClick={()=> showModalList(false)}
+                                    style={{marginTop: 'auto', marginBottom: 24}}
+                                >
+                                    Perfiles ({currentProfile?.length})
+                                </Button>
+                            )}
+                        </Col>
+                    </Row>
+                </Col>
+                {Object.keys(currentUser).length > 0 && !Array.isArray(currentUser) && (
+                    <Col span={24} style={{marginBottom: 24}}>
+                        <div className='body-list-items scroll-bar'>
+                            <div className='item-list-row default'>
+                                <p>Usuario: {Object.keys(values)?.length > 0
+                                    ? getFullName(values?.selectedUser)
+                                    : getFullName(currentUser)}</p>
+                            </div>
+                            {showTitleWork && (
+                                <div className='item-list-row default'>
+                                    <p>Puesto: {Object.keys(values).length > 0
+                                        ? getWork(values?.selectedUser)
+                                        : getWork(currentUser)}</p>
+                                </div>
+                            )}
+                            {showTitleProfile ? (
+                                <>
+                                    <div className='item-list-row normal'>
+                                        <p>Perfil: {infoReport?.length > 0
+                                            ? infoReport.at(-1)?.profiles?.at(-1)?.name
+                                            : Object.keys(currentProfile).length > 0
+                                            ? currentProfile.name : 'Pendiente'}</p>
+                                    </div>
+                                    <div className='item-list-row normal'>
+                                        <p>Compatibilidad: {infoReport?.length > 0
+                                            ? getCompatibility(infoReport.at(-1)) : 'Pendiente'}</p>
+                                    </div>
+                                </>
+                            ) : null}
+                        </div>
+                    </Col>
+                )}
+                <Col span={24}>
+                    <Table
+                        bordered
+                        size='small'
+                        loading={loading}
+                        dataSource={data_report[typeReport] ?? infoReport}
+                        columns={list_columns[typeReport]}
+                        scroll={typeReport == 'pp' ? {y: 500} : columnsMany.length > 8 ? { x: 1500 }: {}}
+                        pagination={{
+                            hideOnSinglePage: true,
+                            showSizeChanger: false
+                        }}
+                    />
+                </Col>
+                {showChart && (
+                    <Col span={24} style={{marginTop: 24}}>
+                        {infoReport?.length > 0 ? (
+                            <div style={{maxWidth: 800, margin: '0px auto'}}>
+                                <ViewChart
+                                    isModal={false}
+                                    infoReport={infoReport}
+                                    typeReport={typeReport}
+                                />
+                            </div>
+                        ):(
+                            <div className='placeholder-list-items graph'>
+                                <p>Reporte no generado</p>
+                                <p>Gráfica en espera</p>
+                            </div>
+                        )}
+                    </Col>
+                )}
+                {/* <Col span={24}>
+                    <ReportPDF
+                        infoReport={infoReport}
+                        typeReport={typeReport}
+                        currentUser={currentUser}
+                        currentProfile={currentProfile}
+                        columns={list_columns[typeReport]}
+                    />
+                </Col> */}
+            </Row>
+            <ViewList
+                visible={openModalList}
+                isUsers={isUsers}
+                close={closeModalList}
+                listData={isUsers ? currentUser : currentProfile}
+                setListData={e =>{
+                    let ids = e.map(item => item.id);
+                    let data = isUsers ? {user_id: ids} : {profile_id: ids};
+                    formReport.setFieldsValue(data);
+                }}
+            />
+            {openModalChart && (
+                 <ViewChart
+                    visible={openModalChart}
+                    infoReport={dataChart}
+                    typeReport={typeChart}
+                    close={()=>{
+                        setOpenModalChart(false)
+                        setDataChart([])
+                        setTypeChart('p')
+                    }}
+                />
+            )}
+            <ModalPP
+                visible={openModalInfo}
+                record={itemInfo}
+                onClose={closeInfo}
+            />
+        </>
+    )
+}
+
+export default memo(FormReport)
