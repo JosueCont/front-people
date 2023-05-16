@@ -149,14 +149,17 @@ const OptionsExport = ({
             : infoReport;
     }
 
+    const getKey = (record, key) =>{
+        return Array.isArray(record[key])
+            ? record[key].join('.')
+            : record[key];
+    }
+
     const getColumns = () =>{
         return [...columns].reduce((acc, current) =>{
-            if(!current.dataIndex && !current.nested) return acc;            
-            let key = current.nested
-                ? current.nested.join('.')
-                : Array.isArray(current.dataIndex)
-                ? current.dataIndex.join('.')
-                : current.dataIndex;
+            if(!current.dataIndex && !current.nested) return acc;
+            let index = current?.nested ? 'nested' : 'dataIndex';
+            let key = getKey(current, index);
             let label = current.name
                 ? current.name : current.title;
             return [...acc, {label, key}];
