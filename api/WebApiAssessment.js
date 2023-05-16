@@ -223,7 +223,8 @@ class WebApiAssessment {
     return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/competence-report/`, data)
   }
   static getReportProfiles (data){
-    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/profiles-report/`, data)
+    /* return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/profiles-report/`, data) */
+    return WebApi.ApisType(`/person/profile-report/`, "post", data);
   }
 
   //Asignaciones por persona

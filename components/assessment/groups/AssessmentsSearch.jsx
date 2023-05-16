@@ -15,6 +15,7 @@ import {
     Typography,
     Spin,
     Tooltip,
+    Radio,
 } from "antd";
 import {
     SearchOutlined,
@@ -29,13 +30,16 @@ import { API_URL } from "../../../config/config";
 
 
 const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
-    const {Title} = Typography
+    const {Title, Text} = Typography
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
     const [showModalCreate, setShowModalCreate] = useState(false);
     const [showModalFile, setShowModalFile] = useState(false)
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false)
+    const [action, setAction] = useState(null)
+    const [showErrorAction, setShowErrorAction] = useState(false)
+    const [showErrorFile, setShowErrorFile] = useState(false)
 
     const propsUpl = {
         onRemove: (file) => {
@@ -89,14 +93,29 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
 
     const closeModalFile = () => {
         setShowModalFile(false)
+        setAction(null)
+        setShowErrorAction(false)
+        setShowErrorFile(false)
         setFileList([])
     }
 
     const sendFile = async () => {
+        setShowErrorAction(false)
+        setShowErrorFile(false)
+        if (!action){
+            setShowErrorAction(true)
+            return;
+            
+        }
+        if (fileList.length <= 0){
+            setShowErrorFile(true);
+            return
+        }
         setLoading(true)
         const formData = new FormData();
         formData.append('file', fileList[0])
         formData.append('node', currentNode.id)
+        formData.append('action', action)
 
         try {
             let resp = await WebApiAssessment.uploadMassiveGroups(formData);
@@ -114,6 +133,17 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
             }
     }
     
+
+    const optionsRadio = [
+        { label: 'Reemplazar', value: 1 },
+        { label: 'Duplicar', value: 2 },
+        { label: 'Omitir', value: 3},
+    ]
+
+    const ChangeAction = (val) => {
+        console.log('action',val)
+        setAction(val?.target?.value)
+    }
 
     return(
         <>
@@ -187,6 +217,38 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                             <Upload maxCount={1} {...propsUpl}>
                                 <Button icon={<UploadOutlined />}>Select File</Button>
                             </Upload>
+                            {
+                                showErrorFile &&
+                                <><br/>
+                                <Text type='danger'>
+                                    Debes elegir un archivo
+                                </Text>
+                                </>
+                            }
+                        </Col>
+                    </Row>
+                    <Row justify="center">
+                        <Col style={{ paddingTop:20, textAlign:'center' }}>
+                            <b>
+                                Que accion desea realizar si el grupo ya existe 
+                            </b>
+                        </Col>
+                        <Col >
+                            <Radio.Group
+                                options={optionsRadio}
+                                onChange={ChangeAction}
+                                value={action}
+                                optionType="button"
+                                buttonStyle="solid"
+                            />
+                            {
+                                showErrorAction &&
+                                <><br/>
+                                <Text type='danger'>
+                                    Selecciona una acción
+                                </Text>
+                                </>
+                            }
                         </Col>
                     </Row>
                     <Divider/>
