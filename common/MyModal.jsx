@@ -33,6 +33,7 @@ const MyModal = ({
     title,
     visible,
     close,
+    mask = true,
     widthModal = 600,
     closable = true
 }) =>{
@@ -46,6 +47,7 @@ const MyModal = ({
             footer={null}
             width={widthModal}
             closable={closable}
+            mask={mask}
         >
             <div className='content-mymodal'>
                 <h3>{title}</h3>

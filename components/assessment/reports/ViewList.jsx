@@ -27,12 +27,12 @@ const ViewList = ({
     const [listItems, setListItems] = useState([]);
 
     useEffect(()=>{
-        if(listData.length > 0) setListItems(listData);
+        if(listData?.length > 0) setListItems(listData);
     },[listData])
 
     const getProperties = (item) =>{
         return isUsers ? {
-            avatar: <Avatar src={getPhoto(item)}/>,
+            // avatar: <Avatar src={getPhoto(item)}/>,
             title: getFullName(item),
             description: getWork(item)
         } : {
