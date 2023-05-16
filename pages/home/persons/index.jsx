@@ -968,7 +968,7 @@ const homeScreen = ({
     <CheckCircleOutlined /> Usuarios creados: { correct }
     <br />
     <br />
-    <CloseCircleOutlined /> Errores: <br/>
+    <CloseCircleOutlined /> Errores: {errors.length} <br/>
      <ListError errors={errors} />
     </div>
   );
