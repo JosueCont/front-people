@@ -667,6 +667,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/node-iuss-configuration/${data.id}/`, "put", data)
   }
 
+  static CreateUIStoreUsers(data){
+    return WebApi.ApisType('/iuss/sync-persons-to-iuss/', "post", data)
+  }
+
 }
 
 export default WebApiPeople;

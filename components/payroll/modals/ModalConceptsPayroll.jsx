@@ -22,6 +22,7 @@ import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { departureMotive } from "../../../utils/constant";
 import moment from "moment";
+import DatePickerHoliDays from "../DatePickerHolidays";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -692,6 +693,18 @@ const ModalConceptsPayroll = ({
                         : `$ 0.00`}
                     </div>
                   )}
+                />
+                <Column
+                  title={'Fechas'}
+                  align={'center'}
+                  key={'date'}
+                  render={(record)=>record.data_type == 2 ? (
+                      <DatePickerHoliDays
+                          withData={record.code==='P118' || record.code==='P119'}
+                          concept={record}
+                          onChangeData={(dates)=>record.dates=dates}
+                          multiple={true} />
+                  ): 'No aplica'}
                 />
                 <Column
                   title="Acciones"
