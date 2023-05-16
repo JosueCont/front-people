@@ -116,6 +116,10 @@ const homeScreen = ({
   const [khonnectId, setKhonnectId] = useState("");
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [errors, setErrors] = useState([])
+  const [ modalError, setModalError ] = useState(false)
+  const applications = props && props.config && props.config.applications || []
+  let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -602,14 +606,17 @@ const homeScreen = ({
         {/*<Menu.Item key="3" onClick={() => handleDeactivate()}>*/}
         {/*  Desactivar*/}
         {/*</Menu.Item>*/}
+        {
+          enableStore && 
+          <Menu.Item key="8" onClick={() => showModalUISS()} icon={<SendOutlined />}>
+            Enviar a UI Store
+          </Menu.Item>
+        }
         {showSynchronizeYNL && (
           <Menu.Item key="6" onClick={() => showModalSynchronizeYNL()} icon={<SyncOutlined />}>
             Sincronizar YNL
           </Menu.Item>
         )}
-        <Menu.Item key="8" icon={<SendOutlined />}>
-          Enviar a UI Store
-        </Menu.Item>
         <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
@@ -684,6 +691,18 @@ const homeScreen = ({
         >
           Descargar carta de renuncia
         </Menu.Item>
+        {
+          enableStore && 
+          <Menu.Item key="9" 
+            icon={<SendOutlined />}
+            onClick={() => {
+              setPersonsToSendUIStore([item]),
+              showModalUISS()
+            }}
+          >
+            Enviar a UI Store
+          </Menu.Item>
+        }
         {showSynchronizeYNL && (
           <Menu.Item
             key="6"
@@ -934,6 +953,23 @@ const homeScreen = ({
     </div>
   );
 
+  const AlertSentToUiStore = () => (
+    <div>
+      Las siguientes personas serán creadas en UI Store, ¿Desea continuar?
+      <br />
+      <br />
+      <ListElementsSendToUiStore personsToSendUIStore={personsToSendUIStore} />
+    </div>
+  );
+
+  const AlertErrors = () => (
+    <div>
+    <br />
+    <br />
+    <ListError errors={errors} />
+    </div>
+  );
+
   const AlertAddImmediateSupervisor = () => (
     <div>
       {personsToAddImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
@@ -986,6 +1022,39 @@ const homeScreen = ({
       </div>
     );
   };
+
+  const ListElementsSendToUiStore = ({ personsToSendUIStore }) => {
+    return (
+      <div>
+        {personsToSendUIStore.map((p) => {
+          return (
+            <>
+              <Row key={p.id} style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo_thumbnail} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );    
+  }
+
+  const ListError = ({ errors }) => {
+    return (
+      <div>
+        {errors.map((p, index) => {
+          return (
+            <>
+              <Row key={index + 1} style={{ marginBottom: 15 }}>
+                <span>{p}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );    
+  }
 
   const ListElementsToAddImmediateSupervisor = ({ personsToAddImmediateSupervisor }) => {
     return (
@@ -1147,6 +1216,10 @@ const homeScreen = ({
     modalSynchronizeYNL ? setModalSynchronizeYNL(false) : setModalSynchronizeYNL(true);
   };
 
+  const showModalUISS = () => {
+    showModalSendIUSS? setShowModalSendIUSS(false) : setShowModalSendIUSS(true)
+  }
+
   const showModalAddImmediateSupervisor = () => {
     personsToAddImmediateSupervisor.length > 0 ? setModalAddImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
   };
@@ -1205,6 +1278,82 @@ const homeScreen = ({
       setModalSynchronizeYNL(false);
     }
   }, [modalSynchronizeYNL]);
+
+  const sendToUIStore = () => {
+    
+    let arrayIds = null
+
+    if(personsToSendUIStore.length == 1){
+      let idPerson = personsToSendUIStore[0].id
+      arrayIds = [idPerson]
+    } else {
+      let arr = personsToSendUIStore.map((person) => person.id)
+      arrayIds = arr
+    }
+
+    let data = {
+      node_id: props.currentNode.id,
+      persons_id: arrayIds
+    }
+
+    setLoading(true)
+
+    WebApiPeople.CreateUIStoreUsers(data)
+    .then((res) => {
+      console.log(res)
+      let errors = res.data.error_details || []
+      setErrors(errors)
+      errors.length > 0 && setModalError(true)
+      message.success('Usuarios enviados correctamente')
+    })
+    .catch((e) => {
+      message.error('Error al enviar usuarios')
+    })
+    .finally(() => {
+      setShowModalSendIUSS(false)
+      filterPersonName();
+      setPersonsToSendUIStore([])
+      getListPersons()
+      setLoading(false)
+    })
+
+  }
+
+  useEffect(() => {
+    if(showModalSendIUSS && personsToSendUIStore.length > 0){
+      Modal.confirm({
+        title: 'Enviar a UI Store',
+        icon: <SendOutlined />,
+        content: <AlertSentToUiStore />,
+        okText: 'Sí, enviar',
+        cancelText: "Cancelar ",
+        okButtonProps: {
+          danger: true,
+        },
+        onOk: () => {
+          sendToUIStore()
+        },
+        onCancel: () => {
+          setShowModalSendIUSS(false)
+        }
+        
+      })
+    }
+  },[showModalSendIUSS])
+
+  useEffect(() =>{
+    if(modalError && errors.length > 0){
+      Modal.error({
+        title: 'Se encontraron estos errores',
+        cancelText: "Cerrar",
+        content: <AlertErrors />,
+        onCancel: () => {
+          setModalError(false)
+          setErrors([])
+        }
+      })
+    }
+  },[modalError])
 
   useEffect(() => {
     if (Object.keys(route.query).length === 0) {
