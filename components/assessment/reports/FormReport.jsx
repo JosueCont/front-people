@@ -410,14 +410,17 @@ const FormReport = ({
         },
         {
             title: 'Compatibilidad',
-            dataIndex: 'compatibility',
+            nested: 'compatibility',
             render: (item) =>{
-                if(item == 'N/A') return item;
+                if(item?.compatibility == 'N/A') return item?.compatibility;
                 return (
                     <a style={{color: '#1890ff'}}
                         onClick={()=> showInfo(item)}
                     >
-                        {typeof item == "string" ? item: `${item?.toFixed(2)}%`}
+                        {typeof item?.compatibility == "string"
+                            ? item?.compatibility
+                            : `${item?.compatibility?.toFixed(2)}%`
+                        }
                     </a>
                 )
             }
@@ -450,6 +453,13 @@ const FormReport = ({
             mode: 'multiple',
             maxTagCount: 'responsive',
         };
+    }
+
+    const getRowKey = (record) =>{
+        if(typeReport == 'p') return record?.competence?.id;
+        if(['psc', 'psp'].includes(typeReport)) return record?.persons?.id;
+        // pp pps
+        return record?.id;
     }
 
     return (
@@ -610,6 +620,7 @@ const FormReport = ({
                     <Table
                         bordered
                         size='small'
+                        rowKey={getRowKey}
                         loading={loading}
                         dataSource={data_report[typeReport] ?? infoReport}
                         columns={list_columns[typeReport]}
