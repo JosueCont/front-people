@@ -116,6 +116,8 @@ const homeScreen = ({
   const [khonnectId, setKhonnectId] = useState("");
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [errors, setErrors] = useState([])
+  const [ modalError, setModalError ] = useState(false)
   const applications = props && props.config && props.config.applications || []
   let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
 
@@ -960,6 +962,14 @@ const homeScreen = ({
     </div>
   );
 
+  const AlertErrors = () => (
+    <div>
+    <br />
+    <br />
+    <ListError errors={errors} />
+    </div>
+  );
+
   const AlertAddImmediateSupervisor = () => (
     <div>
       {personsToAddImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
@@ -1022,6 +1032,22 @@ const homeScreen = ({
               <Row key={p.id} style={{ marginBottom: 15 }}>
                 <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );    
+  }
+
+  const ListError = ({ errors }) => {
+    return (
+      <div>
+        {errors.map((p, index) => {
+          return (
+            <>
+              <Row key={index + 1} style={{ marginBottom: 15 }}>
+                <span>{p}</span>
               </Row>
             </>
           );
@@ -1269,12 +1295,15 @@ const homeScreen = ({
       node_id: props.currentNode.id,
       persons_id: arrayIds
     }
-    console.log('Persons', data)
 
     setLoading(true)
 
     WebApiPeople.CreateUIStoreUsers(data)
     .then((res) => {
+      console.log(res)
+      let errors = res.data.error_details || []
+      setErrors(errors)
+      errors.length > 0 && setModalError(true)
       message.success('Usuarios enviados correctamente')
     })
     .catch((e) => {
@@ -1282,6 +1311,7 @@ const homeScreen = ({
     })
     .finally(() => {
       setShowModalSendIUSS(false)
+      filterPersonName();
       setPersonsToSendUIStore([])
       getListPersons()
       setLoading(false)
@@ -1310,6 +1340,20 @@ const homeScreen = ({
       })
     }
   },[showModalSendIUSS])
+
+  useEffect(() =>{
+    if(modalError && errors.length > 0){
+      Modal.error({
+        title: 'Se encontraron estos errores',
+        cancelText: "Cerrar",
+        content: <AlertErrors />,
+        onCancel: () => {
+          setModalError(false)
+          setErrors([])
+        }
+      })
+    }
+  },[modalError])
 
   useEffect(() => {
     if (Object.keys(route.query).length === 0) {
