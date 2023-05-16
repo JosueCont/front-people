@@ -34,8 +34,8 @@ const ReportHeader = ({
                 )}
                 <View style={[
                     styles.user_info,
-                    {borderLeft: photo ? '2px solid #d9d9d9' : 'none',
-                    paddingLeft: photo ? 8 : 0}
+                    {borderLeft: showPhoto ? '2px solid #d9d9d9' : 'none',
+                    paddingLeft: showPhoto ? 8 : 0}
                 ]}>
                     <Text style={styles.user_name}>{name}</Text>
                     {description && (

@@ -34,7 +34,7 @@ const OptionsExport = ({
 
     const getName = () =>{
         let name_report = {
-            'p': 'Persona',
+            'p': 'Reporte competencias',
             'pp': 'Persona - Perfil',
             'psp': 'Personas - Perfil',
             'pps': 'Persona - Perfiles',
