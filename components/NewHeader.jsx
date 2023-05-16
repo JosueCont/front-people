@@ -15,7 +15,7 @@ import {
   Badge,
   Alert,
   Select,
-  Image,
+  Image, Grid,
 } from "antd";
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -33,9 +33,12 @@ import { getCurrentURL } from "../utils/constant";
 import ButtonWizardLight from "./payroll/ButtonWizardLight";
 import { userId } from "../libs/auth";
 
+const { useBreakpoint } = Grid;
+
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
   const router = useRouter();
+  const screens = useBreakpoint();
   const { pathname } = router;
   const { Header } = Layout;
   const [logOut, setLogOut] = useState(false);
@@ -254,7 +257,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col>
+                <Space size={"middle"}>
               <Image
+                  className={'header__logo'}
                 preview={false}
                 onClick={() => router.push("/dashboard")}
                 style={{
@@ -268,14 +273,14 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 }
               />
               <Image
+                  className={'header__logo'}
                 preview={false}
                 onClick={() => router.push("/dashboard")}
                 style={{
                   maxWidth: 100,
                   margin: "auto",
                   maxHeight: 50,
-                  cursor: "pointer",
-                  paddingLeft: "24px"
+                  cursor: "pointer"
                 }}
                 src={
                   !hideLogo && mainLogo
@@ -283,6 +288,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                     : null
                 }
               />
+                </Space>
             </Col>
             <Col>
               {person && (
@@ -291,11 +297,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   style={{ float: "right" }}
                   key={"menu_user_" + props.currentKey}
                 >
-                  <Space size={"large"}>
-                    <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span>
+                  <Space size={"middle"}>
+                    {screens.sm && screens.md && <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span> }
                     <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
+                            className={'header__dropdown_apps'}
                           style={{
                             color: "white",
                             fontSize: 30,

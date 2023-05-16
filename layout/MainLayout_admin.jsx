@@ -352,7 +352,7 @@ const MainLayoutAdmin = ({
                 }
               />
             )}
-            <Content>
+            <Content className={'main_container'}>
               <div className="div-main-layout">{props.children}</div>
             </Content>
           </Layout>

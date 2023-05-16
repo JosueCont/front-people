@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import {Grid, Layout, Menu} from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import Icon, {
@@ -28,6 +28,8 @@ import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../c
 import _ from "lodash"
 const { Sider, Header, Content, Footer } = Layout;
 
+const { useBreakpoint } = Grid;
+
 const MainSider = ({
   user,
   hideMenu,
@@ -38,6 +40,7 @@ const MainSider = ({
   ...props
 }) => {
   const router = useRouter();
+  const screens = useBreakpoint();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
@@ -180,13 +183,16 @@ const MainSider = ({
     return items;
   }
 
-  return (
+  return (<>
+  {!collapsed && (screens.xs || screens.sm  || screens.md) && <div className={'sider-overlay'}/> }
     <Sider
       collapsible
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
       theme={theme}
       width={250}
+      breakpoint="lg"
+      collapsedWidth="80"
     >
       <div className="logo" />
       <Menu
@@ -198,7 +204,7 @@ const MainSider = ({
         items={getMenuItems()}
       />
     </Sider>
-  );
+</>);
 
   /*return (
     <>

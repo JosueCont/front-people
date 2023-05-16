@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-import webReducerUser, { doGetGeneralConfig } from "./UserDuck";
+import webReducerUser, { doGetGeneralConfig, changeLanguage } from "./UserDuck";
 import webReducerCatalog, {doCompanySelectedCatalog, senData} from "./catalogCompany";
 import fiscalDuck from "./fiscalDuck";
 import IntranetDuck from "./IntranetDuck";
@@ -36,6 +36,7 @@ const composeEnhancers =
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 export default () => {
+  changeLanguage()(store.dispatch)
   doGetGeneralConfig()(store.dispatch);
   doCompanySelectedCatalog()(store.dispatch);
   return store;
