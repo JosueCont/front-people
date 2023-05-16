@@ -10,6 +10,25 @@ import {
 } from '@react-pdf/renderer';
 import { Table, CardTable, theme } from '../ReportPDF/ReportUtils';
 
+const styles = StyleSheet.create({
+    section: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8
+    },
+    title:{
+        textAlign: 'center',
+        fontSize: 10,
+        color: theme.color.black
+    },
+    content_img: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        maxHeight: 400
+    }
+})
+
 const ReportPSP = ({
     columns,
     dataSource
@@ -42,24 +61,5 @@ const ReportPSP = ({
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    section: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px'
-    },
-    title:{
-        textAlign: 'center',
-        fontSize: 10,
-        color: theme.color.black
-    },
-    content_img: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        maxHeight: 400
-    }
-})
 
 export default ReportPSP

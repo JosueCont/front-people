@@ -7,62 +7,6 @@ import {
 } from '@react-pdf/renderer';
 import { theme } from './ReportUtils';
 
-const ReportHeader = ({
-    name,
-    description,
-    title,
-    info,
-    photo,
-    showPhoto
-}) => {
-
-    const noValid = [undefined, null, "", " "];
-
-    return (
-        <View style={styles.header}>
-            <View style={styles.user_content}>
-                {showPhoto && (
-                    <Image
-                        src={!noValid.includes(photo) ? { 
-                            uri: photo, 
-                            method: "GET", 
-                            headers: {"Cache-Control": "no-cache"}, 
-                            body: ""
-                        } : '/images/usuario.png'}
-                        style={styles.user_profile}
-                    />
-                )}
-                <View style={[
-                    styles.user_info,
-                    {borderLeft: showPhoto ? '2px solid #d9d9d9' : 'none',
-                    paddingLeft: showPhoto ? 8 : 0}
-                ]}>
-                    <Text style={styles.user_name}>{name}</Text>
-                    {description && (
-                        <Text style={styles.user_extra}>
-                            {description}
-                        </Text>
-                    )}
-                </View>
-            </View>
-            {(title || info) && (
-                <View style={styles.extra_content}>
-                    {title && (
-                        <Text style={styles.user_name}>
-                            {title}
-                        </Text>
-                    )}
-                    {info && (
-                        <Text style={styles.user_extra}>
-                            {info}
-                        </Text>
-                    )}
-                </View>
-            )}
-        </View>
-    )
-}
-
 const styles = StyleSheet.create({
     logo_content:{
         display: 'flex',
@@ -118,16 +62,66 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         gap: 2
     },
-    // date_time: {
-    //     display: 'flex',
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     gap: 4
-    // },
     extra_text: {
         fontSize: 12,
         color: theme.color.black
     }
 })
+
+const ReportHeader = ({
+    name,
+    description,
+    title,
+    info,
+    photo,
+    showPhoto
+}) => {
+
+    const noValid = [undefined, null, "", " "];
+
+    return (
+        <View style={styles.header}>
+            <View style={styles.user_content}>
+                {showPhoto && (
+                    <Image
+                        src={!noValid.includes(photo) ? { 
+                            uri: photo, 
+                            method: "GET", 
+                            headers: {"Cache-Control": "no-cache"}, 
+                            body: ""
+                        } : '/images/usuario.png'}
+                        style={styles.user_profile}
+                    />
+                )}
+                <View style={[
+                    styles.user_info,
+                    {borderLeft: showPhoto ? '2px solid #d9d9d9' : 'none',
+                    paddingLeft: showPhoto ? 8 : 0}
+                ]}>
+                    <Text style={styles.user_name}>{name}</Text>
+                    {description && (
+                        <Text style={styles.user_extra}>
+                            {description}
+                        </Text>
+                    )}
+                </View>
+            </View>
+            {(title || info) && (
+                <View style={styles.extra_content}>
+                    {title && (
+                        <Text style={styles.user_name}>
+                            {title}
+                        </Text>
+                    )}
+                    {info && (
+                        <Text style={styles.user_extra}>
+                            {info}
+                        </Text>
+                    )}
+                </View>
+            )}
+        </View>
+    )
+}
 
 export default ReportHeader
