@@ -18,7 +18,7 @@ const ReportPSP = ({
     //    <Table data={dataSource} columns={columns}/>
         <View style={styles.section}>
             {dataSource?.map((item, idx) => (
-                <React.Fragment key={idx}>
+                <View key={idx} style={styles.section}>
                     {item.profiles?.competences?.map((record, index) => {
                         if(index == 0){
                             return (
@@ -37,7 +37,7 @@ const ReportPSP = ({
                             <Image src={item.chart_img}/>
                         </View>
                     )}
-                </React.Fragment>
+                </View>
             ))}
         </View>
     )
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     section: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 8
+        gap: '8px'
     },
     title:{
         textAlign: 'center',
