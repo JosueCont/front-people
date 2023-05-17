@@ -349,9 +349,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     });
   };
 
-  const disabledDate = (current) => {
-    return current && moment(current).year() < currentYear;
-  };
+  // const disabledDate = (current) => {
+  //   return current && moment(current).year() < currentYear;
+  // };
 
   const disablePeriod = (current) => {
     let month = moment(current).month() + 1;
@@ -371,6 +371,49 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       if (date.month === 1 && date.year < currentYear) return true;
       return false;
     }
+  };
+
+  const disableActivationDate = (current) => {
+    let start_date = moment(startDate, "YYYY-MM-DD");
+    // Desactivamos las fechas anteriores al inicio de calendario
+    if (current < start_date) return true;
+    else false;
+  };
+
+  const disableStartInsindeceDate = (current) => {
+    let periodicity_code = "04";
+    let days = 16;
+    if (props.periodicities) {
+      props.periodicities.map((p) => {
+        if (selectPeriodicity && p.id == selectPeriodicity) {
+          periodicity_code = p.code;
+        }
+      });
+
+      switch (periodicity_code) {
+        case "02":
+          days = 8;
+          break;
+        case "03":
+          days = 15;
+          break;
+        case "04":
+          days = 16;
+          break;
+        case "05":
+          days = 31;
+          break;
+        default:
+          break;
+      }
+    }
+
+    let start_date = moment(startDate, "YYYY-MM-DD");
+    let start_insidence = new Date(start_date);
+    start_insidence.setDate(start_insidence.getDate() - days);
+    // Desactivamos las fechas anteriores al inicio de calendario
+    if (current < start_insidence) return true;
+    else false;
   };
 
   const onChangePeriodicy = (value) => {
@@ -580,7 +623,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  // disabledDate={disablePeriod}
+                  disabledDate={disableActivationDate}
                 />
               </Form.Item>
             </Col>
@@ -648,7 +691,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  // disabledDate={disablePeriod}
+                  disabledDate={disableStartInsindeceDate}
                 />
               </Form.Item>
             </Col>
@@ -767,6 +810,7 @@ const mapState = (state) => {
     catPerception: state.fiscalStore.cat_perceptions,
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     currentNode: state.userStore.current_node,
+    periodicities: state.fiscalStore.payment_periodicity,
   };
 };
 

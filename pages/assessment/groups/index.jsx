@@ -136,6 +136,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
           createGroup={createGroup}
           searchGroup={searchGroup}
           setNumPage={setNumPage}
+          getListGroups={getListGroups}
         />
         <AssessmentsTable
           dataGroups={listGroups}

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../layout/MainInter";
 import { useRouter } from "next/router";
-import { connect, useDispatch } from "react-redux";
-import { Breadcrumb, message, Tabs } from "antd";
+import { connect } from "react-redux";
+import { Breadcrumb, Tabs } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
 import { getPersonsCompany } from "../../../redux/UserDuck";
 import ReportsCompetences from "../../../components/assessment/reports/ReportsCompetences";
-import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions"
+import TabsReport from "../../../components/assessment/reports/TabsReport";
 
 const Index = ({
   currentNode,
@@ -45,8 +45,7 @@ const Index = ({
           <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        <Tabs activeKey={currentKey} onChange={(key) => setCurrentKey(key)} type="card">
+        {/* <Tabs activeKey={currentKey} onChange={(key) => setCurrentKey(key)} type="card">
             <TabPane tab="Persona" key="p">
               <ReportsCompetences
                 showCardUser={true}
@@ -88,8 +87,8 @@ const Index = ({
                 currentKey={currentKey}
               />
             </TabPane>
-        </Tabs>
-      </div>
+        </Tabs> */}
+        <TabsReport/>
     </MainLayout>
   );
 };

@@ -49,7 +49,7 @@ const TruoraCheck = ({person, ...props}) => {
       ]
 
     useEffect(() => {
-        if(person?.meta_data?.check_id){
+        if(person?.metadata?.check_id){
             getBackgroundCheck_details();
         }
     }, [])

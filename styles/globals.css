@@ -712,6 +712,50 @@ textarea {
 .icon-intranet {
   width: 15px !important;
 }
+.ant-tooltip{
+  width: 300px!important;
+  max-width: 300px!important;
+}
+.tooltip-scroll-content{
+  max-height:220px;
+  overflow:auto
+}
+.tooltip-scroll-content::-webkit-scrollbar {
+  width: 3px;
+}
+
+.tooltip-scroll-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.tooltip-scroll-content::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+}
+
+@media screen and (max-width: 991px) {
+
+  .ant-layout-sider {
+    position: absolute;
+    z-index: 2;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+  }
+  .ant-layout-sider .ant-layout-sider-children{
+    overflow: auto;
+  }
+  .sider-overlay{
+    width: 100%;
+    height: calc(100vh - 64px);
+    position: absolute;
+    z-index: 2;
+    background: rgba(0,0,0,0.5);
+  }
+  .ant-layout-content.main_container{
+    margin-left: 80px;
+    max-height: calc(100vh - 64px);
+    overflow: auto;
+  }
+}
 
 @media screen and (max-width: 880px) {
   .text-title-tab {
@@ -739,17 +783,55 @@ textarea {
 }
 
 @media screen and (max-width: 600px) {
+
+  h1.ant-typography, div.ant-typography-h1, div.ant-typography-h1 > textarea, .ant-typography h1{ font-size: 28px}
+  h2.ant-typography, div.ant-typography-h2, div.ant-typography-h2 > textarea, .ant-typography h2{ font-size: 24px}
+  h3.ant-typography, div.ant-typography-h3, div.ant-typography-h3 > textarea, .ant-typography h3{ font-size: 20px}
+  h4.ant-typography, div.ant-typography-h4, div.ant-typography-h4 > textarea, .ant-typography h4{ font-size: 18px}
+  h5.ant-typography, div.ant-typography-h5, div.ant-typography-h5 > textarea, .ant-typography h5{ font-size: 16px}
+
   .ant-layout-sider {
-    flex: 0 0 80px !important;
+/*    flex: 0 0 80px !important;
     max-width: 80px !important;
     min-width: 80px !important;
-    width: 80px !important;
+    width: 80px !important;*/
+   /* position: absolute;
+    z-index: 2;
+    height: 100vh;
+    overflow: auto;*/
   }
+ /* .sider-overlay{
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    z-index: 2;
+    background: rgba(0,0,0,0.5);
+  }
+  .ant-layout-content.main_container{
+    margin-left: 80px;
+    max-height: 100vh;
+    overflow: auto;
+  }*/
   .ant-layout-sider-trigger {
-    width: 80px !important;
+   /* width: 80px !important;*/
   }
   .search_header {
     display: none;
+  }
+
+  .ant-layout-header{
+    padding: 0 16px;
+  }
+  .header__logo,
+  .ant-layout-header .ant-image-img{
+    max-width: 85px!important;
+  }
+  .ant-layout-header .ant-space.ant-space-horizontal{ gap: 16px!important; }
+  .ant-layout-header .ant-dropdown-trigger svg{
+    font-size: 24px!important;
+  }
+  .header__dropdown_apps{
+    font-size: 24px!important;
   }
 }
 
