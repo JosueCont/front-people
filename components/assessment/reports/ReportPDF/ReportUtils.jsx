@@ -24,14 +24,21 @@ export const theme = {
 
 export const CardTable = ({
     pos = 0,
-    item = {}
+    item = {},
+    marginTop = 0,
+    tip = 'Resultado no encontrado'
 }) => (
     <View style={{
         border: '1px solid #d9d9d9',
         borderRadius: 4,
-        backgroundColor: '#fafafa'
+        backgroundColor: '#fafafa',
+        marginTop: marginTop
     }} wrap={false}>
         <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             textAlign: 'center',
             borderBottom: '1px solid #d9d9d9',
             paddingVertical: 4,
@@ -40,7 +47,13 @@ export const CardTable = ({
             <Text style={{
                 fontSize: 10,
                 color: theme.color.black
-            }}>{pos+1}.- {item.name}</Text>
+            }}>{pos+1}.- {item?.name}</Text>
+            <Text style={{
+                fontSize: 10,
+                color: theme.color.black
+            }}>
+                {item?.compatibility}
+            </Text>
         </View>
         <View style={{
             display: 'flex',
@@ -80,19 +93,37 @@ export const CardTable = ({
             alignItems: 'stretch',
             borderTop: '1px solid #d9d9d9'
         }}>
-            <View style={{
-                flex: '1',
-                textAlign: 'justify',
-                paddingVertical: 4,
-                paddingHorizontal: 8
-            }}>
-                <Text style={{
-                    fontSize: 10,
-                    color: theme.color.black
+            {item?.description_person ? (
+                <View style={{
+                    flex: '1',
+                    textAlign: 'justify',
+                    paddingVertical: 4,
+                    paddingHorizontal: 8
                 }}>
-                    {item?.description_person}
-                </Text>
-            </View>
+                    <Text style={{
+                        fontSize: 10,
+                        color: theme.color.black
+                    }}>
+                        {item?.description_person}
+                    </Text>
+                </View>
+            ) : (
+                <View style={{
+                    flex: '1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: 4,
+                    paddingHorizontal: 8
+                }}>
+                    <Text style={{
+                        fontSize: 10,
+                        color: '#d9d9d9'
+                    }}>
+                        {tip}
+                    </Text>
+                </View>
+            )}
             <View style={{
                 flex: '1',
                 textAlign: 'justify',

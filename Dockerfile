@@ -11,4 +11,4 @@ RUN yarn build
 # ==== RUN =======
 # ENV NODE_ENV production
 EXPOSE 3006
-ENTRYPOINT ["yarn", "dev" ]
+ENTRYPOINT ["yarn", "start" ]
