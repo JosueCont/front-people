@@ -22,7 +22,7 @@ import {
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined, SendOutlined } from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined, SendOutlined, CheckCircleOutlined, CloseCircleOutlined  } from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -53,6 +53,7 @@ import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
 import { getAdminRolesOptions } from "../../../redux/catalogCompany";
+import DownloadReport from "../../../components/person/DownloadReport";
 
 const homeScreen = ({
   getAdminRolesOptions,
@@ -117,6 +118,7 @@ const homeScreen = ({
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [errors, setErrors] = useState([])
+  const [correct, SetCorrect ] = useState(0)
   const [ modalError, setModalError ] = useState(false)
   const applications = props && props.config && props.config.applications || []
   let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
@@ -656,6 +658,7 @@ const homeScreen = ({
                 Asignar evaluaciones
               </Menu.Item>
             )}
+            <DownloadReport person={item}/>
           </>
         )}
         {permissions.edit && (
@@ -964,9 +967,11 @@ const homeScreen = ({
 
   const AlertErrors = () => (
     <div>
+    <CheckCircleOutlined /> Usuarios creados: { correct }
     <br />
     <br />
-    <ListError errors={errors} />
+    <CloseCircleOutlined /> Errores: {errors.length} <br/>
+     <ListError errors={errors} />
     </div>
   );
 
@@ -1300,11 +1305,15 @@ const homeScreen = ({
 
     WebApiPeople.CreateUIStoreUsers(data)
     .then((res) => {
-      console.log(res)
       let errors = res.data.error_details || []
+      let success = res.data.success
       setErrors(errors)
-      errors.length > 0 && setModalError(true)
-      message.success('Usuarios enviados correctamente')
+      SetCorrect(success)
+      if(errors.length > 0) {
+        setModalError(true)
+      } else {
+        message.success('Usuarios enviados correctamente')
+      }
     })
     .catch((e) => {
       message.error('Error al enviar usuarios')
@@ -1343,8 +1352,8 @@ const homeScreen = ({
 
   useEffect(() =>{
     if(modalError && errors.length > 0){
-      Modal.error({
-        title: 'Se encontraron estos errores',
+      Modal.info({
+        title: 'Detalles de la sincronización',
         cancelText: "Cerrar",
         content: <AlertErrors />,
         onCancel: () => {
