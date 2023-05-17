@@ -236,7 +236,7 @@ const ReportsCompetences = ({
         if(['p','pp','pps'].includes(currentTab) && usersSelected.length <= 0){
             message.error('Selecciona un usuario')
         }else if( ['psp','psc'].includes(currentTab) && usersSelected.length <= 0 && groupsSelected.length <= 0){
-            message.error('Selecciona una o mas personas o grupo de personas')
+            message.error('Selecciona una o más personas o grupo de personas')
         }else if(['pp','psp','psc'].includes(currentTab) && profilesSelected.length <= 0){
             message.error('Selecciona un perfil')
         }else if(currentTab == 'pps' && profilesSelected.length <=0){
