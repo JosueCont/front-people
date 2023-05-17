@@ -11,6 +11,24 @@ import ReportHeader from './ReportHeader';
 import GetReport from './GetReport';
 import { getFullName, getWork } from '../../../../utils/functions';
 
+const styles = StyleSheet.create({
+    content: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 24
+    },
+    body:{
+        paddingTop: 16,
+        // display: 'flex',
+        // flexDirection: 'column',
+        // gap: 16
+    },
+    viewer: {
+        width: '100%',
+        minHeight: '100vh'
+    }
+})
+
 const ReportPDF = ({
     infoReport,
     currentUser,
@@ -86,23 +104,5 @@ const ReportPDF = ({
         // </PDFViewer>
     )
 }
-
-const styles = StyleSheet.create({
-    content: {
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 24
-    },
-    body:{
-        paddingTop: 16,
-        // display: 'flex',
-        // flexDirection: 'column',
-        // gap: 16
-    },
-    viewer: {
-        width: '100%',
-        minHeight: '100vh'
-    }
-})
 
 export default ReportPDF

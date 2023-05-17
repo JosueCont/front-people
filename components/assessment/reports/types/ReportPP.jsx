@@ -10,6 +10,15 @@ import {
 } from '@react-pdf/renderer';
 import { Table } from '../ReportPDF/ReportUtils';
 
+const styles = StyleSheet.create({
+    content_img: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        maxHeight: 400
+    }
+})
+
 const ReportPP = ({
     columns,
     dataSource,
@@ -37,14 +46,5 @@ const ReportPP = ({
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    content_img: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        maxHeight: 400
-    }
-})
 
 export default ReportPP
