@@ -7,67 +7,6 @@ import {
 } from '@react-pdf/renderer';
 import { theme } from './ReportUtils';
 
-const styles = StyleSheet.create({
-    logo_content:{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 4,
-        marginBottom: 4
-    },
-    logo_img: {
-        height: 16,
-        minWidth: 16
-    },
-    header: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: 50,
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 4,
-    },
-    user_content: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8
-    },
-    user_info: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        width: 375
-    },
-    user_profile: {
-        height: 34,
-        minWidth: 34,
-        borderRadius: '50%'
-    },
-    user_name: {
-        fontSize: 12,
-        color: theme.color.black,
-        maxWidth: 300
-    },
-    user_extra: {
-        fontSize: 10,
-        color: '#00000080',
-        maxWidth: 375,
-    },
-    extra_content: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: 2
-    },
-    extra_text: {
-        fontSize: 12,
-        color: theme.color.black
-    }
-})
-
 const ReportHeader = ({
     name,
     description,
@@ -123,5 +62,56 @@ const ReportHeader = ({
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    header: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 50,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: '#f0f0f0',
+        border: '1px solid #d9d9d9',
+        borderRadius: 4,
+    },
+    user_content: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    user_info: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: 375
+    },
+    user_profile: {
+        height: 34,
+        minWidth: 34,
+        borderRadius: '50%',
+        marginRight: 8
+    },
+    user_name: {
+        fontSize: 12,
+        color: theme.color.black,
+        maxWidth: 300
+    },
+    user_extra: {
+        fontSize: 10,
+        color: '#00000080',
+        maxWidth: 375,
+        marginTop: 2
+    },
+    extra_content: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end'
+    },
+    extra_text: {
+        fontSize: 12,
+        color: theme.color.black
+    }
+})
 
 export default ReportHeader

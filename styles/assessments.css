@@ -1117,8 +1117,10 @@ span.input-with-clear:focus{
 }
 .competence_title{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #d9d9d9;
+    padding: 0px 8px;
 }
 .competence_title p{
     font-weight: 700;
