@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, memo} from 'react';
 import { getFullName, getWork } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
-import { Form, Row, Col, Select, Button, Table, message, Tooltip} from 'antd';
+import { Form, Row, Col, Select, Button, Table, message, Tooltip, Typography, Space, Switch} from 'antd';
 import { ruleRequired } from '../../../utils/rules';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import dynamic from 'next/dynamic';
@@ -32,7 +32,8 @@ const FormReport = ({
     showTitleProfile = false,
     showTitleWork = true,
     multiUser = false,
-    multiProfile = false
+    multiProfile = false,
+    ...props
 }) => {
 
     const {
@@ -64,6 +65,12 @@ const FormReport = ({
 
     const user = Form.useWatch('user_id', formReport);
     const profile = Form.useWatch('profile_id', formReport);
+
+    /* For Groups */
+    const {Text} = Typography
+    const [selectType, setSelectType] = useState(1)
+    const [listGroups, setLisGroups] = useState([]);
+    const [groupsSelected, setGroupsSelected] = useState([])
 
     useEffect(()=>{
         formReport.resetFields()
@@ -143,17 +150,22 @@ const FormReport = ({
     const getReportProfiles = async (values) =>{
         setLoading(true)
         try {
-            const filter_ = item => values.user_id?.includes(item.id);
-            const map_ = item => ({id: item.id, fullName: getFullName(item)});
-            const find_ = item => item.id == values.user_id;
             let body = {
-                profiles: Array.isArray(values.profile_id)
-                    ? values.profile_id : [values.profile_id],
-                users: Array.isArray(values.user_id)
-                    ? persons_company.filter(filter_).map(map_)
-                    : [persons_company.find(find_)].map(map_),
+                profiles: Array.isArray(values.profile_id) ? values.profile_id : [values.profile_id],
                 calculation_type: general_config?.calculation_type,
-                node_id: current_node?.id
+                node_id: current_node?.id,
+                users: []
+            }
+
+            if (values['user_id']){
+                const filter_ = item => values.user_id?.includes(item.id);
+                const map_ = item => ({id: item.id, fullName: getFullName(item)});
+                const find_ = item => item.id == values.user_id;
+                body['users'] = Array.isArray(values.user_id) ? persons_company.filter(filter_).map(map_) : [persons_company.find(find_)].map(map_)
+            }
+
+            if(values['groups']){
+                body['groups'] = groupsSelected
             }
             let response = await WebApiAssessment.getReportProfiles(body);
             setInfoReport(response.data);
@@ -462,11 +474,67 @@ const FormReport = ({
         return record?.id;
     }
 
+    /* Funciones para seleccion de grupos */
+    const changeSelectType = (val) => {
+        console.log('val',val);
+        if(val === true){
+            setSelectType(2)
+            /* setUsersSelected([]) */
+        }else{
+            setSelectType(1)
+            setGroupsSelected([])
+        }
+    }
+
+    useEffect(() => {
+      getGroups()
+    }, [])
+    
+
+    const getGroups = async () => {
+        const data = {
+            nodeId: current_node?.id,
+            name: '',
+            queryParam: '',
+          };
+        try {
+            let response = await WebApiAssessment.getGroupsPersons(data);
+            console.log('response',response);
+            if (response.status === 200){
+                setLisGroups(response?.data?.results);    
+            }
+            
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const addGroup = (val) => {
+        const map_ = item => listGroups.find(record => record.id == item);
+        let results = val.map(map_);
+        setGroupsSelected(results);
+    }
+    
+
     return (
         <>
             <Row style={{padding: 16}}>
                 <Col span={24}>
-                    <Row justify='space-between'>
+                    <Row justify='space-between' gutter={[20,20]}>
+                        {
+                            ['psp','psc'].includes(props.type) &&
+                            <Col span={24}>
+                                <Space>
+                                    <Text style={selectType === 1 ? {fontWeight:'bold'} : null}>
+                                        Personas
+                                    </Text>
+                                    <Switch checked={selectType === 2 ? true : false} onChange={changeSelectType} />
+                                    <Text style={selectType === 2 ? {fontWeight:'bold'} : null}>
+                                        Grupos
+                                    </Text>
+                                </Space>
+                            </Col>
+                        }
                         <Col span={showSelectProfile ? 16 : 10}>
                             <Form
                                 form={formReport}
@@ -475,28 +543,57 @@ const FormReport = ({
                             >
                                 <Row style={{width: '100%'}}>
                                     <Col span={24} style={{display: 'flex', gap: 16}}>
-                                        <Form.Item
-                                            label={multiUser ? 'Usuarios' : 'Usuario'}
-                                            name='user_id'
-                                            style={{flex: '1'}}
-                                            rules={[ruleRequired]}
-                                        >
-                                            <Select
-                                                showSearch
-                                                {...getPropSelect(multiUser)}
-                                                disabled={load_persons}
-                                                loading={load_persons}
-                                                placeholder='Seleccionar una opción'
-                                                notFoundContent='No se encontraron resultados'
-                                                optionFilterProp='children'
+                                        {
+                                            selectType === 1 ?
+                                            <Form.Item
+                                                label={multiUser ? 'Usuarios' : 'Usuario'}
+                                                name='user_id'
+                                                style={{flex: '1'}}
+                                                rules={[ruleRequired]}
                                             >
-                                                {persons_company.length > 0 && persons_company.map(item => (
-                                                    <Select.Option value={item.id} key={item.id}>
-                                                        {getFullName(item)}
-                                                    </Select.Option>
-                                                ))}
-                                            </Select>
-                                        </Form.Item>
+                                                <Select
+                                                    showSearch
+                                                    {...getPropSelect(multiUser)}
+                                                    disabled={load_persons}
+                                                    loading={load_persons}
+                                                    placeholder='Seleccionar una opción'
+                                                    notFoundContent='No se encontraron resultados'
+                                                    optionFilterProp='children'
+                                                >
+                                                    {persons_company.length > 0 && persons_company.map(item => (
+                                                        <Select.Option value={item.id} key={item.id}>
+                                                            {getFullName(item)}
+                                                        </Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                            :
+                                            <Form.Item
+                                                label={"Grupos"}
+                                                name='groups_ids'
+                                                style={{flex: '1'}}
+                                                rules={[ruleRequired]}
+                                            >
+                                                <Select
+                                                    showSearch
+                                                    placeholder='Seleccionar usuario'
+                                                    notFoundContent='No se encontraron resultados'
+                                                    onChange={addGroup}
+                                                    loading={load_persons}
+                                                    style={{width: 200}}
+                                                    optionFilterProp='children'
+                                                    mode="multiple"
+                                                >
+                                                    {listGroups.length > 0 && listGroups.map(item => (
+                                                        <Select.Option value={item.id} key={item.id}>
+                                                            {item.name}
+                                                        </Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+
+                                        }
+
                                         {showSelectProfile && (
                                             <Form.Item
                                                 label={multiProfile ? 'Perfiles' : 'Perfil'}
