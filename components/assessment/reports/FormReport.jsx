@@ -150,17 +150,22 @@ const FormReport = ({
     const getReportProfiles = async (values) =>{
         setLoading(true)
         try {
-            const filter_ = item => values.user_id?.includes(item.id);
-            const map_ = item => ({id: item.id, fullName: getFullName(item)});
-            const find_ = item => item.id == values.user_id;
             let body = {
-                profiles: Array.isArray(values.profile_id)
-                    ? values.profile_id : [values.profile_id],
-                users: Array.isArray(values.user_id)
-                    ? persons_company.filter(filter_).map(map_)
-                    : [persons_company.find(find_)].map(map_),
+                profiles: Array.isArray(values.profile_id) ? values.profile_id : [values.profile_id],
                 calculation_type: general_config?.calculation_type,
-                node_id: current_node?.id
+                node_id: current_node?.id,
+                users: []
+            }
+
+            if (values['user_id']){
+                const filter_ = item => values.user_id?.includes(item.id);
+                const map_ = item => ({id: item.id, fullName: getFullName(item)});
+                const find_ = item => item.id == values.user_id;
+                body['users'] = Array.isArray(values.user_id) ? persons_company.filter(filter_).map(map_) : [persons_company.find(find_)].map(map_)
+            }
+
+            if(values['groups']){
+                body['groups'] = groupsSelected
             }
             let response = await WebApiAssessment.getReportProfiles(body);
             setInfoReport(response.data);
