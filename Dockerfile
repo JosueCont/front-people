@@ -9,6 +9,6 @@ RUN yarn
 COPY . /app
 RUN yarn build
 # ==== RUN =======
-ENV NODE_ENV production
+# ENV NODE_ENV production
 EXPOSE 3006
 ENTRYPOINT ["yarn", "start" ]
