@@ -59,6 +59,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   //resumen de datos
   const [resumeData, setResumeData] = useState(null);
   const [visibleResumeModal, setVisibleResumemodal] = useState(false);
+  const [visibleRegPatronalSelect, setVisibleRegPatronalSelect] = useState(false)
 
   // Modal respuesta del import
   const [titileMessage, setTitleMessage] = useState("");
@@ -120,6 +121,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const setModal = (value) => {
     setViewModal(value);
   };
+
+  useEffect(()=>{
+
+    if(router?.query){
+      if(router?.query?.action==='addxmls'){
+        console.log(router?.query?.action)
+      }
+    }
+
+  },[router?.query])
 
   useEffect(() => {
     getTypeTax();
