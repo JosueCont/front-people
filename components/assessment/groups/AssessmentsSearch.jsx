@@ -230,7 +230,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                     <Row justify="center">
                         <Col style={{ paddingTop:20, textAlign:'center' }}>
                             <b>
-                                Que accion desea realizar si el grupo ya existe 
+                                ¿Qué acción desea realizar si el grupo ya existe?
                             </b>
                         </Col>
                         <Col >
@@ -260,7 +260,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                         </Col>
                         <Col>
                             <Button onClick={() => sendFile()}>
-                                Enviar_
+                                Enviar
                             </Button>
                         </Col>
                     </Row>
