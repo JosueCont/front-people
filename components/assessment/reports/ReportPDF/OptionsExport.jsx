@@ -25,6 +25,23 @@ const OptionsExport = ({
     const [csvHeaders, setCsvHeaders] = useState([]);
     const [csvData, setCsvData] = useState([]);
     const [loading, setLoading] = useState(false);
+    // Estate para renderizar el pdf
+    const [renderData, setRenderData] = useState([]);
+
+    // Solo para renderizar el pdf
+    // useEffect(()=>{
+    //     if(infoReport.length > 0) getRenderData();
+    // },[infoReport])
+
+    // const getRenderData = async () =>{
+    //     try {
+    //         let resp = await getData();
+    //         setRenderData(resp)
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
+    // Termina solo para renderizar el pdf
 
     useEffect(()=>{
         setCsvHeaders([])
@@ -41,7 +58,7 @@ const OptionsExport = ({
             'psc': 'Persona - Competencias'
         }
         let name_user = Array.isArray(currentUser) ? '' : getFullName(currentUser);
-        let name_profile = Array.isArray(currentProfile.name) ? '' : currentProfile.name;
+        let name_profile = Array.isArray(currentProfile) ? '' : currentProfile?.name;
         let name_select = typeReport == 'pp' ? `${name_user} - ${name_profile}` : (name_user || name_profile);
         let name_file = `${name_select || 'Reporte'} (${name_report[typeReport]})`;
         return name_file.replace(/\./g,'');
@@ -50,8 +67,7 @@ const OptionsExport = ({
     const getCompatibility = (item) => typeof item.compatibility == 'string'
         ? item.compatibility : `${item.compatibility?.toFixed(2)}%`;
 
-    const getCompetencesPP = () =>{
-        let profiles = infoReport?.at(-1)?.profiles?.at(-1);
+    const getCompetences = (profiles) =>{
         return profiles?.competences?.map((item) =>{
             let compatibility = getCompatibility(item);
             return {...item, compatibility};
@@ -61,7 +77,7 @@ const OptionsExport = ({
     const transformPP = async (type) =>{
         // Para para reporte excel
         let profiles = infoReport?.at(-1)?.profiles?.at(-1);
-        let competences = getCompetencesPP();
+        let competences = getCompetences(profiles);
         if(type == 2) return competences;
         // Para reporte pdf
         let chart_img = null;
@@ -78,9 +94,10 @@ const OptionsExport = ({
         let list = [...infoReport]?.at(-1)?.profiles;
         for(const item of list){
             // Para reporte excel
+            let competences = getCompetences(item);
             let compatibility = getCompatibility(item);
             if(type == 2){
-                results.push({...item, compatibility});
+                results.push({...item, compatibility, competences});
             }else{
                 //Para reporte pdf
                 let chart_img = null;
@@ -90,7 +107,7 @@ const OptionsExport = ({
                     let {fullName, ...args} = generateConfig(report);
                     chart_img = await getChart({...args, type: 'radar'});
                 }
-                results.push({...item, chart_img, compatibility});
+                results.push({...item, chart_img, compatibility, competences});
             }
         }
         return results;
@@ -100,8 +117,10 @@ const OptionsExport = ({
         let results = [];
         for(const item of infoReport){
             // Para reporte excel
-            let compatibility = getCompatibility(item.profiles[0]);
-            let profiles = {...item.profiles[0], compatibility};
+            let self = item.profiles?.at(-1);
+            let competences = getCompetences(self)
+            let compatibility = getCompatibility(self);
+            let profiles = {...self, compatibility, competences};
             if(type == 2){
                 results.push({...item, profiles})
             }else{
@@ -278,7 +297,7 @@ const OptionsExport = ({
             {children ? React.cloneElement(children, {generateExcel, generatePDF})
                 : (
                     <Dropdown overlay={Options}>
-                            <Button
+                        <Button
                             icon={<ExportOutlined />}
                             loading={loading}
                             style={{
@@ -300,6 +319,13 @@ const OptionsExport = ({
             >
                 Descargar
             </CSVLink>
+            {/* Solo para renderizar el pdf */}
+            {/* {infoReport.length > 0
+                && currentUser
+                && currentProfile
+            && (
+                <MyDoc source={renderData}/>
+            )} */}
         </>
     )
 }
