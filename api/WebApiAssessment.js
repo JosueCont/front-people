@@ -29,6 +29,10 @@ class WebApiAssessment {
     return WebApi.ApisType(`/person/group-assessments/?node=${id}`, "get");
   }
 
+  static uploadMassiveGroups(data) {
+    return WebApi.ApisType(`/person/group-assessments/upload_massive/`, "post", data);
+  }
+
 
 
   static getListSurveys(nodeId, queryParam = "") {
@@ -219,7 +223,8 @@ class WebApiAssessment {
     return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/competence-report/`, data)
   }
   static getReportProfiles (data){
-    return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/profiles-report/`, data)
+    /* return Axios.post(`${urlKuizBaseApiWithTenant}/sittings/profiles-report/`, data) */
+    return WebApi.ApisType(`/person/profile-report/`, "post", data);
   }
 
   //Asignaciones por persona

@@ -8,6 +8,9 @@ import {
     Button,
     Tooltip,
     message,
+    Switch,
+    Space,
+    Typography
 } from 'antd';
 import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -51,6 +54,11 @@ const ReportsCompetences = ({
     ...props
 }) => {
 
+    const {Text} = Typography
+    const [selectType, setSelectType] = useState(1)
+    const [listGroups, setLisGroups] = useState([]);
+    
+
     const columns_many = [
         {
             title: 'Imagen',
@@ -88,6 +96,7 @@ const ReportsCompetences = ({
     ]
 
     const [usersSelected, setUsersSelected] = useState([]);
+    const [groupsSelected, setGroupsSelected] = useState([])
     const [profilesSelected, setProfilesSelected] = useState([]);
     const [listReports, setListReports] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -178,6 +187,12 @@ const ReportsCompetences = ({
         }
     }
 
+    const addGroup = (val) => {
+        const map_ = item => listGroups.find(record => record.id == item);
+        let results = val.map(map_);
+        setGroupsSelected(results);
+    }
+
     const sendProfileUser = (user) =>{
         if(user.work_title &&
             user.work_title.job &&
@@ -220,8 +235,8 @@ const ReportsCompetences = ({
     const validateParameters = () =>{
         if(['p','pp','pps'].includes(currentTab) && usersSelected.length <= 0){
             message.error('Selecciona un usuario')
-        }else if(['psp','psc'].includes(currentTab) && usersSelected.length <= 0){
-            message.error('Selecciona los usuarios')
+        }else if( ['psp','psc'].includes(currentTab) && usersSelected.length <= 0 && groupsSelected.length <= 0){
+            message.error('Selecciona una o más personas o grupo de personas')
         }else if(['pp','psp','psc'].includes(currentTab) && profilesSelected.length <= 0){
             message.error('Selecciona un perfil')
         }else if(currentTab == 'pps' && profilesSelected.length <=0){
@@ -256,7 +271,8 @@ const ReportsCompetences = ({
             profiles: profilesSelected.map(item => item.id),
             users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}}),
             calculation_type: general_config?.calculation_type,
-            node_id: currentNode?.id
+            node_id: currentNode?.id,
+            groups: groupsSelected
         }
         getReportProfiles(data);
     }
@@ -641,30 +657,111 @@ const ReportsCompetences = ({
         return params;
     }
 
+    const changeSelectType = (val) => {
+        console.log('val',val);
+        if(val === true){
+            setSelectType(2)
+            setUsersSelected([])
+        }else{
+            setSelectType(1)
+            setGroupsSelected([])
+        }
+    }
+
+    useEffect(() => {
+      
+    
+      return () => {
+        console.log('selectType', selectType);
+      }
+    }, [selectType])
+    
+
+    const getGroups = async () => {
+        const data = {
+            nodeId: currentNode?.id,
+            name: '',
+            queryParam: '',
+          };
+        try {
+            let response = await WebApiAssessment.getGroupsPersons(data);
+            console.log('response',response);
+            if (response.status === 200){
+                setLisGroups(response?.data?.results);    
+            }
+            
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        getGroups();
+    }, [currentNode])
+    
+
+
     return (
         <div style={{margin: '20px'}}>
             <Row gutter={[24,24]}>
+                {
+                    ['psp','psc'].includes(currentTab) &&
+                    <Col>
+                        <Space>
+                            <Text style={selectType === 1 ? {fontWeight:'bold'} : null}>
+                                Personas
+                            </Text>
+                            <Switch checked={selectType === 2 ? true : false} onChange={changeSelectType} />
+                            <Text style={selectType === 2 ? {fontWeight:'bold'} : null}>
+                                Grupos
+                            </Text>
+                        </Space>
+                    </Col>
+                }
                 <Col span={24} className='content_header'>
                     <div className='content_inputs'>
-                        <div className='content_inputs_element'>
-                            <p>{labelUser}</p>
-                            <Select
-                                showSearch
-                                placeholder='Seleccionar usuario'
-                                notFoundContent='No se encontraron resultados'
-                                {...getPropertiesSelectUser()}
-                                onChange={sendUser}
-                                loading={load_persons}
-                                style={{width: 200}}
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </div>
+                        {
+                            selectType === 1 ? 
+                            <div className='content_inputs_element'>
+                                <p>{labelUser}</p>
+                                <Select
+                                    showSearch
+                                    placeholder='Seleccionar grupo'
+                                    notFoundContent='No se encontraron resultados'
+                                    {...getPropertiesSelectUser()}
+                                    onChange={sendUser}
+                                    loading={load_persons}
+                                    style={{width: 200}}
+                                    optionFilterProp='children'
+                                >
+                                    {persons_company.length > 0 && persons_company.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {getFullName(item)}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </div> :
+                            <div className='content_inputs_element'>
+                                <p>Selecciona un grupo</p>
+                                <Select
+                                    showSearch
+                                    placeholder='Seleccionar usuario'
+                                    notFoundContent='No se encontraron resultados'
+                                    onChange={addGroup}
+                                    loading={load_persons}
+                                    style={{width: 200}}
+                                    optionFilterProp='children'
+                                    mode="multiple"
+                                >
+                                    {listGroups.length > 0 && listGroups.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </div>                             
+                        } 
+                        
                         {showSelectProfile && (
                             <div className='content_inputs_element'>
                                 <p>{labelProfile}</p>
