@@ -164,7 +164,7 @@ const FormReport = ({
                 body['users'] = Array.isArray(values.user_id) ? persons_company.filter(filter_).map(map_) : [persons_company.find(find_)].map(map_)
             }
 
-            if(values['groups']){
+            if(values['groups_ids']){
                 body['groups'] = groupsSelected
             }
             let response = await WebApiAssessment.getReportProfiles(body);
