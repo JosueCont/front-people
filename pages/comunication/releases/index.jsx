@@ -29,7 +29,7 @@ import locale from "antd/lib/date-picker/locale/es_ES";
 import {verifyMenuNewForTenant} from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 
-const Releases = ({permissions, ...props}) => {
+const Releases = ({permissions,node, ...props}) => {
     /* React */
     const {Column} = Table;
     const {Option} = Select;
@@ -64,6 +64,11 @@ const Releases = ({permissions, ...props}) => {
     ) => {
         setLoading(true);
         let url = `/noticenter/notification/?showAll=true&`;
+
+        if(node){
+            url += `target_company__id=${node?.id}&`;
+        }
+
         if (created_by) {
             url += `created_by__id=${created_by}&`;
         }
@@ -446,6 +451,7 @@ const Releases = ({permissions, ...props}) => {
 const mapState = (state) => {
     return {
         permissions: state.userStore.permissions.comunication,
+        node: state.userStore?.current_node
     };
 };
 
