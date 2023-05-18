@@ -438,8 +438,12 @@ export const getFullName = (item) => {
   }
 };
 
-export const getPhoto = ({ photo }) => {
-  return photo ? photo : "/images/usuario.png";
+export const getPhoto = (person, picture = null) => {
+  return person?.photo_thumbnail
+    ? person?.photo_thumbnail
+    : person?.photo
+    ? person?.photo
+    : picture ? picture : "/images/usuario.png";
 };
 
 export const getWork = ({ work_title }) => {

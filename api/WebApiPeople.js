@@ -359,8 +359,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/permit/change_status/`, "post", data);
   }
 
-  static geVacationRequest(url = "") {
-    return WebApi.ApisType(`/person/vacation/${url}`, "get");
+  static getInfoVacation(id) {
+    return WebApi.ApisType(`/person/vacation/${id}/`, "get");
   }
 
   static saveVacationRequest(data) {
@@ -385,6 +385,10 @@ class WebApiPeople {
 
   static vacationReOpenRequest(data) {
     return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
+  }
+
+  static vacationNextPeriod(data){
+    return WebApi.ApisType('/person/vacation/planned-vacation/', 'post', data);
   }
 
   static informationNode(data) {
