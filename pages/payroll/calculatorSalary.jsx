@@ -472,7 +472,7 @@ const calculatorSalary = ({ ...props }) => {
                                 </Col>
                               </>
                             )}
-                            {salary.new_daily_salary && (
+                            {/*{salary.new_daily_salary && (
                               <>
                                 <Col span={18}>
                                   <span style={{}}>Nuevo Salario diario</span>
@@ -483,7 +483,7 @@ const calculatorSalary = ({ ...props }) => {
                                   </Text>
                                 </Col>
                               </>
-                            )}
+                            )}*/}
                           </Row>
                           {!allowance && (
                             <Row className="table-grid-footer">
