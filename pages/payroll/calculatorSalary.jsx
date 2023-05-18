@@ -79,6 +79,7 @@ const calculatorSalary = ({ ...props }) => {
 
   const changeMode = (item) => {
     setSalary(null);
+    form.setFieldsValue({type:null})
     if (item == "1") {
       setChangeType(false);
       setAllowance(false);
@@ -309,7 +310,10 @@ const calculatorSalary = ({ ...props }) => {
                         >
                           <Select
                             size="large"
-                            options={typeCalculate}
+                            options={changeType?[{
+                              label: "Bruto-Neto",
+                              value: 1,
+                            },]:typeCalculate}
                             placeholder="Tipo de calculo"
                             onChange={(value) => {
                               setType(value), setSalary(null);
