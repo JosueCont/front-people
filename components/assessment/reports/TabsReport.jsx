@@ -44,6 +44,7 @@ const TabsReport = () => {
         <Tabs type='card' onChange={onChangeTab}>
             <Tabs.TabPane key='p' tab='Persona'>
                 <FormReport
+                    type='p'
                     showSelectProfile={false}
                     showTitleProfile={false}
                     {...reportProps}
@@ -51,6 +52,7 @@ const TabsReport = () => {
             </Tabs.TabPane>
             <Tabs.TabPane key='pp' tab='Persona-Perfil' forceRender>
                 <FormReport
+                    type='pp'
                     showChart={true}
                     showTitleProfile={true}
                     {...reportProps}
@@ -58,6 +60,7 @@ const TabsReport = () => {
             </Tabs.TabPane>
             <Tabs.TabPane key='psp' tab='Personas-Perfil' forceRender>
                 <FormReport
+                    type='psp'
                     multiUser={true}
                     showChartModal={true}
                     {...reportProps}
@@ -65,12 +68,14 @@ const TabsReport = () => {
             </Tabs.TabPane>
             <Tabs.TabPane key='pps' tab='Persona-Perfiles' forceRender>
                 <FormReport
+                    type='pps'
                     multiProfile={true}
                     {...reportProps}
                 />
             </Tabs.TabPane>
             <Tabs.TabPane key='psc' tab='Personas-Competencias' forceRender>
                 <FormReport
+                    type='psc'
                     multiUser={true}
                     {...reportProps}
                 />
