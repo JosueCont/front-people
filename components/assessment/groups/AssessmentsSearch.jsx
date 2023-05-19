@@ -16,20 +16,23 @@ import {
     Spin,
     Tooltip,
     Radio,
+    Select,
 } from "antd";
 import {
     SearchOutlined,
     PlusOutlined,
     SyncOutlined,
     UploadOutlined,
-    DownloadOutlined
+    DownloadOutlined,
+    InboxOutlined
 } from "@ant-design/icons";
 import AssessmentsGroup from "./AssessmentsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import { API_URL } from "../../../config/config";
+import { setErrorFormAdd, setModalGroup } from '../../../redux/assessmentDuck'
 
 
-const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
+const AssessmentsSearch = ({currentNode, getListGroups, setErrorFormAdd, setModalGroup, assessmentStore, ...props}) =>{
     const {Title, Text} = Typography
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
@@ -37,7 +40,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     const [showModalFile, setShowModalFile] = useState(false)
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false)
-    const [action, setAction] = useState(null)
+    const [action, setAction] = useState(2)
     const [showErrorAction, setShowErrorAction] = useState(false)
     const [showErrorFile, setShowErrorFile] = useState(false)
 
@@ -60,16 +63,15 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     const HandleFilterReset = () => {
         form.resetFields();
         props.searchGroup("")
-        props.setNumPage(1)
     };
 
     const HandleCreateGroup = () =>{
-        setShowModalCreate(true)
+        /* setShowModalCreate(true) */
+        setErrorFormAdd(false)
+        setModalGroup(true)
     }
 
-    const HandleClose = ()=>{
-        setShowModalCreate(false)
-    }
+    
 
     const onFinishAdd = async (values) =>{
         props.setLoading(true)
@@ -79,7 +81,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     const onFinishSearch = (values) =>{
         let name = "";
         if((values.name).trim()){
-            name = `&name=${values.name}`;
+            name = `${values.name}`;
         }else{
             name = "";
             form.resetFields();
@@ -88,6 +90,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     }
 
     const openMassiveForm = () =>{
+        setAction(2)
         setShowModalFile(true)
     }
 
@@ -145,6 +148,11 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
         setAction(val?.target?.value)
     }
 
+    useEffect(() => {
+      console.log('assessmentStore',assessmentStore?.open_modal_create_group)
+    }, [assessmentStore.open_modal_create_group])
+    
+
     return(
         <>
             <Row>
@@ -181,7 +189,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                 <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Space>
                         <Tooltip title="Descargar layout para carga masiva">
-                            <Button href={`${API_URL}/static/PERFILES CON PRUEBAS Y NIVELES DE COMPETENCIAS.xlsx`}  icon={<DownloadOutlined />} />    
+                            <Button href={`${API_URL}/static/plantilla_grupo_assessments.xlsx`}  icon={<DownloadOutlined />} />    
                         </Tooltip>
                         <Tooltip title="Cargar archivo">
                             <Button onClick={() => openMassiveForm()} icon={<UploadOutlined />} />    
@@ -196,27 +204,51 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                     </Space>
                 </Col>
             </Row>
-            {showModalCreate && (
+            {assessmentStore?.open_modal_create_group && (
                 <AssessmentsGroup
                     loadData={{}}
                     title={"Crear nuevo grupo"}
-                    visible={showModalCreate}
-                    close={HandleClose}
+                    visible={assessmentStore?.open_modal_create_group}
                     actionForm={onFinishAdd}
                 />
             )}
-            <Modal closable={false} visible={showModalFile} footer="" onCancel={() => closeModalFile()}>
-                <Spin spinning={loading}>
+            <Modal
+                footer={
+                    <Col >
+                        <Space>
+                            <Button
+                                size="large"
+                                htmlType="button"
+                                onClick={() => closeModalFile()}
+                                style={{ paddingLeft: 30, paddingRight: 30 }}
+                                disabled={loading}
+                            >
+                                Cancelar
+                            </Button>
+                            
+                            <Button
+                                size="large"
+                                htmlType="button"
+                                onClick={() => sendFile()}
+                                disabled={fileList.length <= 0}
+                                style={{ paddingLeft: 30, paddingRight: 30 }}
+                            >
+                                Enviar
+                            </Button>
+
+                        </Space>
+                    </Col>
+                }
+                closable={false} visible={showModalFile} onCancel={() => closeModalFile()}> 
+                <Spin tip="Cargando" spinning={loading}>
+                    <Upload.Dragger maxCount={1} {...propsUpl}>
+                        <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                        </p>
+                        <p className="ant-upload-text">Selecciona o arrastra un archivo para cargarlo</p>
+                    </Upload.Dragger>
                     <Row>
-                        <Col>
-                            <b>
-                                Cargar grupos
-                            </b>
-                        </Col>
                         <Col span={24}>
-                            <Upload maxCount={1} {...propsUpl}>
-                                <Button icon={<UploadOutlined />}>Select File</Button>
-                            </Upload>
                             {
                                 showErrorFile &&
                                 <><br/>
@@ -227,20 +259,29 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                             }
                         </Col>
                     </Row>
-                    <Row justify="center">
-                        <Col style={{ paddingTop:20, textAlign:'center' }}>
+                    <Row>
+                        <Col span={24} style={{ paddingTop:20 }}>
+                            <Space direction="vertical" style={{ width:'100%' }}>
                             <b>
-                                ¿Qué acción desea realizar si el grupo ya existe?
+                                ¿Qué acción desea realizar si el grupo de evaluaciones ya existe?
                             </b>
-                        </Col>
-                        <Col >
                             <Radio.Group
-                                options={optionsRadio}
                                 onChange={ChangeAction}
                                 value={action}
-                                optionType="button"
-                                buttonStyle="solid"
-                            />
+                            >
+                                <Space direction="vertical">
+                                    <Radio value={2} >Duplicar</Radio>
+                                    <Radio value={3}>Omitir</Radio>
+                                    <Radio value={1}>Reemplazar</Radio>
+                                    
+                                </Space>
+                            </Radio.Group>
+                            </Space>
+                            {/* <Select placeholder="Selecciona una opción" options={optionsRadio} style={{ width:200, marginTop:10 }} /> */}
+                        </Col>
+                        <Col>
+                            
+                            
                             {
                                 showErrorAction &&
                                 <><br/>
@@ -249,19 +290,6 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                                 </Text>
                                 </>
                             }
-                        </Col>
-                    </Row>
-                    <Divider/>
-                    <Row justify="center" gutter={20}>
-                        <Col>
-                            <Button onClick={() => closeModalFile()} >
-                                Cancelar
-                            </Button>
-                        </Col>
-                        <Col>
-                            <Button onClick={() => sendFile()}>
-                                Enviar
-                            </Button>
                         </Col>
                     </Row>
                 </Spin>
@@ -273,7 +301,8 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
 const mapState = (state) => {
     return {
       currentNode: state.userStore.current_node,
+      assessmentStore: state.assessmentStore,
     };
 };
 
-export default connect(mapState, { })(AssessmentsSearch);
+export default connect(mapState, { setErrorFormAdd, setModalGroup })(AssessmentsSearch);
