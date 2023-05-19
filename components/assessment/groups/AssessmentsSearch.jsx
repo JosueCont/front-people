@@ -29,9 +29,10 @@ import {
 import AssessmentsGroup from "./AssessmentsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import { API_URL } from "../../../config/config";
+import { setErrorFormAdd, setModalGroup } from '../../../redux/assessmentDuck'
 
 
-const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
+const AssessmentsSearch = ({currentNode, getListGroups, setErrorFormAdd, setModalGroup, assessmentStore, ...props}) =>{
     const {Title, Text} = Typography
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
@@ -62,16 +63,15 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     const HandleFilterReset = () => {
         form.resetFields();
         props.searchGroup("")
-        props.setNumPage(1)
     };
 
     const HandleCreateGroup = () =>{
-        setShowModalCreate(true)
+        /* setShowModalCreate(true) */
+        setErrorFormAdd(false)
+        setModalGroup(true)
     }
 
-    const HandleClose = ()=>{
-        setShowModalCreate(false)
-    }
+    
 
     const onFinishAdd = async (values) =>{
         props.setLoading(true)
@@ -81,7 +81,7 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
     const onFinishSearch = (values) =>{
         let name = "";
         if((values.name).trim()){
-            name = `&name=${values.name}`;
+            name = `${values.name}`;
         }else{
             name = "";
             form.resetFields();
@@ -148,6 +148,11 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
         setAction(val?.target?.value)
     }
 
+    useEffect(() => {
+      console.log('assessmentStore',assessmentStore?.open_modal_create_group)
+    }, [assessmentStore.open_modal_create_group])
+    
+
     return(
         <>
             <Row>
@@ -199,12 +204,11 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
                     </Space>
                 </Col>
             </Row>
-            {showModalCreate && (
+            {assessmentStore?.open_modal_create_group && (
                 <AssessmentsGroup
                     loadData={{}}
                     title={"Crear nuevo grupo"}
-                    visible={showModalCreate}
-                    close={HandleClose}
+                    visible={assessmentStore?.open_modal_create_group}
                     actionForm={onFinishAdd}
                 />
             )}
@@ -297,7 +301,8 @@ const AssessmentsSearch = ({currentNode, getListGroups, ...props}) =>{
 const mapState = (state) => {
     return {
       currentNode: state.userStore.current_node,
+      assessmentStore: state.assessmentStore,
     };
 };
 
-export default connect(mapState, { })(AssessmentsSearch);
+export default connect(mapState, { setErrorFormAdd, setModalGroup })(AssessmentsSearch);

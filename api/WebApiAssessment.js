@@ -17,7 +17,7 @@ const urlKuizBaseApiWithTenant = `${typeHttp}://${tenant}.${API_ASSESSMENT}`
 class WebApiAssessment {
   static getGroupsAssessments(data) {
     return WebApi.ApisType(
-      `/person/group-assessments/?node=${data.nodeId}${data.name}${data.queryParam}`,
+      `/person/group-assessments/?node=${data.nodeId}`,
       "get"
     );
   }
