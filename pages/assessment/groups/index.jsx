@@ -29,11 +29,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalG
   useEffect(() => {
   
   
-    return () => {
-      if (listGroups)
-        console.log('listGroups===========>',listGroups)
-    }
-  }, [listGroups])
+    
   
 
   useEffect(() => {
@@ -75,7 +71,6 @@ const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalG
     setLoading(true);
     try {
       let response = await WebApiAssessment.getGroupsAssessments(data);
-      console.log('=========>',response)
       setLisGroups(response.data);
       setAllGroups(response.data)
       setLoading(false);
