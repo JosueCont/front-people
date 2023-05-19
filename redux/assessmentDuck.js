@@ -162,7 +162,6 @@ const assessmentReducer = (state = initialData, action) => {
     case types.SET_ERROR_FORM_ADD:
       return { ...state, error_form_add: action.payload }
     case types.SET_MODAL_GROUP:
-      console.log('=============>>>>>>>>>><', action.payload)
       return { ...state, open_modal_create_group: action.payload}
     default:
       return state;
