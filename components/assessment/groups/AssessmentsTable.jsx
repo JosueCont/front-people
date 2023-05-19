@@ -50,6 +50,9 @@ const AssessmentsTable = ({...props}) => {
     setShowModalEdit(true)
   }
 
+  
+  
+
   const HandleClose = () =>{
       setShowModalEdit(false)
       resetValuesDelete()
@@ -86,7 +89,7 @@ const AssessmentsTable = ({...props}) => {
     }
   }
 
-  const onChangePage = (pagination) => {
+  /* const onChangePage = (pagination) => {
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
       const queryParam = `&limit=10&offset=${offset}`;
@@ -95,7 +98,7 @@ const AssessmentsTable = ({...props}) => {
       props.getListGroups(currenNode?.id,"","")
     }
     props.setNumPage(pagination.current)
-  }
+  } */
 
   useEffect(()=>{
     if(openModalDelete){
@@ -238,21 +241,13 @@ const AssessmentsTable = ({...props}) => {
                   rowKey={'id'}
                   columns={columns}
                   size={'small'}
-                  loading={props.loading}
-                  dataSource={props.dataGroups?.results}
+                  loading={props?.loading}
+                  dataSource={props?.dataGroups}
                   locale={{
                     emptyText: props.loading ?
                     "Cargando..." :
                     "No se encontraron resultados."
                   }}
-                  pagination={{
-                    pageSize: 10,
-                    current: props.numPage,
-                    total: props.dataGroups?.count,
-                    hideOnSinglePage: true,
-                    showSizeChanger: false
-                  }}
-                  onChange={onChangePage}
                   rowSelection={rowSelectionGroup}
                 />
             </Col>
