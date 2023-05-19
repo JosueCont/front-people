@@ -26,11 +26,6 @@ const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalG
     getCategories();
   }, []);
 
-  useEffect(() => {
-  
-  
-    
-  
 
   useEffect(() => {
     if (currenNode?.id) {
