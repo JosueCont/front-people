@@ -21,7 +21,7 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, twoDigit, expMonths, expYear } from "../../utils/rules";
 import SelectBank from "../selects/SelectBank";
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 import moment from "moment";
 
@@ -35,21 +35,21 @@ const FormBanckAccount = ({ person_id = null }) => {
   const [loadingTable, setLoadingTable] = useState(true);
   const [selectedBank, setSelectedBank] = useState(null);
   const [banks, setBanks] = useState([]);
-  const banksStore = useSelector((state) => state?.fiscalStore?.banks)
+  const banksStore = useSelector((state) => state?.fiscalStore?.banks);
 
   useEffect(() => {
     getBankAccount();
   }, []);
 
-  useEffect(()=>{
-    if(banksStore){
+  useEffect(() => {
+    if (banksStore) {
       let b = {};
-      banksStore.map((ele)=> {
-          b[ele.code] = ele.id;
+      banksStore.map((ele) => {
+        b[ele.code] = ele.id;
       });
-      setBanks(b)
+      setBanks(b);
     }
-  },[banksStore])
+  }, [banksStore]);
 
   /* functions CRUD*/
   const getBankAccount = async () => {
@@ -84,19 +84,19 @@ const FormBanckAccount = ({ person_id = null }) => {
     }
   };
 
-  const onBlurClabe=(clabe)=>{
+  const onBlurClabe = (clabe) => {
     const bankCode = clabe.substring(0, 3);
     const bankSelected = banks[bankCode];
     if (bankSelected) {
-       formBank.setFieldsValue({
-         bank: banks[bankCode]
-       })
+      formBank.setFieldsValue({
+        bank: banks[bankCode],
+      });
     } else {
       formBank.setFieldsValue({
-        bank: null
-      })
+        bank: null,
+      });
     }
-  }
+  };
 
   const updateBankAcc = async (data) => {
     setLoadingTable(true);
@@ -148,30 +148,39 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   /* Events */
   const formBankAcc = (value) => {
-    if(value?.expiration_month){
-      let month = parseInt(value?.expiration_month)
-      if(month<1 || month>12){
-        message.error('El valor del mes es incorrecto, valor aceptable entre 01 y 12.')
-        return
+    if (value?.interbank_key || value?.account_number || value?.card_number) {
+      if (value?.expiration_month) {
+        let month = parseInt(value?.expiration_month);
+        if (month < 1 || month > 12) {
+          message.error(
+            "El valor del mes es incorrecto, valor aceptable entre 01 y 12."
+          );
+          return;
+        }
       }
-    }
 
-    if(value?.expiration_year){
-      let year = parseInt(value?.expiration_year)
-      let currentYear = parseInt(moment().format('YY'))
-      if(year<currentYear){
-        message.error('El valor del año es incorrecto, no puede ser menor al actual.')
-        return
+      if (value?.expiration_year) {
+        let year = parseInt(value?.expiration_year);
+        let currentYear = parseInt(moment().format("YY"));
+        if (year < currentYear) {
+          message.error(
+            "El valor del año es incorrecto, no puede ser menor al actual."
+          );
+          return;
+        }
       }
-    }
 
-
-    if (upBankAcc) {
-      value.id = idBankAcc;
-      updateBankAcc(value);
+      if (upBankAcc) {
+        value.id = idBankAcc;
+        updateBankAcc(value);
+      } else {
+        value.person = person_id;
+        saveBankAcc(value);
+      }
     } else {
-      value.person = person_id;
-      saveBankAcc(value);
+      message.error(
+        "Debes capturar Clabe interbancaria, Numero de cuenta o Numero de tarjeta."
+      );
     }
   };
   const updateFormbankAcc = (item) => {
@@ -332,20 +341,20 @@ const FormBanckAccount = ({ person_id = null }) => {
               label="Número de cuenta"
               rules={[onlyNumeric]}
             >
-              <Input  maxLength={11} />
+              <Input maxLength={11} />
             </Form.Item>
           </Col>
           <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
-              onBlur={(e)=> onBlurClabe(e.target.value)}
+              onBlur={(e) => onBlurClabe(e.target.value)}
               rules={[onlyNumeric]}
             >
               <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
-          <Col lg={11} xs={22} md={12} >
+          <Col lg={11} xs={22} md={12}>
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
@@ -364,13 +373,13 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLengyh={2} maxLength={2} />
             </Form.Item>
           </Col>
-          <Col lg={11} xs={22} md={12} >
+          <Col lg={11} xs={22} md={12}>
             <SelectBank
-                withDescription={true}
-                rules={[ruleRequired]}
-                name="bank"
-                bankSelected={selectedBank}
-                style={{ width: "100%" }}
+              withDescription={true}
+              rules={[ruleRequired]}
+              name="bank"
+              bankSelected={selectedBank}
+              style={{ width: "100%" }}
             />
           </Col>
           <Col lg={11} xs={22} md={12}>

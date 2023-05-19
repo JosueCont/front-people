@@ -727,7 +727,8 @@ const CalculatePayroll = ({ ...props }) => {
             error.response.data &&
             error.response.data.message
           ) {
-            setMessageModal(1, error.response.data.message);
+
+            setMessageModal(1,error?.response?.data?.message,error?.response?.data?.errors);
             setGenericModal(true);
           } else message.error(messageError);
           setLoading(false);
@@ -737,8 +738,8 @@ const CalculatePayroll = ({ ...props }) => {
     }
   };
 
-  const setMessageModal = (type, data) => {
-    const check_configuration = (data) => {
+  const setMessageModal = (type, data,errors=[]) => {
+    const check_configuration = (data,errors=[]) => {
       if (data.includes("concepto interno")) {
         let words = data.split(" ");
         let data_parts = words.map((x) => {
@@ -757,7 +758,12 @@ const CalculatePayroll = ({ ...props }) => {
         });
         return <span>{data_parts}</span>;
       } else {
-        return data;
+        if(errors && errors.length>0){
+          return <span>{data} <ul>{errors.map((err)=> <li>{err}</li>)}</ul></span>;
+        }else{
+          return data;
+        }
+
       }
     };
     switch (type) {
@@ -793,7 +799,7 @@ const CalculatePayroll = ({ ...props }) => {
             : data.toLowerCase().includes("patronal") ||
               data.toLowerCase().includes("riesgo")
             ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
-            : check_configuration(data),
+            : check_configuration(data, errors),
           type_alert: data.toLowerCase().includes("error")
             ? "error"
             : "warning",
