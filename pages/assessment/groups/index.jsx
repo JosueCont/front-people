@@ -7,22 +7,25 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsSearch from "../../../components/assessment/groups/AssessmentsSearch";
 import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
-import { getCategories } from "../../../redux/assessmentDuck";
+import { getCategories, setErrorFormAdd, setModalGroup } from "../../../redux/assessmentDuck";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions"
 
-const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
+const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalGroup, ...props }) => {
   const router = useRouter();
   const currenNode = useSelector((state) => state.userStore.current_node);
-  const [listGroups, setLisGroups] = useState({});
+  const [listGroups, setLisGroups] = useState([]);
+  const [allGroups, setAllGroups] = useState([])
   const [surveyList, setSurveyList] = useState([]);
   const [loadSurvey, setLoadSurvey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [numPage, setNumPage] = useState(1);
+  const [errorName, setErrorName] = useState(false)
 
   useEffect(() => {
     getCategories();
   }, []);
+
 
   useEffect(() => {
     if (currenNode?.id) {
@@ -56,16 +59,15 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
     }
   };
 
-  const getListGroups = async (nodeId, name, queryParam) => {
+  const getListGroups = async (nodeId, name = "") => {
     const data = {
       nodeId: nodeId,
-      name: name,
-      queryParam: queryParam,
     };
     setLoading(true);
     try {
       let response = await WebApiAssessment.getGroupsAssessments(data);
       setLisGroups(response.data);
+      setAllGroups(response.data)
       setLoading(false);
     } catch (e) {
       console.log(e);
@@ -74,14 +76,23 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   };
 
   const createGroup = async (values) => {
+    setErrorFormAdd(false)
     const data = { ...values, node: currenNode?.id };
     try {
       await WebApiAssessment.createGroupAssessments(data);
       getListGroups(currenNode?.id, "", "");
       message.success("Grupo agregado");
+      setModalGroup(false)
     } catch (e) {
       setLoading(false);
-      message.error("Grupo no agregado");
+      if(e.response?.data?.message === "Este nombre de grupo ya existe"){
+        setErrorFormAdd(e.response.data.message);
+      }else{
+        message.error("Grupo no agregado");
+        setModalGroup(false)
+
+      }
+      
     }
   };
 
@@ -110,9 +121,13 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
     }
   };
 
-  const searchGroup = async (name) => {
-    setLoading(true);
-    getListGroups(currenNode?.id, name, "");
+  const searchGroup = (name) => {
+    /* console.log('name', name)
+    let filtered = allGroups.filter(function (str) { return str.includes(name); }); */
+
+    let list = allGroups.filter(item => item.name.toLowerCase() .includes(name.toLowerCase()))
+    setLisGroups(list)
+
   };
 
   return (
@@ -145,8 +160,6 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
           getListGroups={getListGroups}
           updateGroup={updateGroup}
           deteleGroup={deleteGroup}
-          setNumPage={setNumPage}
-          numPage={numPage}
         />
       </div>
     </MainLayout>
@@ -159,4 +172,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { getCategories })(withAuthSync(GroupsKuiz));
+export default connect(mapState, { getCategories, setErrorFormAdd, setModalGroup })(withAuthSync(GroupsKuiz));
