@@ -38,7 +38,8 @@ const initialData = {
   profiles: [],
   pagination_profiles: 1,
   error_form_add: false,
-  open_modal_create_group: false
+  open_modal_create_group: false,
+  open_modal_edit_group: false,
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -163,6 +164,8 @@ const assessmentReducer = (state = initialData, action) => {
       return { ...state, error_form_add: action.payload }
     case types.SET_MODAL_GROUP:
       return { ...state, open_modal_create_group: action.payload}
+    case types.SET_MODAL_GROUP_EDIT:
+      return { ...state, open_modal_edit_group: action.payload}
     default:
       return state;
   }
@@ -752,6 +755,15 @@ export const setModalGroup = (flag) => {
   return async (dispatch) => {
     dispatch({
       type: types.SET_MODAL_GROUP,
+      payload: flag
+    })
+  }
+}
+
+export const setModalGroupEdit = (flag) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.SET_MODAL_GROUP_EDIT,
       payload: flag
     })
   }
