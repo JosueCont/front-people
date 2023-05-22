@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import RequestsForm from './RequestsForm';
 import { useSelector } from 'react-redux';
-import { getFullName, getPhoto } from '../../../utils/functions';
+import { getFullName, getPhoto, getValueFilter } from '../../../utils/functions';
 import WebApiPeople from '../../../api/WebApiPeople';
 import ModalRequests from './ModalRequests';
 import ListItems from '../../../common/ListItems';
 import { message, Spin, Modal } from 'antd';
+import { optionsStatusVacation } from '../../../utils/constant';
 import {
     Card,
     Row,
@@ -55,6 +56,7 @@ const InfoRequests = () => {
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoVacation(id);
+            console.log("🚀 ~ file: InfoRequests.jsx:58 ~ getInfoRequest ~ response:", response)
             setInfoRequest(response.data)
             setStatus(response.data?.status)
             getPerson(response.data?.collaborator?.id)
@@ -155,6 +157,7 @@ const InfoRequests = () => {
 
     const setValuesForm = () => {
         let values = {};
+        values.status = infoRequest?.status ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
         values.period = infoRequest?.period ? infoRequest.period : null;
         values.departure_date = infoRequest?.departure_date
@@ -169,6 +172,13 @@ const InfoRequests = () => {
             ? getFullName(infoRequest.immediate_supervisor) : null;
         formRequest.setFieldsValue(values)
     }
+
+    const getStatus = (value) => getValueFilter({
+        value,
+        list: optionsStatusVacation,
+        keyEquals: 'value',
+        keyShow: 'label'
+    })
 
     const actionBack = () => {
         router.push('/comunication/requests/holidays')

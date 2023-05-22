@@ -76,7 +76,7 @@ const FormReport = ({
         formReport.resetFields()
         setValues({})
     },[typeReport])
-
+    
     // useEffect(()=>{
     //     if(Object.keys(values).length <=0) return;
     //     const map_ = item => item.id;
@@ -522,7 +522,7 @@ const FormReport = ({
                 <Col span={24}>
                     <Row justify='space-between' gutter={[20,20]}>
                         {
-                            ['psp','psc'].includes(props.type) &&
+                            ['psp','psc'].includes(typeReport) &&
                             <Col span={24}>
                                 <Space>
                                     <Text style={selectType === 1 ? {fontWeight:'bold'} : null}>
@@ -580,7 +580,6 @@ const FormReport = ({
                                                     notFoundContent='No se encontraron resultados'
                                                     onChange={addGroup}
                                                     loading={load_persons}
-                                                    style={{width: 200}}
                                                     optionFilterProp='children'
                                                     mode="multiple"
                                                 >
