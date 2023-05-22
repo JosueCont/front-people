@@ -559,6 +559,14 @@ class WebApiPeople {
     );
   }
 
+  static assignedMassiveSubstituteImmediateSupervisor(data) {
+    return WebApi.ApisType(
+      `/person/person/set-substitute-immediate-supervisor/`,
+      "post",
+      data
+    );
+  }
+
   //Roles de administrador
 
   static getModulesPermissions() {
