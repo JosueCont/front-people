@@ -24,7 +24,7 @@ import {
   DeleteOutlined,
   SyncOutlined,
   ExclamationCircleOutlined,
-  EllipsisOutlined,
+  EllipsisOutlined, DownloadOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import FormAssessment from "../../../components/assessment/forms/FormAssessment";
@@ -44,7 +44,10 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import { FormattedMessage } from "react-intl";
 import esES from "antd/lib/locale/es_ES";
-import { verifyMenuNewForTenant } from "../../../utils/functions"
+import {asyncForEach, verifyMenuNewForTenant} from "../../../utils/functions"
+import _ from "lodash";
+import AssessmentQuestionsPDF from "../../../components/assessment/pdf/AssessmentQuestionsPDF";
+import {pdf, PDFViewer} from "@react-pdf/renderer";
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -69,6 +72,8 @@ const AssessmentScreen = ({
     showSizeChanger: true,
   });
   const [filterValues, filterActive, onFilterReset] = useFilter();
+  const [assessmentSections, setAssessmentSections] = useState([]);
+  const [assessmentQuestions, setAssessmentQuestions] = useState([]);
 
   useEffect(() => {
     if (props.currentNode) {
@@ -90,6 +95,67 @@ const AssessmentScreen = ({
       ? setShowUpdateAssessment(true)
       : setShowUpdateAssessment(false);
   }, [assessmentStore]);
+
+  const HandleDownloadAssessment = async (item) => {
+   //dispatch(assessmentDetailsAction(item.id))
+     /*console.log('RICH')
+    let data= {
+      "description_es":"<p><a href=\"https://google.com.mx/\">Go to</a><img alt=\"\" src=\"http://testmid.khor.mx/hlsql/imagesPruebas/120/e01_3.jpg\" /><img alt=\"\" src=\"https://khorplus.s3.amazonaws.com/humand/kuiz/assessment/images/115202173958/e01_1.jpg\" />,&nbsp;<img alt=\"\" src=\"https://khorplus.s3.amazonaws.com/humand/kuiz/assessment/images/11520217414/e01_2.jpg\" />&nbsp;y&nbsp;<img alt=\"\" src=\"https://khorplus.s3.amazonaws.com/humand/kuiz/assessment/images/115202174133/e01_3.jpg\" /><img alt=\"\" src=\"http://testmid.khor.mx/hlsql/imagesPruebas/120/e01_3.jpg\" /></p>"
+    }
+    const blocksFromHTML = convertFromHTML(data.description_es)
+    const initialState = ContentState.createFromBlockArray(
+        blocksFromHTML.contentBlocks,
+        blocksFromHTML.entityMap,
+    );
+
+    const editorState = EditorState.createWithContent(initialState)
+    const rawContent = convertToRaw(editorState.getCurrentContent())
+   // let rtx = <RichText content={item.instructions_es}/>
+
+    console.log('RICH2', rawContent)*/
+
+    const key = 'updatable';
+    message.loading({content: 'Generando PDF...', key});
+    try {
+      let response = await WebApiAssessment.assessmentSections(item.id)
+      let _sections = _.orderBy(response.data.results, ["order"], ["asc"])
+      let _questions = [];
+      await asyncForEach(_sections, async (element) => {
+        let { data } = await WebApiAssessment.assessmentQuestions(element.id)
+        data.results.answer_set = _.orderBy( data.results.answer_set, ["order"], ["asc"])
+        _questions.push(...data.results)
+      })
+      _questions = _.orderBy(_questions, ["order"], ["asc"])
+      console.log(_questions)
+      setAssessmentQuestions(_questions)
+      setAssessmentSections(_sections)
+      setAssessmentData(item)
+   //    let _pdfBlob = await pdf(<AssessmentQuestionsPDF assessment={item} sections={_sections} questions={_questions}/>).toBlob()
+
+      setTimeout(()=>{
+        message.success({content: 'PDF generado', key})
+      },1000)
+
+    /*  setTimeout(()=>{
+         downloadPDF(_pdfBlob, item)
+      },1000)*/
+
+    }catch (e){
+      setTimeout(()=>{
+        message.error({content: 'PDF no generado', key})
+      },1000)
+      console.log(e)
+    }
+  }
+  const downloadPDF = (pdfBlob, assessment) =>{
+    const urlBlob = window.URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = `${assessment.name_es}.pdf`;
+    link.target = "_blank";
+    link.click();
+    window.URL.revokeObjectURL(urlBlob);
+  }
 
   const HandleCreateAssessment = () => {
     setAssessmentData(false);
@@ -288,6 +354,14 @@ const AssessmentScreen = ({
   const menuSurvey = (item) => {
     return (
       <Menu>
+       {/* <Menu.Item
+            key={3}
+            icon={<DownloadOutlined />}
+            onClick={() => HandleDownloadAssessment(item)}
+        >
+          PDF
+        </Menu.Item>
+        {item.category !== "K" && <>*/}
         {props.permissions?.edit && (
           <Menu.Item
             key={1}
@@ -306,6 +380,7 @@ const AssessmentScreen = ({
             Eliminar
           </Menu.Item>
         )}
+     {/* </>}*/}
       </Menu>
     );
   };
@@ -397,7 +472,7 @@ const AssessmentScreen = ({
                       <EllipsisOutlined />
                     </Button>
                   </Dropdown>
-                )}
+              )}
               </>
             )}
           </>
@@ -503,6 +578,9 @@ const AssessmentScreen = ({
                 onChange={onChangeTable}
               />
             </ConfigProvider>
+            {/*{assessmentData && assessmentSections && assessmentQuestions && <PDFViewer style={{width:'100%', height:'22cm'}}>
+              <AssessmentQuestionsPDF assessment={assessmentData} sections={assessmentSections} questions={assessmentQuestions}/>
+            </PDFViewer>}*/}
           </Col>
         </Row>
       </div>

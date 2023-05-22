@@ -32,10 +32,14 @@ import {
 } from "./Styled";
 import { connect } from "react-redux";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import {setErrorFormAdd, setModalGroup, setModalGroupEdit} from '../../../redux/assessmentDuck'
 
 const AssessmentsGroup = ({
   assessmentStore,
   userStore,
+  setErrorFormAdd,
+  setModalGroup,
+  setModalGroupEdit,
   ...props
 }) => {
   const [formGroup] = Form.useForm();
@@ -56,6 +60,16 @@ const AssessmentsGroup = ({
       getSurveys(userStore.current_node.id, "&is_active=true");
     }
   },[]);
+
+
+  useEffect(() => {
+    if(assessmentStore.error_form_add){
+      formGroup.setFields([
+        { name: 'name', errors: [assessmentStore.error_form_add] },
+      ]);
+    }
+  }, [assessmentStore.error_form_add])
+  
 
   const getSurveys = async (nodeId, queryParam) => {
     setSurveyList([]);
@@ -86,8 +100,12 @@ const AssessmentsGroup = ({
   };
 
   const onCloseModal = () => {
-    props.close();
-    setSurveysTable([])
+    if(props.loadData.assessments){
+      setModalGroupEdit(false)
+    }else{
+      setModalGroup(false)
+      setErrorFormAdd(false)
+    }
   };
 
   const getOnlyIds = () => {
@@ -103,9 +121,8 @@ const AssessmentsGroup = ({
       const ids = getOnlyIds();
       setLoadAdd(true);
       setTimeout(() => {
-        onCloseModal();
-        setLoadAdd(false);
         props.actionForm({ name: values.name, assessments: ids });
+        setLoadAdd(false);
       }, 2000);
     } else {
       message.error("Selecciona al menos dos Evaluaciones");
@@ -252,7 +269,7 @@ const AssessmentsGroup = ({
         </Row>
         <Row align={"end"}>
           <Space>
-            <Button key="back" onClick={() => props.close()}>
+            <Button key="back" onClick={onCloseModal}>
               Cancelar
             </Button>
             <Button htmlType="submit" loading={loadAdd}>
@@ -271,4 +288,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(AssessmentsGroup);
+export default connect(mapState, { setErrorFormAdd, setModalGroup, setModalGroupEdit })(AssessmentsGroup);
