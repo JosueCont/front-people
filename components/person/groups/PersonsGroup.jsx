@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
-import styled from '@emotion/styled';
-import { useSelector } from "react-redux";
 import {
     Form,
-    Input,
     Button,
-    Modal,
     Row,
     Col,
     Space,
     Select,
     Table,
-    Checkbox,
     message,
-    Radio,
-    Tooltip
 } from "antd";
-import { DeleteOutlined, SearchOutlined, PlusOutlined} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import { ruleRequired } from "../../../utils/rules";
-import { CustomInput, ButtonDanger, CompactSelect, CompactButton } from "../../assessment/groups/Styled";
+import { CustomInput } from "../../assessment/groups/Styled";
+import { getFullName } from "../../../utils/functions";
 
 const PersonsGroup = ({...props}) =>{
 
@@ -166,16 +160,10 @@ const PersonsGroup = ({...props}) =>{
                                 onChange={onChangePerson}
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                                filterSort={(optionA, optionB) =>
-                                    optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                                }
                             >
                                 {membersSelect.length > 0 && membersSelect.map((item) => (
                                     <Option key={item.id} value={item.id}>
-                                        {`${item.first_name} ${item.flast_name} ${item.mlast_name}`}
+                                        {getFullName(item)}
                                     </Option>
                                 ))}
                             </Select>
