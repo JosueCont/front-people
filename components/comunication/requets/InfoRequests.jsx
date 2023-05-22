@@ -24,6 +24,8 @@ const InfoRequests = () => {
     const getUser = state => state.userStore.user;
     const current_user = useSelector(getUser);
 
+    const noValid = [undefined,null,""," "];
+
     const router = useRouter();
     const refSubmit = useRef(null);
     const [formRequest] = Form.useForm();
@@ -56,7 +58,6 @@ const InfoRequests = () => {
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoVacation(id);
-            console.log("🚀 ~ file: InfoRequests.jsx:58 ~ getInfoRequest ~ response:", response)
             setInfoRequest(response.data)
             setStatus(response.data?.status)
             getPerson(response.data?.collaborator?.id)
@@ -81,7 +82,7 @@ const InfoRequests = () => {
         try {
             setLoading(true)
             let body = {...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
-            let response = await WebApiPeople.vacationCancelRequest(body);
+            await WebApiPeople.vacationCancelRequest(body);
             setTimeout(()=>{
                 setLoading(false)
                 onSuccess({message: 'Solicitud cancelada'})
@@ -97,7 +98,7 @@ const InfoRequests = () => {
         try {
             setLoading(true)
             let body = {...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
-            let response = await WebApiPeople.vacationRejectRequest(body);
+            await WebApiPeople.vacationRejectRequest(body);
             setTimeout(()=>{
                 setLoading(false)
                 onSuccess({message: 'Solicitud rechazada'})
@@ -113,7 +114,7 @@ const InfoRequests = () => {
         try {
             setLoading(true)
             let body = {id: router.query?.id, khonnect_id: current_user?.khonnect_id};
-            let response = await WebApiPeople.vacationApproveRequest(body);
+            await WebApiPeople.vacationApproveRequest(body);
             setTimeout(()=>{
                 setLoading(false)
                 onSuccess({message: 'Solicitud aprobada'})
@@ -157,16 +158,16 @@ const InfoRequests = () => {
 
     const setValuesForm = () => {
         let values = {};
-        values.status = infoRequest?.status ? getStatus(infoRequest?.status) : null;
+        values.status = !noValid.includes(infoRequest?.status) ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
         values.period = infoRequest?.period ? infoRequest.period : null;
         values.departure_date = infoRequest?.departure_date
             ? moment(infoRequest.departure_date, formatStart).format(formatEnd) : null;
         values.return_date = infoRequest?.return_date
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
-        values.days_requested = infoRequest?.days_requested
+        values.days_requested = !noValid.includes(infoRequest?.days_requested)
             ? infoRequest?.days_requested : null;
-        values.availableDays = infoRequest?.available_days_vacation
+        values.availableDays = !noValid.includes(infoRequest?.available_days_vacation)
             ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
