@@ -331,7 +331,7 @@ class WebApiPayroll {
   }
 
   static addMassiveCalendar(data){
-    console.log(data)
+    
     return WebApi.ApisType(
       "/payroll/assign-calendar-employees",
       "post",

@@ -49,6 +49,8 @@ const FormPerson = ({
   const [loading, setLoading] = useState(false);
   const [payrrollActive, setPayrrollActive] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
+  const [substituteSupervisorList, setSubstituteSupervisorList] = useState([]);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -105,6 +107,31 @@ const FormPerson = ({
   const disabledDate = (current) => {
     return current && moment(current).startOf("day") > moment().startOf("day");
   };
+
+  const onChangeSupervisor = (value) =>{
+    setSelectedSupervisorId(value)
+    form.setFieldsValue({
+      substitute_immediate_supervisor: ''
+    })
+    let _substitutes = listPersons.filter(e => e.id !== value)
+    console.log(value, _substitutes)
+    setSubstituteSupervisorList(_substitutes )
+  }
+
+  const onClearSupervisor = () =>{
+    setSelectedSupervisorId('')
+    form.setFieldsValue({
+      immediate_supervisor: '',
+      substitute_immediate_supervisor: '',
+    })
+  }
+
+  const onClearSubstituteSupervisor = () =>{
+    setSelectedSupervisorId('')
+    form.setFieldsValue({
+      substitute_immediate_supervisor: '',
+    })
+  }
 
   return (
     <>
@@ -236,13 +263,33 @@ const FormPerson = ({
                 </Col>
                 <Col lg={8} xs={24}>
                   <Form.Item name="immediate_supervisor" label="Jefe inmediato">
-                    <Select showSearch optionFilterProp="children">
+                    <Select showSearch optionFilterProp="children"
+                            allowClear={true}
+                            onChange={onChangeSupervisor}
+                            onClear={onClearSupervisor}
+                    >
                       {listPersons.length > 0 &&
                         listPersons.map((item) => (
                           <Select.Option value={item.id} key={item.id}>
                             {getFullName(item)}
                           </Select.Option>
                         ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={24}>
+                  <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato">
+                    <Select showSearch optionFilterProp="children"
+                            allowClear={true}
+                            disabled={!selectedSupervisorId}
+                            onClear={onClearSubstituteSupervisor}
+                    >
+                      {substituteSupervisorList.length > 0 &&
+                          substituteSupervisorList.map((item) => (
+                              <Select.Option value={item.id} key={item.id}>
+                                {getFullName(item)}
+                              </Select.Option>
+                          ))}
                     </Select>
                   </Form.Item>
                 </Col>

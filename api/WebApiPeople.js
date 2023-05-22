@@ -216,8 +216,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
   }
 
-  static getVacationRequest(data) {
-    return WebApi.ApisType(`/person/vacation/?${data}`, "get");
+  static getVacationRequest(node, query) {
+    return WebApi.ApisType(`/person/vacation/?person__node__id=${node}${query}`, "get");
   }
 
   static saveMassiveDepartments(data) {
@@ -359,8 +359,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/permit/change_status/`, "post", data);
   }
 
-  static geVacationRequest(url = "") {
-    return WebApi.ApisType(`/person/vacation/${url}`, "get");
+  static getInfoVacation(id) {
+    return WebApi.ApisType(`/person/vacation/${id}/`, "get");
   }
 
   static saveVacationRequest(data) {
@@ -385,6 +385,10 @@ class WebApiPeople {
 
   static vacationReOpenRequest(data) {
     return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
+  }
+
+  static vacationNextPeriod(data){
+    return WebApi.ApisType('/person/vacation/planned-vacation/', 'post', data);
   }
 
   static informationNode(data) {
@@ -554,6 +558,14 @@ class WebApiPeople {
   static assignedMassiveImmediateSupervisor(data) {
     return WebApi.ApisType(
       `/person/person/set-immediate-supervisor/`,
+      "post",
+      data
+    );
+  }
+
+  static assignedMassiveSubstituteImmediateSupervisor(data) {
+    return WebApi.ApisType(
+      `/person/person/set-substitute-immediate-supervisor/`,
       "post",
       data
     );

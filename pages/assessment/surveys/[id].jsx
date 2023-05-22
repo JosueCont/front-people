@@ -263,11 +263,13 @@ const Detail = ({ assessmentStore, ...props }) => {
             span={24}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button
-              onClick={() => HandleCreateSection(true)}
-            >
-              <PlusOutlined /> Agregar nueva sección
-            </Button>
+           {/* {assessmentStore.assessment_selected.category !== "K" &&*/}
+                <Button
+                onClick={() => HandleCreateSection(true)}
+              >
+                <PlusOutlined /> Agregar nueva sección
+              </Button>
+           {/* }*/}
           </Col>
         </Row>
         <Row style={{ marginTop: 20 }}>
@@ -311,7 +313,8 @@ const Detail = ({ assessmentStore, ...props }) => {
                                   }
                                   header={pregunta.title}
                                   key={pregunta.id}
-                                  extra={
+                                  extra={<>
+                                  {/* {assessmentStore.assessment_selected.category !== "K" &&*/}
                                     <Options
                                       item={pregunta}
                                       index={index}
@@ -322,7 +325,8 @@ const Detail = ({ assessmentStore, ...props }) => {
                                       onCreate={HandleCreateAnswer}
                                       buttonName="Agregar respuesta"
                                     />
-                                  }
+                                    {/*  }*/}
+                                  </>}
                                 >
                                   <div className="ant-collapse">
                                     {pregunta.answer_set.length > 0 ? (
@@ -331,7 +335,8 @@ const Detail = ({ assessmentStore, ...props }) => {
                                           <Panel
                                             header={respuesta.title}
                                             key={respuesta.id}
-                                            extra={
+                                            extra={<>
+                                           {/* {assessmentStore.assessment_selected.category !== "K" &&*/}
                                               <Options
                                                 item={respuesta}
                                                 index={index}
@@ -340,7 +345,8 @@ const Detail = ({ assessmentStore, ...props }) => {
                                                 onUpdate={HandleUpdateAnswer}
                                                 onDelete={HandleDeleteAnswer}
                                               />
-                                            }
+                                          {/*  }*/}
+                                            </>}
                                           ></Panel>
                                         )
                                       )

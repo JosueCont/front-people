@@ -54,3 +54,5 @@ Thumbs.db
 yarn.lock
 package-lock.json
 .vscode/
+PROD.env.local
+.env.local

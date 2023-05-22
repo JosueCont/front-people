@@ -75,6 +75,8 @@ const DataPerson = ({
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
   const [listPersons, setListPersons] = useState([]);
+  const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
+  const [substituteSupervisorList, setSubstituteSupervisorList] = useState([]);
   //
   const isAdmin = Form.useWatch('is_admin', formPerson);
 
@@ -82,6 +84,13 @@ const DataPerson = ({
     setPersonWT(person.id);
     setFormPerson(person);
   }, [person]);
+
+  useEffect(() => {
+    if(listPersons.length > 0 && selectedSupervisorId){
+      let _substitutes = listPersons.filter(e => e.id !== selectedSupervisorId)
+      setSubstituteSupervisorList(_substitutes )
+    }
+  }, [listPersons, selectedSupervisorId]);
 
   useEffect(() => {
     if(currentNode){
@@ -131,6 +140,7 @@ const DataPerson = ({
       is_careerlab_admin: person.is_careerlab_admin,
       patronal_registration: null,
       immediate_supervisor: person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : null,
+      substitute_immediate_supervisor: person?.substitute_immediate_supervisor?.id ? person?.substitute_immediate_supervisor?.id : null,
       is_admin: person.is_admin,
       administrator_profile: person?.administrator_profile?.id ?? null
     });
@@ -188,6 +198,7 @@ const DataPerson = ({
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);
+    setSelectedSupervisorId(person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : '')
   };
 
   const validateImmediateSupervisor = (id) => ({
@@ -219,6 +230,8 @@ const DataPerson = ({
       ? (value.groups = [value.groups])
       : delete value["groups"];
     value.immediate_supervisor != undefined ? value.immediate_supervisor : null;
+   // console.log(value)
+   // return
     updatePerson(value);
   };
 
@@ -334,6 +347,30 @@ const DataPerson = ({
     }
 
   };
+
+  const onChangeSupervisor = (value) =>{
+    setSelectedSupervisorId(value)
+    formPerson.setFieldsValue({
+      substitute_immediate_supervisor: ''
+    })
+    let _substitutes = listPersons.filter(e => e.id !== value)
+    setSubstituteSupervisorList(_substitutes )
+  }
+
+  const onClearSupervisor = () =>{
+    setSelectedSupervisorId('')
+    formPerson.setFieldsValue({
+      immediate_supervisor: '',
+      substitute_immediate_supervisor: '',
+    })
+  }
+
+  const onClearSubstituteSupervisor = () =>{
+    setSelectedSupervisorId('')
+    formPerson.setFieldsValue({
+      substitute_immediate_supervisor: '',
+    })
+  }
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -621,12 +658,30 @@ const DataPerson = ({
                     showSearch
                     optionFilterProp="children"
                     allowClear={true}
-                    >
+                    onChange={onChangeSupervisor}
+                    onClear={onClearSupervisor}
+                  >
                       { listPersons.length > 0 && listPersons.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
                       ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato">
+                  <Select showSearch optionFilterProp="children"
+                          allowClear={true}
+                          disabled={!selectedSupervisorId}
+                          onClear={onClearSubstituteSupervisor}
+                  >
+                    {substituteSupervisorList.length > 0 &&
+                        substituteSupervisorList.map((item) => (
+                            <Select.Option value={item.id} key={item.id}>
+                              {getFullName(item)}
+                            </Select.Option>
+                        ))}
                   </Select>
                 </Form.Item>
               </Col>
