@@ -28,8 +28,9 @@ import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 import MainIndexSecurity from "../../../components/security/MainIndexSecurity";
+import {getPeopleCompany} from "../../../redux/catalogCompany";
 
-const SelectCompany = ({ ...props }) => {
+const SelectCompany = ({ getPeopleCompany,...props }) => {
   const route = useRouter();
   const { Title } = Typography;
 
@@ -73,6 +74,7 @@ const SelectCompany = ({ ...props }) => {
     if (props.user) {
       if (props.user.is_admin) {
         getCopaniesList();
+        getPeopleCompany()
       } else {
         let data = props.user.nodes?.filter((a) => a.active);
         setDataList(data);
@@ -205,4 +207,4 @@ const mapState = (state) => {
   return { user: state.userStore.user };
 };
 
-export default connect(mapState)(withAuthSync(SelectCompany));
+export default connect(mapState, {getPeopleCompany})(withAuthSync(SelectCompany));

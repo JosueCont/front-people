@@ -38,7 +38,7 @@ import {
 } from "../../../utils/rules";
 import Link from "next/link";
 
-const FormImssInfonavit = ({ person, person_id = null, node }) => {
+const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ...props }) => {
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [formInfonavitManual] = Form.useForm();
@@ -163,6 +163,13 @@ const FormImssInfonavit = ({ person, person_id = null, node }) => {
       setModalVisible(true);
     }
   }, [updateInfonavit]);
+
+  useEffect(()=>{
+    if(refreshtab){
+      localUserCredit()
+      props.onFinishRefresh()
+    }
+  },[refreshtab])
 
   useEffect(() => {
     if (isNewRegister) {

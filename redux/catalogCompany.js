@@ -311,6 +311,7 @@ export const getProfileGroups =
 
 export const getPeopleCompany = (idCompany) => async (dispatch, getState) => {
   try {
+    if(!idCompany) idCompany = userCompanyId();
     let response = await WebApiPeople.filterPerson({ node: idCompany });
     let people = response.data.map((a, i) => {
       return {
