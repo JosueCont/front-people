@@ -73,10 +73,7 @@ const SearchRequests = () => {
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push({
-                                    pathname: 'holidays/new',
-                                    query: router.query
-                                })}>
+                                <Button onClick={()=> router.push('holidays/new')}>
                                     Agregar
                                 </Button>
                             </div>
