@@ -22,6 +22,14 @@ const RequestsForm = ({
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} xl={8}>
                 <Form.Item
+                    name='status'
+                    label='Estatus'
+                >
+                    <Input size='large' readOnly placeholder='Estatus'/>
+                </Form.Item>
+            </Col>
+            <Col xs={24} md={12} xl={8}>
+                <Form.Item
                     name='person'
                     label='Colaborador'
                 >
@@ -77,15 +85,15 @@ const RequestsForm = ({
                 </Form.Item>
             </Col>
             <Col span={24} className='content-end' style={{gap: 8}}>
+                {vacation?.reject_vacation && [1,5].includes(status) && (
+                    <Button onClick={()=> showModal('cancel')}>
+                        Cancelar solicitud
+                    </Button>
+                )}
                 {vacation?.reject_vacation && status == 1 && (
-                    <>
-                        <Button onClick={()=> showModal('cancel')}>
-                            Cancelar solicitud
-                        </Button>
-                        <Button onClick={()=> showModal('reject')}>
-                            Rechazar solicitud
-                        </Button>
-                    </>
+                    <Button onClick={()=> showModal('reject')}>
+                        Rechazar solicitud
+                    </Button>
                 )}
                 {vacation?.approve_vacation && status == 1 && (
                     <Button onClick={()=> showConfirm('approve')}>
