@@ -6,7 +6,6 @@ import SearchAssign from '../../../components/jobbank/candidates/assign/SearchAs
 import TableAssign from '../../../components/jobbank/candidates/assign/TableAssign';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { CustomProvider } from '../../../components/jobbank/context/CustomContext';
 import { valueToFilter } from '../../../utils/functions';
 import moment from 'moment';
 import { deleteFiltersJb } from '../../../utils/functions';

@@ -712,7 +712,7 @@ textarea {
 .icon-intranet {
   width: 15px !important;
 }
-.ant-tooltip{
+.ant-tooltip.tooltip-competence{
   width: 300px!important;
   max-width: 300px!important;
 }
