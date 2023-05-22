@@ -20,7 +20,6 @@ const VacactionForm = ({
     currentPerson,
     setCurrentPerson,
     action,
-    getPerson = ()=>{},
     actionBack = ()=>{}
 }) => {
 
@@ -114,7 +113,18 @@ const VacactionForm = ({
         values.period = person[period] ? person[period] : null;
         values.immediate_supervisor = person?.immediate_supervisor
             ? person?.immediate_supervisor?.id : null,
+        values.days_requested = null;
+        values.departure_date = null;
+        values.return_date = null;
         formRequest.setFieldsValue(values);
+    }
+
+    const getPerson = (id) =>{
+        if(!id) return {};
+        const find_ = item => item.id == id;
+        let result = persons_company.find(find_);
+        if(!result) return {};
+        return result;
     }
 
     const onChangePerson = (value) =>{
@@ -225,6 +235,7 @@ const VacactionForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         onChange={onChangePerson}
+                        size='large'
                     >
                         {persons_company.length > 0 && persons_company.map(item => (
                             <Select.Option value={item.id} key={item.id}>
@@ -247,6 +258,7 @@ const VacactionForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         onChange={onChangePeriod}
+                        size='large'
                     >
                         {Object.keys(currentPerson).length > 0 && (
                             <>
@@ -281,6 +293,7 @@ const VacactionForm = ({
                         onChange={onChangeStart}
                         format='DD-MM-YYYY'
                         inputReadOnly
+                        size='large'
                     />
                 </Form.Item>
             </Col>
@@ -300,6 +313,7 @@ const VacactionForm = ({
                         onChange={onChangeEnd}
                         format='DD-MM-YYYY'
                         inputReadOnly
+                        size='large'
                     />
                 </Form.Item>
             </Col>
@@ -315,6 +329,7 @@ const VacactionForm = ({
                     <InputNumber
                         min={1}
                         disabled
+                        size='large'
                         placeholder='Días solicitados'
                         style={{
                             width: '100%',
@@ -333,6 +348,7 @@ const VacactionForm = ({
                 >
                     <InputNumber
                         disabled
+                        size='large'
                         placeholder='Días disponibles'
                         style={{
                             width: '100%',
@@ -345,10 +361,8 @@ const VacactionForm = ({
                 <Form.Item
                     name='immediate_supervisor'
                     label='Jefe inmediato'
-                    rules={[{
-                        required: true,
-                        message: "Este campo es requerido, esta información la puedes asignar desde el expediente de la persona",
-                    }]}
+                    rules={[ruleRequired]}
+                    tooltip='Esta información la puedes asignar desde el expediente de la persona'
                 >
                     <Select
                         allowClear
@@ -358,6 +372,7 @@ const VacactionForm = ({
                         placeholder='Seleccionar una opción'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
+                        size='large'
                     >
                         {persons_company.length > 0 && persons_company.map(item => (
                             <Select.Option value={item.id} key={item.id}>

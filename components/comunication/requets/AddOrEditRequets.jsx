@@ -18,7 +18,7 @@ const AddOrEditRequets = ({
 
     const ExtraBread = [
         { name: 'Vacaciones', URL: '/comunication/requests/holidays' },
-        { name: action == 'add' ? 'Registrar' : 'Actualizar' }
+        { name: action == 'add' ? 'Registrar' : action == 'details' ? 'Detalle' : 'Actualizar' }
     ]
 
     return (

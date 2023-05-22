@@ -216,8 +216,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
   }
 
-  static getVacationRequest(data) {
-    return WebApi.ApisType(`/person/vacation/?${data}`, "get");
+  static getVacationRequest(node, query) {
+    return WebApi.ApisType(`/person/vacation/?person__node__id=${node}${query}`, "get");
   }
 
   static saveMassiveDepartments(data) {

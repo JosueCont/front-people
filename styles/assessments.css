@@ -1167,4 +1167,9 @@ span.input-with-clear:focus{
     border-left: 2px solid #d9d9d9;
 } */
 
+div.picker-range-jb{
+    border: 1px solid transparent!important;
+    box-shadow: none!important;
+}
+
 /* Termina diseño para solicitud de vacaciones */

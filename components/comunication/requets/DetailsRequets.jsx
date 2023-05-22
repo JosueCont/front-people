@@ -19,11 +19,7 @@ import moment from 'moment';
 const DetailsRequets = ({
     action
 }) => {
-
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
+    
     const {
         current_node,
         general_config
@@ -33,7 +29,6 @@ const DetailsRequets = ({
     const [loading, setLoading] = useState(false);
     const [currentPerson, setCurrentPerson] = useState({});
     const [infoRequest, setInfoRequest] = useState({});
-    const person = Form.useWatch('person', formRequest);
     // Keys
     const period = 'current_vacation_period';
 
@@ -50,18 +45,15 @@ const DetailsRequets = ({
         }
     },[infoRequest])
 
-    useEffect(()=>{
-        if(persons_company?.length <=0) return;
-        let user = getPerson(person);
-        setCurrentPerson(user)
-    },[person, persons_company])
-
     const getInfoRequest = async (id) =>{
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoVacation(id);
             setInfoRequest(response.data)
             setLoading(false)
+            let user_id = response.data?.collaborator?.id;
+            if(!user_id) return;
+            getPerson(user_id)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -99,6 +91,16 @@ const DetailsRequets = ({
         }
     }
 
+    const getPerson = async (id) =>{
+        try {
+            let response = await WebApiPeople.getPerson(id);
+            setCurrentPerson(response.data)
+        } catch (e) {
+            console.log(e)
+            setCurrentPerson({})
+        }
+    }
+
     const setValuesForm = () =>{
         let values = {};
         values.person = infoRequest?.collaborator ? infoRequest.collaborator?.id : null;
@@ -128,14 +130,6 @@ const DetailsRequets = ({
             add: onFinishCreate
         }
         actions[action](values)
-    }
-
-    const getPerson = (id) =>{
-        if(!id) return {};
-        const find_ = item => item.id == id;
-        let result = persons_company.find(find_);
-        if(!result) return {};
-        return result;
     }
 
     const actionBack = () =>{
@@ -180,7 +174,6 @@ const DetailsRequets = ({
                                 setCurrentPerson={setCurrentPerson}
                                 formRequest={formRequest}
                                 action={action}
-                                getPerson={getPerson}
                                 actionBack={actionBack}
                             />
                         </Form>

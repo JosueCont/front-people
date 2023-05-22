@@ -472,6 +472,7 @@ export const createFiltersJB = (obj = {}, discard = []) =>{
 }
 
 export const getFiltersJB = (obj = {}, discard = []) =>{
+  if(Object.keys(obj).length <=0) return '';
   return Object.entries(obj).reduce((query, [key, val])=>{
     if(["size", ...discard].includes(key)) return query;
     if(key == "page"){
