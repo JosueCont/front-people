@@ -83,15 +83,12 @@ const GroupsKuiz = ({
             </Breadcrumb>
             <div style={{
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                gap: 24
             }}>
-                {/* <AssessmentsSearch
-                setLoading={setLoading}
-                createGroup={createGroup}
-                searchGroup={searchGroup}
-                setNumPage={setNumPage}
-                getListGroups={getListGroups}
-                /> */}
+                <AssessmentsSearch
+                    getListGroups={getListGroups}
+                />
                 <AssessmentsTable
                     listGroups={listGroups}
                     loading={loading}

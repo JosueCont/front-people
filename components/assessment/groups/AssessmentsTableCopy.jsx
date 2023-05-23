@@ -20,7 +20,7 @@ import {
     EyeInvisibleOutlined
 } from '@ant-design/icons';
 import ViewSurveys from './ViewSurveys';
-import AssessmentsGroupCopy from './AssessmentsGroupCopy';
+import AssessmentsGroup from './AssessmentsGroupCopy';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import ListItems from '../../../common/ListItems';
 
@@ -229,7 +229,7 @@ const AssessmentsTableCopy = ({
                 itemGroup={itemGroup}
                 visible={openList}
             />
-            <AssessmentsGroupCopy
+            <AssessmentsGroup
                 title='Editar grupo'
                 close={closeEdit}
                 visible={openEdit}

@@ -191,9 +191,11 @@ const AssessmentsGroup = ({
                                 padding: '0px 0px 4px'
                             }}>Seleccionar evaluaciones</label>
                             <Input
+                                allowClear
                                 value={nameSearch}
                                 onChange={onFilter}
                                 placeholder='Buscar'
+                                style={{border: '1px solid black'}}
                             />
                         </div>
                         <Table
