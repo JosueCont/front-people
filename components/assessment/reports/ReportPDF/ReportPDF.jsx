@@ -23,7 +23,7 @@ const ReportPDF = ({
 
 
     const columns_ = useMemo(() =>{
-        if(!['p','pp'].includes(typeReport)) return [];
+        if(!['p'].includes(typeReport)) return [];
         return [...columns].reduce((acc, current) =>{
             if(!current.dataIndex && !current.nested) return acc;            
             let key = current.nested ? current.nested : current.dataIndex;
@@ -70,7 +70,6 @@ const ReportPDF = ({
             <Document title={fileName}>
                 <Page
                     size='LETTER'
-                    orientation={typeReport == 'pp' ? 'landscape' : 'portrait'}
                     style={styles.content} wrap={true}
                 >
                     <ReportHeader {...propsHeader}/>
