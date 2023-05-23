@@ -12,6 +12,7 @@ const FormCaledanrXml = ({
   calendar,
   paymentPeriodicity = [],
   dataImportCalendar,
+  isAddXMLS=false,// esto indica si es la opcion de agregar mas xmls a un calendario existente
   perceptions_type = null,
   ...props
 }) => {
@@ -66,14 +67,14 @@ const FormCaledanrXml = ({
     ).description;
     setPeriodicityCode(periodicity_code);
     formCalendar.setFieldsValue({
-      name: calendar.calendar.name,
+      name: isAddXMLS ? calendar.name : calendar.calendar.name,
       perception_type: calendar.calendar.perception_type,
       period: calendar.calendar.period,
-      periodicity: calendar.calendar.periodicity,
-      start_date: moment(calendar.calendar.start_date),
-      activation_date: moment(calendar.calendar.activation_date),
-      type_tax: calendar.calendar.type_tax,
-      salary_days: calendar.calendar.salary_days,
+      periodicity: isAddXMLS ? calendar.periodicity:calendar.calendar.periodicity ,
+      start_date:isAddXMLS ? moment(calendar.start_date) : moment(calendar.calendar.start_date),
+      activation_date:isAddXMLS ?  moment(calendar.activation_date) :  moment(calendar.calendar.activation_date),
+      type_tax: isAddXMLS ? calendar.type_tax : calendar.calendar.type_tax,
+      salary_days: isAddXMLS ? calendar.salary_days : calendar.calendar.salary_days,
     });
     setlastPeriodDate(calendar.calendar.activation_date);
   }, [calendar]);
