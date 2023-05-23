@@ -654,19 +654,21 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     );
   };
 
-  // const UseInternalConcept = ({ use = false }) => {
-  //   return (
-  //     <Switch
-  //       defaultChecked={use}
-  //       checkedChildren="Si"
-  //       unCheckedChildren="No"
-  //       onChange={(value) => {
-  //         xmlImport.companies[companySelect].company.use_internal_concepts =
-  //           value;
-  //       }}
-  //     />
-  //   );
-  // };
+  const UseInternalConcept = ({ use = false }) => {
+    return (
+        <Form.Item label="Utilizar conceptos internos del sistema">
+            <Switch
+              defaultChecked={use}
+              checkedChildren="Si"
+              unCheckedChildren="No"
+              onChange={(value) => {
+                xmlImport.companies[companySelect].company.use_internal_concepts =
+                  value;
+              }}
+            />
+        </Form.Item>
+    );
+  };
 
   return (
     <MainLayout
@@ -854,6 +856,12 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                                 ?.branch_node
                                           }
                                       />
+                                    </Col>
+                                }
+
+                                {
+                                    !isAddXMLS && <Col style={{ display: "flex" }}>
+                                        <UseInternalConcept use={xmlImport.companies[companySelect].company.use_internal_concepts}/>
                                     </Col>
                                 }
 

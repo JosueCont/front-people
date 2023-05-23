@@ -31,7 +31,7 @@ const FormCaledanrXml = ({
       let percep = perceptions_type.find(
         (item) => item.id == calendar.perception
       );
-      if (percep) setPerception(percep.code == "001" ? "Nomina" : "Asimilados");
+      if (percep) setPerception(percep.code == "001" ? "Nómina" : "Asimilados");
     }
   }, [perceptions_type, calendar]);
 
@@ -270,6 +270,7 @@ const FormCaledanrXml = ({
 
                   </>
               }
+
 
               {periodicityCode &&
                 periodicityCode != "" &&
