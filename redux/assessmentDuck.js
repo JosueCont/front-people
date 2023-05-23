@@ -142,6 +142,7 @@ const assessmentReducer = (state = initialData, action) => {
       return {
         ...state,
         categories_assessment: action.payload,
+        fetching: false
       };
     case types.UPD_PAGINATION:
       return {
