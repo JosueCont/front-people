@@ -90,7 +90,7 @@ const MainSider = ({
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
       integrationFactors: "/business/integrationFactors",
-      importMassivePayroll: "/payroll/importMasivePayroll",
+      importMassivePayroll: "/payroll/importMasivePayroll/?action=addxmls",
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
       documentsLog: "/log/documentsLog",
