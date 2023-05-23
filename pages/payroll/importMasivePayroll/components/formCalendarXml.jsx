@@ -146,6 +146,7 @@ const FormCaledanrXml = ({
                   initialValue={calendar.calendar.name}
                 >
                   <Input
+                      disabled={isAddXMLS}
                     onChange={(value) =>
                       (calendar.calendar.name = value.target.value)
                     }
@@ -183,6 +184,7 @@ const FormCaledanrXml = ({
                     style={{ width: "100%" }}
                     moment={"YYYY-MM-DD"}
                     placeholder=""
+                    disabled={isAddXMLS}
                     locale={locale}
                     onChange={(value, dateString) => {
                       calendar.calendar.start_date = dateString;
@@ -201,6 +203,7 @@ const FormCaledanrXml = ({
                     style={{ width: "100%" }}
                     moment={"YYYY-MM-DD"}
                     placeholder=""
+                    disabled={isAddXMLS}
                     locale={locale}
                     onChange={(value, dateString) => {
                       calendar.calendar.activation_date = dateString;
@@ -216,6 +219,7 @@ const FormCaledanrXml = ({
                 <SelectTypeTax
                   style={{ width: 240 }}
                   rules={[ruleRequired]}
+                  disabled={isAddXMLS}
                   onChange={(value) => (calendar.calendar.type_tax = value)}
                 />
               </Col>
@@ -229,6 +233,7 @@ const FormCaledanrXml = ({
                   <Select
                     key={"SelectSalaryDays"}
                     placeholder="Días a pagar"
+                    disabled={isAddXMLS}
                     options={salaryDays}
                     onChange={(value) =>
                       (calendar.calendar.salary_days = value)
@@ -236,30 +241,36 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
-                <Form.Item label="¿Activo?">
-                  <SwitchCalendar
-                    status={calendar.calendar.active}
-                    name={"active"}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item label="Ajuste mensual">
-                  <SwitchCalendar
-                    status={calendar.calendar.monthly_adjustment}
-                    name={"monthly_adjustment"}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item label="Ajuste anual">
-                  <SwitchCalendar
-                    status={calendar.calendar.annual_adjustment}
-                    name={"annual_adjustment"}
-                  />
-                </Form.Item>
-              </Col>
+              {
+                !isAddXMLS && <>
+                    <Col span={6}>
+                      <Form.Item label="¿Activo?">
+                        <SwitchCalendar
+                            status={calendar.calendar.active}
+                            name={"active"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item label="Ajuste mensual">
+                        <SwitchCalendar
+                            status={calendar.calendar.monthly_adjustment}
+                            name={"monthly_adjustment"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item label="Ajuste anual">
+                        <SwitchCalendar
+                            status={calendar.calendar.annual_adjustment}
+                            name={"annual_adjustment"}
+                        />
+                      </Form.Item>
+                    </Col>
+
+                  </>
+              }
+
               {periodicityCode &&
                 periodicityCode != "" &&
                 periodicityCode == "02" && (
