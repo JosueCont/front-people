@@ -134,13 +134,8 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
 
     const getGroupsSurveys = async (nodeId, queryParam)=> {
         setLoading(true)
-        const data = {
-            nodeId: nodeId,
-            name: "",
-            queryParam: queryParam
-        }
         try {
-            let response = await WebApiAssessment.getGroupsAssessments(data);
+            let response = await WebApiAssessment.getGroupsAssessments(nodeId, queryParam);
             setListSurveys(response.data)
             setCopyList(response.data)
             setLoading(false)
@@ -211,13 +206,6 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
             copyList.results :
             copyList;
         return list;
-    }
-
-    const getListTotal = () =>{
-        let size = listSurveys.count ?
-        listSurveys.count :
-        listSurveys.length;
-        return size;
     }
 
     const deleteItem = (index) => {
@@ -396,7 +384,7 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
                             <CustomInput
                                 maxLength={50}
                                 allowClear={true}
-                                placeholder="Buscar prueba"
+                                placeholder="Buscar"
                                 onChange={onSearchByName}
                                 prefix={<SearchOutlined />}
                                 value={textForSearch}
@@ -444,7 +432,9 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
                         </Radio.Group>
                     </ColButtons>
                     <Col span={12}>
-                        <Form.Item label={"Agregar evaluaciones"}>
+                        <Form.Item label={isIndividual
+                                ? "Asignar evaluaciones" : "Asignar grupos"
+                            }>
                             <Table
                                 rowKey={'id'}
                                 columns={columns}
@@ -459,19 +449,13 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
                                 }}
                                 scroll={{y: 200}}
                                 // rowSelection={rowSelection}
-                                onChange={onChangePage}
-                                pagination={isIndividual ? false : {
-                                    pageSize: 10,
-                                    total: getListTotal(),
-                                    position: ['bottomLeft'],
-                                    hideOnSinglePage: true,
-                                    showSizeChanger: false
-                                }}
+                                // onChange={onChangePage}
+                                pagination={false}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12} style={{marginBottom: 'auto'}}>
-                        <Form.Item label={`Evaluaciones seleccionadas (${surveySelected.length})`}>
+                        <Form.Item label={`Seleccionados (${surveySelected.length})`}>
                             <Table
                                 rowKey={'id'}
                                 columns={columnSelected}
