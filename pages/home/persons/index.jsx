@@ -1167,7 +1167,7 @@ const homeScreen = ({
   };
 
   const HandleModalAssign = (item) => {
-    setNamePerson(item?.first_name + " " + item?.flast_name)
+    setNamePerson(getFullName(item))
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);

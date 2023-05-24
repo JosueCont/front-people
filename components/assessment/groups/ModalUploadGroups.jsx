@@ -21,7 +21,7 @@ const ModalUploadGroups = ({
         let data = new FormData();
         data.append('file', fileList[0])
         data.append('node', current_node?.id)
-        data.action('action', action)
+        data.append('action', action)
         return data;
     }
 
