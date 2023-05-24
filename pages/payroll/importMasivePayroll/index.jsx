@@ -42,6 +42,8 @@ import _ from "lodash";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import { orange } from "@material-ui/core/colors";
 import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
+import SelectPaymentCalendar from "../../../components/selects/SelectPaymentCalendar";
+import moment from "moment";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -60,6 +62,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const [resumeData, setResumeData] = useState(null);
   const [visibleResumeModal, setVisibleResumemodal] = useState(false);
   const [visibleRegPatronalSelect, setVisibleRegPatronalSelect] = useState(false)
+  const [isAddXMLS, setIsAddXMLS] = useState(false) // para saber si la vista se comportará como añadir xmls a calendario existente
+  const [calendarSelected, setCalendarSelected] = useState(null)
 
   // Modal respuesta del import
   const [titileMessage, setTitleMessage] = useState("");
@@ -126,7 +130,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
     if(router?.query){
       if(router?.query?.action==='addxmls'){
-        console.log(router?.query?.action)
+        setIsAddXMLS(true)
+      }else{
+        setIsAddXMLS(false)
       }
     }
 
@@ -170,6 +176,18 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         data.append("File", item.originFileObj);
       });
       data.append("export", "False");
+      if(isAddXMLS){
+
+        if(!calendarSelected){
+          message.error('Es requerido elegir un calendario')
+          setLoading(false);
+          return
+        }
+
+        data.append("node_id", props?.currentNode?.id)
+        data.append("calendar_id", calendarSelected)
+      }
+
       sendFiles(data);
     }
   }, [files]);
@@ -283,11 +301,18 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const sendFiles = (data) => {
     WebApiPayroll.importPayrollMasiveXml(data)
       .then((response) => {
+        if(response?.data?.companies && response?.data?.companies.length>0){
+          message.success(messageUploadSuccess);
+          console.log("DATA IMPORT ->", response.data);
+          setXmlImport(response.data);
+          processResume(response.data);
+        }else{
+          message.error("No se pudo procesar la información, asegurate que los recibos sean correspondientes a la misma empresa o al mismo periodo");
+          setLoading(false);
+          return;
+        }
         setLoading(false);
-        message.success(messageUploadSuccess);
-        console.log("DATA IMPORT ->", response.data);
-        setXmlImport(response.data);
-        processResume(response.data);
+
       })
       .catch((error) => {
         setLoading(false);
@@ -448,6 +473,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       if (company.patronal_registrations) {
         company.patronal_registrations.map((reg_pat) => {
           if (reg_pat.periodicities && reg_pat.periodicities.length > 0) {
+            debugger;
             reg_pat.periodicities.map((periodicity) => {
               let calendar = {
                 patronal_registration: reg_pat.patronal_registration,
@@ -456,6 +482,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
               calendar.periodicity_type = periodicity.periodicity_code;
               calendar.errors = [];
               if (periodicity.calendar) {
+                if(isAddXMLS){
+                  periodicity.calendar.name = periodicity.name ? periodicity.name  : "";
+                  periodicity.calendar.start_date = periodicity.start_date ? periodicity.start_date  : "";
+                  periodicity.calendar.type_tax = periodicity.type_tax ? periodicity.type_tax  : "";
+                  periodicity.calendar.salary_days = periodicity.salary_days ? periodicity.salary_days  : "";
+                  periodicity.calendar.activation_date = periodicity.activation_date ? periodicity.activation_date  : "";
+                  periodicity.calendar.id = periodicity.id ? periodicity.id  : "";
+                }
                 if (periodicity.calendar.name == "") {
                   calendar.errors.push("Nombre es requerido");
                 }
@@ -467,6 +501,10 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 }
                 if (periodicity.calendar.activation_date == "") {
                   calendar.errors.push("Fecha de activación es requerido");
+                }
+
+                if (periodicity.calendar.salary_days == "") {
+                  calendar.errors.push("Días a pagar");
                 }
                 if (calendar.errors.length > 0)
                   company_error.calendars.push(calendar);
@@ -616,19 +654,21 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     );
   };
 
-  // const UseInternalConcept = ({ use = false }) => {
-  //   return (
-  //     <Switch
-  //       defaultChecked={use}
-  //       checkedChildren="Si"
-  //       unCheckedChildren="No"
-  //       onChange={(value) => {
-  //         xmlImport.companies[companySelect].company.use_internal_concepts =
-  //           value;
-  //       }}
-  //     />
-  //   );
-  // };
+  const UseInternalConcept = ({ use = false }) => {
+    return (
+        <Form.Item label="Utilizar conceptos internos del sistema">
+            <Switch
+              defaultChecked={use}
+              checkedChildren="Si"
+              unCheckedChildren="No"
+              onChange={(value) => {
+                xmlImport.companies[companySelect].company.use_internal_concepts =
+                  value;
+              }}
+            />
+        </Form.Item>
+    );
+  };
 
   return (
     <MainLayout
@@ -760,8 +800,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                               <Form.Item label="Razon social">
                                 <Input
                                   value={
-                                    xmlImport.companies[companySelect].company
-                                      .reason
+                                    xmlImport.companies[companySelect]?.company
+                                      ?.reason
                                   }
                                 />
                               </Form.Item>
@@ -770,8 +810,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                               <Form.Item label="RFC">
                                 <Input
                                   value={
-                                    xmlImport.companies[companySelect].company
-                                      .rfc
+                                    xmlImport.companies[companySelect]?.company
+                                      ?.rfc
                                   }
                                 />
                               </Form.Item>
@@ -785,15 +825,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                           (item) =>
                                             item.code ===
                                             xmlImport.companies[companySelect]
-                                              .company.fiscal_regime
-                                        ).description
+                                              ?.company?.fiscal_regime
+                                        )?.description
                                       : ""
                                   }
                                 />
                               </Form.Item>
                             </Col>
                             {xmlImport.companies[companySelect]
-                              .patronal_registrations && (
+                              ?.patronal_registrations && (
                               <>
                                 <Col style={{ display: "flex" }}>
                                   <Form.Item label="Registro patronal">
@@ -801,21 +841,30 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                       readOnly
                                       value={
                                         patronals.length > 0
-                                          ? patronals[patronalSelect].label
+                                          ? patronals[patronalSelect]?.label
                                           : ""
                                       }
                                     />
                                   </Form.Item>
                                 </Col>
-                                <Col style={{ display: "flex" }}>
-                                  <NameSuc
-                                    name={
-                                      xmlImport.companies[companySelect]
-                                        .patronal_registrations[patronalSelect]
-                                        .branch_node
-                                    }
-                                  />
-                                </Col>
+                                {
+                                  !isAddXMLS && <Col style={{ display: "flex" }}>
+                                      <NameSuc
+                                          name={
+                                            xmlImport.companies[companySelect]
+                                                ?.patronal_registrations[patronalSelect]
+                                                ?.branch_node
+                                          }
+                                      />
+                                    </Col>
+                                }
+
+                                {
+                                    !isAddXMLS && <Col style={{ display: "flex" }}>
+                                        <UseInternalConcept use={xmlImport.companies[companySelect].company.use_internal_concepts}/>
+                                    </Col>
+                                }
+
                               </>
                             )}
                             {/* <Col style={{ display: "flex" }}>
@@ -841,6 +890,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 company={xmlImport.companies[companySelect]}
                 paymentPeriodicity={props.payment_periodicity}
                 setPerson={setPerson}
+                isAddXMLS={isAddXMLS}
                 companies={xmlImport.companies}
                 periodicities
                 perceptions_type={props.perceptions_type}
@@ -877,7 +927,11 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                             fontWeight: "bold",
                           }}
                         >
-                          <DollarCircleOutlined /> Recibos de nómina
+
+                          <DollarCircleOutlined />
+                          {
+                            isAddXMLS ? ' Añadir nómina a calendario existente': ' Recibos de nómina'
+                          }
                         </span>
                       </Col>
                       <Col span={2} style={{ display: "flex" }}>
@@ -899,6 +953,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
               </Col>
               <Col span={24}>
                 <Card>
+                  {
+                    isAddXMLS && <Row>
+                        <Col span={6}>
+                          <SelectPaymentCalendar style={{width:'100%'}}  setCalendarId={(calendar)=>setCalendarSelected(calendar)} />
+                        </Col>
+                      </Row>
+                  }
+
+
                   <div
                     onClick={() => setModal(true)}
                     className={"ImportPayroll"}
@@ -908,11 +971,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       <span style={{ fontSize: "20px" }}>
                         <b>Importa tus recibos aquí</b>
                       </span>
-                      <p style={{ fontSize: "15px" }}>
-                        Se analizará la información de tus archivos, se creará
-                        la empresa, información de los empleados y sus pagos de
-                        nómina.
-                      </p>
+                      {
+                        isAddXMLS ?  <p style={{ fontSize: "15px" }}>
+                          Se analizará la información de tus archivos, y se añadirá a un calendario seleccionado.
+                        </p>  :  <p style={{ fontSize: "15px" }}>
+                          Se analizará la información de tus archivos, se creará
+                          la empresa, información de los empleados y sus pagos de
+                          nómina.
+                        </p>
+                      }
+
                       <Button
                         style={{
                           background: "#fa8c16",

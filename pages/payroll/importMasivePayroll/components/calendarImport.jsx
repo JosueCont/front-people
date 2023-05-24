@@ -9,14 +9,13 @@ const CalendarImport = ({
   paymentPeriodicity = null,
   patronalSelect = null,
   setPerson,
+  isAddXMLS=false,
   perceptions_type,
   ...props
 }) => {
   const [validDatas, setValidDatas] = useState(false);
   const [periodicities, setPeriodicities] = useState();
   const [calendarSelect, setCalendarSelect] = useState(0);
-
-  useEffect;
 
   useEffect(() => {
     if (
@@ -146,6 +145,7 @@ const CalendarImport = ({
               <Row justify="space-between">
                 <Row style={{ width: "100%" }}>
                   <FormCaledanrXml
+                    isAddXMLS={isAddXMLS}
                     calendar={periodicities[calendarSelect]}
                     paymentPeriodicity={paymentPeriodicity}
                     perceptions_type={perceptions_type}

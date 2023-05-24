@@ -225,6 +225,7 @@ const CreatePerfil = ({
                     {selectedLevel &&
                         <Tooltip
                             placement="bottomRight"
+                            overlayClassName='tooltip-competence'
                             title={<>
                                 <b>{item.name} (Nivel {selectedLevel.level}):</b><br/>
                                 <div className={'tooltip-scroll-content'}>

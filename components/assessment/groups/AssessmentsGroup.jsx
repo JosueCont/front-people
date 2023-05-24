@@ -32,13 +32,14 @@ import {
 } from "./Styled";
 import { connect } from "react-redux";
 import WebApiAssessment from "../../../api/WebApiAssessment";
-import { setErrorFormAdd, setModalGroup } from '../../../redux/assessmentDuck'
+import {setErrorFormAdd, setModalGroup, setModalGroupEdit} from '../../../redux/assessmentDuck'
 
 const AssessmentsGroup = ({
   assessmentStore,
   userStore,
   setErrorFormAdd,
   setModalGroup,
+  setModalGroupEdit,
   ...props
 }) => {
   const [formGroup] = Form.useForm();
@@ -99,7 +100,12 @@ const AssessmentsGroup = ({
   };
 
   const onCloseModal = () => {
-    setModalGroup(false)
+    if(props.loadData.assessments){
+      setModalGroupEdit(false)
+    }else{
+      setModalGroup(false)
+      setErrorFormAdd(false)
+    }
   };
 
   const getOnlyIds = () => {
@@ -263,7 +269,7 @@ const AssessmentsGroup = ({
         </Row>
         <Row align={"end"}>
           <Space>
-            <Button key="back" onClick={() => setModalGroup(false)}>
+            <Button key="back" onClick={onCloseModal}>
               Cancelar
             </Button>
             <Button htmlType="submit" loading={loadAdd}>
@@ -282,4 +288,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setErrorFormAdd, setModalGroup })(AssessmentsGroup);
+export default connect(mapState, { setErrorFormAdd, setModalGroup, setModalGroupEdit })(AssessmentsGroup);

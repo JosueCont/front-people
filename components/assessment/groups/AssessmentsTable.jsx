@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {
     Table,
     Row,
@@ -28,8 +28,9 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewSurveys from "./ViewSurveys";
 import DeleteGroups from "./DeleteGroups";
 import AssessmentsGroup from "./AssessmentsGroup";
+import {setErrorFormAdd, setModalGroupEdit} from "../../../redux/assessmentDuck";
 
-const AssessmentsTable = ({...props}) => {
+const AssessmentsTable = ({ setModalGroupEdit, assessmentStore, ...props}) => {
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
   const permissions = useSelector(state => state.userStore.permissions.person)
@@ -47,14 +48,15 @@ const AssessmentsTable = ({...props}) => {
     /* let resp = await getOnlyGroup(item.group_kuiz_id); */
     // setItemGroupPeople(item)
     setItemGroup(item)
-    setShowModalEdit(true)
+   // setShowModalEdit(true)
+      setModalGroupEdit(true)
   }
 
   
   
 
   const HandleClose = () =>{
-      setShowModalEdit(false)
+   //   setShowModalEdit(false)
       resetValuesDelete()
   }
 
@@ -252,11 +254,10 @@ const AssessmentsTable = ({...props}) => {
                 />
             </Col>
         </Row>
-        {showModalEdit && (
+        {assessmentStore?.open_modal_edit_group && (
           <AssessmentsGroup
               title={'Editar grupo'}
-              visible={showModalEdit}
-              close={HandleClose}
+              visible={assessmentStore?.open_modal_edit_group}
               loadData={itemGroup}
               actionForm={onFinishEdit}
           />
@@ -281,4 +282,12 @@ const AssessmentsTable = ({...props}) => {
   )
 }
 
-export default AssessmentsTable
+//export default AssessmentsTable
+const mapState = (state) => {
+    return {
+        currentNode: state.userStore.current_node,
+        assessmentStore: state.assessmentStore,
+    };
+};
+
+export default connect(mapState, { setErrorFormAdd, setModalGroupEdit })(AssessmentsTable);

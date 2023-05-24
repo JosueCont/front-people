@@ -438,8 +438,12 @@ export const getFullName = (item) => {
   }
 };
 
-export const getPhoto = ({ photo }) => {
-  return photo ? photo : "/images/usuario.png";
+export const getPhoto = (person, picture = null) => {
+  return person?.photo_thumbnail
+    ? person?.photo_thumbnail
+    : person?.photo
+    ? person?.photo
+    : picture ? picture : "/images/usuario.png";
 };
 
 export const getWork = ({ work_title }) => {
@@ -468,6 +472,7 @@ export const createFiltersJB = (obj = {}, discard = []) =>{
 }
 
 export const getFiltersJB = (obj = {}, discard = []) =>{
+  if(Object.keys(obj).length <=0) return '';
   return Object.entries(obj).reduce((query, [key, val])=>{
     if(["size", ...discard].includes(key)) return query;
     if(key == "page"){

@@ -1147,3 +1147,29 @@ span.input-with-clear:focus{
     justify-content: center;
 }
 /* Termina diseño descripción perfil */
+
+/* Inicia diseño para solicitud de vacaciones */
+.content_title_requets{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content_title_requets .ant-image{
+    width: 68px;
+}
+.content_title_requets .ant-image img{
+    border-radius: 10px;
+}
+
+/* .content_title_requets_text{
+    padding-left: 8px;
+    border-left: 2px solid #d9d9d9;
+} */
+
+div.picker-range-jb{
+    border: 1px solid transparent!important;
+    box-shadow: none!important;
+}
+
+/* Termina diseño para solicitud de vacaciones */

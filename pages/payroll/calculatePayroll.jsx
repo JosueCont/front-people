@@ -157,6 +157,23 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     },
     {
+      title: "SD",
+      key: "SD",
+      className: "cursor_pointer",
+      render: (item) => (
+          <div>
+            <NumberFormat
+                prefix={"$"}
+                number={
+                  item.daily_salary
+                      ? item.daily_salary
+                      : 0.0
+                }
+            />
+          </div>
+      ),
+    },
+    {
       title: "Total percepciones",
       key: "company",
       className: "cursor_pointer",
@@ -1762,6 +1779,7 @@ const CalculatePayroll = ({ ...props }) => {
           calendar={{
             payment_period: periodSelected.id,
           }}
+          periodicity={calendarSelect.periodicity}
           person_id={personId}
           payroll={payroll}
           setLoading={setLoading}

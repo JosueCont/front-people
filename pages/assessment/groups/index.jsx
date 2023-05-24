@@ -7,11 +7,11 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsSearch from "../../../components/assessment/groups/AssessmentsSearch";
 import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
-import { getCategories, setErrorFormAdd, setModalGroup } from "../../../redux/assessmentDuck";
+import {getCategories, setErrorFormAdd, setModalGroup, setModalGroupEdit} from "../../../redux/assessmentDuck";
 import {FormattedMessage} from "react-intl";
 import { verifyMenuNewForTenant } from "../../../utils/functions"
 
-const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalGroup, ...props }) => {
+const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalGroup, setModalGroupEdit, ...props }) => {
   const router = useRouter();
   const currenNode = useSelector((state) => state.userStore.current_node);
   const [listGroups, setLisGroups] = useState([]);
@@ -85,11 +85,14 @@ const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalG
       setModalGroup(false)
     } catch (e) {
       setLoading(false);
-      if(e.response?.data?.message === "Este nombre de grupo ya existe"){
-        setErrorFormAdd(e.response.data.message);
+      if (e.response.status === 400) {
+        message.error(e.response.data.message)
+        if(e.response?.data?.message === "Este nombre de grupo ya existe"){
+          setErrorFormAdd(e.response.data.message);
+        }
       }else{
         message.error("Grupo no agregado");
-        setModalGroup(false)
+      //  setModalGroup(false)
 
       }
       
@@ -97,15 +100,19 @@ const GroupsKuiz = ({ getCategories, assessmentStore, setErrorFormAdd, setModalG
   };
 
   const updateGroup = async (values, id) => {
-    const data = { ...values, node: currenNode?.id };
+    const data = { ...values, node: currenNode?.id }
     try {
-      await WebApiAssessment.updateGroupAssessments(data, id);
-      getListGroups(currenNode?.id, "", "");
-      message.success("Información actualizada");
+      await WebApiAssessment.updateGroupAssessments(data, id)
+      getListGroups(currenNode?.id, "", "")
+      message.success("Grupo actualizado")
+      setModalGroupEdit(false)
     } catch (e) {
       setLoading(false);
-      message.error("Información no actualizada");
-      console.log(e);
+      if (e.response.status === 400) {
+        message.error(e.response.data.message)
+      }else{
+        message.error("Grupo no actualizado")
+      }
     }
   };
 
@@ -172,4 +179,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { getCategories, setErrorFormAdd, setModalGroup })(withAuthSync(GroupsKuiz));
+export default connect(mapState, { getCategories, setErrorFormAdd, setModalGroup, setModalGroupEdit })(withAuthSync(GroupsKuiz));

@@ -63,6 +63,8 @@ const DetailPerson = ({
   const [deleted, setDeleted] = useState({});
   const [modal, setModal] = useState(false);
   const router = useRouter();
+  const [refreshTab12,setRefreshTab12] = useState(false)
+  const [refreshTab10,setRefreshTab10] = useState(false)
 
   const showModal = () => {
     modal ? setModal(false) : setModal(true);
@@ -97,6 +99,16 @@ const DetailPerson = ({
     if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
 
+  const processTabs=(tab_code)=>{
+    if(tab_code==='tab_12'){
+      setRefreshTab12(true)
+    }else if(tab_code==='tab_10'){
+      setRefreshTab10(true)
+    }else{
+      setRefreshTab12(false)
+      setRefreshTab10(false)
+    }
+  }
 
   const getNewFilters = () => {
     let newFilters = { ...router.query };
@@ -145,7 +157,7 @@ const DetailPerson = ({
           hideProfileSecurity={hideProfileSecurity}
         />
         <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
-        <Tabs tabPosition="left">
+        <Tabs onTabClick={(tabcode) => processTabs(tabcode)} tabPosition="left">
           <TabPane
             tab={
               <Tooltip title="Datos generales">
@@ -162,43 +174,42 @@ const DetailPerson = ({
           {config?.nomina_enabled && (
             <TabPane
               tab={
-                <Tooltip title="Nómina">
                   <div className="container-title-tab">
                     <DollarOutlined />
                     <div className="text-title-tab">Nómina</div>
                   </div>
-                </Tooltip>
               }
               key="tab_10"
             >
-              <FormPayrollPerson person={person} node={person.node} />
+              <FormPayrollPerson
+                  refreshtab={refreshTab10}
+                  onFinishRefresh={()=>setRefreshTab10(false)}
+                  person={person} node={person.node} />
             </TabPane>
           )}
           <TabPane
             tab={
-              <Tooltip title="IMSS">
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
                   <div className="text-title-tab">IMSS / INFONAVIT</div>
                 </div>
-              </Tooltip>
             }
             key="tab_12"
           >
             <FormImssInfonavit
               person={person}
+              refreshtab={refreshTab12}
+              onFinishRefresh={()=>setRefreshTab12(false)}
               person_id={person.id}
               node={person.node}
             />
           </TabPane>
           <TabPane
             tab={
-              <Tooltip title="vacations">
                 <div className="container-title-tab">
                   <CalendarOutlined />
                   <div className="text-title-tab">Vacaciones</div>
                 </div>
-              </Tooltip>
             }
             key="tab_13"
           >
@@ -210,12 +221,10 @@ const DetailPerson = ({
           </TabPane>
           <TabPane
             tab={
-              <Tooltip title="Teléfono">
                 <div className="container-title-tab">
                   <PhoneOutlined />
                   <div className="text-title-tab">Teléfono</div>
                 </div>
-              </Tooltip>
             }
             key="tab_2"
           >

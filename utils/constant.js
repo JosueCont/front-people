@@ -718,3 +718,11 @@ export const optionsStatusApply = [
   {value: '1', key: '1', label: 'En curso'},
   {value: '2', key: '2', label: 'Finalizada'}
 ]
+
+export const optionsStatusVacation = [
+  {value: '1', key: '1', label: 'Pendiente'},
+  {value: '2', key: '2', label: 'Aprobada'},
+  {value: '3', key: '3', label: 'Rechazada'},
+  {value: '4', key: '4', label: 'Cancelada'},
+  {value: '5', key: '5', label: 'Programada'}
+]
