@@ -21,7 +21,7 @@ import {
   Space, Typography
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
-import { useEffect, useState, useRef, React } from "react";
+import { useEffect, useState, useRef, React, useMemo } from "react";
 import {
   SyncOutlined,
   SearchOutlined,
@@ -1334,10 +1334,16 @@ const homeScreen = ({
       formAddImmediateSupervisor.resetFields();
       filterPersonName();
     })
-    .catch((error) => {
+    .catch((e) => {
+      console.log(e)
+      if(e.response?.status == 400){
+        let txt = e.response?.data?.message;
+        let error = [{name: 'immediate_supervisor', errors: [txt]}];
+        formAddImmediateSupervisor.setFields(error)
+      }else{
+        message.error("Error al asignar");
+      }
       setIsLoadingImmediateSupervisor(false);
-      console.log(error);
-      message.error("Error al asignar");
     });
   };
 
@@ -1366,10 +1372,16 @@ const homeScreen = ({
       formAddSubstituteImmediateSupervisor.resetFields();
       filterPersonName();
     })
-    .catch((error) => {
+    .catch((e) => {
+      console.log(e)
+      if(e.response?.status == 400){
+        let txt = e.response?.data?.message;
+        let error = [{name: 'substitute_immediate_supervisor', errors: [txt]}];
+        formAddSubstituteImmediateSupervisor.setFields(error)
+      }else{
+        message.error("Error al asignar");
+      }
       setIsLoadingSubstituteImmediateSupervisor(false);
-      console.log(error);
-      message.error("Error al asignar");
     });
   };
 
@@ -1713,6 +1725,24 @@ const homeScreen = ({
       setIsAdmin(props.user_store.is_admin)
     }
   }, [props.user_store]);
+
+  // Lista para asignar jefe inmediato
+  // Se excluye al suplente de jefe inmediato en caso de tener uno asignado
+  const listImmediateSupervisor = useMemo(()=>{
+    if(personsToAddImmediateSupervisor?.length <=0) return listPersons;
+    let ids = personsToAddImmediateSupervisor.map(item => item.substitute_immediate_supervisor?.id);
+    const filter_ = item => !ids.includes(item?.id);
+    return listPersons.filter(filter_);
+  },[listPersons, personsToAddImmediateSupervisor])
+
+  // Lista para asignar suplente de jefe inmediato
+  // Se excluye al jefe inmediato en caso de tener uno asignado
+  const listSubstituteSupevisor = useMemo(()=>{
+    if(personsToAddSubstituteImmediateSupervisor?.length <=0) return listPersons;
+    let ids = personsToAddImmediateSupervisor.map(item => item?.immediate_supervisor?.id);
+    const filter_ = item => !ids.includes(item?.id);
+    return listPersons.filter(filter_)
+  },[listPersons, personsToAddSubstituteImmediateSupervisor])
 
   return (
     <>
@@ -2121,8 +2151,10 @@ const homeScreen = ({
                     showSearch
                     optionFilterProp="children"
                     allowClear={true}
+                    notFoundContent="No se encontraron resultados"
+                    placeholder="Seleccionar una opción"
                     >
-                      { listPersons.length > 0 && listPersons.map(item => (
+                      {listImmediateSupervisor.length > 0 && listImmediateSupervisor.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
@@ -2160,9 +2192,12 @@ const homeScreen = ({
                   <Select
                       showSearch
                       optionFilterProp="children"
+                      notFoundContent="No se encontraron resultados"
                       allowClear={true}
+                      placeholder="Seleccionar una opción"
                   >
-                    { listPersons.length > 0 && (listPersons.filter(e => e.id !== personsToAddSubstituteImmediateSupervisor.immediate_supervisor?.id)).map(item => (
+                    {listSubstituteSupevisor.length > 0 &&
+                      listSubstituteSupevisor.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
