@@ -1328,7 +1328,10 @@ const homeScreen = ({
     let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
-      message.success("Asignado correctamente.");
+      let msg = response.status == 206
+        ? response.data?.message
+        : 'Asignado correctamente';
+      message.success({content: msg, duration: 4});
       setIsLoadingImmediateSupervisor(false);
       setModalAddImmediateSupervisor(false);
       formAddImmediateSupervisor.resetFields();
@@ -1366,7 +1369,10 @@ const homeScreen = ({
 
     WebApiPeople.assignedMassiveSubstituteImmediateSupervisor(data)
     .then((response) => {
-      message.success("Asignado correctamente.");
+      let msg = response.status == 206
+        ? response.data?.message
+        : 'Asignado correctamente';
+      message.success({content: msg, duration: 4});
       setIsLoadingSubstituteImmediateSupervisor(false);
       setModalAddSubstituteImmediateSupervisor(false);
       formAddSubstituteImmediateSupervisor.resetFields();
@@ -1726,19 +1732,12 @@ const homeScreen = ({
     }
   }, [props.user_store]);
 
-  // Lista para asignar jefe inmediato
-  // Se excluye al suplente de jefe inmediato en caso de tener uno asignado
-  const listImmediateSupervisor = useMemo(()=>{
-    if(personsToAddImmediateSupervisor?.length <=0) return listPersons;
-    let ids = personsToAddImmediateSupervisor.map(item => item.substitute_immediate_supervisor?.id);
-    const filter_ = item => !ids.includes(item?.id);
-    return listPersons.filter(filter_);
-  },[listPersons, personsToAddImmediateSupervisor])
-
   // Lista para asignar suplente de jefe inmediato
   // Se excluye al jefe inmediato en caso de tener uno asignado
   const listSubstituteSupevisor = useMemo(()=>{
-    if(personsToAddSubstituteImmediateSupervisor?.length <=0) return listPersons;
+    let size = personsToAddSubstituteImmediateSupervisor?.length;
+    if(size <=0) return listPersons;
+    if(size > 1) return listPersons; //Solo aplica para la asignación masiva
     let ids = personsToAddImmediateSupervisor.map(item => item?.immediate_supervisor?.id);
     const filter_ = item => !ids.includes(item?.id);
     return listPersons.filter(filter_)
@@ -2154,7 +2153,7 @@ const homeScreen = ({
                     notFoundContent="No se encontraron resultados"
                     placeholder="Seleccionar una opción"
                     >
-                      {listImmediateSupervisor.length > 0 && listImmediateSupervisor.map(item => (
+                      {listPersons.length > 0 && listPersons.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
