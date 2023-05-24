@@ -195,7 +195,7 @@ const ModalConceptsPayroll = ({
                     defaultValue={item.value}
                     formatter={(value) => value.replace("-", "")}
                     controls={false}
-                    onChange={(e) => changeHandler(type, item.id)(e)}
+                    onChange={(e) => changeHandler(type, item.id)(e, item)}
                   />
                   {item.data_type === 2 && (
                     <span style={{ marginLeft: "7px", marginTop: "3px" }}>
@@ -217,7 +217,8 @@ const ModalConceptsPayroll = ({
     if (type === 3) setOtherPayments(checkedValues);
   };
 
-  const changeHandler = (type, name) => (value) => {
+  const changeHandler = (type, name) => (value, item) => {
+    let c = props;
     if (type === 1)
       perceptions.map((item) => {
         if (item.id === name)

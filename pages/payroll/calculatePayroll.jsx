@@ -1779,6 +1779,7 @@ const CalculatePayroll = ({ ...props }) => {
           calendar={{
             payment_period: periodSelected.id,
           }}
+          periodicity={calendarSelect.periodicity}
           person_id={personId}
           payroll={payroll}
           setLoading={setLoading}
