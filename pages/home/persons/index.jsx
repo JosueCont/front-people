@@ -31,6 +31,7 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
+  LinkOutlined,
   EditOutlined,
   DeleteOutlined,
   UserAddOutlined,
@@ -159,6 +160,10 @@ const homeScreen = ({
     if(!props.currentNode) return;
     getAdminRolesOptions(props.currentNode?.id)
   },[props.currentNode])
+
+
+  
+
 
   // useEffect(() => {
   //   if (props.currentNode) {
@@ -684,6 +689,16 @@ const homeScreen = ({
               })}>
               Ver asignaciones
             </Menu.Item>
+            <Menu.Item
+              key="5.1"
+              icon={<LinkOutlined />}
+              onClick={() => 
+                navigator.clipboard.writeText(`
+                ${window.location.origin}/validation?user=f6cdbeaec44d41c3a8ab5786d53903ea&app=kuiz&type=user
+                `)
+              }>
+              Copiar permalink de evaluaciones
+            </Menu.Item>
             {permissions.create && (
               <Menu.Item
                 key="1"
@@ -694,6 +709,7 @@ const homeScreen = ({
               </Menu.Item>
             )}
             <DownloadReport person={item}/>
+            
           </>
         )}
         {permissions.edit && (

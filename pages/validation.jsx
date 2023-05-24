@@ -125,7 +125,6 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
           .companySelected(user.node, props.config)
           .then((response) => {
             props.doCompanySelectedCatalog();
-            useRouter.push("/user");
           })
           .catch((error) => {
             console.log('=======',message)
@@ -158,24 +157,25 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
                             if (responseJWT) {
                                 setUserPermissions(token.perms)
                                 .then((response) => {
-                                    console.log('response=========>', response)
                                     /* Aqui ponemos la logica de la pantalla de verificación */
                                     accessSuccess(token, true)
                                     delete token.perms;
                                     Cookies.set("token", token);
                                     setCompanySelect(userResponse.data);
                                     props.setUser()
-                                    setTimeout(() => {
-                                        router.push({ 
-                                            pathname: "/user",
-                                        });
-                                    }, 2000);
+                                    if(router?.query?.app=="kuiz" && router?.query?.type == "user"){
+                                        setTimeout(() => {
+                                            router.push({ 
+                                                pathname: "/user/assessments",
+                                            });
+                                        }, 2000);
+                                    }
                                 })
                                 .catch((error) => {
-                                        /* accessDenied() */
+                                        accessDenied()
                                 });
                             } else {
-                                /* accessDenied() */
+                                accessDenied()
                             }
                     });
                 }
