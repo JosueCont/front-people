@@ -699,6 +699,16 @@ const homeScreen = ({
               }>
               Copiar permalink de evaluaciones
             </Menu.Item>
+            <Menu.Item
+              key="5.1"
+              icon={<LinkOutlined />}
+              onClick={() => 
+                navigator.clipboard.writeText(`
+                ${window.location.origin}/validation?user=f6cdbeaec44d41c3a8ab5786d53903ea&app=kuiz&type=user
+                `)
+              }>
+              Enviar permalink por email
+            </Menu.Item>
             {permissions.create && (
               <Menu.Item
                 key="1"
