@@ -21,7 +21,7 @@ import {
   Space, Typography
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
-import { useEffect, useState, useRef, React } from "react";
+import { useEffect, useState, useRef, React, useMemo } from "react";
 import {
   SyncOutlined,
   SearchOutlined,
@@ -1345,16 +1345,25 @@ const homeScreen = ({
     let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
     .then((response) => {
-      message.success("Asignado correctamente.");
+      let msg = response.status == 206
+        ? response.data?.message
+        : 'Asignado correctamente';
+      message.success({content: msg, duration: 4});
       setIsLoadingImmediateSupervisor(false);
       setModalAddImmediateSupervisor(false);
       formAddImmediateSupervisor.resetFields();
       filterPersonName();
     })
     .catch((error) => {
+      console.log(e)
+      if(e.response?.status == 400){
+        let txt = e.response?.data?.message;
+        let error = [{name: 'immediate_supervisor', errors: [txt]}];
+        formAddImmediateSupervisor.setFields(error)
+      }else{
+        message.error("Error al asignar");
+      }
       setIsLoadingImmediateSupervisor(false);
-      console.log(error);
-      message.error("Error al asignar");
     });
   };
 
@@ -1377,16 +1386,25 @@ const homeScreen = ({
 
     WebApiPeople.assignedMassiveSubstituteImmediateSupervisor(data)
     .then((response) => {
-      message.success("Asignado correctamente.");
+      let msg = response.status == 206
+        ? response.data?.message
+        : 'Asignado correctamente';
+      message.success({content: msg, duration: 4});
       setIsLoadingSubstituteImmediateSupervisor(false);
       setModalAddSubstituteImmediateSupervisor(false);
       formAddSubstituteImmediateSupervisor.resetFields();
       filterPersonName();
     })
     .catch((error) => {
+      console.log(e)
+      if(e.response?.status == 400){
+        let txt = e.response?.data?.message;
+        let error = [{name: 'substitute_immediate_supervisor', errors: [txt]}];
+        formAddSubstituteImmediateSupervisor.setFields(error)
+      }else{
+        message.error("Error al asignar");
+      }
       setIsLoadingSubstituteImmediateSupervisor(false);
-      console.log(error);
-      message.error("Error al asignar");
     });
   };
 
@@ -1731,6 +1749,19 @@ const homeScreen = ({
     }
   }, [props.user_store]);
 
+
+  // Lista para asignar suplente de jefe inmediato
+  // Se excluye al jefe inmediato en caso de tener uno asignado
+  const listSubstituteSupevisor = useMemo(()=>{
+    let size = personsToAddSubstituteImmediateSupervisor?.length;
+    if(size <=0) return listPersons;
+    if(size > 1) return listPersons; //Solo aplica para la asignación masiva
+    let ids = personsToAddImmediateSupervisor.map(item => item?.immediate_supervisor?.id);
+    const filter_ = item => !ids.includes(item?.id);
+    return listPersons.filter(filter_)
+  },[listPersons, personsToAddSubstituteImmediateSupervisor])
+
+
   return (
     <>
       <MainLayout currentKey={["persons"]} defaultOpenKeys={["strategyPlaning", "people"]}>
@@ -1826,6 +1857,8 @@ const homeScreen = ({
                                   showSearch
                                   optionFilterProp="children"
                                   allowClear={true}
+                                  notFoundContent="No se encontraron resultados"
+                                  placeholder="Seleccionar una opción"
                                 >
                                   {listPersons.length > 0 && listPersons.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -2179,7 +2212,8 @@ const homeScreen = ({
                       optionFilterProp="children"
                       allowClear={true}
                   >
-                    { listPersons.length > 0 && (listPersons.filter(e => e.id !== personsToAddSubstituteImmediateSupervisor.immediate_supervisor?.id)).map(item => (
+                    {listSubstituteSupevisor.length > 0 &&
+                      listSubstituteSupevisor.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
