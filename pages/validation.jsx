@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Spin } from 'antd';
+import { Spin, message } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { validateTokenKhonnect } from '../api/apiKhonnect';
 import WebApiIntranet from '../api/WebApiIntranet';
 import WebApiPeople from '../api/WebApiPeople';
-import { doGetGeneralConfig, setUserPermissions } from '../redux/UserDuck';
+import { doGetGeneralConfig, setUserPermissions, companySelected, setUser } from '../redux/UserDuck';
+import { doCompanySelectedCatalog } from "../redux/catalogCompany";
 import { LoadingOutlined, CloseCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { Content, ContentVerify, ContentVertical } from '../components/validation/styled';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
 import { setStorage, getStorage, delStorage, logoutAuth } from '../libs/auth';
+import axiosApi from '../api/axiosApi';
+import Axios from "axios";
+import jwt_decode from "jwt-decode";
 
 
 const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...props}) => {
@@ -31,6 +35,9 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
             if(router.query.token){
                 validateToken(router.query.token)
             }
+            if(router.query.user){
+                validateUserCredentials(router.query.user)
+            }
         }
     },[statusConfig, router.query])
 
@@ -50,7 +57,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         },2000)
     }
 
-    const accessSuccess =async (jwt) =>{
+    const accessSuccess =async (jwt, no_redirect=false) =>{
         if(jwt.perms) delete jwt.perms;
         Cookies.remove("token")
         Cookies.set("token", jwt)
@@ -68,9 +75,12 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
                 },2000)
             }          
         }else{
-            setTimeout(()=>{
-                router.push({pathname: "/select-company"})
-            },2000)
+            if(!no_redirect){
+                setTimeout(()=>{
+                    router.push({pathname: "/select-company"})
+                },2000)
+            }
+            
         }
     }
 
@@ -84,6 +94,103 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
             validateJWT(response.data.data.token)
         } catch (e) {
             accessDenied()
+        }
+    }
+
+    const saveJWT = async (jwt, data_token) => {
+        try {
+          let data = {
+            khonnect_id: jwt.user_id,
+            jwt: { ...jwt, metadata: [{ token: data_token }] },
+          };
+    
+          let response = await WebApiPeople.saveJwt(data);
+          if (response.status == 200) {
+            if (response.data.is_active) return true;
+            return false;
+          } else {
+            return false;
+          }
+        } catch (error) {
+            console.log('========>', error)
+          return false;
+        }
+      };
+
+    const setCompanySelect = async (user) => {
+        console.log("USER", user)
+        sessionStorage.setItem("data", user.node);
+        localStorage.setItem("data", user.node);
+        await props
+          .companySelected(user.node, props.config)
+          .then((response) => {
+            props.doCompanySelectedCatalog();
+            useRouter.push("/user");
+          })
+          .catch((error) => {
+            console.log('=======',message)
+          });
+      };
+
+    const validateUserCredentials = async (user) => {
+        try {
+            
+            let userResponse = await axiosApi.get(`person/person/${user}`)
+            if (userResponse.status === 200){
+                const headers = {
+                    "client-id": general_config.client_khonnect_id,
+                    "Content-Type": "application/json",
+                };
+                
+                const data = {
+                    email: userResponse.data.email,
+                    password: userResponse.data.khor_password,
+                };
+                Axios.post(general_config.url_server_khonnect + "/login/", data, {
+                    headers: headers,
+                })
+                .then(function (response) {
+                    const data_token = response["data"]["token"];
+                    localStorage.setItem('token',data_token)
+                    let token = jwt_decode(data_token);
+                    if (token) {
+                        saveJWT(token, data_token).then(function (responseJWT) {
+                            if (responseJWT) {
+                                setUserPermissions(token.perms)
+                                .then((response) => {
+                                    console.log('response=========>', response)
+                                    /* Aqui ponemos la logica de la pantalla de verificación */
+                                    accessSuccess(token, true)
+                                    delete token.perms;
+                                    Cookies.set("token", token);
+                                    setCompanySelect(userResponse.data);
+                                    props.setUser()
+                                    setTimeout(() => {
+                                        router.push({ 
+                                            pathname: "/user",
+                                        });
+                                    }, 2000);
+                                })
+                                .catch((error) => {
+                                        /* accessDenied() */
+                                });
+                            } else {
+                                /* accessDenied() */
+                            }
+                    });
+                }
+            })
+            .catch(function (error) {
+                /* setLoading(false);
+                setErrorLogin(true); */
+                console.log(error);
+                });
+            }else{
+                accessDenied()
+            }
+
+        } catch (error) {
+            
         }
     }
 
@@ -221,13 +328,17 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 const mapState = (state) => {
     return {
         general_config: state.userStore.general_config,
-        userInfo: state.userStore
+        userInfo: state.userStore,
+        config: state.userStore.general_config,
     }
 };
 
 export default connect(
     mapState, {
         setUserPermissions,
-        doGetGeneralConfig
+        doGetGeneralConfig,
+        companySelected,
+        doCompanySelectedCatalog,
+        setUser
     }
 )(validation);

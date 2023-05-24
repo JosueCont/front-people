@@ -4,6 +4,7 @@ import {Breadcrumb, Card, Button, Row, Col, List, Avatar, Typography, Tooltip, D
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../libs/auth';
 import { useRouter } from 'next/router';
+import WebApiPeople from '../../api/WebApiPeople'
 import CardApps from "../../components/dashboards-cards/CardApp";
 
 import {
@@ -52,6 +53,30 @@ const index = ({
           setVouchers(null)
         }
     }
+
+    const validateUser = async (data, isAdmin) =>{
+        try {
+            let response = await WebApiPeople.validateKhor(data);
+            console.log('========>', response)
+            /* if(response.status == 200){
+                redirectUser(response.data, isAdmin)
+            } */
+        } catch (e) {
+            
+            
+            console.log(e)
+        }
+    }
+
+    useEffect(() => {
+        let data = {
+            email: user?.email,
+            khonnect_id: user?.khonnect_id,
+            node_id: user?.node
+        }
+        validateUser(data, user?.is_admin)
+    }, [])
+    
 
 
     const getDashboardWidget= async(widget,params)=>{
