@@ -18,11 +18,29 @@ import {
   notification,
   Checkbox,
   Upload,
-  Space
+  Space, Typography
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
-import { SyncOutlined, SearchOutlined, PlusOutlined, DownloadOutlined, UploadOutlined, EllipsisOutlined, ExclamationCircleOutlined, EyeOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, UserSwitchOutlined, KeyOutlined, SendOutlined, CheckCircleOutlined, CloseCircleOutlined  } from "@ant-design/icons";
+import {
+  SyncOutlined,
+  SearchOutlined,
+  PlusOutlined,
+  DownloadOutlined,
+  UploadOutlined,
+  EllipsisOutlined,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UserAddOutlined,
+  UserSwitchOutlined,
+  KeyOutlined,
+  SendOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  UsergroupAddOutlined, WarningOutlined
+} from "@ant-design/icons";
 import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainInter";
 import FormPerson from "../../../components/person/FormPerson";
@@ -55,6 +73,8 @@ import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from ".
 import { getAdminRolesOptions } from "../../../redux/catalogCompany";
 import DownloadReport from "../../../components/person/DownloadReport";
 
+const { Text } = Typography;
+
 const homeScreen = ({
   getAdminRolesOptions,
   ...props
@@ -76,6 +96,7 @@ const homeScreen = ({
   const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const [formAddImmediateSupervisor] = Form.useForm();
+  const [formAddSubstituteImmediateSupervisor] = Form.useForm();
   const [formImportPeople] = Form.useForm();
   const [formResetPassword] = Form.useForm();
   // const inputFileRef = useRef(null);
@@ -95,10 +116,12 @@ const homeScreen = ({
   const [modalDelete, setModalDelete] = useState(false);
   const [modalSynchronizeYNL, setModalSynchronizeYNL] = useState(false);
   const [modalAddImmediateSupervisor, setModalAddImmediateSupervisor] = useState(false);
+  const [modalAddSubstituteImmediateSupervisor, setModalAddSubstituteImmediateSupervisor] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
   const [personsToSendUIStore, setPersonsToSendUIStore ] = useState([])
   const [personsToAddImmediateSupervisor, setPersonsToAddImmediateSupervisor] = useState([]);
+  const [personsToAddSubstituteImmediateSupervisor, setPersonsToAddSubstituteImmediateSupervisor] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
   const [showSynchronizeYNL, setShowSynchronizeYNL] = useState(false);
   let urlFilter = "/person/person/?";
@@ -113,6 +136,8 @@ const homeScreen = ({
   const [addPersonCfi, setPersonCfi] = useState(false)
   const [listPersons, setListPersons] = useState([]);
   const [isLoadingImmediateSupervisor, setIsLoadingImmediateSupervisor] = useState(false);
+  const [isLoadingSubstituteImmediateSupervisor, setIsLoadingSubstituteImmediateSupervisor] = useState(false);
+  const [couldAddSubstitute, setCouldAddSubstitute] = useState(false);
   const [isOpenModalResetPassword, setIsOpenModalResetPassword] = useState(false);
   const [khonnectId, setKhonnectId] = useState("");
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
@@ -465,6 +490,13 @@ const homeScreen = ({
       },
     },
     {
+      title: "Suplente de jefe inmediato",
+      show: true,
+      render: (item) => {
+        return <div>{item?.substitute_immediate_supervisor ? getFullName(item.substitute_immediate_supervisor) : ""}</div>;
+      },
+    },
+    {
       title: "Estatus",
       show: true,
       render: (item) => {
@@ -622,6 +654,9 @@ const homeScreen = ({
         <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
+        <Menu.Item key="add_substitute"  onClick={() => showModalAddSubstituteImmediateSupervisor()} icon={<UsergroupAddOutlined />}>
+          Asignar suplente de jefe inmediato
+        </Menu.Item>
       </Menu>
     );
   };
@@ -726,6 +761,15 @@ const homeScreen = ({
         >
           Asignar jefe inmediato
         </Menu.Item>
+
+        {item.immediate_supervisor &&
+            <Menu.Item key="add_substitute" icon={<UsergroupAddOutlined />} onClick={ () => {
+              setPersonsToAddSubstituteImmediateSupervisor([item]), setModalAddSubstituteImmediateSupervisor(true);
+            }}>
+              Asignar suplente de jefe inmediato
+            </Menu.Item>
+        }
+
         { isAdmin && (
           <Menu.Item
             key="8"
@@ -991,6 +1035,7 @@ const homeScreen = ({
       setPersonsToSendUIStore(selectedRows)
       setPersonsToSynchronizeYNL(selectedRows);
       setPersonsToAddImmediateSupervisor(selectedRows)
+      setPersonsToAddSubstituteImmediateSupervisor(selectedRows)
     },
   };
 
@@ -1078,6 +1123,36 @@ const homeScreen = ({
     );
   };
 
+  const ListElementsToAddSubstituteImmediateSupervisor = () => {
+    let noSupervisorCount = false
+    const list = <>
+          {personsToAddSubstituteImmediateSupervisor.map((p) => {
+            let hasSupervisor = p.immediate_supervisor
+            if(!hasSupervisor ){
+              noSupervisorCount += 1
+            }
+            return (
+                <>
+                  <Row style={{ marginBottom: 15 }}>
+                    <Avatar src={p.photo_thumbnail ? p.photo_thumbnail : defaulPhoto} />
+                    <span>{" " + p.first_name + " " + p.flast_name}</span>
+                    {!hasSupervisor && <Tooltip title={'Jefe inmediato no asignado'}><ExclamationCircleOutlined style={{color: 'red', marginLeft: 8}} /></Tooltip>}
+                  </Row>
+                </>
+            )
+          })}
+        </>
+    setCouldAddSubstitute(noSupervisorCount < personsToAddSubstituteImmediateSupervisor.length)
+    return <div>
+      {list}
+      {noSupervisorCount > 0 &&
+          <div style={{marginTop: 16, marginBottom:16, fontStyle: 'italic', border: '1px solid #ddd', background: '#fafafa', borderRadius: 8, padding: 8}}>
+            <ExclamationCircleOutlined style={{color: 'red', marginRight: 8}} />No se asignará el suplente a personas sin un jefe inmediato
+          </div>
+      }
+    </div>
+  }
+
   const HandleCloseGroup = () => {
     setShowModalGroup(false);
     setModalCreateGroup(false);
@@ -1086,6 +1161,7 @@ const homeScreen = ({
     setPersonsToDelete([]);
     setPersonsToSynchronizeYNL([]);
     setPersonsToAddImmediateSupervisor([]);
+    setPersonsToAddSubstituteImmediateSupervisor([]);
     setPersonsKeys([]);
     setItemPerson({});
   };
@@ -1228,10 +1304,14 @@ const homeScreen = ({
   const showModalAddImmediateSupervisor = () => {
     personsToAddImmediateSupervisor.length > 0 ? setModalAddImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
   };
+  const showModalAddSubstituteImmediateSupervisor = () => {
+    personsToAddSubstituteImmediateSupervisor.length > 0 ? setModalAddSubstituteImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
+  };
 
   const finishImmediateSupervisor = (value) =>{
-    let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
-    validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe inmediato") : assignedImmediateSupervisor(value.immediate_supervisor)
+    // let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
+    // validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe inmediato") : assignedImmediateSupervisor(value.immediate_supervisor)
+    assignedImmediateSupervisor(value.immediate_supervisor)
   }
 
   const assignedImmediateSupervisor = (immediate_supervisor) => {
@@ -1256,6 +1336,38 @@ const homeScreen = ({
     })
     .catch((error) => {
       setIsLoadingImmediateSupervisor(false);
+      console.log(error);
+      message.error("Error al asignar");
+    });
+  };
+
+  const onFinishAddSubstituteImmediateSupervisor = (values) => {
+    setIsLoadingSubstituteImmediateSupervisor(true)
+    let ids = null;
+    let _personsToAdd = personsToAddSubstituteImmediateSupervisor.filter(e => e.immediate_supervisor)
+    if(_personsToAdd.length === 0){
+      message.error("No se puede asignar un suplente a personas sin jefe inmediato")
+      return;
+    }
+
+      ids = (_personsToAdd.map((a) => a.id)).join(',')
+
+    let data = {
+      immediate_supervisor: values.substitute_immediate_supervisor,
+      persons_id: ids,
+      node: props.currentNode.id
+    }
+
+    WebApiPeople.assignedMassiveSubstituteImmediateSupervisor(data)
+    .then((response) => {
+      message.success("Asignado correctamente.");
+      setIsLoadingSubstituteImmediateSupervisor(false);
+      setModalAddSubstituteImmediateSupervisor(false);
+      formAddSubstituteImmediateSupervisor.resetFields();
+      filterPersonName();
+    })
+    .catch((error) => {
+      setIsLoadingSubstituteImmediateSupervisor(false);
       console.log(error);
       message.error("Error al asignar");
     });
@@ -2035,6 +2147,62 @@ const homeScreen = ({
           </Form>
           <br />
         </Modal>
+
+        { personsToAddSubstituteImmediateSupervisor && <Modal title="Asignar suplente de jefe inmediato" closable={false} visible={modalAddSubstituteImmediateSupervisor} footer={false} >
+          <Form
+              onFinish={onFinishAddSubstituteImmediateSupervisor}
+              layout={"vertical"}
+              form={formAddSubstituteImmediateSupervisor}
+          >
+            <Row>
+              <Col xs={24} md={24}>
+                <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato" rules={[ruleRequired]}>
+                  <Select
+                      showSearch
+                      optionFilterProp="children"
+                      allowClear={true}
+                  >
+                    { listPersons.length > 0 && (listPersons.filter(e => e.id !== personsToAddSubstituteImmediateSupervisor.immediate_supervisor?.id)).map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <div>
+              {personsToAddSubstituteImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
+              <br /><br />
+              <ListElementsToAddSubstituteImmediateSupervisor/>
+            </div>
+            <Row gutter={[8,20]} justify="end">
+              <Col span={6}>
+                <Button
+                    disabled={isLoadingSubstituteImmediateSupervisor}
+                    style={{width:'100%', opacity: isLoadingSubstituteImmediateSupervisor ? "0.6" : "1"}}
+                    className="btn-filter"
+                    onClick={()=>{
+                      setModalAddSubstituteImmediateSupervisor(false)
+                      formAddSubstituteImmediateSupervisor.resetFields()
+                    }}>
+                  Cancelar
+                </Button>
+              </Col>
+              <Col span={6}>
+                <Button
+                    loading={isLoadingSubstituteImmediateSupervisor}
+                    disabled={!couldAddSubstitute}
+                    style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                  Asignar
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <br />
+        </Modal>
+        }
+
         <Modal title="Reestablecer contraseña" visible={isOpenModalResetPassword} closable={false} footer={false}>
           <Form
             form={formResetPassword}

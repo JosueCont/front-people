@@ -1,50 +1,54 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {
-    PDFViewer,
-    Document,
-    Page,
     StyleSheet,
     View,
-    Text,
     Image
 } from '@react-pdf/renderer';
-import { Table } from '../ReportPDF/ReportUtils';
+import { Table, CardTable } from '../ReportPDF/ReportUtils';
+
+const ReportPP = ({
+    columns,
+    dataSource
+}) => {
+    
+    // const columns_ = useMemo(()=>{
+    //     let width = {0: '15%', 1: '10%', 2: '28%', 3: '9%', 4: '28%', 5: '10%'};
+    //     return columns?.map((item, idx) =>{
+    //         return {...item, width: width[idx]}
+    //     })
+    // },[columns])
+
+    return (
+        <>
+            {dataSource?.chart_img && (
+                <View style={styles.content_img}>
+                    <Image src={dataSource?.chart_img}/>
+                </View>
+            )}
+            {dataSource?.competences?.length > 0 && dataSource.competences.map((item, idx) =>(
+                <CardTable
+                    pos={idx}
+                    key={idx}
+                    item={item}
+                    marginTop={idx > 0 ? 8 : 0}
+                />
+            ))}
+            {/* <Table
+                columns={columns_}
+                data={dataSource?.competences}
+            /> */}
+        </>
+    )
+}
 
 const styles = StyleSheet.create({
     content_img: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        maxHeight: 400
+        maxHeight: 400,
+        marginBottom: 8
     }
 })
-
-const ReportPP = ({
-    columns,
-    dataSource,
-    imgChart
-}) => {
-    
-    const columns_ = useMemo(()=>{
-        let width = {0: '15%', 1: '10%', 2: '28%', 3: '9%', 4: '28%', 5: '10%'};
-        return columns?.map((item, idx) =>{
-            return {...item, width: width[idx]}
-        })
-    },[columns])
-
-    return (
-        <>
-            <Table
-                columns={columns_}
-                data={dataSource?.competences}
-            />
-            {dataSource?.chart_img && (
-                <View style={styles.content_img}>
-                    <Image src={dataSource?.chart_img}/>
-                </View>
-            )}
-        </>
-    )
-}
 
 export default ReportPP

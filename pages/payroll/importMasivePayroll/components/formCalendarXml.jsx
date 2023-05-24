@@ -12,6 +12,7 @@ const FormCaledanrXml = ({
   calendar,
   paymentPeriodicity = [],
   dataImportCalendar,
+  isAddXMLS=false,// esto indica si es la opcion de agregar mas xmls a un calendario existente
   perceptions_type = null,
   ...props
 }) => {
@@ -30,7 +31,7 @@ const FormCaledanrXml = ({
       let percep = perceptions_type.find(
         (item) => item.id == calendar.perception
       );
-      if (percep) setPerception(percep.code == "001" ? "Nomina" : "Asimilados");
+      if (percep) setPerception(percep.code == "001" ? "Nómina" : "Asimilados");
     }
   }, [perceptions_type, calendar]);
 
@@ -66,14 +67,14 @@ const FormCaledanrXml = ({
     ).description;
     setPeriodicityCode(periodicity_code);
     formCalendar.setFieldsValue({
-      name: calendar.calendar.name,
+      name: isAddXMLS ? calendar.name : calendar.calendar.name,
       perception_type: calendar.calendar.perception_type,
       period: calendar.calendar.period,
-      periodicity: calendar.calendar.periodicity,
-      start_date: moment(calendar.calendar.start_date),
-      activation_date: moment(calendar.calendar.activation_date),
-      type_tax: calendar.calendar.type_tax,
-      salary_days: calendar.calendar.salary_days,
+      periodicity: isAddXMLS ? calendar.periodicity:calendar.calendar.periodicity ,
+      start_date:isAddXMLS ? moment(calendar.start_date) : moment(calendar.calendar.start_date),
+      activation_date:isAddXMLS ?  moment(calendar.activation_date) :  moment(calendar.calendar.activation_date),
+      type_tax: isAddXMLS ? calendar.type_tax : calendar.calendar.type_tax,
+      salary_days: isAddXMLS ? calendar.salary_days : calendar.calendar.salary_days,
     });
     setlastPeriodDate(calendar.calendar.activation_date);
   }, [calendar]);
@@ -145,6 +146,7 @@ const FormCaledanrXml = ({
                   initialValue={calendar.calendar.name}
                 >
                   <Input
+                      disabled={isAddXMLS}
                     onChange={(value) =>
                       (calendar.calendar.name = value.target.value)
                     }
@@ -182,6 +184,7 @@ const FormCaledanrXml = ({
                     style={{ width: "100%" }}
                     moment={"YYYY-MM-DD"}
                     placeholder=""
+                    disabled={isAddXMLS}
                     locale={locale}
                     onChange={(value, dateString) => {
                       calendar.calendar.start_date = dateString;
@@ -200,6 +203,7 @@ const FormCaledanrXml = ({
                     style={{ width: "100%" }}
                     moment={"YYYY-MM-DD"}
                     placeholder=""
+                    disabled={isAddXMLS}
                     locale={locale}
                     onChange={(value, dateString) => {
                       calendar.calendar.activation_date = dateString;
@@ -215,6 +219,7 @@ const FormCaledanrXml = ({
                 <SelectTypeTax
                   style={{ width: 240 }}
                   rules={[ruleRequired]}
+                  disabled={isAddXMLS}
                   onChange={(value) => (calendar.calendar.type_tax = value)}
                 />
               </Col>
@@ -228,6 +233,7 @@ const FormCaledanrXml = ({
                   <Select
                     key={"SelectSalaryDays"}
                     placeholder="Días a pagar"
+                    disabled={isAddXMLS}
                     options={salaryDays}
                     onChange={(value) =>
                       (calendar.calendar.salary_days = value)
@@ -235,30 +241,37 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
-                <Form.Item label="¿Activo?">
-                  <SwitchCalendar
-                    status={calendar.calendar.active}
-                    name={"active"}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item label="Ajuste mensual">
-                  <SwitchCalendar
-                    status={calendar.calendar.monthly_adjustment}
-                    name={"monthly_adjustment"}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item label="Ajuste anual">
-                  <SwitchCalendar
-                    status={calendar.calendar.annual_adjustment}
-                    name={"annual_adjustment"}
-                  />
-                </Form.Item>
-              </Col>
+              {
+                !isAddXMLS && <>
+                    <Col span={6}>
+                      <Form.Item label="¿Activo?">
+                        <SwitchCalendar
+                            status={calendar.calendar.active}
+                            name={"active"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item label="Ajuste mensual">
+                        <SwitchCalendar
+                            status={calendar.calendar.monthly_adjustment}
+                            name={"monthly_adjustment"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item label="Ajuste anual">
+                        <SwitchCalendar
+                            status={calendar.calendar.annual_adjustment}
+                            name={"annual_adjustment"}
+                        />
+                      </Form.Item>
+                    </Col>
+
+                  </>
+              }
+
+
               {periodicityCode &&
                 periodicityCode != "" &&
                 periodicityCode == "02" && (

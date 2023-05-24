@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, Row, Col, Form } from 'antd';
 import FormReport from './FormReport';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const TabsReport = () => {
 
@@ -15,12 +17,39 @@ const TabsReport = () => {
             show: true,
             ellipsis: true,
         }
-    ]
+    ];
+
+    const {
+        current_node,
+        general_config
+    } = useSelector(state => state.userStore);
+
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [infoReport, setInfoReport] = useState([]);
     const [typeReport, setTypeReport] = useState('p');
     const [columnsMany, setColumnsMany] = useState(columns_many);
+
+    const [loadGroups, setLoadGroups] = useState(false);
+    const [groupsPersons, setGroupsPersons] = useState([]);
+
+    useEffect(()=>{
+        if(current_node) getGroups(current_node?.id);
+    },[current_node])
+
+    const getGroups = async (nodeId) => {
+        try {
+            setLoadGroups(true)
+            let body = {nodeId, name: '', queryParam: '&paginate=0'};
+            let response = await WebApiAssessment.getGroupsPersons(body);
+            setLoadGroups(false)
+            setGroupsPersons(response.data)
+        } catch (e) {
+            console.log(e);
+            setLoadGroups(false)
+            setGroupsPersons([])
+        }
+    }
 
     const reportProps = {
         infoReport,
@@ -30,7 +59,9 @@ const TabsReport = () => {
         typeReport,
         columnsMany,
         setColumnsMany,
-        columns_many
+        columns_many,
+        loadGroups,
+        groupsPersons
     }
 
     const onChangeTab = (e) =>{
@@ -44,39 +75,36 @@ const TabsReport = () => {
         <Tabs type='card' onChange={onChangeTab}>
             <Tabs.TabPane key='p' tab='Persona'>
                 <FormReport
-                    type='p'
                     showSelectProfile={false}
                     showTitleProfile={false}
                     {...reportProps}
                 />
             </Tabs.TabPane>
-            <Tabs.TabPane key='pp' tab='Persona-Perfil' forceRender>
+            <Tabs.TabPane key='pp' tab='Persona-Perfil'>
                 <FormReport
-                    type='pp'
                     showChart={true}
                     showTitleProfile={true}
                     {...reportProps}
                 />
             </Tabs.TabPane>
-            <Tabs.TabPane key='psp' tab='Personas-Perfil' forceRender>
+            <Tabs.TabPane key='psp' tab='Personas-Perfil'>
                 <FormReport
-                    type='psp'
                     multiUser={true}
                     showChartModal={true}
+                    useGroups={true}
                     {...reportProps}
                 />
             </Tabs.TabPane>
-            <Tabs.TabPane key='pps' tab='Persona-Perfiles' forceRender>
+            <Tabs.TabPane key='pps' tab='Persona-Perfiles'>
                 <FormReport
-                    type='pps'
                     multiProfile={true}
                     {...reportProps}
                 />
             </Tabs.TabPane>
-            <Tabs.TabPane key='psc' tab='Personas-Competencias' forceRender>
+            <Tabs.TabPane key='psc' tab='Personas-Competencias'>
                 <FormReport
-                    type='psc'
                     multiUser={true}
+                    useGroups={true}
                     {...reportProps}
                 />
             </Tabs.TabPane>

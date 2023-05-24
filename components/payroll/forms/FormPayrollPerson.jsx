@@ -34,7 +34,7 @@ import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovem
 import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 
-const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
+const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...props }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const [contrctsType, setContractsType] = useState([]);
@@ -79,6 +79,16 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       setHiringRegimeType(data);
     }
   }, [props.catTaxRegime]);
+
+  useEffect(()=>{
+    if(refreshtab){
+      getPayrollPerson();
+      getPaymentCalendar();
+      PayrollList();
+      props.onFinishRefresh()
+    }
+  },[refreshtab])
+
 
   useEffect(() => {
     if (props.catContracType) {

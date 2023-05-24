@@ -558,9 +558,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
                           onChange={changeMonthlyAdjustment}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                       <span>
@@ -572,9 +572,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
                           onChange={changeAnnualAdjustment}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                     </div>
