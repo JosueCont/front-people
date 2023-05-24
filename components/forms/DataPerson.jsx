@@ -13,7 +13,7 @@ import {
   message,
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
@@ -75,25 +75,27 @@ const DataPerson = ({
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
   const [listPersons, setListPersons] = useState([]);
-  const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
-  const [substituteSupervisorList, setSubstituteSupervisorList] = useState([]);
+  // const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
+  // const [substituteSupervisorList, setSubstituteSupervisorList] = useState([]);
   //
   const isAdmin = Form.useWatch('is_admin', formPerson);
+  const id_supervisor = Form.useWatch('immediate_supervisor', formPerson);
+  const id_substitute = Form.useWatch('substitute_immediate_supervisor', formPerson);
 
   useEffect(() => {
     setPersonWT(person.id);
     setFormPerson(person);
   }, [person]);
 
-  useEffect(() => {
-    if(listPersons.length > 0 && selectedSupervisorId){
-      let _substitutes = listPersons.filter(e => e.id !== selectedSupervisorId)
-      setSubstituteSupervisorList(_substitutes )
-    }
-  }, [listPersons, selectedSupervisorId]);
+  // useEffect(() => {
+  //   if(listPersons.length > 0 && selectedSupervisorId){
+  //     let _substitutes = listPersons.filter(e => e.id !== selectedSupervisorId)
+  //     setSubstituteSupervisorList(_substitutes )
+  //   }
+  // }, [listPersons, selectedSupervisorId]);
 
   useEffect(() => {
-    if(currentNode){
+    if (currentNode) {
       filters.node = currentNode.id
       filterPersonName(filters)
     }
@@ -176,7 +178,7 @@ const DataPerson = ({
         register_date: moment(person.timestamp),
       });
 
-      if (person.is_admin)
+    if (person.is_admin)
       // setIsActiveAdmin(person.is_admin)
       formPerson.setFieldsValue({
         is_admin: person.is_admin,
@@ -198,7 +200,7 @@ const DataPerson = ({
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);
-    setSelectedSupervisorId(person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : '')
+    // setSelectedSupervisorId(person?.immediate_supervisor?.id ? person?.immediate_supervisor?.id : '')
   };
 
   const validateImmediateSupervisor = (id) => ({
@@ -217,7 +219,7 @@ const DataPerson = ({
     if (dateIngPlatform) value.register_date = moment(dateIngPlatform).format('YYYY-MM-DD');
     else delete value["register_date"];
     if (birthDate) value.birth_date = moment(birthDate).format('YYYY-MM-DD');
-    else  value.birth_date=null;
+    else value.birth_date = null;
     if (dateAdmission) value.date_of_admission = moment(dateAdmission).format('YYYY-MM-DD');
     else delete value["date_of_admission"];
     value.id = person.id;
@@ -230,8 +232,8 @@ const DataPerson = ({
       ? (value.groups = [value.groups])
       : delete value["groups"];
     value.immediate_supervisor != undefined ? value.immediate_supervisor : null;
-   // console.log(value)
-   // return
+    // console.log(value)
+    // return
     updatePerson(value);
   };
 
@@ -249,7 +251,7 @@ const DataPerson = ({
       })
       .catch((error) => {
         message.error("Error al actualizar, intente de nuevo.");
-        if(error?.response?.data?.message === "Este email ya se encuentra registrado" ){
+        if (error?.response?.data?.message === "Este email ya se encuentra registrado") {
           formPerson.setFields([
             { name: 'email', errors: [error.response.data.message] },
           ])
@@ -340,37 +342,51 @@ const DataPerson = ({
   };
 
   const onChangeBirthDate = (date, dateString) => {
-    if(date){
+    if (date) {
       setBirthDate(moment(date).format('YYYY-MM-DD'));
-    }else{
+    } else {
       setBirthDate(null)
     }
 
   };
 
-  const onChangeSupervisor = (value) =>{
-    setSelectedSupervisorId(value)
+  const onChangeSupervisor = (value) => {
+    // setSelectedSupervisorId(value)
     formPerson.setFieldsValue({
       substitute_immediate_supervisor: ''
     })
-    let _substitutes = listPersons.filter(e => e.id !== value)
-    setSubstituteSupervisorList(_substitutes )
+    // let _substitutes = listPersons.filter(e => e.id !== value)
+    // setSubstituteSupervisorList(_substitutes )
   }
 
-  const onClearSupervisor = () =>{
-    setSelectedSupervisorId('')
+  const onClearSupervisor = () => {
+    // setSelectedSupervisorId('')
     formPerson.setFieldsValue({
-      immediate_supervisor: '',
+      // immediate_supervisor: '',
+      substitute_immediate_supervisor: null,
+    })
+  }
+
+  const onClearSubstituteSupervisor = () => {
+    // setSelectedSupervisorId('')
+    formPerson.setFieldsValue({
       substitute_immediate_supervisor: '',
     })
   }
 
-  const onClearSubstituteSupervisor = () =>{
-    setSelectedSupervisorId('')
-    formPerson.setFieldsValue({
-      substitute_immediate_supervisor: '',
-    })
-  }
+  // Lista para asignar jefe inmediato
+  // Se excluye al suplente de jefe inmediato en caso de tener uno asignado
+  const listImmediateSupervisor = useMemo(() => {
+    if (!id_substitute) return listPersons;
+    return listPersons.filter(item => item.id !== id_substitute);
+  }, [listPersons, id_substitute])
+
+  // Lista para asignar suplente de jefe inmediato
+  // Se excluye al jefe inmediato en caso de tener uno asignado
+  const listSubstituteSupevisor = useMemo(() => {
+    if (!id_supervisor) return listPersons;
+    return listPersons.filter(item => item.id !== id_supervisor);
+  }, [listPersons, id_supervisor])
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -384,13 +400,13 @@ const DataPerson = ({
                     style={
                       photo
                         ? {
-                            width: "120px",
-                            height: "120px",
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignContent: "center",
-                            textAlign: "center",
-                          }
+                          width: "120px",
+                          height: "120px",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          alignContent: "center",
+                          textAlign: "center",
+                        }
                         : {}
                     }
                   >
@@ -407,14 +423,14 @@ const DataPerson = ({
                           style={
                             photo
                               ? {
-                                  width: "120px",
-                                  height: "120px",
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
-                                  alignContent: "center",
-                                }
+                                width: "120px",
+                                height: "120px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                borderRadius: "10px",
+                                textAlign: "center",
+                                alignContent: "center",
+                              }
                               : {}
                           }
                         >
@@ -451,12 +467,12 @@ const DataPerson = ({
             <Row gutter={20}>
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
-                <Col lg={8} xs={12}>
-                  <Form.Item label="Número de empleado" name="code">
-                    <Input type="text" placeholder="Núm. empleado" />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={12}>
+                    <Form.Item label="Número de empleado" name="code">
+                      <Input type="text" placeholder="Núm. empleado" />
+                    </Form.Item>
+                  </Col>
+                )}
               <Col lg={8} xs={12}>
                 <SelectPersonType label="Tipo de persona" />
               </Col>
@@ -480,13 +496,13 @@ const DataPerson = ({
                     style={
                       photo
                         ? {
-                            width: "120px",
-                            height: "120px",
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignContent: "center",
-                            textAlign: "center",
-                          }
+                          width: "120px",
+                          height: "120px",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          alignContent: "center",
+                          textAlign: "center",
+                        }
                         : {}
                     }
                   >
@@ -502,14 +518,14 @@ const DataPerson = ({
                           style={
                             photo
                               ? {
-                                  width: "120px",
-                                  height: "120px",
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
-                                  alignContent: "center",
-                                }
+                                width: "120px",
+                                height: "120px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                borderRadius: "10px",
+                                textAlign: "center",
+                                alignContent: "center",
+                              }
                               : {}
                           }
                         >
@@ -579,7 +595,7 @@ const DataPerson = ({
                 <SelectDepartment
                   disabled={
                     (props.user && props.user.nodes) ||
-                    (props.user && props.user.is_admin)
+                      (props.user && props.user.is_admin)
                       ? false
                       : true
                   }
@@ -594,7 +610,7 @@ const DataPerson = ({
                 <SelectJob
                   disabled={
                     (props.user && props.user.nodes) ||
-                    (props.user && props.user.is_admin)
+                      (props.user && props.user.is_admin)
                       ? false
                       : true
                   }
@@ -603,7 +619,7 @@ const DataPerson = ({
                   onChange={(item) => {
                     setJobSelected(item), setPersonWT(true);
                   }}
-                  // rules = { [ruleRequired] }
+                // rules = { [ruleRequired] }
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -652,16 +668,19 @@ const DataPerson = ({
                 <Form.Item
                   name="immediate_supervisor"
                   label="Jefe inmediato"
-                  // rules={[validateImmediateSupervisor(person.id)]}
+                // rules={[validateImmediateSupervisor(person.id)]}
                 >
                   <Select
                     showSearch
                     optionFilterProp="children"
                     allowClear={true}
-                    onChange={onChangeSupervisor}
+                    // onChange={onChangeSupervisor}
                     onClear={onClearSupervisor}
+                    placeholder="Seleccionar una opción"
+                    notFoundContent="No se encontraron resultados"
                   >
-                      { listPersons.length > 0 && listPersons.map(item => (
+                    {listImmediateSupervisor.length > 0 &&
+                      listImmediateSupervisor.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
@@ -672,16 +691,19 @@ const DataPerson = ({
               <Col lg={8} xs={24}>
                 <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato">
                   <Select showSearch optionFilterProp="children"
-                          allowClear={true}
-                          disabled={!selectedSupervisorId}
-                          onClear={onClearSubstituteSupervisor}
+                    allowClear={true}
+                    disabled={!id_supervisor}
+                    // onClear={onClearSubstituteSupervisor}
+                    placeholder='Seleccionar una opción'
+                    notFoundContent='No se encontraron resultados'
+                    
                   >
-                    {substituteSupervisorList.length > 0 &&
-                        substituteSupervisorList.map((item) => (
-                            <Select.Option value={item.id} key={item.id}>
-                              {getFullName(item)}
-                            </Select.Option>
-                        ))}
+                    {listSubstituteSupevisor.length > 0 &&
+                      listSubstituteSupevisor.map((item) => (
+                        <Select.Option value={item.id} key={item.id}>
+                          {getFullName(item)}
+                        </Select.Option>
+                      ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -701,76 +723,76 @@ const DataPerson = ({
               {config.applications?.find(
                 (item) => item.app === "SUKHATV" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item name="sukhatv_access" label="Acceso a Sukha Tv">
-                    <Select options={SukhaAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item name="sukhatv_access" label="Acceso a Sukha Tv">
+                      <Select options={SukhaAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {config.applications?.find(
                 (item) => item.app === "SUKHATV" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item
-                    name="is_sukhatv_admin"
-                    label="¿Es administrador SukhaTV?"
-                  >
-                    <Select options={SukhaAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                      name="is_sukhatv_admin"
+                      label="¿Es administrador SukhaTV?"
+                    >
+                      <Select options={SukhaAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item name="khorflix_access" label="Acceso a Khorflix">
-                    <Select options={KhorflixAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item name="khorflix_access" label="Acceso a Khorflix">
+                      <Select options={KhorflixAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item
-                    name="is_khorflix_admin"
-                    label="¿Es administrador Khorflix?"
-                  >
-                    <Select options={KhorflixAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                      name="is_khorflix_admin"
+                      label="¿Es administrador Khorflix?"
+                    >
+                      <Select options={KhorflixAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {config.applications?.find(
                 (item) => item.app === "CAREERLAB" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item
-                    name="is_careerlab_admin"
-                    label="¿Es administrador Careerlab?"
-                  >
-                    <Select options={CareerlabAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                      name="is_careerlab_admin"
+                      label="¿Es administrador Careerlab?"
+                    >
+                      <Select options={CareerlabAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {config.applications?.find(
                 (item) => item.app === "KHORFLIX" && item.is_active
               ) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item name="careerlab_access" label="Acceso a Careerlab">
-                    <Select options={CareerlabAccess} />
-                  </Form.Item>
-                </Col>
-              )}
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item name="careerlab_access" label="Acceso a Careerlab">
+                      <Select options={CareerlabAccess} />
+                    </Form.Item>
+                  </Col>
+                )}
               {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
-              <Form.Item
+                <Form.Item
                   name="is_admin"
                   label="¿Es administrador?"
                 >
                   <Select
                     placeholder='Seleccionar una opción'
                     options={[
-                      {value: true, key: true, label: 'Sí'},
-                      {value: false, key: false, label: 'No'}
+                      { value: true, key: true, label: 'Sí' },
+                      { value: false, key: false, label: 'No' }
                     ]}
                   />
                 </Form.Item>
@@ -812,7 +834,7 @@ const DataPerson = ({
                 <Form.Item
                   name="email"
                   label="Dirección de e-mail"
-                  rules={[{type: "email", message: "Ingresa una dirección de e-mail válida" }]}
+                  rules={[{ type: "email", message: "Ingresa una dirección de e-mail válida" }]}
                 >
                   <Input onChange={setFormatEmail} />
                 </Form.Item>
@@ -849,8 +871,8 @@ const DataPerson = ({
                   name="curp"
                   label="CURP"
                   rules={[config.applications.find(
-                      (item) => item.app === "PAYROLL" && item.is_active
-                  ) ? ruleRequired :{}, curpFormat]}
+                    (item) => item.app === "PAYROLL" && item.is_active
+                  ) ? ruleRequired : {}, curpFormat]}
                 >
                   <Input maxLength={18} />
                 </Form.Item>
@@ -860,8 +882,8 @@ const DataPerson = ({
                   name="rfc"
                   label="RFC"
                   rules={[config.applications.find(
-                      (item) => item.app === "PAYROLL" && item.is_active
-                  ) ? ruleRequired :{}, rfcFormat]}
+                    (item) => item.app === "PAYROLL" && item.is_active
+                  ) ? ruleRequired : {}, rfcFormat]}
                 >
                   <Input maxLength={13} />
                 </Form.Item>
