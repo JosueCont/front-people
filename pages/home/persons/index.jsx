@@ -1354,7 +1354,7 @@ const homeScreen = ({
       formAddImmediateSupervisor.resetFields();
       filterPersonName();
     })
-    .catch((error) => {
+    .catch((e) => {
       console.log(e)
       if(e.response?.status == 400){
         let txt = e.response?.data?.message;
@@ -1395,7 +1395,7 @@ const homeScreen = ({
       formAddSubstituteImmediateSupervisor.resetFields();
       filterPersonName();
     })
-    .catch((error) => {
+    .catch((e) => {
       console.log(e)
       if(e.response?.status == 400){
         let txt = e.response?.data?.message;
@@ -1857,8 +1857,6 @@ const homeScreen = ({
                                   showSearch
                                   optionFilterProp="children"
                                   allowClear={true}
-                                  notFoundContent="No se encontraron resultados"
-                                  placeholder="Seleccionar una opción"
                                 >
                                   {listPersons.length > 0 && listPersons.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -2171,8 +2169,10 @@ const homeScreen = ({
                     showSearch
                     optionFilterProp="children"
                     allowClear={true}
+                    notFoundContent="No se encontraron resultados"
+                    placeholder="Seleccionar una opción"
                     >
-                      { listPersons.length > 0 && listPersons.map(item => (
+                      {listPersons.length > 0 && listPersons.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
@@ -2211,6 +2211,8 @@ const homeScreen = ({
                       showSearch
                       optionFilterProp="children"
                       allowClear={true}
+                      notFoundContent="No se encontraron resultados"
+                      placeholder="Seleccionar una opción"
                   >
                     {listSubstituteSupevisor.length > 0 &&
                       listSubstituteSupevisor.map(item => (
