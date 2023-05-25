@@ -694,7 +694,7 @@ const homeScreen = ({
               icon={<LinkOutlined />}
               onClick={() => 
                 navigator.clipboard.writeText(`
-                ${window.location.origin}/validation?user=f6cdbeaec44d41c3a8ab5786d53903ea&app=kuiz&type=user
+                ${window.location.origin}/validation?user=${item.id}&app=kuiz&type=user
                 `)
               }>
               Copiar permalink de evaluaciones
