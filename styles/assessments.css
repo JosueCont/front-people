@@ -1164,10 +1164,10 @@ span.input-with-clear:focus{
     border-radius: 10px;
 }
 
-/* .content_title_requets_text{
-    padding-left: 8px;
-    border-left: 2px solid #d9d9d9;
-} */
+.content_title_requets_text{
+    display: flex;
+    flex-direction: column;
+}
 
 div.picker-range-jb{
     border: 1px solid transparent!important;

@@ -35,12 +35,19 @@ const colorGen = () => {
 }
 
 const getProperties = (haveProfile = false, random = false) =>{
+    const red = '255, 0, 0';
+    const blue = '0, 0, 255';
+    // const colors = [
+    //     'rgba(243, 110, 55, 1)',
+    //     'rgba(243, 110, 55, 0.2)',
+    //     'rgba(123, 37, 241, 1)',
+    //     'rgba(123, 37, 241, 0.2)'
+    // ]
     const colors = [
-        'rgba(243, 110, 55, 1)',
-        'rgba(243, 110, 55, 0.2)',
-        'rgba(123, 37, 241, 1)',
-        'rgba(123, 37, 241, 0.2)',
-        '#ffff'
+        `rgba(${blue}, 1)`,
+        `rgba(${blue}, 0.2)`,
+        `rgba(${red}, 1)`,
+        `rgba(${red}, 0.2)`
     ]
     let color1 = haveProfile ? colors[2] : random ? `rgba(${colorGen()}, 1)` : colors[0];
     let color2 = haveProfile ? colors[3] : random ? `rgba(${colorGen()}, 0.2)` : colors[1];
@@ -49,8 +56,8 @@ const getProperties = (haveProfile = false, random = false) =>{
         backgroundColor: color2,
         borderColor: color1,
         pointBackgroundColor: color1,
-        poingBorderColor: colors[4],
-        pointHoverBackgroundColor: colors[4],
+        poingBorderColor: '#ffff',
+        pointHoverBackgroundColor: '#ffff',
         pointHoverBorderColor: color1,
         pointHoverRadius: 5,
         borderWidth: 1,
