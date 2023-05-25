@@ -53,7 +53,7 @@ const ModalRequests = ({
                         </Form.Item>
                     </Col>
                     <Col span={24} className='content-end'style={{gap: 8}}>
-                        <Button>
+                        <Button onClick={()=> onClose()}>
                             Cerrar
                         </Button>
                         <Button loading={loading} htmlType='submit'>

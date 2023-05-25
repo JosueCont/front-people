@@ -20,11 +20,11 @@ import {
 import moment from 'moment';
 
 const InfoRequests = () => {
-    
+
     const getUser = state => state.userStore.user;
     const current_user = useSelector(getUser);
 
-    const noValid = [undefined,null,""," "];
+    const noValid = [undefined, null, "", " "];
 
     const router = useRouter();
     const refSubmit = useRef(null);
@@ -68,7 +68,7 @@ const InfoRequests = () => {
         }
     }
 
-    const getPerson = async (id) =>{
+    const getPerson = async (id) => {
         try {
             let response = await WebApiPeople.getPerson(id);
             setCurrentPerson(response.data)
@@ -81,12 +81,12 @@ const InfoRequests = () => {
     const onFinishCancel = async (values) => {
         try {
             setLoading(true)
-            let body = {...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { ...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             await WebApiPeople.vacationCancelRequest(body);
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-                onSuccess({message: 'Solicitud cancelada'})
-            },1000)
+                onSuccess({ message: 'Solicitud cancelada' })
+            }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -97,12 +97,12 @@ const InfoRequests = () => {
     const onFinishReject = async (values) => {
         try {
             setLoading(true)
-            let body = {...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { ...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             await WebApiPeople.vacationRejectRequest(body);
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-                onSuccess({message: 'Solicitud rechazada'})
-            },1000)
+                onSuccess({ message: 'Solicitud rechazada' })
+            }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -113,12 +113,12 @@ const InfoRequests = () => {
     const onFinishApprove = async () => {
         try {
             setLoading(true)
-            let body = {id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             await WebApiPeople.vacationApproveRequest(body);
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-                onSuccess({message: 'Solicitud aprobada'})
-            },1000)
+                onSuccess({ message: 'Solicitud aprobada' })
+            }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -126,15 +126,15 @@ const InfoRequests = () => {
         }
     }
 
-    const onFinishReopen = async () =>{
+    const onFinishReopen = async () => {
         try {
             setLoading(true)
-            let body = {id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             let response = await WebApiPeople.vacationReOpenRequest(body);
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-                onSuccess({message: response.data?.message})
-            },1000)
+                onSuccess({ message: response.data?.message })
+            }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -144,7 +144,7 @@ const InfoRequests = () => {
 
     const onSuccess = ({
         message = ''
-    }) =>{
+    }) => {
         Modal.success({
             keyboard: false,
             maskClosable: false,
@@ -190,7 +190,7 @@ const InfoRequests = () => {
         setOpenModal(true)
     }
 
-    const showConfirm = (type) =>{
+    const showConfirm = (type) => {
         setTypeModal(type)
         setOpenConfirm(true)
     }
@@ -200,7 +200,7 @@ const InfoRequests = () => {
         setOpenModal(false)
     }
 
-    const closeConfirm = () =>{
+    const closeConfirm = () => {
         setOpenConfirm(false)
         setTypeModal('cancel')
     }
@@ -240,6 +240,14 @@ const InfoRequests = () => {
                                 <p className='title-action-text'>
                                     Detalle de la solicitud
                                 </p>
+                                {Object.keys(currentPerson).length > 0 && (
+                                    <p style={{ marginBottom: 0 }}>
+                                        Fecha de ingreso:&nbsp;
+                                        {currentPerson.date_of_admission
+                                            ? moment(currentPerson.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
+                                            : 'No disponible'}
+                                    </p>
+                                )}
                             </div>
                         </div>
                         <Button

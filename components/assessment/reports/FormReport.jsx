@@ -312,6 +312,34 @@ const FormReport = ({
         setOpenModalList(false)
     }
 
+    const getDataP = () =>{
+        const some_ = item => item.level == 'N/A';
+        let result = infoReport.some(some_);
+        if(result) return [];
+        return [{
+            fullName: getFullName(values?.selectedUser),
+            data: infoReport
+        }]
+    }
+
+    const getDataChart = () =>{
+        const list = {
+            'p': getDataP
+        }
+        return list[typeReport]()
+    }
+
+    const showChartGeneral = () =>{
+        let data = getDataChart();
+        if(data?.length <= 0){
+            message.error('Información insuficiente');
+            return;
+        }
+        setDataChart(data)
+        setTypeChart(typeReport)
+        setOpenModalChart(true)
+    }
+
     const showChartIndividual = (item) =>{
         if(typeReport == 'pps'){
             let fullName = infoReport?.at(-1)?.persons?.fullName;
@@ -614,11 +642,12 @@ const FormReport = ({
                                 dataSource={data_report[typeReport] ?? infoReport}
                                 disabled={loading || infoReport?.length <=0}
                             />
-                            {/* {typeReport == 'pp' && (
+                            {/* {['p'].includes(typeReport) && (
                                 <Button
                                     disabled={infoReport?.length <=0}
                                     icon={<EyeOutlined />}
-                                    onClick={()=> showModalChart()}
+                                    onClick={()=> showChartGeneral()}
+                                    style={{marginTop: 'auto', marginBottom: 24}}
                                 >
                                     Ver gráfica
                                 </Button>

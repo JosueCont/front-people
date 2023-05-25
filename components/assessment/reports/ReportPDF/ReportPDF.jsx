@@ -17,13 +17,13 @@ const ReportPDF = ({
     currentProfile,
     typeReport = 'p',
     columns = [],
-    dataSource = [] || {},
+    dataSource,
     fileName = ""
 }) => {
 
 
     const columns_ = useMemo(() =>{
-        if(!['p'].includes(typeReport)) return [];
+        if(typeReport !== 'p') return [];
         return [...columns].reduce((acc, current) =>{
             if(!current.dataIndex && !current.nested) return acc;            
             let key = current.nested ? current.nested : current.dataIndex;
