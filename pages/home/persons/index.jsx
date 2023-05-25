@@ -693,9 +693,7 @@ const homeScreen = ({
               key="5.1"
               icon={<LinkOutlined />}
               onClick={() => 
-                navigator.clipboard.writeText(`
-                ${window.location.origin}/validation?user=${item.id}&app=kuiz&type=user
-                `)
+                navigator.clipboard.writeText(`${window.location.origin}/validation?user=${item.id}&app=kuiz&type=user`)
               }>
               Copiar permalink de evaluaciones
             </Menu.Item>
