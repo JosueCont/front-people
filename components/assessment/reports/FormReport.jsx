@@ -678,23 +678,8 @@ const FormReport = ({
                         </div>
                     </Col>
                 )}
-                <Col span={24}>
-                    <Table
-                        bordered
-                        size='small'
-                        rowKey={getRowKey}
-                        loading={loading}
-                        dataSource={data_report[typeReport] ?? infoReport}
-                        columns={list_columns[typeReport]}
-                        scroll={typeReport == 'pp' ? {y: 500} : columnsMany.length > 8 ? { x: 1500 }: {}}
-                        pagination={{
-                            hideOnSinglePage: true,
-                            showSizeChanger: false
-                        }}
-                    />
-                </Col>
                 {showChart && (
-                    <Col span={24} style={{marginTop: 24}}>
+                    <Col span={24} style={{marginBottom: 24}}>
                         {infoReport?.length > 0 ? (
                             <div style={{maxWidth: 800, margin: '0px auto'}}>
                                 <ViewChart
@@ -711,6 +696,21 @@ const FormReport = ({
                         )}
                     </Col>
                 )}
+                <Col span={24}>
+                    <Table
+                        bordered
+                        size='small'
+                        rowKey={getRowKey}
+                        loading={loading}
+                        dataSource={data_report[typeReport] ?? infoReport}
+                        columns={list_columns[typeReport]}
+                        scroll={typeReport == 'pp' ? {y: 500} : columnsMany.length > 8 ? { x: 1500 }: {}}
+                        pagination={{
+                            hideOnSinglePage: true,
+                            showSizeChanger: false
+                        }}
+                    />
+                </Col>
                 {/* <Col span={24}>
                     <ReportPDF
                         infoReport={infoReport}

@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
 import {
-    Layout,
-    Row,
-    Col,
-    Avatar,
-    Menu,
-    Dropdown,
-    Card,
-    Button,
-    Typography,
-    Divider,
-    Modal,
-    Space,
-    Badge,
-    Alert,
-    Select,
-    Image, Grid,
+  Layout,
+  Row,
+  Col,
+  Avatar,
+  Menu,
+  Dropdown,
+  Card,
+  Button,
+  Typography,
+  Divider,
+  Modal,
+  Space,
+  Badge,
+  Alert,
+  Select,
+  Image, Grid,
 } from "antd";
-import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  MenuOutlined,
+  BellOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
@@ -33,7 +39,14 @@ import { getCurrentURL } from "../utils/constant";
 
 const { useBreakpoint } = Grid;
 
-const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
+const NewHeader = ({
+  hideSearch,
+  mainLogo,
+  hideLogo,
+  menuCollapsed = false,
+  setMenuCollapsed,
+  ...props
+}) => {
   const { Text } = Typography;
   const router = useRouter();
   const screens = useBreakpoint();
@@ -69,7 +82,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           response.data.fullName = personName;
           setPerson(response.data);
           // let have_role = Object.keys(response?.data?.administrator_profile ?? {}).length > 0;
-          if (response.data?.is_admin || localStorage.getItem('is_admin')){
+          if (response.data?.is_admin || localStorage.getItem('is_admin')) {
             setIsAdmin(true)
           }
           // setIsAdmin(localStorage.getItem('is_admin'));
@@ -107,10 +120,10 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-          <p className="text-menu" onClick={() => router.push("/user/profile")}>
+            <p className="text-menu" onClick={() => router.push("/user/profile")}>
               <Text>Mi perfil</Text>
             </p>
-          {isAdmin && (
+            {isAdmin && (
               <p
                 className="text-menu"
                 onClick={() => router.push("/dashboard")}
@@ -166,14 +179,14 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text>Editar perfil</Text>
             </p>
 
-            { verifyMenuNewForTenant() && process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER?!process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER.includes(getCurrentURL(true, true)):true &&
+            {verifyMenuNewForTenant() && process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER ? !process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER.includes(getCurrentURL(true, true)) : true &&
               <p
-              className="text-menu"
-              onClick={() => router.push("/user")}
+                className="text-menu"
+                onClick={() => router.push("/user")}
 
-            >
-              <Text>Cambiar a la vista de Usuario</Text>
-            </p>}
+              >
+                <Text>Cambiar a la vista de Usuario</Text>
+              </p>}
 
             {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
               <p
@@ -266,39 +279,52 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col>
-
-                <Space size={"middle"}>
-              <Image
+              <Space size={'middle'}>
+                {!screens.lg && (
+                  <>
+                    {menuCollapsed ? (
+                      <MenuUnfoldOutlined
+                        style={{ cursor: 'pointer', color: '#ffff', fontSize: 20 }}
+                        onClick={() => setMenuCollapsed(!menuCollapsed)} />
+                    ) : (
+                      <MenuFoldOutlined
+                        style={{ cursor: 'pointer', color: '#ffff', fontSize: 20 }}
+                        onClick={() => setMenuCollapsed(!menuCollapsed)}
+                      />
+                    )}
+                  </>
+                )}
+                <Image
                   className={'header__logo'}
-                preview={false}
-                onClick={() => router.push("/user")}
-                style={{
-                  maxWidth: 100,
-                  margin: "auto",
-                  maxHeight: 50,
-                  cursor: "pointer",
-                }}
-                src={
-                  "/images/LogoKhorconnect.svg"
-                }
-              />
-              <Image
+                  preview={false}
+                  onClick={() => router.push("/user")}
+                  style={{
+                    maxWidth: 100,
+                    margin: "auto",
+                    maxHeight: 50,
+                    cursor: "pointer",
+                  }}
+                  src={
+                    "/images/LogoKhorconnect.svg"
+                  }
+                />
+                <Image
                   className={'header__logo'}
-                preview={false}
-                // onClick={() => router.push("/home/persons")}
-                style={{
-                  maxWidth: 100,
-                  margin: "auto",
-                  maxHeight: 50,
-                  cursor: "pointer"
-                }}
-                src={
-                  !hideLogo && mainLogo
-                    ? mainLogo
-                    : null
-                }
-              />
-                </Space>
+                  preview={false}
+                  // onClick={() => router.push("/home/persons")}
+                  style={{
+                    maxWidth: 100,
+                    margin: "auto",
+                    maxHeight: 50,
+                    cursor: "pointer"
+                  }}
+                  src={
+                    !hideLogo && mainLogo
+                      ? mainLogo
+                      : null
+                  }
+                />
+              </Space>
             </Col>
             <Col>
               {person && (
@@ -308,11 +334,15 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    {screens.sm && screens.md && <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span>}
-                    <Dropdown overlay={<CardApps is_admin={false}/>} key="dropdown_apps">
+                    {screens.sm && screens.md && <span style={{ color: 'white' }}>{props.currentNode ? props.currentNode.name : ""}</span>}
+                    <Dropdown
+                      trigger={[screens.lg ? 'hover' : 'click']}
+                      overlay={<CardApps is_admin={false} />}
+                      key="dropdown_apps"
+                    >
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
-                            className={'header__dropdown_apps'}
+                          className={'header__dropdown_apps'}
                           style={{
                             color: "white",
                             fontSize: 30,
@@ -322,7 +352,11 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                         />
                       </div>
                     </Dropdown>
-                    <Dropdown overlay={verifyMenuNewForTenant()?userCardDisplay:userCardDisplayMenuOld} key="dropdown_user">
+                    <Dropdown
+                      trigger={[screens.lg ? 'hover' : 'click']}
+                      overlay={verifyMenuNewForTenant() ? userCardDisplay : userCardDisplayMenuOld}
+                      key="dropdown_user"
+                    >
                       <div key="menu_user_content">
                         <Avatar
                           key="avatar_key"
@@ -397,7 +431,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 props.versionCfdi
                   ? props.versionCfdi
                   : props.catCfdiVersion.find((item) => item.active === true)
-                      .version
+                    .version
               }
               options={props.catCfdiVersion.map((item) => {
                 return {

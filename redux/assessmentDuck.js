@@ -40,6 +40,8 @@ const initialData = {
   error_form_add: false,
   open_modal_create_group: false,
   open_modal_edit_group: false,
+  list_assessments: [],
+  load_assessments: false
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -142,6 +144,7 @@ const assessmentReducer = (state = initialData, action) => {
       return {
         ...state,
         categories_assessment: action.payload,
+        fetching: false
       };
     case types.UPD_PAGINATION:
       return {
@@ -166,6 +169,11 @@ const assessmentReducer = (state = initialData, action) => {
       return { ...state, open_modal_create_group: action.payload}
     case types.SET_MODAL_GROUP_EDIT:
       return { ...state, open_modal_edit_group: action.payload}
+    case types.LIST_ASSETS:
+      return {...state,
+        list_assessments: action.payload,
+        load_assessments: action.fetching
+      }
     default:
       return state;
   }
@@ -732,6 +740,18 @@ export const deleteProfile = (id, node) => {
     }
   };
 };
+
+export const getListAssets = (node, query = '') => async (dispatch) =>{
+  const action = {type: types.LIST_ASSETS, payload: [], fetching: false};
+  try {
+    dispatch({...action, fetching: true})
+    let response = await WebApiAssessment.getListSurveys(node, query);
+    dispatch({...action, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(action)
+  }
+}
 
 export const setCurrentPage = (num) => {
   return async (dispatch) => {

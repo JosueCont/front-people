@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {Grid, Layout, Menu} from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -37,6 +37,8 @@ const MainSider = ({
   defaultOpenKeys = null,
   hideProfile = true,
   onClickImage = true,
+  menuCollapsed,
+  setMenuCollapsed,
   ...props
 }) => {
   const router = useRouter();
@@ -184,15 +186,22 @@ const MainSider = ({
   }
 
   return (<>
-  {!collapsed && (screens.xs || screens.sm  || screens.md) && <div className={'sider-overlay'}/> }
+  {((!collapsed && screens.lg) || !menuCollapsed)
+    && (screens.xs || screens.sm  || screens.md)
+    && <div className={'sider-overlay'}/> }
     <Sider
       collapsible
-      collapsed={collapsed}
-      onCollapse={(value) => setCollapsed(value)}
+      collapsed={screens.lg ? collapsed : menuCollapsed}
+      onCollapse={(value) => screens.lg ? setCollapsed(value) : setMenuCollapsed(value)}
       theme={theme}
       width={250}
       breakpoint="lg"
-      collapsedWidth="80"
+      onBreakpoint={e =>{
+        setCollapsed(false);
+        setMenuCollapsed(false);
+      }}
+      collapsedWidth={screens.lg ? 80 : 0}
+      trigger={!screens.lg && null}
     >
       <div className="logo" />
       <Menu

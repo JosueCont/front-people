@@ -38,6 +38,7 @@ import {
   assessmentLoadAction,
   getCategories,
   updPagination,
+  getListAssets
 } from "../../../redux/assessmentDuck";
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
@@ -53,6 +54,7 @@ const AssessmentScreen = ({
   assessmentStore,
   getCategories,
   updPagination,
+  getListAssets,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -66,7 +68,6 @@ const AssessmentScreen = ({
   const [testsSelected, setTestsSelected] = useState([]);
   const [testsKeys, setTestsKeys] = useState([]);
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
-  const [showModalCreateGroup, setShowModalCreateGroup] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
   const [configPagination, setConfigPagination] = useState({
     showSizeChanger: true,
@@ -80,6 +81,7 @@ const AssessmentScreen = ({
       props.assessmentLoadAction(props.currentNode.id);
       getCategories();
       updPagination(1);
+      getListAssets(props.currentNode?.id)
     }
   }, [props.currentNode]);
 
@@ -236,16 +238,18 @@ const AssessmentScreen = ({
   };
 
   const onFinishCreateGroup = async (values) => {
-    setLoading(true);
-    const body = { ...values, node: props.currentNode?.id };
     try {
+      let body = { ...values, node: props.currentNode?.id };
       await WebApiAssessment.createGroupAssessments(body);
       message.success("Grupo agregado");
-      setLoading(false);
     } catch (e) {
       console.log(e);
-      setLoading(false);
-      message.error("Grupo no agregado");
+      // Se devuelve un error para no cerrar el modal
+      let txt = e.response?.data?.message;
+      if (e.response.status === 400) return txt;
+      let msg = txt ? txt : 'Grupo no agregado';
+      message.error(msg)
+      return 'ERROR';
     }
   };
 
@@ -253,24 +257,16 @@ const AssessmentScreen = ({
     setTestsKeys([]);
     setTestsSelected([]);
     setOpenModalAddGroup(false);
-    setShowModalCreateGroup(false);
   };
 
-  useEffect(() => {
-    if (openModalAddGroup) {
-      if (testsSelected.length > 0) {
-        if (testsSelected.length >= 2) {
-          setShowModalCreateGroup(true);
-        } else {
-          setOpenModalAddGroup(false);
-          message.error("Selecciona al menos 2 evaluaciones");
-        }
-      } else {
-        message.error("Selecciona las evaluaciones");
-        setOpenModalAddGroup(false);
-      }
+  const showModalGroup = () =>{
+    if(testsSelected?.length > 1){
+      setOpenModalAddGroup(true);
+      return;
     }
-  }, [openModalAddGroup]);
+    setOpenModalAddGroup(false)
+    message.error('Selecciona al menos dos evaluaciones')
+  }
 
   const onFinishSearch = ({ name }) => {
     if (name.trim()) {
@@ -294,7 +290,7 @@ const AssessmentScreen = ({
           <Menu.Item
             key={1}
             icon={<PlusOutlined />}
-            onClick={() => setOpenModalAddGroup(true)}
+            onClick={() => showModalGroup()}
           >
             Crear grupo
           </Menu.Item>
@@ -303,9 +299,9 @@ const AssessmentScreen = ({
     );
   };
 
-  useEffect(() => {
-    console.log("testsSelected", testsSelected);
-  }, [testsSelected]);
+  // useEffect(() => {
+  //   console.log("testsSelected", testsSelected);
+  // }, [testsSelected]);
 
   const rowSelectionGroup = {
     selectedRowKeys: testsKeys,
@@ -597,14 +593,13 @@ const AssessmentScreen = ({
           onChangeTable={onChangeTable}
         />
       )}
-      {showModalCreateGroup && (
+      {openModalAddGroup && (
         <AssessmentsGroup
-          loadData={{ name: "", assessments: testsSelected }}
-          title={"Crear nuevo grupo"}
-          visible={showModalCreateGroup}
+          itemGroup={{name: "",assessments: testsSelected }}
+          title="Crear nuevo grupo"
+          visible={openModalAddGroup}
           close={HandleCloseGroup}
           actionForm={onFinishCreateGroup}
-          surveyList={assessments}
         />
       )}
     </MainLayout>
@@ -626,4 +621,5 @@ export default connect(mapState, {
   assessmentLoadAction,
   getCategories,
   updPagination,
+  getListAssets,
 })(withAuthSync(AssessmentScreen));
