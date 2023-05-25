@@ -167,8 +167,8 @@ const InfoRequests = () => {
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
         values.days_requested = !noValid.includes(infoRequest?.days_requested)
             ? infoRequest?.days_requested : null;
-        values.availableDays = !noValid.includes(infoRequest?.available_days_vacation)
-            ? infoRequest?.available_days_vacation : null;
+        // values.availableDays = !noValid.includes(infoRequest?.available_days_vacation)
+        //     ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
         formRequest.setFieldsValue(values)
