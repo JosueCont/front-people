@@ -1,293 +1,264 @@
-import React, { useState, useEffect } from "react";
-import {connect, useSelector} from "react-redux";
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
     Table,
-    Row,
-    Col,
     Tooltip,
-    Tag,
-    Modal,
-    message,
-    Menu,
-    Dropdown,
-    Button,
     Space,
-    List,
-    Avatar,
-    Badge
-} from "antd";
+    Tag,
+    Dropdown,
+    Menu,
+    Button,
+    message
+} from 'antd';
 import {
     EditOutlined,
     DeleteOutlined,
     EyeOutlined,
     EllipsisOutlined,
     UserOutlined,
-    FileTextOutlined
-} from "@ant-design/icons";
-import WebApiAssessment from "../../../api/WebApiAssessment";
-import ViewSurveys from "./ViewSurveys";
-import DeleteGroups from "./DeleteGroups";
-import AssessmentsGroup from "./AssessmentsGroup";
-import {setErrorFormAdd, setModalGroupEdit} from "../../../redux/assessmentDuck";
+    FileTextOutlined,
+    EyeInvisibleOutlined
+} from '@ant-design/icons';
+import ViewSurveys from './ViewSurveys';
+import AssessmentsGroup from './AssessmentsGroup';
+import WebApiAssessment from '../../../api/WebApiAssessment';
+import ListItems from '../../../common/ListItems';
 
-const AssessmentsTable = ({ setModalGroupEdit, assessmentStore, ...props}) => {
+const AssessmentsTable = ({
+    listGroups = [],
+    loading = false,
+    getListGroups = () => { }
+}) => {
 
-  const menuDropDownStyle = { background: "#434343", color: "#ffff"};
-  const permissions = useSelector(state => state.userStore.permissions.person)
-  const currenNode = useSelector(state => state.userStore.current_node)
-  const [showModalEdit, setShowModalEdit] = useState(false);
-  const [showModalDelete, setShowModalDelete] = useState(false);
-  const [showModalSurveys, setShowModalSurveys] = useState(false);
-  const [openModalDelete, setOpenModalDelete] = useState(false);
-  const [itemGroup, setItemGroup] = useState({});
-  // const [itemGroupPeople, setItemGroupPeople] = useState();
-  const [groupsToDelete, setGroupsToDelete] = useState([]);
-  const [groupsKeys, setGroupsKeys] = useState([]);
+    const permissions = useSelector(state => state.userStore.permissions.person)
+    const { current_node } = useSelector(state => state.userStore)
 
-  const HandleUpdateGroup = async (item) => {
-    /* let resp = await getOnlyGroup(item.group_kuiz_id); */
-    // setItemGroupPeople(item)
-    setItemGroup(item)
-   // setShowModalEdit(true)
-      setModalGroupEdit(true)
-  }
+    const [openList, setOpenList] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [itemGroup, setItemGroup] = useState({});
 
-  
-  
+    const [openDelete, setOpenDelete] = useState(false);
+    const [itemsKeys, setItemsKeys] = useState([]);
+    const [itemsSelected, setItemsSelected] = useState([]);
 
-  const HandleClose = () =>{
-   //   setShowModalEdit(false)
-      resetValuesDelete()
-  }
-
-  const HandleDeleteGroup = (item) => {
-      setGroupsToDelete([item])
-      setShowModalDelete(true)
-  }
-
-  const openModalSurveys = async (item)=>{
-    // let resp = await getOnlyGroup(item.group_kuiz_id);
-    if(item.assessments?.length > 0){
-      setItemGroup(item)
-      setShowModalSurveys(true)
-    }else{
-      setItemGroup({})
-      message.error("El grupo aún no tiene evaluaciones")
+    const actionUpdate = async (values) => {
+        try {
+            let body = { ...values, node: current_node?.id }
+            await WebApiAssessment.updateGroupAssessments(body, itemGroup?.id)
+            getListGroups(current_node?.id)
+            message.success('Grupo actualizado')
+        } catch (e) {
+            console.log(e)
+            // Se devuelve un error para no cerrar el modal
+            let txt = e.response?.data?.message;
+            if (e.response.status === 400) return txt;
+            let msg = txt ? txt : 'Grupo no actualizado';
+            message.error(msg)
+            return 'ERROR';
+        }
     }
-  }
 
-  const resetValuesDelete = ()=>{
-    setGroupsKeys([])
-    setGroupsToDelete([])
-    setShowModalDelete(false)
-    setOpenModalDelete(false)
-  }
+    const actionDelete = async () => {
+        let groups_id = itemsSelected?.map(item => item.id);
+        try {
+            await WebApiAssessment.deleteGroupAssessments({ groups_id });
+            getListGroups(current_node?.id)
+            let msg = groups_id?.length > 1
+                ? 'Grupos eliminados' : 'Grupo eliminado';
+            message.success(msg)
+        } catch (e) {
+            console.log(e)
+            let msg = groups_id?.length > 1
+                ? 'Grupos no eliminados' : 'Grupo no eliminado';
+            message.error(msg)
+        }
+    };
 
-  const rowSelectionGroup = {
-    selectedRowKeys: groupsKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setGroupsKeys(selectedRowKeys)
-      setGroupsToDelete(selectedRows)
+    const showList = (item) => {
+        setItemGroup(item)
+        setOpenList(true)
     }
-  }
 
-  /* const onChangePage = (pagination) => {
-    if (pagination.current > 1) {
-      const offset = (pagination.current - 1) * 10;
-      const queryParam = `&limit=10&offset=${offset}`;
-      props.getListGroups(currenNode?.id,"",queryParam)
-    } else if (pagination.current == 1) {
-      props.getListGroups(currenNode?.id,"","")
+    const closeList = () => {
+        setItemGroup({})
+        setOpenList(false)
     }
-    props.setNumPage(pagination.current)
-  } */
 
-  useEffect(()=>{
-    if(openModalDelete){
-      if(groupsToDelete.length > 0){
-        setShowModalDelete(true)
-      }else{
-        setOpenModalDelete(false)
-        message.error("Selecciona al menos un grupo")
-      }
+    const showEdit = (item) => {
+        setItemGroup(item)
+        setOpenEdit(true)
     }
-  },[openModalDelete])
-  
-  const removeGroups = async (ids) =>{
-    props.setLoading(true)
-    props.deteleGroup(ids)
-    resetValuesDelete();
-  }
 
-  const onFinishEdit = async (values) =>{
-    props.setLoading(true)
-    props.updateGroup(values, itemGroup.id)
-  }
-
-  const getOnlyGroup = async (id) =>{
-    try {
-      let response = await WebApiAssessment.getOnlyGroupAssessment(id);
-      return response.data;
-    } catch (e) {
-      console.log(e)
-      return e.response;
+    const closeEdit = () => {
+        setItemGroup({})
+        setOpenEdit(false)
     }
-  }
 
-  const menuTable = () => {
-    return (
-      <Menu>
-        {permissions?.delete && (
-          <Menu.Item
-            key={1}
-            icon={<DeleteOutlined/>}
-            onClick={()=>setOpenModalDelete(true)}
-          >
-            Eliminar
-          </Menu.Item>
-        )}
-      </Menu>
-    );
-  };
+    const showManyDelete = () => {
+        if (itemsSelected.length > 1) {
+            setOpenDelete(true)
+            return;
+        }
+        setOpenDelete(false)
+        message.error('Selecciona al menos dos grupos')
+    }
 
-  const menuGroup = (item) => {
-    return (
-      <Menu>
-        {permissions?.edit && (
-          <Menu.Item
-            key={1}
-            icon={<EditOutlined/>}
-            onClick={() => HandleUpdateGroup(item)}
-          >
-            Editar
-          </Menu.Item>
-        )}
-        {permissions?.delete && (
-          <Menu.Item
-            key={2}
-            icon={<DeleteOutlined/>}
-            onClick={() => HandleDeleteGroup(item)}
-          >
-            Eliminar
-          </Menu.Item>
-        )}
-      </Menu>
+    const showDelete = (item) => {
+        setItemsSelected([item])
+        setOpenDelete(true)
+    }
+
+    const closeDelete = () => {
+        setItemsKeys([])
+        setItemsSelected([])
+        setOpenDelete(false)
+    }
+
+    const rowSelection = {
+        selectedRowKeys: itemsKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+            setItemsKeys(selectedRowKeys)
+            setItemsSelected(selectedRows)
+        }
+    }
+
+    const MenuTable = () => (
+        <Menu>
+            <Menu.Item
+                key='1'
+                icon={<DeleteOutlined />}
+                onClick={() => showManyDelete()}
+            >
+                Eliminar
+            </Menu.Item>
+        </Menu>
     )
-  }
 
-  const columns = [
-      {
-        title: "Nombre",
-        key: 'name',
-        dataIndex: 'name'
-      },
-      {
-        title: "Evaluaciones",
-        render: (item) => {
-          return (
-            <Space>
-              {item.assessments?.length > 0 && (
-                <Tooltip title='Ver evaluaciones'>
-                  <EyeOutlined
-                    style={{cursor: 'pointer'}}
-                    onClick={()=>openModalSurveys(item)}
-                  />
-                </Tooltip>
-              )}
-              <Tag
-                icon={<FileTextOutlined style={{color:'#52c41a'}} />}
-                color={'green'}
-                style={{fontSize: '14px'}}
-              >
-                {item.assessments ? item.assessments.length : 0}
-              </Tag>
-            </Space>
-          )
-        }
-      },
-      {
-        title: () => {
-          return (
-            <>
-              {permissions?.delete && (
-                <Dropdown overlay={menuTable}>
-                  <Button style={menuDropDownStyle} size="small">
-                    <EllipsisOutlined />
-                  </Button>
-                </Dropdown>
-              )}
-            </>
-          )
+    const MenuItem = ({ item }) => (
+        <Menu>
+            {permissions?.edit && (
+                <Menu.Item
+                    key='1'
+                    icon={<EditOutlined />}
+                    onClick={() => showEdit(item)}
+                >
+                    Editar
+                </Menu.Item>
+            )}
+            {permissions?.delete && (
+                <Menu.Item
+                    key='2'
+                    icon={<DeleteOutlined />}
+                    onClick={() => showDelete(item)}
+                >
+                    Eliminar
+                </Menu.Item>
+            )}
+        </Menu>
+    )
+
+    const columns = [
+        {
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
         },
-        render: (item) => {
-          return (
-            <>
-              {(permissions?.edit || permissions?.delete) && (
-                <Dropdown overlay={() => menuGroup(item)}>
-                  <Button style={menuDropDownStyle} size="small">
-                    <EllipsisOutlined />
-                  </Button>
-                </Dropdown>
-              )}
-            </>
-          )
-        }
-      },
-  ]
+        {
+            title: 'Evaluaciones',
+            render: (item) => (
+                <Space>
+                    {item.assessments?.length > 0 ? (
+                        <Tooltip title='Ver evaluaciones'>
+                            <EyeOutlined
+                                onClick={() => showList(item)}
+                            />
+                        </Tooltip>
+                    ) : <EyeInvisibleOutlined />}
+                    <Tag
+                        icon={<FileTextOutlined style={{ color: '#52c41a' }} />}
+                        color={'green'}
+                        style={{ fontSize: '14px' }}
+                    >
+                        {item.assessments ? item.assessments?.length : 0}
+                    </Tag>
+                </Space>
+            )
+        },
+        {
+            title: () => {
+                return (
+                    <>
+                        {permissions?.delete && (
+                            <Dropdown overlay={<MenuTable />}>
+                                <Button size="small">
+                                    <EllipsisOutlined />
+                                </Button>
+                            </Dropdown>
+                        )}
+                    </>
+                )
+            },
+            render: (item) => {
+                return (
+                    <>
+                        {(permissions?.edit || permissions?.delete) && (
+                            <Dropdown overlay={<MenuItem item={item} />}>
+                                <Button size="small">
+                                    <EllipsisOutlined />
+                                </Button>
+                            </Dropdown>
+                        )}
+                    </>
+                )
+            }
+        },
+    ]
 
-  return(
-    <>
-        <Row>
-            <Col span={24}>
-                <Table
-                  rowKey={'id'}
-                  columns={columns}
-                  size={'small'}
-                  loading={props?.loading}
-                  dataSource={props?.dataGroups}
-                  locale={{
-                    emptyText: props.loading ?
-                    "Cargando..." :
-                    "No se encontraron resultados."
-                  }}
-                  rowSelection={rowSelectionGroup}
-                />
-            </Col>
-        </Row>
-        {assessmentStore?.open_modal_edit_group && (
-          <AssessmentsGroup
-              title={'Editar grupo'}
-              visible={assessmentStore?.open_modal_edit_group}
-              loadData={itemGroup}
-              actionForm={onFinishEdit}
-          />
-        )}
-        {showModalSurveys && (
-          <ViewSurveys
-            title={'Lista de evaluaciones'}
-            visible={showModalSurveys}
-            setVisible={setShowModalSurveys}
-            item={itemGroup}
-          />
-        )}
-        {showModalDelete && (
-          <DeleteGroups
-            visible={showModalDelete}
-            close={resetValuesDelete}
-            groups={groupsToDelete}
-            actionDelete={removeGroups}
-          />
-        )}
-    </>
-  )
+    return (
+        <>
+            <Table
+                rowKey='id'
+                size='small'
+                columns={columns}
+                dataSource={listGroups}
+                loading={loading}
+                rowSelection={rowSelection}
+                pagination={{
+                    hideOnSinglePage: true,
+                    showSizeChanger: false
+                }}
+                locale={{
+                    emptyText: loading ?
+                        "Cargando..." :
+                        "No se encontraron resultados."
+                }}
+            />
+            <ViewSurveys
+                title='Lista de evaluaciones'
+                close={closeList}
+                itemGroup={itemGroup}
+                visible={openList}
+            />
+            <AssessmentsGroup
+                title='Editar grupo'
+                close={closeEdit}
+                visible={openEdit}
+                itemGroup={itemGroup}
+                actionForm={actionUpdate}
+            />
+            <ListItems
+                title={itemsSelected?.length > 1
+                    ? '¿Estas seguro de eliminar estos grupos?'
+                    : '¿Estas seguro de eliminar este grupo?'
+                }
+                visible={openDelete}
+                keyTitle='name'
+                close={closeDelete}
+                itemsToList={itemsSelected}
+                actionConfirm={actionDelete}
+            />
+        </>
+    )
 }
 
-//export default AssessmentsTable
-const mapState = (state) => {
-    return {
-        currentNode: state.userStore.current_node,
-        assessmentStore: state.assessmentStore,
-    };
-};
-
-export default connect(mapState, { setErrorFormAdd, setModalGroupEdit })(AssessmentsTable);
+export default AssessmentsTable

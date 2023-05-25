@@ -1184,7 +1184,7 @@ const homeScreen = ({
   };
 
   const HandleModalAssign = (item) => {
-    setNamePerson(item?.first_name + " " + item?.flast_name)
+    setNamePerson(getFullName(item))
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
@@ -1749,6 +1749,14 @@ const homeScreen = ({
     }
   }, [props.user_store]);
 
+  const closeAssign = () =>{
+    setPersonsKeys([])
+    setPersonsToDelete([])
+    setPersonsToSendUIStore([])
+    setPersonsToSynchronizeYNL([])
+    setPersonsToAddImmediateSupervisor([])
+    setPersonsToAddSubstituteImmediateSupervisor([])
+  }
 
   // Lista para asignar suplente de jefe inmediato
   // Se excluye al jefe inmediato en caso de tener uno asignado
@@ -2184,7 +2192,15 @@ const homeScreen = ({
             <AlertAddImmediateSupervisor/>
             <Row gutter={[8,20]} justify="end">
               <Col span={6}>
-                <Button disabled={isLoadingImmediateSupervisor} style={{width:'100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1"}} className="btn-filter" onClick={()=>{setModalAddImmediateSupervisor(false), formAddImmediateSupervisor.resetFields()}}>
+                <Button
+                  disabled={isLoadingImmediateSupervisor}
+                  style={{width:'100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1"}}
+                  className="btn-filter"
+                  onClick={()=>{
+                    closeAssign()
+                    setModalAddImmediateSupervisor(false)
+                    formAddImmediateSupervisor.resetFields()
+                  }}>
                   Cancelar
                 </Button>
               </Col>
@@ -2236,6 +2252,7 @@ const homeScreen = ({
                     style={{width:'100%', opacity: isLoadingSubstituteImmediateSupervisor ? "0.6" : "1"}}
                     className="btn-filter"
                     onClick={()=>{
+                      closeAssign()
                       setModalAddSubstituteImmediateSupervisor(false)
                       formAddSubstituteImmediateSupervisor.resetFields()
                     }}>
