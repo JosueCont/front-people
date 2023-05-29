@@ -74,8 +74,23 @@ const OptionsExport = ({
         })
     }
 
+    const transformP = async (type) =>{
+        // Para reporte excel
+        if(type == 2) return infoReport;
+        // Para reporte pdf
+        let chart_img = null;
+        const some_ = item => item.level == 'N/A';
+        let result = infoReport.some(some_);
+        if(!result){
+            let params = [{fullName: "", data: infoReport}]
+            let {fullName, ...args} = generateConfig({typeReport: 'p', infoReport: params});
+            chart_img = await getChart({...args, type: 'radar'});
+        }
+        return {chart_img, competences: infoReport}
+    }
+
     const transformPP = async (type) =>{
-        // Para para reporte excel
+        // Para reporte excel
         let profiles = infoReport?.at(-1)?.profiles?.at(-1);
         let competences = getCompetences(profiles);
         if(type == 2) return competences;
@@ -158,6 +173,7 @@ const OptionsExport = ({
 
     const getData = async (type = 1) => {
         const actions = {
+            // 'p': transformP,
             'pp': transformPP,
             'psp': transformPSP,
             'pps': transformPPS,

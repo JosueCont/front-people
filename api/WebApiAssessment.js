@@ -15,9 +15,9 @@ if (process.browser) {
 const urlKuizBaseApiWithTenant = `${typeHttp}://${tenant}.${API_ASSESSMENT}`
 
 class WebApiAssessment {
-  static getGroupsAssessments(data) {
+  static getGroupsAssessments(node, query) {
     return WebApi.ApisType(
-      `/person/group-assessments/?node=${data.nodeId}`,
+      `/person/group-assessments/?node=${node}${query}`,
       "get"
     );
   }

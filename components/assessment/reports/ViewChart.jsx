@@ -39,7 +39,7 @@ const ViewChart = ({
     const [activeCircular, setActiveCircular] = useState(false);
 
     useLayoutEffect(()=>{
-        if(infoReport?.length > 0 && typeReport == 'pp') generateConfig();
+        if(infoReport?.length > 0 && (visible || !isModal)) generateConfig();
         else setParameters(config);
     },[infoReport])
 
@@ -289,13 +289,13 @@ const ViewChart = ({
             zoom: {
                 zoom: {
                     wheel: {
-                        enabled: true
+                        enabled: isModal
                     },
                     mode: "xy",
                     speed: 50,
                 },
                 pan: {
-                    enabled: true,
+                    enabled: isModal,
                     mode: "xy",
                     speed: 50
                 }

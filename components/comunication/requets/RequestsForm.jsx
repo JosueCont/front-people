@@ -68,14 +68,14 @@ const RequestsForm = ({
                     <Input size='large' readOnly placeholder='Días solicitados'/>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} xl={8}>
+            {/* <Col xs={24} md={12} xl={8}>
                 <Form.Item
                     name='availableDays'
                     label='Días disponibles'
                 >
                     <Input size='large' readOnly placeholder='Días disponibles'/>
                 </Form.Item>
-            </Col>
+            </Col> */}
             <Col xs={24} md={12} xl={8}>
                 <Form.Item
                     name='immediate_supervisor'

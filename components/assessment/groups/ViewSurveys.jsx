@@ -6,25 +6,30 @@ import {
     Avatar
 } from "antd";
 
-const ViewSurveys = ({...props}) =>{
+const ViewSurveys = ({
+    title = '',
+    visible = false,
+    close =()=>{},
+    itemGroup = {}
+}) =>{
 
     return(
         <Modal
-            title={props.title}
-            visible={props.visible}
-            onCancel={() => props.setVisible(false)}
+            title={title}
+            visible={visible}
+            onCancel={() => close()}
             className={'custom-modal'}
             width={500}
             footer={[
-                <Button type="primary" onClick={()=>props.setVisible(false)}>
+                <Button type="primary" onClick={()=> close()}>
                     Cerrar
                 </Button>
             ]}
         >
             <List
-                size={'small'}
+                size='small'
                 itemLayout="horizontal"
-                dataSource={props.item?.assessments}
+                dataSource={itemGroup?.assessments}
                 renderItem={item => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
@@ -32,8 +37,8 @@ const ViewSurveys = ({...props}) =>{
                             description={
                                 <div>
                                     Tipo: {item.category === "A" ? "Assessment" : item.category === "K" ? "Khor" : "Quiz"},
-                                    Secciones: {item.total_sections},
-                                    Preguntas: {item.total_questions}
+                                    Secciones: {item?.total_sections},
+                                    Preguntas: {item?.total_questions}
                                 </div>
                             }
                         />

@@ -152,6 +152,14 @@ const DetailsRequets = ({
                                     : 'Información de la solicitud'
                                 }
                             </p>
+                            {Object.keys(currentPerson).length > 0 && (
+                                <p style={{marginBottom: 0}}>
+                                    Fecha de ingreso:&nbsp;
+                                    {currentPerson.date_of_admission
+                                        ? moment(currentPerson.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
+                                        : 'No disponible'}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <Button

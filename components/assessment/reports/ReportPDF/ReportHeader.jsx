@@ -83,8 +83,7 @@ const styles = StyleSheet.create({
     },
     user_info: {
         display: 'flex',
-        flexDirection: 'column',
-        width: 375
+        flexDirection: 'column'
     },
     user_profile: {
         height: 34,
