@@ -190,9 +190,10 @@ class WebApi {
   }
 
 
-  static getDashboardDataWidget(widget= null, params='' ){
-    let url = DASHBOARD_WIDGET_URLS[widget]
-    return WebApi.ApisType(`${url}${params}`, "get");
+  static getDashboardDataWidget(node, params='' ){
+    // Se comenta, todas las urls son iguales
+    // let url = DASHBOARD_WIDGET_URLS[widget]
+    return WebApi.ApisType(`/person/dashboard/?node_id=${node}${params}`, "get");
   }
 
 }
