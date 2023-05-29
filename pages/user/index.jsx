@@ -34,9 +34,9 @@ const index = ({
                     <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p>
                 </div>
                 <ContentCards>
-                    <WidgetBirthday redirectPerson={false} />
-                    <WidgetPayroll/>
                     <WidgetRequests />
+                    <WidgetPayroll/>
+                    <WidgetBirthday redirectPerson={false} />
                 </ContentCards>
             </ContentVertical>
         </MainLayout>
