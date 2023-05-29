@@ -224,8 +224,11 @@ const ModalConceptsPayroll = ({
     if (type === 3) setOtherPayments(checkedValues);
   };
 
-  const changeHandler = (type, name) => (value, item) => {
-    let c = props;
+  const changeHandler = (type, name) => (value, item_concept) => {
+    let _periodicity = props.periodicity;
+    const {code,description} = item_concept; //P119 es doble , P118 triple
+    //GDZUL --- validacion de conceptos
+    //validar las horas extras dobles y triples
     if (type === 1)
       perceptions.map((item) => {
         if (item.id === name)
