@@ -82,18 +82,25 @@ const ModalConceptsPayroll = ({
       } else {
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
-            item.perception_type.is_payroll && item.node != null && item.show
+            item.perception_type.is_payroll &&
+            item.node != null &&
+            item.show &&
+            item.is_active
         );
         props.deductions_int = props.deductions_int.filter(
           (item) =>
             item.deduction_type.is_payroll &&
             item.node != null &&
             item.deduction_type.code !== "002" &&
-            item.show
+            item.show &&
+            item.is_active
         );
         props.other_payments_int = props.other_payments_int.filter(
           (item) =>
-            item.other_type_payment.is_payroll && item.node != null && item.show
+            item.other_type_payment.is_payroll &&
+            item.node != null &&
+            item.show &&
+            item.is_active
         );
       }
       setPerceptionsCat(
@@ -699,16 +706,23 @@ const ModalConceptsPayroll = ({
                   )}
                 />
                 <Column
-                  title={'Fechas'}
-                  align={'center'}
-                  key={'date'}
-                  render={(record)=>record.data_type == 2 ? (
+                  title={"Fechas"}
+                  align={"center"}
+                  key={"date"}
+                  render={(record) =>
+                    record.data_type == 2 ? (
                       <DatePickerHoliDays
-                          withData={record.code==='P118' || record.code==='P119'}
-                          concept={record}
-                          onChangeData={(dates)=>record.dates=dates}
-                          multiple={true} />
-                  ): 'No aplica'}
+                        withData={
+                          record.code === "P118" || record.code === "P119"
+                        }
+                        concept={record}
+                        onChangeData={(dates) => (record.dates = dates)}
+                        multiple={true}
+                      />
+                    ) : (
+                      "No aplica"
+                    )
+                  }
                 />
                 <Column
                   title="Acciones"
