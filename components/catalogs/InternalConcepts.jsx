@@ -78,6 +78,12 @@ const InternalConcepts = ({
         );
       },
     },
+    {
+      title: "¿Es activo?",
+      render: (item) => {
+        return <div>{item.is_active ? <>Activo</> : <>Inactivo</>}</div>;
+      },
+    },
 
     {
       title: "Acciones",
