@@ -5,6 +5,7 @@ import { MdEmail } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
 import { useUser } from '../../utils/useUser';
 import { useStatistics } from '../../utils/useStatistics';
+import { getFullName } from '../../utils/functions'
 
 //Components
 import CardGeneric from '../dashboards-cards/CardGeneric';
@@ -13,15 +14,17 @@ import {
     ContentVertical,
     Title2,
     CustomCard } from '../validation/styledAssesments';
+import { useSelector } from 'react-redux';
 const { useBreakpoint } = Grid;
 
 const CardPerson = ({...props}) => {
     const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
-    const { user } = useUser();
+    
+    const user = useSelector(state => state.userStore.user);
     const { toAnswer, completed } = useStatistics();
-    const screens = useBreakpoint();
+    const screens = useBreakpoint();    
 
   return (
     <Row gutter={[24,24]} align={'middle'}>
@@ -44,7 +47,7 @@ const CardPerson = ({...props}) => {
                       <ContentStart gap={'8px'}>
                         <FaUser style={{fontSize: '1rem', color: '#121212'}}/>
                         <Title2 color={'#121212'} cut={true}>
-                            {user.fullName}
+                            {getFullName(user)}
                         </Title2>
                       </ContentStart>
                       <ContentStart gap={'8px'}>

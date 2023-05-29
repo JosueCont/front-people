@@ -132,7 +132,7 @@ const GroupsPeople = () => {
           <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
         }
         <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
-        <Breadcrumb.Item>Grupos</Breadcrumb.Item>
+        <Breadcrumb.Item>Grupos de personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <PersonsGroupSearch
