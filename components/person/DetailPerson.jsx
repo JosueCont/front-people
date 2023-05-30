@@ -328,7 +328,7 @@ const DetailPerson = ({
           </TabPane>
 
           {
-            (props?.applications && (_.has(props.applications, "troura") && props.applications["troura"].active)) &&
+            (props?.applications && (_.has(props.applications, "truora") && props.applications["truora"].active)) &&
             <TabPane
               tab={
                 <Tooltip title="Usuario">
