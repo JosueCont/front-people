@@ -21,7 +21,9 @@ const initialData = {
   load_persons: false,
   info_current_rol: {},
   load_current_rol: false,
-  lang: 'es-mx'
+  lang: 'es-mx',
+  list_persons: [],
+  fetch_persons: false
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -38,6 +40,7 @@ const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 const CHANGE_LANG = "CHANGE_LANG";
+const GET_PERSONS = "GET_PERSONS";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -75,6 +78,11 @@ const webReducer = (state = initialData, action) => {
       return {...state,
         info_current_rol: action.payload,
         load_current_rol: action.fetching
+      }
+    case GET_PERSONS:
+      return {...state,
+        list_persons: action.payload,
+        fetch_persons: action.fetching
       }
     default:
       return state;
@@ -228,16 +236,28 @@ export const saveCurrentNode = (data) => async (dispatch) =>{
   dispatch({ type: COMPANY_SELCTED, payload: data });
 }
 
-export const getPersonsCompany = (data) => async (dispatch, getState) => {
+export const getPersonsCompany = (data, query = {}) => async (dispatch, getState) => {
   dispatch({ type: PERSONS_COMPANY, payload: [], fetching: true });
   try {
-    let response = await WebApiPeople.filterPerson({ node: data });
+    let response = await WebApiPeople.filterPerson({...query, node: data });
     dispatch({ type: PERSONS_COMPANY, payload: response.data, fetching: false });
   } catch (error) {
     dispatch({ type: PERSONS_COMPANY, payload: [], fetching: false });
     console.log(error);
   }
 };
+
+export const getListPersons = (node, query = {}) => async (dispatch, getState) =>{
+  const action = {type: GET_PERSONS, payload: [], fetching: false};
+  dispatch({...action, fetching: true})
+  try {
+    let response = await WebApiPeople.filterPerson({...query, node})
+    dispatch({...action, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(action)
+  }
+}
 
 export const getCurrentRol = (id_rol) => async (dispatch) =>{
   const typeFunction = { type: GET_CURRENT_ROL, payload: {}, fetching: false};
