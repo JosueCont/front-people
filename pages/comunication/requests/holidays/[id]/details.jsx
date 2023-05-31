@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import MainRequets from '../../../../../components/comunication/requets/MainRequets';
+import { withAuthSync } from '../../../../../libs/auth';
+import MainRequets from '../../../../../components/comunication/MainRequets';
 import InfoRequests from '../../../../../components/comunication/requets/InfoRequests';
 import { getPersonsCompany } from '../../../../../redux/UserDuck';
 
@@ -40,4 +41,4 @@ export default connect(
     mapState, {
     getPersonsCompany
 }
-)(index);
+)(withAuthSync(index));
