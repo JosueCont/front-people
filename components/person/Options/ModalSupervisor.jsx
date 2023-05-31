@@ -23,9 +23,6 @@ const ModalSupervisor = ({
 
     const [formAssign] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const keyField = typeAssign == 1
-        ? 'immediate_supervisor'
-        : 'substitute_immediate_supervisor'
 
 
     const {
@@ -37,8 +34,8 @@ const ModalSupervisor = ({
         setLoading(true)
         setTimeout(async () => {
             let resp = await actionForm(values)
-            if(resp && resp != 'ERROR') formAssign.setFields([{ name: keyField, errors: [resp] }]);
-            else if(!resp) onClose();
+            if (resp && resp != 'ERROR') formAssign.setFields([{ name: 'immediate_supervisor', errors: [resp] }]);
+            else if (!resp) onClose();
             setLoading(false)
         }, 2000)
     }
@@ -47,6 +44,12 @@ const ModalSupervisor = ({
         close()
         formAssign.resetFields()
     }
+
+    const disabledSubmit = useMemo(()=>{
+        if(typeAssign == 1) return false;
+        const some_ = item => item.immediate_supervisor;
+        return !itemsSelected?.some(some_);
+    },[itemsSelected, typeAssign])
 
     const list_to_select = useMemo(() => {
         if (typeAssign == 1) return persons_company;
@@ -75,7 +78,7 @@ const ModalSupervisor = ({
                 <Row>
                     <Col span={24}>
                         <Form.Item
-                            name={keyField}
+                            name='immediate_supervisor'
                             label={typeAssign == 1
                                 ? 'Jefe inmediato'
                                 : 'Suplete de jefe inmediato'
@@ -141,7 +144,11 @@ const ModalSupervisor = ({
                         <Button disabled={loading} onClick={() => onClose()}>
                             Cancelar
                         </Button>
-                        <Button loading={loading} htmlType='submit'>
+                        <Button
+                            loading={loading}
+                            htmlType='submit'
+                            disabled={disabledSubmit}
+                        >
                             Asignar
                         </Button>
                     </Col>

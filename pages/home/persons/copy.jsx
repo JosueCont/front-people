@@ -9,14 +9,22 @@ import TableCollaborator from '../../../components/person/TableCollaborator';
 import { connect } from 'react-redux';
 import {
     getPersonsCompany,
-    getListPersons
+    getListPersons,
 } from '../../../redux/UserDuck';
+import {
+    getListAssets,
+    getCategories,
+    getGroupAssets
+} from '../../../redux/assessmentDuck';
 import { useRouter } from 'next/router';
 
 const index = ({
     currentNode,
     getPersonsCompany,
-    getListPersons
+    getListPersons,
+    getCategories,
+    getListAssets,
+    getGroupAssets
 }) => {
 
     const router = useRouter();
@@ -30,6 +38,9 @@ const index = ({
     useEffect(()=>{
         if(!currentNode) return;
         getPersonsCompany(currentNode?.id)
+        getListAssets(currentNode?.id, '&is_active=true')
+        getGroupAssets(currentNode?.id)
+        getCategories()
     },[currentNode])
 
     return (
@@ -70,6 +81,9 @@ const mapState = (state) => {
 export default connect(
     mapState, {
         getPersonsCompany,
-        getListPersons
+        getListPersons,
+        getCategories,
+        getListAssets,
+        getGroupAssets
     }
 )(withAuthSync(index))
