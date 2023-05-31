@@ -72,7 +72,7 @@ import { getFullName } from "../../../utils/functions";
 import _ from "lodash"
 import { ruleWhiteSpace, ruleRequired, ruleMinPassword, validateSpaces } from "../../../utils/rules";
 import { getAdminRolesOptions } from "../../../redux/catalogCompany";
-import DownloadReport from "../../../components/person/DownloadReport";
+import ModalCompetences from "../../../components/person/ModalCompetences";
 
 const { Text } = Typography;
 
@@ -91,7 +91,7 @@ const homeScreen = ({
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [showModalAssigns, setShowModalAssigns] = useState(false);
-  const [showModalSendIUSS, setShowModalSendIUSS ] = useState(false)
+  const [showModalSendIUSS, setShowModalSendIUSS] = useState(false)
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [namePerson, setNamePerson] = useState("");
@@ -120,7 +120,7 @@ const homeScreen = ({
   const [modalAddSubstituteImmediateSupervisor, setModalAddSubstituteImmediateSupervisor] = useState(false);
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [personsToSynchronizeYNL, setPersonsToSynchronizeYNL] = useState([]);
-  const [personsToSendUIStore, setPersonsToSendUIStore ] = useState([])
+  const [personsToSendUIStore, setPersonsToSendUIStore] = useState([])
   const [personsToAddImmediateSupervisor, setPersonsToAddImmediateSupervisor] = useState([]);
   const [personsToAddSubstituteImmediateSupervisor, setPersonsToAddSubstituteImmediateSupervisor] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
@@ -144,10 +144,13 @@ const homeScreen = ({
   const [loadingChangePassword, setLoadingChangePassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [errors, setErrors] = useState([])
-  const [correct, SetCorrect ] = useState(0)
-  const [ modalError, setModalError ] = useState(false)
+  const [correct, SetCorrect] = useState(0)
+  const [modalError, setModalError] = useState(false)
   const applications = props && props.config && props.config.applications || []
-  let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
+  let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active)
+  // Modal competencias
+  const [openCompetences, setOpenCompetences] = useState(false);
+  const [itemReport, setItemReport] = useState([]);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -156,13 +159,13 @@ const homeScreen = ({
     }, 5000);
   }, [props.permissions]);
 
-  useEffect(()=>{
-    if(!props.currentNode) return;
+  useEffect(() => {
+    if (!props.currentNode) return;
     getAdminRolesOptions(props.currentNode?.id)
-  },[props.currentNode])
+  }, [props.currentNode])
 
 
-  
+
 
 
   // useEffect(() => {
@@ -646,7 +649,7 @@ const homeScreen = ({
         {/*  Desactivar*/}
         {/*</Menu.Item>*/}
         {
-          enableStore && 
+          enableStore &&
           <Menu.Item key="8" onClick={() => showModalUISS()} icon={<SendOutlined />}>
             Enviar a UI Store
           </Menu.Item>
@@ -656,10 +659,10 @@ const homeScreen = ({
             Sincronizar YNL
           </Menu.Item>
         )}
-        <Menu.Item key="7"  onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
+        <Menu.Item key="7" onClick={() => showModalAddImmediateSupervisor()} icon={<UserSwitchOutlined />}>
           Asignar jefe inmediato
         </Menu.Item>
-        <Menu.Item key="add_substitute"  onClick={() => showModalAddSubstituteImmediateSupervisor()} icon={<UsergroupAddOutlined />}>
+        <Menu.Item key="add_substitute" onClick={() => showModalAddSubstituteImmediateSupervisor()} icon={<UsergroupAddOutlined />}>
           Asignar suplente de jefe inmediato
         </Menu.Item>
       </Menu>
@@ -669,6 +672,40 @@ const homeScreen = ({
   const handleDeactivate = () => {
     setDeactivateTrigger(true);
   };
+
+  const closeCompetences = (person,) => {
+    setItemPerson({})
+    setItemReport([])
+    setOpenCompetences(false)
+  }
+
+  const getReport = async (item) => {
+    const key = 'updatable';
+    message.loading({ content: 'Obteniendo información...', key })
+    try {
+      let body = {
+        node_id: props.currentNode?.id,
+        user_id: item?.id,
+        calculation_type: props.config?.calculation_type
+      }
+      let response = await WebApiAssessment.getReportCompetences(body);
+      setTimeout(()=>{
+        message.success({content: 'Información obtenida', key})
+        setItemPerson(item)
+        setItemReport(response.data)
+      },1000)
+      setTimeout(()=>{
+        setOpenCompetences(true)
+      },2000)
+    } catch (e) {
+      console.log(e)
+      let error = e?.response?.data?.message;
+      let msg = error ? error : 'Información no obtenida';
+      setTimeout(() => {
+        message.error({ content: msg, key })
+      }, 2000)
+    }
+  }
 
   const menuPerson = (item) => {
     return (
@@ -692,12 +729,12 @@ const homeScreen = ({
             <Menu.Item
               key="5.1"
               icon={<LinkOutlined />}
-              onClick={() => 
+              onClick={() =>
                 navigator.clipboard.writeText(`${window.location.origin}/validation?user=${item.id}&app=kuiz&type=user`)
               }>
               Copiar permalink de evaluaciones
             </Menu.Item>
-            
+
             {permissions.create && (
               <Menu.Item
                 key="1"
@@ -707,8 +744,14 @@ const homeScreen = ({
                 Asignar evaluaciones
               </Menu.Item>
             )}
-            <DownloadReport person={item}/>
-            
+           <Menu.Item
+              key="10"
+              icon={<EyeOutlined/>}
+              onClick={()=> getReport(item)}
+            >
+                Ver reporte competencias
+            </Menu.Item>
+
           </>
         )}
         {permissions.edit && (
@@ -745,12 +788,12 @@ const homeScreen = ({
           Descargar carta de renuncia
         </Menu.Item>
         {
-          enableStore && 
-          <Menu.Item key="9" 
+          enableStore &&
+          <Menu.Item key="9"
             icon={<SendOutlined />}
             onClick={() => {
               setPersonsToSendUIStore([item]),
-              showModalUISS()
+                showModalUISS()
             }}
           >
             Enviar a UI Store
@@ -770,7 +813,7 @@ const homeScreen = ({
         <Menu.Item
           key="7"
           icon={<UserSwitchOutlined />}
-          onClick={ () => {
+          onClick={() => {
             setPersonsToAddImmediateSupervisor([item]), setModalAddImmediateSupervisor(true);
           }}
         >
@@ -778,18 +821,18 @@ const homeScreen = ({
         </Menu.Item>
 
         {item.immediate_supervisor &&
-            <Menu.Item key="add_substitute" icon={<UsergroupAddOutlined />} onClick={ () => {
-              setPersonsToAddSubstituteImmediateSupervisor([item]), setModalAddSubstituteImmediateSupervisor(true);
-            }}>
-              Asignar suplente de jefe inmediato
-            </Menu.Item>
+          <Menu.Item key="add_substitute" icon={<UsergroupAddOutlined />} onClick={() => {
+            setPersonsToAddSubstituteImmediateSupervisor([item]), setModalAddSubstituteImmediateSupervisor(true);
+          }}>
+            Asignar suplente de jefe inmediato
+          </Menu.Item>
         }
 
-        { isAdmin && (
+        {isAdmin && (
           <Menu.Item
             key="8"
             icon={<KeyOutlined />}
-            onClick={ () => { setIsOpenModalResetPassword(true), setKhonnectId(item.khonnect_id) }}
+            onClick={() => { setIsOpenModalResetPassword(true), setKhonnectId(item.khonnect_id) }}
           >
             Reestablecer contraseña
           </Menu.Item>
@@ -881,11 +924,11 @@ const homeScreen = ({
     3 = Quiero que lea imss
     */
 
-    let imss = formImportPeople.getFieldValue('types_imss') ? [3]: [];
+    let imss = formImportPeople.getFieldValue('types_imss') ? [3] : [];
     let timbrado = formImportPeople.getFieldValue('types_stamp') ? [2] : [];
 
     //formData.append("File", e);
-    formData.append("types",[1,...imss,...timbrado,0])
+    formData.append("types", [1, ...imss, ...timbrado, 0])
     formData.append("excel_person_file", e);
     formData.append("node_id", props.currentNode.id);
     formData.append("saved_by", userSession.user_id);
@@ -1026,11 +1069,11 @@ const homeScreen = ({
 
   const AlertErrors = () => (
     <div>
-    <CheckCircleOutlined /> Usuarios creados: { correct }
-    <br />
-    <br />
-    <CloseCircleOutlined /> Errores: {errors.length} <br/>
-     <ListError errors={errors} />
+      <CheckCircleOutlined /> Usuarios creados: {correct}
+      <br />
+      <br />
+      <CloseCircleOutlined /> Errores: {errors.length} <br />
+      <ListError errors={errors} />
     </div>
   );
 
@@ -1057,7 +1100,7 @@ const homeScreen = ({
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
-        {personsDelete.map((p,i) => {
+        {personsDelete.map((p, i) => {
           return (
             <div key={i}>
               <Row style={{ marginBottom: 15 }}>
@@ -1102,7 +1145,7 @@ const homeScreen = ({
           );
         })}
       </div>
-    );    
+    );
   }
 
   const ListError = ({ errors }) => {
@@ -1118,7 +1161,7 @@ const homeScreen = ({
           );
         })}
       </div>
-    );    
+    );
   }
 
   const ListElementsToAddImmediateSupervisor = ({ personsToAddImmediateSupervisor }) => {
@@ -1141,29 +1184,29 @@ const homeScreen = ({
   const ListElementsToAddSubstituteImmediateSupervisor = () => {
     let noSupervisorCount = false
     const list = <>
-          {personsToAddSubstituteImmediateSupervisor.map((p) => {
-            let hasSupervisor = p.immediate_supervisor
-            if(!hasSupervisor ){
-              noSupervisorCount += 1
-            }
-            return (
-                <>
-                  <Row style={{ marginBottom: 15 }}>
-                    <Avatar src={p.photo_thumbnail ? p.photo_thumbnail : defaulPhoto} />
-                    <span>{" " + p.first_name + " " + p.flast_name}</span>
-                    {!hasSupervisor && <Tooltip title={'Jefe inmediato no asignado'}><ExclamationCircleOutlined style={{color: 'red', marginLeft: 8}} /></Tooltip>}
-                  </Row>
-                </>
-            )
-          })}
-        </>
+      {personsToAddSubstituteImmediateSupervisor.map((p) => {
+        let hasSupervisor = p.immediate_supervisor
+        if (!hasSupervisor) {
+          noSupervisorCount += 1
+        }
+        return (
+          <>
+            <Row style={{ marginBottom: 15 }}>
+              <Avatar src={p.photo_thumbnail ? p.photo_thumbnail : defaulPhoto} />
+              <span>{" " + p.first_name + " " + p.flast_name}</span>
+              {!hasSupervisor && <Tooltip title={'Jefe inmediato no asignado'}><ExclamationCircleOutlined style={{ color: 'red', marginLeft: 8 }} /></Tooltip>}
+            </Row>
+          </>
+        )
+      })}
+    </>
     setCouldAddSubstitute(noSupervisorCount < personsToAddSubstituteImmediateSupervisor.length)
     return <div>
       {list}
       {noSupervisorCount > 0 &&
-          <div style={{marginTop: 16, marginBottom:16, fontStyle: 'italic', border: '1px solid #ddd', background: '#fafafa', borderRadius: 8, padding: 8}}>
-            <ExclamationCircleOutlined style={{color: 'red', marginRight: 8}} />No se asignará el suplente a personas sin un jefe inmediato
-          </div>
+        <div style={{ marginTop: 16, marginBottom: 16, fontStyle: 'italic', border: '1px solid #ddd', background: '#fafafa', borderRadius: 8, padding: 8 }}>
+          <ExclamationCircleOutlined style={{ color: 'red', marginRight: 8 }} />No se asignará el suplente a personas sin un jefe inmediato
+        </div>
       }
     </div>
   }
@@ -1313,7 +1356,7 @@ const homeScreen = ({
   };
 
   const showModalUISS = () => {
-    showModalSendIUSS? setShowModalSendIUSS(false) : setShowModalSendIUSS(true)
+    showModalSendIUSS ? setShowModalSendIUSS(false) : setShowModalSendIUSS(true)
   }
 
   const showModalAddImmediateSupervisor = () => {
@@ -1323,7 +1366,7 @@ const homeScreen = ({
     personsToAddSubstituteImmediateSupervisor.length > 0 ? setModalAddSubstituteImmediateSupervisor(true) : message.warning("Selecciones colaboradores");
   };
 
-  const finishImmediateSupervisor = (value) =>{
+  const finishImmediateSupervisor = (value) => {
     // let validateColaborator = personsToAddImmediateSupervisor.filter(item => item.id === value.immediate_supervisor)
     // validateColaborator.length > 0 ? message.error("No se puede asignar al mismo colaborador como jefe inmediato") : assignedImmediateSupervisor(value.immediate_supervisor)
     assignedImmediateSupervisor(value.immediate_supervisor)
@@ -1342,39 +1385,39 @@ const homeScreen = ({
     }
     let data = { immediate_supervisor: immediate_supervisor, persons_id: ids, node: props.currentNode.id }
     WebApiPeople.assignedMassiveImmediateSupervisor(data)
-    .then((response) => {
-      let msg = response.status == 206
-        ? response.data?.message
-        : 'Asignado correctamente';
-      message.success({content: msg, duration: 4});
-      setIsLoadingImmediateSupervisor(false);
-      setModalAddImmediateSupervisor(false);
-      formAddImmediateSupervisor.resetFields();
-      filterPersonName();
-    })
-    .catch((e) => {
-      console.log(e)
-      if(e.response?.status == 400){
-        let txt = e.response?.data?.message;
-        let error = [{name: 'immediate_supervisor', errors: [txt]}];
-        formAddImmediateSupervisor.setFields(error)
-      }else{
-        message.error("Error al asignar");
-      }
-      setIsLoadingImmediateSupervisor(false);
-    });
+      .then((response) => {
+        let msg = response.status == 206
+          ? response.data?.message
+          : 'Asignado correctamente';
+        message.success({ content: msg, duration: 4 });
+        setIsLoadingImmediateSupervisor(false);
+        setModalAddImmediateSupervisor(false);
+        formAddImmediateSupervisor.resetFields();
+        filterPersonName();
+      })
+      .catch((e) => {
+        console.log(e)
+        if (e.response?.status == 400) {
+          let txt = e.response?.data?.message;
+          let error = [{ name: 'immediate_supervisor', errors: [txt] }];
+          formAddImmediateSupervisor.setFields(error)
+        } else {
+          message.error("Error al asignar");
+        }
+        setIsLoadingImmediateSupervisor(false);
+      });
   };
 
   const onFinishAddSubstituteImmediateSupervisor = (values) => {
     setIsLoadingSubstituteImmediateSupervisor(true)
     let ids = null;
     let _personsToAdd = personsToAddSubstituteImmediateSupervisor.filter(e => e.immediate_supervisor)
-    if(_personsToAdd.length === 0){
+    if (_personsToAdd.length === 0) {
       message.error("No se puede asignar un suplente a personas sin jefe inmediato")
       return;
     }
 
-      ids = (_personsToAdd.map((a) => a.id)).join(',')
+    ids = (_personsToAdd.map((a) => a.id)).join(',')
 
     let data = {
       immediate_supervisor: values.substitute_immediate_supervisor,
@@ -1383,27 +1426,27 @@ const homeScreen = ({
     }
 
     WebApiPeople.assignedMassiveSubstituteImmediateSupervisor(data)
-    .then((response) => {
-      let msg = response.status == 206
-        ? response.data?.message
-        : 'Asignado correctamente';
-      message.success({content: msg, duration: 4});
-      setIsLoadingSubstituteImmediateSupervisor(false);
-      setModalAddSubstituteImmediateSupervisor(false);
-      formAddSubstituteImmediateSupervisor.resetFields();
-      filterPersonName();
-    })
-    .catch((e) => {
-      console.log(e)
-      if(e.response?.status == 400){
-        let txt = e.response?.data?.message;
-        let error = [{name: 'substitute_immediate_supervisor', errors: [txt]}];
-        formAddSubstituteImmediateSupervisor.setFields(error)
-      }else{
-        message.error("Error al asignar");
-      }
-      setIsLoadingSubstituteImmediateSupervisor(false);
-    });
+      .then((response) => {
+        let msg = response.status == 206
+          ? response.data?.message
+          : 'Asignado correctamente';
+        message.success({ content: msg, duration: 4 });
+        setIsLoadingSubstituteImmediateSupervisor(false);
+        setModalAddSubstituteImmediateSupervisor(false);
+        formAddSubstituteImmediateSupervisor.resetFields();
+        filterPersonName();
+      })
+      .catch((e) => {
+        console.log(e)
+        if (e.response?.status == 400) {
+          let txt = e.response?.data?.message;
+          let error = [{ name: 'substitute_immediate_supervisor', errors: [txt] }];
+          formAddSubstituteImmediateSupervisor.setFields(error)
+        } else {
+          message.error("Error al asignar");
+        }
+        setIsLoadingSubstituteImmediateSupervisor(false);
+      });
   };
 
   useEffect(() => {
@@ -1430,10 +1473,10 @@ const homeScreen = ({
   }, [modalSynchronizeYNL]);
 
   const sendToUIStore = () => {
-    
+
     let arrayIds = null
 
-    if(personsToSendUIStore.length == 1){
+    if (personsToSendUIStore.length == 1) {
       let idPerson = personsToSendUIStore[0].id
       arrayIds = [idPerson]
     } else {
@@ -1449,32 +1492,32 @@ const homeScreen = ({
     setLoading(true)
 
     WebApiPeople.CreateUIStoreUsers(data)
-    .then((res) => {
-      let errors = res.data.error_details || []
-      let success = res.data.success
-      setErrors(errors)
-      SetCorrect(success)
-      if(errors.length > 0) {
-        setModalError(true)
-      } else {
-        message.success('Usuarios enviados correctamente')
-      }
-    })
-    .catch((e) => {
-      message.error('Error al enviar usuarios')
-    })
-    .finally(() => {
-      setShowModalSendIUSS(false)
-      filterPersonName();
-      setPersonsToSendUIStore([])
-      getListPersons()
-      setLoading(false)
-    })
+      .then((res) => {
+        let errors = res.data.error_details || []
+        let success = res.data.success
+        setErrors(errors)
+        SetCorrect(success)
+        if (errors.length > 0) {
+          setModalError(true)
+        } else {
+          message.success('Usuarios enviados correctamente')
+        }
+      })
+      .catch((e) => {
+        message.error('Error al enviar usuarios')
+      })
+      .finally(() => {
+        setShowModalSendIUSS(false)
+        filterPersonName();
+        setPersonsToSendUIStore([])
+        getListPersons()
+        setLoading(false)
+      })
 
   }
 
   useEffect(() => {
-    if(showModalSendIUSS && personsToSendUIStore.length > 0){
+    if (showModalSendIUSS && personsToSendUIStore.length > 0) {
       Modal.confirm({
         title: 'Enviar a UI Store',
         icon: <SendOutlined />,
@@ -1490,13 +1533,13 @@ const homeScreen = ({
         onCancel: () => {
           setShowModalSendIUSS(false)
         }
-        
+
       })
     }
-  },[showModalSendIUSS])
+  }, [showModalSendIUSS])
 
-  useEffect(() =>{
-    if(modalError && errors.length > 0){
+  useEffect(() => {
+    if (modalError && errors.length > 0) {
       Modal.info({
         title: 'Detalles de la sincronización',
         cancelText: "Cerrar",
@@ -1507,7 +1550,7 @@ const homeScreen = ({
         }
       })
     }
-  },[modalError])
+  }, [modalError])
 
   useEffect(() => {
     if (Object.keys(route.query).length === 0) {
@@ -1567,15 +1610,15 @@ const homeScreen = ({
     }
   }, [route, props.currentNode]);
 
-  const validatePersonTodelete=(personsToDelete = [])=>{
+  const validatePersonTodelete = (personsToDelete = []) => {
     // Validamos si no estoy tratando de eliminarme a mi mismo
     let isValid = true;
-    if(personsToDelete && personsToDelete.length>0){
-      let myPerson = personsToDelete.find((p)=> p.id === props?.user_store?.id);
-      console.log('personsToDelete===>',personsToDelete,myPerson)
-      if(myPerson){
+    if (personsToDelete && personsToDelete.length > 0) {
+      let myPerson = personsToDelete.find((p) => p.id === props?.user_store?.id);
+      console.log('personsToDelete===>', personsToDelete, myPerson)
+      if (myPerson) {
         isValid = false;
-      }else{
+      } else {
         isValid = true;
       }
     }
@@ -1585,7 +1628,7 @@ const homeScreen = ({
   const deletePerson = () => {
     let ids = null;
     let isValid = validatePersonTodelete(personsToDelete);
-    if(!isValid){
+    if (!isValid) {
       message.error('No se puede completar esta acción, verifique que no se encuentre su usuario en la lista de personas a eliminar.')
       return;
     }
@@ -1704,7 +1747,7 @@ const homeScreen = ({
     </Menu>
   );
 
-  const onFinishChangePassword = (data) =>{
+  const onFinishChangePassword = (data) => {
     setLoadingChangePassword(true)
     let dataToApi = {
       khonnect_id: khonnectId,
@@ -1713,10 +1756,10 @@ const homeScreen = ({
     data.passwordTwo === data.passwordOne ? changePasswordUser(dataToApi) : message.info("Confirme bien sus contraseñas")
   }
 
-  const changePasswordUser = async (data) =>{
+  const changePasswordUser = async (data) => {
     try {
       let response = await WebApiPeople.validateChangePassword(data);
-      if(response.status == 200){
+      if (response.status == 200) {
         setTimeout(() => {
           setLoadingChangePassword(false)
           message.success("Cambio de contraseña exitoso");
@@ -1742,12 +1785,12 @@ const homeScreen = ({
   });
 
   useEffect(() => {
-    if(props.user_store){
+    if (props.user_store) {
       setIsAdmin(props.user_store.is_admin)
     }
   }, [props.user_store]);
 
-  const closeAssign = () =>{
+  const closeAssign = () => {
     setPersonsKeys([])
     setPersonsToDelete([])
     setPersonsToSendUIStore([])
@@ -1758,14 +1801,14 @@ const homeScreen = ({
 
   // Lista para asignar suplente de jefe inmediato
   // Se excluye al jefe inmediato en caso de tener uno asignado
-  const listSubstituteSupevisor = useMemo(()=>{
+  const listSubstituteSupevisor = useMemo(() => {
     let size = personsToAddSubstituteImmediateSupervisor?.length;
-    if(size <=0) return listPersons;
-    if(size > 1) return listPersons; //Solo aplica para la asignación masiva
+    if (size <= 0) return listPersons;
+    if (size > 1) return listPersons; //Solo aplica para la asignación masiva
     let ids = personsToAddImmediateSupervisor.map(item => item?.immediate_supervisor?.id);
     const filter_ = item => !ids.includes(item?.id);
     return listPersons.filter(filter_)
-  },[listPersons, personsToAddSubstituteImmediateSupervisor])
+  }, [listPersons, personsToAddSubstituteImmediateSupervisor])
 
 
   return (
@@ -1921,63 +1964,63 @@ const homeScreen = ({
                 </Row>
 
               </div>
-              <Row span={24} style={{marginBottom:12}}>
+              <Row span={24} style={{ marginBottom: 12 }}>
                 <Col span={24}>
-                  <div style={{display: "flex", justifyContent:'flex-start', gap:8, flexWrap:'wrap'}}>
+                  <div style={{ display: "flex", justifyContent: 'flex-start', gap: 8, flexWrap: 'wrap' }}>
                     {permissions.export_csv_person && (
-                        <Button
-                          type="primary"
-                          icon={<DownloadOutlined />}
-                          onClick={() => exportPersons()}
-                        >
-                          Descargar personas
-                        </Button>
+                      <Button
+                        type="primary"
+                        icon={<DownloadOutlined />}
+                        onClick={() => exportPersons()}
+                      >
+                        Descargar personas
+                      </Button>
                     )}
 
                     {permissions.import_csv_person && props.config && !props.config.nomina_enabled && (
-                        <Upload
-                          {...{
-                            showUploadList: false,
-                            beforeUpload: (file) => {
-                              const isXlsx = file.name.includes(".xlsx");
-                              if (!isXlsx) {
-                                message.error(`${file.name} no es un xlsx.`);
+                      <Upload
+                        {...{
+                          showUploadList: false,
+                          beforeUpload: (file) => {
+                            const isXlsx = file.name.includes(".xlsx");
+                            if (!isXlsx) {
+                              message.error(`${file.name} no es un xlsx.`);
+                            }
+                            return isXlsx || Upload.LIST_IGNORE;
+                          },
+                          onChange(info) {
+                            const { status } = info.file;
+                            if (status !== "uploading") {
+                              if (info.fileList.length > 0) {
+                                importPersonFileExtend(
+                                  info.fileList[0].originFileObj
+                                );
+                                info.file = null;
+                                info.fileList = [];
                               }
-                              return isXlsx || Upload.LIST_IGNORE;
-                            },
-                            onChange(info) {
-                              const { status } = info.file;
-                              if (status !== "uploading") {
-                                if (info.fileList.length > 0) {
-                                  importPersonFileExtend(
-                                    info.fileList[0].originFileObj
-                                  );
-                                  info.file = null;
-                                  info.fileList = [];
-                                }
-                              }
-                            },
-                          }}
+                            }
+                          },
+                        }}
+                      >
+                        <Button
+                          //size="middle"
+                          icon={<UploadOutlined />}
                         >
-                          <Button
-                            //size="middle"
-                            icon={<UploadOutlined />}
-                          >
-                            Importar personas
-                          </Button>
-                        </Upload>
+                          Importar personas
+                        </Button>
+                      </Upload>
 
                     )}
 
                     {
-                        permissions.import_csv_person && props?.config && props?.config?.nomina_enabled && (
-                            <Button
-                                icon={<DownloadOutlined />}
-                                onClick={()=>setShowModalImportPersons(true)}
-                            >
-                              Importar personas
-                            </Button>
-                        )
+                      permissions.import_csv_person && props?.config && props?.config?.nomina_enabled && (
+                        <Button
+                          icon={<DownloadOutlined />}
+                          onClick={() => setShowModalImportPersons(true)}
+                        >
+                          Importar personas
+                        </Button>
+                      )
                     }
                     <Button
                       icon={<DownloadOutlined />}
@@ -1995,7 +2038,7 @@ const homeScreen = ({
                     </Button>
 
                     {props.config && props.config.nomina_enabled &&
-                        <ButtonDownloadConfronta />
+                      <ButtonDownloadConfronta />
                     }
 
                     {/*{props.config && props.config.nomina_enabled &&*/}
@@ -2003,7 +2046,7 @@ const homeScreen = ({
                     {/*}*/}
 
                     {props.config && props.config.nomina_enabled &&
-                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
+                      <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode} />
                     }
                     <Button
                       //size="middle"
@@ -2084,6 +2127,12 @@ const homeScreen = ({
             actionDelete={deleteAssigns}
           />
         )}
+        <ModalCompetences
+          visible={openCompetences}
+          close={closeCompetences}
+          itemReport={itemReport}
+          itemPerson={itemPerson}
+        />
         <ModalAddPersonCFI
           visible={addPersonCfi}
           setVisible={() => setPersonCfi(false)}
@@ -2091,58 +2140,58 @@ const homeScreen = ({
         />
 
         <Modal title={'Importar personas'} closable={false} footer={false} visible={showModalImportPersons}>
-            <p>Selecciona los datos que estas por importar</p>
+          <p>Selecciona los datos que estas por importar</p>
 
           <Form
             form={formImportPeople}
-            initialValues={{ types_imss: true, types_stamp : true }}
+            initialValues={{ types_imss: true, types_stamp: true }}
             layout="inline"
           >
             <Form.Item
-                name="types_imss"
-                valuePropName="checked"
+              name="types_imss"
+              valuePropName="checked"
             >
               <Checkbox>IMSS</Checkbox>
             </Form.Item>
 
             <Form.Item
-                name="types_stamp"
-                valuePropName="checked"
+              name="types_stamp"
+              valuePropName="checked"
             >
               <Checkbox>Timbrado</Checkbox>
             </Form.Item>
 
             <Form.Item
-                name="types_stamp"
-                valuePropName="checked"
+              name="types_stamp"
+              valuePropName="checked"
             >
               <Upload
-                  {...{
-                    showUploadList: false,
-                    beforeUpload: (file) => {
-                      const isXlsx = file.name.includes(".xlsx");
-                      if (!isXlsx) {
-                        message.error(`${file.name} no es un xlsx.`);
+                {...{
+                  showUploadList: false,
+                  beforeUpload: (file) => {
+                    const isXlsx = file.name.includes(".xlsx");
+                    if (!isXlsx) {
+                      message.error(`${file.name} no es un xlsx.`);
+                    }
+                    return isXlsx || Upload.LIST_IGNORE;
+                  },
+                  onChange(info) {
+                    const { status } = info.file;
+                    if (status !== "uploading") {
+                      if (info.fileList.length > 0) {
+                        importPersonFileExtend(
+                          info.fileList[0].originFileObj
+                        );
+                        info.file = null;
+                        info.fileList = [];
                       }
-                      return isXlsx || Upload.LIST_IGNORE;
-                    },
-                    onChange(info) {
-                      const { status } = info.file;
-                      if (status !== "uploading") {
-                        if (info.fileList.length > 0) {
-                          importPersonFileExtend(
-                              info.fileList[0].originFileObj
-                          );
-                          info.file = null;
-                          info.fileList = [];
-                        }
-                      }
-                    },
-                  }}
+                    }
+                  },
+                }}
               >
                 <Button
-                    //size="middle"
-                    icon={<UploadOutlined />}
+                  //size="middle"
+                  icon={<UploadOutlined />}
                 >
                   Importar personas
                 </Button>
@@ -2155,9 +2204,9 @@ const homeScreen = ({
 
 
 
-          <Divider/>
+          <Divider />
 
-            <Button onClick={()=>setShowModalImportPersons(false) }>Cerrar</Button>
+          <Button onClick={() => setShowModalImportPersons(false)}>Cerrar</Button>
 
 
         </Modal>
@@ -2177,24 +2226,24 @@ const homeScreen = ({
                     allowClear={true}
                     notFoundContent="No se encontraron resultados"
                     placeholder="Seleccionar una opción"
-                    >
-                      {listPersons.length > 0 && listPersons.map(item => (
-                        <Select.Option value={item.id} key={item.id}>
-                          {getFullName(item)}
-                        </Select.Option>
-                      ))}
+                  >
+                    {listPersons.length > 0 && listPersons.map(item => (
+                      <Select.Option value={item.id} key={item.id}>
+                        {getFullName(item)}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
             </Row>
-            <AlertAddImmediateSupervisor/>
-            <Row gutter={[8,20]} justify="end">
+            <AlertAddImmediateSupervisor />
+            <Row gutter={[8, 20]} justify="end">
               <Col span={6}>
                 <Button
                   disabled={isLoadingImmediateSupervisor}
-                  style={{width:'100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1"}}
+                  style={{ width: '100%', opacity: isLoadingImmediateSupervisor ? "0.6" : "1" }}
                   className="btn-filter"
-                  onClick={()=>{
+                  onClick={() => {
                     closeAssign()
                     setModalAddImmediateSupervisor(false)
                     formAddImmediateSupervisor.resetFields()
@@ -2203,37 +2252,37 @@ const homeScreen = ({
                 </Button>
               </Col>
               <Col span={6}>
-                <Button loading={isLoadingImmediateSupervisor} style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                <Button loading={isLoadingImmediateSupervisor} style={{ width: '100%' }} className="btn-filter" htmlType="submit">
                   Asignar
                 </Button>
-              </Col>         
+              </Col>
             </Row>
           </Form>
           <br />
         </Modal>
 
-        { personsToAddSubstituteImmediateSupervisor && <Modal title="Asignar suplente de jefe inmediato" closable={false} visible={modalAddSubstituteImmediateSupervisor} footer={false} >
+        {personsToAddSubstituteImmediateSupervisor && <Modal title="Asignar suplente de jefe inmediato" closable={false} visible={modalAddSubstituteImmediateSupervisor} footer={false} >
           <Form
-              onFinish={onFinishAddSubstituteImmediateSupervisor}
-              layout={"vertical"}
-              form={formAddSubstituteImmediateSupervisor}
+            onFinish={onFinishAddSubstituteImmediateSupervisor}
+            layout={"vertical"}
+            form={formAddSubstituteImmediateSupervisor}
           >
             <Row>
               <Col xs={24} md={24}>
                 <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato" rules={[ruleRequired]}>
                   <Select
-                      showSearch
-                      optionFilterProp="children"
-                      allowClear={true}
-                      notFoundContent="No se encontraron resultados"
-                      placeholder="Seleccionar una opción"
+                    showSearch
+                    optionFilterProp="children"
+                    allowClear={true}
+                    notFoundContent="No se encontraron resultados"
+                    placeholder="Seleccionar una opción"
                   >
                     {listSubstituteSupevisor.length > 0 &&
                       listSubstituteSupevisor.map(item => (
                         <Select.Option value={item.id} key={item.id}>
                           {getFullName(item)}
                         </Select.Option>
-                    ))}
+                      ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -2241,27 +2290,27 @@ const homeScreen = ({
             <div>
               {personsToAddSubstituteImmediateSupervisor.length > 1 ? (<b>Colaboradores a asignar:</b>) : (<b>Colaborador a asignar:</b>)}
               <br /><br />
-              <ListElementsToAddSubstituteImmediateSupervisor/>
+              <ListElementsToAddSubstituteImmediateSupervisor />
             </div>
-            <Row gutter={[8,20]} justify="end">
+            <Row gutter={[8, 20]} justify="end">
               <Col span={6}>
                 <Button
-                    disabled={isLoadingSubstituteImmediateSupervisor}
-                    style={{width:'100%', opacity: isLoadingSubstituteImmediateSupervisor ? "0.6" : "1"}}
-                    className="btn-filter"
-                    onClick={()=>{
-                      closeAssign()
-                      setModalAddSubstituteImmediateSupervisor(false)
-                      formAddSubstituteImmediateSupervisor.resetFields()
-                    }}>
+                  disabled={isLoadingSubstituteImmediateSupervisor}
+                  style={{ width: '100%', opacity: isLoadingSubstituteImmediateSupervisor ? "0.6" : "1" }}
+                  className="btn-filter"
+                  onClick={() => {
+                    closeAssign()
+                    setModalAddSubstituteImmediateSupervisor(false)
+                    formAddSubstituteImmediateSupervisor.resetFields()
+                  }}>
                   Cancelar
                 </Button>
               </Col>
               <Col span={6}>
                 <Button
-                    loading={isLoadingSubstituteImmediateSupervisor}
-                    disabled={!couldAddSubstitute}
-                    style={{width:'100%'}} className="btn-filter" htmlType="submit">
+                  loading={isLoadingSubstituteImmediateSupervisor}
+                  disabled={!couldAddSubstitute}
+                  style={{ width: '100%' }} className="btn-filter" htmlType="submit">
                   Asignar
                 </Button>
               </Col>
@@ -2285,24 +2334,24 @@ const homeScreen = ({
                   label="Contraseña nueva"
                   rules={[ruleRequired, ruleWhiteSpace, validateSpaces, ruleMinPassword(6)]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                  <Input.Password type="password" style={{ minWidth: "100%" }} />
                 </Form.Item>
                 <Form.Item
                   name="passwordTwo"
                   label="Confirmar contraseña"
                   rules={[ruleRequired, ruleWhiteSpace, validatePassword, validateSpaces, ruleMinPassword(6)]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                  <Input.Password type="password" style={{ minWidth: "100%" }} />
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={[8,20]} justify="end">
+            <Row gutter={[8, 20]} justify="end">
               <Col span={6}>
-                <Button disabled={loadingChangePassword} style={{width:'100%', opacity: loadingChangePassword ? "0.6" : "1"}} className="btn-filter" onClick={()=>{ setIsOpenModalResetPassword(false) }}>Cancelar</Button>
+                <Button disabled={loadingChangePassword} style={{ width: '100%', opacity: loadingChangePassword ? "0.6" : "1" }} className="btn-filter" onClick={() => { setIsOpenModalResetPassword(false) }}>Cancelar</Button>
               </Col>
               <Col span={12}>
-                <Button className="btn-filter" style={{width:'100%'}} loading={loadingChangePassword} type="primary" htmlType="submit">Reestablecer contraseña</Button>
-              </Col> 
+                <Button className="btn-filter" style={{ width: '100%' }} loading={loadingChangePassword} type="primary" htmlType="submit">Reestablecer contraseña</Button>
+              </Col>
             </Row>
           </Form>
         </Modal>

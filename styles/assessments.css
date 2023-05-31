@@ -1106,7 +1106,7 @@ span.input-with-clear:focus{
 .competence_list{
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 400px);
     overflow: auto;
     gap: 16px;
 }
