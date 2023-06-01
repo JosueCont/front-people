@@ -286,7 +286,8 @@ const FormStrategies = ({
                     label='Número de proyecto'
                     tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                 >
-                    <InputNumber
+                    <Input maxLength={100} placeholder='Número de proyecto'/>
+                    {/* <InputNumber
                         type='number'
                         disabled
                         maxLength={10}
@@ -298,7 +299,7 @@ const FormStrategies = ({
                             width: '100%',
                             border: '1px solid black'
                         }}
-                    />
+                    /> */}
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
