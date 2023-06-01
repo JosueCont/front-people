@@ -45,9 +45,7 @@ const TabEvaluations = ({
     let stringId = id.toString()
     try {
       let response = await WebApiAssessment.getOnlyGroupAssessmentByNode(stringId);
-      if(response.data.results.length > 0){
-        setEvaluationsGroup(response.data.results)
-      }
+      setEvaluationsGroup(response.data)
     } catch (e) {
       console.log(e)
       return e.response;
