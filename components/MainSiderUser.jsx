@@ -46,7 +46,7 @@ const MainSider = ({
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
-
+  
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
@@ -170,11 +170,13 @@ const MainSider = ({
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      if (user && (user.intranet_access === 2 || user.intranet_access === 3)){
-        let children3 = [getItem("KHOR Connect", "connect")]
+      let children3 = []
+      if ([2,3].includes(user?.intranet_access) && props.applications?.khorconnect?.active){
+        children3.push(getItem("KHOR Connect", "connect"))
+      }
+      if(children3?.length > 0){
         items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
       }
-
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
 
