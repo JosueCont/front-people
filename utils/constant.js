@@ -726,3 +726,9 @@ export const optionsStatusVacation = [
   {value: '4', key: '4', label: 'Cancelada'},
   {value: '5', key: '5', label: 'Programada'}
 ]
+
+export const optionsStatusPermits = [
+  { value: 1, key: 1, label: "Pendiente" },
+  { value: 2, key: 2, label: "Aprobado" },
+  { value: 3, key: 3, label: "Rechazado" },
+]

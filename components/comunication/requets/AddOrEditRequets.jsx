@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import MainRequets from './MainRequets';
+import MainRequets from '../MainRequets';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import DetailsRequets from './DetailsRequets';
@@ -18,7 +18,7 @@ const AddOrEditRequets = ({
 
     const ExtraBread = [
         { name: 'Vacaciones', URL: '/comunication/requests/holidays' },
-        { name: action == 'add' ? 'Registrar' : action == 'details' ? 'Detalle' : 'Actualizar' }
+        { name: action == 'add' ? 'Registrar' : 'Actualizar' }
     ]
 
     return (
