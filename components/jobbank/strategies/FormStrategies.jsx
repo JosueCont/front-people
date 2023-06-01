@@ -286,7 +286,7 @@ const FormStrategies = ({
                     label='Número de proyecto'
                     tooltip='El valor se obtiene de acuerdo al registro de la vacante seleccionada.'
                 >
-                    <Input maxLength={100} placeholder='Número de proyecto'/>
+                    <Input disabled maxLength={100} placeholder='Número de proyecto'/>
                     {/* <InputNumber
                         type='number'
                         disabled
