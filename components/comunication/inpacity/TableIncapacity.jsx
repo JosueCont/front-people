@@ -18,9 +18,7 @@ import {
 
 const TableIncapacity = ({
     loading = false,
-    disabilities = [],
-    loadDisability = false,
-    listDisability = []
+    disabilities = []
 }) => {
 
     const {
@@ -41,15 +39,6 @@ const TableIncapacity = ({
             title: 'Departamento',
             dataIndex: ['department', 'name'],
             key: ['department', 'name']
-        },
-        {
-            title: 'Inpacidad',
-            dataIndex: 'incapacity_type',
-            render: (item) => getValueFilter({
-                value: item,
-                list: listDisability,
-                keyShow: 'description'
-            })
         },
         {
             title: 'Días solicitados',

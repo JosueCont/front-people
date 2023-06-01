@@ -7,18 +7,15 @@ import {
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
 import { createFiltersJB } from '../../../utils/functions';
-import FiltersPermission from './FiltersPermission';
-import { useFiltersPermission } from './useFiltersPermission';
+import { useFiltersIncapacity } from './useFiltersInpacity';
+import FiltersIncapacity from './FiltersIncapacity';
 
-const SearchPermission = ({
-    urlIndex = '/comunication/requests/permission',
-    ulrAdd = 'permission/new'
-}) => {
+const SearchIncapacity = () => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys } = useFiltersPermission();
+    const { listGets, listKeys } = useFiltersIncapacity();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -33,7 +30,7 @@ const SearchPermission = ({
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: urlIndex,
+        pathname: '/comunication/requests/incapacity/copy',
         query: filters
     }, undefined, {shallow: true});
 
@@ -67,7 +64,7 @@ const SearchPermission = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push(ulrAdd)}>
+                                <Button onClick={()=> router.push('incapacity/new')}>
                                     Agregar
                                 </Button>
                             </div>
@@ -81,7 +78,7 @@ const SearchPermission = ({
                     </Col>  
                 </Row>
             </Card>
-            <FiltersPermission
+            <FiltersIncapacity
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -91,4 +88,4 @@ const SearchPermission = ({
     )
 }
 
-export default SearchPermission;
+export default SearchIncapacity;

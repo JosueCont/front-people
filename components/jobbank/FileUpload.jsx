@@ -26,7 +26,8 @@ const FileUpload = ({
     disabled = false,
     download = false,
     revertColor = false,
-    hideOptions = false
+    hideOptions = false,
+    sizeInput = 'default'
 }) => {
 
     const inputFile = useRef(null);
@@ -43,7 +44,7 @@ const FileUpload = ({
             return;
         }
         let extension = getFileExtension(files[0].name);
-        if(!typeFile.includes(extension.toLowerCase())){
+        if(typeFile?.length > 0 && !typeFile.includes(extension.toLowerCase())){
             let msg = 'El archivo seleccionado no es válido';
             message.error(msg);
             return;
@@ -103,6 +104,7 @@ const FileUpload = ({
             >
                 <Input
                     readOnly
+                    size={sizeInput}
                     disabled={disabled}
                     placeholder='Ningún archivo seleccionado'
                 />
