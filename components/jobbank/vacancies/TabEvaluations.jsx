@@ -100,20 +100,10 @@ const closeModalDelete = () =>{
 }
 
 const openViewModal = (item) => {
-  
-  let listAssesmentsGroups = item?.group_assessment.map((as) => as.id)
-  let itemGroups = []
-
-  listAssesmentsGroups.length > 0 && evaluationsGroup.forEach((eg) => {
-    listAssesmentsGroups.forEach((ga) => {
-      if(eg.people_group_assessment_id === ga){
-        itemGroups.push(eg)
-      }
-    })
-  })
-
+  let ids = item?.group_assessment.map((item) => item.id)
+  let result = evaluationsGroup.filter(item => ids.includes(item.id));
   setShowModalSurveys(true)
-  setItemGroup(itemGroups)
+  setItemGroup(result)
 }
 
 const validateAction = () => Object.keys(itemToEdit).length > 0;
