@@ -116,6 +116,13 @@ const PermissionForm = ({
         return departureDate ? departureDate : moment();
     }
 
+    const disabledStart = (current) =>{
+        let actually = current?.format('YYYY-MM-DD');
+        let present = current?.locale('en').format('dddd').toLowerCase();
+        let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
+        return current && exist;
+    }
+
     const disabledEnd = (current) => {
         let actually = current?.format('YYYY-MM-DD');
         let present = current?.locale('en').format('dddd').toLowerCase();
@@ -154,12 +161,13 @@ const PermissionForm = ({
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item
                     name='departure_date'
-                    label='Fecha de salida'
+                    label='Fecha inicio'
                     rules={[ruleRequired]}
                 >
                     <DatePicker
                         style={{ width: "100%" }}
                         placeholder='Seleccionar una fecha'
+                        disabledDate={disabledStart}
                         onChange={onChangeStart}
                         format='DD-MM-YYYY'
                         inputReadOnly
@@ -170,7 +178,7 @@ const PermissionForm = ({
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item
                     name='return_date'
-                    label='Fecha de regreso'
+                    label='Fecha fin'
                     dependencies={['departure_date']}
                     rules={[ruleRequired]}
                 >

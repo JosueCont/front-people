@@ -39,7 +39,7 @@ const PermitForm = ({
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item
                     name='departure_date'
-                    label='Fecha de salida'
+                    label='Fecha inicio'
                 >
                     <Input size='large' readOnly placeholder='Fecha de salida' />
                 </Form.Item>
@@ -47,7 +47,7 @@ const PermitForm = ({
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item
                     name='return_date'
-                    label='Fecha de regreso'
+                    label='Fecha fin'
                 >
                     <Input size='large' readOnly placeholder='Fecha de regreso' />
                 </Form.Item>
