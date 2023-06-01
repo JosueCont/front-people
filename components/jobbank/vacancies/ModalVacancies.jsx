@@ -145,7 +145,7 @@ const ModalVacancies = ({
                                 <Select placeholder='Selecciona una evaluación' mode='multiple' showArrow={true}>
                                     {
                                         evaluationsGroup.length > 0 && evaluationsGroup.map((eva) => (
-                                            <Select.Option key={eva.people_group_assessment_id} value={eva.people_group_assessment_id}>
+                                            <Select.Option key={eva.id} value={eva.id}>
                                                     { eva.name }
                                             </Select.Option>
                                         ))
