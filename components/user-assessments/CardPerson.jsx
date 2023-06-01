@@ -47,13 +47,13 @@ const CardPerson = ({...props}) => {
                       <ContentStart gap={'8px'}>
                         <FaUser style={{fontSize: '1rem', color: '#121212'}}/>
                         <Title2 color={'#121212'} cut={true}>
-                            {getFullName(user)}
+                            {user && getFullName(user)}
                         </Title2>
                       </ContentStart>
                       <ContentStart gap={'8px'}>
                         <MdEmail style={{fontSize: '1rem', color: '#121212'}}/>
                         <Title2 cut={true} color={'#121212'}>
-                            {user.email}
+                            {user?.email}
                         </Title2>
                       </ContentStart>
                     </ContentVertical>
