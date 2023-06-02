@@ -38,6 +38,8 @@ const IncapacityForm = ({
         current_node,
     } = useSelector(state => state.userStore);
 
+    const noValid = [undefined, null, "", " "];
+
     const [nonWorkingDays, setNonWorkingDays] = useState([]);
     const [nonWorkingWeekDays, setNonWorkingWeekDays] = useState([]);
 
@@ -129,6 +131,17 @@ const IncapacityForm = ({
         return result;
     }
 
+    const getDisability = (id) =>{
+        if(!id || listDisability?.length <= 0) return {};
+        let result = listDisability.find(item => item.id == id);
+        if(!result) return {};
+        return result;
+    }
+
+    const typeDisability = useMemo(()=>{
+        return getDisability(idDisability);
+    },[idDisability, listDisability])
+
     const onChangePerson = (value) => {
         let person = getPerson(value);
         setCurrentPerson(person)
@@ -150,6 +163,29 @@ const IncapacityForm = ({
         getWorkingDaysFromRange(departureDate, date)
     }
 
+    const onChangeCategory = (value) =>{
+        formIncapacity.setFieldsValue({
+            subcategory: null
+        })
+    }
+
+    const onChangeClasif = (value) =>{
+        if(!['01','03'].includes(typeDisability?.code)){
+            formIncapacity.setFieldsValue({
+                category: null,
+                subcategory: null
+            })
+        }
+    }
+
+    const onChangeDisabiliy = (value) =>{
+        formIncapacity.setFieldsValue({
+            category: null,
+            subcategory: null,
+            imss_classification: null
+        })
+    }
+
     const getDefaultEnd = () => {
         return departureDate ? departureDate : moment();
     }
@@ -169,76 +205,48 @@ const IncapacityForm = ({
         return current && (valid_start || exist);
     }
 
-    const getDisability = (id) =>{
-        if(!id || listDisability?.length <= 0) return {};
-        let result = listDisability.find(item => item.id == id);
-        if(!result) return {};
-        return result;
-    }
-
     const getOptionsClasif = () =>{
         let code = typeDisability?.code;
-        console.log("🚀 ~ file: IncapacityForm.jsx:181 ~ getOptionsClasif ~ code:", code)
-        if(code == '01'){
-            const filter_ = item => [1,2,3].includes(item.value);
-            return optionsClasifIMSS.filter(filter_);
+        if(!code) return [];
+        const gets = {
+            '01': e => e.value >= 1 && e.value <= 3,
+            '03': e => e.value >= 4 && e.value <= 7
         }
-        if(['02', '04'].includes(code)){
-            const filter_ = item => item.value == 0;
-            return optionsClasifIMSS.filter(filter_);
-        }
-        if(code == '03'){
-            const filter_ = item => [4,5,6,7].includes(item.value);
-            return optionsClasifIMSS.filter(filter_);
-        }
-        return [];
+        return gets[code]
+            ? optionsClasifIMSS.filter(gets[code])
+            : optionsCategoryIMSS;
     }
 
     const getOptionsCategory = () =>{
         let code = typeDisability?.code;
-        if(code == '02'){
-            const filter_ = item => item.value !== 2;
-            return optionsCategoryIMSS.filter(filter_);
-        }
-        if(code == '04'){
-            const filter_ = item => item.value == 0;
-            return optionsCategoryIMSS.filter(filter_);
-        }
-        return [];
+        if(['01','03'].includes(code)) return optionsCategoryIMSS;
+        if(!code || noValid.includes(idClasif)) return [];
+        const filter_ = item => item.value !== idClasif;
+        return optionsCategoryIMSS.filter(filter_);
     }
 
     const getOptionsSubcategory = () =>{
         let code = typeDisability?.code;
-        if(code == '02' && idCategory == 0){
-            const filter_ = item => item.value == 2;
+        if(!code || noValid.includes(idCategory)) return [];
+        if(['01','03'].includes(code)){
+            const filter_ = item => item.value !== idCategory;
             return optionsCategoryIMSS.filter(filter_);
         }
-        if(code == '02' && idCategory == 1){
-            const filter_ = item => item.value !== 0;
-            return optionsCategoryIMSS.filter(filter_);
-        }
-        return [];
+        const filter_ = item => ![idCategory, idClasif].includes(item.value);
+        return optionsCategoryIMSS.filter(filter_);
     }
 
-
-    const typeDisability = useMemo(()=>{
-        return getDisability(idDisability);
-    },[idDisability, listDisability])
-
     const optionsClasifications = useMemo(()=>{
-        if(Object.keys(typeDisability).length <=0) return [];
         return getOptionsClasif();
     },[typeDisability])
 
     const optionsCategory = useMemo(()=>{
-        if(Object.keys(typeDisability).length <=0) return [];
         return getOptionsCategory();
-    },[typeDisability])
+    },[typeDisability, idClasif])
 
     const optionsSubcategory = useMemo(()=>{
-        if(!typeDisability || !idCategory) return [];
         return getOptionsSubcategory();
-    },[typeDisability, idCategory])
+    },[idCategory, typeDisability])
 
     return (
         <Row gutter={[24, 0]}>
@@ -296,6 +304,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
+                        onChange={onChangeDisabiliy}
                     >
                         {listDisability.length > 0 && listDisability.map(item => (
                             <Select.Option value={item.id} key={item.id}>
@@ -320,6 +329,7 @@ const IncapacityForm = ({
                         size='large'
                         disabled={optionsClasifications?.length <=0}
                         options={optionsClasifications}
+                        onChange={onChangeClasif}
                     />
                 </Form.Item>
             </Col>
@@ -338,6 +348,7 @@ const IncapacityForm = ({
                         size='large'
                         disabled={optionsCategory?.length <=0}
                         options={optionsCategory}
+                        onChange={onChangeCategory}
                     />
                 </Form.Item>
             </Col>
@@ -426,10 +437,6 @@ const IncapacityForm = ({
                     <DatePicker
                         style={{ width: "100%" }}
                         placeholder='Seleccionar una fecha'
-                        // disabledDate={disabledEnd}
-                        // defaultPickerValue={getDefaultEnd()}
-                        // disabled={!departureDate}
-                        // onChange={onChangeEnd}
                         format='DD-MM-YYYY'
                         inputReadOnly
                         size='large'

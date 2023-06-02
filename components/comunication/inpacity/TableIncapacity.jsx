@@ -56,6 +56,13 @@ const TableIncapacity = ({
             render: (item) => item ? moment(item, formatStart).format(formatEnd) : null
         },
         {
+            title: 'Documento',
+            dataIndex: 'document',
+            render: (item) => item ? (
+                <a href={item} target='_blank'>Ver documento</a>
+            ) : null
+        },
+        {
             title: 'Estatus',
             dataIndex: 'status',
             render: (item) => getValueFilter({

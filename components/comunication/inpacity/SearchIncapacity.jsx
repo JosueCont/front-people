@@ -30,7 +30,7 @@ const SearchIncapacity = () => {
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/comunication/requests/incapacity/copy',
+        pathname: '/comunication/requests/incapacity',
         query: filters
     }, undefined, {shallow: true});
 

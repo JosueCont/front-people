@@ -86,16 +86,12 @@ const DetailsPermission = ({
     }
 
     const setValuesForm = () =>{
-        let values = {};
+        let values = {...infoPermit};
         values.person = infoPermit?.collaborator ? infoPermit.collaborator?.id : null;
         values.departure_date = infoPermit?.departure_date
             ? moment(infoPermit.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoPermit?.return_date
             ? moment(infoPermit.return_date, 'YYYY-MM-DD') : null;
-        values.requested_days = infoPermit?.requested_days
-            ? infoPermit?.requested_days : null;
-        values.reason = infoPermit?.reason
-            ? infoPermit.reason : null;
         formPermit.setFieldsValue(values)
     }
 

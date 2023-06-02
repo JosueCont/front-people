@@ -16,13 +16,13 @@ const AddOrEditIncapacity = ({
     },[currentNode])
 
     const ExtraBread = [
-        {name: 'Permisos', URL: '/comunication/requests/incapacity'},
+        {name: 'Incapacidad', URL: '/comunication/requests/incapacity'},
         {name: action == 'add' ? 'Registrar' : 'Actualizar'}
     ]
 
     return (
         <MainRequets
-            pageKey={['permission']}
+            pageKey={['incapacity']}
             extraBread={ExtraBread}
         >
             <DetailsIncapacity action={action}/>

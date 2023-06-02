@@ -16,6 +16,7 @@ import {
     DesktopOutlined,
     MobileOutlined,
 } from '@ant-design/icons';
+import moment from 'moment';
 
 const TablePermission = ({
     loading = false,
@@ -24,6 +25,9 @@ const TablePermission = ({
 
     const router = useRouter();
     const permissions = useSelector(state =>  state.userStore.permissions);
+
+    const formatStart = 'YYYY-MM-DD';
+    const formatEnd = 'DD/MM/YYYY';
 
     const columns = [
         {
@@ -40,6 +44,16 @@ const TablePermission = ({
             title: 'Días solicitados',
             dataIndex: 'requested_days',
             key: 'requested_days'
+        },
+        {
+            title: 'Fecha inicio',
+            dataIndex: 'departure_date',
+            render: (item) => item ? moment(item, formatStart).format(formatEnd) : null
+        },
+        {
+            title: 'Fecha fin',
+            dataIndex: 'return_date',
+            render: (item) => item ? moment(item, formatStart).format(formatEnd) : null
         },
         {
             title: 'Estatus',

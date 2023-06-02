@@ -90,16 +90,13 @@ const InfoPermission = () => {
     }
 
     const setValuesForm = () => {
-        let values = {};
+        let values = {...infoPermit};
         values.status = !noValid.includes(infoPermit?.status) ? getStatus(infoPermit?.status) : null;
         values.person = infoPermit?.collaborator ? getFullName(infoPermit?.collaborator) : null;
         values.departure_date = infoPermit?.departure_date
             ? moment(infoPermit.departure_date, formatStart).format(formatEnd) : null;
         values.return_date = infoPermit?.return_date
             ? moment(infoPermit.return_date, formatStart).format(formatEnd) : null;
-        values.requested_days = !noValid.includes(infoPermit?.requested_days)
-            ? infoPermit?.requested_days : null;
-        values.reason = infoPermit?.reason ? infoPermit?.reason : null;
         formPermit.setFieldsValue(values)
     }
 
