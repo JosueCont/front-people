@@ -94,11 +94,11 @@ const IncapacityForm = ({
             let response = await WebApiFiscal.getDisabilityType();
             let results = response.data?.results || [];
             // Los registros se repiten y se eliminan por medio del código
-            let list = results?.reduce((acc, current) =>{
+            let list = results?.reduce((acc, current) => {
                 const some_ = item => item.code == current.code;
-                if(acc?.some(some_)) return acc;
-                return [...acc, current] 
-            },[])
+                if (acc?.some(some_)) return acc;
+                return [...acc, current]
+            }, [])
             setListDisability(list)
             setLoadDisability(false)
         } catch (e) {
@@ -131,16 +131,16 @@ const IncapacityForm = ({
         return result;
     }
 
-    const getDisability = (id) =>{
-        if(!id || listDisability?.length <= 0) return {};
+    const getDisability = (id) => {
+        if (!id || listDisability?.length <= 0) return {};
         let result = listDisability.find(item => item.id == id);
-        if(!result) return {};
+        if (!result) return {};
         return result;
     }
 
-    const typeDisability = useMemo(()=>{
+    const typeDisability = useMemo(() => {
         return getDisability(idDisability);
-    },[idDisability, listDisability])
+    }, [idDisability, listDisability])
 
     const onChangePerson = (value) => {
         let person = getPerson(value);
@@ -163,14 +163,14 @@ const IncapacityForm = ({
         getWorkingDaysFromRange(departureDate, date)
     }
 
-    const onChangeCategory = (value) =>{
+    const onChangeCategory = (value) => {
         formIncapacity.setFieldsValue({
             subcategory: null
         })
     }
 
-    const onChangeClasif = (value) =>{
-        if(!['01','03'].includes(typeDisability?.code)){
+    const onChangeClasif = (value) => {
+        if (!['01', '03'].includes(typeDisability?.code)) {
             formIncapacity.setFieldsValue({
                 category: null,
                 subcategory: null
@@ -178,7 +178,7 @@ const IncapacityForm = ({
         }
     }
 
-    const onChangeDisabiliy = (value) =>{
+    const onChangeDisabiliy = (value) => {
         formIncapacity.setFieldsValue({
             category: null,
             subcategory: null,
@@ -205,48 +205,70 @@ const IncapacityForm = ({
         return current && (valid_start || exist);
     }
 
-    const getOptionsClasif = () =>{
+    const getOptionsClasif = () => {
         let code = typeDisability?.code;
-        if(!code) return [];
+        if (!code) return [];
         const gets = {
             '01': e => e.value >= 1 && e.value <= 3,
             '03': e => e.value >= 4 && e.value <= 7
         }
         return gets[code]
             ? optionsClasifIMSS.filter(gets[code])
-            : optionsCategoryIMSS;
+            : [optionsCategoryIMSS.find(item => item.value == 0)];
     }
 
-    const getOptionsCategory = () =>{
-        let code = typeDisability?.code;
-        if(['01','03'].includes(code)) return optionsCategoryIMSS;
-        if(!code || noValid.includes(idClasif)) return [];
-        const filter_ = item => item.value !== idClasif;
-        return optionsCategoryIMSS.filter(filter_);
-    }
+    const find0 = item => item.value == 0;
+    const find1 = item => item.value == 1;
+    const find2 = item => item.value == 2;
+    const diff0 = item => item.value !== 0;
+    const diff2 = item => item.value !== 2;
 
-    const getOptionsSubcategory = () =>{
+    const getOptionsCategory = () => {
         let code = typeDisability?.code;
-        if(!code || noValid.includes(idCategory)) return [];
-        if(['01','03'].includes(code)){
-            const filter_ = item => item.value !== idCategory;
-            return optionsCategoryIMSS.filter(filter_);
+        if (code == '01') {
+            if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
+            return [optionsCategoryIMSS.find(find1)];
         }
-        const filter_ = item => ![idCategory, idClasif].includes(item.value);
-        return optionsCategoryIMSS.filter(filter_);
+        if(code == '02' &&
+            idClasif == 0
+        ) return optionsCategoryIMSS.filter(diff2);
+        if(code == '03' &&
+            [4,5,6,7].includes(idClasif)
+        ) return [optionsCategoryIMSS.find(find0)];
+        // 04
+        return [optionsCategoryIMSS.find(find0)];
     }
 
-    const optionsClasifications = useMemo(()=>{
+    const getOptionsSubcategory = () => {
+        let code = typeDisability?.code;
+        if (code == '01') {
+            if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
+            return optionsCategoryIMSS.filter(diff0);
+        }
+        if(code == '02' && idCategory == 0){
+            return [optionsCategoryIMSS.find(find2)];
+        }
+        if(code == '02' && idCategory == 1){
+            return optionsCategoryIMSS.filter(diff0);
+        }
+        if(code == '03' &&
+            [4,5,6,7].includes(idClasif)
+        ) return [optionsCategoryIMSS.find(find2)];
+        // 04
+        return [optionsCategoryIMSS.find(find2)];
+    }
+
+    const optionsClasifications = useMemo(() => {
         return getOptionsClasif();
-    },[typeDisability])
+    }, [typeDisability])
 
-    const optionsCategory = useMemo(()=>{
+    const optionsCategory = useMemo(() => {
         return getOptionsCategory();
-    },[typeDisability, idClasif])
+    }, [typeDisability, idClasif])
 
-    const optionsSubcategory = useMemo(()=>{
+    const optionsSubcategory = useMemo(() => {
         return getOptionsSubcategory();
-    },[idCategory, typeDisability])
+    }, [idCategory, typeDisability])
 
     return (
         <Row gutter={[24, 0]}>
@@ -327,7 +349,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
-                        disabled={optionsClasifications?.length <=0}
+                        disabled={optionsClasifications?.length <= 0}
                         options={optionsClasifications}
                         onChange={onChangeClasif}
                     />
@@ -346,7 +368,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
-                        disabled={optionsCategory?.length <=0}
+                        disabled={optionsCategory?.length <= 0}
                         options={optionsCategory}
                         onChange={onChangeCategory}
                     />
@@ -365,7 +387,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
-                        disabled={optionsSubcategory?.length <=0}
+                        disabled={optionsSubcategory?.length <= 0}
                         options={optionsSubcategory}
                     />
                 </Form.Item>
