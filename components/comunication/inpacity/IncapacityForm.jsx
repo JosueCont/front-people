@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import moment from 'moment';
@@ -170,12 +170,10 @@ const IncapacityForm = ({
     }
 
     const onChangeClasif = (value) => {
-        if (!['01', '03'].includes(typeDisability?.code)) {
-            formIncapacity.setFieldsValue({
-                category: null,
-                subcategory: null
-            })
-        }
+        formIncapacity.setFieldsValue({
+            category: null,
+            subcategory: null
+        })
     }
 
     const onChangeDisabiliy = (value) => {
@@ -245,12 +243,12 @@ const IncapacityForm = ({
             if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
             return optionsCategoryIMSS.filter(diff0);
         }
-        if(code == '02' && idCategory == 0){
-            return [optionsCategoryIMSS.find(find2)];
-        }
-        if(code == '02' && idCategory == 1){
-            return optionsCategoryIMSS.filter(diff0);
-        }
+        if(code == '02' &&
+            idCategory == 0
+        ) return [optionsCategoryIMSS.find(find2)];
+        if(code == '02' &&
+            idCategory == 1
+        ) return optionsCategoryIMSS.filter(diff0);
         if(code == '03' &&
             [4,5,6,7].includes(idClasif)
         ) return [optionsCategoryIMSS.find(find2)];
@@ -264,11 +262,11 @@ const IncapacityForm = ({
 
     const optionsCategory = useMemo(() => {
         return getOptionsCategory();
-    }, [typeDisability, idClasif])
+    }, [idClasif])
 
     const optionsSubcategory = useMemo(() => {
         return getOptionsSubcategory();
-    }, [idCategory, typeDisability])
+    }, [idCategory])
 
     return (
         <Row gutter={[24, 0]}>
@@ -368,7 +366,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
-                        disabled={optionsCategory?.length <= 0}
+                        disabled={noValid.includes(idClasif)}
                         options={optionsCategory}
                         onChange={onChangeCategory}
                     />
@@ -387,7 +385,7 @@ const IncapacityForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         size='large'
-                        disabled={optionsSubcategory?.length <= 0}
+                        disabled={noValid.includes(idCategory)}
                         options={optionsSubcategory}
                     />
                 </Form.Item>
