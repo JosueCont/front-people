@@ -10,10 +10,7 @@ import { createFiltersJB } from '../../../utils/functions';
 import FiltersPermission from './FiltersPermission';
 import { useFiltersPermission } from './useFiltersPermission';
 
-const SearchPermission = ({
-    urlIndex = '/comunication/requests/permission',
-    ulrAdd = 'permission/new'
-}) => {
+const SearchPermission = () => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
@@ -33,7 +30,7 @@ const SearchPermission = ({
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: urlIndex,
+        pathname: '/comunication/requests/permission',
         query: filters
     }, undefined, {shallow: true});
 
@@ -67,7 +64,7 @@ const SearchPermission = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push(ulrAdd)}>
+                                <Button onClick={()=> router.push('permission/new')}>
                                     Agregar
                                 </Button>
                             </div>
