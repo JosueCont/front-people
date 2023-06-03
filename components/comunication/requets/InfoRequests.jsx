@@ -145,18 +145,13 @@ const InfoRequests = () => {
     }
 
     const setValuesForm = () => {
-        let values = {};
+        let values = {...infoRequest};
         values.status = !noValid.includes(infoRequest?.status) ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
-        values.period = infoRequest?.period ? infoRequest.period : null;
         values.departure_date = infoRequest?.departure_date
             ? moment(infoRequest.departure_date, formatStart).format(formatEnd) : null;
         values.return_date = infoRequest?.return_date
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
-        values.days_requested = !noValid.includes(infoRequest?.days_requested)
-            ? infoRequest?.days_requested : null;
-        // values.availableDays = !noValid.includes(infoRequest?.available_days_vacation)
-        //     ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
         formRequest.setFieldsValue(values)

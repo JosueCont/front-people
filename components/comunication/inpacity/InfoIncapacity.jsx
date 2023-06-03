@@ -7,7 +7,11 @@ import WebApiPeople from '../../../api/WebApiPeople';
 import ModalRequests from '../ModalRequests';
 import ListItems from '../../../common/ListItems';
 import { message, Spin } from 'antd';
-import { optionsStatusPermits } from '../../../utils/constant';
+import {
+    optionsStatusPermits,
+    optionsClasifIMSS,
+    optionsCategoryIMSS
+} from '../../../utils/constant';
 import {
     Card,
     Row,
@@ -17,9 +21,9 @@ import {
     Image
 } from 'antd';
 import moment from 'moment';
-import PermitForm from './PermitForm';
+import InabilityForm from './InabilityForm';
 
-const InfoPermission = () => {
+const InfoIncapacity = () => {
 
     const getUser = state => state.userStore.user;
     const current_user = useSelector(getUser);
@@ -27,12 +31,10 @@ const InfoPermission = () => {
     const noValid = [undefined, null, "", " "];
 
     const router = useRouter();
-    const [formPermit] = Form.useForm();
+    const [formInability] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [currentPerson, setCurrentPerson] = useState({});
-
-    const [infoPermit, setInfoPermit] = useState({});
-    const [statusSelected, setStatusSelected] = useState(2);
+    const [infoInability, setInfoInability] = useState({});
 
     const [openModal, setOpenModal] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
@@ -42,23 +44,23 @@ const InfoPermission = () => {
 
     useEffect(() => {
         if (router?.query?.id) {
-            getInfoPermit(router.query?.id)
+            getInfoInability(router.query?.id)
         }
     }, [router.query?.id])
 
     useEffect(() => {
-        if (Object.keys(infoPermit).length > 0) {
-            formPermit.setFieldsValue()
+        if (Object.keys(infoInability).length > 0) {
+            formInability.setFieldsValue()
             setValuesForm()
         }
-    }, [infoPermit])
+    }, [infoInability])
 
-    const getInfoPermit = async (id) => {
+    const getInfoInability = async (id) => {
         try {
             setLoading(true)
-            let response = await WebApiPeople.getInfoPermit(id);
-            setInfoPermit(response.data)
-            setCurrentPerson(response.data?.collaborator)
+            let response = await WebApiPeople.getInfoInability(id);
+            setInfoInability(response.data)
+            setCurrentPerson(response.data?.person)
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -66,39 +68,79 @@ const InfoPermission = () => {
         }
     }
 
-    const onFinish = async (values = {}) => {
+    const onFinishReject = async (values) => {
         try {
             setLoading(true)
-            let body = { ...values, status: statusSelected,
-                id: router.query?.id, khonnect_id: current_user?.khonnect_id
-            };
-            let response = await WebApiPeople.changeStatusPermitsRequest(body);
-            let msg = statusSelected == 2
-                ? 'Solicitud aprobada'
-                : 'Solicitud rechazada';
-            message.success(msg)
-            setInfoPermit(response.data)
-            setLoading(false)
+            let body = { ...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            await WebApiPeople.rejectDisabilitiesRequest(body);
+            message.success('Solicitud rechazada')
+            getInfoInability(router.query?.id)
         } catch (e) {
             console.log(e)
             setLoading(false)
-            let msg = statusSelected == 2
-                ? 'Solicitud no aprobada'
-                : 'Solicitud no rechazada';
-            message.error(msg)
+            message.error('Solicitud no rechazada')
+        }
+    }
+
+    const onFinishApprove = async () => {
+        try {
+            setLoading(true)
+            let body = {id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            await WebApiPeople.approveDisabilitiesRequest(body);
+            message.success('Solicitud aprobada')
+            getInfoInability(router.query?.id)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            message.error('Solicitud no aprobada')
         }
     }
 
     const setValuesForm = () => {
-        let values = {...infoPermit};
-        values.status = !noValid.includes(infoPermit?.status) ? getStatus(infoPermit?.status) : null;
-        values.person = infoPermit?.collaborator ? getFullName(infoPermit?.collaborator) : null;
-        values.departure_date = infoPermit?.departure_date
-            ? moment(infoPermit.departure_date, formatStart).format(formatEnd) : null;
-        values.return_date = infoPermit?.return_date
-            ? moment(infoPermit.return_date, formatStart).format(formatEnd) : null;
-        formPermit.setFieldsValue(values)
+        let values = {};
+        values.person = infoInability?.person ? getFullName(infoInability?.person): null;
+        values.status = !noValid.includes(infoInability?.status) ? getStatus(infoInability?.status) : null;
+        values.incapacity_type = infoInability?.incapacity_type
+            ? infoInability?.incapacity_type?.description : null;
+        
+        values.imss_classification = !noValid.includes(infoInability?.imss_classification)
+            ? ['01','03'].includes(infoInability.incapacity_type?.code)
+            ? getClasif(infoInability?.imss_classification)
+            : getCategory(infoInability?.imss_classification) : null;
+
+        values.category = !noValid.includes(infoInability?.category)
+            ? getCategory(infoInability?.category) : null;
+        values.subcategory = !noValid.includes(infoInability?.subcategory)
+            ? getCategory(infoInability?.subcategory) : null;
+        
+        values.departure_date = infoInability?.departure_date
+            ? moment(infoInability.departure_date, formatStart).format(formatEnd) : null;
+        values.return_date = infoInability?.return_date
+            ? moment(infoInability.return_date, formatStart).format(formatEnd) : null;
+        values.payroll_apply_date = infoInability.payroll_apply_date
+            ? moment(infoInability?.payroll_apply_date, formatStart).format(formatEnd) : null;
+
+        values.requested_days = infoInability?.requested_days;
+        values.invoice = infoInability?.invoice;
+        values.document_name_read = infoInability?.document
+            ? infoInability.document?.split('/')?.at(-1) : null;
+            
+        formInability.setFieldsValue(values)
     }
+
+    const getClasif = (value) => getValueFilter({
+        value,
+        list: optionsClasifIMSS,
+        keyEquals: 'value',
+        keyShow: 'label'
+    })
+
+    const getCategory = (value) => getValueFilter({
+        value,
+        list: optionsCategoryIMSS,
+        keyEquals: 'value',
+        keyShow: 'label'
+    })
 
     const getStatus = (value) => getValueFilter({
         value,
@@ -108,27 +150,23 @@ const InfoPermission = () => {
     })
 
     const actionBack = () => {
-        router.push('/comunication/requests/permission')
+        router.push('/comunication/requests/incapacity')
     }
 
     const showModal = () => {
         setOpenModal(true)
-        setStatusSelected(3) //Rechazado
     }
 
     const showConfirm = () => {
         setOpenConfirm(true)
-        setStatusSelected(2) //Aprobado
     }
 
     const closeModal = () => {
         setOpenModal(false)
-        setStatusSelected(3)
     }
 
     const closeConfirm = () => {
         setOpenConfirm(false)
-        setStatusSelected(2)
     }
 
     return (
@@ -158,13 +196,13 @@ const InfoPermission = () => {
                     <Col span={24}>
                         <Spin spinning={loading}>
                             <Form
-                                form={formPermit}
+                                form={formInability}
                                 layout='vertical'
                             >
-                                <PermitForm
+                                <InabilityForm
                                     showConfirm={showConfirm}
                                     showModal={showModal}
-                                    infoPermit={infoPermit}
+                                    infoInability={infoInability}
                                 />
                             </Form>
                         </Spin>
@@ -172,16 +210,16 @@ const InfoPermission = () => {
                 </Row>
             </Card>
             <ModalRequests
-                title='Rechazar solicitud de permisos'
+                title='Rechazar solicitud de incapacidad'
                 visible={openModal}
                 close={closeModal}
-                actionForm={onFinish}
+                actionForm={onFinishReject}
                 textAction='Rechazar'
             />
             <ListItems
                 visible={openConfirm}
-                title='¿Estás seguro de aprobar la siguiente solicitud de permisos?'
-                actionConfirm={onFinish}
+                title='¿Estás seguro de aprobar la siguiente solicitud de incapacidad?'
+                actionConfirm={onFinishApprove}
                 textConfirm='Aprobar'
                 close={closeConfirm}
                 showList={false}
@@ -190,4 +228,4 @@ const InfoPermission = () => {
     )
 }
 
-export default InfoPermission
+export default InfoIncapacity

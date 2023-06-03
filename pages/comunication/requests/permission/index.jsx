@@ -33,6 +33,7 @@ const index = ({
         try {
             setLoading(true)
             let response = await WebApiPeople.getPermitsRequest(node, query);
+            console.log("🚀 ~ file: index.jsx:36 ~ getListPermissions ~ response:", response)
             setPermits(response.data)
             setLoading(false)
         } catch (e) {

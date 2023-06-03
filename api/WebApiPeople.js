@@ -323,8 +323,12 @@ class WebApiPeople {
   }
 
   /* Solicitudes */
-  static geDisabilitiesRequest(url = "") {
-    return WebApi.ApisType(`/person/incapacity/${url}`, "get");
+  static getDisabilitiesRequest(node, query = '') {
+    return WebApi.ApisType(`/person/incapacity/?person__node__id=${node}${query}`, "get");
+  }
+
+  static getInfoInability(id) {
+    return WebApi.ApisType(`/person/incapacity/${id}/`, "get");
   }
 
   static saveDisabilitiesRequest(data) {
