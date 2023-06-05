@@ -61,15 +61,10 @@ const ModalConceptsPayroll = ({
   const [antiquity, setAntiquity] = useState(false);
   const [motiveDeparture, setMotiveDeparture] = useState(null);
   const [departureDate, setDepartureDate] = useState("");
-<<<<<<< HEAD
   const [errorExtraHours, setErrorExtraHours] = useState({});
   const [errorExistExtraHours, setErrorExistExtraHours] = useState(false);
-=======
-  const [errorExtraHours, setErrorExtraHours] = useState({})
-  const [errorExistExtraHours, setErrorExistExtraHours] = useState(false)
-  const [daysActive, setDaysActive] = useState([])
-  const [nonWorkingDays, setNonWorkingDays] = useState([])
->>>>>>> 8827ff3f3bb69d01c74f7187b0fb2eb6741af5d6
+  const [daysActive, setDaysActive] = useState([]);
+  const [nonWorkingDays, setNonWorkingDays] = useState([]);
 
   useEffect(() => {
     if (
@@ -128,7 +123,7 @@ const ModalConceptsPayroll = ({
             amount: 0,
             data_type: item.data_type,
             perception_type: item.perception_type,
-            is_rest_day: item.is_rest_day
+            is_rest_day: item.is_rest_day,
           };
         })
       );
@@ -143,7 +138,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
-            deduction_type: item.deduction_type
+            deduction_type: item.deduction_type,
           };
         })
       );
@@ -158,7 +153,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
-            other_type_payment: item.other_type_payment
+            other_type_payment: item.other_type_payment,
           };
         })
       );
@@ -170,10 +165,6 @@ const ModalConceptsPayroll = ({
     visible,
   ]);
 
-<<<<<<< HEAD
-=======
-  
->>>>>>> 8827ff3f3bb69d01c74f7187b0fb2eb6741af5d6
   useEffect(() => {
     console.log("errorExtraHours", errorExtraHours);
   }, [errorExtraHours]);
@@ -181,13 +172,11 @@ const ModalConceptsPayroll = ({
   useEffect(() => {}, [payment_period]);
 
   useEffect(() => {
-    if(props?.currentNode?.id){
-      getWorkingWeek()
-      getNonWorkingDays()
+    if (props?.currentNode?.id) {
+      getWorkingWeek();
+      getNonWorkingDays();
     }
-  }, [])
-  
-  
+  }, []);
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -206,63 +195,62 @@ const ModalConceptsPayroll = ({
       </>
     );
   };
-<<<<<<< HEAD
-=======
-
 
   const getNonWorkingDays = async () => {
     try {
-      let response = await WebApiPeople.getNonWorkingDays({node:props?.currentNode?.id, limit:10000})
-      console.log('response getNonWorkingDays', response)
-      if(response.status === 200){
-        let disabledDays = []
-        response.data.results.map(day => {
-          disabledDays.push(day.date)
-        })
-        setNonWorkingDays(disabledDays)
+      let response = await WebApiPeople.getNonWorkingDays({
+        node: props?.currentNode?.id,
+        limit: 10000,
+      });
+      console.log("response getNonWorkingDays", response);
+      if (response.status === 200) {
+        let disabledDays = [];
+        response.data.results.map((day) => {
+          disabledDays.push(day.date);
+        });
+        setNonWorkingDays(disabledDays);
       }
     } catch (error) {
-      console.log('getNonWorkingDays', error.message)
+      console.log("getNonWorkingDays", error.message);
     }
-  }
+  };
 
   const getWorkingWeek = async () => {
     try {
-      let response = await WebApiPeople.getWorkingWeekDays(props.currentNode.id)
-      if(response.status == 200){
-        let actives = []
-        let days = response.data.results[0]
-        if(days['sunday']){
-          actives.push(0)
+      let response = await WebApiPeople.getWorkingWeekDays(
+        props.currentNode.id
+      );
+      if (response.status == 200) {
+        let actives = [];
+        let days = response.data.results[0];
+        if (days["sunday"]) {
+          actives.push(0);
         }
-        if(days['monday']){
-          actives.push(1)
+        if (days["monday"]) {
+          actives.push(1);
         }
-        if(days['tuesday']){
-          actives.push(2)
+        if (days["tuesday"]) {
+          actives.push(2);
         }
-        if(days['wednesday']){
-          actives.push(3)
+        if (days["wednesday"]) {
+          actives.push(3);
         }
-        if(days['thursday']){
-          actives.push(4)
+        if (days["thursday"]) {
+          actives.push(4);
         }
-        if(days['friday']){
-          actives.push(5)
+        if (days["friday"]) {
+          actives.push(5);
         }
-        if(days['saturday']){
-          actives.push(6)
+        if (days["saturday"]) {
+          actives.push(6);
         }
-        
-        setDaysActive(actives)
 
+        setDaysActive(actives);
       }
     } catch (error) {
-      console.log('error====Z', error)
+      console.log("error====Z", error);
     }
-  }
-  
->>>>>>> 8827ff3f3bb69d01c74f7187b0fb2eb6741af5d6
+  };
 
   const resetperceptionsDeductions = () => {
     setConcepts([]);
@@ -441,27 +429,24 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
-
     let errorAmount = false;
-    concepts.map(item => {
-      let datesValue = 0
-      if(item?.dates){
-        item?.dates.map(date =>{
-          datesValue += date.value
-        })
+    concepts.map((item) => {
+      let datesValue = 0;
+      if (item?.dates) {
+        item?.dates.map((date) => {
+          datesValue += date.value;
+        });
 
-        if(item.value > datesValue){
-          errorAmount = true
-          item['error_value'] = true
+        if (item.value > datesValue) {
+          errorAmount = true;
+          item["error_value"] = true;
         }
       }
+    });
 
-
-    })
-    
-    if(errorAmount){  
-      console.log('error')
-      return
+    if (errorAmount) {
+      console.log("error");
+      return;
     }
 
     if (extraOrdinary) {
@@ -948,12 +933,11 @@ const ModalConceptsPayroll = ({
 };
 
 const mapState = (state) => {
-  console.log("Percepciones- > ", state.fiscalStore.perceptions_int);
   return {
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
     other_payments_int: state.fiscalStore.other_payments_int,
-    currentNode: state.userStore.current_node
+    currentNode: state.userStore.current_node,
   };
 };
 
