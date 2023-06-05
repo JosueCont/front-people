@@ -333,8 +333,8 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
         >
           <Row>
             <Col span={24}>
-              <Alert message="El uso de este formulario depende de la conexión del servicio del INFONAVIT,
-            por lo que pudiera demorar varios segundos al guardar las credenciales." type="info" />
+              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del INFONAVIT, " +
+                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal " + patronalData.code} type="warning" />
               <br/>
             </Col>
             <Col span={24}>
@@ -393,8 +393,8 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
         >
           <Row>
             <Col span={24}>
-              <Alert message="El uso de este formulario depende de la conexión del servicio del IMSS,
-            por lo que pudiera demorar varios segundos al guardar las credenciales." type="info" />
+              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del IMSS, " +
+                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal "+ patronalData.code} type="warning" />
               <br/>
             </Col>
 
