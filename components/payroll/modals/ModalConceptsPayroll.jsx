@@ -250,7 +250,7 @@ const ModalConceptsPayroll = ({
 
       }
     } catch (error) {
-      console.log('error', error.message)
+      console.log('error====Z', error)
     }
   }
   
@@ -428,15 +428,21 @@ const ModalConceptsPayroll = ({
   const createObjectSend = () => {
 
     let errorAmount = false;
+    debugger;
     concepts.map(item => {
       let datesValue = 0
-      item.dates.map(date =>{
-        datesValue += date.value
-      })
-      if(item.value > datesValue){
-        errorAmount = true
-        item['error_value'] = true
+      if(item?.dates){
+        item?.dates.map(date =>{
+          datesValue += date.value
+        })
+
+        if(item.value > datesValue){
+          errorAmount = true
+          item['error_value'] = true
+        }
       }
+
+
     })
     
     if(errorAmount){  
