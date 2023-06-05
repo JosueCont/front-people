@@ -3,7 +3,7 @@ import { Row, col, Table } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import moment from "moment";
 
-const EmaYEvaFiles = ({ files, loading }) => {
+const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
   const colums = [
     {
       title: "Nombre del archivo",
@@ -46,7 +46,8 @@ const EmaYEvaFiles = ({ files, loading }) => {
       pagination={{
         pageSize: 10,
         showSizeChanger: false,
-        total: files && files.lenght,
+        total: total,
+        onChange: changePage
       }}
       scroll={{
         x: true,

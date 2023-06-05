@@ -69,13 +69,12 @@ const ButtonAltaImssImport = ({
   useEffect(() => {
     if (regPatronal) {
       let _regPatronal = regPatronals.find((ele) => ele.id === regPatronal);
-      console.log(_regPatronal);
       setRegPatronalSelected(_regPatronal);
     }
   }, [regPatronal]);
 
   const importData = (type) => {
-    console.log(type, currentFile);
+    
     if (currentFile)
       switch (type) {
         case MOVEMENTS_TYPE.UPDATE_SALARY:
@@ -90,7 +89,7 @@ const ButtonAltaImssImport = ({
   };
 
   const importImssPerson = async (file) => {
-    console.log(file);
+    
     setLoading(true);
     let formdata = new FormData();
     formdata.append("modified_by", user.id);
@@ -98,14 +97,14 @@ const ButtonAltaImssImport = ({
     formdata.append("File", file);
     try {
       const resp = await WebApiPayroll.importIMSSPerson(formdata);
-      console.log(resp);
+      
       message.info(resp.data.message);
       props.onFinish();
       if (resp.data?.data) {
         let arrPersonas = resp.data.data.filter((person) => !person?.status);
         if (arrPersonas.length > 0) {
           setPersonsListErrors(arrPersonas);
-          console.log(arrPersonas);
+          
         } else {
           setPersonsListErrors(null);
           setShowModal(false);
@@ -115,7 +114,6 @@ const ButtonAltaImssImport = ({
       message.error(
         "Hubo un error al cargar la información, por favor intente nuevamente o revise su archivo."
       );
-      console.log(e);
     } finally {
       setLoading(false);
       setFileName(null);
@@ -125,20 +123,20 @@ const ButtonAltaImssImport = ({
   };
 
   const importMovementUpdate = async (file) => {
-    console.log(file);
+    
     setLoading(true);
     let formdata = new FormData();
     formdata.append("modified_by", user.id);
     formdata.append("File", file);
     try {
       const resp = await WebApiPayroll.importSalaryModification(formdata);
-      console.log(resp);
+      
       message.info(resp.data.message);
       if (resp.data?.data) {
         let arrPersonas = resp.data.data.filter((person) => !person?.status);
         if (arrPersonas.length > 0) {
           setPersonsListErrors(arrPersonas);
-          console.log(arrPersonas);
+          
         } else {
           setPersonsListErrors(null);
           setShowModal(false);
@@ -148,7 +146,7 @@ const ButtonAltaImssImport = ({
       message.error(
         "Hubo un error al cargar la información, por favor intente nuevamente o revise su archivo."
       );
-      console.log(e);
+      
     } finally {
       setLoading(false);
       setFileName(null);
@@ -159,7 +157,6 @@ const ButtonAltaImssImport = ({
 
   const openModal = (type = MOVEMENTS_TYPE.UPDATE_SALARY) => {
     setFileName(null);
-    console.log(personsList);
 
     setCurrentMovement({
       title: "Alta IMSS",
@@ -226,11 +223,11 @@ const ButtonAltaImssImport = ({
                       const { status } = info.file;
                       if (status !== "uploading") {
                         setPersonsListErrors(null);
-                        if (info.fileList.length > 0) {
-                          setFileName(info?.fileList[0]?.originFileObj?.name);
-                          setCurrentFile(info?.fileList[0]?.originFileObj);
+                        
+                        if (info.file) {
+                          setFileName(info?.file?.originFileObj?.name);
+                          setCurrentFile(info?.file?.originFileObj);
                           info.file = null;
-                          info.fileList = [];
                         } else {
                           setCurrentFile(null);
                           setFileName(null);
