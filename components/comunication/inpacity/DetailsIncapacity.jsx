@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import VacactionForm from './VacactionForm';
-import { useSelector } from 'react-redux';
+import IncapacityForm from './IncapacityForm';
 import { getPhoto } from '../../../utils/functions';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { message, Spin } from 'antd';
@@ -16,41 +15,39 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-const DetailsRequets = ({
+const DetailsIncapacity = ({
     action
 }) => {
 
-    const {
-        current_node,
-        general_config
-    } = useSelector(state => state.userStore);
     const router = useRouter();
-    const [formRequest] = Form.useForm();
+    const noValid = [undefined, null, '', ' '];
+
+    const [formIncapacity] = Form.useForm();
     const [loading, setLoading] = useState(false);
+
     const [currentPerson, setCurrentPerson] = useState({});
-    const [infoRequest, setInfoRequest] = useState({});
-    // Keys
-    const period = 'current_vacation_period';
+    const [infoIncapacity, setInfoIncapacity] = useState({});
+    const [fileDocument, setFileDocument] = useState([]);
 
     useEffect(() => {
         if (router?.query?.id && action == 'edit') {
-            getInfoRequest(router.query?.id)
+            getInfoIncapacity(router.query?.id)
         }
     }, [router.query?.id])
 
     useEffect(() => {
-        if (Object.keys(infoRequest).length > 0) {
-            formRequest.setFieldsValue()
+        if (Object.keys(infoIncapacity).length > 0) {
+            formIncapacity.setFieldsValue()
             setValuesForm()
         }
-    }, [infoRequest])
+    }, [infoIncapacity])
 
-    const getInfoRequest = async (id) => {
+    const getInfoIncapacity = async (id) => {
         try {
             setLoading(true)
-            let response = await WebApiPeople.getInfoVacation(id);
-            setInfoRequest(response.data)
-            setCurrentPerson(response.data?.collaborator)
+            let response = await WebApiPeople.getInfoInability(id);
+            setInfoIncapacity(response.data)
+            setCurrentPerson(response.data?.person)
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -60,13 +57,7 @@ const DetailsRequets = ({
 
     const onFinishCreate = async (values) => {
         try {
-            let body = { ...values, node: current_node?.id }
-            const SaveRequest = values?.period == currentPerson[period]
-                ? WebApiPeople.saveVacationRequest
-                : WebApiPeople.vacationNextPeriod;
-            let response = await SaveRequest(body);
-            // formRequest.resetFields();
-            // setLoading(false)
+            await WebApiPeople.saveDisabilitiesRequest(values);
             message.success('Solicitud registrada')
             actionBack()
         } catch (e) {
@@ -78,9 +69,10 @@ const DetailsRequets = ({
 
     const onFinishUpdate = async (values) => {
         try {
-            let response = await WebApiPeople.updateVacationRequest(router.query?.id, values);
-            setInfoRequest(response.data)
+            let response = await WebApiPeople.updateDisabilitiesRequest(router.query?.id, values);
+            setInfoIncapacity(response.data)
             setLoading(false)
+            setFileDocument([])
             message.success('Solicitud actualizada')
         } catch (e) {
             setLoading(false)
@@ -90,35 +82,50 @@ const DetailsRequets = ({
     }
 
     const setValuesForm = () => {
-        let values = {...infoRequest};
-        values.person = infoRequest?.collaborator ? infoRequest.collaborator?.id : null;
-        values.departure_date = infoRequest?.departure_date
-            ? moment(infoRequest.departure_date, 'YYYY-MM-DD') : null;
-        values.return_date = infoRequest?.return_date
-            ? moment(infoRequest.return_date, 'YYYY-MM-DD') : null;
-        values.availableDays = infoRequest?.available_days_vacation
-            ? infoRequest?.available_days_vacation : null;
-        values.immediate_supervisor = infoRequest?.immediate_supervisor
-            ? infoRequest.immediate_supervisor?.id : null;
-        formRequest.setFieldsValue(values)
+        let values = {...infoIncapacity};
+        values.person = infoIncapacity?.person ? infoIncapacity.person?.id : null;
+        values.incapacity_type = infoIncapacity?.incapacity_type
+            ? values.incapacity_type?.id : null;
+        values.departure_date = infoIncapacity?.departure_date
+            ? moment(infoIncapacity.departure_date, 'YYYY-MM-DD') : null;
+        values.return_date = infoIncapacity?.return_date
+            ? moment(infoIncapacity.return_date, 'YYYY-MM-DD') : null;
+        values.payroll_apply_date = infoIncapacity.payroll_apply_date
+            ? moment(infoIncapacity?.payroll_apply_date, 'YYYY-MM-DD') : null;
+        values.document_name_read = infoIncapacity?.document
+            ? infoIncapacity.document?.split('/')?.at(-1) : null;
+        formIncapacity.setFieldsValue(values)
+    }
+
+    const createData = (values) => {
+        let dataIncapacity = new FormData();
+        if (fileDocument?.length > 0) dataIncapacity.append('document', fileDocument[0]);
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            dataIncapacity.append(key, value);
+        })
+        return dataIncapacity;
     }
 
     const onFinish = (values) => {
         setLoading(true)
-        values.created_from = 2; // 2 es que se hizo desde la web
         values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
             ? values.return_date?.format('YYYY-MM-DD') : null;
+        values.payroll_apply_date = values.payroll_apply_date
+            ? values.payroll_apply_date?.format('YYYY-MM-DD') : null;
+
+        let body = createData(values);
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate
         }
-        actions[action](values)
+        actions[action](body)
     }
 
     const actionBack = () => {
-        router.push('/comunication/requests/holidays')
+        router.push('/comunication/requests/incapacity')
     }
 
     return (
@@ -137,13 +144,6 @@ const DetailsRequets = ({
                                     : 'Información de la solicitud'
                                 }
                             </p>
-                            <p style={{ marginBottom: 0 }}>
-                                Fecha de ingreso:&nbsp;
-                                {currentPerson?.date_of_admission
-                                    ? moment(currentPerson?.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
-                                    : 'No disponible'
-                                }
-                            </p>
                         </div>
                     </div>
                     <Button
@@ -157,16 +157,18 @@ const DetailsRequets = ({
                 <Col span={24}>
                     <Spin spinning={loading}>
                         <Form
-                            form={formRequest}
+                            form={formIncapacity}
                             layout='vertical'
                             onFinish={onFinish}
                         >
-                            <VacactionForm
+                            <IncapacityForm
                                 currentPerson={currentPerson}
                                 setCurrentPerson={setCurrentPerson}
-                                formRequest={formRequest}
+                                formIncapacity={formIncapacity}
                                 action={action}
                                 actionBack={actionBack}
+                                infoIncapacity={infoIncapacity}
+                                setFileDocument={setFileDocument}
                             />
                         </Form>
                     </Spin>
@@ -176,4 +178,4 @@ const DetailsRequets = ({
     )
 }
 
-export default DetailsRequets
+export default DetailsIncapacity

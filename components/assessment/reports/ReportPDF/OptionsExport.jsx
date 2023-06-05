@@ -310,7 +310,7 @@ const OptionsExport = ({
 
     return (
         <>
-            {children ? React.cloneElement(children, {generateExcel, generatePDF})
+            {children ? React.cloneElement(children, {generateExcel, generatePDF, loading})
                 : (
                     <Dropdown overlay={Options}>
                         <Button

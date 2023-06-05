@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import VacactionForm from './VacactionForm';
+import PermissionForm from './PermissionForm';
 import { useSelector } from 'react-redux';
 import { getPhoto } from '../../../utils/functions';
 import WebApiPeople from '../../../api/WebApiPeople';
@@ -16,40 +16,41 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-const DetailsRequets = ({
+const DetailsPermission = ({
     action
 }) => {
-
+    
     const {
         current_node,
         general_config
     } = useSelector(state => state.userStore);
     const router = useRouter();
-    const [formRequest] = Form.useForm();
+    
+    const [formPermit] = Form.useForm();
     const [loading, setLoading] = useState(false);
+
     const [currentPerson, setCurrentPerson] = useState({});
-    const [infoRequest, setInfoRequest] = useState({});
-    // Keys
-    const period = 'current_vacation_period';
+    const [infoPermit, setInfoPermit] = useState({});
 
-    useEffect(() => {
-        if (router?.query?.id && action == 'edit') {
-            getInfoRequest(router.query?.id)
+
+    useEffect(()=>{
+        if(router?.query?.id && action == 'edit'){
+            getInfoPermit(router.query?.id)
         }
-    }, [router.query?.id])
+    },[router.query?.id])
 
-    useEffect(() => {
-        if (Object.keys(infoRequest).length > 0) {
-            formRequest.setFieldsValue()
+    useEffect(()=>{
+        if(Object.keys(infoPermit).length > 0){
+            formPermit.setFieldsValue()
             setValuesForm()
         }
-    }, [infoRequest])
+    },[infoPermit])
 
-    const getInfoRequest = async (id) => {
+    const getInfoPermit = async (id) =>{
         try {
             setLoading(true)
-            let response = await WebApiPeople.getInfoVacation(id);
-            setInfoRequest(response.data)
+            let response = await WebApiPeople.getInfoPermit(id);
+            setInfoPermit(response.data)
             setCurrentPerson(response.data?.collaborator)
             setLoading(false)
         } catch (e) {
@@ -58,15 +59,10 @@ const DetailsRequets = ({
         }
     }
 
-    const onFinishCreate = async (values) => {
+    const onFinishCreate = async (values) =>{
         try {
-            let body = { ...values, node: current_node?.id }
-            const SaveRequest = values?.period == currentPerson[period]
-                ? WebApiPeople.saveVacationRequest
-                : WebApiPeople.vacationNextPeriod;
-            let response = await SaveRequest(body);
-            // formRequest.resetFields();
-            // setLoading(false)
+            let body = {...values, node: current_node?.id}
+            await WebApiPeople.savePermitsRequest(body);
             message.success('Solicitud registrada')
             actionBack()
         } catch (e) {
@@ -76,10 +72,10 @@ const DetailsRequets = ({
         }
     }
 
-    const onFinishUpdate = async (values) => {
+    const onFinishUpdate = async (values) =>{
         try {
-            let response = await WebApiPeople.updateVacationRequest(router.query?.id, values);
-            setInfoRequest(response.data)
+            let response = await WebApiPeople.updatePermitsRequest(router.query?.id, values);
+            setInfoPermit(response.data)
             setLoading(false)
             message.success('Solicitud actualizada')
         } catch (e) {
@@ -89,23 +85,18 @@ const DetailsRequets = ({
         }
     }
 
-    const setValuesForm = () => {
-        let values = {...infoRequest};
-        values.person = infoRequest?.collaborator ? infoRequest.collaborator?.id : null;
-        values.departure_date = infoRequest?.departure_date
-            ? moment(infoRequest.departure_date, 'YYYY-MM-DD') : null;
-        values.return_date = infoRequest?.return_date
-            ? moment(infoRequest.return_date, 'YYYY-MM-DD') : null;
-        values.availableDays = infoRequest?.available_days_vacation
-            ? infoRequest?.available_days_vacation : null;
-        values.immediate_supervisor = infoRequest?.immediate_supervisor
-            ? infoRequest.immediate_supervisor?.id : null;
-        formRequest.setFieldsValue(values)
+    const setValuesForm = () =>{
+        let values = {...infoPermit};
+        values.person = infoPermit?.collaborator ? infoPermit.collaborator?.id : null;
+        values.departure_date = infoPermit?.departure_date
+            ? moment(infoPermit.departure_date, 'YYYY-MM-DD') : null;
+        values.return_date = infoPermit?.return_date
+            ? moment(infoPermit.return_date, 'YYYY-MM-DD') : null;
+        formPermit.setFieldsValue(values)
     }
 
-    const onFinish = (values) => {
+    const onFinish = (values) =>{
         setLoading(true)
-        values.created_from = 2; // 2 es que se hizo desde la web
         values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
@@ -117,13 +108,13 @@ const DetailsRequets = ({
         actions[action](values)
     }
 
-    const actionBack = () => {
-        router.push('/comunication/requests/holidays')
+    const actionBack = () =>{
+        router.push('/comunication/requests/permission')
     }
-
+    
     return (
-        <Card bodyStyle={{ padding: 18 }}>
-            <Row gutter={[16, 16]}>
+        <Card bodyStyle={{padding: 18}}>
+            <Row gutter={[16,16]}>
                 <Col span={24} className='title-action-content title-action-border'>
                     <div className='content_title_requets'>
                         <Image
@@ -137,17 +128,10 @@ const DetailsRequets = ({
                                     : 'Información de la solicitud'
                                 }
                             </p>
-                            <p style={{ marginBottom: 0 }}>
-                                Fecha de ingreso:&nbsp;
-                                {currentPerson?.date_of_admission
-                                    ? moment(currentPerson?.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
-                                    : 'No disponible'
-                                }
-                            </p>
                         </div>
                     </div>
                     <Button
-                        onClick={() => actionBack()}
+                        onClick={()=> actionBack()}
                         disabled={loading}
                         icon={<ArrowLeftOutlined />}
                     >
@@ -157,14 +141,14 @@ const DetailsRequets = ({
                 <Col span={24}>
                     <Spin spinning={loading}>
                         <Form
-                            form={formRequest}
+                            form={formPermit}
                             layout='vertical'
                             onFinish={onFinish}
                         >
-                            <VacactionForm
+                            <PermissionForm
                                 currentPerson={currentPerson}
                                 setCurrentPerson={setCurrentPerson}
-                                formRequest={formRequest}
+                                formPermit={formPermit}
                                 action={action}
                                 actionBack={actionBack}
                             />
@@ -176,4 +160,4 @@ const DetailsRequets = ({
     )
 }
 
-export default DetailsRequets
+export default DetailsPermission

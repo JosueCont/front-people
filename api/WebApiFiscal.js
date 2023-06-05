@@ -98,6 +98,10 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/disability-type/`, "get");
   }
 
+  static getInfoDisabilityType(id) {
+    return WebApi.ApisType(`/fiscal/disability-type/${id}/`, "get");
+  }
+
   static getPostalCode(data, version) {
     return WebApi.ApisType(
       `/fiscal/postal-code?limit=10&search=${data}`,

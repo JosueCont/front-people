@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withAuthSync } from '../../../../libs/auth';
-import MainRequets from '../../../../components/comunication/requets/MainRequets';
+import MainRequets from '../../../../components/comunication/MainRequets';
 import SearchRequets from '../../../../components/comunication/requets/SearchRequets';
 import TableRequests from '../../../../components/comunication/requets/TableRequests';
 import WebApiPeople from '../../../../api/WebApiPeople';

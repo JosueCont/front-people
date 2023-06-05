@@ -19,37 +19,38 @@ const FileUpload = ({
     tooltip = '',
     setFile,
     maxSizeFile = 10,
-    setNameFile = ()=>{},
+    setNameFile = () => { },
     typeFile = [],
     label = '',
     keyName = 'name_file',
     disabled = false,
     download = false,
     revertColor = false,
-    hideOptions = false
+    hideOptions = false,
+    sizeInput = 'default'
 }) => {
 
     const inputFile = useRef(null);
 
-    const openFile = () =>{
+    const openFile = () => {
         inputFile.current.value = null;
         inputFile.current.click();
     }
 
-    const onChangeFile = ({target : { files }}) =>{
-        if(Object.keys(files).length <= 0){
+    const onChangeFile = ({ target: { files } }) => {
+        if (Object.keys(files).length <= 0) {
             let msg = 'No se pudo cargar el archivo, intente de nuevo';
             message.error(msg)
             return;
         }
         let extension = getFileExtension(files[0].name);
-        if(!typeFile.includes(extension.toLowerCase())){
+        if (typeFile?.length > 0 && !typeFile.includes(extension.toLowerCase())) {
             let msg = 'El archivo seleccionado no es válido';
             message.error(msg);
             return;
         }
         let size = files[0].size / 1024 / 1024;
-        if(size > maxSizeFile){
+        if (size > maxSizeFile) {
             message.error(`Archivo pesado: ${size.toFixed(2)}mb`);
             return;
         }
@@ -57,7 +58,7 @@ const FileUpload = ({
         setNameFile(files[0].name)
     }
 
-    const resetImg = () =>{
+    const resetImg = () => {
         setFile([]);
         setNameFile(null)
     }
@@ -65,33 +66,36 @@ const FileUpload = ({
     return (
         <Form.Item>
             <div className='custom-label-form'>
-                <label className={isRequired ? 'custom-required': ''}>
-                    {label} {tooltip && ( <Tooltip title={tooltip}><QuestionCircleOutlined/></Tooltip> )}
+                <label className={isRequired ? 'custom-required' : ''}>
+                    {label} {tooltip && (<Tooltip title={tooltip}><QuestionCircleOutlined /></Tooltip>)}
                 </label>
                 {!hideOptions && (
                     <div className={`label-options ${revertColor ? 'revert' : 'default'}`}>
                         {urlPreview ? (
                             <Tooltip title={download ? 'Descargar' : 'Visualizar'}>
                                 {download ?
-                                    <DownloadOutlined onClick={()=> downloadCustomFile({
+                                    <DownloadOutlined onClick={() => downloadCustomFile({
                                         url: urlPreview,
-                                        name: urlPreview?.split('/')?.at(-1)})}
-                                    /> : <EyeOutlined onClick={()=> redirectTo(urlPreview, true)}/>}
+                                        name: urlPreview?.split('/')?.at(-1)
+                                    })}
+                                    /> : <EyeOutlined onClick={() => redirectTo(urlPreview, true)} />}
                             </Tooltip>
-                        ): (
+                        ) : setFile && (
                             <Tooltip title={!disabled ? 'Eliminar' : ''}>
                                 <DeleteOutlined
                                     disabled={disabled}
-                                    onClick={()=> !disabled ? resetImg() : {}}
+                                    onClick={() => !disabled ? resetImg() : {}}
                                 />
                             </Tooltip>
                         )}
-                        <Tooltip title={!disabled ? 'Subir archivo' : ''}>
-                            <ToTopOutlined
-                                disabled={disabled}
-                                onClick={()=> !disabled ? openFile() : {}}
-                            />
-                        </Tooltip>
+                        {setFile && (
+                            <Tooltip title={!disabled ? 'Subir archivo' : ''}>
+                                <ToTopOutlined
+                                    disabled={disabled}
+                                    onClick={() => !disabled ? openFile() : {}}
+                                />
+                            </Tooltip>
+                        )}
                     </div>
                 )}
             </div>
@@ -103,14 +107,15 @@ const FileUpload = ({
             >
                 <Input
                     readOnly
+                    size={sizeInput}
                     disabled={disabled}
                     placeholder='Ningún archivo seleccionado'
                 />
             </Form.Item>
             <input
                 type='file'
-                style={{display: 'none'}}
-                accept={typeFile.reduce((acc, item) => `${acc}.${item}, `,'')}
+                style={{ display: 'none' }}
+                accept={typeFile.reduce((acc, item) => `${acc}.${item}, `, '')}
                 ref={inputFile}
                 onChange={onChangeFile}
             />

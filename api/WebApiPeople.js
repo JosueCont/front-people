@@ -323,8 +323,12 @@ class WebApiPeople {
   }
 
   /* Solicitudes */
-  static geDisabilitiesRequest(url = "") {
-    return WebApi.ApisType(`/person/incapacity/${url}`, "get");
+  static getDisabilitiesRequest(node, query = '') {
+    return WebApi.ApisType(`/person/incapacity/?person__node__id=${node}${query}`, "get");
+  }
+
+  static getInfoInability(id) {
+    return WebApi.ApisType(`/person/incapacity/${id}/`, "get");
   }
 
   static saveDisabilitiesRequest(data) {
@@ -343,8 +347,12 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/incapacity/approve_request/`, "post", data);
   }
 
-  static gePermitsRequest(url = "") {
-    return WebApi.ApisType(`/person/permit/${url}`, "get");
+  static getPermitsRequest(node, query = '') {
+    return WebApi.ApisType(`/person/permit/?person__node__id=${node}${query}`, "get");
+  }
+
+  static getInfoPermit(id){
+    return WebApi.ApisType(`/person/permit/${id}/`, 'get')
   }
 
   static savePermitsRequest(data) {

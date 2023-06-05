@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import MyModal from '../../../common/MyModal';
+import MyModal from '../../common/MyModal';
 import { Form, Row, Col, Input, Button} from 'antd';
 
 const ModalRequests = ({
