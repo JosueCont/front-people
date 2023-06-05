@@ -210,7 +210,7 @@ const SelectCompany = ({ ...props }) => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Empresa",
       key: "name",
       render: (text, record) => (
         <div
@@ -247,7 +247,7 @@ const SelectCompany = ({ ...props }) => {
   };
 
   const filterCompanies = (name) => {
-    let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name))
+    let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
     setDataList(new_liest)
   }
 
@@ -349,7 +349,7 @@ const SelectCompany = ({ ...props }) => {
                     </Row>
                   </Col>
                   <Col span={24}>
-                    <Input style={{ width:400 }} placeholder="Nombre de la empresa" onChange={debouncedSearch} allowClear />
+                    <Input style={{ width:400 }} placeholder="Buscar" onChange={debouncedSearch} allowClear />
                   </Col>
                   {!treeTable &&
                     dataList.map((item) => (
