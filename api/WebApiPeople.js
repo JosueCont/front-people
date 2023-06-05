@@ -178,8 +178,8 @@ class WebApiPeople {
   }
 
   static getCatalogs(model, data) {
-    let nodeStr = 'node'
-    if(model==='level') nodeStr = 'node__id'
+    let nodeStr = "node";
+    if (model === "level") nodeStr = "node__id";
 
     return WebApi.ApisType(`/business/${model}/?${nodeStr}=${data}`, "get");
   }
@@ -217,7 +217,10 @@ class WebApiPeople {
   }
 
   static getVacationRequest(node, query) {
-    return WebApi.ApisType(`/person/vacation/?person__node__id=${node}${query}`, "get");
+    return WebApi.ApisType(
+      `/person/vacation/?person__node__id=${node}${query}`,
+      "get"
+    );
   }
 
   static saveMassiveDepartments(data) {
@@ -323,8 +326,11 @@ class WebApiPeople {
   }
 
   /* Solicitudes */
-  static getDisabilitiesRequest(node, query = '') {
-    return WebApi.ApisType(`/person/incapacity/?person__node__id=${node}${query}`, "get");
+  static getDisabilitiesRequest(node, query = "") {
+    return WebApi.ApisType(
+      `/person/incapacity/?person__node__id=${node}${query}`,
+      "get"
+    );
   }
 
   static getInfoInability(id) {
@@ -347,12 +353,15 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/incapacity/approve_request/`, "post", data);
   }
 
-  static getPermitsRequest(node, query = '') {
-    return WebApi.ApisType(`/person/permit/?person__node__id=${node}${query}`, "get");
+  static getPermitsRequest(node, query = "") {
+    return WebApi.ApisType(
+      `/person/permit/?person__node__id=${node}${query}`,
+      "get"
+    );
   }
 
-  static getInfoPermit(id){
-    return WebApi.ApisType(`/person/permit/${id}/`, 'get')
+  static getInfoPermit(id) {
+    return WebApi.ApisType(`/person/permit/${id}/`, "get");
   }
 
   static savePermitsRequest(data) {
@@ -395,8 +404,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/vacation/rollback-request/`, "post", data);
   }
 
-  static vacationNextPeriod(data){
-    return WebApi.ApisType('/person/vacation/planned-vacation/', 'post', data);
+  static vacationNextPeriod(data) {
+    return WebApi.ApisType("/person/vacation/planned-vacation/", "post", data);
   }
 
   static informationNode(data) {
@@ -625,12 +634,12 @@ class WebApiPeople {
   }
 
   /*** WORKING/NON-WORKING DAYS ***/
-  static getNonWorkingDays({node, offset= 0, limit= 10, year = ''}) {
-    let _URL = `/business/non-working-day/?node=${node}`
-    _URL += offset && offset > 0 ? `&offset=${offset}` : ''
-   // _URL += offset && offset >= 1 ? `&offset=${offset}` : '&offset=1'
-    _URL += limit && limit >= 1 ? `&limit=${limit}` : '&limit=10'
-    _URL += year && year !== '' ? `&date__year=${year}` : ''
+  static getNonWorkingDays({ node, offset = 0, limit = 10, year = "" }) {
+    let _URL = `/business/non-working-day/?node=${node}`;
+    _URL += offset && offset > 0 ? `&offset=${offset}` : "";
+    // _URL += offset && offset >= 1 ? `&offset=${offset}` : '&offset=1'
+    _URL += limit && limit >= 1 ? `&limit=${limit}` : "&limit=10";
+    _URL += year && year !== "" ? `&date__year=${year}` : "";
 
     return WebApi.ApisType(_URL, "get");
   }
@@ -660,37 +669,61 @@ class WebApiPeople {
   }
 
   static getWorkingDaysFromRange(data) {
-    return WebApi.ApisType(`/business/get-working-days-from-range-date/`, "post", data);
+    return WebApi.ApisType(
+      `/business/get-working-days-from-range-date/`,
+      "post",
+      data
+    );
   }
 
-  static CreateTruoraRequest(id){
-    return WebApi.ApisType(`/person/person/${id}/add_background_check/`, "post",{});
+  static CreateTruoraRequest(id) {
+    return WebApi.ApisType(
+      `/person/person/${id}/add_background_check/`,
+      "post",
+      {}
+    );
   }
 
-  static GetTruoraRequest(id){
+  static GetTruoraRequest(id) {
     return WebApi.ApisType(`/person/person/${id}/get_background_check/`, "get");
   }
 
-  static GetTruoraFile(id){
-    return WebApi.ApisType(`/person/person/${id}/get_background_check_file/`, "get");
+  static GetTruoraFile(id) {
+    return WebApi.ApisType(
+      `/person/person/${id}/get_background_check_file/`,
+      "get"
+    );
   }
 
-  static GetUiStoreId(node){
-    return WebApi.ApisType(`/business/node-iuss-configuration/?node=${node}`, "get")
+  static GetUiStoreId(node) {
+    return WebApi.ApisType(
+      `/business/node-iuss-configuration/?node=${node}`,
+      "get"
+    );
   }
 
-  static CreateUiStoreId(data){
-    return WebApi.ApisType('/business/node-iuss-configuration/', "post", data)
+  static CreateUiStoreId(data) {
+    return WebApi.ApisType("/business/node-iuss-configuration/", "post", data);
   }
 
-  static UpdateUiStoreId(data){
-    return WebApi.ApisType(`/business/node-iuss-configuration/${data.id}/`, "put", data)
+  static UpdateUiStoreId(data) {
+    return WebApi.ApisType(
+      `/business/node-iuss-configuration/${data.id}/`,
+      "put",
+      data
+    );
   }
 
-  static CreateUIStoreUsers(data){
-    return WebApi.ApisType('/iuss/sync-persons-to-iuss/', "post", data)
+  static CreateUIStoreUsers(data) {
+    return WebApi.ApisType("/iuss/sync-persons-to-iuss/", "post", data);
   }
 
+  static getfiscalInformation(node_id) {
+    return WebApi.ApisType(
+      `/business/get-fiscal-information/?node=${node_id}`,
+      "get"
+    );
+  }
 }
 
 export default WebApiPeople;

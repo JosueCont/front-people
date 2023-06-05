@@ -33,6 +33,7 @@ const ButtonUpdateSalaryMovement = ({
   node,
   payrollPerson = null,
   onRefresh,
+  perceptionCode,
   ...props
 }) => {
   const [loading, setLoading] = useState(false);
@@ -141,36 +142,38 @@ const ButtonUpdateSalaryMovement = ({
             name="control-hooks"
             onFinish={onFinish}
           >
-            <Row>
-              <Col span={12}>
-                <Form.Item
-                  name="generate_movement"
-                  label="Generar movimiento IMSS?"
-                  initialValue={false}
-                  valuePropName="checked"
-                >
-                  <Switch
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
-                    onChange={() => setGenerateMovement(!generateMovement)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="change_sdi"
-                  label="¿Modificar SDI?"
-                  initialValue={false}
-                  valuePropName="checked"
-                >
-                  <Switch
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
-                    onChange={onchageSdi}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+            {perceptionCode && perceptionCode == "001" ? (
+              <Row>
+                <Col span={12}>
+                  <Form.Item
+                    name="generate_movement"
+                    label="Generar movimiento IMSS?"
+                    initialValue={false}
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      onChange={() => setGenerateMovement(!generateMovement)}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="change_sdi"
+                    label="¿Modificar SDI?"
+                    initialValue={false}
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      onChange={onchageSdi}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            ) : null}
 
             <Form.Item
               name="new_salary"
@@ -193,27 +196,31 @@ const ButtonUpdateSalaryMovement = ({
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="new_sdi"
-              label="Salario diario Integrado"
-              rules={[
-                ruleRequired,
-                twoDecimal,
-                // {
-                //   message: "Este monto debe ser diferente al salario actual",
-                //   validator: (_, value) => {
-                //     // if (value!==payrollPerson?.daily_salary && value>=payrollPerson?.daily_salary) {
-                //     if (value !== payrollPerson?.new_sdi) {
-                //       return Promise.resolve();
-                //     } else {
-                //       return Promise.reject();
-                //     }
-                //   },
-                // },
-              ]}
-            >
-              <Input disabled={!changeSdi} />
-            </Form.Item>
+
+            {perceptionCode && perceptionCode == "001" ? (
+              <Form.Item
+                name="new_sdi"
+                label="Salario diario Integrado"
+                rules={[
+                  ruleRequired,
+                  twoDecimal,
+                  // {
+                  //   message: "Este monto debe ser diferente al salario actual",
+                  //   validator: (_, value) => {
+                  //     // if (value!==payrollPerson?.daily_salary && value>=payrollPerson?.daily_salary) {
+                  //     if (value !== payrollPerson?.new_sdi) {
+                  //       return Promise.resolve();
+                  //     } else {
+                  //       return Promise.reject();
+                  //     }
+                  //   },
+                  // },
+                ]}
+              >
+                <Input disabled={!changeSdi} />
+              </Form.Item>
+            ) : null}
+
             <Form.Item
               name="date_updated"
               label="Fecha de actualización"

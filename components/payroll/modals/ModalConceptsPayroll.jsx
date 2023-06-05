@@ -43,8 +43,7 @@ const ModalConceptsPayroll = ({
   payment_period = null,
   ...props
 }) => {
-
-  const { Text } = Typography
+  const { Text } = Typography;
 
   const [departureForm] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
@@ -61,8 +60,8 @@ const ModalConceptsPayroll = ({
   const [antiquity, setAntiquity] = useState(false);
   const [motiveDeparture, setMotiveDeparture] = useState(null);
   const [departureDate, setDepartureDate] = useState("");
-  const [errorExtraHours, setErrorExtraHours] = useState({})
-  const [errorExistExtraHours, setErrorExistExtraHours] = useState(false)
+  const [errorExtraHours, setErrorExtraHours] = useState({});
+  const [errorExistExtraHours, setErrorExistExtraHours] = useState(false);
 
   useEffect(() => {
     if (
@@ -74,7 +73,7 @@ const ModalConceptsPayroll = ({
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
             item.apply_assimilated &&
-            item.perception_type.code !== "046" &&
+            // item.perception_type.code !== "046" &&
             item.node != null
         );
         props.deductions_int = props.deductions_int.filter(
@@ -159,12 +158,10 @@ const ModalConceptsPayroll = ({
     visible,
   ]);
 
-
   useEffect(() => {
-    console.log('errorExtraHours',errorExtraHours)
-  }, [errorExtraHours])
+    console.log("errorExtraHours", errorExtraHours);
+  }, [errorExtraHours]);
 
-  
   useEffect(() => {}, [payment_period]);
 
   const RenderCheckConcept = ({ data, type }) => {
@@ -184,7 +181,6 @@ const ModalConceptsPayroll = ({
       </>
     );
   };
-  
 
   const resetperceptionsDeductions = () => {
     setConcepts([]);
@@ -195,45 +191,54 @@ const ModalConceptsPayroll = ({
   };
 
   const extraHoursValidation = () => {
+    let errorsExist = false;
 
-    let errorsExist = false
-
-    perceptions.map(item => {
+    perceptions.map((item) => {
       let _periodicity = props.periodicity;
-       //P119 es doble , P118 triple */
+      //P119 es doble , P118 triple */
       /* Validamos las horas dobles */
-      if(item.code == "P119"){
-        if (_periodicity.code == "02" && item.value > 9){
-          setErrorExtraHours({...errorExtraHours, [item.id]: `El valor debe ser menor a 10`})
-          setErrorExistExtraHours(true)
-          errorsExist = true
-        }else if ((_periodicity.code == "03" || _periodicity.code == "04") && item.value > 18){
-          setErrorExtraHours({...errorExtraHours, [item.id]: `El valor debe ser menor a 19`})
-          setErrorExistExtraHours(true)
-          errorsExist = true
-        }else if (_periodicity.code == "05" && item.value > 36){
-          setErrorExtraHours({...errorExtraHours, [item.id]: `El valor debe ser menor a 37`})
-          setErrorExistExtraHours(true)
-          errorsExist = true
-        }else{
-          setErrorExtraHours({...errorExtraHours, [item.id]: false})
-          setErrorExistExtraHours(false)
+      if (item.code == "P119") {
+        if (_periodicity.code == "02" && item.value > 9) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 10`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else if (
+          (_periodicity.code == "03" || _periodicity.code == "04") &&
+          item.value > 18
+        ) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 19`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else if (_periodicity.code == "05" && item.value > 36) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 37`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else {
+          setErrorExtraHours({ ...errorExtraHours, [item.id]: false });
+          setErrorExistExtraHours(false);
         }
       }
-    })
+    });
 
-    return errorsExist
-    
-  }
+    return errorsExist;
+  };
 
   const resetErrors = (name) => {
-    setErrorExtraHours({...errorExtraHours,[name]: false })
-  }
+    setErrorExtraHours({ ...errorExtraHours, [name]: false });
+  };
 
   const debouncedErrors = useMemo(() => {
     return _.debounce((name) => resetErrors(name), 600);
   }, []);
-
 
   const RenderConcept = ({ data = [], type }) => {
     return (
@@ -245,15 +250,13 @@ const ModalConceptsPayroll = ({
               <Row style={{ marginBottom: "8px" }}>
                 <Col span={16}>
                   {item.description}
-                  {
-                    !_.isEmpty(errorExtraHours) && item.id in errorExtraHours &&
+                  {!_.isEmpty(errorExtraHours) &&
+                    item.id in errorExtraHours && (
                       <p>
-                        <Text type="danger">
-                        {errorExtraHours[item.id]}
-                        </Text>
+                        <Text type="danger">{errorExtraHours[item.id]}</Text>
                       </p>
-                  }
-                  </Col>
+                    )}
+                </Col>
                 <Col span={6}>
                   {item.data_type === 1 && (
                     <span style={{ marginRight: "7px", marginTop: "3px" }}>
@@ -293,7 +296,7 @@ const ModalConceptsPayroll = ({
   const changeHandler = (type, name) => (value, item_concept) => {
     /* setErrorExtraHours({...errorExtraHours,[name]: false }) */
     let _periodicity = props.periodicity;
-    const {code,description} = item_concept; //P119 es doble , P118 triple
+    const { code, description } = item_concept; //P119 es doble , P118 triple
     //GDZUL --- validacion de conceptos
     //validar las horas extras dobles y triples
     if (type === 1)
@@ -314,8 +317,8 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
-    if(extraHoursValidation()){
-      return
+    if (extraHoursValidation()) {
+      return;
     }
     if (value != null) {
       setCurrentStep(value);
@@ -327,7 +330,6 @@ const ModalConceptsPayroll = ({
     let data = [];
 
     /* extraHoursValidation(); */
-
 
     if (perceptions.length > 0)
       perceptions.map((item) => {
@@ -839,6 +841,7 @@ const ModalConceptsPayroll = ({
 };
 
 const mapState = (state) => {
+  console.log("Percepciones- > ", state.fiscalStore.perceptions_int);
   return {
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
