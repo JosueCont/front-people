@@ -445,9 +445,9 @@ class WebApiPeople {
     );
   }
 
-  static listEbaAndEmaFiles(node, patronalRegistration) {
+  static listEbaAndEmaFiles(node, patronalRegistration, offset = 0, limit = 10) {
     return WebApi.ApisType(
-      `/business/document/?node_id=${node}&patronal_registration_id=${patronalRegistration}&origin__type=1`,
+      `/business/document/?node_id=${node}&limit=${limit}&offset=${offset}&patronal_registration_id=${patronalRegistration}&origin__type=1`,
       "get"
     );
   }
