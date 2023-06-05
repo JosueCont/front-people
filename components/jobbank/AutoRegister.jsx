@@ -33,6 +33,7 @@ const AutoRegister = ({
             hideMenu={true}
             onClickImage={false}
             autoregister={true}
+            hideProfile={true}
         >
             <ConfigProvider locale={esES}>
                 {children}
