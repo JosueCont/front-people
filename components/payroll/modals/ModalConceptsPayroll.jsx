@@ -25,6 +25,7 @@ import { departureMotive } from "../../../utils/constant";
 import moment from "moment";
 import DatePickerHoliDays from "../DatePickerHolidays";
 import _ from "lodash";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -63,6 +64,8 @@ const ModalConceptsPayroll = ({
   const [departureDate, setDepartureDate] = useState("");
   const [errorExtraHours, setErrorExtraHours] = useState({})
   const [errorExistExtraHours, setErrorExistExtraHours] = useState(false)
+  const [daysActive, setDaysActive] = useState([])
+  const [nonWorkingDays, setNonWorkingDays] = useState([])
 
   useEffect(() => {
     if (
@@ -120,6 +123,8 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            perception_type: item.perception_type,
+            is_rest_day: item.is_rest_day
           };
         })
       );
@@ -134,6 +139,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            deduction_type: item.deduction_type
           };
         })
       );
@@ -148,6 +154,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            other_type_payment: item.other_type_payment
           };
         })
       );
@@ -159,13 +166,22 @@ const ModalConceptsPayroll = ({
     visible,
   ]);
 
-
+  
   useEffect(() => {
     console.log('errorExtraHours',errorExtraHours)
   }, [errorExtraHours])
 
   
   useEffect(() => {}, [payment_period]);
+
+  useEffect(() => {
+    if(props?.currentNode?.id){
+      getWorkingWeek()
+      getNonWorkingDays()
+    }
+  }, [])
+  
+  
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -184,6 +200,59 @@ const ModalConceptsPayroll = ({
       </>
     );
   };
+
+
+  const getNonWorkingDays = async () => {
+    try {
+      let response = await WebApiPeople.getNonWorkingDays({node:props?.currentNode?.id, limit:10000})
+      console.log('response getNonWorkingDays', response)
+      if(response.status === 200){
+        let disabledDays = []
+        response.data.results.map(day => {
+          disabledDays.push(day.date)
+        })
+        setNonWorkingDays(disabledDays)
+      }
+    } catch (error) {
+      console.log('getNonWorkingDays', error.message)
+    }
+  }
+
+  const getWorkingWeek = async () => {
+    try {
+      let response = await WebApiPeople.getWorkingWeekDays(props.currentNode.id)
+      if(response.status == 200){
+        let actives = []
+        let days = response.data.results[0]
+        if(days['sunday']){
+          actives.push(0)
+        }
+        if(days['monday']){
+          actives.push(1)
+        }
+        if(days['tuesday']){
+          actives.push(2)
+        }
+        if(days['wednesday']){
+          actives.push(3)
+        }
+        if(days['thursday']){
+          actives.push(4)
+        }
+        if(days['friday']){
+          actives.push(5)
+        }
+        if(days['saturday']){
+          actives.push(6)
+        }
+        
+        setDaysActive(actives)
+
+      }
+    } catch (error) {
+      console.log('error', error.message)
+    }
+  }
   
 
   const resetperceptionsDeductions = () => {
@@ -357,6 +426,24 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
+
+    let errorAmount = false;
+    concepts.map(item => {
+      let datesValue = 0
+      item.dates.map(date =>{
+        datesValue += date.value
+      })
+      if(item.value > datesValue){
+        errorAmount = true
+        item['error_value'] = true
+      }
+    })
+    
+    if(errorAmount){  
+      console.log('error')
+      return
+    }
+
     if (extraOrdinary) {
       if (
         departureDate == undefined ||
@@ -787,6 +874,8 @@ const ModalConceptsPayroll = ({
                   render={(record) =>
                     record.data_type == 2 ? (
                       <DatePickerHoliDays
+                        daysActives={daysActive}
+                        disabledDays={nonWorkingDays}
                         withData={
                           record.code === "P118" || record.code === "P119"
                         }
@@ -843,6 +932,7 @@ const mapState = (state) => {
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
     other_payments_int: state.fiscalStore.other_payments_int,
+    currentNode: state.userStore.current_node
   };
 };
 

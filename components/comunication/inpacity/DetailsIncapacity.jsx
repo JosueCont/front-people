@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import PermissionForm from './PermissionForm';
-import { useSelector } from 'react-redux';
+import IncapacityForm from './IncapacityForm';
 import { getPhoto } from '../../../utils/functions';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { message, Spin } from 'antd';
@@ -16,42 +15,39 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-const DetailsPermission = ({
+const DetailsIncapacity = ({
     action
 }) => {
-    
-    const {
-        current_node,
-        general_config
-    } = useSelector(state => state.userStore);
+
     const router = useRouter();
-    
-    const [formPermit] = Form.useForm();
+    const noValid = [undefined, null, '', ' '];
+
+    const [formIncapacity] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
     const [currentPerson, setCurrentPerson] = useState({});
-    const [infoPermit, setInfoPermit] = useState({});
+    const [infoIncapacity, setInfoIncapacity] = useState({});
+    const [fileDocument, setFileDocument] = useState([]);
 
-
-    useEffect(()=>{
-        if(router?.query?.id && action == 'edit'){
-            getInfoPermit(router.query?.id)
+    useEffect(() => {
+        if (router?.query?.id && action == 'edit') {
+            getInfoIncapacity(router.query?.id)
         }
-    },[router.query?.id])
+    }, [router.query?.id])
 
-    useEffect(()=>{
-        if(Object.keys(infoPermit).length > 0){
-            formPermit.setFieldsValue()
+    useEffect(() => {
+        if (Object.keys(infoIncapacity).length > 0) {
+            formIncapacity.setFieldsValue()
             setValuesForm()
         }
-    },[infoPermit])
+    }, [infoIncapacity])
 
-    const getInfoPermit = async (id) =>{
+    const getInfoIncapacity = async (id) => {
         try {
             setLoading(true)
-            let response = await WebApiPeople.getInfoPermit(id);
-            setInfoPermit(response.data)
-            setCurrentPerson(response.data?.collaborator)
+            let response = await WebApiPeople.getInfoInability(id);
+            setInfoIncapacity(response.data)
+            setCurrentPerson(response.data?.person)
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -59,10 +55,9 @@ const DetailsPermission = ({
         }
     }
 
-    const onFinishCreate = async (values) =>{
+    const onFinishCreate = async (values) => {
         try {
-            let body = {...values, node: current_node?.id}
-            await WebApiPeople.savePermitsRequest(body);
+            await WebApiPeople.saveDisabilitiesRequest(values);
             message.success('Solicitud registrada')
             actionBack()
         } catch (e) {
@@ -72,11 +67,12 @@ const DetailsPermission = ({
         }
     }
 
-    const onFinishUpdate = async (values) =>{
+    const onFinishUpdate = async (values) => {
         try {
-            let response = await WebApiPeople.updatePermitsRequest(router.query?.id, values);
-            setInfoPermit(response.data)
+            let response = await WebApiPeople.updateDisabilitiesRequest(router.query?.id, values);
+            setInfoIncapacity(response.data)
             setLoading(false)
+            setFileDocument([])
             message.success('Solicitud actualizada')
         } catch (e) {
             setLoading(false)
@@ -85,36 +81,56 @@ const DetailsPermission = ({
         }
     }
 
-    const setValuesForm = () =>{
-        let values = {...infoPermit};
-        values.person = infoPermit?.collaborator ? infoPermit.collaborator?.id : null;
-        values.departure_date = infoPermit?.departure_date
-            ? moment(infoPermit.departure_date, 'YYYY-MM-DD') : null;
-        values.return_date = infoPermit?.return_date
-            ? moment(infoPermit.return_date, 'YYYY-MM-DD') : null;
-        formPermit.setFieldsValue(values)
+    const setValuesForm = () => {
+        let values = {...infoIncapacity};
+        values.person = infoIncapacity?.person ? infoIncapacity.person?.id : null;
+        values.incapacity_type = infoIncapacity?.incapacity_type
+            ? values.incapacity_type?.id : null;
+        values.departure_date = infoIncapacity?.departure_date
+            ? moment(infoIncapacity.departure_date, 'YYYY-MM-DD') : null;
+        values.return_date = infoIncapacity?.return_date
+            ? moment(infoIncapacity.return_date, 'YYYY-MM-DD') : null;
+        values.payroll_apply_date = infoIncapacity.payroll_apply_date
+            ? moment(infoIncapacity?.payroll_apply_date, 'YYYY-MM-DD') : null;
+        values.document_name_read = infoIncapacity?.document
+            ? infoIncapacity.document?.split('/')?.at(-1) : null;
+        formIncapacity.setFieldsValue(values)
     }
 
-    const onFinish = (values) =>{
+    const createData = (values) => {
+        let dataIncapacity = new FormData();
+        if (fileDocument?.length > 0) dataIncapacity.append('document', fileDocument[0]);
+        Object.entries(values).map(([key, val]) => {
+            let value = noValid.includes(val) ? "" : val;
+            dataIncapacity.append(key, value);
+        })
+        return dataIncapacity;
+    }
+
+    const onFinish = (values) => {
         setLoading(true)
         values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
             ? values.return_date?.format('YYYY-MM-DD') : null;
+        values.payroll_apply_date = values.payroll_apply_date
+            ? values.payroll_apply_date?.format('YYYY-MM-DD') : null;
+
+        let body = createData(values);
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate
         }
-        actions[action](values)
+        actions[action](body)
     }
 
-    const actionBack = () =>{
-        router.push('/comunication/requests/permission')
+    const actionBack = () => {
+        router.push('/comunication/requests/incapacity')
     }
-    
+
     return (
-        <Card bodyStyle={{padding: 18}}>
-            <Row gutter={[16,16]}>
+        <Card bodyStyle={{ padding: 18 }}>
+            <Row gutter={[16, 16]}>
                 <Col span={24} className='title-action-content title-action-border'>
                     <div className='content_title_requets'>
                         <Image
@@ -131,7 +147,7 @@ const DetailsPermission = ({
                         </div>
                     </div>
                     <Button
-                        onClick={()=> actionBack()}
+                        onClick={() => actionBack()}
                         disabled={loading}
                         icon={<ArrowLeftOutlined />}
                     >
@@ -141,16 +157,18 @@ const DetailsPermission = ({
                 <Col span={24}>
                     <Spin spinning={loading}>
                         <Form
-                            form={formPermit}
+                            form={formIncapacity}
                             layout='vertical'
                             onFinish={onFinish}
                         >
-                            <PermissionForm
+                            <IncapacityForm
                                 currentPerson={currentPerson}
                                 setCurrentPerson={setCurrentPerson}
-                                formPermit={formPermit}
+                                formIncapacity={formIncapacity}
                                 action={action}
                                 actionBack={actionBack}
+                                infoIncapacity={infoIncapacity}
+                                setFileDocument={setFileDocument}
                             />
                         </Form>
                     </Spin>
@@ -160,4 +178,4 @@ const DetailsPermission = ({
     )
 }
 
-export default DetailsPermission
+export default DetailsIncapacity

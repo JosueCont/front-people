@@ -517,10 +517,11 @@ export const getValueFilter = ({
   keyEquals = 'id',
   keyShow = 'name'
 }) =>{
-  if(!value) return value;
+  let novalid = [undefined, null, "", ""];
+  if(novalid.includes(value)) return value;
   const find_ = item => item[keyEquals] == value;
   let result = list.find(find_);
-  if(!result) return value;
+  if(novalid.includes(result)) return value;
   return typeof keyShow == 'function'
     ? keyShow(result) : result[keyShow];
 }

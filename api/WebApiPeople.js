@@ -323,8 +323,12 @@ class WebApiPeople {
   }
 
   /* Solicitudes */
-  static geDisabilitiesRequest(url = "") {
-    return WebApi.ApisType(`/person/incapacity/${url}`, "get");
+  static getDisabilitiesRequest(node, query = '') {
+    return WebApi.ApisType(`/person/incapacity/?person__node__id=${node}${query}`, "get");
+  }
+
+  static getInfoInability(id) {
+    return WebApi.ApisType(`/person/incapacity/${id}/`, "get");
   }
 
   static saveDisabilitiesRequest(data) {
@@ -441,9 +445,9 @@ class WebApiPeople {
     );
   }
 
-  static listEbaAndEmaFiles(node, patronalRegistration) {
+  static listEbaAndEmaFiles(node, patronalRegistration, offset = 0, limit = 10) {
     return WebApi.ApisType(
-      `/business/document/?node_id=${node}&patronal_registration_id=${patronalRegistration}&origin__type=1`,
+      `/business/document/?node_id=${node}&limit=${limit}&offset=${offset}&patronal_registration_id=${patronalRegistration}&origin__type=1`,
       "get"
     );
   }

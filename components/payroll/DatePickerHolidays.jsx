@@ -3,6 +3,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import {connect} from "react-redux";
 import Calendar from "rc-year-calendar";
 import { Global, css } from "@emotion/core";
+import { Space, Typography } from "antd";
 
 
 
@@ -40,15 +41,50 @@ const gregorian_es_lowercase = {
 
 
 
-const DatePickerHoliDays=({withData=false,locale='es',concept=null,...props})=>{
+const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=[], disabledDays=[], showCount=false, ...props})=>{
     const [value, setValue] = useState([]); 
     const [arrayDates, setArrayDates] = useState([])
+    const [isFestive, setIsFestive] = useState(false)
+    const [isRest, setIsRest] = useState(false)
+    const [isSunday, setIsSunday] = useState(false)
+    const [disability, setDisability] = useState(false)
+    const [count, setCount] = useState(0)
+    const [showError, setShowError] = useState(false)
 
+    const { Text } = Typography
 
     useEffect(() => {
-        
+        if(concept?.deduction_typ?.code === "006"){
+            setDisability(true)
+        }
+        if(concept?.perception_type?.code === "020"){
+            setIsSunday(true)
+        }
+        if(concept?.code === "P122" || (concept?.description?.toLowerCase().includes("festivo") && concept?.perception_type?.code === "019")){
+            setIsFestive(true)
+        }
+        if(concept.is_rest_day === true  
+            || concept.code === "P120" 
+            || concept?.description?.toLowerCase().includes("descanso")
+            || (concept?.perception_type?.code === "019" && concept?.perception_type?.description?.toLowerCase().includes("descanso") )
+            ){ 
+            setIsRest(true)
+        }
+    }, [concept])
+
+
+    
+
+    useEffect(() => {
+        let n = 0
+        arrayDates.map(item => {
+            n += item.value
+        })
+        setCount(n)
         props.onChangeData(arrayDates)
-    }, [arrayDates])    
+    }, [arrayDates])
+
+    
 
     const dateSelected = (dateFocused, dateClicked) => {
         let current_date = dateClicked?.format?.()
@@ -119,26 +155,69 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null,...props})=>{
                 }
             `
         } />
-        <DatePicker
-            onFocusedDateChange={dateSelected}
-            locale={locale==='es'?gregorian_es_lowercase:null}
-            {...props}
-            value={value}
-            render={<CustomInput />}
-            mapDays={( { date, today, selectedDate, currentMonth, isSameDate }) => {
-                let m = `0${date.month.number}`.slice(-2) 
-                let d = `0${date.day}`.slice(-2) 
-                let current = `${date.year}/${m}/${d}`
-                let propsDate = {}
-                let exist = value.includes(current) 
-                if (exist){ 
-                    propsDate.className = "marker"
-                }else{
-                    propsDate.className = "no_marker"
-                } 
-                return propsDate
-              }}
-            />
+        <Space align="start">
+            <div>
+                <DatePicker
+                    onFocusedDateChange={dateSelected}
+                    locale={locale==='es'?gregorian_es_lowercase:null}
+                    {...props}
+                    value={value}
+                    render={<CustomInput />}
+                    mapDays={( { date, today, selectedDate, currentMonth, isSameDate }) => {
+                        let propsDate = {} 
+                        console.log('date',date)
+                        let d = ("0"+date.day).slice(-2)
+                        let m = ("0"+date.month.number).slice(-2)
+                        let y = date.year
+
+                        let format_date = y+"-"+m+"-"+d
+                        let current = date?.format?.()
+
+                        if(isSunday){
+                            if(date?.weekDay?.number != '1'){
+                                propsDate.disabled = true
+                                return propsDate
+                            }
+                        }else if(isFestive || isRest){
+                            if(!disabledDays.includes(format_date) && daysActives.includes(date?.weekDay?.index)){
+                                propsDate.disabled = true
+                                return propsDate
+                            }
+                        }else{
+                            if(!daysActives.includes(date?.weekDay?.index)){
+                                propsDate.disabled = true
+                                return propsDate
+                            }
+                            if(disabledDays.includes(format_date)){
+                                propsDate.disabled = true
+                                return propsDate
+                            }
+                        }
+                        
+
+                        
+                        /* Validamos si esta seleccionado para agregarle la clase para marcarlo */
+                        let exist = value.includes(current) 
+                        if (exist){ 
+                            propsDate.className = "marker"
+                        }else{
+                            propsDate.className = "no_marker"
+                        } 
+                        return propsDate
+                    }}
+                /><br/>
+                {
+                    showError === true && 
+                    (<Text type="danger" >
+                        Datos incompletos
+                    </Text>)
+                }
+                
+            </div>
+            <span>
+            ({count})
+            </span>
+        </Space>
     </>
 }
 

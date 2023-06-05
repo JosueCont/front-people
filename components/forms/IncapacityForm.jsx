@@ -248,7 +248,13 @@ const Incapacityform = (props) => {
   const getDisabilitys = async () => {
     WebApiFiscal.getDisabilityType()
       .then(function (response) {
-        let datas = response.data.results.map((a) => {
+        // Los registros se repiten y se eliminan por medio del código
+        let list = response.data?.results?.reduce((acc, current) =>{
+          const some_ = item => item.code == current.code;
+          if(acc?.some(some_)) return acc;
+          return [...acc, current] 
+      },[])
+        let datas = list.map((a) => {
           return { label: a.description, value: a.id, code: a.code };
         });
         setDisabilitys(datas);

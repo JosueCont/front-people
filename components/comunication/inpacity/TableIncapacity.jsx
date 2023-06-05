@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Table,
     Space
@@ -7,24 +7,24 @@ import {
     getFullName,
     getValueFilter
 } from '../../../utils/functions';
+import moment from 'moment';
+import { optionsStatusPermits } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { optionsStatusPermits } from '../../../utils/constant';
 import {
     EditOutlined,
-    EyeOutlined,
-    DesktopOutlined,
-    MobileOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
-import moment from 'moment';
 
-const TablePermission = ({
+const TableIncapacity = ({
     loading = false,
-    permits = []
+    disabilities = []
 }) => {
 
+    const {
+        incapacity
+    } = useSelector(state => state.userStore.permissions);
     const router = useRouter();
-    const permissions = useSelector(state =>  state.userStore.permissions);
 
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
@@ -32,13 +32,13 @@ const TablePermission = ({
     const columns = [
         {
             title: 'Colaborador',
-            dataIndex: 'collaborator',
+            dataIndex: 'person',
             render: (item) => getFullName(item)
         },
         {
             title: 'Departamento',
-            dataIndex: 'department',
-            key: 'department'   
+            dataIndex: ['department', 'name'],
+            key: ['department', 'name']
         },
         {
             title: 'Días solicitados',
@@ -46,14 +46,21 @@ const TablePermission = ({
             key: 'requested_days'
         },
         {
-            title: 'Fecha inicio',
+            title: 'Fecha incio',
             dataIndex: 'departure_date',
             render: (item) => item ? moment(item, formatStart).format(formatEnd) : null
         },
         {
-            title: 'Fecha fin',
+            title: 'Fecha final',
             dataIndex: 'return_date',
             render: (item) => item ? moment(item, formatStart).format(formatEnd) : null
+        },
+        {
+            title: 'Documento',
+            dataIndex: 'document',
+            render: (item) => item ? (
+                <a href={item} target='_blank'>Ver documento</a>
+            ) : null
         },
         {
             title: 'Estatus',
@@ -69,9 +76,9 @@ const TablePermission = ({
             title: 'Acciones',
             render: (item) => (
                 <Space>
-                    <EyeOutlined onClick={()=> router.push(`permission/${item.id}/details`)}/>
-                    {permissions.permit?.edit && item.status == 1 && (
-                        <EditOutlined onClick={()=> router.push(`permission/${item.id}/edit`)}/>
+                    <EyeOutlined onClick={() => router.push(`incapacity/${item.id}/details`)} />
+                    {incapacity?.edit && item.status == 1 && (
+                        <EditOutlined onClick={() => router.push(`incapacity/${item.id}/edit`)} />
                     )}
                 </Space>
             )
@@ -83,8 +90,8 @@ const TablePermission = ({
             rowKey='id'
             size='small'
             columns={columns}
-            dataSource={permits}
             loading={loading}
+            dataSource={disabilities}
             pagination={{
                 hideOnSinglePage: true,
                 showSizeChanger: false
@@ -93,4 +100,4 @@ const TablePermission = ({
     )
 }
 
-export default TablePermission
+export default TableIncapacity

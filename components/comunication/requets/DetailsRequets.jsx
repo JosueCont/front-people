@@ -90,15 +90,12 @@ const DetailsRequets = ({
     }
 
     const setValuesForm = () => {
-        let values = {};
+        let values = {...infoRequest};
         values.person = infoRequest?.collaborator ? infoRequest.collaborator?.id : null;
-        values.period = infoRequest?.period ? infoRequest.period : null;
         values.departure_date = infoRequest?.departure_date
             ? moment(infoRequest.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoRequest?.return_date
             ? moment(infoRequest.return_date, 'YYYY-MM-DD') : null;
-        values.days_requested = infoRequest?.days_requested
-            ? infoRequest?.days_requested : null;
         values.availableDays = infoRequest?.available_days_vacation
             ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
