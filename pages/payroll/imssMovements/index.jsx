@@ -35,6 +35,7 @@ const ImssMovements = ({ ...props }) => {
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles] = useState([]);
+  const [totalFiles, setTotalFiles] = useState(0)
   const [file, setFile] = useState(null);
   const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -63,11 +64,13 @@ const ImssMovements = ({ ...props }) => {
     patronalSelected && props?.currentNode?.id && getFiles();
   }, [patronalSelected, props?.currentNode?.id]);
 
-  const getFiles = () => {
+  const getFiles = (offset=0) => {
     setLoading(true);
-    WebApiPeople.listEbaAndEmaFiles(props?.currentNode?.id, patronalSelected)
+    WebApiPeople.listEbaAndEmaFiles(props?.currentNode?.id, patronalSelected, offset)
       .then((response) => {
         setFiles(response.data.results);
+        setTotalFiles(response?.data?.count)
+        
         setLoading(false);
       })
       .catch((error) => {
@@ -117,6 +120,12 @@ const ImssMovements = ({ ...props }) => {
       setFile(null);
     }
   };
+
+
+  const changePage = (page, pageSize) => {
+    let offset = (page -1) * pageSize
+    getFiles(offset)
+  } 
 
   return (
     <>
@@ -221,6 +230,8 @@ const ImssMovements = ({ ...props }) => {
                 <EmaYEvaFiles
                   files={files?.length > 0 ? files : []}
                   loading={loading}
+                  total={totalFiles}
+                  changePage={changePage}
                 />
               </Panel>
               <Panel header="Consulta de movimientos al IMSS" key="3">

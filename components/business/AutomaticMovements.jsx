@@ -12,7 +12,8 @@ import {
   Modal,
   Spin,
   Upload,
-  Popconfirm
+  Popconfirm,
+  Alert
   
 } from "antd";
 import {
@@ -332,6 +333,11 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
         >
           <Row>
             <Col span={24}>
+              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del INFONAVIT, " +
+                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal " + patronalData.code} type="warning" />
+              <br/>
+            </Col>
+            <Col span={24}>
               <Form.Item
                 name="user"
                 label = "Usuario"
@@ -386,6 +392,12 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
           onFinish={ onFinishImss }
         >
           <Row>
+            <Col span={24}>
+              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del IMSS, " +
+                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal "+ patronalData.code} type="warning" />
+              <br/>
+            </Col>
+
             <Col span={24}>
               <Form.Item
                 name="user"
