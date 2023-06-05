@@ -38,7 +38,7 @@ import router from "next/router";
 import { messageError } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import moment from "moment";
-import _ from "lodash";
+import _, { debounce } from "lodash";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -65,6 +65,12 @@ const SelectCompany = ({ ...props }) => {
       setIsLoadCompany(true);
     }
   }, [router]);
+
+  useEffect(() => {
+    console.log('================')
+    console.log(allCompanies)
+  }, [allCompanies])
+  
 
   useEffect(() => {}, [isLoadCompany]);
 
@@ -246,14 +252,18 @@ const SelectCompany = ({ ...props }) => {
     e.target.src = "/images/empresas.svg";
   };
 
-  const filterCompanies = (name) => {
+  const filterCompanies = (e) => {
+    let name = e.target.value
+    console.log('name', name)
+    console.log('allCompanies',allCompanies)
+    console.log('new_liest',new_liest)
     let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
     setDataList(new_liest)
+    
+    
   }
 
-  const debouncedSearch = useMemo(() => {
-    return _.debounce((e) => filterCompanies(e.target.value), 500);
-  }, []);
+  const debouncedSearch = debounce(filterCompanies, 500);
 
   return (
     <>
