@@ -428,7 +428,6 @@ const ModalConceptsPayroll = ({
   const createObjectSend = () => {
 
     let errorAmount = false;
-    debugger;
     concepts.map(item => {
       let datesValue = 0
       if(item?.dates){
