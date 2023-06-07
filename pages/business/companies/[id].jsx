@@ -9,6 +9,7 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import FiscalInformationNode from "../../../components/payroll/FiscalInformationNode";
 import PatronalRegistration from "../../../components/payroll/PatronalRegistration";
 import NonWorkingDays from "../../../components/business/NonWorkingDays";
+import PayrollSpread from '../../../components/business/PayrollSpread'
 import WorkingDays from "../../../components/business/WorkingDays";
 import UiStore from "../../../components/business/UiStore";
 
@@ -101,6 +102,11 @@ const ConfigCompany = ({ ...props }) => {
 
               <TabPane tab="UI Store" key={"5"}>
                 <UiStore  node_id={company && company.id} />
+              </TabPane>
+            }
+            { props.config && props.config.nomina_enabled &&
+              <TabPane tab="Dispersión bancaria" key={"6"}>
+                <PayrollSpread node_id={company && company.id} />
               </TabPane>
             }
 
