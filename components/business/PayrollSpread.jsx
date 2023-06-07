@@ -49,7 +49,6 @@ const [filterName, setFilterName] = useState(null)
   }
 
   const onEdit = (item) =>{
-    console.log('item', item)
     setSelectedItem(item)
     form.setFields([
         {
@@ -58,7 +57,7 @@ const [filterName, setFilterName] = useState(null)
         },
         {
             name:'bank',
-            value: item.bank
+            value: item.bank.id
         },
         {
             name:'bank_account',
@@ -100,7 +99,7 @@ const [filterName, setFilterName] = useState(null)
     },
     {
       title: 'Banco',
-      dataIndex: 'bank',
+      dataIndex: ['bank','name'],
       key: 'bank',
     },
     {
@@ -148,7 +147,7 @@ const [filterName, setFilterName] = useState(null)
     try {
         setSaving(true)
         let response = await WebApiPayroll.updPayrollSpred(data, selectedItem)
-        if(response.status === 200){
+        if(response.status === 201){
             message.success("Disperción actualizada")
             closeModal()
             getInfo()
