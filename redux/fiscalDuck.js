@@ -154,20 +154,21 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
-        if(response?.data?.results){
-            let _banks =  response?.data?.results.filter(bank => bank.version_cfdi.length > 0); //GDZUL -- para evitar duplicados , revisar con peter
-            let newBanks = _.orderBy(_banks, ['name'],['asc']);
-            dispatch({
-                type: BANKS,
-                payload: newBanks,
-            });
-        }else{
-            dispatch({
-                type: BANKS,
-                payload: [],
-            });
-        }
-
+      if (response?.data?.results) {
+        let _banks = response?.data?.results.filter(
+          (bank) => bank.version_cfdi.length > 0
+        ); //GDZUL -- para evitar duplicados , revisar con peter
+        let newBanks = _.orderBy(_banks, ["name"], ["asc"]);
+        dispatch({
+          type: BANKS,
+          payload: newBanks,
+        });
+      } else {
+        dispatch({
+          type: BANKS,
+          payload: [],
+        });
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -207,7 +208,7 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
         return 0;
       });
 
-      let perseptions = _.orderBy(orderedPerseptions, ['description'],['asc']);
+      let perseptions = _.orderBy(orderedPerseptions, ["description"], ["asc"]);
 
       dispatch({
         type: PERCEPTIONS,
@@ -272,11 +273,12 @@ export const getInternalPerceptions =
       .then((response) => {
         dispatch({
           type: PERCEPTIONS_INT,
-          payload: response.data.filter(
-            (item) =>
-              // item.perception_type.code != "001" &&
-              item.perception_type.code != "046"
-          ),
+          payload: response.data,
+          // .filter(
+          //   (item) =>
+          //     // item.perception_type.code != "001" &&
+          //     item.perception_type.code != "046"
+          // ),
         });
       })
       .catch((error) => {
@@ -315,7 +317,7 @@ export const getInternalOtherPayments =
 export const getTypeTax = () => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
     .then((response) => {
-      let taxes = _.orderBy(response.data.results, ['description'],['asc']);
+      let taxes = _.orderBy(response.data.results, ["description"], ["asc"]);
       dispatch({
         type: TYPE_TAX,
         payload: taxes,
@@ -354,7 +356,11 @@ export const getContractType = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
-      let contracts = _.orderBy(response.data.results, ['description'],['asc']);
+      let contracts = _.orderBy(
+        response.data.results,
+        ["description"],
+        ["asc"]
+      );
       dispatch({
         type: CONTRACT_TYPE,
         payload: contracts,
@@ -374,7 +380,7 @@ export const getJourneyType = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
-      let journeys = _.orderBy(response.data.results, ['description'],['asc']);
+      let journeys = _.orderBy(response.data.results, ["description"], ["asc"]);
       dispatch({
         type: JOURNEY_TYPE,
         payload: journeys,
@@ -394,7 +400,7 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
       //     (item) => Number(item.version_cfdi.version) <= use_cfdi
       //   ),
       // });
-      let regimens = _.orderBy(response.data.results, ['description'],['asc']);
+      let regimens = _.orderBy(response.data.results, ["description"], ["asc"]);
       dispatch({
         type: HIRING_REGIME,
         payload: regimens,
@@ -452,20 +458,22 @@ export const FamilyMedicalUnit = () => async (dispatch, getState) => {
     });
 };
 
-export const getGeographicArea = (year=null) => async (dispatch, getState) => {
-  let currentYear = parseInt(moment().format("YYYY"));
-  if(year){
-     currentYear = year;
-  }
+export const getGeographicArea =
+  (year = null) =>
+  async (dispatch, getState) => {
+    let currentYear = parseInt(moment().format("YYYY"));
+    if (year) {
+      currentYear = year;
+    }
 
-  await WebApiFiscal.get_geograp_area(currentYear)
-    .then((response) => {
-      dispatch({
-        type: GEOGRAPHIC_AREA,
-        payload: response.data,
+    await WebApiFiscal.get_geograp_area(currentYear)
+      .then((response) => {
+        dispatch({
+          type: GEOGRAPHIC_AREA,
+          payload: response.data,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+  };
