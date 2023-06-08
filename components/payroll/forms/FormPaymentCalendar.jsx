@@ -172,7 +172,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           periodicity: item.periodicity.id,
           type_tax: item.type_tax.id,
           perception_type: item.perception_type.id,
-          bank_dispersion: item.bank_dispersion,
+          bank_dispersion: item?.bank_dispersion?.id,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
           incidence_start: item.incidence_start
@@ -285,6 +285,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = paymentSaturday;
     value.payment_sunday = paymentSunday;
+    value.bank_dispersion = value.bank_dispersion ? value.bank_dispersion : null
     if (!value.group_fixed_concept) {
       value.group_fixed_concept = null;
     }
@@ -652,7 +653,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item name="bank_dispersion" label="Disperción bancaria">
-                <Select options={bankDispersionList} />
+                <Select options={bankDispersionList} allowClear />
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
