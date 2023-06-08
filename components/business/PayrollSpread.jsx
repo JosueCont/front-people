@@ -12,7 +12,7 @@ const [dataList, setDataList] = useState([])
 const [showModal, setShowModal] = useState(false)
 const [selectedItem, setSelectedItem] = useState(null)
 const [bankList, setBankList] = useState([])
-const ruleRequired = [{required:true, message:'Este campo es requerido'}]
+const ruleRequired = {required:true, message:'Este campo es requerido'}
 const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
 const [loadingData, setLoadingData] = useState(false)
 const [saving, setSaving] = useState(false)
@@ -33,7 +33,7 @@ const [filterName, setFilterName] = useState(null)
     }
   }
 
-  const getInfo = async (name="", page=null) => {
+  const getInfo = async (name="") => {
     setLoadingData(true)
     try {
       let filters = `?node__id=${node_id}&name__icontains=${name}`
@@ -150,12 +150,24 @@ const [filterName, setFilterName] = useState(null)
         if(response.status === 201){
             message.success("Disperción actualizada")
             closeModal()
-            getInfo()
+            getInfo(filterName)
         }
         setSaving(false)
       } catch (error) {
         setSaving(false)
-        console.log('error', error.data)
+        if(error?.response?.data?.message){
+            let errors = []
+            Object.entries(error?.response?.data?.message).map(([key, value]) => {
+                let err = {
+                    name:key,
+                    errors: value
+                }
+                errors.push(err)
+            })
+            form.setFields(errors)
+        }else{
+            message("Disperción no actualizada")
+        }
       }
   }
 
@@ -167,12 +179,24 @@ const [filterName, setFilterName] = useState(null)
         if(response.status === 201){
             message.success("Disperción creada")
             closeModal()
-            getInfo()
+            getInfo(filterName)
         }
         setSaving(false)
       } catch (error) {
         setSaving(false)
-        console.log('error', error.data)
+        if(error?.response?.data?.message){
+            let errors = []
+            Object.entries(error?.response?.data?.message).map(([key, value]) => {
+                let err = {
+                    name:key,
+                    errors: value
+                }
+                errors.push(err)
+            })
+            form.setFields(errors)
+        }else{
+            message("Disperción no guardada")
+        }
       }
   }
 
@@ -188,6 +212,7 @@ const [filterName, setFilterName] = useState(null)
         setModalDeleteVisible(false)
         setSelectedItem(null)
         setSaving(false)
+        getInfo(filterName)
     } catch (error) {
         setSaving(false)
         message.error("Ocurrio un error al eliminar la disperción")
@@ -255,6 +280,7 @@ const [filterName, setFilterName] = useState(null)
             loading={loadingData}
             columns={columns}
             dataSource={dataList}
+            pagination={false}
         />
         <Modal onOk={() => form.submit()} title={selectedItem?'Editar disperción' : 'Crear disperción'} visible={showModal} onCancel={closeModal}>
         <Form
@@ -264,19 +290,19 @@ const [filterName, setFilterName] = useState(null)
             layout={"vertical"}
         >
             <Spin spinning={saving}>
-                <Form.Item rules={ruleRequired} label="Nombre de la cuenta bancaria" name={'name'} >
+                <Form.Item rules={[ruleRequired]} label="Nombre de la cuenta bancaria" name={'name'} >
                     <Input />
                 </Form.Item>
-                <Form.Item rules={ruleRequired} label="Banco" name={'bank'} >
+                <Form.Item rules={[ruleRequired]} label="Banco" name={'bank'} >
                     <Select options={bankList} />
                 </Form.Item>
-                <Form.Item rules={ruleRequired} label="Cuenta bancaria emisora" name={'bank_account'} >
+                <Form.Item rules={[ruleRequired,{max:11, message:'Ingresa maximo 11 digitos'}]} label="Cuenta bancaria emisora" name={'bank_account'} >
                     <Input />
                 </Form.Item>
-                <Form.Item rules={ruleRequired} label="Numero de sucursal bancaria" name={'branch_number'} >
+                <Form.Item rules={[ruleRequired]} label="Numero de sucursal bancaria" name={'branch_number'} >
                     <Input />
                 </Form.Item>
-                <Form.Item rules={ruleRequired} label="Numero de plaza" name={'commercial_zone_number'} >
+                <Form.Item rules={[ruleRequired]} label="Numero de plaza" name={'commercial_zone_number'} >
                     <Input />
                 </Form.Item>
             </Spin>
