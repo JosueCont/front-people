@@ -46,6 +46,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [versions, setVersions] = useState([]);
   const [selectPeriodicity, setSelectPeriodicity] = useState(null);
   const currentYear = moment().year();
+  const [bankDispersionList, setBankDispersionList] = useState([])
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -119,6 +120,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         ];
 
   useEffect(() => {
+    getBankDispersion()
+  }, [])
+
+  useEffect(() => {
     if (idPaymentCalendar) {
       getPaymentCalendar();
       setLocked(true);
@@ -161,11 +166,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       if (response.data) {
         setPaymentCalendar(response.data);
         let item = response.data;
+        console.log('item',item)
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
           type_tax: item.type_tax.id,
           perception_type: item.perception_type.id,
+          bank_dispersion: item.bank_dispersion,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
           incidence_start: item.incidence_start
@@ -424,6 +431,22 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     //formPaymentCalendar.setFieldsValue({ benefits: value });
     setBenefits(value);
   };
+
+  const getBankDispersion = async () => {
+    try {
+      let filters = `?node__id=${props.currentNode.id}`
+      let response = await WebApiPayroll.getPayrollSpred(filters)
+      if(response.status === 200){
+        let list = response.data.results.map(item => {
+          return {value: item.id, label: item.name}
+        })
+        setBankDispersionList(list)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   return (
     <>
       <Global
@@ -625,6 +648,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   locale={locale}
                   disabledDate={disableActivationDate}
                 />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22}>
+              <Form.Item name="bank_dispersion" label="Disperción bancaria">
+                <Select options={bankDispersionList} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
