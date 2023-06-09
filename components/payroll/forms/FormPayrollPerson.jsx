@@ -162,7 +162,8 @@ const FormPayrollPerson = ({
     await WebApiPayroll.getPayrollPerson(person.id)
       .then((response) => {
         if (response.data) {
-          let item = response.data;
+          let item = response.data;          
+          setPerceptionCode(item.payment_calendar?.perception_type?.code)
           setPayrollPerson(item);
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
@@ -264,7 +265,7 @@ const FormPayrollPerson = ({
           return { value: a.id, label: a.name };
         });
       }
-      setPaymentCalendars(payment_calendar);
+      setPaymentCalendars(payment_calendar);      
     } catch (error) {
       console.log(error);
     }
@@ -330,7 +331,7 @@ const FormPayrollPerson = ({
   };
   const selectCalendar = (value) => {
     if (value) {
-      let calendar = calendars.find((calendar) => calendar.id == value);
+      let calendar = calendars.find((calendar) => calendar.id == value);      
       setPerceptionCode(calendar.perception_type.code);
       if (calendar) {
         formPayrollPerson.setFieldsValue({
