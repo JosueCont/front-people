@@ -126,7 +126,7 @@ const ModalInfoRequest = ({
                         </FormField>
                         <FormField>
                             <Field>
-                                <p>Perido:</p>
+                                <p>Periodo:</p>
                                 <span>{itemRequest?.period}</span>
                             </Field>
                             <Field>

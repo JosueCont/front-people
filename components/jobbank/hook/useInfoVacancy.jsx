@@ -44,6 +44,7 @@ export const useInfoVacancy = () =>{
         }
         if(details.assignment_date) details['assignment_date'] = moment(details.assignment_date);
         if(details.customer) details['customer_id'] = details.customer.id;
+        details.location_id = details.location;
         return details;
     }
 

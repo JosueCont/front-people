@@ -49,3 +49,7 @@ export const urlCareerlab = process.browser
 export const urlKuizBaseFront = process.browser
   ? process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE_FRONT
   : process.env.FRONT_BASE_URL_KUIZ
+
+export const defaultJobbankNode = process.browser
+  ? process.env.NEXT_PUBLIC_DEFAULT_JOBBANK_NODE
+  : process.env.DEFAULT_JOBBANK_NODE;

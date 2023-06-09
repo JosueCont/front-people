@@ -35,7 +35,14 @@ import { userId } from "../libs/auth";
 
 const { useBreakpoint } = Grid;
 
-const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
+const NewHeader = ({
+  hideSearch,
+  mainLogo,
+  hideLogo,
+  hideProfile,
+  onClickImage,
+  ...props
+}) => {
   const { Text } = Typography;
   const router = useRouter();
   const screens = useBreakpoint();
@@ -73,17 +80,18 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           console.log(error);
         });
       const user_id = userId()
+      if (!user_id) return;
       let codes_apps = await WebApiPeople.getCodesApps(user_id)
-      if (codes_apps['status'] == 200){
+      if (codes_apps['status'] == 200) {
         let verify_codes_apps = {}
         console.log(props.userInfo)
-        if (codes_apps?.data?.sukhatv_code && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && props.userInfo?.is_sukhatv_admin){
+        if (codes_apps?.data?.sukhatv_code && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && props.userInfo?.is_sukhatv_admin) {
           verify_codes_apps['sukhatv_code'] = codes_apps?.data?.sukhatv_code || null
         }
-        if (codes_apps?.data?.khorflix_code && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && props.userInfo?.is_khorflix_admin){
+        if (codes_apps?.data?.khorflix_code && (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && props.userInfo?.is_khorflix_admin) {
           verify_codes_apps['khorflix_code'] = codes_apps?.data?.khorflix_code || null
         }
-        if (codes_apps?.data?.concierge_code){
+        if (codes_apps?.data?.concierge_code) {
           verify_codes_apps['concierge_code'] = codes_apps?.data?.concierge_code || null
         }
         setInfoCodeApps(verify_codes_apps)
@@ -91,14 +99,14 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     }
   };
 
-  const verify_view_user = () =>{
-    if (process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER){
-      if (process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER.includes(getCurrentURL(true, true))){
+  const verify_view_user = () => {
+    if (process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER) {
+      if (process.env.NEXT_PUBLIC_TENANT_NOT_USE_VIEW_USER.includes(getCurrentURL(true, true))) {
         return false
-      }else{
+      } else {
         return true
       }
-    }else{
+    } else {
       return true
     }
   }
@@ -153,12 +161,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <>
                 {verifyMenuNewForTenant() && verify_view_user() &&
                   <p
-                  className="text-menu"
-                  onClick={() => router.push("/user")}
-    
-                >
-                  <Text>Cambiar a la vista de Usuario</Text>
-                </p>}
+                    className="text-menu"
+                    onClick={() => router.push("/user")}
+
+                  >
+                    <Text>Cambiar a la vista de Usuario</Text>
+                  </p>}
                 <p
                   className="text-menu"
                   onClick={() => router.push("/select-company")}
@@ -173,32 +181,32 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               props.config.applications.find(
                 (item) => item.app === "PAYROLL" && item.is_active
               ) && (
-                  <>
-                    <p
-                        className="text-menu"
-                        onClick={() => setModalCfdiVersion(true)}
-                    >
-                      <Text>Cambiar version de CDFI</Text>
-                    </p>
-                  </>
+                <>
+                  <p
+                    className="text-menu"
+                    onClick={() => setModalCfdiVersion(true)}
+                  >
+                    <Text>Cambiar version de CDFI</Text>
+                  </p>
+                </>
 
 
               )}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
-            <hr/>
+            <hr />
             {props.config &&
-                props.config.applications &&
-                props.config.applications.find(
-                    (item) => item.app === "PAYROLL" && item.is_active
-                ) && (
-                    <>
-                      <ButtonWizardLight data={infoCodeApps}/>
-                    </>
+              props.config.applications &&
+              props.config.applications.find(
+                (item) => item.app === "PAYROLL" && item.is_active
+              ) && (
+                <>
+                  <ButtonWizardLight data={infoCodeApps} />
+                </>
 
 
-                )}
+              )}
           </Col>
         </Row>
       </Card>
@@ -257,77 +265,81 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col>
-                <Space size={"middle"}>
-              <Image
+              <Space size={"middle"}>
+                <Image
                   className={'header__logo'}
-                preview={false}
-                onClick={() => router.push("/dashboard")}
-                style={{
-                  maxWidth: 100,
-                  margin: "auto",
-                  maxHeight: 50,
-                  cursor: "pointer",
-                }}
-                src={
-                  "/images/LogoKhorconnect.svg"
-                }
-              />
-              <Image
-                  className={'header__logo'}
-                preview={false}
-                onClick={() => router.push("/dashboard")}
-                style={{
-                  maxWidth: 100,
-                  margin: "auto",
-                  maxHeight: 50,
-                  cursor: "pointer"
-                }}
-                src={
-                  !hideLogo && mainLogo
-                    ? mainLogo
-                    : null
-                }
-              />
-                </Space>
+                  preview={false}
+                  onClick={() => onClickImage ? router.push("/dashboard") : {}}
+                  style={{
+                    maxWidth: 100,
+                    margin: "auto",
+                    maxHeight: 50,
+                    cursor: onClickImage ? "pointer" : "default",
+                  }}
+                  src={
+                    "/images/LogoKhorconnect.svg"
+                  }
+                />
+                {!hideLogo && (
+                  <Image
+                    className={'header__logo'}
+                    preview={false}
+                    onClick={() => onClickImage ? router.push("/dashboard") : {}}
+                    style={{
+                      maxWidth: 100,
+                      margin: "auto",
+                      maxHeight: 50,
+                      cursor: onClickImage ? "pointer" : "default",
+                    }}
+                    src={
+                      mainLogo
+                        ? mainLogo
+                        : null
+                    }
+                  />
+                )}
+              </Space>
             </Col>
-            <Col>
-              {person && (
-                <div
-                  className={"pointer"}
-                  style={{ float: "right" }}
-                  key={"menu_user_" + props.currentKey}
-                >
-                  <Space size={"middle"}>
-                    {screens.sm && screens.md && 
-                      <span style={{color:'white'}} onClick={() => router.push(`business/companies/${props.currentNode.id}`) }>
-                        {props.currentNode ? props.currentNode.name : ""}
-                      </span> }
-                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
-                      <div key="menu_apps_content">
-                        <BsFillGrid3X3GapFill
+            {!hideProfile && (
+              <Col>
+                {person && (
+                  <div
+                    className={"pointer"}
+                    style={{ float: "right" }}
+                    key={"menu_user_" + props.currentKey}
+                  >
+                    <Space size={"middle"}>
+                      {screens.sm && screens.md &&
+                        <span style={{ color: 'white' }} onClick={() => router.push(`business/companies/${props.currentNode.id}`)}>
+                          {props.currentNode ? props.currentNode.name : ""}
+                        </span>}
+                      <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
+                        <div key="menu_apps_content">
+                          <BsFillGrid3X3GapFill
                             className={'header__dropdown_apps'}
-                          style={{
-                            color: "white",
-                            fontSize: 30,
-                            display: "flex",
-                            margin: "auto",
-                          }}
-                        />
-                      </div>
-                    </Dropdown>
-                    <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                      <div key="menu_user_content">
-                        <Avatar
-                          key="avatar_key"
-                          icon={<UserOutlined />}
-                          src={person.photo_thumbnail}
-                        />
-                      </div>
-                    </Dropdown>
-                  </Space>
-                </div>
-              )}
-            </Col>
+                            style={{
+                              color: "white",
+                              fontSize: 30,
+                              display: "flex",
+                              margin: "auto",
+                            }}
+                          />
+                        </div>
+                      </Dropdown>
+                      <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                        <div key="menu_user_content">
+                          <Avatar
+                            key="avatar_key"
+                            icon={<UserOutlined />}
+                            src={person.photo_thumbnail}
+                          />
+                        </div>
+                      </Dropdown>
+                    </Space>
+                  </div>
+                )}
+              </Col>
+            )}
           </Row>
         </div>
       </Header>
@@ -390,7 +402,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 props.versionCfdi
                   ? props.versionCfdi
                   : props.catCfdiVersion.find((item) => item.active === true)
-                      .version
+                    .version
               }
               options={props.catCfdiVersion.map((item) => {
                 return {
