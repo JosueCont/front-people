@@ -10,6 +10,7 @@ import {
     Modal,
     Row,
     Select,
+    Space,
     Switch,
     Table,
     Tooltip,
@@ -22,6 +23,8 @@ import {
     LoadingOutlined,
     NodeExpandOutlined,
     PlusOutlined,
+    SearchOutlined,
+    SyncOutlined,
     SettingOutlined,
     StopOutlined,
     TableOutlined,
@@ -36,6 +39,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import {messageDeleteSuccess, messageError, messageSaveSuccess, messageUpdateSuccess} from "../../utils/constant";
 import {verifyMenuNewForTenant} from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
+import _, { debounce } from "lodash";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -43,6 +47,7 @@ const {Option} = Select;
 const businessForm = ({currentNode, ...props}) => {
     let router = useRouter();
     const [business, setBusiness] = useState([]);
+    const [allBusiness, setAllBusiness] = useState([]);
     const [imageUrl, setImageUrl] = useState(null);
 
     const [loading, setLoading] = useState(false);
@@ -60,6 +65,7 @@ const businessForm = ({currentNode, ...props}) => {
     let personId = userId();
     const [admin, setAdmin] = useState(false);
     const [addB, setAddB] = useState(false);
+    
 
     const onFinish = (values) => {
         if (isDeleted) {
@@ -211,6 +217,7 @@ const businessForm = ({currentNode, ...props}) => {
         await WebApiPeople.getCompanys(props?.user?.id, null)
             .then((response) => {
                 setBusiness(response.data.results);
+                setAllBusiness(response.data.results)
                 setLoading(false);
             })
             .catch((error) => {
@@ -356,6 +363,15 @@ const businessForm = ({currentNode, ...props}) => {
         }
     };
 
+    const filterCompanies = (e) => {
+        let name = e.target.value
+        let new_liest = allBusiness.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
+        setBusiness(new_liest)
+    }
+
+    const debouncedSearch = debounce(filterCompanies, 500);
+
+
     function getBase64(img, callback) {
         const reader = new FileReader();
         reader.addEventListener("load", () => callback(reader.result));
@@ -464,6 +480,7 @@ const businessForm = ({currentNode, ...props}) => {
                     <Col span={24}>
                         {treeTable ? (
                             <ConfigProvider locale={esES}>
+                                <Input onChange={debouncedSearch} style={{ width:300 }} allowClear />
                                 <Table
                                     className={"mainTable"}
                                     scroll={{x: 300}}

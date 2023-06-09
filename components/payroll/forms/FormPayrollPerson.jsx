@@ -33,8 +33,14 @@ import locale from "antd/lib/date-picker/locale/es_ES";
 import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
 import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
+import WebApiPeople from "../../../api/WebApiPeople";
 
-const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...props }) => {
+const FormPayrollPerson = ({
+  person = null,
+  refreshtab = false,
+  node = null,
+  ...props
+}) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const [contrctsType, setContractsType] = useState([]);
@@ -55,6 +61,8 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
   const [perceptionTypes, setPerceptionTypes] = useState([]);
   const [confirm, setConfirm] = useState(false);
   const [calendar, setCalendar] = useState(null);
+  const [applyAssimilated, SetApplyAssimilated] = useState(null);
+  const [perceptionCode, setPerceptionCode] = useState(null);
 
   useEffect(() => {
     if (props.catPerception) {
@@ -80,15 +88,14 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
     }
   }, [props.catTaxRegime]);
 
-  useEffect(()=>{
-    if(refreshtab){
+  useEffect(() => {
+    if (refreshtab) {
       getPayrollPerson();
       getPaymentCalendar();
       PayrollList();
-      props.onFinishRefresh()
+      props.onFinishRefresh();
     }
-  },[refreshtab])
-
+  }, [refreshtab]);
 
   useEffect(() => {
     if (props.catContracType) {
@@ -144,12 +151,19 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
     PayrollList();
   }, []);
 
+  useEffect(() => {
+    if (node) {
+      getFiscalInformationNode(node);
+    }
+  }, [node]);
+
   const getPayrollPerson = async () => {
     setLoading(true);
     await WebApiPayroll.getPayrollPerson(person.id)
       .then((response) => {
         if (response.data) {
-          let item = response.data;
+          let item = response.data;          
+          setPerceptionCode(item.payment_calendar?.perception_type?.code)
           setPayrollPerson(item);
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
@@ -195,37 +209,40 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
         // si no hay datos de nomina de la persona entonces hacemos que se seleccione datos estaticos (sugeridos)
         setLoading(false);
 
-        if(props.catJourneyType){
+        if (props.catJourneyType) {
           // se elige Tipo jornada Diurna
-          let workingDay = props.catJourneyType.find((ele) => ele.code == '01');
+          let workingDay = props.catJourneyType.find((ele) => ele.code == "01");
           formPayrollPerson.setFieldsValue({
             type_working_day: workingDay?.id,
-          })
+          });
         }
 
-        if(props.catContracType){
+        if (props.catContracType) {
           // se elige Tipo de contrato "Contrato de trabajo por tiempo indeterminado"
-          let contractType = props.catContracType.find((ele) => ele.code == '01');
+          let contractType = props.catContracType.find(
+            (ele) => ele.code == "01"
+          );
           formPayrollPerson.setFieldsValue({
             contract_type: contractType?.id,
-          })
+          });
         }
 
-        if(props.catHiringRegime){
+        if (props.catHiringRegime) {
           // se elige Tipo de régimen de contratación "Sueldos"
-          let contractType = props.catHiringRegime.find((ele) => ele.code == '02');
+          let contractType = props.catHiringRegime.find(
+            (ele) => ele.code == "02"
+          );
           formPayrollPerson.setFieldsValue({
             hiring_regime_type: contractType?.id,
-          })
+          });
         }
 
         /// Forma de pago "Efectivo"
         formPayrollPerson.setFieldsValue({
           payment_type: 0,
-        })
+        });
 
-        setBankDisabled(true)
-
+        setBankDisabled(true);
       });
   };
 
@@ -248,7 +265,7 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
           return { value: a.id, label: a.name };
         });
       }
-      setPaymentCalendars(payment_calendar);
+      setPaymentCalendars(payment_calendar);      
     } catch (error) {
       console.log(error);
     }
@@ -314,7 +331,8 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
   };
   const selectCalendar = (value) => {
     if (value) {
-      let calendar = calendars.find((calendar) => calendar.id == value);
+      let calendar = calendars.find((calendar) => calendar.id == value);      
+      setPerceptionCode(calendar.perception_type.code);
       if (calendar) {
         formPayrollPerson.setFieldsValue({
           perception_type: calendar.perception_type.id,
@@ -366,6 +384,19 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
       }
       value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
+    }
+  };
+
+  const getFiscalInformationNode = async (node) => {
+    try {
+      let response = await WebApiPeople.getfiscalInformation(node);
+      if (response.data) {
+        SetApplyAssimilated(response.data.assimilated_pay);
+      }
+    } catch (error) {
+      console.log("Error-> ", error);
+      setLoading(false);
+      message.error(messageError);
     }
   };
 
@@ -460,7 +491,9 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
         <Row>
           <Title style={{ fontSize: "20px" }}>Nómina</Title>
         </Row>
-        {person.date_of_admission ? (
+        {person.date_of_admission ||
+        applyAssimilated ||
+        payrollPerson?.last_day_paid ? (
           <>
             <Form
               layout={"vertical"}
@@ -709,6 +742,7 @@ const FormPayrollPerson = ({ person = null, refreshtab=false, node = null, ...pr
                     person={person}
                     node={person.node}
                     payrollPerson={payrollPerson}
+                    perceptionCode={perceptionCode}
                   />
                 </Form.Item>
                 <Form.Item>
