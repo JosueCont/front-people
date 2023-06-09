@@ -298,7 +298,10 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   key={"menu_user_" + props.currentKey}
                 >
                   <Space size={"middle"}>
-                    {screens.sm && screens.md && <span style={{color:'white'}}>{props.currentNode ? props.currentNode.name : ""}</span> }
+                    {screens.sm && screens.md && 
+                      <span style={{color:'white'}} onClick={() => router.push(`business/companies/${props.currentNode.id}`) }>
+                        {props.currentNode ? props.currentNode.name : ""}
+                      </span> }
                     <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill

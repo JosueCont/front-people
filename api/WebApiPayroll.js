@@ -338,6 +338,26 @@ class WebApiPayroll {
       data
     );
   }
+
+  static getPayrollSpred(filters){
+    return WebApi.ApisType(`/business/bank-dispersion/${filters}`,"get");
+  }
+
+  static savePayrollSpred(data){
+    return WebApi.ApisType(`/business/bank-dispersion/`,"post", data);
+  }
+
+  static updPayrollSpred(data, item){
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}/`,"put", data);
+  }
+
+  static deletePayrollSpred(item){
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}`,"delete");
+  }
+
+  static getBanks(){
+    return WebApi.ApisType(`/business/bank-dispersion/banks/`,"get");
+  }
 }
 
 export default WebApiPayroll;
