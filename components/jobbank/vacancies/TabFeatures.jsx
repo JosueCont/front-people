@@ -71,7 +71,7 @@ const TabFeatures = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={hasEstrategy || disabledClient}
+                        disabled={load_clients_options || hasEstrategy || disabledClient}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
