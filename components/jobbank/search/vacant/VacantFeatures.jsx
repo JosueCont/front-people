@@ -65,22 +65,6 @@ const VacantFeatures = ({
                     ? infoVacant?.age_range?.join(' - ')
                     : null
                 } />
-                {/* <ContentVertical>
-                    <FeaturesText>Categoría</FeaturesText>
-                    {!loading ? (
-                        <FeaturesText color='gray'>
-                            {infoVacant.education_and_competence?.main_category?.name || 'No disponible'}
-                        </FeaturesText>
-                    ) : Wait}
-                </ContentVertical> */}
-                {/* <ContentVertical>
-                    <FeaturesText>Subcategoría</FeaturesText>
-                    {!loading ? (
-                        <FeaturesText color='gray'>
-                            {infoVacant.education_and_competence?.sub_category?.name || 'No disponible'}
-                        </FeaturesText>
-                    ) : Wait}
-                </ContentVertical> */}
             </FeaturesContent>
         </ContentVertical>
     )
