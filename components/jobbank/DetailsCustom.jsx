@@ -26,7 +26,8 @@ const DetailsCustom = ({
     onlyOptions = false,
     showOptions = true,
     borderTitle = false,
-    childrenIsTabs = false
+    childrenIsTabs = false,
+    showBack = false
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -91,12 +92,12 @@ const DetailsCustom = ({
     return !onlyOptions ? (
         <Card bodyStyle={{padding: '18px'}}>
             <Row gutter={[16,16]}>
-                <Col span={24}>
+                <Col span={24} className='header-card'>
                     <div className={`title-action-content ${borderTitle ? 'title-action-border' : ''}`}>
                         <p className='title-action-text'>
                             {titleCard}
                         </p>
-                        {!isAutoRegister && (
+                        {(!isAutoRegister || showBack) && (
                             <div className='content-end' style={{gap: 8}}>
                                 <ExtraActions/>
                                 <Button

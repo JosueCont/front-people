@@ -35,6 +35,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant/fields/?node=${node}`, 'post');
     }
 
+    static getVacanciesSearch(node, query){
+        return WebApi.ApisType(`/job-bank/vacant-search/?node=${node}${query}`, 'get');
+    }
+
     static getInfoVacant(id){
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'get');
     }

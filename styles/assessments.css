@@ -347,12 +347,14 @@
     margin-bottom: 0px;
     font-size: 1.5rem;
     font-weight: 500;
+    line-height: 1.2;
 }
 
 .title-action-content{
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .title-action-border{
@@ -1175,3 +1177,27 @@ div.picker-range-jb{
 }
 
 /* Termina diseño para solicitud de vacaciones */
+
+@media (max-width: 768px) {
+    /* .header-card .title-action-content{
+        justify-content: flex-start;
+    } */
+    .header-card .title-action-content{
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .header-card .content-end{
+        width: 100%;
+    }
+    .header-card .title-action-text{
+        font-size: 1.25rem;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-card .title-action-text{
+        font-size: 1rem;
+    }
+}

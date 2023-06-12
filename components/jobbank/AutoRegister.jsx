@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import MainInter from '../../layout/MainInter';
 import WebApiPeople from '../../api/WebApiPeople';
 import { saveCurrentNode } from '../../redux/UserDuck';
@@ -9,20 +8,35 @@ import { ConfigProvider } from 'antd';
 
 const AutoRegister = ({
     children,
-    generalConfig,
-    saveCurrentNode
+    saveCurrentNode,
+    currentCode = null,
+    currentNode = null
 }) => {
 
-    const router = useRouter();
-
     useEffect(()=>{
-        if(router.query?.code) getCompay(router.query.code);
-    },[router.query?.code])
+        if(currentNode && !currentCode){
+            getCompanyByNode();
+            return;
+        }
+        if(currentCode && !currentNode){
+            getCompanyByCode();
+            return;
+        }
+    },[currentNode, currentCode])
 
-    const getCompay = async (code) =>{
+    const getCompanyByNode = async () =>{
         try {
-            let response = await WebApiPeople.getCompanyPermanentCode(code);
-            saveCurrentNode(response.data.results.at(-1))       
+            let response = await WebApiPeople.getCompany(currentNode);
+            saveCurrentNode(response.data)
+        } catch (e) {
+            console.log()
+        }
+    }
+
+    const getCompanyByCode = async () =>{
+        try {
+            let response = await WebApiPeople.getCompanyPermanentCode(currentCode);
+            saveCurrentNode(response.data?.results?.at(-1))       
         } catch (e) {
             console.log(e)
         }
@@ -33,6 +47,7 @@ const AutoRegister = ({
             hideMenu={true}
             onClickImage={false}
             autoregister={true}
+            hideProfile={true}
         >
             <ConfigProvider locale={esES}>
                 {children}

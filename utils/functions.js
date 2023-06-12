@@ -465,8 +465,8 @@ export const createFiltersJB = (obj = {}, discard = []) =>{
   let noValid = [undefined, null, "", " "];
   return Object.entries(obj).reduce((filters, [key, val])=>{
     if(discard.includes(key)) return filters
-    if(noValid.includes(val)) return filters;
-    let value = val.toString().trim();
+    let value = val?.toString().trim();
+    if(noValid.includes(value)) return filters;
     return {...filters, [key]: value}
   }, {});
 }
