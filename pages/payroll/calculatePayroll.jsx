@@ -1102,10 +1102,6 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     });
   };
-
-  useEffect(() => {
-    console.log('payroll',payroll)
-  }, [payroll])
   
 
   const generateDispersion =  async () => {
@@ -1139,10 +1135,6 @@ const CalculatePayroll = ({ ...props }) => {
       setDownloading(false)
     }
   }
-
-  useEffect(() => {
-    console.log('step',step)
-  }, [step])
   
 
   const importPayrollCaculate = (data) => {
