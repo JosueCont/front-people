@@ -273,8 +273,8 @@ const ViewChart = ({
         },
         scales: {
             r: {
+                beginAtZero: true,
                 ticks: {
-                    beginAtZero: true,
                     stepSize: getSize(),
                     backdropPadding: {
                         y: 8
