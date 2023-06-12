@@ -33,7 +33,7 @@ const ButtonUpdateSalaryMovement = ({
   node,
   payrollPerson = null,
   onRefresh,
-  perceptionCode,
+  perceptionCode=null,
   ...props
 }) => {
   const [loading, setLoading] = useState(false);
@@ -88,7 +88,7 @@ const ButtonUpdateSalaryMovement = ({
         date_updated: moment(),
       });
     }
-  }, [payrollPerson]);
+  }, [payrollPerson]); 
 
   // const disabledDate = (current) => {
   //   // Can not select days before today and today

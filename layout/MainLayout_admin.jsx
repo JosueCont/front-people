@@ -21,7 +21,7 @@ const MainLayoutAdmin = ({
   hideProfile,
   logoNode = null,
   companyName = null,
-  onClickImage,
+  onClickImage = true,
   hideSearch,
   hideLogo = false,
   nómina = false,

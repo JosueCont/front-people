@@ -11,6 +11,7 @@ const MainLayoutInter = ({
   hideSearch,
   hideLogo,
   autoregister = false,
+  hideProfile = false,
   ...props
 }) => {
 
@@ -26,6 +27,7 @@ const MainLayoutInter = ({
             hideSearch={hideSearch}
             onClickImage={onClickImage}
             autoregister={autoregister}
+            hideProfile={hideProfile}
         >
             {props.children}
         </MainLayoutAdmin>

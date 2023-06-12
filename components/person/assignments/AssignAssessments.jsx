@@ -185,7 +185,7 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
                 individual.push(item.id)
             }
             if(!item.is_individual){
-                group.push(item.id)
+                group.push(item.group_kuiz_id)
             }
         })
         setGroupsKeys(group)
