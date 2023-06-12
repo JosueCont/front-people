@@ -1123,13 +1123,20 @@ const CalculatePayroll = ({ ...props }) => {
     }
     try {
       let response = await WebApiPayroll.generateDispersion(data)
-      const blob = new Blob([response.data]);
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "Disperción bancaria.txt";
-      link.click();
+      if (response.data.message){
+        message.error(response.data.message)
+      }else{
+        const blob = new Blob([response.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "Disperción bancaria.txt";
+        link.click();
+        message.success("Archivo descargado")
+      }
+      setDownloading(false)
     } catch (error) {
       console.log('error', error)
+      setDownloading(false)
     }
   }
 
@@ -1650,6 +1657,7 @@ const CalculatePayroll = ({ ...props }) => {
                         block
                         htmlType="button"
                         onClick={() => generateDispersion()}
+                        loading={downloading}
                       >
                         Generar disperción
                       </Button>
