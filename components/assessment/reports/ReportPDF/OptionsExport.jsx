@@ -204,7 +204,7 @@ const OptionsExport = ({
     const getChart = async (config) =>{
         try {
             if(config?.data?.datasets?.length <=0) return null;
-            let body = {config, version: '3', width: 650, height: 650};
+            let body = {config, version: '3.7.0', width: 650, height: 650};
             return await toDataURL(body);     
         } catch (e) {
             console.log(e)
