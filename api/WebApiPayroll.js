@@ -358,6 +358,10 @@ class WebApiPayroll {
   static getBanks(){
     return WebApi.ApisType(`/business/bank-dispersion/banks/`,"get");
   }
+
+  static generateDispersion(data){
+    return WebApi.ApisType(`/payroll/payroll-dispersion`,"post", data);
+  }
 }
 
 export default WebApiPayroll;

@@ -98,6 +98,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [arrayCfdi, setArrayCfdi] = useState([]);
   const [totalPerceptions, setTotalPerceptions] = useState(null);
+  const [downloading, setDownloading] = useState(false)
   const [totalDeductions, setTotalDeductions] = useState(null);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -1102,6 +1103,41 @@ const CalculatePayroll = ({ ...props }) => {
     });
   };
 
+  useEffect(() => {
+    console.log('payroll',payroll)
+  }, [payroll])
+  
+
+  const generateDispersion =  async () => {
+    let data;
+    setDownloading(true)
+    if (personStamp.length > 0){
+      let list = personStamp.map(item => item.payroll_cfdi_person.id)
+      data = {
+        cfdis: list
+      }
+    }else{
+      data = {
+        period_id: periodSelected.id
+      }
+    }
+    try {
+      let response = await WebApiPayroll.generateDispersion(data)
+      const blob = new Blob([response.data]);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Disperción bancaria.txt";
+      link.click();
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  useEffect(() => {
+    console.log('step',step)
+  }, [step])
+  
+
   const importPayrollCaculate = (data) => {
     setLoading(true);
     setPayroll([]);
@@ -1403,15 +1439,15 @@ const CalculatePayroll = ({ ...props }) => {
                 >
                   <Row
                     justify="start"
+                    gutter={20}
                     style={{
                       textAlign: "center",
                       padding: "20px",
                     }}
                   >
-                    <Col md={4} style={{ minWidth: "200px" }}>
+                    <Col>
                       <Button
                         size="large"
-                        style={{ minWidth: "200px" }}
                         block
                         htmlType="button"
                         icon={<FileExcelOutlined />}
@@ -1452,14 +1488,9 @@ const CalculatePayroll = ({ ...props }) => {
                       <>
                         {consolidated && (
                           <>
-                            <Col
-                              md={4}
-                              offset={1}
-                              style={{ minWidth: "200px" }}
-                            >
+                            <Col >
                               <Button
                                 size="large"
-                                style={{ minWidth: "210px" }}
                                 block
                                 icon={<FileExcelOutlined />}
                                 htmlType="button"
@@ -1482,10 +1513,9 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
 
                         {step == 0 && calculate && (
-                          <Col md={4} offset={1} style={{ minWidth: "200px" }}>
+                          <Col md={4}  style={{ minWidth: "200px" }}>
                             <Button
                               size="large"
-                              style={{ minWidth: "200px" }}
                               block
                               htmlType="button"
                               onClick={() => reCalculatePayroll([...payroll])}
@@ -1499,12 +1529,9 @@ const CalculatePayroll = ({ ...props }) => {
                           consolidated.status <= 2 && (
                             <Col
                               md={4}
-                              offset={1}
-                              style={{ minWidth: "200px" }}
                             >
                               <Button
                                 size="large"
-                                style={{ minWidth: "200px" }}
                                 block
                                 icon={<UnlockOutlined />}
                                 htmlType="button"
@@ -1519,6 +1546,7 @@ const CalculatePayroll = ({ ...props }) => {
                                     components: (
                                       <>
                                         <Row
+                                          gutter={20}
                                           style={{
                                             width: "100%",
                                             marginTop: "5px",
@@ -1546,10 +1574,9 @@ const CalculatePayroll = ({ ...props }) => {
                               (consolidated.status <= 2 ||
                                 consolidated.status == 6)) ||
                               (isOpen && !consolidated)) && (
-                              <Col md={4} offset={1}>
+                              <Col md={4} >
                                 <Button
                                   size="large"
-                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<LockOutlined />}
                                   htmlType="button"
@@ -1562,14 +1589,9 @@ const CalculatePayroll = ({ ...props }) => {
                             {step == 2 &&
                               consolidated &&
                               consolidated.status < 3 && (
-                                <Col
-                                  md={4}
-                                  offset={1}
-                                  style={{ minWidth: "200px" }}
-                                >
+                                <Col >
                                   <Button
                                     size="large"
-                                    style={{ minWidth: "200px" }}
                                     block
                                     icon={<FileDoneOutlined />}
                                     htmlType="button"
@@ -1581,13 +1603,9 @@ const CalculatePayroll = ({ ...props }) => {
                               )}
                             {step == 3 && (
                               <Col
-                                md={4}
-                                offset={1}
-                                style={{ minWidth: "200px" }}
                               >
                                 <Button
                                   size="large"
-                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<StopOutlined />}
                                   htmlType="button"
@@ -1626,6 +1644,16 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
                       </>
                     )}
+                    <Col>
+                      <Button
+                        size="large"
+                        block
+                        htmlType="button"
+                        onClick={() => generateDispersion()}
+                      >
+                        Generar disperción
+                      </Button>
+                    </Col>
                   </Row>
                 </div>
                 {previousStep && (
@@ -1689,7 +1717,7 @@ const CalculatePayroll = ({ ...props }) => {
                             : "No se encontraron resultados.",
                         }}
                         rowSelection={
-                          consolidated && step == 2 && consolidated.status < 3
+                          consolidated && step > 1 && (consolidated.status <= 3 || consolidated.status == 6)
                             ? rowSelectionPerson
                             : null
                         }
