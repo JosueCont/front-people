@@ -38,7 +38,7 @@ const Dashboard = ({
                         <Typography.Title style={{marginBottom:0}} level={1}>
                             <Space size={10}>
                                 <>{currentNode && currentNode.name}</>
-                                <SettingOutlined style={{ cursor:'pointer' }} onClick={()=> router.push(`business/companies/${currentNode.id}`) } />
+                                <SettingOutlined style={{ cursor:'pointer' }} onClick={()=> router.push(`/business/companies/${currentNode.id}`) } />
                             </Space>
                         </Typography.Title>
                         <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>

@@ -310,7 +310,7 @@ const NewHeader = ({
                   >
                     <Space size={"middle"}>
                       {screens.sm && screens.md &&
-                        <span style={{ color: 'white' }} onClick={() => router.push(`business/companies/${props.currentNode.id}`)}>
+                        <span style={{ color: 'white' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
                           {props.currentNode ? props.currentNode.name : ""}
                         </span>}
                       <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
