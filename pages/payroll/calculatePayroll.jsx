@@ -1643,17 +1643,22 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
                       </>
                     )}
-                    <Col>
-                      <Button
-                        size="large"
-                        block
-                        htmlType="button"
-                        onClick={() => generateDispersion()}
-                        loading={downloading}
-                      >
-                        Generar disperción
-                      </Button>
-                    </Col>
+                    {
+                      consolidated &&
+                      (consolidated.status <= 3 || consolidated.status >= 6 ) &&
+                      step >= 2 &&
+                      <Col>
+                        <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          onClick={() => generateDispersion()}
+                          loading={downloading}
+                        >
+                          Generar disperción
+                        </Button>
+                      </Col>
+                    }
                   </Row>
                 </div>
                 {previousStep && (
