@@ -155,7 +155,7 @@ const PermissionsReport = ({ permissions, ...props }) => {
         url += `status=${status}&`;
       }
       let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
+      let data = response.data;
       setPermissionsList(data);
     } catch (e) {
       console.log(e);

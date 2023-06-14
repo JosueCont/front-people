@@ -148,7 +148,7 @@ const HolidaysReport = ({ permissions, ...props }) => {
       }
 
       let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
+      let data = response.data;
       data.map((item, index) => {
         item.key = index;
         return item;

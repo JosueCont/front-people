@@ -45,8 +45,8 @@ const InabilityReport = ({ permissions, ...props }) => {
       render: (collaborator) => {
         return (
           <>
-            {collaborator.first_name ? collaborator.first_name + " " : null}
-            {collaborator.flast_name ? collaborator.flast_name : null}
+            {collaborator?.first_name ? collaborator?.first_name + " " : null}
+            {collaborator?.flast_name ? collaborator?.flast_name : null}
           </>
         );
       },
@@ -56,7 +56,7 @@ const InabilityReport = ({ permissions, ...props }) => {
       dataIndex: "collaborator",
       key: "company",
       render: (collaborator) => {
-        return <>{props.currenNode.name}</>;
+        return <>{props.currentNode.name}</>;
       },
     },
     {
@@ -124,7 +124,7 @@ const InabilityReport = ({ permissions, ...props }) => {
   ];
 
   const download = async (item = null) => {
-    let dataId = { business_id: props.currenNode.id };
+    let dataId = { business_id: props.currentNode.id };
     if (item) {
       dataId = {
         incapacity_id: item.id,
@@ -189,7 +189,7 @@ const InabilityReport = ({ permissions, ...props }) => {
     setLoading(true);
     try {
       setLoading(true);
-      let url = `/person/incapacity/?person__node__id=${props.currenNode.id}&`;
+      let url = `/person/incapacity/?person__node__id=${props.currentNode.id}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -208,7 +208,7 @@ const InabilityReport = ({ permissions, ...props }) => {
       }
 
       let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
+      let data = response.data;
       data = data.map((item) => {
         item.key = item.id;
         return item;
@@ -248,7 +248,7 @@ const InabilityReport = ({ permissions, ...props }) => {
 
   useEffect(() => {
     if (props.currentNode) getIncapacity();
-  }, [props.currenNode]);
+  }, [props.currentNode]);
 
   return (
     <>
@@ -277,7 +277,7 @@ const InabilityReport = ({ permissions, ...props }) => {
                 <SelectDepartment
                   style={{ width: 100 }}
                   name="department"
-                  companyId={props.currenNode && props.currenNode.id}
+                  companyId={props.currentNode && props.currentNode.id}
                 />
               </Col>
               <Col>
