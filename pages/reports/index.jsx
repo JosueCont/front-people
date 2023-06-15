@@ -51,9 +51,9 @@ const Reports = () => {
               tabPosition="left"
               className="tabReports"
             >
-              <TabPane tab={<UsersIcon />} key="1">
-                <CollaboratorsReport />
-              </TabPane>
+              {/*<TabPane tab={<UsersIcon />} key="1">*/}
+              {/*  <CollaboratorsReport />*/}
+              {/*</TabPane>*/}
               <TabPane tab={<NominaIcon />} key="2">
                 <PayrollReport />
               </TabPane>

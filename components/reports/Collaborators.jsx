@@ -154,7 +154,7 @@ const CollaboratorsReport = ({ permissions, ...props }) => {
     }
     try {
       let response = await Axios.post(
-        API_URL + `/person/employee-report`,
+        API_URL + `/person/employee-report/`,
         QueryData
       );
       let data = response.data;
