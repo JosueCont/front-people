@@ -30,6 +30,14 @@ const PayrollReport = ({ permissions, ...props }) => {
 
   const columns = [
     {
+      title: "UUID",
+      key: "uuid",
+      width: 1,
+      render: (payroll) => {
+        return payroll?.uuid;
+      },
+    },
+    {
       title: "Núm. trabajador",
       width: 1,
       render: (payroll) => {
