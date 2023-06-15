@@ -274,7 +274,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                 <SelectPaymentCalendar
                   setCalendarId={(value) => setCalendar(value)}
                   name="calendar"
-                  //rules={[ruleRequired]}
+                  rules={[ruleRequired]}
                   style={{ width: "100%" }}
                 />
               </Col>
