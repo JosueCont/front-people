@@ -652,7 +652,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item name="bank_dispersion" label="Disperción bancaria">
+              <Form.Item name="bank_dispersion" label="Dispersión bancaria">
                 <Select options={bankDispersionList} allowClear />
               </Form.Item>
             </Col>
