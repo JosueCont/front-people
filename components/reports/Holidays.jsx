@@ -89,21 +89,7 @@ const HolidaysReport = ({ permissions, ...props }) => {
           ? "Aprobado"
           : "Rechazado";
       },
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_vacations && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
-      },
-    },
+    }
   ];
 
   /* Select status */
@@ -181,33 +167,33 @@ const HolidaysReport = ({ permissions, ...props }) => {
     }
 
     try {
-      // downLoadFileBlob(
-      //     API_URL + `/person/vacation-report-export`,
-      //     "Reporte_de_Vacaciones.xlsx",
-      //     "POST",
-      //     dataId
-      // )
-      let response = await Axios.post(
-        API_URL + `/person/vacation-report-export`,
-        dataId
-      );
-      const type = response.headers["content-type"];
-      const blob = new Blob([response.data], {
-        type: type,
-        encoding: "UTF-8",
-      });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = item
-        ? "Reporte_de_Vacaciones(" +
-          (item.collaborator.first_name ? item.collaborator.first_name : null) +
-          "_" +
-          (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
-          "_" +
-          (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
-          ").csv"
-        : "Reporte_de_Vacaciones.csv";
-      link.click();
+      downLoadFileBlob(
+          API_URL + `/person/vacation-report-export`,
+          "Reporte_de_Vacaciones.xlsx",
+          "POST",
+          dataId
+      )
+      // let response = await Axios.post(
+      //   API_URL + `/person/vacation-report-export`,
+      //   dataId
+      // );
+      // const type = response.headers["content-type"];
+      // const blob = new Blob([response.data], {
+      //   type: type,
+      //   encoding: "UTF-8",
+      // });
+      // const link = document.createElement("a");
+      // link.href = window.URL.createObjectURL(blob);
+      // link.download = item
+      //   ? "Reporte_de_Vacaciones(" +
+      //     (item.collaborator.first_name ? item.collaborator.first_name : null) +
+      //     "_" +
+      //     (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
+      //     "_" +
+      //     (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
+      //     ").csv"
+      //   : "Reporte_de_Vacaciones.csv";
+      // link.click();
     } catch (e) {
       console.log(e);
     }

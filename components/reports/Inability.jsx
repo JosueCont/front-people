@@ -41,13 +41,14 @@ const InabilityReport = ({ permissions, ...props }) => {
   const columns = [
     {
       title: "Colaborador",
-      dataIndex: "collaborator",
-      key: "collaborator",
+      dataIndex: "person",
+      key: "person",
       render: (collaborator) => {
         return (
           <>
             {collaborator?.first_name ? collaborator?.first_name + " " : null}
-            {collaborator?.flast_name ? collaborator?.flast_name : null}
+            {collaborator?.flast_name ? collaborator?.flast_name + " ": null}
+            {collaborator?.mlast_name ? collaborator?.mlast_name : null}
           </>
         );
       },
@@ -102,19 +103,19 @@ const InabilityReport = ({ permissions, ...props }) => {
           : "Rechazado";
       },
     },
-    {
-      title: "Acciones",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_inabilitys && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
-      },
-    },
+    // {
+    //   title: "Acciones",
+    //   key: "actions",
+    //   render: (record, item) => {
+    //     return (
+    //       <>
+    //         {permissions.export_inabilitys && (
+    //           <DownloadOutlined onClick={() => download(item)} />
+    //         )}
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
   /* Select status */

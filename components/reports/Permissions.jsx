@@ -96,20 +96,20 @@ const PermissionsReport = ({ permissions, ...props }) => {
         );
       },
     },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_permits && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
-      },
-    },
+    // {
+    //   title: "Acciones",
+    //   dataIndex: "actions",
+    //   key: "actions",
+    //   render: (record, item) => {
+    //     return (
+    //       <>
+    //         {permissions.export_permits && (
+    //           <DownloadOutlined onClick={() => download(item)} />
+    //         )}
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
   /* Select status */

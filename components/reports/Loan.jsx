@@ -128,21 +128,21 @@ const LoanReport = ({ permissions, ...props }) => {
           ? "Rechazado"
           : "Pagado";
       },
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_loans && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
-      },
-    },
+    }
+    // {
+    //   title: "Acciones",
+    //   dataIndex: "actions",
+    //   key: "actions",
+    //   render: (record, item) => {
+    //     return (
+    //       <>
+    //         {permissions.export_loans && (
+    //           <DownloadOutlined onClick={() => download(item)} />
+    //         )}
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
   /* Options for select */
