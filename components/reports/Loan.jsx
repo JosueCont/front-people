@@ -195,7 +195,7 @@ const LoanReport = ({ permissions, ...props }) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { person__node__id: props.currentNode.id };
+    let dataId = { node__id: props.currentNode.id };
 
     if (item) {
       dataId = {
@@ -256,7 +256,7 @@ const LoanReport = ({ permissions, ...props }) => {
     setLoading(true);
     try {
       let url =
-        API_URL + `/payroll/loan/?person__node__id=${props.currentNode.id}&`;
+        API_URL + `/payroll/loan/?node__id=${props.currentNode.id}&`;
       if (personID) {
         url += `person__id=${personID}&`;
       }

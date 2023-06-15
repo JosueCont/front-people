@@ -22,6 +22,7 @@ import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import esES from "antd/lib/locale/es_ES";
+import {downLoadFileBlob} from "../../utils/functions";
 
 const InabilityReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -148,27 +149,14 @@ const InabilityReport = ({ permissions, ...props }) => {
     }
 
     try {
+
+      downLoadFileBlob(API_URL + `/person/incapacity/download_data/`,
+          "Reporte_de_Incapacidades.xlsx",
+          "POST",dataId)
       let response = await Axios.post(
         API_URL + `/person/incapacity/download_data/`,
         dataId
       );
-      const type = response.headers["content-type"];
-      const blob = new Blob([response.data], {
-        type: type,
-        encoding: "UTF-8",
-      });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = item
-        ? "Reporte_de_Incapacidades(" +
-          (item.collaborator.first_name ? item.collaborator.first_name : null) +
-          "_" +
-          (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
-          "_" +
-          (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
-          ").csv"
-        : "Reporte_de_Incapacidades.csv";
-      link.click();
     } catch (e) {
       console.log(e);
     }
@@ -204,7 +192,7 @@ const InabilityReport = ({ permissions, ...props }) => {
       if (date1 && date2) {
         let d1 = moment(dateOne).format("YYYY-MM-DD");
         let d2 = moment(dateTwo).format("YYYY-MM-DD");
-        url += `departure_date__gte=${d1}&departure_date__lte=${d2}&`;
+        url += `start_date=${d1}&end_date=${d2}&`;
       }
 
       let response = await Axios.get(API_URL + url);

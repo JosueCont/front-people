@@ -20,6 +20,7 @@ import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
 import esES from "antd/lib/locale/es_ES";
+import {downLoadFileBlob} from "../../utils/functions";
 
 const HolidaysReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -180,6 +181,12 @@ const HolidaysReport = ({ permissions, ...props }) => {
     }
 
     try {
+      // downLoadFileBlob(
+      //     API_URL + `/person/vacation-report-export`,
+      //     "Reporte_de_Vacaciones.xlsx",
+      //     "POST",
+      //     dataId
+      // )
       let response = await Axios.post(
         API_URL + `/person/vacation-report-export`,
         dataId
