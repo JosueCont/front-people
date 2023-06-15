@@ -274,7 +274,7 @@ const LoanReport = ({ permissions, ...props }) => {
       }
 
       let response = await Axios.get(url);
-      let data = response.data.results;
+      let data = response.data;
 
       setLendingList(data);
     } catch (e) {
