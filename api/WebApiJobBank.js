@@ -59,6 +59,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
     }
 
+    static updateShowCustomerNameVacant(id, data){
+        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+    }
+
     static deleteVacant(data){
         // return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
         return WebApi.ApisType('/job-bank/vacant/massive_delete/', 'post', data);
