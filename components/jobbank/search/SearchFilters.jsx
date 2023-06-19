@@ -96,7 +96,7 @@ const SearchFilters = () => {
                 </SectionTitle>
                 <SectionBody>
                     <SectionSubtitle>
-                        <p>Ubicación</p>
+                        <p>Estado</p>
                         {existLocation && (
                             <span onClick={() => cleanFilter('location')}>
                                 Limpiar filtro
