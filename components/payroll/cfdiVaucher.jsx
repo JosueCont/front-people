@@ -561,7 +561,7 @@ const CfdiVaucher = ({
                   ? "Cargando..."
                   : "No se encontraron resultados.",
               }}
-              rowSelection={!rowSelectionPerson}
+              rowSelection={rowSelectionPerson}
               pagination={false}
             />
           </Col>

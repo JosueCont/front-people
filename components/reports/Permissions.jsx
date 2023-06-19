@@ -22,6 +22,7 @@ import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
 import esES from "antd/lib/locale/es_ES";
+import {downLoadFileBlob} from "../../utils/functions";
 
 const PermissionsReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -95,20 +96,20 @@ const PermissionsReport = ({ permissions, ...props }) => {
         );
       },
     },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_permits && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
-      },
-    },
+    // {
+    //   title: "Acciones",
+    //   dataIndex: "actions",
+    //   key: "actions",
+    //   render: (record, item) => {
+    //     return (
+    //       <>
+    //         {permissions.export_permits && (
+    //           <DownloadOutlined onClick={() => download(item)} />
+    //         )}
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
   /* Select status */
@@ -155,7 +156,7 @@ const PermissionsReport = ({ permissions, ...props }) => {
         url += `status=${status}&`;
       }
       let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
+      let data = response.data;
       setPermissionsList(data);
     } catch (e) {
       console.log(e);
@@ -179,27 +180,12 @@ const PermissionsReport = ({ permissions, ...props }) => {
     }
 
     try {
-      let response = await Axios.post(
-        API_URL + `/person/permit/download_data/`,
-        dataId
-      );
-      const type = response.headers["content-type"];
-      const blob = new Blob([response.data], {
-        type: type,
-        encoding: "UTF-8",
-      });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = item
-        ? "Reporte_de_permisos(" +
-          (item.collaborator.first_name ? item.collaborator.first_name : null) +
-          "_" +
-          (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
-          "_" +
-          (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
-          ").csv"
-        : "Reporte_de_permisos.csv";
-      link.click();
+      downLoadFileBlob(
+          API_URL + `/person/permit/download_data/`,
+          "Reporte_de_permisos.xlsx",
+          "POST",
+          dataId
+      )
     } catch (e) {
       console.log(e);
     }

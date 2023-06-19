@@ -59,7 +59,7 @@ const AssessmentsTable = ({
     }
 
     const actionDelete = async () => {
-        let groups_id = itemsSelected?.map(item => item.id);
+        let groups_id = itemsSelected?.map(item => item.group_kuiz_id);
         try {
             await WebApiAssessment.deleteGroupAssessments({ groups_id });
             getListGroups(current_node?.id)
