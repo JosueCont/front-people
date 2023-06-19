@@ -102,6 +102,7 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
         form={formPassword}
         onFinish={changePassword}
         autoComplete="off"
+        className="form-details-person"
       >
         {isRegister && <Form.Item
           name="email_person_userd"

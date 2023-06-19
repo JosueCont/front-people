@@ -223,7 +223,7 @@ const FormEmergencyContact = ({ person_id = null, ...props }) => {
         layout="vertical"
         form={formContactEmergency}
         onFinish={formFinishContactE}
-        className="inputs_form_responsive"
+        className="inputs_form_responsive form-details-person"
       >
         <Row gutter={20}>
           <Col lg={6} xs={22} md={8}>
