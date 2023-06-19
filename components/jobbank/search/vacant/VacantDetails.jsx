@@ -7,7 +7,8 @@ import {
     VacantOptions,
     VacantCards,
     VacantHeader,
-    ContentVertical
+    ContentVertical,
+    SearchLogo
 } from '../SearchStyled';
 import {
     CheckCircleFilled,
@@ -19,6 +20,7 @@ import VacantFeatures from './VacantFeatures';
 import VacantDescription from './VacantDescription';
 import VacantEducation from './VacantEducation';
 import VacantBenefits from './VacantBenefits';
+import { Image } from 'antd';
 
 const VacantDetails = ({
     loading = false,
@@ -36,11 +38,20 @@ const VacantDetails = ({
 
     return (
         <ContentVertical gap='16px'>
+            <SearchLogo>
+                <Image
+                    src='/images/portadaHex.png'
+                    preview={false}
+                />
+            </SearchLogo>
             <VacantHeader>
                 <VacantTitle>
                     <span />
                     <VacantName>
-                        <p>{infoVacant?.job_position || 'Vacante'}</p>
+                        <p>
+                            {infoVacant?.job_position || 'Vacante'}
+                            {infoVacant?.show_customer_name && ` (${infoVacant?.customer?.name})`}
+                        </p>
                     </VacantName>
                 </VacantTitle>
                 <VacantOptions>
@@ -51,9 +62,9 @@ const VacantDetails = ({
                         <ArrowLeftOutlined />
                         <span>Regresar</span>
                     </SearchBtn>
-                    <ButtonPrimary onClick={()=> router.push({
+                    <ButtonPrimary onClick={() => router.push({
                         pathname: '/jobbank/autoregister/candidate',
-                        query: {...router.query, back: 'details'}
+                        query: { ...router.query, back: 'details' }
                     })}>
                         <CheckCircleFilled />
                         <span>Aplicar</span>
@@ -77,7 +88,7 @@ const VacantDetails = ({
                     <VacantDescription
                         loading={loading}
                         title='Descripción de la vacante'
-                        description={infoVacant?.description}
+                        description={infoVacant?.description?.split('\n')}
                     />
                 )}
                 {infoVacant?.education_and_competence?.knowledge && (
@@ -90,15 +101,13 @@ const VacantDetails = ({
                 {infoVacant?.education_and_competence?.experience && (
                     <VacantDescription
                         loading={loading}
-                        isList={true}
                         title='Experiencia requerida'
-                        description={infoVacant?.education_and_competence?.experience}
+                        description={infoVacant?.education_and_competence?.experience?.split(',')}
                     />
                 )}
                 {infoVacant?.education_and_competence?.technical_skills?.length > 0 && (
                     <VacantDescription
                         loading={loading}
-                        isList={true}
                         title='Habilidades técnicas'
                         description={infoVacant?.education_and_competence?.technical_skills}
                     />
