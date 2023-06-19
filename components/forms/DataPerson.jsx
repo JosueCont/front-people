@@ -390,7 +390,12 @@ const DataPerson = ({
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
-      <Form onFinish={onFinishPerson} layout={"vertical"} form={formPerson}>
+      <Form
+        onFinish={onFinishPerson}
+        layout={"vertical"}
+        form={formPerson}
+        className="form-details-person"
+      >
         <Row justify="center">
           <Col lg={22}>
             <Row gutter={20}>

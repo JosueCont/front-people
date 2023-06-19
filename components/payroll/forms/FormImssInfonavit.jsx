@@ -500,6 +500,7 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
           layout="vertical"
           form={formImssInfonavit}
           onFinish={formImmssInfonavitAct}
+          className="form-details-person"
         >
           <Row>
             <Col lg={6} xs={22} offset={1}>
@@ -665,6 +666,7 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
           layout="vertical"
           form={formInfonavitManual}
           onFinish={newInfonavit}
+          className="form-details-person"
         >
           <Row>
             <Col span={11}>

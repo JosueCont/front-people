@@ -234,7 +234,7 @@ const FormFamily = ({ person_id = null, ...props }) => {
         layout={"vertical"}
         form={formFamily}
         onFinish={formFinishFamily}
-        className="inputs_form_responsive"
+        className="inputs_form_responsive form-details-person"
       >
         <Row gutter={20}>
           <Col lg={8} xs={22} md={12}>

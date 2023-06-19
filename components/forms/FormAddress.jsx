@@ -101,7 +101,12 @@ const FormAddress = ({ person_id, ...props }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Dirección</Title>
       </Row>
-      <Form layout={"vertical"} form={formAddress} onFinish={formAddressPerson}>
+      <Form 
+        layout={"vertical"}
+        form={formAddress}
+        onFinish={formAddressPerson}
+        className="form-details-person"
+      >
         <Row>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
