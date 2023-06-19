@@ -30,20 +30,14 @@ const VacantDescription = ({
         </SectionVoid>
     )
 
-    const DescriptionInfo = () => { 
+    const DescriptionInfo = () => {
         return description ? (
             <>
-                {isList ? (
+                {Array.isArray(description) ? (
                     <FeaturesList>
-                        {Array.isArray(description) ? (
-                            <>{description.map((item, idx)=>(
-                                <li key={idx}>{item}</li>
-                            ))}</>
-                        ): (
-                            <>{description.split(',').map((item, idx)=>(
-                                <li key={idx}>{item}</li>
-                            ))}</>
-                        )}
+                        <>{description.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                        ))}</>
                     </FeaturesList>
                 ) : (
                     <FeaturesText color='gray'>

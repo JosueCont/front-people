@@ -66,7 +66,7 @@ const VacantBenefits = ({
             </SectionTitle>
             <FeaturesContent responsive>
                 <Field title='Sueldo mensual bruto' value={benefits?.gross_salary
-                    ? `$ ${formatNum(benefits?.gross_salary)} MXN`
+                    ? `$${formatNum(benefits?.gross_salary)} MXN`
                     : null
                 } />
                 

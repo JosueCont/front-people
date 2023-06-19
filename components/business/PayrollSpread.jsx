@@ -108,12 +108,12 @@ const [filterName, setFilterName] = useState(null)
       key: 'emisor_bank',
     },
     {
-      title: 'Num. Sucursal Bancaria',
+      title: 'Núm. Sucursal Bancaria',
       dataIndex: 'branch_number',
       key: 'branch_office',
     },
     {
-        title: 'Num. de Plaza',
+        title: 'Núm. de Plaza',
         dataIndex: 'commercial_zone_number',
         key: 'no_work_title',
     },
@@ -148,7 +148,7 @@ const [filterName, setFilterName] = useState(null)
         setSaving(true)
         let response = await WebApiPayroll.updPayrollSpred(data, selectedItem)
         if(response.status === 201){
-            message.success("Disperción actualizada")
+            message.success("Dispersión actualizada")
             closeModal()
             getInfo(filterName)
         }
@@ -166,7 +166,7 @@ const [filterName, setFilterName] = useState(null)
             })
             form.setFields(errors)
         }else{
-            message("Disperción no actualizada")
+            message("Dispersión no actualizada")
         }
       }
   }
@@ -177,7 +177,7 @@ const [filterName, setFilterName] = useState(null)
         let response = await WebApiPayroll.savePayrollSpred(data)
         console.log('responseSave', response)
         if(response.status === 201){
-            message.success("Disperción creada")
+            message.success("Dispersión creada")
             closeModal()
             getInfo(filterName)
         }
@@ -195,7 +195,7 @@ const [filterName, setFilterName] = useState(null)
             })
             form.setFields(errors)
         }else{
-            message("Disperción no guardada")
+            message("Dispersión no guardada")
         }
       }
   }
@@ -205,9 +205,9 @@ const [filterName, setFilterName] = useState(null)
         setSaving(true)
         let response = await WebApiPayroll.deletePayrollSpred(selectedItem)
         if(response.status === 200){
-            message.success("Disperción eliminada")
+            message.success("Dispersión eliminada")
         }else{
-            message.error("Disperción no eliminada")
+            message.error("Dispersión no eliminada")
         }
         setModalDeleteVisible(false)
         setSelectedItem(null)
@@ -215,7 +215,7 @@ const [filterName, setFilterName] = useState(null)
         getInfo(filterName)
     } catch (error) {
         setSaving(false)
-        message.error("Ocurrio un error al eliminar la disperción")
+        message.error("Ocurrio un error al eliminar la dispersión")
     }
   }
 
@@ -282,7 +282,7 @@ const [filterName, setFilterName] = useState(null)
             dataSource={dataList}
             pagination={false}
         />
-        <Modal onOk={() => form.submit()} title={selectedItem?'Editar disperción' : 'Crear disperción'} visible={showModal} onCancel={closeModal}>
+        <Modal onOk={() => form.submit()} title={selectedItem?'Editar dispersión' : 'Crear dispersión'} visible={showModal} onCancel={closeModal}>
         <Form
             onFinish={onFinish}
             
@@ -299,10 +299,10 @@ const [filterName, setFilterName] = useState(null)
                 <Form.Item rules={[ruleRequired,{max:11, message:'Ingresa maximo 11 digitos'}]} label="Cuenta bancaria emisora" name={'bank_account'} >
                     <Input />
                 </Form.Item>
-                <Form.Item rules={[ruleRequired]} label="Numero de sucursal bancaria" name={'branch_number'} >
+                <Form.Item rules={[ruleRequired]} label="Número de sucursal bancaria" name={'branch_number'} >
                     <Input />
                 </Form.Item>
-                <Form.Item rules={[ruleRequired]} label="Numero de plaza" name={'commercial_zone_number'} >
+                <Form.Item rules={[ruleRequired]} label="Número de plaza" name={'commercial_zone_number'} >
                     <Input />
                 </Form.Item>
             </Spin>

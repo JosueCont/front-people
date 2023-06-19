@@ -51,7 +51,7 @@ const GroupView = ({ ...props }) => {
     if(isUserKhor){
       let permsUser = validateUser?.user?.khor_perms;
       if( permsUser != null){
-        let permYnl = validateUser?.user?.khor_perms.filter(item => item === "Khor Plus YNL")
+        let permYnl = validateUser?.user?.khor_perms.filter(item => item === "Khor Plus Red Social")
         if( permYnl.length > 0 ){
           setValidatePermition(true);
         }else{

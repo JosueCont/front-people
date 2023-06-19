@@ -55,11 +55,9 @@ const VacantFeatures = ({
                 <p>Característcas de la vacante</p>
             </SectionTitle>
             <FeaturesContent responsive>
-                <Field title='Producto' value={infoVacant?.product} />
-                <Field title='Folio' value={infoVacant?.num_project} />
                 <Field title='Modalidad' value={modality} />
                 <Field title='Horario' value={infoVacant?.working_hours} />
-                <Field title='Ubicación' value={infoVacant?.location?.name} />
+                <Field title='Estado' value={infoVacant?.location?.name} />
                 <Field title='Género' value={gender} />
                 <Field title='Edad' value={infoVacant?.age_range?.length > 0
                     ? infoVacant?.age_range?.join(' - ')

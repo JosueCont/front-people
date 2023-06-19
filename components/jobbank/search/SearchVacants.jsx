@@ -7,6 +7,7 @@ import {
     SearchHeader,
     SearchAside,
     SearchBody,
+    SearchLogo,
     SearchTitle,
     SearchPagination,
     CardItem,
@@ -16,7 +17,8 @@ import { useSelector } from 'react-redux';
 import {
     Pagination,
     Skeleton,
-    Empty
+    Empty,
+    Image
 } from 'antd';
 import { useRouter } from 'next/router';
 
@@ -44,6 +46,12 @@ const SearchVacants = () => {
 
     return (
         <SearchContent>
+            <SearchLogo grid={true}>
+                <Image
+                    src='/images/portadaHex.png'
+                    preview={false}
+                />
+            </SearchLogo>
             <SearchHeader>
                 <SearchTitle>
                     <p>Vacantes encontradas: {list_vacancies_search?.count ?? 0}</p>

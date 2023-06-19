@@ -464,6 +464,11 @@ export const optionsStatusVacant = [
     { value: 4, key: 4, label: "Cubierta" },
 ];
 
+export const optionsShowCustomerNameVacant = [
+    { value: true, key: 1, label: "Mostrar" },
+    { value: false, key: 2, label: "Ocultar" }
+];
+
 export const optionsLangVacant = [
     { value: 1, key: 1, label: "Inglés" },
     { value: 2, key: 2, label: "Francés" },
