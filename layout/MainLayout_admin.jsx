@@ -27,6 +27,7 @@ const MainLayoutAdmin = ({
   nómina = false,
   pageTitle = "KHOR Plus",
   autoregister = false,
+  logoAlign = 'left',
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -342,6 +343,7 @@ const MainLayoutAdmin = ({
             hideLogo={hideLogo}
             setShowEvents={setShowEvents}
             config={props.config}
+            logoAlign={logoAlign}
           />
           <Layout>
             {!hideMenu && props.currentNode && (

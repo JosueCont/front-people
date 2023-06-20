@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Form,
   Row,
@@ -38,11 +38,11 @@ const TabEducation = ({
     })
   }
 
-  const optionsByCategory = () =>{
+  const optionsByCategory = useMemo(() =>{
     if(!categorySelected) return [];
     const options = item => item.category === categorySelected;
     return list_sub_categories.filter(options);
-  }
+  },[categorySelected, list_sub_categories])
 
   return (
     <Row gutter={[24,0]}>
@@ -79,11 +79,11 @@ const TabEducation = ({
             showSearch
             placeholder='Seleccionar una subcategoría'
             notFoundContent='No se encontraron resultados'
-            disabled={optionsByCategory().length <= 0}
+            disabled={optionsByCategory.length <= 0}
             loading={load_sub_categories}
             optionFilterProp='children'
           >
-            {optionsByCategory().map(item=> (
+            {optionsByCategory.map(item=> (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>

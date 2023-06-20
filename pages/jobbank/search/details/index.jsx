@@ -44,7 +44,10 @@ const index = ({
 
     return (
         <LayoutSearch>
-            <AutoRegister currentNode={infoVacant?.node}>
+            <AutoRegister
+                currentNode={infoVacant?.node}
+                logoAlign='right'
+            >
                 <VacantDetails
                     loading={loading}
                     infoVacant={infoVacant}

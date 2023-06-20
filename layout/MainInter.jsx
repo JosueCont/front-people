@@ -12,6 +12,7 @@ const MainLayoutInter = ({
   hideLogo,
   autoregister = false,
   hideProfile = false,
+  logoAlign,
   ...props
 }) => {
 
@@ -28,6 +29,7 @@ const MainLayoutInter = ({
             onClickImage={onClickImage}
             autoregister={autoregister}
             hideProfile={hideProfile}
+            logoAlign={logoAlign}
         >
             {props.children}
         </MainLayoutAdmin>
