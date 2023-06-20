@@ -4,3 +4,7 @@
   background: black;
   content: "hola";
 }
+
+.form-details-person .ant-form-item .ant-form-item-label{
+  font-weight: bold;
+}

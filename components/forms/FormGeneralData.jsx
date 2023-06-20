@@ -102,6 +102,7 @@ const FormGeneralData = ({ person_id = null }) => {
         layout={"vertical"}
         form={formGeneralData}
         onFinish={formGeneralDataPerson}
+        className="form-details-person"
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>

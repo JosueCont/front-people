@@ -85,7 +85,11 @@ const documentModal = ({ person_id, node,getDocumentType, ...props }) => {
           onCancel={() => closeDialog()}
           footer={null}
         >
-          <Form onFinish={onFinish} form={form}>
+          <Form
+            onFinish={onFinish}
+            form={form}
+            className="form-details-person"
+          >
             <Form.Item name="document_type" rules={[ruleRequired]}>
               <Select
                 options={props.cat_document_type.map((item) => {

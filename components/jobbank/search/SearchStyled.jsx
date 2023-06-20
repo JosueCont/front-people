@@ -2,32 +2,61 @@ import { Skeleton } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 
+export const LayoutSearch = styled.section`
+    & main.ant-layout-content{
+        background-color: #dbdbdb!important;
+    }
+`;
+
 export const SearchContent = styled.section`
     display: grid;
     grid-template-columns: 400px 1fr;
-    grid-template-rows: 76px 1fr;
-    grid-auto-flow: dense;
+    grid-template-rows: 1fr 76px;
+    grid-auto-flow: row dense;
     gap: 16px;
 
     @media (max-width: 992px) {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 76px 1fr;
+        grid-template-rows: auto auto 76px 1fr;
     }
+`;
+
+export const SearchLogo = styled.section`
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    & .ant-image,
+    .ant-image-img{
+        height: 100%;
+        width: auto;
+    }
+    @media (max-width: 1137px) {
+       height: auto;
+       & .ant-image,
+        .ant-image-img{
+            height: auto;
+            width: 100%;
+        }
+    }
+    ${({grid}) => grid && css`
+        grid-column: 1 / 3;
+        grid-row: 1 / 2;
+    `}
 `;
 
 export const SearchHeader = styled.section`
     grid-column: 2 / 3;
-    grid-row: 1;
+    grid-row: 2 / 3;
 
     @media (max-width: 992px) {
         grid-column: 1 / 3;
-        grid-row: 2 / 3;
+        grid-row: 3 / 4;
     }
 `;
 
 export const SearchAside = styled.section`
     grid-column: 1 / 2;
-    grid-row: 1 / 3;
+    grid-row: 2 / 4;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -35,17 +64,17 @@ export const SearchAside = styled.section`
 
     @media (max-width: 992px) {
         grid-column: 1 / 3;
-        grid-row: 1 / 2;
+        grid-row: 2 / 3;
     }
 `;
 
 export const SearchBody = styled.section`
     grid-column: 2 / 3;
-    grid-row: 2 / 3;
+    grid-row: 3 / 4;
 
     @media (max-width: 992px) {
         grid-column: 1 / 3;
-        grid-row: 3 / 4;
+        grid-row: 4 / 5;
     }
 `;
 
@@ -153,8 +182,8 @@ export const ContentCards = styled.div`
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-auto-rows: 200px;
-    grid-auto-flow: dense;
+    grid-auto-rows: 225px;
+    grid-auto-flow: row dense;
 `;
 
 export const CardItem = styled.div`
@@ -199,18 +228,11 @@ export const CardTitle = styled.div`
 
 export const CardDescription = styled.div`
     display: flex;
+    gap: 4px;
     flex-direction: column;
     min-height: calc(100% - 70.14px);
     max-height: calc(100% - 70.14px);
     overflow-y: auto;
-    & p{
-        margin-bottom: 0px;
-        font-weight: 500;
-    }
-    & span{
-        font-weight: normal;
-        color: gray;
-    }
 `;
 
 export const CardsVoid = styled.div`
@@ -269,7 +291,7 @@ export const ContentEnd = styled.div`
 
 export const ContentVertical = styled.div`
     display: flex;
-    flex-direction: column;
+    flex-direction: ${({ direction }) => direction ? direction : 'column'};
     gap: ${({ gap }) => gap ? gap : '0px'};
 `;
 
@@ -369,7 +391,7 @@ export const FeaturesContent = styled(ContentVertical)`
 
 export const FeaturesText = styled.p`
     margin-bottom: 0px;
-    font-size: 14px;
+    font-size: ${({size}) => size ? size : '14px'};
     line-height: 1.2;
     color: ${({ color }) => color ? color : '#005eb8'};
     ${({ weight }) => weight && css`
@@ -378,8 +400,8 @@ export const FeaturesText = styled.p`
 `;
 
 export const FeaturesList = styled.ul`
-    list-style: auto;
-    padding-inline-start: 15px;
+    list-style: disc;
+    padding-inline-start: 20px;
     margin-block-end: 0px;
     margin-block-start: 0px;
     margin-bottom: 0px;
@@ -392,13 +414,4 @@ export const LoadText = styled(Skeleton.Input)`
         height: 19px;
         line-height: 19px;
     }
-`;
-
-export const ModalBody = styled.div`
-    margin: 8px 36px 0px 36px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: calc(100vh - 400px);
-    overflow-y: auto;
 `;
