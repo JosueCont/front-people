@@ -400,8 +400,8 @@ export const FeaturesText = styled.p`
 `;
 
 export const FeaturesList = styled.ul`
-    list-style: auto;
-    padding-inline-start: 15px;
+    list-style: disc;
+    padding-inline-start: 20px;
     margin-block-end: 0px;
     margin-block-start: 0px;
     margin-bottom: 0px;

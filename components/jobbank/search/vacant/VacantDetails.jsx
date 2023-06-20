@@ -95,7 +95,7 @@ const VacantDetails = ({
                     <VacantDescription
                         loading={loading}
                         title='Conocimientos requeridos'
-                        description={infoVacant?.education_and_competence?.knowledge}
+                        description={infoVacant?.education_and_competence?.knowledge?.split('\n')}
                     />
                 )}
                 {infoVacant?.education_and_competence?.experience && (

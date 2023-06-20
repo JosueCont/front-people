@@ -41,6 +41,7 @@ const NewHeader = ({
   hideLogo,
   hideProfile,
   onClickImage,
+  logoAlign,
   ...props
 }) => {
   const { Text } = Typography;
@@ -213,6 +214,23 @@ const NewHeader = ({
     </>
   );
 
+  const LogoImg = () => {
+    return !hideLogo && mainLogo ? (
+      <Image
+        className={'header__logo'}
+        preview={false}
+        onClick={() => onClickImage ? router.push("/dashboard") : {}}
+        style={{
+          maxWidth: 100,
+          margin: "auto",
+          maxHeight: 50,
+          cursor: onClickImage ? "pointer" : "default",
+        }}
+        src={mainLogo}
+      />
+    ) : <></>
+  }
+
   return (
     <>
       <Global
@@ -280,66 +298,46 @@ const NewHeader = ({
                     "/images/LogoKhorconnect.svg"
                   }
                 />
-                {!hideLogo && (
-                  <Image
-                    className={'header__logo'}
-                    preview={false}
-                    onClick={() => onClickImage ? router.push("/dashboard") : {}}
-                    style={{
-                      maxWidth: 100,
-                      margin: "auto",
-                      maxHeight: 50,
-                      cursor: onClickImage ? "pointer" : "default",
-                    }}
-                    src={
-                      mainLogo
-                        ? mainLogo
-                        : null
-                    }
-                  />
+                {logoAlign == 'left' && <LogoImg />}
+              </Space>
+            </Col>
+            <Col>
+              <Space size={"middle"}>
+                {hideProfile && logoAlign == 'right' && <LogoImg/>}
+                {!hideProfile && person && (
+                  <>
+                    {screens.sm && screens.md &&
+                      <span style={{ color: 'white' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
+                        {props.currentNode ? props.currentNode.name : ""}
+                      </span>}
+                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
+                      <div key="menu_apps_content">
+                        <BsFillGrid3X3GapFill
+                          className={'header__dropdown_apps'}
+                          style={{
+                            color: "white",
+                            fontSize: 30,
+                            display: "flex",
+                            margin: "auto",
+                            cursor: 'pointer'
+                          }}
+                        />
+                      </div>
+                    </Dropdown>
+                    <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                      <div key="menu_user_content">
+                        <Avatar
+                          key="avatar_key"
+                          icon={<UserOutlined />}
+                          src={person.photo_thumbnail}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </div>
+                    </Dropdown>
+                  </>
                 )}
               </Space>
             </Col>
-            {!hideProfile && (
-              <Col>
-                {person && (
-                  <div
-                    className={"pointer"}
-                    style={{ float: "right" }}
-                    key={"menu_user_" + props.currentKey}
-                  >
-                    <Space size={"middle"}>
-                      {screens.sm && screens.md &&
-                        <span style={{ color: 'white' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
-                          {props.currentNode ? props.currentNode.name : ""}
-                        </span>}
-                      <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
-                        <div key="menu_apps_content">
-                          <BsFillGrid3X3GapFill
-                            className={'header__dropdown_apps'}
-                            style={{
-                              color: "white",
-                              fontSize: 30,
-                              display: "flex",
-                              margin: "auto",
-                            }}
-                          />
-                        </div>
-                      </Dropdown>
-                      <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                        <div key="menu_user_content">
-                          <Avatar
-                            key="avatar_key"
-                            icon={<UserOutlined />}
-                            src={person.photo_thumbnail}
-                          />
-                        </div>
-                      </Dropdown>
-                    </Space>
-                  </div>
-                )}
-              </Col>
-            )}
           </Row>
         </div>
       </Header>

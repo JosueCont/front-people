@@ -37,7 +37,10 @@ const index = ({
 
     return (
         <LayoutSearch>
-            <AutoRegister currentNode={defaultJobbankNode}>
+            <AutoRegister
+                currentNode={defaultJobbankNode}
+                logoAlign='right'
+            >
                 <SearchVacants />
             </AutoRegister>
         </LayoutSearch>
