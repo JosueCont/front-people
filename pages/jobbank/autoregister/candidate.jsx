@@ -116,7 +116,10 @@ const candidate = ({
 
     return (
         <>
-            <AutoRegister currentNode={infoVacant?.node}>
+            <AutoRegister
+                currentNode={infoVacant?.node}
+                logoAlign='right'
+            >
                 {router.query?.type == 'success' ? (
                     <ContentMsg>
                         <ContentVertical gap={8}>
