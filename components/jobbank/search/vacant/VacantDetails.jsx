@@ -6,9 +6,7 @@ import {
     SearchBtn,
     VacantOptions,
     VacantCards,
-    VacantHeader,
-    ContentVertical,
-    SearchLogo
+    VacantHeader
 } from '../SearchStyled';
 import {
     CheckCircleFilled,
@@ -20,7 +18,6 @@ import VacantFeatures from './VacantFeatures';
 import VacantDescription from './VacantDescription';
 import VacantEducation from './VacantEducation';
 import VacantBenefits from './VacantBenefits';
-import { Image } from 'antd';
 
 const VacantDetails = ({
     loading = false,
@@ -37,13 +34,7 @@ const VacantDetails = ({
     }, [router.query])
 
     return (
-        <ContentVertical gap='16px'>
-            <SearchLogo>
-                <Image
-                    src='/images/portadaHex.png'
-                    preview={false}
-                />
-            </SearchLogo>
+        <>
             <VacantHeader>
                 <VacantTitle>
                     <span />
@@ -113,7 +104,7 @@ const VacantDetails = ({
                     />
                 )}
             </VacantCards>
-        </ContentVertical>
+        </>
     )
 }
 
