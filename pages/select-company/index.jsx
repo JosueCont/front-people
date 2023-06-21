@@ -49,7 +49,7 @@ const SelectCompany = ({ ...props }) => {
   const [loading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(null);
   const [admin, setAdmin] = useState(false);
-  const [treeTable, setTreeTable] = useState(true);
+  const [treeTable, setTreeTable] = useState(false);
   const [modalSwitch, setModalSwitch] = useState(false);
   const [createNode, setCreateNode] = useState(false);
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
