@@ -48,7 +48,7 @@ const ImssMovements = ({ ...props }) => {
   const [formSua] = Form.useForm()
 
   const movSuaTypes = [
-    { label: 'ASEG', value: 'ASEG' },
+    { label: 'Asegurados', value: 'ASEG' },
     { label: 'Movimientos afiliatorios', value: 'MOVT' },
     { label: 'Créditos infonavit', value: 'CRED' },
     { label: 'INCAP', value: 'INCAP' },
