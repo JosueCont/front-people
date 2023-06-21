@@ -158,7 +158,6 @@ const FormGeneral = ({
                     label='CV'
                     keyName='cv_name_read'
                     tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
-                    isRequired={true}
                     urlPreview={infoCandidate?.cv}
                     download={true}
                     setFile={setFileCV}
