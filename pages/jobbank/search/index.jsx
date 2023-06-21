@@ -9,8 +9,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
-import AutoRegister from '../../../components/jobbank/AutoRegister';
-import { LayoutSearch } from '../../../components/jobbank/search/SearchStyled';
+import MainSearch from '../../../components/jobbank/search/MainSearch';
 
 const index = ({
     currentNode,
@@ -36,11 +35,9 @@ const index = ({
     }, [currentNode, router.query])
 
     return (
-        <LayoutSearch>
-            <AutoRegister currentNode={defaultJobbankNode}>
-                <SearchVacants />
-            </AutoRegister>
-        </LayoutSearch>
+        <MainSearch currentNode={defaultJobbankNode}>
+            <SearchVacants />
+        </MainSearch>
     )
 }
 
@@ -51,9 +48,9 @@ const mapState = (state) => {
 }
 
 export default connect(
-    mapState, {
-    getMainCategories,
-    getListStates,
-    getVacanciesSearch
-}
+        mapState, {
+        getMainCategories,
+        getListStates,
+        getVacanciesSearch
+    }
 )(index);

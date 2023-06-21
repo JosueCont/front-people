@@ -10,7 +10,10 @@ const AutoRegister = ({
     children,
     saveCurrentNode,
     currentCode = null,
-    currentNode = null
+    currentNode = null,
+    logoAlign = 'left',
+    showFooter = false,
+    contentFooter = <></>
 }) => {
 
     useEffect(()=>{
@@ -48,6 +51,9 @@ const AutoRegister = ({
             onClickImage={false}
             autoregister={true}
             hideProfile={true}
+            logoAlign={logoAlign}
+            showFooter={showFooter}
+            contentFooter={contentFooter}
         >
             <ConfigProvider locale={esES}>
                 {children}
