@@ -50,9 +50,7 @@ const ImssMovements = ({ ...props }) => {
   const movSuaTypes = [
     { label: 'Asegurados', value: 'ASEG' },
     { label: 'Movimientos afiliatorios', value: 'MOVT' },
-    { label: 'Créditos infonavit', value: 'CRED' },
-    { label: 'INCAP', value: 'INCAP' },
-    { label: 'Análisis SUA', value: 'Análisis SUA' }
+    { label: 'Créditos infonavit', value: 'CRED' }  
   ]
 
   const subMovTypes = [
@@ -157,7 +155,10 @@ const ImssMovements = ({ ...props }) => {
 
     values['start_date'] = values.start_date ? moment(values.start_date).format("YYYY-MM-DD") : null
     values['end_date'] = values.end_date ? moment(values.end_date).format("YYYY-MM-DD") : null
-
+    console.log('values',values)
+    if(values.type === "MOVT" && (values.inner_types === undefined || values.inner_types.length < 1 )){
+      values['inner_types'] = subMovTypes.map(item => item.value)
+    }
 
     setLoadingSua(true)
     try {
@@ -322,8 +323,8 @@ const ImssMovements = ({ ...props }) => {
                     {
                       movType === "MOVT" &&
                       <Col span={6}>
-                        <Form.Item  rules={[ruleRequired]} name="inner_types" label="Subtipos de movimientos">
-                          <Select mode="multiple" options={subMovTypes} allowClear />
+                        <Form.Item  name="inner_types" label="Subtipos de movimientos">
+                          <Select placeholder="Todos" mode="multiple" options={subMovTypes} allowClear />
                         </Form.Item>
                       </Col>
                     }
