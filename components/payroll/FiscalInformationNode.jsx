@@ -4,6 +4,7 @@ import {
   Col,
   Typography,
   Divider,
+  Alert,
   Form,
   Button,
   message,
@@ -31,6 +32,9 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const [formLegalRep] = Form.useForm();
   const [fiscalData, setFiscalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
+  const [messageCert, setMessageCert] = useState(null);
+  const [loadingCert, setLoadingCert] = useState(false);
+  const [existsCSD, setExistsCSD] = useState(false);
 
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
@@ -45,6 +49,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
         .catch((error) => {
           console.error(error);
         });
+        validateCSDExists()
     }
   }, [node_id]);
 
@@ -73,19 +78,48 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     }
   };
 
+  const validateCSDExists=async ()=>{
+    try {
+      const response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id)
+      if(typeof response?.data?.message?.status === 'boolean' && response?.data?.message?.status===true){
+        setExistsCSD(true)
+      }
+    }catch (e){
+      console.log('error',e)
+    }
+  }
+
+
   const uploadCsds = () => {
     if (password && certificate && key) {
+      setLoadingCert(true)
       let data = new FormData();
       data.append("node", node_id);
       data.append("cer", certificate);
       data.append("key", key);
       data.append("password", password);
-      WebApiFiscal.uploadCsdsMultiEmmiter(data)
+      WebApiFiscal.uploadCsdsMultiEmmiter(data, node_id)
         .then((response) => {
-          message.success(messageUploadSuccess);
+          if(response?.data?.message){
+            //gdzul
+            if(typeof response?.data?.message?.status === 'boolean' && response?.data?.message?.status===true){
+              message.success(messageUploadSuccess);
+            }else{
+              setMessageCert(response?.data?.message);
+            }
+
+           // openNotification('info',response?.data?.message)
+          }else{
+            setMessageCert(null)
+            message.success(messageUploadSuccess);
+          }
+          setLoadingCert(false)
+
         })
         .catch((error) => {
+          console.log(error)
           message.error(messageError);
+          setLoadingCert(false)
         });
     }
   };
@@ -205,8 +239,19 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
                     showList={true}
                   />
                 </Col>
+                <Col span={24}>
+                  {
+                    messageCert && <Alert
+                    message="Información"
+                    description={messageCert}
+                    type="info"
+                    showIcon
+                    />
+                  }
+                </Col>
                 <Row justify="end">
                   <Button
+                      loading={loadingCert}
                     disabled={password && certificate && key ? false : true}
                     onClick={() => uploadCsds()}
                   >
