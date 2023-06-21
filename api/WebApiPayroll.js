@@ -362,6 +362,10 @@ class WebApiPayroll {
   static generateDispersion(data){
     return WebApi.ApisType(`/payroll/payroll-dispersion`,"post", data);
   }
+
+  static getSuaFile(data){
+    return WebApi.ApisType(`/payroll/sua`,"post", data);
+  }
 }
 
 export default WebApiPayroll;
