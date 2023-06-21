@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
+import DetailsVacanciesCopy from './DetailsVacanciesCopy';
 import { connect } from 'react-redux';
 import {
     getClientsOptions,
@@ -59,7 +60,7 @@ const AddOrEditVacancies = ({
             extraBread={ExtraBread}
             newFilters={newFilters}
         >
-            <DetailsVacancies
+            <DetailsVacanciesCopy
                 action={action}
                 newFilters={newFilters}
             />
