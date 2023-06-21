@@ -1,23 +1,27 @@
-import { Skeleton } from 'antd';
+import { Skeleton, Spin } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 
-export const LayoutSearch = styled.section`
+export const SearchLayout = styled.section`
     & main.ant-layout-content{
         background-color: #dbdbdb!important;
+        overflow-x: hidden;
+    }
+    & .ant-spin-container::after{
+        background: transparent;
     }
 `;
 
 export const SearchContent = styled.section`
     display: grid;
     grid-template-columns: 400px 1fr;
-    grid-template-rows: 1fr 76px;
+    grid-template-rows: 76px 1fr;
     grid-auto-flow: row dense;
     gap: 16px;
 
     @media (max-width: 992px) {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto 76px 1fr;
+        grid-template-rows: auto 76px 1fr;
     }
 `;
 
@@ -38,7 +42,7 @@ export const SearchLogo = styled.section`
             width: 100%;
         }
     }
-    ${({grid}) => grid && css`
+    ${({ grid }) => grid && css`
         grid-column: 1 / 3;
         grid-row: 1 / 2;
     `}
@@ -46,35 +50,35 @@ export const SearchLogo = styled.section`
 
 export const SearchHeader = styled.section`
     grid-column: 2 / 3;
-    grid-row: 2 / 3;
+    grid-row: 1;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
-        grid-row: 3 / 4;
+        grid-column: 1;
+        grid-row: 2 / 3;
     }
 `;
 
 export const SearchAside = styled.section`
     grid-column: 1 / 2;
-    grid-row: 2 / 4;
+    grid-row: 1 / 3;
     display: flex;
     flex-direction: column;
     height: 100%;
     gap: 16px;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
-        grid-row: 2 / 3;
+        grid-column: 1;
+        grid-row: 1 / 2;
     }
 `;
 
 export const SearchBody = styled.section`
     grid-column: 2 / 3;
-    grid-row: 3 / 4;
+    grid-row: 2 / 3;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
-        grid-row: 4 / 5;
+        grid-column: 1;
+        grid-row: 3 / 4;
     }
 `;
 
@@ -263,9 +267,35 @@ export const SearchBtn = styled.button`
     transition: all 0.3s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     :hover{
         opacity: 0.9;
+    }
+    :disabled:not([role='loading']){
+        color: gray;
+        border-color: #f0f0f0;
+        background: #f0f0f0;
+        text-shadow: none;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+    :where([role='loading']){
+        position: relative;
+        cursor: default;
+        ::before{
+            display: block;
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            bottom: -1px;
+            left: -1px;
+            z-index: 1;
+            background: #fff;
+            border-radius: inherit;
+            opacity: 0.35;
+            transition: opacity 0.2s;
+            content: '';
+        }
     }
 `;
 
@@ -287,6 +317,7 @@ export const ContentEnd = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: ${({ gap }) => gap ? gap : '0px'};
 `;
 
 export const ContentVertical = styled.div`
@@ -391,7 +422,7 @@ export const FeaturesContent = styled(ContentVertical)`
 
 export const FeaturesText = styled.p`
     margin-bottom: 0px;
-    font-size: ${({size}) => size ? size : '14px'};
+    font-size: ${({ size }) => size ? size : '14px'};
     line-height: 1.2;
     color: ${({ color }) => color ? color : '#005eb8'};
     ${({ weight }) => weight && css`
@@ -413,5 +444,20 @@ export const LoadText = styled(Skeleton.Input)`
     & .ant-skeleton-input-sm {
         height: 19px;
         line-height: 19px;
+    }
+`;
+
+export const ContentCenter = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const ContentPrivacy = styled(ContentCenter)`
+    & a{
+        font-size: 16px;
+        color: #ffff;
+        font-weight: 500;
+        text-decoration: underline;
     }
 `;

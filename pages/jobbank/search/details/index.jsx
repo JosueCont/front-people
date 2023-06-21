@@ -6,6 +6,7 @@ import VacantDetails from '../../../../components/jobbank/search/vacant/VacantDe
 import AutoRegister from '../../../../components/jobbank/AutoRegister';
 import { getScholarship } from '../../../../redux/jobBankDuck';
 import { LayoutSearch } from '../../../../components/jobbank/search/SearchStyled';
+import MainSearch from '../../../../components/jobbank/search/MainSearch';
 
 const index = ({
     currentNode,
@@ -43,17 +44,12 @@ const index = ({
     }
 
     return (
-        <LayoutSearch>
-            <AutoRegister
-                currentNode={infoVacant?.node}
-                logoAlign='right'
-            >
-                <VacantDetails
-                    loading={loading}
-                    infoVacant={infoVacant}
-                />
-            </AutoRegister>
-        </LayoutSearch>
+        <MainSearch currentNode={infoVacant?.node}>
+            <VacantDetails
+                loading={loading}
+                infoVacant={infoVacant}
+            />
+        </MainSearch>
     )
 }
 

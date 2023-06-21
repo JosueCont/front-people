@@ -5,7 +5,7 @@
           }} */
 .div-main-layout {
   /* margin-top: -30px; */
-  min-height: calc(100vh - 134px);
+  /* min-height: calc(100vh - 134px); */
   padding: 30px 50px;
 }
 
