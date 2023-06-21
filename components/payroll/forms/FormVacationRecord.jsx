@@ -193,6 +193,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
             layout="vertical"
             form={formVacationsRecord}
             onFinish={saveVacationRecord}
+            className="form-details-person"
           >
             <Row>
               <Col lg={6} xs={22} offset={1}>

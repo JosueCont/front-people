@@ -1125,7 +1125,7 @@ const CalculatePayroll = ({ ...props }) => {
         const blob = new Blob([response.data]);
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "Disperción bancaria.txt";
+        link.download = "Dispersión bancaria.txt";
         link.click();
         message.success("Archivo descargado")
       }
@@ -1655,7 +1655,7 @@ const CalculatePayroll = ({ ...props }) => {
                           onClick={() => generateDispersion()}
                           loading={downloading}
                         >
-                          Generar disperción
+                          Generar dispersión
                         </Button>
                       </Col>
                     }

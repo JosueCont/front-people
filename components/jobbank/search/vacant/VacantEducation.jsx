@@ -90,7 +90,7 @@ const VacantEducation = ({
             </SectionTitle>
             <FeaturesContent responsive>
                 <Field title='Categoría' value={education?.main_category?.name} />
-                <Field title='Categoría' value={education?.sub_category?.name} />
+                <Field title='Subcategoría' value={education?.sub_category?.name} />
                 <Field title='Grado académico' value={studyLevel} />
                 <Field title='Estatus académico' value={studyStatus} />
                 <Field title='Carrera' value={education?.academics_degree?.at(-1)?.name} />

@@ -9,7 +9,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
-import AutoRegister from '../../../components/jobbank/AutoRegister';
+import MainSearch from '../../../components/jobbank/search/MainSearch';
 
 const index = ({
     currentNode,
@@ -29,15 +29,15 @@ const index = ({
     useEffect(() => {
         if (!currentNode) return;
         let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB({...router.query}, ['page']);
+        let filters = getFiltersJB({ ...router.query }, ['page']);
         let params = `${filters}&page=${page}`;
         getVacanciesSearch(currentNode.id, params, page);
     }, [currentNode, router.query])
 
     return (
-        <AutoRegister currentNode={defaultJobbankNode}>
+        <MainSearch currentNode={defaultJobbankNode}>
             <SearchVacants />
-        </AutoRegister>
+        </MainSearch>
     )
 }
 
@@ -48,7 +48,7 @@ const mapState = (state) => {
 }
 
 export default connect(
-    mapState, {
+        mapState, {
         getMainCategories,
         getListStates,
         getVacanciesSearch

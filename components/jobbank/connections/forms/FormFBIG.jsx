@@ -214,7 +214,6 @@ const FormFBIG = ({
                     name='data_config|ig_user_id'
                     label='Identificador (User ID)'
                     tooltip='Parámetro necesario para publicar en Instagram'
-                    rules={[ruleRequired, ruleWhiteSpace]}
                 >
                     <Input placeholder='ID del usuario'/>
                 </Form.Item>
