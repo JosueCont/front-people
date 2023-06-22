@@ -175,6 +175,23 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     },
     {
+      title: "SDI",
+      key: "SDI",
+      className: "cursor_pointer",
+      render: (item) => (
+          <div>
+            <NumberFormat
+                prefix={"$"}
+                number={
+                  item.integrated_daily_salary
+                      ? item.integrated_daily_salary
+                      : 0.0
+                }
+            />
+          </div>
+      ),
+    },
+    {
       title: "Total percepciones",
       key: "company",
       className: "cursor_pointer",
