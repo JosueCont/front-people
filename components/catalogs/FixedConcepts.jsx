@@ -322,8 +322,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       }
     });
     setEdit(true);
-    setId(item.id);
-    console.log("ITEM->", item);
+    setId(item.id);    
 
     form.setFieldsValue({
       name: item.name,
