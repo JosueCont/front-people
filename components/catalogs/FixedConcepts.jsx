@@ -49,6 +49,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const [concepSelect, setConcepSelect] = useState([]);
   const [key, setKey] = useState(1);
   const [catalog, setCat] = useState([]);
+  const [showNumPeriods, SetShowNumPeriods] = useState(false);  
 
   const data = [
     // {
@@ -255,9 +256,34 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     }
 
     value.node = currentNode.id;
+    if (value.num_of_periods){
+      value.num_of_periods = parseInt(value.num_of_periods)    
+    }
+    else{
+      value.num_of_periods = 0    
+    }
+
+    /* Validamos el tipo de concepto */
+    if (value.concept_type == 1){
+      value.deduction_type = null
+      value.other_payment_type = null
+    } else if (value.concept_type == 2){
+      value.perception_type = null
+      value.other_payment_type = null
+    } else if (value.concept_type == 3){
+      value.perception_type = null
+      value.deduction_type = null
+    }
+    
     if (edit) {
       updateRegister(value);
-    } else saveRegister(value);
+    } else {
+      /** Inicializamos el saldo al crear el concepto programado de forma diferida */
+      if (value.num_of_periods > 0 && value.discount_type == 2){
+        value.balance = value.datum
+
+      }
+      saveRegister(value);}
   };
 
   const saveRegister = async (data) => {
@@ -297,6 +323,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     });
     setEdit(true);
     setId(item.id);
+    console.log("ITEM->", item);
 
     form.setFieldsValue({
       name: item.name,
@@ -308,10 +335,14 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       perception_type: item.perception_type,
       deduction_type: item.deduction_type,
       other_payment_type: item.other_payment_type,
-      "": item.perception_type ? 1 : item.deduction_type ? 2 : 3,
+      concept_type: item.perception_type ? 1 : item.deduction_type ? 2 : 3,
       ...checksValues,
+      period_config: item.period_config,
+      application_mode: item.application_mode,
+      num_of_periods: item.num_of_periods
     });
-    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
+    SetShowNumPeriods(item.application_mode == 1 ? false : true)
+    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);    
   };
 
   const updateRegister = async (value) => {
@@ -403,6 +434,16 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     { value: 2, label: "Deducción" },
     { value: 3, label: "Otro pago" },
   ];
+  const period_config = [
+    {value: 1, label: 'Todos'},
+    {value: 2, label: 'Primer periodo'},
+    {value: 3, label: 'Último periodo'}
+  ]
+  const application_mode = [
+    {value: 1, label: 'Fijo'},
+    {value: 2, label: 'Dividir en periodos'},
+    {value: 3, label: 'Frecuencia'}
+  ]
 
   const RenderConditions = ({ data }) => {
     return data.map((item, i) => {
@@ -496,6 +537,18 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     }
   };
 
+  const changeApplicationMode = (value) => {    
+    if (value && value  > 1){
+      SetShowNumPeriods(true);
+    }
+    else {
+      SetShowNumPeriods(false)
+      form.setFieldsValue({
+        num_of_periods: 0
+      })
+    }
+  }
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -521,7 +574,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                 </Col>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
-                    name=""
+                    name="concept_type"
                     label="Tipo de concepto"
                     rules={[ruleRequired]}
                   >
@@ -566,7 +619,9 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                       />
                     </Form.Item>
                   </Col>
-                )}
+                )}               
+                </Row>
+                <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     name="data_type"
@@ -599,6 +654,8 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     <Input type={"number"} />
                   </Form.Item>
                 </Col>
+                </Row>
+                <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     initialValue={1}
@@ -627,6 +684,53 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     <Input type={"number"} min={0} />
                   </Form.Item>
                 </Col>
+                </Row>
+                <Row gutter={20}>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={1}
+                    name="period_config"
+                    label="Configuración de períodos"                    
+                  >
+                    <Select options={period_config} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={1}
+                    name="application_mode"
+                    label="Modo de aplicación"                    
+                  >
+                    <Select options={application_mode} onChange={changeApplicationMode}/>
+                  </Form.Item>
+                </Col>
+                { showNumPeriods  && 
+                <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  initialValue={0}
+                  name="num_of_periods"
+                  label="Número de periodos"
+                  rules={[
+                    ruleRequired,
+                    {
+                      message: "Se requiere un valor mayor a 0",
+                      validator: (_, value) => {
+                        if (value > 0) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject(
+                            "Se requiere un valor mayor a 0"
+                          );
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <Input type={"number"} />
+                </Form.Item>
+              </Col>}
+                </Row>
+                <Row gutter={20}>               
                 <RenderConditions data={data} />
               </Row>
               <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
