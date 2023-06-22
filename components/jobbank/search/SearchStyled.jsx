@@ -1,12 +1,22 @@
-import { Skeleton } from 'antd';
+import { Skeleton, Spin } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
+
+export const SearchLayout = styled.section`
+    & main.ant-layout-content{
+        background-color: #dbdbdb!important;
+        overflow-x: hidden;
+    }
+    & .ant-spin-container::after{
+        background: transparent;
+    }
+`;
 
 export const SearchContent = styled.section`
     display: grid;
     grid-template-columns: 400px 1fr;
     grid-template-rows: 76px 1fr;
-    grid-auto-flow: dense;
+    grid-auto-flow: row dense;
     gap: 16px;
 
     @media (max-width: 992px) {
@@ -15,12 +25,35 @@ export const SearchContent = styled.section`
     }
 `;
 
+export const SearchLogo = styled.section`
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    & .ant-image,
+    .ant-image-img{
+        height: 100%;
+        width: auto;
+    }
+    @media (max-width: 1137px) {
+       height: auto;
+       & .ant-image,
+        .ant-image-img{
+            height: auto;
+            width: 100%;
+        }
+    }
+    ${({ grid }) => grid && css`
+        grid-column: 1 / 3;
+        grid-row: 1 / 2;
+    `}
+`;
+
 export const SearchHeader = styled.section`
     grid-column: 2 / 3;
     grid-row: 1;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
+        grid-column: 1;
         grid-row: 2 / 3;
     }
 `;
@@ -34,7 +67,7 @@ export const SearchAside = styled.section`
     gap: 16px;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
+        grid-column: 1;
         grid-row: 1 / 2;
     }
 `;
@@ -44,7 +77,7 @@ export const SearchBody = styled.section`
     grid-row: 2 / 3;
 
     @media (max-width: 992px) {
-        grid-column: 1 / 3;
+        grid-column: 1;
         grid-row: 3 / 4;
     }
 `;
@@ -153,8 +186,8 @@ export const ContentCards = styled.div`
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-auto-rows: 200px;
-    grid-auto-flow: dense;
+    grid-auto-rows: 225px;
+    grid-auto-flow: row dense;
 `;
 
 export const CardItem = styled.div`
@@ -199,18 +232,11 @@ export const CardTitle = styled.div`
 
 export const CardDescription = styled.div`
     display: flex;
+    gap: 4px;
     flex-direction: column;
     min-height: calc(100% - 70.14px);
     max-height: calc(100% - 70.14px);
     overflow-y: auto;
-    & p{
-        margin-bottom: 0px;
-        font-weight: 500;
-    }
-    & span{
-        font-weight: normal;
-        color: gray;
-    }
 `;
 
 export const CardsVoid = styled.div`
@@ -241,9 +267,35 @@ export const SearchBtn = styled.button`
     transition: all 0.3s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     :hover{
         opacity: 0.9;
+    }
+    :disabled:not([role='loading']){
+        color: gray;
+        border-color: #f0f0f0;
+        background: #f0f0f0;
+        text-shadow: none;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+    :where([role='loading']){
+        position: relative;
+        cursor: default;
+        ::before{
+            display: block;
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            bottom: -1px;
+            left: -1px;
+            z-index: 1;
+            background: #fff;
+            border-radius: inherit;
+            opacity: 0.35;
+            transition: opacity 0.2s;
+            content: '';
+        }
     }
 `;
 
@@ -265,11 +317,12 @@ export const ContentEnd = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: ${({ gap }) => gap ? gap : '0px'};
 `;
 
 export const ContentVertical = styled.div`
     display: flex;
-    flex-direction: column;
+    flex-direction: ${({ direction }) => direction ? direction : 'column'};
     gap: ${({ gap }) => gap ? gap : '0px'};
 `;
 
@@ -369,7 +422,7 @@ export const FeaturesContent = styled(ContentVertical)`
 
 export const FeaturesText = styled.p`
     margin-bottom: 0px;
-    font-size: 14px;
+    font-size: ${({ size }) => size ? size : '14px'};
     line-height: 1.2;
     color: ${({ color }) => color ? color : '#005eb8'};
     ${({ weight }) => weight && css`
@@ -378,8 +431,8 @@ export const FeaturesText = styled.p`
 `;
 
 export const FeaturesList = styled.ul`
-    list-style: auto;
-    padding-inline-start: 15px;
+    list-style: disc;
+    padding-inline-start: 20px;
     margin-block-end: 0px;
     margin-block-start: 0px;
     margin-bottom: 0px;
@@ -394,11 +447,17 @@ export const LoadText = styled(Skeleton.Input)`
     }
 `;
 
-export const ModalBody = styled.div`
-    margin: 8px 36px 0px 36px;
+export const ContentCenter = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: calc(100vh - 400px);
-    overflow-y: auto;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const ContentPrivacy = styled(ContentCenter)`
+    & a{
+        font-size: 16px;
+        color: #ffff;
+        font-weight: 500;
+        text-decoration: underline;
+    }
 `;

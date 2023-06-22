@@ -332,7 +332,7 @@ const FormBanckAccount = ({ person_id = null }) => {
         layout="vertical"
         form={formBank}
         onFinish={formBankAcc}
-        className="inputs_form_responsive"
+        className="inputs_form_responsive form-details-person"
       >
         <Row gutter={16}>
           <Col lg={11} xs={22} md={12}>

@@ -499,7 +499,7 @@ const FormPayrollPerson = ({
               layout={"vertical"}
               form={formPayrollPerson}
               onFinish={formFinish}
-              className="inputs_form_responsive"
+              className="inputs_form_responsive form-details-person"
               onValuesChange={handleValuesChange}
             >
               <Row gutter={20}>

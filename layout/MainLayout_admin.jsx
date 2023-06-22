@@ -27,6 +27,9 @@ const MainLayoutAdmin = ({
   nómina = false,
   pageTitle = "KHOR Plus",
   autoregister = false,
+  logoAlign = 'left',
+  showFooter = false,
+  contentFooter = <></>,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -55,7 +58,7 @@ const MainLayoutAdmin = ({
       //   link
       // );
       // head.appendChild(link);
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   // useEffect(() => {
@@ -82,17 +85,17 @@ const MainLayoutAdmin = ({
     }
   }, [props.currentNode, props.config, props.userData]);
 
-  const validateShowModal = (showModal, changePassword) =>{
+  const validateShowModal = (showModal, changePassword) => {
     let localStateChangedPassword = window.sessionStorage.getItem("requestChangePassword")
-    if(showModal){
-      if(!changePassword){
-        if(localStateChangedPassword == null){
+    if (showModal) {
+      if (!changePassword) {
+        if (localStateChangedPassword == null) {
           setIsOpenModalChangePassword(true)
         }
-      }else{
+      } else {
         setIsOpenModalChangePassword(false)
       }
-    }else{
+    } else {
       setIsOpenModalChangePassword(false)
     }
   }
@@ -101,7 +104,7 @@ const MainLayoutAdmin = ({
     setShowEvents(false);
   };
 
-  const onFinishChangePassword = (data) =>{
+  const onFinishChangePassword = (data) => {
     setDisabledButtonSend(true)
     let dataToApi = {
       khonnect_id: khonnectId,
@@ -110,12 +113,12 @@ const MainLayoutAdmin = ({
     data.passwordTwo === data.passwordOne ? changePasswordUser(dataToApi) : message.info("Confirme bien sus contraseñas")
   }
 
-  const changePasswordUser = async (data) =>{
+  const changePasswordUser = async (data) => {
     try {
       let response = await WebApiPeople.validateChangePassword(data);
-      if(response.status == 200){
+      if (response.status == 200) {
         setTimeout(() => {
-          if(isBrowser()){
+          if (isBrowser()) {
             window.sessionStorage.setItem("requestChangePassword", "changed")
           }
           setDisabledButtonSend(false)
@@ -151,7 +154,7 @@ const MainLayoutAdmin = ({
             requiredMark={false}
           >
             <Row justify="center">
-              <p style={{textAlign:"justify"}}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.</b></p>
+              <p style={{ textAlign: "justify" }}><b>Por seguridad, es necesario que cambies tu contraseña por primera vez.</b></p>
             </Row>
             <Row>
               <Col span={24}>
@@ -160,14 +163,14 @@ const MainLayoutAdmin = ({
                   label="Contraseña nueva"
                   rules={[ruleRequired, ruleWhiteSpace, validateSpaces, ruleMinPassword(6)]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                  <Input.Password type="password" style={{ minWidth: "100%" }} />
                 </Form.Item>
                 <Form.Item
                   name="passwordTwo"
                   label="Confirmar contraseña"
                   rules={[ruleRequired, ruleWhiteSpace, validatePassword, validateSpaces, ruleMinPassword(6)]}
                 >
-                  <Input.Password type="password" style={{minWidth:"100%"}}/>
+                  <Input.Password type="password" style={{ minWidth: "100%" }} />
                 </Form.Item>
               </Col>
             </Row>
@@ -185,52 +188,52 @@ const MainLayoutAdmin = ({
           styles={css`
             :root {
               --primaryColor: ${props.config && props.config.theme_color
-                ? props.config.theme_color.primary_color
-                : "#252837"};
+              ? props.config.theme_color.primary_color
+              : "#252837"};
               --primaryAlternativeColor: ${props.config &&
               props.config.theme_color
-                ? props.config.theme_color.primary_alternative_color
-                : "#252837"};
+              ? props.config.theme_color.primary_alternative_color
+              : "#252837"};
 
               --secondaryColor: ${props.config && props.config.theme_color
-                ? props.config.theme_color.secondary_color
-                : "#1C1B2B"};
+              ? props.config.theme_color.secondary_color
+              : "#1C1B2B"};
               --secondaryAlternativeColor: ${props.config &&
               props.config.theme_color
-                ? props.config.theme_color.secondary_alternative_color
-                : "#1C1B2B"};
+              ? props.config.theme_color.secondary_alternative_color
+              : "#1C1B2B"};
 
               --fontPrimaryColor: ${props.config ? "#ffff" : "#ffff"};
 
               --fontSecondaryColor: ${props.config ? "#ffff" : "#ffff"};
 
               --login_image: ${props.config && props.config.concierge_logo_login
-                ? "url(" + props.config.concierge_logo_login + ")"
-                : 'url("/images/login.jpg")'};
+              ? "url(" + props.config.concierge_logo_login + ")"
+              : 'url("/images/login.jpg")'};
               --logo_login: ${props.config && props.config.concierge_logo
-                ? "url(" + props.config.concierge_logo + ")"
-                : 'url("/images/Grupo Industrial Roche-Color.png")'};
+              ? "url(" + props.config.concierge_logo + ")"
+              : 'url("/images/Grupo Industrial Roche-Color.png")'};
               --fontFamily: ${flavor && flavor.font_family
-                ? flavor.font_family
-                : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
+              ? flavor.font_family
+              : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
               --fontStyle: ${flavor && flavor.font_family
-                ? flavor.font_style
-                : "normal"};
+              ? flavor.font_style
+              : "normal"};
               --srcFontFamily: ${flavor && flavor.font_family
-                ? flavor.font_family
-                : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'};
+              ? flavor.font_family
+              : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'};
               --fontFormColor: ${flavor && flavor.fontFormColor
-                ? flavor.font_family
-                : "#000"};
+              ? flavor.font_family
+              : "#000"};
               --fontSpanColor: ${props.config &&
               props.config.concierge_font_primary_color
-                ? props.config.concierge_font_primary_color
-                : "#000"};
+              ? props.config.concierge_font_primary_color
+              : "#000"};
 
               --fontColorSecondary: ${props.config &&
               props.config.concierge_font_secondary_color
-                ? props.config.concierge_font_secondary_color
-                : "#000"};
+              ? props.config.concierge_font_secondary_color
+              : "#000"};
             }
 
             .ant-layout-content {
@@ -342,6 +345,7 @@ const MainLayoutAdmin = ({
             hideLogo={hideLogo}
             setShowEvents={setShowEvents}
             config={props.config}
+            logoAlign={logoAlign}
           />
           <Layout>
             {!hideMenu && props.currentNode && (
@@ -356,6 +360,11 @@ const MainLayoutAdmin = ({
               <div className="div-main-layout">{props.children}</div>
             </Content>
           </Layout>
+          {showFooter && (
+            <Layout.Footer>
+              {contentFooter}
+            </Layout.Footer>
+          )}
         </Layout>
         {props.currentNode && (
           <Drawer placement="right" onClose={closeEvents} visible={showEvents}>

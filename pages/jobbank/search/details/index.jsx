@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
 import VacantDetails from '../../../../components/jobbank/search/vacant/VacantDetails';
 import AutoRegister from '../../../../components/jobbank/AutoRegister';
-import {
-    getScholarship
-} from '../../../../redux/jobBankDuck';
+import { getScholarship } from '../../../../redux/jobBankDuck';
+import { LayoutSearch } from '../../../../components/jobbank/search/SearchStyled';
+import MainSearch from '../../../../components/jobbank/search/MainSearch';
 
 const index = ({
     currentNode,
@@ -17,25 +17,25 @@ const index = ({
     const [loading, setLoading] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
 
-    useEffect(()=>{
-        if(router.query?.vacant){
+    useEffect(() => {
+        if (router.query?.vacant) {
             getInfoVacant(router.query?.vacant)
         }
-    },[router.query?.vacant])
+    }, [router.query?.vacant])
 
-    useEffect(()=>{
-        if(Object.keys(infoVacant).length <=0) return;
+    useEffect(() => {
+        if (Object.keys(infoVacant).length <= 0) return;
         getScholarship(infoVacant?.node)
-    },[infoVacant])
+    }, [infoVacant])
 
-    const getInfoVacant = async (id) =>{
+    const getInfoVacant = async (id) => {
         try {
             setLoading(true)
             let response = await WebApiJobBank.getInfoVacant(id);
             setInfoVacant(response.data)
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-            },1500)
+            }, 1500)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -44,12 +44,12 @@ const index = ({
     }
 
     return (
-        <AutoRegister currentNode={infoVacant?.node}>
+        <MainSearch currentNode={infoVacant?.node}>
             <VacantDetails
                 loading={loading}
                 infoVacant={infoVacant}
             />
-        </AutoRegister>
+        </MainSearch>
     )
 }
 
@@ -61,6 +61,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getScholarship
-    }
+    getScholarship
+}
 )(index);

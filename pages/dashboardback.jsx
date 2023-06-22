@@ -185,7 +185,7 @@ const index = () => {
                 }
 
                 .btn_hide{
-                    margin-left:auto
+                    margin-left:auto;
                     margin-bottom: auto;
                     margin-top:10px; 
                     border-radius:3px;

@@ -113,8 +113,12 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
 
-  static uploadCsdsMultiEmmiter(data) {
-    return WebApi.ApisType(`fiscal/csd-multi-emitter`, "post", data);
+  static uploadCsdsMultiEmmiter(data,node) {
+    return WebApi.ApisType(`fiscal/csd-multi-emitter-validate/${node}/`, "post", data);
+  }
+
+  static validateExistsCsdsMultiEmmiter(node) {
+    return WebApi.ApisType(`fiscal/csd-multi-emitter-validate/${node}/`, "get");
   }
 
   static ImssDelegation(data) {
