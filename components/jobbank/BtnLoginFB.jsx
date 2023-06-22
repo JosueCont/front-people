@@ -44,7 +44,7 @@ const BtnLoginFB = ({
             return;
         }
         onSuccess(resp.authResponse);
-        FacebookLoginClient.logout(onLogout);
+        /* FacebookLoginClient.logout(onLogout); */
     }
 
     const validateLogin = () =>{
