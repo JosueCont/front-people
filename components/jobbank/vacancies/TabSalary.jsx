@@ -25,7 +25,8 @@ const TabSalary = ({
     setEditorState,
     editorState,
     setValueHTML,
-    initialHTML
+    initialHTML,
+    stylesEditor = {}
 }) => {
 
     const { economic_benefits_description } = initialHTML;
@@ -96,18 +97,7 @@ const TabSalary = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, economic_benefits_description: e }))}
                             editorState={editorState?.economic_benefits_description}
                             setEditorState={e => setEditorState(prev => ({ ...prev, economic_benefits_description: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='economic_benefits_description'
@@ -129,18 +119,7 @@ const TabSalary = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, benefits: e }))}
                             editorState={editorState?.benefits}
                             setEditorState={e => setEditorState(prev => ({ ...prev, benefits: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='benefits'
@@ -161,18 +140,7 @@ const TabSalary = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, rewards: e }))}
                             editorState={editorState?.rewards}
                             setEditorState={e => setEditorState(prev => ({ ...prev, rewards: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='rewards'
@@ -193,18 +161,7 @@ const TabSalary = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, work_tools: e }))}
                             editorState={editorState?.work_tools}
                             setEditorState={e => setEditorState(prev => ({ ...prev, work_tools: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='work_tools'

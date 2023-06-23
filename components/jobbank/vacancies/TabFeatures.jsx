@@ -40,7 +40,8 @@ const TabFeatures = ({
     disabledClient,
     setEditorState,
     editorState,
-    setValueHTML
+    setValueHTML,
+    stylesEditor
 }) => {
 
     const {
@@ -380,18 +381,7 @@ const TabFeatures = ({
                     setValueHTML={e => setValueHTML(prev =>({...prev, description: e}))}
                     editorState={editorState?.description}
                     setEditorState={e => setEditorState(prev => ({...prev, description: e}))}
-                    editorStyle={{
-                        borderRadius: '0px 0px 10px 10px',
-                        borderTop: '1px solid black'
-                    }}
-                    toolbarStyle={{
-                        border: 'none',
-                        borderRadius: '10px 10px 0px 0px'
-                    }}
-                    wrapperStyle={{
-                        border: '1px solid black',
-                        borderRadius: 10
-                    }}
+                    {...stylesEditor}
                 />
                 {/* <Form.Item
                     name='description'

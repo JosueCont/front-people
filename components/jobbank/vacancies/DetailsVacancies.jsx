@@ -50,9 +50,23 @@ const DetailsVacancies = ({
         rewards: emptyHTML,
         work_tools: emptyHTML
     }
+    const stylesEditor = {
+        editorStyle: {
+            borderRadius: '0px 0px 10px 10px',
+            borderTop: '1px solid black'
+        },
+        toolbarStyle: {
+            border: 'none',
+            borderRadius: '10px 10px 0px 0px'
+        },
+        wrapperStyle: {
+            border: '1px solid black',
+            borderRadius: 10
+        }
+    }
     const [editorState, setEditorState] = useState(initialHTML);
     const [valueHTML, setValueHTML] = useState({});
-    
+
     useEffect(() => {
         if (router.query.client && action == 'add') {
             formVacancies.resetFields()
@@ -121,7 +135,7 @@ const DetailsVacancies = ({
 
     const onFinish = async (values) => {
         setFetching(true);
-        let bodyData = createData({...values, ...valueHTML});
+        let bodyData = createData({ ...values, ...valueHTML });
         bodyData.interviewers = listInterviewers;
         const actionFunction = {
             edit: onFinisUpdate,
@@ -207,6 +221,15 @@ const DetailsVacancies = ({
             : 'Información de la vacante',
     }
 
+    const propsTab = {
+        formVacancies,
+        infoVacant,
+        setEditorState,
+        editorState,
+        setValueHTML,
+        stylesEditor
+    }
+
     return (
         <DetailsCustom {...propsCustom}>
             <Form
@@ -235,12 +258,8 @@ const DetailsVacancies = ({
                     >
                         <Spin spinning={fetching}>
                             <TabFeatures
-                                formVacancies={formVacancies}
                                 disabledClient={router.query?.client}
-                                infoVacant={infoVacant}
-                                setEditorState={setEditorState}
-                                editorState={editorState}
-                                setValueHTML={setValueHTML}
+                                {...propsTab}
                             />
                         </Spin>
                     </Tabs.TabPane>
@@ -250,13 +269,7 @@ const DetailsVacancies = ({
                         key='2'
                     >
                         <Spin spinning={fetching}>
-                            <TabEducation
-                                formVacancies={formVacancies}
-                                infoVacant={infoVacant}
-                                setEditorState={setEditorState}
-                                editorState={editorState}
-                                setValueHTML={setValueHTML}
-                            />
+                            <TabEducation {...propsTab} />
                         </Spin>
                     </Tabs.TabPane>
                     <Tabs.TabPane
@@ -266,12 +279,8 @@ const DetailsVacancies = ({
                     >
                         <Spin spinning={fetching}>
                             <TabSalary
-                                formVacancies={formVacancies}
-                                infoVacant={infoVacant}
-                                setEditorState={setEditorState}
-                                editorState={editorState}
-                                setValueHTML={setValueHTML}
                                 initialHTML={initialHTML}
+                                {...propsTab}
                             />
                         </Spin>
                     </Tabs.TabPane>

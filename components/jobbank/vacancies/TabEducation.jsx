@@ -20,7 +20,8 @@ const TabEducation = ({
     infoVacant,
     setEditorState,
     editorState,
-    setValueHTML
+    setValueHTML,
+    stylesEditor
 }) => {
 
     const {
@@ -209,18 +210,7 @@ const TabEducation = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, language_activities: e }))}
                             editorState={editorState?.language_activities}
                             setEditorState={e => setEditorState(prev => ({ ...prev, language_activities: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='language_activities'
@@ -245,18 +235,7 @@ const TabEducation = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, knowledge: e }))}
                             editorState={editorState?.knowledge}
                             setEditorState={e => setEditorState(prev => ({ ...prev, knowledge: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='knowledge'
@@ -281,18 +260,7 @@ const TabEducation = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, experience: e }))}
                             editorState={editorState?.experience}
                             setEditorState={e => setEditorState(prev => ({ ...prev, experience: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='experience'
@@ -317,18 +285,7 @@ const TabEducation = ({
                             setValueHTML={e => setValueHTML(prev => ({ ...prev, technical_skills: e }))}
                             editorState={editorState?.technical_skills}
                             setEditorState={e => setEditorState(prev => ({ ...prev, technical_skills: e }))}
-                            editorStyle={{
-                                borderRadius: '0px 0px 10px 10px',
-                                borderTop: '1px solid black'
-                            }}
-                            toolbarStyle={{
-                                border: 'none',
-                                borderRadius: '10px 10px 0px 0px'
-                            }}
-                            wrapperStyle={{
-                                border: '1px solid black',
-                                borderRadius: 10
-                            }}
+                            {...stylesEditor}
                         />
                         {/* <Form.Item
                             name='technical_skills'
