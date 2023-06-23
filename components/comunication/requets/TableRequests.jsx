@@ -29,17 +29,12 @@ const TableRequests = ({
             title: 'Colaborador',
             dataIndex: 'collaborator',
             render: (item) => getFullName(item)
-        },
-        {
-            title: 'Días',
-            dataIndex: 'days_requested',
-            key: 'days_requested'
-        },
+        },        
         {
             title: 'Periodo',
             dataIndex: 'period',
             key: 'period'
-        },
+        },       
         {
             title: 'Fecha inicio',
             dataIndex: 'departure_date',
@@ -49,6 +44,21 @@ const TableRequests = ({
             title: 'Fecha fin',
             dataIndex: 'return_date',
             render: (item) => item ? moment(item, formatStart).format(formatEnd) : <></>
+        },
+        {
+            title: 'Días disponibles',
+            dataIndex: 'current_available_days',
+            key: 'current_available_days'
+        },
+        {
+            title: 'Días solicitados',
+            dataIndex: 'days_requested',
+            key: 'days_requested'
+        },
+        {
+            title: 'Días restantes',
+            dataIndex: 'remaining_days',
+            render: (item, record) => record?.current_available_days - record?.days_requested
         },
         {
             title: 'Jefe inmediato',
