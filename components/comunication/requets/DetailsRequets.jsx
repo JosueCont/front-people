@@ -103,13 +103,14 @@ const DetailsRequets = ({
         formRequest.setFieldsValue(values)
     }
 
-    const onFinish = (values) => {
+    const onFinish = (values) => {        
         setLoading(true)
         values.created_from = 2; // 2 es que se hizo desde la web
+        values.current_available_days = values.availableDays // Dias disponibles al momento de la solicitud
         values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
-            ? values.return_date?.format('YYYY-MM-DD') : null;
+            ? values.return_date?.format('YYYY-MM-DD') : null;        
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate
