@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
-import DetailsVacanciesCopy from './DetailsVacanciesCopy';
 import { connect } from 'react-redux';
 import {
     getClientsOptions,
@@ -12,6 +11,9 @@ import {
     getScholarship,
     getListStates
 } from '../../../redux/jobBankDuck';
+import {
+    getGroupsAssessments
+} from '../../../redux/assessmentDuck';
 import { deleteFiltersJb } from '../../../utils/functions';
 import MainIndexJB from '../MainIndexJB';
 
@@ -24,7 +26,8 @@ const AddOrEditVacancies = ({
     getAcademics,
     getCompetences,
     getScholarship,
-    getListStates
+    getListStates,
+    getGroupsAssessments
 }) => {
 
     const router = useRouter();
@@ -46,6 +49,8 @@ const AddOrEditVacancies = ({
             getCompetences(currentNode.id);
             getScholarship(currentNode.id);
             getListStates(currentNode.id);
+            if(action == 'add') return;
+            getGroupsAssessments(currentNode?.id);
         }
     },[currentNode])
 
@@ -60,7 +65,7 @@ const AddOrEditVacancies = ({
             extraBread={ExtraBread}
             newFilters={newFilters}
         >
-            <DetailsVacanciesCopy
+            <DetailsVacancies
                 action={action}
                 newFilters={newFilters}
             />
@@ -82,6 +87,7 @@ export default connect(
         getAcademics,
         getCompetences,
         getScholarship,
-        getListStates
+        getListStates,
+        getGroupsAssessments
     }
 )(AddOrEditVacancies);

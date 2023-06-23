@@ -118,7 +118,7 @@ export const useInfoVacancy = () =>{
         else info.academics_degree = [];
         // if(info.experiences) info.experiences = info.experiences.split(',');
         // else info.experiences = [];
-        if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
+        if(info.technical_skills) info.technical_skills = [info.technical_skills];
         else info.technical_skills = [];
         if(info.gross_salary) info.gross_salary = info.gross_salary.replaceAll(',','');
 

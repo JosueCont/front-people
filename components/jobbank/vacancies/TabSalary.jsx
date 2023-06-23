@@ -7,29 +7,38 @@ import {
     Select,
     InputNumber
 } from 'antd';
-import { validateNum } from '../../../utils/functions';
 import {
-    fourDecimal,
-    onlyNumeric,
     ruleRequired,
-    ruleWhiteSpace,
     numCommaAndDot
 } from '../../../utils/rules';
 import {
     optionsPaymentPeriod,
     optionsEconomicBenefits
 } from '../../../utils/constant';
+import dynamic from 'next/dynamic';
 
-const TabSalary = ({ formVacancies }) => {
+const EditorHTML = dynamic(() => import('../EditorHTML'), { ssr: false });
 
+const TabSalary = ({
+    formVacancies,
+    infoVacant,
+    setEditorState,
+    editorState,
+    setValueHTML,
+    initialHTML
+}) => {
+
+    const { economic_benefits_description } = initialHTML;
     const benefitSelected = Form.useWatch('economic_benefits', formVacancies);
 
-    const onChangeBenefit = (value) =>{
-        formVacancies.setFieldsValue({economic_benefits_description: null});
+    const onChangeBenefit = (value) => {
+        // formVacancies.setFieldsValue({ economic_benefits_description: null });
+        setValueHTML(prev => ({ ...prev, economic_benefits_description: '<p></p>'}))
+        setEditorState(prev => ({...prev, economic_benefits_description}));
     }
 
     return (
-        <Row gutter={[24,0]}>
+        <Row gutter={[24, 0]}>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='gross_salary'
@@ -38,7 +47,7 @@ const TabSalary = ({ formVacancies }) => {
                 >
                     <Input
                         prefix='$'
-                        style={{border: '1px solid black'}}
+                        style={{ border: '1px solid black' }}
                         maxLength={10}
                         placeholder='Ej. 70,500.5999'
                         onKeyPress={e => e.which == 32 && e.preventDefault()}
@@ -77,55 +86,136 @@ const TabSalary = ({ formVacancies }) => {
                 </Form.Item>
             </Col>
             <Col span={24}>
-                <Row gutter={[24,0]}>
-                    <Col xs={24} md={12} xl={8} xxl={6}>
-                        <Form.Item
+                <Row gutter={[24, 24]}>
+                    <Col xs={24} xl={12}>
+                        <EditorHTML
+                            isReadOnly={benefitSelected !== 3}
+                            label='Descripción de prestaciones'
+                            placeholder='Ej. Vales de despensa, seguro de vida, gastos médicos, etc.'
+                            textHTML={infoVacant?.salary_and_benefits?.economic_benefits_description}
+                            setValueHTML={e => setValueHTML(prev => ({ ...prev, economic_benefits_description: e }))}
+                            editorState={editorState?.economic_benefits_description}
+                            setEditorState={e => setEditorState(prev => ({ ...prev, economic_benefits_description: e }))}
+                            editorStyle={{
+                                borderRadius: '0px 0px 10px 10px',
+                                borderTop: '1px solid black'
+                            }}
+                            toolbarStyle={{
+                                border: 'none',
+                                borderRadius: '10px 10px 0px 0px'
+                            }}
+                            wrapperStyle={{
+                                border: '1px solid black',
+                                borderRadius: 10
+                            }}
+                        />
+                        {/* <Form.Item
                             name='economic_benefits_description'
                             label='Descripción de prestaciones'
-                            // rules={[ruleWhiteSpace]}
+                            rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 disabled={benefitSelected !== 3}
                                 placeholder='Ej. Vales de despensa, seguro de vida, gastos médicos, etc.'
-                                autoSize={{minRows: 4, maxRows: 4}}
+                                autoSize={{minRows: 5, maxRows: 5}}
                             />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
-                    <Col xs={24} md={12} xl={8} xxl={6}>
-                        <Form.Item
+                    <Col xs={24} xl={12}>
+                        <EditorHTML
+                            label='Beneficios'
+                            placeholder='Transporte, servicio de comedor, etc.'
+                            textHTML={infoVacant?.salary_and_benefits?.benefits}
+                            setValueHTML={e => setValueHTML(prev => ({ ...prev, benefits: e }))}
+                            editorState={editorState?.benefits}
+                            setEditorState={e => setEditorState(prev => ({ ...prev, benefits: e }))}
+                            editorStyle={{
+                                borderRadius: '0px 0px 10px 10px',
+                                borderTop: '1px solid black'
+                            }}
+                            toolbarStyle={{
+                                border: 'none',
+                                borderRadius: '10px 10px 0px 0px'
+                            }}
+                            wrapperStyle={{
+                                border: '1px solid black',
+                                borderRadius: 10
+                            }}
+                        />
+                        {/* <Form.Item
                             name='benefits'
                             label='Beneficios'
-                            // rules={[ruleWhiteSpace]}
+                            rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Transporte, servicio de comedor, etc.'
-                                autoSize={{minRows: 4, maxRows: 4}}
+                                autoSize={{ minRows: 5, maxRows: 5 }}
                             />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
-                    <Col xs={24} md={12} xl={8} xxl={6}>
-                        <Form.Item
+                    <Col xs={24} xl={12}>
+                        <EditorHTML
+                            label='Bonos'
+                            placeholder='Especificar los bonos a otorgar'
+                            textHTML={infoVacant?.salary_and_benefits?.rewards}
+                            setValueHTML={e => setValueHTML(prev => ({ ...prev, rewards: e }))}
+                            editorState={editorState?.rewards}
+                            setEditorState={e => setEditorState(prev => ({ ...prev, rewards: e }))}
+                            editorStyle={{
+                                borderRadius: '0px 0px 10px 10px',
+                                borderTop: '1px solid black'
+                            }}
+                            toolbarStyle={{
+                                border: 'none',
+                                borderRadius: '10px 10px 0px 0px'
+                            }}
+                            wrapperStyle={{
+                                border: '1px solid black',
+                                borderRadius: 10
+                            }}
+                        />
+                        {/* <Form.Item
                             name='rewards'
                             label='Bonos'
-                            // rules={[ruleWhiteSpace]}
+                            rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Especificar los bonos a otorgar'
-                                autoSize={{minRows: 4, maxRows: 4}}
+                                autoSize={{ minRows: 5, maxRows: 5 }}
                             />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
-                    <Col xs={24} md={12} xl={8} xxl={6}>
-                        <Form.Item
+                    <Col xs={24} xl={12}>
+                        <EditorHTML
+                            label='Herramientas de trabajo'
+                            placeholder='Uniformes, equipos de cómputo, etc.'
+                            textHTML={infoVacant?.salary_and_benefits?.work_tools}
+                            setValueHTML={e => setValueHTML(prev => ({ ...prev, work_tools: e }))}
+                            editorState={editorState?.work_tools}
+                            setEditorState={e => setEditorState(prev => ({ ...prev, work_tools: e }))}
+                            editorStyle={{
+                                borderRadius: '0px 0px 10px 10px',
+                                borderTop: '1px solid black'
+                            }}
+                            toolbarStyle={{
+                                border: 'none',
+                                borderRadius: '10px 10px 0px 0px'
+                            }}
+                            wrapperStyle={{
+                                border: '1px solid black',
+                                borderRadius: 10
+                            }}
+                        />
+                        {/* <Form.Item
                             name='work_tools'
                             label='Herramientas de trabajo'
-                            // rules={[ruleWhiteSpace]}
+                            rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
                                 placeholder='Uniformes, equipos de cómputo, etc.'
-                                autoSize={{minRows: 4, maxRows: 4}}
+                                autoSize={{ minRows: 5, maxRows: 5 }}
                             />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
                 </Row>
             </Col>
