@@ -272,6 +272,30 @@ const homeScreen = ({
     }
   };
 
+
+  const downloadFixedTermContract = async (item) => {
+    try {
+      let response = await WebApiPayroll.downloadFixedTermContract(item.id)
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Contrato por tiempo determinado.pdf"
+      link.click()
+
+    } catch (error) {
+      console.log('error',error)
+      error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        message.error(error.response.data.message)
+    }
+  }
+
   const downloadResignationLetter = async (item) => {
 
     try {
@@ -786,6 +810,16 @@ const homeScreen = ({
           }
         >
           Descargar carta de renuncia
+        </Menu.Item>
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="10"
+          onClick={() => {
+            downloadFixedTermContract(item)
+          }
+          }
+        >
+          Descargar contrato de tiempo determinado
         </Menu.Item>
         {
           enableStore &&
