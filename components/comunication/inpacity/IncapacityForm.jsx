@@ -111,13 +111,15 @@ const IncapacityForm = ({
     // Recupera el número de días laborables entre un rango de fecha especificado
     const getWorkingDaysFromRange = async (start, end) => {
         try {
-            let params = {
+           /* let params = {
                 node_id: current_node.id,
                 start_date: start?.format('YYYY-MM-DD'),
                 end_date: end?.format('YYYY-MM-DD')
             }
             let response = await WebApiPeople.getWorkingDaysFromRange(params)
-            formIncapacity.setFieldsValue({ requested_days: response.data.total_days });
+            */
+            // para incapacidades no se necesita contemplar dias inhabiles
+            formIncapacity.setFieldsValue({ requested_days: Math.abs(start.diff(end,'days'))+1 });
         } catch (e) {
             console.log(e)
         }
@@ -305,7 +307,7 @@ const IncapacityForm = ({
                         size='large'
                         maxLength={20}
                         placeholder='Folio de inpacidad'
-                        disabled={action == 'edit'}
+                        disabled={action !== 'edit' && action !== 'add'}
                     />
                 </Form.Item>
             </Col>
@@ -399,7 +401,6 @@ const IncapacityForm = ({
                     <DatePicker
                         style={{ width: "100%" }}
                         placeholder='Seleccionar una fecha'
-                        disabledDate={disabledStart}
                         onChange={onChangeStart}
                         format='DD-MM-YYYY'
                         inputReadOnly
@@ -417,7 +418,6 @@ const IncapacityForm = ({
                     <DatePicker
                         style={{ width: "100%" }}
                         placeholder='Seleccionar una fecha'
-                        disabledDate={disabledEnd}
                         defaultPickerValue={getDefaultEnd()}
                         disabled={!departureDate}
                         onChange={onChangeEnd}

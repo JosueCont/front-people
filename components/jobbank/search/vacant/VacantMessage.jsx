@@ -114,7 +114,7 @@ const VacantMessage = ({
                 de atracción de talento son gratuitos
             </CustomText>
             <CustomText size='1rem'>
-                Síguemos en redes sociales
+                Síguenos en redes sociales
             </CustomText>
             <ContentIcons>
                 <button name='facebook' onClick={()=> redirectTo('https://es-es.facebook.com/HEXbyiUCorp/', true)}>
@@ -126,7 +126,7 @@ const VacantMessage = ({
                 <button name='linkedin' onClick={()=> redirectTo('https://mx.linkedin.com/company/hexbyiucorp', true)}>
                     <LinkedinFilled />
                 </button>
-                <button name='tiktok' onClick={()=> redirectTo('https://www.tiktok.com/es/', true)}>
+                <button name='tiktok' onClick={()=> redirectTo('https://www.tiktok.com/@hex_by_iucorp?_t=8dMJSyzci2v&_r=1', true)}>
                     <FaTiktok />
                 </button>
             </ContentIcons>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
 import WebApiPeople from "../../../api/WebApiPeople";
+import WebApiPayroll from '../../../api/WebApiPayroll'
 import {
   Breadcrumb,
   Button,
@@ -12,7 +13,7 @@ import {
   Checkbox,
   message,
   Modal,
-  Typography, Alert, Divider,
+  Typography, Alert, Divider, Select, Form, DatePicker,
 } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainInter";
@@ -26,7 +27,9 @@ import MovementsSection from "../../../components/payroll/ImssMovements/Movement
 import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import { useRouter } from "next/router";
+import moment from "moment";
 const { Text } = Typography;
+import { ruleEmail, ruleRequired } from "../../../utils/rules";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -39,7 +42,24 @@ const ImssMovements = ({ ...props }) => {
   const [file, setFile] = useState(null);
   const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loadingSua, setLoadingSua] = useState(false)
+  const [movType, setMovType] = useState(null)
   const router = useRouter();
+  const [formSua] = Form.useForm()
+
+  const movSuaTypes = [
+    { label: 'Asegurados', value: 'ASEG' },
+    { label: 'Movimientos afiliatorios', value: 'MOVT' },
+    { label: 'Créditos infonavit', value: 'CRED' }  
+  ]
+
+  const subMovTypes = [
+    { label: 'Bajas', value: '02' },
+    { label: 'Modificación de salario', value: '07' },
+    { label: 'Altas/reingreso', value: '08' },
+    { label: 'Incapacidad', value: '12' },
+    { label: 'Ausentismo', value: '11' }
+  ]
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
@@ -126,6 +146,51 @@ const ImssMovements = ({ ...props }) => {
     let offset = (page -1) * pageSize
     getFiles(offset)
   } 
+
+  const getSuaFile = async (values) => {
+    if(!values.patronal_registration){
+      message.error("Selecciona un registro patronal")
+      return
+    }
+
+    values['start_date'] = values.start_date ? moment(values.start_date).format("YYYY-MM-DD") : null
+    values['end_date'] = values.end_date ? moment(values.end_date).format("YYYY-MM-DD") : null
+    console.log('values',values)
+    if(values.type === "MOVT" && (values.inner_types === undefined || values.inner_types.length < 1 )){
+      values['inner_types'] = subMovTypes.map(item => item.value)
+    }
+
+    setLoadingSua(true)
+    try {
+      let response = await WebApiPayroll.getSuaFile(values);
+      setLoadingSua(false)
+      if(response?.data?.message){
+        message.info(response.data.message)
+      }else{
+        const nameFile = values.type == 'ASEG' ? 'Asegurados' :
+                          values.type == 'MOVT' ? 'Movimientos afiliatorios' :
+                          values.type == 'CRED' ? 'Créditos infonavit de personas' :
+                          values.type == 'INCAP' ? 'Incapacidades' :
+                          values.type == "Análisis SUA" && "Análisis SUA"
+        const blob = new Blob([response.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = nameFile+".txt";
+        link.click();
+        message.success("Archivo descargado")
+      }
+      
+      
+    } catch (error) {
+      setLoadingSua(false)
+    }
+  }
+
+  const validTypeMov = () => {
+    let type = formSua.getFieldValue('type')
+    console.log('type', type)
+    return type
+  }
 
   return (
     <>
@@ -238,6 +303,50 @@ const ImssMovements = ({ ...props }) => {
                 <Col span={24}>
                   <MovementsIMSS currentNodeId={currentNodeId} />
                 </Col>
+              </Panel>
+              <Panel header="SUA" key="4">
+                <h4>Movimientos SUA</h4>
+                <Form
+                    layout="vertical"
+                    form={formSua}
+                    onFinish={getSuaFile}
+                >
+                  <Row gutter={[10,0]}>
+                    <Col span={6}>
+                      <SelectPatronalRegistration/>
+                    </Col>  
+                    <Col span={6}>
+                      <Form.Item rules={[ruleRequired]} name="type" label="Tipo de movimiento">
+                        <Select  options={movSuaTypes} allowClear onChange={(val) => setMovType(val) } />
+                      </Form.Item>
+                    </Col>
+                    {
+                      movType === "MOVT" &&
+                      <Col span={6}>
+                        <Form.Item  name="inner_types" label="Subtipos de movimientos">
+                          <Select placeholder="Todos" mode="multiple" options={subMovTypes} allowClear />
+                        </Form.Item>
+                      </Col>
+                    }
+                    </Row>
+                    <Row gutter={[10,0]}>
+                    <Col span={6}>
+                      <Form.Item  name={'start_date'} label="Fecha inicio">
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item  name={'end_date'} label="Fecha fin">
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>   
+                      <Button htmlType="submit">
+                        Generar archivo    
+                      </Button>
+                    </Col>
+                </Row>
+                </Form>
               </Panel>
             </Collapse>
           </div>

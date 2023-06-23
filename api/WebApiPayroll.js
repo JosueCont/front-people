@@ -162,6 +162,13 @@ class WebApiPayroll {
     );
   }
 
+  static downloadFixedTermContract(id) {
+    return WebApi.ApisType(
+      `/payroll/fixed-term-contract?person_id=${id}&contract_code=CTO2`,
+      "get"
+    );
+  }
+
   static getPayrollList(data) {
     return WebApi.ApisType(
       `/payroll/payroll-person/get_payroll_person/`,
@@ -361,6 +368,10 @@ class WebApiPayroll {
 
   static generateDispersion(data){
     return WebApi.ApisType(`/payroll/payroll-dispersion`,"post", data);
+  }
+
+  static getSuaFile(data){
+    return WebApi.ApisType(`/payroll/sua`,"post", data);
   }
 }
 
