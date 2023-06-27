@@ -5,16 +5,18 @@ import {
     FeaturesContent,
     FeaturesText,
     SectionVoid,
-    FeaturesList
+    FeaturesList,
+    ContentHTML
 } from '../SearchStyled';
 import { Skeleton } from 'antd';
 
 const VacantDescription = ({
     loading = false,
     description = null,
-    title = '',
-    isList = false
+    title = ''
 }) => {
+
+    const noValid = [undefined, null, "", " ", "<p></p>"];
 
     const fetching = (
         <Skeleton
@@ -31,20 +33,8 @@ const VacantDescription = ({
     )
 
     const DescriptionInfo = () => {
-        return description ? (
-            <>
-                {Array.isArray(description) ? (
-                    <FeaturesList>
-                        <>{description.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                        ))}</>
-                    </FeaturesList>
-                ) : (
-                    <FeaturesText color='gray'>
-                        {description}
-                    </FeaturesText>
-                )}
-            </>
+        return !noValid.includes(description) ? (
+            <ContentHTML dangerouslySetInnerHTML={{__html: description}}/>
         ) : Empty;
     }
 

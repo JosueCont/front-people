@@ -4,56 +4,70 @@ import {
     Modal,
     List,
     Avatar,
-    Typography
+    Typography,
+    Row,
+    Col
 } from "antd";
-const { Text } = Typography
+import MyModal from "../../../common/MyModal";
 
-const ViewAssessments = ({...props}) =>{
+const ViewAssessments = ({
+    visible = false,
+    close = () => { },
+    itemsGroup = []
+}) => {
 
-    return(
-        <Modal
-            title={props.title}
-            visible={props.visible}
-            onCancel={() => props.setVisible(false)}
-            className={'custom-modal'}
-            width={500}
-            footer={[
-                <Button type="primary" onClick={()=>props.setVisible(false)}>
-                    Cerrar
-                </Button>
-            ]}
+    return (
+        <MyModal
+            title='Grupos de evaluaciones'
+            visible={visible}
+            widthModal={450}
+            close={close}
         >
-
-          {
-            props.item.length > 0 && props.item.map((ass) => (
-              <>
-                <Text style={{ fontWeight: 'bold' }}> { ass.name } </Text>
-                <List
-                  key={ass.id}
-                  size={'small'}
-                  itemLayout="horizontal"
-                  dataSource={ass.assessments}
-                  renderItem={ass => (
-                      <List.Item key={ass.id}>
-                          <List.Item.Meta
-                              title={ass.name}
-                              description={
-                                  <div>
-                                      Tipo: {ass.category === "A" ? "Assessment" : ass.category === "K" ? "Khor" : "Quiz"},
-                                      Secciones: {ass.total_sections},
-                                      Preguntas: {ass.total_questions}
-                                  </div>
-                              }
-                          />
-                      </List.Item>
-                  )}
-                />
-              </>
-
-            ))
-          }
-
-        </Modal>
+            <Row style={{
+                maxHeight: 'calc(100vh - 400px)',
+                overflowY: 'auto'
+            }} className="scroll-bar">
+                {itemsGroup?.length > 0 && itemsGroup.map((record, idx) => (
+                    <React.Fragment key={idx}>
+                        <Col span={24} style={{marginTop: idx > 0 ? 8 : 0}}>
+                            <p style={{
+                                fontWeight: 500,
+                                marginBottom: 0
+                            }}>{record?.name}</p>
+                        </Col>
+                        <Col span={24}>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                backgroundColor: '#ffff',
+                                padding: '4px 8px',
+                                borderRadius: 8
+                            }} className='scroll-bar'>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    lineHeight: 1.3,
+                                    gap: 4
+                                }}>
+                                    {record?.assessments?.map((row, idx) => (
+                                        <div key={idx}>
+                                            <p style={{
+                                                marginBottom: 0
+                                            }}>{row?.name}</p>
+                                            <span style={{ color: 'gray' }}>
+                                                Tipo: {row.category === "A" ? "Assessment" : row.category === "K" ? "Khor" : "Quiz"},
+                                                Secciones: {row?.total_sections},
+                                                Preguntas: {row?.total_questions}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </Col>
+                    </React.Fragment>
+                ))}
+            </Row>
+        </MyModal>
     )
 }
 
