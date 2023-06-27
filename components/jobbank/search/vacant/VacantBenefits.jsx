@@ -4,12 +4,14 @@ import {
     SectionTitle,
     FeaturesContent,
     FeaturesText,
+    ContentHTML,
     LoadText
 } from '../SearchStyled';
 import {
     optionsPaymentPeriod,
     optionsEconomicBenefits
 } from '../../../../utils/constant';
+import { Skeleton } from 'antd';
 
 const VacantBenefits = ({
     loading = false,
@@ -17,30 +19,39 @@ const VacantBenefits = ({
 }) => {
 
     const keyObj = 'salary_and_benefits';
+    const noValid = [undefined, null, "", " ", "<p></p>"];
 
     const benefits = useMemo(() => {
         if (!infoVacant[keyObj]) return {};
         return infoVacant[keyObj];
     }, [infoVacant])
 
-    const formatNum = (value = "0") => parseFloat(value).toLocaleString('es-Mx', {maximumFractionDigits: 4});
+    const formatNum = (value = "0") => parseFloat(value).toLocaleString('es-Mx', { maximumFractionDigits: 4 });
 
-    const periodName = useMemo(()=>{
+    const periodName = useMemo(() => {
         const find_ = item => item.value == benefits?.payment_period;
         let result = optionsPaymentPeriod.find(find_);
         return result?.label;
-    },[benefits])
+    }, [benefits])
 
-    const economic = useMemo(()=>{
+    const economic = useMemo(() => {
         const find_ = item => item.value == benefits?.economic_benefits;
         let result = optionsEconomicBenefits.find(find_);
         return result?.label;
-    },[benefits])
+    }, [benefits])
 
     const Wait = (
         <LoadText
             active
             size='small'
+        />
+    )
+
+    const fetching = (
+        <Skeleton
+            title={false}
+            paragraph={{ rows: 2 }}
+            active
         />
     )
 
@@ -69,19 +80,20 @@ const VacantBenefits = ({
                     ? `$${formatNum(benefits?.gross_salary)} MXN`
                     : null
                 } />
-                
-                <Field title='Periodo de pago' value={periodName}/>
+
+                <Field title='Periodo de pago' value={periodName} />
                 <Field
                     title='Prestaciones'
                     value={economic}
                     className={benefits?.economic_benefits ? 'needRow' : ''}
                 />
-                {benefits?.economic_benefits_description && (
-                    <Field
-                        className='needRow'
-                        title='Descripción de prestaciones'
-                        value={benefits?.economic_benefits_description}
-                    />
+                {!noValid.includes(benefits?.economic_benefits_description) && (
+                    <ContentVertical className='needRow'>
+                        <FeaturesText>Descripción de prestaciones</FeaturesText>
+                        {!loading ? (
+                            <ContentHTML dangerouslySetInnerHTML={{__html: benefits?.economic_benefits_description}}/>
+                        ) : fetching}
+                    </ContentVertical>
                 )}
             </FeaturesContent>
         </ContentVertical>
