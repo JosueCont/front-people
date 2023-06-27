@@ -61,7 +61,6 @@ const EditorHTML = ({
                 readOnly={isReadOnly}
                 editorState={editorState}
                 onEditorStateChange={onChangeEditor}
-                handleBeforeInput
                 toolbar={{
                     options,
                     inline: { options: ['bold', 'italic', 'underline', 'strikethrough', 'monospace'] },

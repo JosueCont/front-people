@@ -463,6 +463,7 @@ export const ContentPrivacy = styled(ContentCenter)`
 `;
 
 export const ContentHTML = styled.div`
+    color: gray;
     & p{
         margin-bottom: 0.5em;
     }
