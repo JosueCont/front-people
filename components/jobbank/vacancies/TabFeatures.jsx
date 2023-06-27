@@ -214,6 +214,7 @@ const TabFeatures = ({
                 <Form.Item
                     name='location_id'
                     label='Estado'
+                    rules={[ruleRequired]}
                 >
                     <Select
                         allowClear
@@ -237,7 +238,7 @@ const TabFeatures = ({
                 <Form.Item
                     name='municipality'
                     label='Municipio'
-                    rules={[ruleWhiteSpace]}
+                    rules={[ruleRequired, ruleWhiteSpace]}
                 >
                     <Input
                         disabled={!idState}
