@@ -31,7 +31,7 @@ const index = ({
             setTimeout(()=>{
                 setLoading(false)
                 return;
-            },2000)
+            },1000)
         }
     }, [currentNode, infoVacant])
 
