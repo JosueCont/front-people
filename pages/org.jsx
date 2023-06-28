@@ -12,9 +12,11 @@ import { Spin } from 'antd';
 const ChartOrgComponent = ({currentNode, cat_branches, ...props}) => {
   const [mainLogo, setMainLogo] = useState("");
   const [nodes, setNodes] = useState([])
+  const [loading, setLoading] = useState(true)
   const isBrowser = () => typeof window !== "undefined";
   
   const getAllInfo = async () => {
+    setLoading(true)
     let temp_nodes =  [...nodes]
     let company = setInfoCompanies()
     if (company){
@@ -24,6 +26,7 @@ const ChartOrgComponent = ({currentNode, cat_branches, ...props}) => {
         let {deptos, persons } = await getPersonsDeptos();
         let new_nodes = [company].concat(branchs, deptos, persons);
         setNodes(new_nodes)
+        setLoading(false)
       }
 
     }
@@ -90,7 +93,7 @@ const ChartOrgComponent = ({currentNode, cat_branches, ...props}) => {
               deptos.push({
                 id: person.work_title.department.id,
                 name: person.work_title.department.name,
-                pid: person.branch_node.id
+                pid: person.branch_node ? person.branch_node.id : person.node_user.id
               })
             }
           }
@@ -131,10 +134,20 @@ const ChartOrgComponent = ({currentNode, cat_branches, ...props}) => {
         `}
       />
       <MainLayout defaultOpenKeys={['company']} currentKey={["chartOrg"]}>
-        {
-          nodes && 
+        {/* {
+          loading &&
+          <div style={{ width:'100%',  height:'100vh', display: 'flex' }}>
+            <span style={{ margin:'auto' }}>
+              
+            </span>
+          </div>
+        } */}
+        {/* {
+          nodes.length > 0 && !loading && */}
+        <Spin spinning={loading} tip="Cargando información" >
           <ChartOrg mainLogo={mainLogo} nodes={nodes} />
-        }
+        </Spin>
+        {/* } */}
         
       </MainLayout>
     </>

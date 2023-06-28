@@ -51,6 +51,9 @@ const ChartOrg = ({mainLogo, nodes, ...props}) => {
             mouseScrool: OrgChart.action.ctrlZoom,
             nodeBinding: props.nodeBinding,
             nodes: props.nodes,
+            collapse: {
+                level: 3
+            },
             assistantSeparation: 170,
             template: "olivia",
             layout: OrgChart.mixed,
@@ -115,7 +118,7 @@ const ChartOrg = ({mainLogo, nodes, ...props}) => {
                     template: "mainCompany"
                 },
                 "Branch_office":{
-                    template: "branch_office"
+                    template: "branch_office",
                 },
                 "top-management": {
                     template: "invisibleGroup",
