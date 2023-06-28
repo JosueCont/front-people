@@ -69,15 +69,15 @@ const MainLayoutAdmin = ({
   // }, []);
 
   useEffect(() => {
-    if (logoNode && logoNode != "") {
-      setMainLogo(logoNode);
-      return;
-    }
     if(secondaryLogo){
       setMainLogo(secondaryLogo)
       return;
     }
-    if (props.currentNode) {
+    if (logoNode && logoNode != "") {
+      setMainLogo(logoNode);
+      return;
+    }
+    if (props.currentNode & !secondaryLogo) {
       setMainLogo(props.currentNode.image);
       return;
     }
