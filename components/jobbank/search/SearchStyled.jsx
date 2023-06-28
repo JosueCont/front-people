@@ -32,7 +32,8 @@ export const SearchLogo = styled.section`
     & .ant-image,
     .ant-image-img{
         height: 100%;
-        width: auto;
+        /* width: auto; */
+        object-fit: contain;
     }
     @media (max-width: 1137px) {
        height: auto;

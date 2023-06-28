@@ -34,6 +34,7 @@ const initialState = {
     list_applications: {},
     list_applications_candidates: [],
     list_vacancies_search: {},
+    list_setup_config: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -67,6 +68,7 @@ const initialState = {
     load_applications: false,
     load_applications_candidates: false,
     load_vacancies_search: false,
+    load_setup_config: true,
     jobbank_page: 1,
     jobbank_filters: "",
     jobbank_load: false,
@@ -117,6 +119,9 @@ const GET_INTERVIEWS = "GET_INTERVIEWS";
 
 const GET_APPLICATIONS = "GET_APPLICATIONS";
 const GET_APPLICATIONS_CANDIDATES = "GET_APPLICATIONS_CANDIDATES";
+
+const GET_SETUP_CONFIG = "GET_SETUP_CONFIG";
+const FETCH_SETUP_CONFIG = "FETCH_SETUP_CONFIG";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -344,6 +349,17 @@ const jobBankReducer = (state = initialState, action) => {
                 list_applications_candidates: action.payload,
                 load_applications_candidates: action.fetching
             }
+        case GET_SETUP_CONFIG:
+            return {
+                ...state,
+                list_setup_config: action.payload,
+            }
+        case FETCH_SETUP_CONFIG: {
+            return {
+                ...state,
+                load_setup_config: action.fetching
+            }
+        }
         case SET_PAGE:
             return { ...state, jobbank_page: action.payload }
         case SET_FILTERS:
@@ -737,6 +753,24 @@ export const getVacanciesSearch = (node, query = '', page = 1, size = 10) => asy
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
+    }
+}
+
+export const getSetupConfig = () => async (dispatch, getState) => {
+    const { jobBankStore: { list_setup_config } } = getState();
+    const typeData = { type: GET_SETUP_CONFIG, payload: list_setup_config };
+    const typeFetch = { type: FETCH_SETUP_CONFIG, fetching: false };
+    // dispatch({ ...typeFetch, fetching: Object.keys(list_setup_config)?.length <= 0 })
+    try {
+        let response = await WebApiJobBank.getSetupConfig();
+        dispatch({ ...typeData, payload: response.data });
+        setTimeout(() => {
+            dispatch(typeFetch)
+        }, 1000);
+    } catch (e) {
+        console.log(e)
+        dispatch(typeData)
+        dispatch(typeFetch)
     }
 }
 
