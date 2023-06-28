@@ -560,6 +560,12 @@ class WebApiJobBank {
     static editVacancyAssesmentCandidateVacancy(id, values){
         return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'put', values)
     }
+
+    //SETUP
+
+    static getSetupConfig(){
+        return WebApi.ApisType('/job-bank/setup/', 'get');
+    }
 }
 
 export default WebApiJobBank;

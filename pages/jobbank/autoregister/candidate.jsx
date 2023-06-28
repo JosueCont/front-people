@@ -4,7 +4,7 @@ import {
     Spin,
     message
 } from 'antd';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
     getListStates,
@@ -39,6 +39,7 @@ const candidate = ({
     const [loadVacant, setLoadVacant] = useState(false);
     const [infoVacant, setInfoVacant] = useState({});
     const [filters, setFilters] = useState({});
+    const [redirect, setRedirect] = useState(false);
     const { createData } = useInfoCandidate({
         fileCV, isAutoRegister: true
     });
@@ -48,16 +49,34 @@ const candidate = ({
         setFilters(deleteFiltersJb({ ...router.query }, ['back', 'type']))
         if (!router.query?.vacant) return;
         getInfoVacant(router.query?.vacant)
-        formCandidate.setFieldsValue({
-            vacant: router.query?.vacant
-        })
     }, [router.query])
 
     useEffect(() => {
+        if (!currentNode) return;
+        getListStates(currentNode?.id);
+        getConnectionsOptions(currentNode?.id, '&conection_type=2');
+    }, [currentNode])
+
+    useEffect(() => {
+        if (!currentNode || redirect) return;
         if (Object.keys(infoVacant)?.length <= 0) return;
-        getListStates(infoVacant?.node);
-        getConnectionsOptions(infoVacant?.node, '&conection_type=2');
-    }, [infoVacant])
+        if (currentNode?.id !== infoVacant?.node) {
+            setRedirect(true)
+            setTimeout(() => {
+                message.error('Vacante no encontrada')
+                Router.push('/jobbank/search');
+            }, 2000)
+        } else {
+            setRedirect(false)
+            setTimeout(() => {
+                setLoadVacant(false)
+                formCandidate.setFieldsValue({
+                    vacant: router.query?.vacant
+                })
+                return;
+            }, 2000)
+        }
+    }, [currentNode, infoVacant])
 
     const updatePage = (filters = {}) => router.replace({
         pathname: '/jobbank/autoregister/candidate',
@@ -68,7 +87,6 @@ const candidate = ({
         try {
             setLoadVacant(true)
             let response = await WebApiJobBank.getInfoVacant(id);
-            setLoadVacant(false)
             setInfoVacant(response.data)
         } catch (e) {
             console.log(e)
@@ -116,7 +134,7 @@ const candidate = ({
             {!!router.query?.back && (
                 <SearchBtn
                     type='button'
-                    disabled={fetching}
+                    disabled={fetching || loadVacant}
                     onClick={() => actionBack(1)}
                 >
                     <ArrowLeftOutlined />
@@ -126,7 +144,7 @@ const candidate = ({
             <ButtonPrimary
                 type='submit'
                 form='form-candidate'
-                disabled={fetching}
+                disabled={fetching || loadVacant}
                 role={fetching ? 'loading' : ''}
             >
                 {fetching ? <LoadingOutlined /> : <></>}
@@ -144,14 +162,14 @@ const candidate = ({
     return (
         <>
             <MainSearch
-                currentNode={infoVacant?.node}
                 showLogo={!router.query?.type}
             >
                 {router.query?.type == 'success' ? (
-                    <VacantMessage actionBack={actionBack}/>
+                    <VacantMessage actionBack={actionBack} />
                 ) : (
                     <>
                         <VacantHead
+                            loading={loadVacant}
                             title={router.query?.vacant ? title : 'Registro de candidato'}
                             actions={actions}
                         />
@@ -165,6 +183,7 @@ const candidate = ({
                                 layout='vertical'
                                 form={formCandidate}
                                 onFinish={onFinish}
+                                disabled={loadVacant}
                             >
                                 <Spin spinning={fetching}>
                                     <FormGeneral
