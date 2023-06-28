@@ -29,6 +29,7 @@ const MainLayoutAdmin = ({
   autoregister = false,
   logoAlign = 'left',
   showFooter = false,
+  secondaryLogo,
   contentFooter = <></>,
   ...props
 }) => {
@@ -70,10 +71,17 @@ const MainLayoutAdmin = ({
   useEffect(() => {
     if (logoNode && logoNode != "") {
       setMainLogo(logoNode);
-    } else if (props.currentNode) {
-      setMainLogo(props.currentNode.image);
+      return;
     }
-  }, [logoNode, companyName, props.currentNode]);
+    if(secondaryLogo){
+      setMainLogo(secondaryLogo)
+      return;
+    }
+    if (props.currentNode) {
+      setMainLogo(props.currentNode.image);
+      return;
+    }
+  }, [logoNode, companyName, props.currentNode, secondaryLogo]);
 
   useEffect(() => {
     if (props.currentNode && props.config && props.userData) {

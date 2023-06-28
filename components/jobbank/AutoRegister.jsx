@@ -13,7 +13,8 @@ const AutoRegister = ({
     currentNode = null,
     logoAlign = 'left',
     showFooter = false,
-    contentFooter = <></>
+    contentFooter = <></>,
+    secondaryLogo = null,
 }) => {
 
     useEffect(()=>{
@@ -54,6 +55,7 @@ const AutoRegister = ({
             logoAlign={logoAlign}
             showFooter={showFooter}
             contentFooter={contentFooter}
+            secondaryLogo={secondaryLogo}
         >
             <ConfigProvider locale={esES}>
                 {children}

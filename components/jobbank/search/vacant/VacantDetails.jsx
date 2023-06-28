@@ -37,14 +37,14 @@ const VacantDetails = ({
 
     const actions = (
         <>
-            <SearchBtn onClick={() => router.push({
+            <SearchBtn disabled={loading} onClick={() => router.push({
                 pathname: '/jobbank/search',
                 query: filters
             })}>
                 <ArrowLeftOutlined />
                 <span>Regresar</span>
             </SearchBtn>
-            <ButtonPrimary onClick={() => router.push({
+            <ButtonPrimary disabled={loading} onClick={() => router.push({
                 pathname: '/jobbank/autoregister/candidate',
                 query: { ...router.query, back: 'details' }
             })}>
@@ -56,7 +56,7 @@ const VacantDetails = ({
 
     return (
         <>
-            <VacantHead title={<>
+            <VacantHead loading={loading} title={<>
                 {infoVacant?.job_position || 'Vacante'}
                 {infoVacant?.show_customer_name && ` (${infoVacant?.customer?.name})`}
             </>} actions={actions}/>
