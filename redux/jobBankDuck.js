@@ -760,7 +760,7 @@ export const getSetupConfig = () => async (dispatch, getState) => {
     const { jobBankStore: { list_setup_config } } = getState();
     const typeData = { type: GET_SETUP_CONFIG, payload: list_setup_config };
     const typeFetch = { type: FETCH_SETUP_CONFIG, fetching: false };
-    dispatch({ ...typeFetch, fetching: Object.keys(list_setup_config)?.length <= 0 })
+    // dispatch({ ...typeFetch, fetching: Object.keys(list_setup_config)?.length <= 0 })
     try {
         let response = await WebApiJobBank.getSetupConfig();
         dispatch({ ...typeData, payload: response.data });
