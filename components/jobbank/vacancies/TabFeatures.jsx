@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+    useState,
+    useEffect
+} from 'react';
 import {
     Form,
     Row,
@@ -13,7 +16,10 @@ import {
     ruleRequired,
     ruleWhiteSpace,
 } from '../../../utils/rules';
-import { validateNum, validateMaxLength } from '../../../utils/functions';
+import {
+    validateNum,
+    validateMaxLength
+} from '../../../utils/functions';
 import {
     optionsSubproduct,
     optionsTypeJob,
@@ -21,14 +27,21 @@ import {
     optionsGenders,
     optionsStatusVacant
 } from '../../../utils/constant';
+import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import RangeAge from '../RangeAge';
 
+const EditorHTML = dynamic(()=> import('../EditorHTML'), {ssr: false});
+
 const TabFeatures = ({
     formVacancies,
-    hasEstrategy,
-    disabledClient
+    infoVacant,
+    disabledClient,
+    setEditorState,
+    editorState,
+    setValueHTML,
+    stylesEditor
 }) => {
 
     const {
@@ -46,7 +59,7 @@ const TabFeatures = ({
         })
     }
 
-    const onChangeState = (value) =>{
+    const onChangeState = (value) => {
         formVacancies.setFieldsValue({
             municipality: null
         })
@@ -62,7 +75,7 @@ const TabFeatures = ({
                 <Form.Item
                     name='customer_id'
                     label='Cliente'
-                    tooltip={hasEstrategy
+                    tooltip={infoVacant?.has_strategy
                         ? `Este campo no es posible actualizarlo,
                             ya que la vacante se en encuentra asociada a una estrategia.
                             ` : ''}
@@ -71,7 +84,7 @@ const TabFeatures = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_clients_options || hasEstrategy || disabledClient}
+                        disabled={load_clients_options || infoVacant?.has_strategy || disabledClient}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
@@ -201,6 +214,7 @@ const TabFeatures = ({
                 <Form.Item
                     name='location_id'
                     label='Estado'
+                    rules={[ruleRequired]}
                 >
                     <Select
                         allowClear
@@ -224,7 +238,7 @@ const TabFeatures = ({
                 <Form.Item
                     name='municipality'
                     label='Municipio'
-                    rules={[ruleWhiteSpace]}
+                    rules={[ruleRequired, ruleWhiteSpace]}
                 >
                     <Input
                         disabled={!idState}
@@ -282,14 +296,14 @@ const TabFeatures = ({
                 </Form.Item>
             </Col>
             {/* <Col xs={24} md={12} xl={8} xxl={6}>
-        <Form.Item label='Lugar de trabajo'>
-          <Select
-            placeholder='Lugar de trabajo'
-            notFoundContent='No se encontraron resultados'
-            options={[]}
-          />
-        </Form.Item>
-      </Col> */}
+                <Form.Item label='Lugar de trabajo'>
+                    <Select
+                        placeholder='Lugar de trabajo'
+                        notFoundContent='No se encontraron resultados'
+                        options={[]}
+                    />
+                </Form.Item>
+            </Col> */}
             <RangeAge />
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
@@ -348,29 +362,38 @@ const TabFeatures = ({
                     </Select>
                 </Form.Item>
             </Col>
-            {/* <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'flex'}}>
-        <div className='turn_rotative'>
-          <Form.Item
-            name='vo_bo'
-            valuePropName='checked'
-            noStyle
-          >
-            <Checkbox/>
-          </Form.Item>
-          <label>Visto bueno</label>
-        </div>
-      </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6} style={{ display: 'flex' }}>
+                <div className='turn_rotative'>
+                    <Form.Item
+                        name='vo_bo'
+                        valuePropName='checked'
+                        noStyle
+                    >
+                        <Checkbox />
+                    </Form.Item>
+                    <label>Visto bueno</label>
+                </div>
+            </Col> */}
             <Col span={24}>
-                <Form.Item
+                <EditorHTML
+                    label='Descripción de la vacante'
+                    placeholder='Descripción de la vacante'
+                    textHTML={infoVacant?.description}
+                    setValueHTML={e => setValueHTML(prev =>({...prev, description: e}))}
+                    editorState={editorState?.description}
+                    setEditorState={e => setEditorState(prev => ({...prev, description: e}))}
+                    {...stylesEditor}
+                />
+                {/* <Form.Item
                     name='description'
                     label='Descripción de la vacante'
-                // rules={[ruleWhiteSpace]}
+                    rules={[ruleWhiteSpace]}
                 >
                     <Input.TextArea
                         autoSize={{ minRows: 5, maxRows: 5 }}
                         placeholder='Descripción de la vacante'
                     />
-                </Form.Item>
+                </Form.Item> */}
             </Col>
         </Row>
     )

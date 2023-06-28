@@ -1,24 +1,44 @@
-import React from 'react';
+import React, {
+    useEffect,
+    useState
+} from 'react';
 import AutoRegister from '../AutoRegister';
 import {
     SearchLayout,
     ContentVertical,
     SearchLogo,
-    FeaturesText,
     ContentPrivacy
 } from './SearchStyled';
 import { Image } from 'antd';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const MainSearch = ({
     children,
-    currentNode,
-    showLogo = true
+    showLogo = true,
 }) => {
+
+    const [setup, setSetup] = useState({});
+
+    useEffect(() => {
+        getSetupConfig()
+    }, [])
+
+    const getSetupConfig = async () => {
+        try {
+            let response = await WebApiJobBank.getSetupConfig();
+            setSetup(response.data)
+        } catch (e) {
+            console.log(e)
+            setSetup({})
+        }
+    }
+
     return (
         <SearchLayout>
             <AutoRegister
-                currentNode={currentNode}
+                currentNode={setup?.node}
                 logoAlign='right'
+                secondaryLogo={setup?.logo}
                 showFooter={true}
                 contentFooter={
                     <ContentPrivacy>
@@ -32,7 +52,7 @@ const MainSearch = ({
                     <ContentVertical gap='16px'>
                         <SearchLogo>
                             <Image
-                                src='/images/portadaHex.png'
+                                src={setup?.banner ? setup?.banner : '/images/portadaHex.png'}
                                 preview={false}
                             />
                         </SearchLogo>
