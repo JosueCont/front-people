@@ -24,16 +24,28 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
   }, [person_user]);
 
   const savePersonKhonnect = async (data) =>{
-    let save_person_khonnect = await WebApiPeople.khonnectSavePerson(data)
-    if (save_person_khonnect.status == 200){
-      message.success("Actualizado correctamente!!");
-      formPassword.resetFields();
-      setIsLoading(false)
-    }else{
-      message.error("Error al actualizar, intente de nuevo");
-      formPassword.resetFields();
+    try{
+      let save_person_khonnect = await WebApiPeople.khonnectSavePerson(data)
+      if (save_person_khonnect.status == 200){
+        message.success("Actualizado correctamente!!");
+        formPassword.resetFields();
+        setIsLoading(false)
+      }else{
+        message.error("Error al actualizar, intente de nuevo");
+        formPassword.resetFields();
+        setIsLoading(false)
+      }
+    }catch (e){
+      if(e?.response?.data?.message){
+        message.error(e?.response?.data?.message);
+      }else{
+        message.error("Error al actualizar, intente de nuevo");
+      }
+
+    }finally {
       setIsLoading(false)
     }
+
   }
   
   const resetPassword = async (data) =>{
@@ -51,6 +63,8 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
       formPassword.resetFields();
       setIsLoading(false)
       console.log(e)
+    }finally {
+      setIsLoading(false)
     }
   }
 
@@ -77,6 +91,7 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
       }
     } else {
       message.error("Las contraseñas no coinciden.");
+      setIsLoading(false)
     }
   };
 
@@ -104,18 +119,18 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
         autoComplete="off"
         className="form-details-person"
       >
+
         {isRegister && <Form.Item
           name="email_person_userd"
           label="Dirección de e-mail"
-          rules={[ruleRequired]}
         >
           <Input
           defaultValue={person_user?.email?person_user.email:null}
           autoComplete="off"
-          disabled={person_user?.email?true:false}
+          //disabled={person_user?.email?true:false}
           />
         </Form.Item>}
-        {isRegister && !(person_user?.jwt_data?.groups?.length > 0) && <SelectGroup viewLabel={true} required={false} />}
+        {isRegister && !(person_user?.jwt_data?.groups?.length > 0) && <SelectGroup viewLabel={true} required={true} />}
         <Form.Item
           name="newPassword"
           label={isRegister?"Contraseña":"Nueva contraseña"}

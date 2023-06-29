@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { defaultJobbankNode } from '../../../config/config';
 import { connect } from 'react-redux';
 import SearchVacants from '../../../components/jobbank/search/SearchVacants';
 import {
@@ -35,7 +34,7 @@ const index = ({
     }, [currentNode, router.query])
 
     return (
-        <MainSearch currentNode={defaultJobbankNode}>
+        <MainSearch>
             <SearchVacants />
         </MainSearch>
     )

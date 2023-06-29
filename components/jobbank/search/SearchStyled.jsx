@@ -32,7 +32,8 @@ export const SearchLogo = styled.section`
     & .ant-image,
     .ant-image-img{
         height: 100%;
-        width: auto;
+        /* width: auto; */
+        object-fit: contain;
     }
     @media (max-width: 1137px) {
        height: auto;
@@ -460,4 +461,24 @@ export const ContentPrivacy = styled(ContentCenter)`
         font-weight: 500;
         text-decoration: underline;
     }
+`;
+
+export const ContentHTML = styled.div`
+    color: gray;
+    & p{
+        margin-bottom: 0.5em;
+    }
+    & ul{
+        padding-inline-start: 20px;
+        margin-block-end: 0px;
+        margin-block-start: 0px;
+        margin-bottom: 0px;
+    }
+    & li{
+        margin-left: 0px!important;
+    }
+    & li, span, p{
+        color: gray!important;
+    }
+
 `;
