@@ -227,6 +227,16 @@ const FormPayrollPerson = ({
           });
         }
 
+        if(props?.user?.date_of_admission){
+          console.log('date',moment(person?.date_of_admission).format('YYYY-MM-DD'))
+          //setLastDayPaid(moment());
+          let date = moment(person?.date_of_admission)
+          formPayrollPerson.setFieldsValue({
+            //hiring_regime_type: contractType?.id,
+            last_day_paid : date.subtract(1, 'd')
+          });
+        }
+
         if (props.catHiringRegime) {
           // se elige Tipo de régimen de contratación "Sueldos"
           let contractType = props.catHiringRegime.find(
