@@ -275,6 +275,15 @@ class WebApiPayroll {
     );
   }
 
+  static importVacationModification(data){
+    return WebApi.ApisType(
+      `/payroll/payroll-person/import_vacation_modification/`,
+      "post",
+      data
+    );
+  }
+
+
   static importIMSSPerson(data) {
     //payroll/payroll-person/import_salary_modification/
     return WebApi.ApisType(

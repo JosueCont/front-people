@@ -66,6 +66,7 @@ import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
+import ButtonUpdVacations from '../../../components/payroll/ImportGenericButton/ButtonUpdVacations'
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import ModalAddPersonCFI from "../../../components/modal/ModalAddPersonCFI";
 import { getFullName } from "../../../utils/functions";
@@ -2128,7 +2129,9 @@ const homeScreen = ({
                     >
                       Descargar reporte vacaciones
                     </Button>
+                    <ButtonUpdVacations />
                   </div>
+                  
                 </Col>
               </Row>
 
