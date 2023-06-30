@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 const { Text } = Typography;
 import { ruleEmail, ruleRequired } from "../../../utils/rules";
+import dayjs from 'dayjs';
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -58,12 +59,28 @@ const ImssMovements = ({ ...props }) => {
     { label: 'Modificación de salario', value: '07' },
     { label: 'Altas/reingreso', value: '08' },
     { label: 'Incapacidad', value: '12' },
-    { label: 'Ausentismo', value: '11' }
+    /* { label: 'Ausentismo', value: '11' } */
   ]
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
+
+  const disabledMinDate  = (current) => {
+    let max_date = formSua.getFieldValue('end_date')
+    if (max_date){
+        return current && current > max_date;    
+    }
+    return current > dayjs().endOf('day');
+};
+
+const disabledMaxDate  = (current) => {
+  let min_date = formSua.getFieldValue('start_date')
+  if (min_date){
+      return current >= dayjs().endOf('day') || current <= min_date;    
+  }
+  return current > dayjs().endOf('day');
+};
 
   useEffect(() => {
     if(router?.query?.regPatronal){
@@ -155,7 +172,12 @@ const ImssMovements = ({ ...props }) => {
 
     values['start_date'] = values.start_date ? moment(values.start_date).format("YYYY-MM-DD") : null
     values['end_date'] = values.end_date ? moment(values.end_date).format("YYYY-MM-DD") : null
-    console.log('values',values)
+    
+    if(values['start_date'] > values['end_date']){
+      message.info("La fecha final no puede ser menor a la fecha de inicio")
+      return
+    }
+
     if(values.type === "MOVT" && (values.inner_types === undefined || values.inner_types.length < 1 )){
       values['inner_types'] = subMovTypes.map(item => item.value)
     }
@@ -167,6 +189,10 @@ const ImssMovements = ({ ...props }) => {
       if(response?.data?.message){
         message.info(response.data.message)
       }else{
+        if(!response.data){
+          message.info("No se encontraron resultados")
+          return
+        }
         const nameFile = values.type == 'ASEG' ? 'Asegurados' :
                           values.type == 'MOVT' ? 'Movimientos afiliatorios' :
                           values.type == 'CRED' ? 'Créditos infonavit de personas' :
@@ -331,13 +357,13 @@ const ImssMovements = ({ ...props }) => {
                     </Row>
                     <Row gutter={[10,0]}>
                     <Col span={6}>
-                      <Form.Item  name={'start_date'} label="Fecha inicio">
-                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                      <Form.Item  name={'start_date'} label="Fecha inicio" >
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} disabledDate={disabledMinDate} />    
                       </Form.Item>
                     </Col>
                     <Col span={6}>
                       <Form.Item  name={'end_date'} label="Fecha fin">
-                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} disabledDate={disabledMaxDate} />    
                       </Form.Item>
                     </Col>
                     <Col span={24}>   
