@@ -40,6 +40,15 @@ const InfoRequests = () => {
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
 
+     // Keys para periodo actual
+     const period = 'current_vacation_period';
+     const start = 'start_date_current_vacation_period';
+     const end = 'end_date_current_vacation_period';
+     // Keys para siguiente periodo
+     const periodNext = 'next_vacation_period';
+     const startNext = 'start_date_next_vacation_period';
+     const endNext = 'end_date_next_vacation_period';
+
     useEffect(() => {
         if (router?.query?.id) {
             getInfoRequest(router.query?.id)
@@ -65,7 +74,7 @@ const InfoRequests = () => {
             setLoading(false)
         }
     }
-    
+
     const onFinishCancel = async (values) => {
         try {
             setLoading(true)
@@ -144,8 +153,18 @@ const InfoRequests = () => {
         })
     }
 
+    const formatPeriod = () =>{
+        let person = infoRequest?.collaborator;
+        let years = person[period] == infoRequest?.period
+            ? [person[start], person[end]]
+            : [person[startNext], person[endNext]];
+        let init = moment(years[0], formatStart).year();
+        let finish = moment(years[1], formatStart).year();
+        return `${init} - ${finish}`;
+    }
+
     const setValuesForm = () => {
-        let values = {...infoRequest};
+        let values = {};
         values.status = !noValid.includes(infoRequest?.status) ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
         values.departure_date = infoRequest?.departure_date
@@ -154,6 +173,8 @@ const InfoRequests = () => {
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
+        values.period = infoRequest?.period ? formatPeriod() : null;
+        values.days_requested = infoRequest?.days_requested;
         formRequest.setFieldsValue(values)
     }
 

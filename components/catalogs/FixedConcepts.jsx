@@ -13,7 +13,8 @@ import {
   Select,
   Checkbox,
   Tabs,
-  ConfigProvider
+  ConfigProvider,
+  DatePicker
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -32,6 +33,7 @@ import {
 } from "../../utils/constant";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import esES from "antd/lib/locale/es_ES";
+import moment from "moment";
 
 const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -50,6 +52,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const [key, setKey] = useState(1);
   const [catalog, setCat] = useState([]);
   const [showNumPeriods, SetShowNumPeriods] = useState(false);  
+  const [applicationDate, setApplicationDate] = useState(null)
 
   const data = [
     // {
@@ -274,6 +277,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       value.perception_type = null
       value.deduction_type = null
     }
+    value.application_date = applicationDate
     
     if (edit) {
       updateRegister(value);
@@ -338,7 +342,8 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       ...checksValues,
       period_config: item.period_config,
       application_mode: item.application_mode,
-      num_of_periods: item.num_of_periods
+      num_of_periods: item.num_of_periods,
+      application_date: item.application_date ? moment(item.application_date, 'YYYY-MM-DD'): null
     });
     SetShowNumPeriods(item.application_mode == 1 ? false : true)
     setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);    
@@ -421,7 +426,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   ];
   const based_on = [
     { value: 1, label: "Periodo" },
-    { value: 2, label: "Dias trabajados" },
+    { value: 2, label: "Días trabajados" },
   ];
   const type_salary = [
     { value: 0, label: "N/A" },
@@ -548,6 +553,11 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     }
   }
 
+  const changeApplicationDate = (date, dateString) => {
+    console.log("Date ->", dateString);
+    setApplicationDate(dateString)
+  };
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -653,6 +663,20 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     <Input type={"number"} />
                   </Form.Item>
                 </Col>
+                <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                    name='application_date'
+                    label='Fecha de inicio de aplicación'
+                    rules={[ruleRequired]}
+                  >
+                    <DatePicker                      
+                      style={{ width: "100%" }}
+                      placeholder='Seleccionar una fecha'                                                
+                      format='YYYY-MM-DD'
+                      onChange={changeApplicationDate}
+                    />
+                  </Form.Item>
+                </Col>
                 </Row>
                 <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
@@ -727,7 +751,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                 >
                   <Input type={"number"} />
                 </Form.Item>
-              </Col>}
+              </Col>}              
                 </Row>
                 <Row gutter={20}>               
                 <RenderConditions data={data} />

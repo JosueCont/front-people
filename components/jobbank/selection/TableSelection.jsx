@@ -13,6 +13,7 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    LinkOutlined,
     CalendarOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -21,7 +22,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalStatus from './ModalStatus';
-import { getPercentGenJB } from '../../../utils/functions';
+import { getPercentGenJB, copyContent } from '../../../utils/functions';
 
 const TableSelection = ({
     currentUser,
@@ -41,7 +42,7 @@ const TableSelection = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const actionDelete = async () =>{
+    const actionDelete = async () => {
         let ids = itemsToDelete.map(item => item.id);
         try {
             // await WebApiJobBank.deleteSelection({ids});
@@ -55,7 +56,7 @@ const TableSelection = ({
         }
     }
 
-    const actionUpdate = async (values) =>{
+    const actionUpdate = async (values) => {
         try {
             await WebApiJobBank.updateSelection(itemToEdit.id, {
                 ...values,
@@ -72,46 +73,47 @@ const TableSelection = ({
         }
     }
 
-    const openModalManyDelete = () =>{
-        if(itemsToDelete.length > 1){
+    const openModalManyDelete = () => {
+        if (itemsToDelete.length > 1) {
             setOpenModalDelete(true)
-        }else{
+        } else {
             setOpenModalDelete(false)
             message.error('Selecciona al menos dos procesos')
         }
     }
 
-    const onChangeStatus = (value, item) =>{
+    const onChangeStatus = (value, item) => {
         setOpenModal(true)
-        setItemToEdit({...item,
+        setItemToEdit({
+            ...item,
             previus_state: item.status_process,
             status_process: value
         })
     }
 
-    const onCloseModal = () =>{
+    const onCloseModal = () => {
         setOpenModal(false)
         setItemToEdit({})
     }
 
-    const openModalRemove = (item) =>{
+    const openModalRemove = (item) => {
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
-    const closeModalDelete = () =>{
+    const closeModalDelete = () => {
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
-    const optionsStatus = (status) =>{
-        const map_ = item => ({...item, disabled: item.value < status});
+    const optionsStatus = (status) => {
+        const map_ = item => ({ ...item, disabled: item.value < status });
         return optionsStatusSelection.map(map_)
     }
 
-    const onChangePage = ({current, pageSize}) =>{
-        let filters = {...router.query, page: current, size: pageSize};
+    const onChangePage = ({ current, pageSize }) => {
+        let filters = { ...router.query, page: current, size: pageSize };
         router.replace({
             pathname: '/jobbank/selection',
             query: filters
@@ -126,13 +128,21 @@ const TableSelection = ({
         }
     }
 
+    const copyPermalink = (item) => {
+        copyContent({
+            text: `${window.location.origin}/validation?user=${item.candidate?.user_person}&app=kuiz&type=user`,
+            onSucces: () => message.success('Permalink copiado'),
+            onError: () => message.error('Permalink no copiado')
+        })
+    }
+
     const menuTable = () => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=>openModalManyDelete()}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalManyDelete()}
                 >
                     Eliminar
                 </Menu.Item>
@@ -141,25 +151,36 @@ const TableSelection = ({
     };
 
     const menuItem = (item) => {
+        let valid = item.candidate?.user_person
+            && item.candidate?.person_assessment_list?.length > 0;
         return (
             <Menu>
                 <Menu.Item
                     key='4'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
+                    icon={<EditOutlined />}
+                    onClick={() => router.push({
                         pathname: '/jobbank/selection/edit',
-                        query: {...router.query, id: item.id, vacant: item.vacant?.id}
+                        query: { ...router.query, id: item.id, vacant: item.vacant?.id }
                     })}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='2'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
+                {valid && (
+                    <Menu.Item
+                        key='3'
+                        icon={<LinkOutlined />}
+                        onClick={() => copyPermalink(item)}
+                    >
+                        Permalink de evaluaciones
+                    </Menu.Item>
+                )}
                 {/* {item.status_process == 2 && (
                     <Menu.Item
                         key='3'
@@ -186,7 +207,7 @@ const TableSelection = ({
             ellipsis: true
         },
         {
-            title:'Correo',
+            title: 'Correo',
             dataIndex: ['candidate', 'email'],
             key: ['candidate', 'email'],
             ellipsis: true
@@ -204,15 +225,15 @@ const TableSelection = ({
         },
         {
             title: 'Evaluaciones',
-            render: (item) =>{
+            render: (item) => {
                 let valid = item.candidate?.user_person
                     && item.candidate?.person_assessment_list?.length > 0;
                 return valid ? (
                     <span
-                        style={{color: '#1890ff', cursor: 'pointer'}}
-                        onClick={()=> router.push({
+                        style={{ color: '#1890ff', cursor: 'pointer' }}
+                        onClick={() => router.push({
                             pathname: '/jobbank/candidates/assign',
-                            query: {...router.query, person: item.candidate?.user_person, back: 'selection'}
+                            query: { ...router.query, person: item.candidate?.user_person, back: 'selection' }
                         })}
                     >
                         {getPercentGenJB(item.candidate?.person_assessment_list)}%
@@ -223,11 +244,11 @@ const TableSelection = ({
         {
             title: 'Estatus',
             width: 170,
-            render: (item) =>{
-                return(
+            render: (item) => {
+                return (
                     <Select
                         size='small'
-                        style={{width: 150}}
+                        style={{ width: 150 }}
                         defaultValue={item.status_process}
                         value={item.status_process}
                         placeholder='Estatus'
@@ -238,8 +259,8 @@ const TableSelection = ({
             }
         },
         {
-            title: ()=>{
-                return(
+            title: () => {
+                return (
                     <Dropdown overlay={menuTable}>
                         <Button size='small'>
                             <EllipsisOutlined />
@@ -247,9 +268,9 @@ const TableSelection = ({
                     </Dropdown>
                 )
             },
-            render: (item) =>{
+            render: (item) => {
                 return (
-                    <Dropdown overlay={()=> menuItem(item)}>
+                    <Dropdown overlay={() => menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
@@ -305,7 +326,7 @@ const TableSelection = ({
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return {
         list_selection: state.jobBankStore.list_selection,
         load_selection: state.jobBankStore.load_selection,
