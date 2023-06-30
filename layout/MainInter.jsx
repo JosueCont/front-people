@@ -15,6 +15,7 @@ const MainLayoutInter = ({
   logoAlign,
   showFooter,
   contentFooter,
+  secondaryLogo,
   ...props
 }) => {
 
@@ -34,6 +35,7 @@ const MainLayoutInter = ({
             logoAlign={logoAlign}
             showFooter={showFooter}s
             contentFooter={contentFooter}
+            secondaryLogo={secondaryLogo}
         >
             {props.children}
         </MainLayoutAdmin>
