@@ -162,6 +162,13 @@ class WebApiPayroll {
     );
   }
 
+  static downloadIndefiniteTermContract(id) {
+    return WebApi.ApisType(
+      `/payroll/indefinite-term-contract?person_id=${id}&contract_code=CTO3`,
+      "get"
+    );
+  }
+
   static downloadFixedTermContract(id) {
     return WebApi.ApisType(
       `/payroll/fixed-term-contract?person_id=${id}&contract_code=CTO2`,
@@ -267,6 +274,15 @@ class WebApiPayroll {
       data
     );
   }
+
+  static importVacationModification(data){
+    return WebApi.ApisType(
+      `/payroll/payroll-person/import_vacation_modification/`,
+      "post",
+      data
+    );
+  }
+
 
   static importIMSSPerson(data) {
     //payroll/payroll-person/import_salary_modification/
