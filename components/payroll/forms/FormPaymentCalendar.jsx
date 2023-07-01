@@ -120,8 +120,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         ];
 
   useEffect(() => {
-    getBankDispersion()
-  }, [])
+    if(props?.currentNode?.id){
+      console.log('getBankDispersion')
+      getBankDispersion()
+    }
+  }, [props])
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -435,7 +438,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   const getBankDispersion = async () => {
     try {
-      let filters = `?node__id=${props.currentNode.id}`
+      let filters = `?node__id=${props?.currentNode?.id}`
       let response = await WebApiPayroll.getPayrollSpred(filters)
       if(response.status === 200){
         let list = response.data.results.map(item => {

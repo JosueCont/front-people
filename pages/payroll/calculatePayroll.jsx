@@ -1555,7 +1555,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   setMessageModal(5, {
                                     title: "Abrir nómina",
                                     description:
-                                      "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                      "Al abrir la nómina tendrás acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el cual se abrirá.",
                                     type_alert: "warning",
                                     action: () => openPayroll(1),
                                     title_action_button: "Abrir nómina",

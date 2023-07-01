@@ -179,7 +179,7 @@ const [filterName, setFilterName] = useState(null)
         if(response.status === 201){
             message.success("Dispersión creada")
             closeModal()
-            getInfo(filterName)
+            getInfo(filterName?filterName:"")
         }
         setSaving(false)
       } catch (error) {
