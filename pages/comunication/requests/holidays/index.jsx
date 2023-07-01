@@ -33,6 +33,8 @@ const index = ({
 
     const validFilters = () =>{
         let params = {...router.query};
+        params.status = router.query?.status
+            ? router.query?.status : '1';
         if(params.range){
             let dates = params.range.split(',');
             params.start_date_filter = dates[0];
