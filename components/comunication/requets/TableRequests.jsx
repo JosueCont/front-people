@@ -24,25 +24,6 @@ const TableRequests = ({
     const formatEnd = 'DD/MM/YYYY';
     const router = useRouter();
 
-    // Keys para periodo actual
-    const period = 'current_vacation_period';
-    const start = 'start_date_current_vacation_period';
-    const end = 'end_date_current_vacation_period';
-    // Keys para siguiente periodo
-    const periodNext = 'next_vacation_period';
-    const startNext = 'start_date_next_vacation_period';
-    const endNext = 'end_date_next_vacation_period';
-
-    const formatYears = (item) => {
-        let person = item?.collaborator;
-        let years = person[period] == item?.period
-            ? [person[start], person[end]]
-            : [person[startNext], person[endNext]];
-        let init = moment(years[0], formatStart).year();
-        let finish = moment(years[1], formatStart).year();
-        return `${init} - ${finish}`;
-    }
-
     const columns = [
         {
             title: 'Colaborador',
@@ -51,7 +32,8 @@ const TableRequests = ({
         },
         {
             title: 'Periodo',
-            render: formatYears
+            dataIndex: 'period',
+            render: (item) => `${item} - ${item+1}`
         },
         {
             title: 'Fecha solicitud',
