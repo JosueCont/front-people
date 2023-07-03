@@ -24,6 +24,17 @@ const TableRequests = ({
     const formatEnd = 'DD/MM/YYYY';
     const router = useRouter();
 
+    const getColor = (status) => {
+        const colors = {
+            1: '#1677ff',
+            2: '#52c41a',
+            3: '#ff4d4f',
+            4: 'default',
+            5: '#F99543'
+        }
+        return colors[status];
+    }
+
     const columns = [
         {
             title: 'Colaborador',
@@ -33,7 +44,7 @@ const TableRequests = ({
         {
             title: 'Periodo',
             dataIndex: 'period',
-            render: (item) => `${item} - ${item+1}`
+            render: (item) => `${item} - ${item + 1}`
         },
         {
             title: 'Fecha solicitud',
@@ -78,26 +89,18 @@ const TableRequests = ({
         {
             title: 'Estatus',
             dataIndex: 'status',
-            // render: (item) => getValueFilter({
-            //     value: item,
-            //     list: optionsStatusVacation,
-            //     keyEquals: 'value',
-            //     keyShow: 'label'
-            // })
-            render: (item) => {
-                let label = getValueFilter({
-                    value: item,
-                    list: optionsStatusVacation,
-                    keyEquals: 'value',
-                    keyShow: 'label'
-                });
-                if (![3, 4].includes(item)) return label;
-                return (
-                    <Tag style={{ width: 90, textAlign: 'center' }} color='red'>
-                        {label}
-                    </Tag>
-                )
-            }
+            render: (item) => (
+                <Tag style={{ width: 90, textAlign: 'center' }}
+                    color={getColor(item)}
+                >
+                    {getValueFilter({
+                        value: item,
+                        list: optionsStatusVacation,
+                        keyEquals: 'value',
+                        keyShow: 'label'
+                    })}
+                </Tag>
+            )
         },
         // {
         //     title: 'Medio',
