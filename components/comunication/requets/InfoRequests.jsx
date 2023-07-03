@@ -39,7 +39,7 @@ const InfoRequests = () => {
 
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
-
+    
     useEffect(() => {
         if (router?.query?.id) {
             getInfoRequest(router.query?.id)
@@ -65,7 +65,7 @@ const InfoRequests = () => {
             setLoading(false)
         }
     }
-    
+
     const onFinishCancel = async (values) => {
         try {
             setLoading(true)
@@ -145,7 +145,7 @@ const InfoRequests = () => {
     }
 
     const setValuesForm = () => {
-        let values = {...infoRequest};
+        let values = {};
         values.status = !noValid.includes(infoRequest?.status) ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
         values.departure_date = infoRequest?.departure_date
@@ -154,6 +154,9 @@ const InfoRequests = () => {
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
+        values.period = !noValid.includes(infoRequest?.period)
+            ? `${infoRequest?.period} - ${infoRequest?.period + 1}` : null;
+        values.days_requested = infoRequest?.days_requested;
         formRequest.setFieldsValue(values)
     }
 

@@ -8,7 +8,12 @@ import {
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
-import { createFiltersJB, downLoadFileBlob, getDomain, getFiltersJB } from '../../../utils/functions';
+import {
+    createFiltersJB,
+    downLoadFileBlob,
+    getDomain,
+    getFiltersJB
+} from '../../../utils/functions';
 import FiltersRequests from './FiltersRequests';
 import { useFiltersRequests } from './useFiltersRequests';
 import { API_URL_TENANT } from '../../../config/config';
@@ -72,6 +77,12 @@ const SearchRequests = ({currentNode}) => {
         );
     }
 
+    const defaultFilter = useMemo(()=>{
+        if(!router.query?.status) return {Estatus: 'Pendiente'};
+        let value = listGets['status'](router.query?.status);
+        return {Estatus: value == '6' ? 'Todas' : value};
+    },[router.query?.status])
+
     return (
         <>
             <Card bodyStyle={{padding: 12}}>
@@ -107,6 +118,8 @@ const SearchRequests = ({currentNode}) => {
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            discardKeys={['status']}
+                            defaultFilters={defaultFilter}
                         />
                     </Col>  
                 </Row>

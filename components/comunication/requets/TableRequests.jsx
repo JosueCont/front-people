@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Space} from 'antd';
+import { Table, Space, Tag } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -19,25 +19,47 @@ const TableRequests = ({
 
     const {
         vacation
-    } = useSelector(state =>  state.userStore.permissions);
+    } = useSelector(state => state.userStore.permissions);
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
     const router = useRouter();
+
+    const getColor = (status) => {
+        const colors = {
+            1: '#1677ff',
+            2: '#52c41a',
+            3: '#ff4d4f',
+            4: 'default',
+            5: '#F99543'
+        }
+        return colors[status];
+    }
 
     const columns = [
         {
             title: 'Colaborador',
             dataIndex: 'collaborator',
             render: (item) => getFullName(item)
-        },        
+        },
         {
             title: 'Periodo',
             dataIndex: 'period',
-            key: 'period'
-        },       
+            render: (item) => `${item} - ${item + 1}`
+        },
+        {
+            title: 'Fecha solicitud',
+            dataIndex: 'timestamp',
+            sorter: (a, b) => {
+                return moment(a?.timestamp).unix() - moment(b?.timestamp).unix();
+            },
+            render: (item) => moment(item).format(formatEnd)
+        },
         {
             title: 'Fecha inicio',
             dataIndex: 'departure_date',
+            sorter: (a, b) => {
+                return moment(a?.departure_date, formatStart).unix() - moment(b?.departure_date, formatStart).unix();
+            },
             render: (item) => item ? moment(item, formatStart).format(formatEnd) : <></>
         },
         {
@@ -57,8 +79,7 @@ const TableRequests = ({
         },
         {
             title: 'Días restantes',
-            dataIndex: 'remaining_days',
-            render: (item, record) => record?.current_available_days - record?.days_requested
+            render: (item) => item?.current_available_days - item?.days_requested
         },
         {
             title: 'Jefe inmediato',
@@ -68,12 +89,18 @@ const TableRequests = ({
         {
             title: 'Estatus',
             dataIndex: 'status',
-            render: (item) => getValueFilter({
-                value: item,
-                list: optionsStatusVacation,
-                keyEquals: 'value',
-                keyShow: 'label'
-            })
+            render: (item) => (
+                <Tag style={{ width: 90, textAlign: 'center' }}
+                    color={getColor(item)}
+                >
+                    {getValueFilter({
+                        value: item,
+                        list: optionsStatusVacation,
+                        keyEquals: 'value',
+                        keyShow: 'label'
+                    })}
+                </Tag>
+            )
         },
         // {
         //     title: 'Medio',
@@ -86,13 +113,13 @@ const TableRequests = ({
             title: 'Acciones',
             render: (item) => (
                 <Space>
-                    <EyeOutlined onClick={()=> router.push(`holidays/${item.id}/details`)}/>
+                    <EyeOutlined onClick={() => router.push(`holidays/${item.id}/details`)} />
                     {vacation.edit
-                        && [1,5].includes(item.status)
-                        && item.created_from == 2 
+                        && [1, 5].includes(item.status)
+                        && item.created_from == 2
                         && (
-                        <EditOutlined onClick={()=> router.push(`holidays/${item.id}/edit`)}/>
-                    )}
+                            <EditOutlined onClick={() => router.push(`holidays/${item.id}/edit`)} />
+                        )}
                 </Space>
             )
         }
@@ -110,6 +137,7 @@ const TableRequests = ({
                     ? 'Cargando...'
                     : 'No se encontraron resultados.',
             }}
+            // rowClassName={e => e.status == 4 ? 'holidays-cancelled': ''}
             pagination={{
                 hideOnSinglePage: true,
                 showSizeChanger: false

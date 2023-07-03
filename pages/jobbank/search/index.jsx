@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { defaultJobbankNode } from '../../../config/config';
 import { connect } from 'react-redux';
 import SearchVacants from '../../../components/jobbank/search/SearchVacants';
 import {
@@ -29,13 +28,12 @@ const index = ({
     useEffect(() => {
         if (!currentNode) return;
         let page = router.query.page ? parseInt(router.query.page) : 1;
-        let filters = getFiltersJB({ ...router.query }, ['page']);
-        let params = `${filters}&page=${page}`;
-        getVacanciesSearch(currentNode.id, params, page);
+        let filters = getFiltersJB({ ...router.query });
+        getVacanciesSearch(currentNode.id, filters, page);
     }, [currentNode, router.query])
 
     return (
-        <MainSearch currentNode={defaultJobbankNode}>
+        <MainSearch>
             <SearchVacants />
         </MainSearch>
     )

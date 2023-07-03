@@ -408,7 +408,7 @@ const SelectCompany = ({ ...props }) => {
                           <Meta
                             className="meta_company"
                             title={item.name}
-                            description="Ultima vez: Hace 2 Hrs"
+                            // description="Ultima vez: Hace 2 Hrs"
                           />
                         </Card>
                       </Col>
