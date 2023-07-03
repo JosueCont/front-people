@@ -36,7 +36,8 @@ const FiltersRequests = ({
         let size = (range * 2) + 1;
         return Array(size).fill(null).map((_, idx) => {
             let result = idx > range ? year + (idx - range) : year - (range - idx);
-            return { value: `${result}`, key: `${result}`, label: `${result}` };
+            let label = `${result} - ${result + 1}`;
+            return { value: `${result}`, key: `${idx}`, label};
         })
     }, [])
 
