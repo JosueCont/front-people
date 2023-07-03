@@ -114,7 +114,7 @@ const VacactionForm = ({
         values.period = person[period] ? person[period] : null;
         values.immediate_supervisor = person?.immediate_supervisor
             ? person?.immediate_supervisor?.id : null,
-            values.days_requested = null;
+        values.days_requested = null;
         values.departure_date = null;
         values.return_date = null;
         formRequest.setFieldsValue(values);
@@ -186,30 +186,6 @@ const VacactionForm = ({
         if (!departureDate) return moment();
         return moment(departureDate);
     }
-
-    const optionsPeriod = useMemo(() => {
-        // if (Object.keys(currentPerson).length <= 0) return [];
-        let options = [];
-        if (currentPerson[period]) {
-            let init = moment(currentPerson[start], formatStart).year();
-            let finish = moment(currentPerson[end], formatStart).year();
-            options.push({
-                key: '1',
-                value: currentPerson[period],
-                label: `${init} - ${finish}`
-            });
-        }
-        if(currentPerson[periodNext]){
-            let init = moment(currentPerson[startNext], formatStart).year();
-            let finish = moment(currentPerson[endNext], formatStart).year();
-            options.push({
-                key: '2',
-                value: currentPerson[periodNext],
-                label: `${init} - ${finish}`
-            });
-        }
-        return options;
-    }, [currentPerson])
 
     const dateStart = useMemo(() => {
         return getDates()
@@ -283,9 +259,23 @@ const VacactionForm = ({
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                         onChange={onChangePeriod}
-                        options={optionsPeriod}
                         size='large'
-                    />
+                    >
+                        {Object.keys(currentPerson).length > 0 && (
+                            <>
+                                {currentPerson[period] && (
+                                    <Select.Option value={currentPerson[period]} key='1'>
+                                        {currentPerson[period]} - {currentPerson[period] + 1}
+                                    </Select.Option>
+                                )}
+                                {currentPerson[periodNext] && (
+                                    <Select.Option value={currentPerson[periodNext]} key='2'>
+                                        {currentPerson[periodNext]} - {currentPerson[periodNext] + 1}
+                                    </Select.Option>
+                                )}
+                            </>
+                        )}
+                    </Select>
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8}>

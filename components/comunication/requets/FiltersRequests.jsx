@@ -71,6 +71,9 @@ const FiltersRequests = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
+                initialValues={{
+                    status: '1'
+                }}
             >
                 <Row gutter={[16, 0]}>
                     <Col span={12}>
