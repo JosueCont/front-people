@@ -52,7 +52,7 @@ const TableRequests = ({
             sorter: (a, b) => {
                 return moment(a?.timestamp).unix() - moment(b?.timestamp).unix();
             },
-            render: (item) => moment(item).format(`${formatEnd} hh:mm a`)
+            render: (item) => moment(item).format(formatEnd)
         },
         {
             title: 'Fecha inicio',
