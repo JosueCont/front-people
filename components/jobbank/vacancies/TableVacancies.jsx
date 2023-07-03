@@ -159,12 +159,6 @@ const TableVacancies = ({
     }
 
     const copyLinkPostulation = (item) =>{
-        //let url = `${window.location.origin}/jobbank/autoregister/candidate`;
-        //copyContent({
-        //    text: `${url}?code=${currentNode.permanent_code}&vacant=${item.id}`,
-        //    onSucces: ()=> message.success('Link de postulación copiado'),
-        //    onError: () => message.error('Link de postulación no copiado')
-        //})
         let url = `${window.location.origin}/jobbank/search/details`;
         copyContent({
             text: `${url}?vacant=${item.id}`,
