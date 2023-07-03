@@ -14,6 +14,9 @@ import {
   Select,
   Spin,
   Input,
+  DatePicker,
+  Checkbox,
+  Switch,
 } from "antd";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -21,9 +24,11 @@ import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
 import { ClearOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectYear from "../selects/SelectYear";
 import moment from "moment";
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
 import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
+import SelectLevel from '../selects/SelectLevel'
 import {
   messageError,
 } from "../../utils/constant";
@@ -53,7 +58,8 @@ const PayrollReport = ({ permissions, ...props }) => {
   /* variables para modal de filtro */
   const [departments, setDepartments] = useState(null)
   const [jobs, setJobs] = useState(null)
-  
+  const [urlFilter, setUrlFilter] = useState(null)
+
   const columns = [
     {
       title: "UUID",
@@ -152,15 +158,27 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const onFinish = (values, exporter = "False", page = 1) => {
-    values['node__id'] = props?.currentNode?.id
-    values['export'] = exporter
-    values['report_type'] = 'PAYROLL_DETAILED'
+    let urlQuery = `page=${page}&node__id=${props?.currentNode?.id}`
+    urlQuery += `&report_type=${values['report_type'] ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
+    urlQuery += `&patronal_registrations=${values['patronal_registrations'].toString()}`
+    urlQuery += `&departments=${values['departments'].toString()}`
+    urlQuery += `&cost_centers=${values['cost_centers'].toString()}`
+    urlQuery += `&jobs=${values['jobs'].toString()}`
+    urlQuery += `&work_titles=${values['work_titles'].toString()}`
+    urlQuery += `&levels=${values['levels'].toString()}`
+    urlQuery += `&payment_calendars=${values['payment_calendars']}`
+    urlQuery += `&payment_periods=${values['payment_periods'].toString()}`
+    urlQuery += `&tags=${values['tags'].toString()}`
+    urlQuery +=  values['start_date'] ? `&start_date=${moment(values['start_date']).format("YYYY/MM/DD")} `:''
+    urlQuery +=  values['end_date'] ? `&end_date=${ moment(values['end_date']).format("YYYY/MM/DD")}`:'' 
+    console.log('urlQuery',urlQuery)
+    setUrlFilter(urlQuery)
 
-    setValuesFilter(values);
-    if (exporter === "False") getReportPayroll(`page=${page}`, values);
+    //setValuesFilter(values);
+    if (exporter === "False") getReportPayroll(urlQuery);
     else
       downLoadFileBlob(
-        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${url}`,
+        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlQuery}&export=${exporter}`,
         "historico_nomina.xlsx",
         "GET"
       );
@@ -171,9 +189,9 @@ const PayrollReport = ({ permissions, ...props }) => {
     setCurrentPage(page);
   };
 
-  const getReportPayroll = (url, data) => {
+  const getReportPayroll = (url) => {
     setLoading(true);
-    WebApiPayroll.getReportPayroll(url, data)
+    WebApiPayroll.getReportPayroll(url)
       .then((response) => {
         setLoading(false);
         setLenData(response.data.count);
@@ -187,19 +205,18 @@ const PayrollReport = ({ permissions, ...props }) => {
       });
   };
 
-  const changeCalendar = (values) => {
+  const changeCalendar = (value) => {
     // setTotalSalary(null);
     // setTotalIsr(null);
     let periods_list = []
 
-    values.map(value => {
-      const calendar = paymentCalendars.find((item) => item.id === value);
-      calendar.periods.map(item => periods_list.push(item))
+    
+    const calendar = paymentCalendars.find((item) => item.id === value);
+    calendar.periods.map(item => periods_list.push(item))
       /* setPeriodSelcted(period); */
       /* setCalendarSelect(calendar); */
       /* setActivePeriod(period.id); */
       /* setPayrollType(calendar.perception_type.code); */  
-    })
     let new_periods = periods_list.sort((a, b) => a.name - b.name)
       .map((item) => {
         return {
@@ -321,11 +338,18 @@ const PayrollReport = ({ permissions, ...props }) => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item name={'report_type'} label="Tipo de prestamo">
-                <Select options={[]} /> 
+            <Col  span={12}/>
+            <Col span={8} >
+              <Form.Item name={'start_date'} label="Fecha inicio">
+                <DatePicker style={{ width:'100%' }} />
               </Form.Item>
             </Col>
+            <Col span={8}>
+              <Form.Item name={'end_date'} label="Fecha fin">
+                <DatePicker style={{ width:'100%' }} />
+              </Form.Item>
+            </Col>
+            
             <Col span={8}>
               <SelectPatronalRegistration
                 name="patronal_registrations"
@@ -336,7 +360,6 @@ const PayrollReport = ({ permissions, ...props }) => {
           <Col span={8}>
             <Form.Item label="Calendarios de pago" name={"payment_calendars"}>
               <Select
-                  mode="multiple"
                   style={{ width: "100%" }}
                   options={optionspPaymentCalendars}
                   onChange={changeCalendar}
@@ -366,10 +389,22 @@ const PayrollReport = ({ permissions, ...props }) => {
               <SelectWorkTitle name="work_titles" multiple foReport department={departments} job={jobs} />
             </Col>
             <Col span={8}>
+              <SelectLevel name="levels" multiple />
+            </Col>
+            
+            <Col span={8}>
               <SelectCostCenter name="cost_centers" multiple viewLabel="Centro de costos" />
             </Col>
             <Col span={8} >
               <SelectTags name="tags" viewLabel="Etiquetas" multiple />
+            </Col>
+            <Col span={8}>
+              <Form.Item name={'report_type'} label="Reporte acomulado">
+                <Switch
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                 />
+              </Form.Item>
             </Col>
           </Row>
         </Form>

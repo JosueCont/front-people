@@ -151,8 +151,8 @@ class WebApiPayroll {
     );
   }
 
-  static getReportPayroll(url, data) {
-    return WebApi.ApisType(`/payroll/payroll-report?${url}`, "post", data);
+  static getReportPayroll(url) {
+    return WebApi.ApisType(`/payroll/payroll-report?${url}`, "get");
   }
 
   static downloadRenegationCart(id) {

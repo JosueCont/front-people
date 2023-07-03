@@ -8,6 +8,7 @@ const SelectLevel = ({
   rules = [],
   value_form = "id",
   textLabel = null,
+  multiple=false,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -45,6 +46,7 @@ const SelectLevel = ({
           notFoundContent={"No se encontraron resultados."}
           showSearch
           optionFilterProp="children"
+          mode={multiple&&'multiple'}
         >
           {options.map((item) => {
             return (
