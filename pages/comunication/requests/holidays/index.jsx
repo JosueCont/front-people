@@ -31,11 +31,12 @@ const index = ({
         }
     }, [currentNode, router.query])
 
-    const validFilters = () =>{
-        let params = {...router.query};
+    const validFilters = () => {
+        let params = { ...router.query};
         params.status = router.query?.status
             ? router.query?.status : '1';
-        if(params.range){
+        if (params?.status == '6') delete params.status;
+        if (params.range) {
             let dates = params.range.split(',');
             params.start_date_filter = dates[0];
             params.end_date_filter = dates[1];
