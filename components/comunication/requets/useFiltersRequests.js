@@ -2,7 +2,7 @@ import { optionsStatusVacation } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
 import { useSelector } from "react-redux";
 
-export const useFiltersRequests = () =>{
+export const useFiltersRequests = () => {
 
     const {
         persons_company,
@@ -17,11 +17,11 @@ export const useFiltersRequests = () =>{
         range: 'Fechas'
     }
 
-    const getDate = (value) =>{
+    const getDate = (value) => {
         let dates = value.split(',');
         return `${dates[0]} - ${dates[1]}`;
     }
-    
+
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusVacation,
@@ -35,11 +35,17 @@ export const useFiltersRequests = () =>{
         keyShow: e => getFullName(e)
     })
 
+    const getPeriod = (value) => {
+        let year = parseInt(value);
+        return `${year} - ${year + 1}`;
+    }
+
     const listGets = {
         range: getDate,
         status: getStatus,
         person__id: getPerson,
-        immediate_supervisor: getPerson
+        immediate_supervisor: getPerson,
+        period: getPeriod
     }
 
     return { listKeys, listGets }

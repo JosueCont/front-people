@@ -36,7 +36,8 @@ const FiltersRequests = ({
         let size = (range * 2) + 1;
         return Array(size).fill(null).map((_, idx) => {
             let result = idx > range ? year + (idx - range) : year - (range - idx);
-            return { value: `${result}`, key: `${result}`, label: `${result}` };
+            let label = `${result} - ${result + 1}`;
+            return { value: `${result}`, key: `${idx}`, label};
         })
     }, [])
 
@@ -126,9 +127,9 @@ const FiltersRequests = ({
                             name='status'
                         >
                             <Select
-                                allowClear
+                                // allowClear
                                 placeholder='Seleccionar una opción'
-                                options={optionsStatusVacation}
+                                options={[{value: '6', key: '6', label: 'Todas'}].concat(optionsStatusVacation)}
                             />
                         </Form.Item>
                     </Col>
