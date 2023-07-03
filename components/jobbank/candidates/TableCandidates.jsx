@@ -237,9 +237,14 @@ const TableCandidates = ({
             ellipsis: true
         },
         {
-            title: 'Teléfono',
+            title: 'Teléfono celular',
             dataIndex: 'cell_phone',
             key: 'cell_phone'
+        },
+        {
+            title: 'Teléfono fijo',
+            dataIndex: 'telephone',
+            key: 'telephone'
         },
         {
             title: 'Evaluaciones',

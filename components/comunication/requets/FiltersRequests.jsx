@@ -126,9 +126,9 @@ const FiltersRequests = ({
                             name='status'
                         >
                             <Select
-                                allowClear
+                                // allowClear
                                 placeholder='Seleccionar una opción'
-                                options={optionsStatusVacation}
+                                options={[{value: '6', key: '6', label: 'Todas'}].concat(optionsStatusVacation)}
                             />
                         </Form.Item>
                     </Col>
