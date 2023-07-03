@@ -175,7 +175,7 @@ const PayrollReport = ({ permissions, ...props }) => {
     setUrlFilter(urlQuery)
 
     //setValuesFilter(values);
-    if (exporter === "False") getReportPayroll(urlQuery);
+    if (exporter === "False") getReportPayroll(urlQuery+`&export=${exporter}`);
     else
       downLoadFileBlob(
         `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlQuery}&export=${exporter}`,
