@@ -18,6 +18,7 @@ const SelectCostCenter = ({ multiple=false,name='cost_center', viewLabel='',plac
         notFoundContent="No se encontraron resultados"
         showSearch
         optionFilterProp="children"
+        allowClear={props.allowClear ? true : false}
       >
         {cat_cost_center && cat_cost_center.map((item) => {
           return (

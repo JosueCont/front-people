@@ -18,6 +18,7 @@ const SelectTags = ({ multiple=false,name='tag', viewLabel='',placeholder='Etiqu
         notFoundContent="No se encontraron resultados"
         showSearch
         optionFilterProp="children"
+        allowClear={props.allowClear ? true : false}
       >
         {cat_tags && cat_tags.map((item) => {
           return (
