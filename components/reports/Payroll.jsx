@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Row,
@@ -8,6 +8,15 @@ import {
   Typography,
   Tooltip,
   Pagination,
+  Space,
+  Modal,
+  message,
+  Select,
+  Spin,
+  Input,
+  DatePicker,
+  Checkbox,
+  Switch,
 } from "antd";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -15,8 +24,22 @@ import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
 import { ClearOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectYear from "../selects/SelectYear";
 import moment from "moment";
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
+import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
+import SelectLevel from '../selects/SelectLevel'
+import {
+  messageError,
+} from "../../utils/constant";
+/* Componentes para filtro */
+import SelectCompany from '../selects/SelectCompany'
+import SelectDepartment from '../selects/SelectDepartment'
+import SelectJob from '../selects/SelectJob'
+import SelectWorkTitle from '../selects/SelectWorkTitle'
+import SelectCostCenter from '../selects/SelectCostCenter'
+import SelectTags from '../selects/SelectTags'
+
 
 const PayrollReport = ({ permissions, ...props }) => {
   const { Title } = Typography;
@@ -27,6 +50,15 @@ const PayrollReport = ({ permissions, ...props }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lenData, setLenData] = useState(0);
   const [valuesFilter, setValuesFilter] = useState(null);
+  const [showModal, setShowModal] = useState(false)
+  const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
+  const [paymentCalendars, setPaymentCalendars] = useState([]);
+  const [calendarSelect, setCalendarSelect] = useState(null);
+  const [periods, setPeriods] = useState([])
+  /* variables para modal de filtro */
+  const [departments, setDepartments] = useState(null)
+  const [jobs, setJobs] = useState(null)
+  const [urlFilter, setUrlFilter] = useState(null)
 
   const columns = [
     {
@@ -101,26 +133,63 @@ const PayrollReport = ({ permissions, ...props }) => {
     },
   ];
 
+  const getPaymentCalendars = async (value) => {
+    await WebApiPayroll.getPaymentCalendar(value)
+      .then((response) => {
+        console.log("==================", response.data.results)
+        setPaymentCalendars(response.data.results);
+        let calendars = response.data.results.map((item, index) => {
+          return { key: item.id, label: item.name, value: item.id };
+        });
+        setOptionsPaymentCalendars(calendars);
+      })
+      .catch((error) => {
+        console.log('====>', error);
+        message.error(messageError);
+      });
+  };
+
   const clearFilter = () => {
     form.resetFields();
     setCalendar(null);
     setLoading(false);
+    setValuesFilter(null)
+    onFinish({patronal_registrations: [], payment_calendars: [], payment_periods: []})
   };
 
-  const onFinish = (value, exporter = "False", page = 1) => {
-    setValuesFilter(value);
-    let url = `node=${props.currentNode.id}&export=${exporter}`;
-    if (value.calendar && value.calendar != "")
-      url = url + `&calendar=${value.calendar}`;
-    if (value.period && value.period != "")
-      url = url + `&period=${value.period}`;
-    if (exporter === "False") getReportPayroll(url + `&page=${page}`);
-    else
+  const onFinish = (values, exporter = "False", page = 1) => {
+    console.log('values', values)
+    let urlQuery = `page=${page}&node__id=${props?.currentNode?.id}`
+    urlQuery += values['name'] ? `&name=${values['name']}` : ''
+    urlQuery += `&report_type=${values['report_type'] ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
+    urlQuery += values['patronal_registrations']?.length > 0 ? `&patronal_registrations=${values['patronal_registrations'].toString()}` : ''
+    urlQuery += values['departments']?.length > 0 ? `&departments=${values['departments'].toString()}` : ''
+    urlQuery += values['cost_centers']?.length > 0 ? `&cost_centers=${values['cost_centers'].toString()}` : ''
+    urlQuery += values['jobs']?.length > 0 ? `&jobs=${values['jobs'].toString()}` : ''
+    urlQuery += values['work_titles']?.length > 0 ? `&work_titles=${values['work_titles'].toString()}` : ''
+    urlQuery += values['levels']?.length > 0 ? `&levels=${values['levels'].toString()}` : ''
+    urlQuery += values['payment_calendars'] ? `&payment_calendars=${values['payment_calendars']}` : ''
+    urlQuery += values['payment_periods']?.length > 0 ? `&payment_periods=${values['payment_periods'].toString()}` : ''
+    urlQuery += values['tags']?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
+    urlQuery +=  values['start_date'] ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")} `:''
+    urlQuery +=  values['end_date'] ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
+    setUrlFilter(urlQuery)
+
+    //setValuesFilter(values);
+    if (exporter === "False") {
+      console.log('report=======>')
+      getReportPayroll(urlQuery+`&export=${exporter}`);
+      console.log('urlQuery',urlQuery+`&export=${exporter}`)
+      //getReportPayroll("https://demo.api.people.hiumanlab.com/payroll/payroll-report?page=1&export=False&node__id=848&report_type=PAYROLL_ACCUMULATED")
+      }
+    else{
+      console.log('download=======>')
       downLoadFileBlob(
-        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${url}`,
+        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlQuery}&export=${exporter}`,
         "historico_nomina.xlsx",
         "GET"
       );
+    }
   };
 
   const pagination = async (page) => {
@@ -135,86 +204,92 @@ const PayrollReport = ({ permissions, ...props }) => {
         setLoading(false);
         setLenData(response.data.count);
         setPayrollList(response.data.results);
+        setShowModal(false)
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
+        setShowModal(false)
       });
   };
 
+  const changeCalendar = (value) => {
+    if(!value){
+      setPeriods([])
+      form.setFields([
+        {
+          name: 'payment_periods',
+          value:[]
+        }
+      ])
+      return
+    }
+      
+    // setTotalSalary(null);
+    // setTotalIsr(null);
+    let periods_list = []
+
+    
+    const calendar = paymentCalendars.find((item) => item.id === value);
+    calendar.periods.map(item => periods_list.push(item))
+      /* setPeriodSelcted(period); */
+      /* setCalendarSelect(calendar); */
+      /* setActivePeriod(period.id); */
+      /* setPayrollType(calendar.perception_type.code); */  
+    let new_periods = periods_list.sort((a, b) => a.name - b.name)
+      .map((item) => {
+        return {
+          value: item.id,
+          label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+          key: item.id,
+        };
+      })
+
+    setPeriods(new_periods)
+    
+  };
+
+  useEffect(() => {
+    
+    getPaymentCalendars(props?.currentNode?.id)
+  }, [props?.currentNode?.id])
+
+
+  
+  
+  
+
   return (
     <>
-      <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
+      <Row justify="end" style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
           <Title level={5}>Nómina</Title>
           <hr />
         </Col>
-        <Col>
-          <Form
-            name="filter"
-            form={form}
-            layout="vertical"
-            key="formFilter"
-            className="formFilterReports"
-            onFinish={onFinish}
-          >
-            <Row gutter={[10]}>
-              <Col>
-                <SelectPaymentCalendar
-                  setCalendarId={(value) => setCalendar(value)}
-                  name="calendar"
-                  style={{ width: 300 }}
-                />
-              </Col>
-              {calendar && (
-                <Col>
-                  <SelectYear
-                    viewLabel={true}
-                    size="middle"
-                    label={"Año"}
-                    placeholder={"Año"}
-                  />
-                </Col>
-              )}
-              <Col style={{ display: "flex" }}>
-                <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    key="buttonFilter"
-                    htmlType="submit"
-                    loading={loading}
-                  >
-                    <SearchOutlined />
-                  </Button>
-                </Tooltip>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                <Tooltip
-                  title="Limpiar filtro"
-                  color={"#3d78b9"}
-                  key={"#3d78b9"}
-                >
-                  <Button
-                    onClick={clearFilter}
-                    style={{
-                      fontWeight: "bold",
-                      marginTop: "auto",
-                    }}
-                    key="buttonClearFilter"
-                  >
-                    <ClearOutlined />
-                  </Button>
-                </Tooltip>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
         <Col className="columnRightFilter">
+          <Space>
+            <Button onClick={() => setShowModal(true)}>
+              <SearchOutlined />
+            </Button>
+            {
+              valuesFilter && 
+              <Tooltip
+              title="Limpiar filtro"
+              color={"#3d78b9"}
+              key={"#3d78b9"}
+            >
+              <Button
+                onClick={clearFilter}
+                style={{
+                  fontWeight: "bold",
+                  marginTop: "auto",
+                }}
+                key="buttonClearFilter"
+              >
+                <ClearOutlined />
+              </Button>
+            </Tooltip>
+            }
           {permissions.export_payrolls && (
             <Button
               style={{
@@ -228,6 +303,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               Descargar
             </Button>
           )}
+          </Space>
         </Col>
       </Row>
       <Row>
@@ -264,6 +340,101 @@ const PayrollReport = ({ permissions, ...props }) => {
           </Col>
         )}
       </Row>
+      <Modal 
+        title="Filtrar reporte de nomina"
+        visible={showModal}
+        onCancel={() => {
+            setShowModal(false)
+            form.resetFields()
+          }
+        }
+        onOk={() => form.submit()}
+        okButtonProps={{ loading: loading }}
+        cancelButtonProps={{ disabled: loading }}
+        width={900}
+      >
+        <Spin spinning={loading}>
+        <Form layout="vertical" form={form} onFinish={onFinish}>
+          <Row gutter={20}>
+            <Col span={12}>
+              <Form.Item name={'name'} label="Nombre de la persona">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col  span={12}/>
+            <Col span={8} >
+              <Form.Item name={'start_date'} label="Fecha inicio">
+                <DatePicker style={{ width:'100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name={'end_date'} label="Fecha fin">
+                <DatePicker style={{ width:'100%' }} />
+              </Form.Item>
+            </Col>
+            
+            <Col span={8}>
+              <SelectPatronalRegistration
+                name="patronal_registrations"
+                multiple
+                currentNode={props?.currentNode?.id}
+              />
+            </Col>
+          <Col span={8}>
+            <Form.Item label="Calendarios de pago" name={"payment_calendars"}>
+              <Select
+                allowClear
+                  style={{ width: "100%" }}
+                  options={optionspPaymentCalendars}
+                  onChange={changeCalendar}
+                  placeholder="Calendarios"
+                  notFoundContent={"No se encontraron resultados."}
+                  maxTagCount="responsive"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name="payment_periods" label="Periodos">
+              <Select
+                placeholder="Periodos"
+                mode="multiple"
+                options={periods}
+                maxTagCount="responsive"
+                allowClear
+              />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <SelectDepartment name="departments" multiple  onChange={(e) =>setDepartments(e)}/>
+            </Col>
+            <Col span={8}>
+              <SelectJob name="jobs" multiple onChange={(e) => setJobs(e) } />
+            </Col>
+            <Col span={8}>
+              <SelectWorkTitle name="work_titles" multiple foReport department={departments} job={jobs} />
+            </Col>
+            <Col span={8}>
+              <SelectLevel name="levels" multiple />
+            </Col>
+            
+            <Col span={8}>
+              <SelectCostCenter name="cost_centers" multiple viewLabel="Centro de costos" allowClear />
+            </Col>
+            <Col span={8} >
+              <SelectTags name="tags" viewLabel="Etiquetas" multiple allowClear />
+            </Col>
+            <Col span={8}>
+              <Form.Item name={'report_type'} label="Reporte acomulado">
+                <Switch
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                 />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        </Spin>
+      </Modal>
     </>
   );
 };
