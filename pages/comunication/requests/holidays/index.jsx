@@ -17,17 +17,18 @@ const index = ({
     const router = useRouter();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [lastFilters, setLastFilters] = useState("");
 
     useEffect(() => {
-        if (currentNode) {
-            getPersonsCompany(currentNode?.id)
-        }
+        if(!currentNode) return;
+        getPersonsCompany(currentNode?.id)
     }, [currentNode])
 
     useEffect(() => {
         if (currentNode) {
             let filters = getFiltersJB(validFilters())
             getRequests(currentNode?.id, filters)
+            setLastFilters(filters)
         }
     }, [currentNode, router.query])
 
@@ -62,7 +63,7 @@ const index = ({
             pageKey={['holidays']}
             extraBread={[{ name: 'Vacaciones' }]}
         >
-            <SearchRequets />
+            <SearchRequets lastFilters={lastFilters}/>
             <TableRequests
                 requests={requests}
                 loading={loading}

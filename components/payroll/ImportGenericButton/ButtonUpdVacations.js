@@ -76,7 +76,7 @@ const ButtonUpdVacations = () => {
                     <Alert
                         style={{ marginBottom: 20 }}
                         showIcon
-                        message={"Esta sección te permite actualizar las vacaciones de manera masiva, modifica el reporte de vaciones y vuelve a subirlo."}
+                        message={'Esta sección te permite actualizar las vacaciones de manera masiva, descarga el reporte de vacaciones, puedes modificar la columna "Días de vacaciones disponibles" y por último importa el excel para realizar los ajustes.'}
                         type={"info"}
                     />
                     <Spin spinning={loading} tip="Cargando archivo..." >
