@@ -6,28 +6,28 @@ import {
   DownloadOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
 import {
     createFiltersJB,
     downLoadFileBlob,
-    getDomain,
-    getFiltersJB
+    getDomain
 } from '../../../utils/functions';
 import FiltersRequests from './FiltersRequests';
 import { useFiltersRequests } from './useFiltersRequests';
 import { API_URL_TENANT } from '../../../config/config';
-import { connect } from 'react-redux';
-import { withAuthSync } from '../../../libs/auth';
 
-const SearchRequests = ({currentNode}) => {
+const SearchRequests = ({
+    lastFilters = ""
+}) => {
 
     const router = useRouter();
+    const { current_node } = useSelector(state => state.userStore);
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const { listGets, listKeys } = useFiltersRequests();
     const format = 'YYYY-MM-DD';
-    const [lastFilters, setLastFilters] = useState(null);
 
     const formatRange = () =>{
         let dates = router.query?.range?.split(',');
@@ -55,21 +55,18 @@ const SearchRequests = ({currentNode}) => {
         values.range = values.range ?
             `${values.range[0].format(format)},${values.range[1].format(format)}` : null;
         let filters = createFiltersJB(values);        
-        setLastFilters(filters)
         setFilters(filters)
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
         setFilters()
-        setLastFilters(null)
     }
 
     const downloadFile = async () => {  
-        let data = null
-        if (lastFilters)  data = getFiltersJB(lastFilters)                            
+        const url = `/person/vacation?person__node__id=${current_node?.id}&download=true`                            
         await downLoadFileBlob(
-            `${getDomain(API_URL_TENANT)}/person/vacation?person__node__id=${currentNode?.id}${data ?data : ""}&download=true`,
+            `${getDomain(API_URL_TENANT)}${url}${lastFilters}`,
             "reporte_vacaciones.xlsx",
             "GET",
             null,
@@ -133,11 +130,5 @@ const SearchRequests = ({currentNode}) => {
         </>
     )
 }
-const mapState = (state) => {
-    return {
-        currentNode: state.userStore.current_node
-    };
-};
-export default connect(
-    mapState, { }
-)(withAuthSync(SearchRequests));
+
+export default SearchRequests;
