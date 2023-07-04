@@ -27,6 +27,7 @@ import { logoutAuth } from "../libs/auth";
 import CardApps from "./dashboards-cards/CardApp";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
+import { setNullCompany } from '../redux/UserDuck'
 import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
 import { getCurrentURL } from "../utils/constant";
@@ -170,7 +171,10 @@ const NewHeader = ({
                   </p>}
                 <p
                   className="text-menu"
-                  onClick={() => router.push("/select-company")}
+                  onClick={() => {
+                    props.setNullCompany()
+                    router.push("/select-company")
+                  }}
                 >
                   <Text>Cambiar de empresa</Text>
                 </p>
@@ -425,4 +429,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setVersionCfdi })(NewHeader);
+export default connect(mapState, { setVersionCfdi, setNullCompany })(NewHeader);
