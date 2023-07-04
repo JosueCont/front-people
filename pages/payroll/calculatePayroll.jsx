@@ -37,6 +37,7 @@ import {
   ExclamationCircleOutlined,
   DownloadOutlined,
   StopOutlined,
+  ClearOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -933,6 +934,18 @@ const CalculatePayroll = ({ ...props }) => {
         });
         setGenericModal(true);
         break;
+      case 6:
+        setInfoGenericModal({
+          title: data.title,
+          title_message: data.title_message,
+          description: data.description,
+          type_alert: data.type_alert,
+          action: data.action,
+          title_action_button: data.title_action_button,
+          viewActionButton: data.viewActionButton,          
+        });
+        setGenericModal(true);
+        break;
     }
 
     return;
@@ -1189,6 +1202,30 @@ const CalculatePayroll = ({ ...props }) => {
         message.error(messageError);
       });
   };
+
+
+  const deletePayroll = (consolidated_id) => {
+    let data = {
+      consolidated_id: consolidated_id,
+    };
+   
+    setLoading(true);
+    setGenericModal(false);
+    WebApiPayroll.deleteConsolidationPayroll(data)
+      .then((response) => {
+        message.success("Reiniciaro correctamente");
+        sendCalculatePayroll({ payment_period: periodSelected.id });
+      })
+      .catch((error) => {
+        if (error.response?.data?.message) {
+          message.error(error.response.data.message);
+        } else {
+          message.error(messageError);
+        }
+        setLoading(false);
+      });   
+  };
+
 
   return (
     <>
@@ -1602,6 +1639,32 @@ const CalculatePayroll = ({ ...props }) => {
                                 </Button>
                               </Col>
                             )}
+                            {/*  Reiniciar Nomina consolidada no timbrada */}
+                            {(step == 1 || step == 2) &&
+                              consolidated &&
+                              consolidated.status == 1 && (
+                              <Col md={4} >
+                                <Button
+                                  size="large"
+                                  block
+                                  icon={<ClearOutlined />}
+                                  htmlType="button"
+                                  onClick={() =>
+                                    setMessageModal(6, {
+                                      title: "Reiniciar Nomina",
+                                      description:
+                                        "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
+                                      type_alert: "warning",
+                                      action: () => deletePayroll(consolidated.id),
+                                      title_action_button: "Reiniciar nómina",                                     
+                                    })
+                                  }
+                                >
+                                  Reiniciar Nomina
+                                </Button>
+                              </Col>
+                            )}
+
                             {step == 2 &&
                               consolidated &&
                               consolidated.status < 3 && (
