@@ -85,16 +85,21 @@ const FormBanckAccount = ({ person_id = null }) => {
   };
 
   const onBlurClabe = (clabe) => {
-    const bankCode = clabe.substring(0, 3);
-    const bankSelected = banks[bankCode];
-    if (bankSelected) {
-      formBank.setFieldsValue({
-        bank: banks[bankCode],
-      });
-    } else {
-      formBank.setFieldsValue({
-        bank: null,
-      });
+    if(clabe){
+      const bankCode = clabe.substring(0, 3);
+      const bankSelected = banks[bankCode];
+      if (bankSelected) {
+        formBank.setFieldsValue({
+          bank: banks[bankCode],
+        });
+      }else{
+        formBank.setFields([
+          {
+            name: 'interbank_key',
+            errors: ['Esta clabe no pertenece a ningun banco']
+          }
+        ])
+      }
     }
   };
 
