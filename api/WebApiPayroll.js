@@ -389,6 +389,14 @@ class WebApiPayroll {
   static getSuaFile(data){
     return WebApi.ApisType(`/payroll/sua`,"post", data);
   }
+
+  static deleteConsolidationPayroll(data) {
+    return WebApi.ApisType(
+      `payroll/consolidated_payroll/delete_consolidation/`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPayroll;
