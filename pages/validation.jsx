@@ -118,7 +118,6 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
       };
 
     const setCompanySelect = async (user) => {
-        console.log("USER", user)
         sessionStorage.setItem("data", user.node);
         localStorage.setItem("data", user.node);
         await props

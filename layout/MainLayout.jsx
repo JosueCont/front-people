@@ -74,7 +74,7 @@ const MainLayout = ({
     if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      if (props.config && !autoregister) props.companySelected(null, props.config);    
+      if (props.config && !autoregister) props.companySelected(null, props.config, true);    
     }
   }, [props.currentNode, props.config]);
 

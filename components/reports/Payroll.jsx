@@ -39,7 +39,8 @@ import SelectJob from '../selects/SelectJob'
 import SelectWorkTitle from '../selects/SelectWorkTitle'
 import SelectCostCenter from '../selects/SelectCostCenter'
 import SelectTags from '../selects/SelectTags'
-
+import axios from "axios";
+import { typeHttp } from "../../config/config";
 
 const PayrollReport = ({ permissions, ...props }) => {
   const { Title } = Typography;
@@ -59,6 +60,7 @@ const PayrollReport = ({ permissions, ...props }) => {
   const [departments, setDepartments] = useState(null)
   const [jobs, setJobs] = useState(null)
   const [urlFilter, setUrlFilter] = useState(null)
+  const [isFilter, setIsFilter] = useState(false)
 
   const columns = [
     {
@@ -150,50 +152,78 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const clearFilter = () => {
+    setIsFilter(false)
     form.resetFields();
-    setCalendar(null);
     setLoading(false);
     setValuesFilter(null)
-    onFinish({patronal_registrations: [], payment_calendars: [], payment_periods: []})
+    setUrlFilter(null)
+    setCurrentPage(1)
+    onFinish()
   };
 
-  const onFinish = (values, exporter = "False", page = 1) => {
-    console.log('values', values)
+  const downLoadCurrentFileBlob = async (urlDownload) => {
+      let headers = {
+        method: "GET",
+        responseType: "blob",
+      };
+      setLoading(true)
+      let url = `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlDownload}`
+      axios(
+        url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
+        headers
+      )
+        .then((response) => {
+          const blob = new Blob([response.data]);
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = "historico_nomina.xlsx";
+          link.click();
+        })
+        .catch((e) => {
+          let errorMessage = e.response?.data?.message || ""
+           if (errorMessage !== ""){
+            message.error(errorMessage)
+          } else if(Textmessage){
+            message.error(Textmessage)
+          }else if(e?.response?.status===404){
+            message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+          } 
+          return false
+        }).finally((()=> {
+          setLoading(false)
+        }));
+  } 
+
+  const onFinish = async (values = null, exporter = "False", page = 1) => {
+    setCurrentPage(page)
     let urlQuery = `page=${page}&node__id=${props?.currentNode?.id}`
-    urlQuery += values['name'] ? `&name=${values['name']}` : ''
-    urlQuery += `&report_type=${values['report_type'] ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
-    urlQuery += values['patronal_registrations']?.length > 0 ? `&patronal_registrations=${values['patronal_registrations'].toString()}` : ''
-    urlQuery += values['departments']?.length > 0 ? `&departments=${values['departments'].toString()}` : ''
-    urlQuery += values['cost_centers']?.length > 0 ? `&cost_centers=${values['cost_centers'].toString()}` : ''
-    urlQuery += values['jobs']?.length > 0 ? `&jobs=${values['jobs'].toString()}` : ''
-    urlQuery += values['work_titles']?.length > 0 ? `&work_titles=${values['work_titles'].toString()}` : ''
-    urlQuery += values['levels']?.length > 0 ? `&levels=${values['levels'].toString()}` : ''
-    urlQuery += values['payment_calendars'] ? `&payment_calendars=${values['payment_calendars']}` : ''
-    urlQuery += values['payment_periods']?.length > 0 ? `&payment_periods=${values['payment_periods'].toString()}` : ''
-    urlQuery += values['tags']?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
-    urlQuery +=  values['start_date'] ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")} `:''
-    urlQuery +=  values['end_date'] ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
+    urlQuery += values?.name ? `&name=${values['name']}` : ''
+    urlQuery += `&report_type=${values?.report_type ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
+    urlQuery += values?.patronal_registrations ?.length > 0 ? `&patronal_registrations=${values['patronal_registrations'].toString()}` : ''
+    urlQuery += values?.departments?.length > 0 ? `&departments=${values['departments'].toString()}` : ''
+    urlQuery += values?.cost_centers?.length > 0 ? `&cost_centers=${values['cost_centers'].toString()}` : ''
+    urlQuery += values?.jobs?.length > 0 ? `&jobs=${values['jobs'].toString()}` : ''
+    urlQuery += values?.work_titles?.length > 0 ? `&work_titles=${values['work_titles'].toString()}` : ''
+    urlQuery += values?.levels?.length > 0 ? `&levels=${values['levels'].toString()}` : ''
+    urlQuery += values?.payment_calendars ? `&payment_calendars=${values['payment_calendars']}` : ''
+    urlQuery += values?.payment_periods?.length > 0 ? `&payment_periods=${values['payment_periods'].toString()}` : ''
+    urlQuery += values?.tags?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
+    urlQuery +=  values?.start_date ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")}`:''
+    urlQuery +=  values?.end_date ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
     setUrlFilter(urlQuery)
 
     //setValuesFilter(values);
     if (exporter === "False") {
-      console.log('report=======>')
       getReportPayroll(urlQuery+`&export=${exporter}`);
-      console.log('urlQuery',urlQuery+`&export=${exporter}`)
       //getReportPayroll("https://demo.api.people.hiumanlab.com/payroll/payroll-report?page=1&export=False&node__id=848&report_type=PAYROLL_ACCUMULATED")
       }
     else{
-      console.log('download=======>')
-      downLoadFileBlob(
-        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlQuery}&export=${exporter}`,
-        "historico_nomina.xlsx",
-        "GET"
-      );
+      downLoadCurrentFileBlob(urlQuery+`&export=${exporter}`)
     }
   };
 
   const pagination = async (page) => {
-    onFinish(valuesFilter, "False", page);
+    onFinish(form.getFieldsValue(), "False", page);
     setCurrentPage(page);
   };
 
@@ -208,8 +238,9 @@ const PayrollReport = ({ permissions, ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error);
         setShowModal(false)
+        setPayrollList([])
+        setLenData(0)
       });
   };
 
@@ -268,28 +299,10 @@ const PayrollReport = ({ permissions, ...props }) => {
         </Col>
         <Col className="columnRightFilter">
           <Space>
-            <Button onClick={() => setShowModal(true)}>
+            <Button disabled={loading} onClick={() => setShowModal(true)}>
               <SearchOutlined />
             </Button>
-            {
-              valuesFilter && 
-              <Tooltip
-              title="Limpiar filtro"
-              color={"#3d78b9"}
-              key={"#3d78b9"}
-            >
-              <Button
-                onClick={clearFilter}
-                style={{
-                  fontWeight: "bold",
-                  marginTop: "auto",
-                }}
-                key="buttonClearFilter"
-              >
-                <ClearOutlined />
-              </Button>
-            </Tooltip>
-            }
+            
           {permissions.export_payrolls && (
             <Button
               style={{
@@ -299,10 +312,27 @@ const PayrollReport = ({ permissions, ...props }) => {
               }}
               onClick={() => onFinish(form.getFieldsValue(), "True")}
               key="btn_new"
+              disabled={loading}
             >
               Descargar
             </Button>
           )}
+          {
+            isFilter && 
+            <Tooltip title="Limpiar busqueda">
+              <Button
+                onClick={clearFilter}
+                style={{
+                  fontWeight: "bold",
+                  marginTop: "auto",
+                }}
+                key="buttonClearFilter"
+                disabled={loading}
+              >
+                <ClearOutlined />
+              </Button>
+            </Tooltip>
+          }
           </Space>
         </Col>
       </Row>
@@ -335,6 +365,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               total={lenData}
               onChange={pagination}
               showSizeChanger={false}
+              disabled={loading}
               // defaultPageSize={10}
             />
           </Col>
@@ -354,11 +385,14 @@ const PayrollReport = ({ permissions, ...props }) => {
         width={900}
       >
         <Spin spinning={loading}>
-        <Form layout="vertical" form={form} onFinish={onFinish}>
+        <Form layout="vertical" form={form} onFinish={(e) => {
+          onFinish(e, 'False', 1)
+          setIsFilter(true)
+          }}>
           <Row gutter={20}>
             <Col span={12}>
               <Form.Item name={'name'} label="Nombre de la persona">
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </Col>
             <Col  span={12}/>

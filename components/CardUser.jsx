@@ -4,8 +4,10 @@ import {
   PoweroffOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
+import { setNullCompany } from '../redux/UserDuck'
 
 import Router from "next/router";
+import { connect } from "react-redux";
 
 const { Meta } = Card;
 
@@ -29,7 +31,6 @@ const cardUser = ({ currentNode, ...props }) => {
             <Button
               onClick={() => {
                 Router.push({ pathname: "/select-company" });
-                sessionStorage.setItem("image", "");
               }}
             >
               <SwapOutlined />
@@ -63,4 +64,12 @@ const cardUser = ({ currentNode, ...props }) => {
   );
 };
 
-export default cardUser;
+const mapState = (state) => {
+  return {
+    userInfo: state.userStore.user
+  };
+};
+
+
+
+export default connect(mapState, { setNullCompany })(cardUser);
