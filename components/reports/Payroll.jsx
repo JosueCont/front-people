@@ -158,30 +158,38 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const onFinish = (values, exporter = "False", page = 1) => {
+    console.log('values', values)
     let urlQuery = `page=${page}&node__id=${props?.currentNode?.id}`
+    urlQuery += values['name'] ? `&name=${values['name']}` : ''
     urlQuery += `&report_type=${values['report_type'] ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
-    urlQuery += `&patronal_registrations=${values['patronal_registrations'].toString()}`
-    urlQuery += `&departments=${values['departments'].toString()}`
-    urlQuery += `&cost_centers=${values['cost_centers'].toString()}`
-    urlQuery += `&jobs=${values['jobs'].toString()}`
-    urlQuery += `&work_titles=${values['work_titles'].toString()}`
-    urlQuery += `&levels=${values['levels'].toString()}`
-    urlQuery += `&payment_calendars=${values['payment_calendars']}`
-    urlQuery += `&payment_periods=${values['payment_periods'].toString()}`
-    urlQuery += `&tags=${values['tags'].toString()}`
-    urlQuery +=  values['start_date'] ? `&start_date=${moment(values['start_date']).format("YYYY/MM/DD")} `:''
-    urlQuery +=  values['end_date'] ? `&end_date=${ moment(values['end_date']).format("YYYY/MM/DD")}`:'' 
-    console.log('urlQuery',urlQuery)
+    urlQuery += values['patronal_registrations']?.length > 0 ? `&patronal_registrations=${values['patronal_registrations'].toString()}` : ''
+    urlQuery += values['departments']?.length > 0 ? `&departments=${values['departments'].toString()}` : ''
+    urlQuery += values['cost_centers']?.length > 0 ? `&cost_centers=${values['cost_centers'].toString()}` : ''
+    urlQuery += values['jobs']?.length > 0 ? `&jobs=${values['jobs'].toString()}` : ''
+    urlQuery += values['work_titles']?.length > 0 ? `&work_titles=${values['work_titles'].toString()}` : ''
+    urlQuery += values['levels']?.length > 0 ? `&levels=${values['levels'].toString()}` : ''
+    urlQuery += values['payment_calendars'] ? `&payment_calendars=${values['payment_calendars']}` : ''
+    urlQuery += values['payment_periods']?.length > 0 ? `&payment_periods=${values['payment_periods'].toString()}` : ''
+    urlQuery += values['tags']?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
+    urlQuery +=  values['start_date'] ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")} `:''
+    urlQuery +=  values['end_date'] ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
     setUrlFilter(urlQuery)
 
     //setValuesFilter(values);
-    if (exporter === "False") getReportPayroll(urlQuery+`&export=${exporter}`);
-    else
+    if (exporter === "False") {
+      console.log('report=======>')
+      getReportPayroll(urlQuery+`&export=${exporter}`);
+      console.log('urlQuery',urlQuery+`&export=${exporter}`)
+      //getReportPayroll("https://demo.api.people.hiumanlab.com/payroll/payroll-report?page=1&export=False&node__id=848&report_type=PAYROLL_ACCUMULATED")
+      }
+    else{
+      console.log('download=======>')
       downLoadFileBlob(
         `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${urlQuery}&export=${exporter}`,
         "historico_nomina.xlsx",
         "GET"
       );
+    }
   };
 
   const pagination = async (page) => {
@@ -206,6 +214,17 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const changeCalendar = (value) => {
+    if(!value){
+      setPeriods([])
+      form.setFields([
+        {
+          name: 'payment_periods',
+          value:[]
+        }
+      ])
+      return
+    }
+      
     // setTotalSalary(null);
     // setTotalIsr(null);
     let periods_list = []
@@ -324,7 +343,11 @@ const PayrollReport = ({ permissions, ...props }) => {
       <Modal 
         title="Filtrar reporte de nomina"
         visible={showModal}
-        onCancel={() => setShowModal(false)}
+        onCancel={() => {
+            setShowModal(false)
+            form.resetFields()
+          }
+        }
         onOk={() => form.submit()}
         okButtonProps={{ loading: loading }}
         cancelButtonProps={{ disabled: loading }}
@@ -360,6 +383,7 @@ const PayrollReport = ({ permissions, ...props }) => {
           <Col span={8}>
             <Form.Item label="Calendarios de pago" name={"payment_calendars"}>
               <Select
+                allowClear
                   style={{ width: "100%" }}
                   options={optionspPaymentCalendars}
                   onChange={changeCalendar}
@@ -376,6 +400,7 @@ const PayrollReport = ({ permissions, ...props }) => {
                 mode="multiple"
                 options={periods}
                 maxTagCount="responsive"
+                allowClear
               />
               </Form.Item>
             </Col>
@@ -393,10 +418,10 @@ const PayrollReport = ({ permissions, ...props }) => {
             </Col>
             
             <Col span={8}>
-              <SelectCostCenter name="cost_centers" multiple viewLabel="Centro de costos" />
+              <SelectCostCenter name="cost_centers" multiple viewLabel="Centro de costos" allowClear />
             </Col>
             <Col span={8} >
-              <SelectTags name="tags" viewLabel="Etiquetas" multiple />
+              <SelectTags name="tags" viewLabel="Etiquetas" multiple allowClear />
             </Col>
             <Col span={8}>
               <Form.Item name={'report_type'} label="Reporte acomulado">
