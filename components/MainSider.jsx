@@ -52,6 +52,7 @@ const MainSider = ({
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
       dashboard: "/dashboard",
+      chartOrg: "/org",
       business: "/business/companies",
       // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
@@ -115,6 +116,7 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Dashboard", "dashboard"),
+          getItem("Organigrama", "chartOrg"),
           getItem("Empresas", "business"),
           getItem("Prestaciones", "integrationFactors")
         ];

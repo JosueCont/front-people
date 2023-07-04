@@ -21,17 +21,20 @@ import {
     PlusOutlined,
     SearchOutlined,
     StopOutlined,
+    CloudSyncOutlined,
     SyncOutlined
 } from "@ant-design/icons";
 import webApiPeople from "../../api/WebApiPeople";
 import {withAuthSync} from "../../libs/auth";
 import ModalNonWorkingDays from "./ModalNonWorkingDays";
 import moment from "moment";
+import {trim} from "lodash/string";
 
 const NonWorkingDays = ({ node_id = null, ...props }) =>{
     const [form] = Form.useForm()
 
     const [loading, setLoading] = useState(false)
+    const [loadingHolidays, setLoadingHolidays] = useState(false)
     const [searchYear, setSearchYear] = useState('')
     const [selectedItem, setSelectedItem] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
@@ -44,6 +47,12 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
     })
 
     const columns = [
+        {
+            title: 'Año',
+            dataIndex: 'date',
+            key: 'date',
+            render: (item) => moment(item, 'YYYY-MM-DD').format('YYYY')
+        },
         {
             title: 'Fecha',
             dataIndex: 'date',
@@ -102,7 +111,7 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
     }
 
     {/* FUNCIONES CRUD */}
-    const getDays = async ( pagination, year = '') =>{
+    const getDays = async ( pagination, year = new Date().getFullYear().toString()) =>{
         try{
             setLoading(true)
             let params = {
@@ -167,11 +176,53 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
         }
     }, [node_id])
 
+    const bulkHolidays=(holidays)=>{
+        let arrayPromises = []
+        setLoadingHolidays(true)
+        console.log(nonWorkingDays)
+        if(holidays){
+            holidays.map((item, i)=>{
+                let data = {
+                    node: node_id,
+                    date: item.date,
+                    description: item.localName
+                }
+                arrayPromises.push(webApiPeople.createNonWorkingDay(data))
+            })
+        }
+
+        if(arrayPromises.length>0){
+            Promise.all(arrayPromises).then(values => {
+                message.success('Agregado correctamente')
+            }).catch(reason => {
+                message.warning('No se pudieron sincronizar todos los días, probablemente algunos ya existan.')
+            }).finally(()=>{
+                setLoadingHolidays(false)
+                onSearch(tablePagination,searchYear)
+            });
+        }else{
+            setLoadingHolidays(false)
+        }
+
+
+    }
+
+    const getHolidays=async ()=>{
+        try{
+            let url = `https://date.nager.at/api/v3/PublicHolidays/${searchYear}/MX`
+            const response = await fetch(url)
+            const jsonData = await response.json();
+            bulkHolidays(jsonData)
+        }catch (e){
+            message.error('Hubo un error al consultar la información de los días festivos')
+        }
+    }
+
 
     return <>
         {/* BÚSQUEDA */}
         <Row>
-            <Col span={18}>
+            <Col md={10}>
                 <ConfigProvider locale={esES}>
                     <Form form={form} scrollToFirstError onFinish={onSearch}>
                         <div style={{display: "flex", justifyContent:'flex-start', gap:8, flexWrap:'wrap'}}>
@@ -197,10 +248,18 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
                 </ConfigProvider>
             </Col>
 
-            <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+
+            <Col md={3}>
                     <Button onClick={onAdd}>
                         <PlusOutlined /> Agregar día
                     </Button>
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                <Button type={'link'} size={'small'} loading={loadingHolidays} ghost={true} disabled={!searchYear} onClick={getHolidays}>
+                    <CloudSyncOutlined /> Obtener días festivos desde servicio de nager.date
+                </Button>
             </Col>
         </Row>
         <Divider style={{ marginTop: "2px" }} />

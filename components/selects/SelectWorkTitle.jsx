@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { useEffect, useState } from "react";
+import { deprecate } from "util";
 const { Option } = Select;
 const SelectWorkTitle = ({
   viewLabel = true,
@@ -15,19 +16,40 @@ const SelectWorkTitle = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    console.log('jobs', job)
+    console.log('departments', department)
+  }, [job, department])
+
+  useEffect(() => {
     setOptions([]);
     if (props.cat_work_title) {
-      let data = props.cat_work_title.filter((item) => item.person === null);
+      let data = []
+      
+      if(!props.foReport){
+        data = props.cat_work_title.filter((item) => item.person === null);
 
-      if (department && job) {
-        data = data.filter(
-          (item) => item.department.id === department && item.job.id === job
-        );
-      } else if (department) {
-        data = data.filter((item) => item.department.id === department);
-      } else if (job) {
-        data = data.filter((item) => item.job.id === job);
+        if (department && job) {
+          data = data.filter(
+            (item) => item.department.id === department && item.job.id === job
+          );
+        } else if (department) {
+          data = data.filter((item) => item.department.id === department);
+        } else if (job) {
+          data = data.filter((item) => item.job.id === job);
+        }
+      }else{
+        data = props.cat_work_title
+        
+        if (department) {
+          data = data.filter((item) => !department.includes(item));
+        }
+
+        if (job) {
+          data = data.filter((item) => !job.includes(item) );            
+        }
+
       }
+
 
       data = data.map((item) => {
         return {
@@ -59,6 +81,8 @@ const SelectWorkTitle = ({
         notFoundContent={"No se encontraron resultados."}
         showSearch
         optionFilterProp="children"
+        mode={props.multiple ? "multiple" : null}
+        maxTagCount="responsive"
       >
         {options.map((item) => {
           return (
@@ -74,6 +98,8 @@ const SelectWorkTitle = ({
     </Form.Item>
   );
 };
+
+
 
 const mapState = (state) => {
   return {
