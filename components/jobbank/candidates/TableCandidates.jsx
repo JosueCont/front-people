@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
-import { copyContent, getPercentGenJB } from '../../../utils/functions';
+import { copyContent, getPercentGenJB, downloadCustomFile } from '../../../utils/functions';
 
 //*Necesario para la libreria react-pdf
 const OptionsReport = dynamic(() => import('./reports/OptionsReport'), { ssr: false });
@@ -211,6 +211,18 @@ const TableCandidates = ({
                         onClick={() => copyPermalink(item)}
                     >
                         Permalink de evaluaciones
+                    </Menu.Item>
+                )}
+                {item?.cv && (
+                    <Menu.Item
+                        key='1'
+                        icon={<DownloadOutlined />}
+                        onClick={() => downloadCustomFile({
+                            name: item?.cv?.split('/')?.at(-1),
+                            url: item?.cv
+                        })}
+                    >
+                        Descargar CV
                     </Menu.Item>
                 )}
             </Menu>
