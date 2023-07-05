@@ -1396,37 +1396,40 @@ const CalculatePayroll = ({ ...props }) => {
                         </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
-                          <Button
-                            style={{ marginTop: "30px", marginRight: 20 }}
-                            size="sm"
-                            icon={<DownloadOutlined />}
-                            onClick={() => {
-                              downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
-                                "POST",
-                                {
-                                  payment_period: periodSelected.id,
-                                  department: department,
-                                  job: job,
-                                  payroll: payroll.map((item) => {
-                                    item.person_id = item.person.id;
-                                    return item;
-                                  }),
-                                }
-                              );
-                            }}
-                          >
-                            Descargar plantilla
-                          </Button>
+                          {
+                            step < 2 && <Button
+                                  style={{ marginTop: "30px", marginRight: 20 }}
+                                  size="sm"
+                                  icon={<DownloadOutlined />}
+                                  onClick={() => {
+                                    downLoadFileBlob(
+                                        `${getDomain(
+                                            API_URL_TENANT
+                                        )}/payroll/payroll-calculus`,
+                                        "Nomina.xlsx",
+                                        "POST",
+                                        {
+                                          payment_period: periodSelected.id,
+                                          department: department,
+                                          job: job,
+                                          payroll: payroll.map((item) => {
+                                            item.person_id = item.person.id;
+                                            return item;
+                                          }),
+                                        }
+                                    );
+                                  }}
+                              >
+                                Descargar plantilla
+                              </Button>
+                          }
+
                         </Col>
                         {(step === 0 ||
                           isOpen ||
                           (consolidated &&
                             !isOpen &&
-                            consolidated.status != 3)) && (
+                            consolidated.status != 3)) && step < 2 && (
                           <Col xxs={24} xl={5} style={{ paddingTop: "30px" }}>
                             <Upload
                               {...{

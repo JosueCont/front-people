@@ -15,7 +15,7 @@ import {
   Modal,
   Typography, Alert, Divider, Select, Form, DatePicker,
 } from "antd";
-import { CaretRightOutlined } from "@ant-design/icons";
+import {CaretRightOutlined, SyncOutlined} from "@ant-design/icons";
 import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
@@ -44,6 +44,7 @@ const ImssMovements = ({ ...props }) => {
   const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [loadingSua, setLoadingSua] = useState(false)
+  const [loadingSyncEmas, setLoadingSyncEmas] = useState(false)
   const [movType, setMovType] = useState(null)
   const router = useRouter();
   const [formSua] = Form.useForm()
@@ -117,7 +118,7 @@ const disabledMaxDate  = (current) => {
   };
 
   const syncEmaandEva = async () => {
-    setLoading(true);
+    setLoadingSyncEmas(true);
     let data = new FormData();
 
     data.append("node", props.currentNode.id);
@@ -131,7 +132,7 @@ const disabledMaxDate  = (current) => {
     } catch (error) {
       message.error("Error al pedir las emsiones. Intente más tarde");
     } finally {
-      setLoading(false);
+      setLoadingSyncEmas(false);
     }
   };
 
@@ -277,34 +278,46 @@ const disabledMaxDate  = (current) => {
               </Panel>
               <Panel header="EMA y EBA" key="2">
                 <Row justify={"space-between"} style={{ marginTop: "20px" }}>
-                  <Col span={12}>
+                  <Col span={10}>
                     <SelectPatronalRegistration
                       currentNode={currentNodeId}
                       onChange={(value) => setPatronalSelected(value)}
                     />
+
+                  </Col>
+                  <Col span={2}>
+                    <Button
+                        disabled = { patronalSelected?  false : true }
+                        onClick={getFiles}
+                    >
+                      <SyncOutlined spin={loading} />
+                    </Button>
                   </Col>
 
                   <Col
                     span={12}
                     style={{ display: "flex", justifyContent: "end" }}
                   >
-                    <Col span={5} style={{ marginRight: 20 }}>
-                      <Button
-                        disabled={patronalSelected ? false : true}
-                        onClick={() => setModalVisible(true)}
-                      >
-                        Importar
-                      </Button>
-                    </Col>
-                    <Col span={7}>
-                      <Button
-                        onClick={() => syncEmaandEva()}
-                        loading={loading}
-                        disabled={patronalSelected ? false : true}
-                      >
-                        Sincronizar
-                      </Button>
-                    </Col>
+                    <Row gutter={16}>
+                      <Col span={5} style={{ marginRight: 20 }}>
+                        <Button
+                            disabled={patronalSelected ? false : true}
+                            onClick={() => setModalVisible(true)}
+                        >
+                          Importar
+                        </Button>
+                      </Col>
+                      <Col span={7}>
+                        <Button
+                            onClick={() => syncEmaandEva()}
+                            loading={loadingSyncEmas}
+                            disabled={patronalSelected ? false : true}
+                        >
+                          Solicitar archivos del IMSS
+                        </Button>
+                      </Col>
+                    </Row>
+
 
                   </Col>
                   <Col span={24}>
