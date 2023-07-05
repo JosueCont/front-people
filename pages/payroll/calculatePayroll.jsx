@@ -108,7 +108,7 @@ const CalculatePayroll = ({ ...props }) => {
     title: "Timbrado de nómina",
     title_message: "Timbrado de nómina exitoso",
     description:
-      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nóminas.",
     type_alert: "success",
 
     closeButton: "Cancelar",
@@ -1654,7 +1654,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   htmlType="button"
                                   onClick={() =>
                                     setMessageModal(6, {
-                                      title: "Reiniciar Nomina",
+                                      title: "Reiniciar Nómina",
                                       description:
                                         "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
                                       type_alert: "warning",
