@@ -1510,7 +1510,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 `${getDomain(
                                   API_URL_TENANT
                                 )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
+                                `nomina_abierta_periodo${periodSelected.name}.xlsx`,
                                 "POST",
                                 {
                                   payment_period: periodSelected.id,
@@ -1526,10 +1526,10 @@ const CalculatePayroll = ({ ...props }) => {
                             : downLoadFileBlob(
                                 `${getDomain(
                                   API_URL_TENANT
-                                )}/payroll/payroll-report?payment_period=${
+                                )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
                                   periodSelected.id
                                 }`,
-                                "Nomina.xlsx",
+                                `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
                                 "GET"
                               );
                         }}
