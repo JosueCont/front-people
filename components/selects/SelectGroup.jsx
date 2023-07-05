@@ -34,12 +34,9 @@ const SelectGroup = ({ viewLabel, required = true, ...props }) => {
       >
         {groups.map((item) => {
           return (
-            <>
               <Option key={item.value} value={item.value}>
                 {item.label}
               </Option>
-              ;
-            </>
           );
         })}
       </Select>

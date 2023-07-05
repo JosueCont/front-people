@@ -162,7 +162,7 @@ const FormPayrollPerson = ({
     await WebApiPayroll.getPayrollPerson(person.id)
       .then((response) => {
         if (response.data) {
-          let item = response.data;          
+          let item = response.data;
           setPerceptionCode(item.payment_calendar?.perception_type?.code)
           setPayrollPerson(item);
           formPayrollPerson.setFieldsValue({
@@ -373,11 +373,12 @@ const FormPayrollPerson = ({
 
   const confirmDataForm = () => {
     let value = formPayrollPerson.getFieldsValue();
+    debugger;
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
       if (value.last_day_paid) {
-        value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
+        value.last_day_paid = value.last_day_paid.format("YYYY-MM-DD");
       } else {
         value.last_day_paid = moment().format("YYYY-MM-DD");
       }
@@ -388,7 +389,7 @@ const FormPayrollPerson = ({
     } else {
       value.person = person.id;
       if (value.last_day_paid) {
-        value.last_day_paid = moment(lastDayPaid).format("YYYY-MM-DD");
+        value.last_day_paid = value.last_day_paid.format("YYYY-MM-DD");
       } else {
         value.last_day_paid = moment().format("YYYY-MM-DD");
       }
@@ -742,19 +743,22 @@ const FormPayrollPerson = ({
                 )}
               </Row>
               <Row justify={"end"}>
-                <Form.Item>
-                  <ButtonUpdateSalaryMovement
-                    onRefresh={() => {
-                      getPayrollPerson();
-                      getPaymentCalendar();
-                      PayrollList();
-                    }}
-                    person={person}
-                    node={person.node}
-                    payrollPerson={payrollPerson}
-                    perceptionCode={perceptionCode}
-                  />
-                </Form.Item>
+                {
+                    payrollPerson && payrollPerson.payment_calendar && <Form.Item>
+                      <ButtonUpdateSalaryMovement
+                          onRefresh={() => {
+                            getPayrollPerson();
+                            getPaymentCalendar();
+                            PayrollList();
+                          }}
+                          person={person}
+                          node={person.node}
+                          payrollPerson={payrollPerson}
+                          perceptionCode={perceptionCode}
+                      />
+                    </Form.Item>
+                }
+
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
                     Guardar
