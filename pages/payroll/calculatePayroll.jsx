@@ -21,6 +21,7 @@ import {
   Upload,
   DatePicker,
   Tag,
+  Tooltip,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -38,6 +39,7 @@ import {
   DownloadOutlined,
   StopOutlined,
   ClearOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -951,7 +953,7 @@ const CalculatePayroll = ({ ...props }) => {
     return;
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (calendarSelect) {
       const filter = {
         payment_period: periodSelected.id,
@@ -961,7 +963,7 @@ const CalculatePayroll = ({ ...props }) => {
       if (job) filter.job = job;
       sendCalculatePayroll(filter);
     }
-  }, [department, job]);
+  }, [department, job]); */
 
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
@@ -1183,6 +1185,7 @@ const CalculatePayroll = ({ ...props }) => {
           total_deductions += item.calculation.total_deductions;
         });
         setConsolidated(response.data.consolidated);
+        /*  */
         setPayroll(response.data.payroll);
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
@@ -1285,7 +1288,7 @@ const CalculatePayroll = ({ ...props }) => {
           <Row gutter={[10, 10]}>
             <Col span={24}>
               <Card className="form_header">
-                <Form form={form} layout="vertical">
+                <Form form={form} layout="vertical" onFinish={(values) => console.log('values===>', values)}>
                   <Row gutter={[16, 8]}>
                     <Col xxs={24} xl={4}>
                       <Form.Item name="calendar" label="Calendario">
@@ -1317,9 +1320,9 @@ const CalculatePayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                sendCalculatePayroll({
+                                /* sendCalculatePayroll({
                                   payment_period: value,
-                                }),
+                                }), */
                                   setPeriodSelcted(
                                     calendarSelect.periods.find(
                                       (p) => p.id == value
@@ -1368,22 +1371,29 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            onChange={(value) =>
+                            onChange={(value) =>{
+                              
                               value && value != undefined
                                 ? setDepartment(value)
-                                : setDepartment(null)
+                                : setDepartment(null)}
                             }
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            onChange={(value) =>
+                            onChange={(value) =>{
+                              console.log('val',value),
                               value && value != undefined
                                 ? setJob(value)
-                                : setJob(null)
+                                : setJob(null)}
                             }
                           />
+                        </Col>
+                        <Col>
+                        <Tooltip title="Buscar">
+                            <Button htmlType="submit" icon={<SearchOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
+                        </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
                           <Button
