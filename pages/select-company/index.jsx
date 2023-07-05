@@ -452,7 +452,7 @@ const SelectCompany = ({ ...props }) => {
                 message={
                   <span>
                     <b>Importar xml:</b> Se crea la empresa y el histórico de
-                    nómina a base de una carga masiva de xml (nominas por
+                    nómina a base de una carga masiva de xml (nóminas por
                     persona). Por favor importa todo tu año {currentYear}
                   </span>
                 }
