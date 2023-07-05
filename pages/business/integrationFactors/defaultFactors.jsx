@@ -18,6 +18,7 @@ const defaultFactors = () => {
   const query = route.query? route.query : {}
   const [loading, setLoading] = useState(false)
   const [detailFactor, setDetailFactor] = useState([])
+  const [filtersYears, setFiltersYears] = useState()
 
   useEffect(() => {
     getDetails()
@@ -28,6 +29,19 @@ const defaultFactors = () => {
     try {
       let response = await WebApiFiscal.defaultIntegratorFactor()
       if(response.data) {
+        let filtersYearList = []
+        
+        response.data.map(dataitem => {
+          let idx = filtersYearList.findIndex(item => item.value === dataitem.year)
+          if(idx < 0){
+            filtersYearList.push({
+              text:dataitem.year,
+              value: dataitem.year
+            })
+          }
+        })
+        
+        setFiltersYears(filtersYearList)
         setDetailFactor(response.data)
       }
     } catch (error) {
@@ -35,18 +49,20 @@ const defaultFactors = () => {
     } finally {
       setLoading(false)
     }
-    // WebApiFiscal.detailsIntegratorFactor()
-    // .then((response) => {
-    //   setDetailFactor(response.data)
-    //   setLoading(false)
-    // })
-    // .catch((e) => {
-    //   console.log('Error', e.response)
-    //   setLoading(false)
-    // })
   }
 
   const columns = [
+    {
+      title: 'Periodo',
+      dataIndex: 'year',
+      key: 'year',
+      filters: filtersYears,
+      onFilter: (value, record) => record.year === value,
+      // specify the condition of filtering result
+      // here is that finding the name started with `value`
+      /* onFilter: (value: string, record) => record.name.indexOf(value) === 0, */
+      sorter: (a, b) => a.year - b.year,
+    },
     {
       title: 'Años de servicio',
       dataIndex: 'service_years',

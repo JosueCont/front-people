@@ -108,7 +108,7 @@ const CalculatePayroll = ({ ...props }) => {
     title: "Timbrado de nómina",
     title_message: "Timbrado de nómina exitoso",
     description:
-      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nóminas.",
     type_alert: "success",
 
     closeButton: "Cancelar",
@@ -1510,7 +1510,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 `${getDomain(
                                   API_URL_TENANT
                                 )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
+                                `nomina_abierta_periodo${periodSelected.name}.xlsx`,
                                 "POST",
                                 {
                                   payment_period: periodSelected.id,
@@ -1526,10 +1526,10 @@ const CalculatePayroll = ({ ...props }) => {
                             : downLoadFileBlob(
                                 `${getDomain(
                                   API_URL_TENANT
-                                )}/payroll/payroll-report?payment_period=${
+                                )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
                                   periodSelected.id
                                 }`,
-                                "Nomina.xlsx",
+                                `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
                                 "GET"
                               );
                         }}
@@ -1651,7 +1651,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   htmlType="button"
                                   onClick={() =>
                                     setMessageModal(6, {
-                                      title: "Reiniciar Nomina",
+                                      title: "Reiniciar Nómina",
                                       description:
                                         "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
                                       type_alert: "warning",
