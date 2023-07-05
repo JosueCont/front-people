@@ -53,6 +53,17 @@ const defaultFactors = () => {
 
   const columns = [
     {
+      title: 'Periodo',
+      dataIndex: 'year',
+      key: 'year',
+      filters: filtersYears,
+      onFilter: (value, record) => record.year === value,
+      // specify the condition of filtering result
+      // here is that finding the name started with `value`
+      /* onFilter: (value: string, record) => record.name.indexOf(value) === 0, */
+      sorter: (a, b) => a.year - b.year,
+    },
+    {
       title: 'Años de servicio',
       dataIndex: 'service_years',
       key: 'service_year'
@@ -76,17 +87,6 @@ const defaultFactors = () => {
       title: 'Factor de integracion',
       dataIndex: 'integration_factor',
       key: 'integration_factor'
-    },
-    {
-      title: 'Año',
-      dataIndex: 'year',
-      key: 'year',
-      filters: filtersYears,
-      onFilter: (value, record) => record.year === value,
-      // specify the condition of filtering result
-      // here is that finding the name started with `value`
-      /* onFilter: (value: string, record) => record.name.indexOf(value) === 0, */
-      sorter: (a, b) => a.year - b.year,
     }
   ]
 
