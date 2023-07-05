@@ -35,15 +35,12 @@ const index = ({
 
     const validFilters = () =>{
         let params = {...router.query};
-        let dates = router.query?.date
-            ? router.query?.date?.split(',')
-            : [
-                moment().startOf('month').format(format),
-                moment().endOf('month').format(format)
-            ];
-        params.registration_date__date__gte = dates[0];
-        params.registration_date__date__lte = dates[1];
-        if(params.date) delete params.date;
+        if(params.date){
+            let dates = params?.date?.split(',');
+            params.registration_date__date__gte = dates[0];
+            params.registration_date__date__lte = dates[1];
+            delete params.date;
+        }
         return params;
     }
 

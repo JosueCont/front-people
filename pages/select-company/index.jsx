@@ -19,6 +19,7 @@ import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import {
+  setNullCompany,
   companySelected,
   setUser,
   resetCurrentnode,
@@ -65,13 +66,7 @@ const SelectCompany = ({ ...props }) => {
       setIsLoadCompany(true);
     }
   }, [router]);
-
-  useEffect(() => {
-    console.log('================')
-    console.log(allCompanies)
-  }, [allCompanies])
   
-
   useEffect(() => {}, [isLoadCompany]);
 
   useEffect(() => {
@@ -84,7 +79,7 @@ const SelectCompany = ({ ...props }) => {
     }
 
     if (isBrowser()) {
-      window.sessionStorage.setItem("image", null);
+      window.sessionStorage.removeItem("image");
     }
   }, []);
 

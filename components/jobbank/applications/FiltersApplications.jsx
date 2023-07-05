@@ -141,10 +141,10 @@ const FiltersApplications = ({
                         <Form.Item
                             label='Fecha'
                             name='date'
-                            tooltip={`
-                                En caso de no seleccionar un rango de fechas,
-                                de manera interna se filtra por el mes actual.
-                            `}
+                            // tooltip={`
+                            //     En caso de no seleccionar un rango de fechas,
+                            //     de manera interna se filtra por el mes actual.
+                            // `}
                         >
                              <DatePicker.RangePicker
                                 style={{width: '100%'}}
