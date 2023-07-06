@@ -17,11 +17,13 @@ import {
 import moment from 'moment';
 
 const DetailsRequets = ({
-    action
+    action,
+    isAdmin
 }) => {
 
     const {
         current_node,
+        user,
         general_config
     } = useSelector(state => state.userStore);
     const router = useRouter();
@@ -31,6 +33,16 @@ const DetailsRequets = ({
     const [infoRequest, setInfoRequest] = useState({});
     // Keys
     const period = 'current_vacation_period';
+
+    useEffect(()=>{
+        if(user && action  == 'add' && !isAdmin){
+            setCurrentPerson(user)
+            formRequest.setFieldsValue({
+                person: user?.id,
+                immediate_supervisor: user?.immediate_supervisor?.id
+            })
+        }
+    },[user])
 
     useEffect(() => {
         if (router?.query?.id && action == 'edit') {
@@ -119,7 +131,10 @@ const DetailsRequets = ({
     }
 
     const actionBack = () => {
-        router.push('/comunication/requests/holidays')
+        let url = isAdmin
+            ? '/comunication/requests/holidays'
+            : '/user/requests/holidays';
+        router.push(url)
     }
 
     return (
@@ -168,6 +183,7 @@ const DetailsRequets = ({
                                 formRequest={formRequest}
                                 action={action}
                                 actionBack={actionBack}
+                                isAdmin={isAdmin}
                             />
                         </Form>
                     </Spin>
