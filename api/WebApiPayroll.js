@@ -161,6 +161,13 @@ class WebApiPayroll {
       "get"
     );
   }
+  
+  static downloadContractForWork(id) {
+    return WebApi.ApisType(
+      `/payroll/contract-for-work?person_id=${id}&contract_code=CTO4`,
+      "get"
+    );
+  }
 
   static downloadIndefiniteTermContract(id) {
     return WebApi.ApisType(

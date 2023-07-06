@@ -273,9 +273,9 @@ const homeScreen = ({
     }
   };
 
-  const downloadIndefiniteTermContract = async (item) => {
+  const downloadContractForWork = async (item) => {
     try {
-      let response = await WebApiPayroll.downloadIndefiniteTermContract(item.id)
+      let response = await WebApiPayroll.downloadContractForWork(item.id)
       const type = response.headers["content-type"];
       const blob = new Blob([response.data], {
         type: type,
@@ -283,7 +283,7 @@ const homeScreen = ({
       });
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = "Contrato por tiempo indeterminado.pdf"
+      link.download = "Contrato individual de trabajo por obra.pdf"
       link.click()
 
     } catch (error) {
@@ -853,6 +853,16 @@ const homeScreen = ({
           }
         >
           Descargar contrato de tiempo indeterminado
+        </Menu.Item>
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="12"
+          onClick={() => {
+            downloadContractForWork(item)
+          }
+          }
+        >
+          Descargar contrato por obra
         </Menu.Item>
         {
           enableStore &&
