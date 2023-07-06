@@ -131,7 +131,7 @@ const NewHeader = ({
               <br />
               <Text>{person.email}</Text>
               <br />
-              <small>
+              <small style={{ display:'block', width: 170, overflow: 'hidden', textOverflow:'ellipsis', whiteSpace: 'nowrap' }}>
                 <b>{props.currentNode ? props.currentNode.name : ""}</b>
               </small>
             </Col>
@@ -312,7 +312,7 @@ const NewHeader = ({
                   <>
                     {screens.sm && screens.md &&
                     <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
-                      <span style={{ color: 'white', maxWidth:500, width:500, textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
+                      <span style={{ color: 'white', maxWidth:500,  textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
                         {props.currentNode ? props.currentNode.name : ""}
                       </span>
                       </Tooltip>
