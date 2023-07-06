@@ -11,7 +11,9 @@ const FiltersRequests = ({
     close = () => { },
     onFinish = () => { },
     formSearch,
-    range = 1
+    range = 1,
+    showCollaborator = true,
+    showSupervisor = true
 }) => {
 
     const {
@@ -20,7 +22,7 @@ const FiltersRequests = ({
     } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
     const period = Form.useWatch('period', formSearch);
-    const noWorking = ['saturday','sunday'];
+    const noWorking = ['saturday', 'sunday'];
 
     const onFinishSearch = (values) => {
         setLoading(true)
@@ -37,29 +39,29 @@ const FiltersRequests = ({
         return Array(size).fill(null).map((_, idx) => {
             let result = idx > range ? year + (idx - range) : year - (range - idx);
             let label = `${result} - ${result + 1}`;
-            return { value: `${result}`, key: `${idx}`, label};
+            return { value: `${result}`, key: `${idx}`, label };
         })
     }, [])
 
-    const onChangePeriod = (value) =>{
+    const onChangePeriod = (value) => {
         formSearch.setFieldsValue({
             range: null
         })
     }
 
-    const yearStart = useMemo(()=>{
+    const yearStart = useMemo(() => {
         return period ? parseInt(period) : moment().year();
-    },[period])
+    }, [period])
 
-    const disabledDate = (current) =>{
+    const disabledDate = (current) => {
         let day = current?.locale('en').format('dddd').toLowerCase();
         let exist = noWorking.includes(day);
-        if(!period) return exist;
+        if (!period) return exist;
         let valid_start = current?.year() < yearStart;
         let valid_end = current?.year() > yearStart;
         return current && (valid_start || valid_end || exist);
     }
-    
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -77,50 +79,54 @@ const FiltersRequests = ({
                 }}
             >
                 <Row gutter={[16, 0]}>
-                    <Col span={12}>
-                        <Form.Item
-                            name='person__id'
-                            label='Colaborador'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
+                    {showCollaborator && (
+                        <Col span={12}>
+                            <Form.Item
+                                name='person__id'
+                                label='Colaborador'
                             >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='immediate_supervisor'
-                            label='Jefe inmediato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    disabled={load_persons}
+                                    loading={load_persons}
+                                    placeholder='Seleccionar una opción'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                >
+                                    {persons_company.length > 0 && persons_company.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {getFullName(item)}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    )}
+                    {showSupervisor && (
+                        <Col span={12}>
+                            <Form.Item
+                                name='immediate_supervisor'
+                                label='Jefe inmediato'
                             >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    disabled={load_persons}
+                                    loading={load_persons}
+                                    placeholder='Seleccionar una opción'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                >
+                                    {persons_company.length > 0 && persons_company.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {getFullName(item)}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    )}
                     <Col span={12}>
                         <Form.Item
                             label='Estatus'
@@ -129,7 +135,7 @@ const FiltersRequests = ({
                             <Select
                                 // allowClear
                                 placeholder='Seleccionar una opción'
-                                options={[{value: '6', key: '6', label: 'Todas'}].concat(optionsStatusVacation)}
+                                options={[{ value: '6', key: '6', label: 'Todas' }].concat(optionsStatusVacation)}
                             />
                         </Form.Item>
                     </Col>
@@ -153,8 +159,8 @@ const FiltersRequests = ({
                             dependencies={['period']}
                         >
                             <DatePicker.RangePicker
-                                style={{width: '100%'}}
-                                placeholder={['Fecha inicio','Fecha fin']}
+                                style={{ width: '100%' }}
+                                placeholder={['Fecha inicio', 'Fecha fin']}
                                 dropdownClassName='picker-range-jb'
                                 disabledDate={disabledDate}
                                 format='DD-MM-YYYY'

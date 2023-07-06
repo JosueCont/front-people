@@ -6,6 +6,7 @@ import DetailsRequets from './DetailsRequets';
 
 const AddOrEditRequets = ({
     action = 'add',
+    isAdmin = true,
     currentNode,
     getPersonsCompany
 }) => {
@@ -17,7 +18,7 @@ const AddOrEditRequets = ({
     }, [currentNode])
 
     const ExtraBread = [
-        { name: 'Vacaciones', URL: '/comunication/requests/holidays' },
+        { name: 'Vacaciones', URL: isAdmin ? '/comunication/requests/holidays' : '/user/requests/holidays' },
         { name: action == 'add' ? 'Registrar' : 'Actualizar' }
     ]
 
@@ -25,8 +26,12 @@ const AddOrEditRequets = ({
         <MainRequets
             pageKey={['holidays']}
             extraBread={ExtraBread}
+            isAdmin={isAdmin}
         >
-            <DetailsRequets action={action}/>
+            <DetailsRequets
+                action={action}
+                isAdmin={isAdmin}
+            />
         </MainRequets>
     )
 }
