@@ -45,6 +45,8 @@ const SelectJob = ({
           notFoundContent={"No se encontraron resultados."}
           showSearch
           optionFilterProp="children"
+          mode={props.multiple ? "multiple" : null}
+          maxTagCount="responsive"
         >
           {options.map((item) => {
             return (

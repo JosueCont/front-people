@@ -36,11 +36,13 @@ const SelectPatronalRegistration = ({
         <Select
           key="SelectPatronalRegistration"
           allowClear
+          mode={props.multiple ? "multiple" : ""}
           placeholder={placeHolder && "Registro Patronal"}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
           showSearch
           optionFilterProp="children"
+          maxTagCount="responsive"
         >
           {options.map((item) => {
             return (

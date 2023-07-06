@@ -20,7 +20,7 @@ const VacactionForm = ({
     currentPerson,
     setCurrentPerson,
     action,
-    actionBack = ()=>{}
+    actionBack = () => { }
 }) => {
 
     const {
@@ -39,6 +39,7 @@ const VacactionForm = ({
     const availableDays = Form.useWatch('availableDays', formRequest);
     const periodForm = Form.useWatch('period', formRequest);
 
+    const formatStart = 'YYYY-MM-DD';
     // Keys para periodo actual
     const days = 'available_days_vacation';
     const period = 'current_vacation_period';
@@ -89,8 +90,8 @@ const VacactionForm = ({
             setLoadDays(true)
             let params = {
                 node_id: current_node.id,
-                start_date: moment(start).format('YYYY-MM-DD'),
-                end_date: moment(end).format('YYYY-MM-DD')
+                start_date: moment(start).format(formatStart),
+                end_date: moment(end).format(formatStart)
             }
             let response = await WebApiPeople.getWorkingDaysFromRange(params)
             let total_days = response.data.total_days;
@@ -119,26 +120,26 @@ const VacactionForm = ({
         formRequest.setFieldsValue(values);
     }
 
-    const getPerson = (id) =>{
-        if(!id) return {};
+    const getPerson = (id) => {
+        if (!id) return {};
         const find_ = item => item.id == id;
         let result = persons_company.find(find_);
-        if(!result) return {};
+        if (!result) return {};
         return result;
     }
 
-    const onChangePerson = (value) =>{
+    const onChangePerson = (value) => {
         let person = getPerson(value);
         setCurrentPerson(person)
 
-        if(!value) formRequest.resetFields();
+        if (!value) formRequest.resetFields();
         else setValuesByUser(person);
     }
 
-    const onChangePeriod = (value) =>{
+    const onChangePeriod = (value) => {
         let _days = value == currentPerson[period]
             ? currentPerson[days] : currentPerson[daysNext];
-        let availableDays = value ? _days : undefined; 
+        let availableDays = value ? _days : undefined;
         formRequest.setFieldsValue({
             departure_date: undefined,
             return_date: undefined,
@@ -147,8 +148,8 @@ const VacactionForm = ({
         })
     }
 
-    const onChangeStart = (value) =>{
-        if(value) return true;
+    const onChangeStart = (value) => {
+        if (value) return true;
         formRequest.setFieldsValue({
             days_requested: undefined,
             return_date: undefined
@@ -156,33 +157,33 @@ const VacactionForm = ({
     }
 
     const onChangeEnd = (date) => {
-        if (!date){
-            formRequest.setFieldsValue({days_requested: undefined});
+        if (!date) {
+            formRequest.setFieldsValue({ days_requested: undefined });
             return false;
         }
         getWorkingDaysFromRange(departureDate, date)
     }
 
-    const getDates = (isStart = true) =>{
+    const getDates = (isStart = true) => {
         if (Object.keys(currentPerson).length <= 0 || !periodForm) return moment();
         let keys = isStart ? [start, startNext] : [end, endNext];
         let date = periodForm == currentPerson[period]
             ? currentPerson[keys[0]]
             : currentPerson[keys[1]];
-        return moment(date, 'YYYY-MM-DD');
+        return moment(date, formatStart);
     }
 
-    const getDefaultStart = () =>{
-        if(!periodForm) return moment();
+    const getDefaultStart = () => {
+        if (!periodForm) return moment();
         let date = periodForm == currentPerson[period]
-            ? moment().format('YYYY-MM-DD')
+            ? moment().format(formatStart)
             : currentPerson[startNext];
-        return moment(date, 'YYYY-MM-DD')
+        return moment(date, formatStart)
     }
 
     // Revisar bien
     const getDefaultEnd = () => {
-        if(!departureDate) return moment();
+        if (!departureDate) return moment();
         return moment(departureDate);
     }
 
@@ -200,7 +201,7 @@ const VacactionForm = ({
 
     const disabledStart = (current) => {
         if (Object.keys(currentPerson).length <= 0 || !periodForm) return false;
-        let actually = current?.format('YYYY-MM-DD');
+        let actually = current?.format(formatStart);
         let present = current?.locale('en').format('dddd').toLowerCase();
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
         let valid_start = current < dateStart?.startOf('day');
@@ -210,7 +211,7 @@ const VacactionForm = ({
 
     const disabledEnd = (current) => {
         if (Object.keys(currentPerson).length <= 0) return false;
-        let actually = current?.format('YYYY-MM-DD');
+        let actually = current?.format(formatStart);
         let present = current?.locale('en').format('dddd').toLowerCase();
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
         let valid_start = current < dateInit?.startOf("day");
@@ -264,12 +265,12 @@ const VacactionForm = ({
                             <>
                                 {currentPerson[period] && (
                                     <Select.Option value={currentPerson[period]} key='1'>
-                                        {currentPerson[period]}
+                                        {currentPerson[period]} - {currentPerson[period] + 1}
                                     </Select.Option>
                                 )}
                                 {currentPerson[periodNext] && (
                                     <Select.Option value={currentPerson[periodNext]} key='2'>
-                                        {currentPerson[periodNext]}
+                                        {currentPerson[periodNext]} - {currentPerson[periodNext] + 1}
                                     </Select.Option>
                                 )}
                             </>
@@ -321,7 +322,7 @@ const VacactionForm = ({
                 <Form.Item
                     name='days_requested'
                     label='Días solicitados'
-                    rules={[ruleRequired , {
+                    rules={[ruleRequired, {
                         type: 'number', min: 1,
                         message: 'Días solicitados debe ser mayor o igual a 1'
                     }]}
@@ -342,7 +343,8 @@ const VacactionForm = ({
                 <Form.Item
                     name='availableDays'
                     label='Días disponibles'
-                    rules={[{ type: 'number', min: 1,
+                    rules={[{
+                        type: 'number', min: 1,
                         message: 'Días disponibles debe ser mayor o igual a 1'
                     }]}
                 >
@@ -382,8 +384,8 @@ const VacactionForm = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={24} className='content-end' style={{gap: 8}}>
-                <Button htmlType='button' onClick={()=> actionBack()}>
+            <Col span={24} className='content-end' style={{ gap: 8 }}>
+                <Button htmlType='button' onClick={() => actionBack()}>
                     Cancelar
                 </Button>
                 <Form.Item shouldUpdate noStyle>
@@ -393,7 +395,7 @@ const VacactionForm = ({
                             disabled={!!formRequest.getFieldsError().filter(({ errors }) => errors.length).length}
                         >
                             {action == 'add' ? 'Guardar' : 'Actualizar'}
-                        </Button>  
+                        </Button>
                     )}
                 </Form.Item>
             </Col>

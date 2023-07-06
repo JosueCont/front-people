@@ -15,7 +15,7 @@ import {
   Modal,
   Typography, Alert, Divider, Select, Form, DatePicker,
 } from "antd";
-import { CaretRightOutlined } from "@ant-design/icons";
+import {CaretRightOutlined, SyncOutlined} from "@ant-design/icons";
 import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 const { Text } = Typography;
 import { ruleEmail, ruleRequired } from "../../../utils/rules";
+import dayjs from 'dayjs';
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -43,6 +44,7 @@ const ImssMovements = ({ ...props }) => {
   const [saveRiskPremium, setSaveRiskPremium] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [loadingSua, setLoadingSua] = useState(false)
+  const [loadingSyncEmas, setLoadingSyncEmas] = useState(false)
   const [movType, setMovType] = useState(null)
   const router = useRouter();
   const [formSua] = Form.useForm()
@@ -58,12 +60,28 @@ const ImssMovements = ({ ...props }) => {
     { label: 'Modificación de salario', value: '07' },
     { label: 'Altas/reingreso', value: '08' },
     { label: 'Incapacidad', value: '12' },
-    { label: 'Ausentismo', value: '11' }
+    /* { label: 'Ausentismo', value: '11' } */
   ]
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
+
+  const disabledMinDate  = (current) => {
+    let max_date = formSua.getFieldValue('end_date')
+    if (max_date){
+        return current && current > max_date;    
+    }
+    return current > dayjs().endOf('day');
+};
+
+const disabledMaxDate  = (current) => {
+  let min_date = formSua.getFieldValue('start_date')
+  if (min_date){
+      return current >= dayjs().endOf('day') || current <= min_date;    
+  }
+  return current > dayjs().endOf('day');
+};
 
   useEffect(() => {
     if(router?.query?.regPatronal){
@@ -100,7 +118,7 @@ const ImssMovements = ({ ...props }) => {
   };
 
   const syncEmaandEva = async () => {
-    setLoading(true);
+    setLoadingSyncEmas(true);
     let data = new FormData();
 
     data.append("node", props.currentNode.id);
@@ -114,7 +132,7 @@ const ImssMovements = ({ ...props }) => {
     } catch (error) {
       message.error("Error al pedir las emsiones. Intente más tarde");
     } finally {
-      setLoading(false);
+      setLoadingSyncEmas(false);
     }
   };
 
@@ -155,7 +173,12 @@ const ImssMovements = ({ ...props }) => {
 
     values['start_date'] = values.start_date ? moment(values.start_date).format("YYYY-MM-DD") : null
     values['end_date'] = values.end_date ? moment(values.end_date).format("YYYY-MM-DD") : null
-    console.log('values',values)
+    
+    if(values['start_date'] > values['end_date']){
+      message.info("La fecha final no puede ser menor a la fecha de inicio")
+      return
+    }
+
     if(values.type === "MOVT" && (values.inner_types === undefined || values.inner_types.length < 1 )){
       values['inner_types'] = subMovTypes.map(item => item.value)
     }
@@ -167,6 +190,10 @@ const ImssMovements = ({ ...props }) => {
       if(response?.data?.message){
         message.info(response.data.message)
       }else{
+        if(!response.data){
+          message.info("No se encontraron resultados")
+          return
+        }
         const nameFile = values.type == 'ASEG' ? 'Asegurados' :
                           values.type == 'MOVT' ? 'Movimientos afiliatorios' :
                           values.type == 'CRED' ? 'Créditos infonavit de personas' :
@@ -251,34 +278,46 @@ const ImssMovements = ({ ...props }) => {
               </Panel>
               <Panel header="EMA y EBA" key="2">
                 <Row justify={"space-between"} style={{ marginTop: "20px" }}>
-                  <Col span={12}>
+                  <Col span={10}>
                     <SelectPatronalRegistration
                       currentNode={currentNodeId}
                       onChange={(value) => setPatronalSelected(value)}
                     />
+
+                  </Col>
+                  <Col span={2}>
+                    <Button
+                        disabled = { patronalSelected?  false : true }
+                        onClick={getFiles}
+                    >
+                      <SyncOutlined spin={loading} />
+                    </Button>
                   </Col>
 
                   <Col
                     span={12}
                     style={{ display: "flex", justifyContent: "end" }}
                   >
-                    <Col span={5} style={{ marginRight: 20 }}>
-                      <Button
-                        disabled={patronalSelected ? false : true}
-                        onClick={() => setModalVisible(true)}
-                      >
-                        Importar
-                      </Button>
-                    </Col>
-                    <Col span={7}>
-                      <Button
-                        onClick={() => syncEmaandEva()}
-                        loading={loading}
-                        disabled={patronalSelected ? false : true}
-                      >
-                        Sincronizar
-                      </Button>
-                    </Col>
+                    <Row gutter={16}>
+                      <Col span={5} style={{ marginRight: 20 }}>
+                        <Button
+                            disabled={patronalSelected ? false : true}
+                            onClick={() => setModalVisible(true)}
+                        >
+                          Importar
+                        </Button>
+                      </Col>
+                      <Col span={7}>
+                        <Button
+                            onClick={() => syncEmaandEva()}
+                            loading={loadingSyncEmas}
+                            disabled={patronalSelected ? false : true}
+                        >
+                          Solicitar archivos del IMSS
+                        </Button>
+                      </Col>
+                    </Row>
+
 
                   </Col>
                   <Col span={24}>
@@ -331,13 +370,13 @@ const ImssMovements = ({ ...props }) => {
                     </Row>
                     <Row gutter={[10,0]}>
                     <Col span={6}>
-                      <Form.Item  name={'start_date'} label="Fecha inicio">
-                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                      <Form.Item  name={'start_date'} label="Fecha inicio" >
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} disabledDate={disabledMinDate} />    
                       </Form.Item>
                     </Col>
                     <Col span={6}>
                       <Form.Item  name={'end_date'} label="Fecha fin">
-                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} />    
+                        <DatePicker style={{ width:'100%' }} format={'YYYY-MM-DD'} disabledDate={disabledMaxDate} />    
                       </Form.Item>
                     </Col>
                     <Col span={24}>   

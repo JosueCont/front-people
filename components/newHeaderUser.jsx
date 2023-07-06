@@ -32,6 +32,7 @@ import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
+import { setNullCompany, clearInfo } from '../redux/UserDuck'
 import GenericModal from "./modal/genericModal";
 import CardApps from "./dashboards-cards/CardApp";
 import { verifyMenuNewForTenant } from "../utils/functions"
@@ -66,7 +67,6 @@ const NewHeader = ({
 
 
   const getPerson = async () => {
-
     let user = Cookie.get();
     if (user && user != undefined && user.token) {
       user = JSON.parse(user.token);
@@ -200,9 +200,12 @@ const NewHeader = ({
             {pathname !== "/select-company" && (
               <p
                 className="text-menu"
-                onClick={() => router.push("/select-company")}
+                onClick={() => {
+                  props.setNullCompany()
+                  router.push("/select-company")
+                }}
               >
-                <Text>Cambiar de empresa</Text>
+                <Text>Cambiar de empresa_</Text>
               </p>
             )}
 
@@ -455,4 +458,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setVersionCfdi })(NewHeader);
+export default connect(mapState, { setVersionCfdi, setNullCompany })(NewHeader);

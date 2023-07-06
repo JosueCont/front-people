@@ -89,7 +89,8 @@ const MainLayoutAdmin = ({
       validateShowModal(props.config.request_first_change_password, props.userData.status_first_change_password)
       setKhonnectId(props.userData.khonnect_id)
     } else {
-      if (props.config && !autoregister) props.companySelected(null, props.config);
+      let data = sessionStorage.getItem("data")
+      if (props.config && !autoregister) props.companySelected(null, props.config, data ? false : true);
     }
   }, [props.currentNode, props.config, props.userData]);
 

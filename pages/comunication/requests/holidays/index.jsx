@@ -17,23 +17,27 @@ const index = ({
     const router = useRouter();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [lastFilters, setLastFilters] = useState("");
 
     useEffect(() => {
-        if (currentNode) {
-            getPersonsCompany(currentNode?.id)
-        }
+        if(!currentNode) return;
+        getPersonsCompany(currentNode?.id)
     }, [currentNode])
 
     useEffect(() => {
         if (currentNode) {
             let filters = getFiltersJB(validFilters())
             getRequests(currentNode?.id, filters)
+            setLastFilters(filters)
         }
     }, [currentNode, router.query])
 
-    const validFilters = () =>{
-        let params = {...router.query};
-        if(params.range){
+    const validFilters = () => {
+        let params = { ...router.query};
+        params.status = router.query?.status
+            ? router.query?.status : '1';
+        if (params?.status == '6') delete params.status;
+        if (params.range) {
             let dates = params.range.split(',');
             params.start_date_filter = dates[0];
             params.end_date_filter = dates[1];
@@ -59,7 +63,7 @@ const index = ({
             pageKey={['holidays']}
             extraBread={[{ name: 'Vacaciones' }]}
         >
-            <SearchRequets />
+            <SearchRequets lastFilters={lastFilters}/>
             <TableRequests
                 requests={requests}
                 loading={loading}

@@ -123,10 +123,20 @@ export const showLoading = (data) => async (dispatch, getState) => {
   } catch (error) {}
 };
 
-export const companySelected = (data, config) => async (dispatch, getState) => {
+export const setNullCompany = () => async (dispatch, getState) => {
   try {
+    sessionStorage.removeItem("image");
+    sessionStorage.removeItem("data");
+    dispatch({ type: COMPANY_SELCTED, payload:null });
+  } catch (error) {
+    console.log('error', error)
+  }
+}
 
-    if (!data) data = await userCompanyId();
+export const companySelected = (data, config, hideCompany=false) => async (dispatch, getState) => {
+  try {
+    
+    if (!data && !hideCompany) data = userCompanyId();
     if (data && config) {
       let response = await WebApiPeople.getCompany(data);
       dispatch({ type: COMPANY_SELCTED, payload: response.data });
@@ -216,7 +226,7 @@ export const setUserPermissions =
     }
   };
 
-export const resetCurrentnode = () => async (dispatch, getState) => {
+export const resetCurrentnode = () => async (dispatch, getState) => {  
   try {
     dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {

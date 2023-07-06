@@ -150,7 +150,7 @@ const [filterName, setFilterName] = useState(null)
         if(response.status === 201){
             message.success("Dispersión actualizada")
             closeModal()
-            getInfo(filterName)
+            getInfo(filterName?filterName:"")
         }
         setSaving(false)
       } catch (error) {
@@ -175,11 +175,10 @@ const [filterName, setFilterName] = useState(null)
     try {
         setSaving(true)
         let response = await WebApiPayroll.savePayrollSpred(data)
-        console.log('responseSave', response)
         if(response.status === 201){
             message.success("Dispersión creada")
             closeModal()
-            getInfo(filterName)
+            getInfo(filterName?filterName:"")
         }
         setSaving(false)
       } catch (error) {
@@ -212,7 +211,7 @@ const [filterName, setFilterName] = useState(null)
         setModalDeleteVisible(false)
         setSelectedItem(null)
         setSaving(false)
-        getInfo(filterName)
+        getInfo(filterName?filterName:"")
     } catch (error) {
         setSaving(false)
         message.error("Ocurrio un error al eliminar la dispersión")

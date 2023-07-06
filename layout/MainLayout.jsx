@@ -74,7 +74,8 @@ const MainLayout = ({
     if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      if (props.config && !autoregister) props.companySelected(null, props.config);    
+      let data = sessionStorage.getItem("data")
+      if (props.config && !autoregister) props.companySelected(null, props.config, data ? false : true);    
     }
   }, [props.currentNode, props.config]);
 

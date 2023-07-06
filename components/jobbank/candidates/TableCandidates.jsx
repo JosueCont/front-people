@@ -20,10 +20,10 @@ import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getCandidates } from '../../../redux/jobBankDuck';
-import { copyContent, getPercentGenJB } from '../../../utils/functions';
+import { copyContent, getPercentGenJB, downloadCustomFile } from '../../../utils/functions';
 
 //*Necesario para la libreria react-pdf
-const OptionsReport = dynamic(()=> import('./reports/OptionsReport'), { ssr: false });
+const OptionsReport = dynamic(() => import('./reports/OptionsReport'), { ssr: false });
 
 const TableCandidates = ({
     currentNode,
@@ -41,10 +41,10 @@ const TableCandidates = ({
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [useToDelete, setUseToDelete] = useState(true);
 
-    const actionDelete = async () =>{
+    const actionDelete = async () => {
         let ids = itemsToDelete.map(item => item.id);
         try {
-            await WebApiJobBank.deleteCandidate({ids});
+            await WebApiJobBank.deleteCandidate({ ids });
             getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = ids.length > 1 ? 'Candidatos eliminados' : 'Candidato eliminado';
             message.success(msg);
@@ -55,9 +55,9 @@ const TableCandidates = ({
         }
     }
 
-    const actionStatus = async (checked, item) =>{
+    const actionStatus = async (checked, item) => {
         try {
-            await WebApiJobBank.updateCandidateStatus(item.id, {is_active: checked});
+            await WebApiJobBank.updateCandidateStatus(item.id, { is_active: checked });
             getCandidates(currentNode.id, jobbank_filters, jobbank_page);
             let msg = checked ? 'Candidato activado' : 'Candidato desactivado';
             message.success(msg);
@@ -68,17 +68,17 @@ const TableCandidates = ({
         }
     }
 
-    const openModalManyDelete = () =>{
+    const openModalManyDelete = () => {
         const filter_ = item => item.in_selection_process;
         let notDelete = itemsToDelete.filter(filter_);
-        if(notDelete.length > 0){
+        if (notDelete.length > 0) {
             setUseToDelete(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
         setUseToDelete(true);
-        if(itemsToDelete.length > 1){
+        if (itemsToDelete.length > 1) {
             setOpenModalDelete(true)
             return;
         }
@@ -86,34 +86,34 @@ const TableCandidates = ({
         message.error('Selecciona al menos dos candidatos')
     }
 
-    const titleDelete = useMemo(()=>{
-        if(!useToDelete){
+    const titleDelete = useMemo(() => {
+        if (!useToDelete) {
             return itemsToDelete.length > 1
-            ? `Estos candidatos no se pueden eliminar, ya que
+                ? `Estos candidatos no se pueden eliminar, ya que
                 se encuentran en un proceso de selección`
-            : `Este candidato no se puede eliminar, ya que
+                : `Este candidato no se puede eliminar, ya que
                 se encuentra en un proceso de selección`;
         }
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estos candidatos?'
             : '¿Estás seguro de eliminar este candidato?';
-    },[useToDelete, itemsToDelete])
+    }, [useToDelete, itemsToDelete])
 
-    const openModalRemove = (item) =>{
+    const openModalRemove = (item) => {
         setUseToDelete(!item?.in_selection_process)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
-    const closeModalDelete = () =>{
+    const closeModalDelete = () => {
         setOpenModalDelete(false)
         setUseToDelete(true)
         setItemsKeys([])
         setItemsToDelete([])
     }
 
-    const onChangePage = ({current, pageSize}) =>{
-        let filters = {...router.query, page: current, size: pageSize};
+    const onChangePage = ({ current, pageSize }) => {
+        let filters = { ...router.query, page: current, size: pageSize };
         router.replace({
             pathname: '/jobbank/candidates',
             query: filters
@@ -128,37 +128,45 @@ const TableCandidates = ({
         }
     }
 
-    const copyLinkAutoregister = () =>{
+    const copyLinkAutoregister = () => {
         let url = `${window.location.origin}/jobbank/autoregister/candidate`;
         copyContent({
             text: `${url}?code=${currentNode.permanent_code}`,
-            onSucces: ()=> message.success('Link de autorregistro copiado'),
+            onSucces: () => message.success('Link de autorregistro copiado'),
             onError: () => message.error('Link de autorregistro no copiado')
         })
     }
 
-    const copyLinkUpdate = (item) =>{
+    const copyLinkUpdate = (item) => {
         copyContent({
             text: `${window.location.origin}/jobbank/${currentNode.permanent_code}/candidate?id=${item.id}`,
-            onSucces: ()=> message.success('Link de actualización copiado'),
+            onSucces: () => message.success('Link de actualización copiado'),
             onError: () => message.error('Link de actualización no copiado')
         })
     }
-    
+
+    const copyPermalink = (item) => {
+        copyContent({
+            text: `${window.location.origin}/validation?user=${item?.user_person}&app=kuiz&type=user`,
+            onSucces: () => message.success('Permalink copiado'),
+            onError: () => message.error('Permalink no copiado')
+        })
+    }
+
     const menuTable = () => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
-                    icon={<LinkOutlined/>}
-                    onClick={()=> copyLinkAutoregister()}
+                    icon={<LinkOutlined />}
+                    onClick={() => copyLinkAutoregister()}
                 >
                     Autorregistro
                 </Menu.Item>
                 <Menu.Item
                     key='2'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=>openModalManyDelete()}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalManyDelete()}
                 >
                     Eliminar
                 </Menu.Item>
@@ -167,6 +175,8 @@ const TableCandidates = ({
     };
 
     const menuItem = (item) => {
+        let valid = item?.user_person
+            && item?.person_assessment_list?.length > 0;
         return (
             <Menu>
                 {/* <Menu.Item
@@ -178,22 +188,43 @@ const TableCandidates = ({
                 </Menu.Item> */}
                 <Menu.Item
                     key='2'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
+                    icon={<EditOutlined />}
+                    onClick={() => router.push({
                         pathname: `/jobbank/candidates/edit`,
-                        query:{...router.query, id: item.id }
+                        query: { ...router.query, id: item.id }
                     })}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='3'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
-                <OptionsReport key='6' candidate={item}/>
+                <OptionsReport key='6' candidate={item} />
+                {valid && (
+                    <Menu.Item
+                        key='7'
+                        icon={<LinkOutlined />}
+                        onClick={() => copyPermalink(item)}
+                    >
+                        Permalink de evaluaciones
+                    </Menu.Item>
+                )}
+                {item?.cv && (
+                    <Menu.Item
+                        key='1'
+                        icon={<DownloadOutlined />}
+                        onClick={() => downloadCustomFile({
+                            name: item?.cv?.split('/')?.at(-1),
+                            url: item?.cv
+                        })}
+                    >
+                        Descargar CV
+                    </Menu.Item>
+                )}
             </Menu>
         );
     };
@@ -212,28 +243,33 @@ const TableCandidates = ({
             ellipsis: true
         },
         {
-            title:'Correo electrónico',
+            title: 'Correo electrónico',
             dataIndex: 'email',
             key: 'email',
             ellipsis: true
         },
         {
-            title: 'Teléfono',
+            title: 'Teléfono celular',
             dataIndex: 'cell_phone',
             key: 'cell_phone'
         },
         {
+            title: 'Teléfono fijo',
+            dataIndex: 'telephone',
+            key: 'telephone'
+        },
+        {
             title: 'Evaluaciones',
-            render: (item) =>{
+            render: (item) => {
                 // let valid = true;
                 let valid = item?.user_person
                     && item?.person_assessment_list?.length > 0;
                 return valid ? (
                     <span
-                        style={{color: '#1890ff', cursor: 'pointer'}}
-                        onClick={()=> router.push({
+                        style={{ color: '#1890ff', cursor: 'pointer' }}
+                        onClick={() => router.push({
                             pathname: '/jobbank/candidates/assign',
-                            query: {...router.query, person: item.user_person}
+                            query: { ...router.query, person: item.user_person }
                         })}
                     >
                         {getPercentGenJB(item?.person_assessment_list)}%
@@ -243,22 +279,22 @@ const TableCandidates = ({
         },
         {
             title: 'Estatus',
-            render: (item) =>{
-                return(
+            render: (item) => {
+                return (
                     <Switch
                         size='small'
                         defaultChecked={item.is_active}
                         checked={item.is_active}
                         checkedChildren="Activo"
                         unCheckedChildren="Inactivo"
-                        onChange={(e)=> actionStatus(e, item)}
+                        onChange={(e) => actionStatus(e, item)}
                     />
                 )
             }
         },
         {
-            title: ()=>{
-                return(
+            title: () => {
+                return (
                     <Dropdown overlay={menuTable}>
                         <Button size='small'>
                             <EllipsisOutlined />
@@ -266,9 +302,9 @@ const TableCandidates = ({
                     </Dropdown>
                 )
             },
-            render: (item) =>{
+            render: (item) => {
                 return (
-                    <Dropdown overlay={()=> menuItem(item)}>
+                    <Dropdown overlay={() => menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
@@ -304,7 +340,7 @@ const TableCandidates = ({
             <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle={['first_name','last_name']}
+                keyTitle={['first_name', 'last_name']}
                 keyDescription='email'
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
@@ -316,7 +352,7 @@ const TableCandidates = ({
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return {
         list_candidates: state.jobBankStore.list_candidates,
         load_candidates: state.jobBankStore.load_candidates,
