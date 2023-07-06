@@ -68,6 +68,7 @@ import moment from "moment";
 import NumericInput from "../../components/inputNumeric";
 import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
+import SelectCollaboratorItemForm from '../../components/selects/SelectCollaboratorItemForm'
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -1206,6 +1207,30 @@ const CalculatePayroll = ({ ...props }) => {
       });
   };
 
+  const onChangeJob = (value) => {
+    value && value != undefined ? setJob(value) : setJob(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const onchangeDeptop = (value) => {
+    value && value != undefined ? setDepartment(value) : setDepartment(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const sendForm = (values) => {
+    values['payment_period'] = periodSelected.id,
+    sendCalculatePayroll(values)
+  }
 
   const deletePayroll = (consolidated_id) => {
     let data = {
@@ -1288,7 +1313,7 @@ const CalculatePayroll = ({ ...props }) => {
           <Row gutter={[10, 10]}>
             <Col span={24}>
               <Card className="form_header">
-                <Form form={form} layout="vertical" onFinish={(values) => console.log('values===>', values)}>
+                <Form form={form} layout="vertical" onFinish={sendForm}>
                   <Row gutter={[16, 8]}>
                     <Col xxs={24} xl={4}>
                       <Form.Item name="calendar" label="Calendario">
@@ -1371,24 +1396,17 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            onChange={(value) =>{
-                              
-                              value && value != undefined
-                                ? setDepartment(value)
-                                : setDepartment(null)}
-                            }
+                            onChange={onchangeDeptop}
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            onChange={(value) =>{
-                              console.log('val',value),
-                              value && value != undefined
-                                ? setJob(value)
-                                : setJob(null)}
-                            }
+                            onChange={onChangeJob}
                           />
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
                         </Col>
                         <Col>
                         <Tooltip title="Buscar">
