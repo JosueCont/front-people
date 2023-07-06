@@ -116,7 +116,7 @@ const TableRequests = ({
                     <EyeOutlined onClick={() => router.push(`holidays/${item.id}/details`)} />
                     {vacation.edit
                         && [1, 5].includes(item.status)
-                        && item.created_from == 2
+                        // && item.created_from == 2
                         && (
                             <EditOutlined onClick={() => router.push(`holidays/${item.id}/edit`)} />
                         )}

@@ -62,6 +62,17 @@ const PayrollReport = ({ permissions, ...props }) => {
   const [urlFilter, setUrlFilter] = useState(null)
   const [isFilter, setIsFilter] = useState(false)
 
+  const typeReports = [
+    {
+      value: 'PAYROLL_ACCUMULATED',
+      label: 'Acumulado'
+    },
+    {
+      value: 'PAYROLL_PROVISIONS',
+      label: 'Acumulado + provisiones'
+    }
+  ]
+
   const columns = [
     {
       title: "UUID",
@@ -198,7 +209,7 @@ const PayrollReport = ({ permissions, ...props }) => {
     setCurrentPage(page)
     let urlQuery = `page=${page}&node__id=${props?.currentNode?.id}`
     urlQuery += values?.name ? `&name=${values['name']}` : ''
-    urlQuery += `&report_type=${values?.report_type ? 'PAYROLL_ACCUMULATED' : 'PAYROLL_DETAILED'}`
+    urlQuery += `&report_type=${values?.report_type ? values?.report_type : 'PAYROLL_DETAILED'}`
     urlQuery += values?.patronal_registrations ?.length > 0 ? `&patronal_registrations=${values['patronal_registrations'].toString()}` : ''
     urlQuery += values?.departments?.length > 0 ? `&departments=${values['departments'].toString()}` : ''
     urlQuery += values?.cost_centers?.length > 0 ? `&cost_centers=${values['cost_centers'].toString()}` : ''
@@ -299,7 +310,7 @@ const PayrollReport = ({ permissions, ...props }) => {
         </Col>
         <Col className="columnRightFilter">
           <Space>
-            <Button disabled={loading} onClick={() => setShowModal(true)}>
+            <Button loading={loading}  onClick={() => setShowModal(true)}>
               <SearchOutlined />
             </Button>
             
@@ -312,6 +323,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               }}
               onClick={() => onFinish(form.getFieldsValue(), "True")}
               key="btn_new"
+              loading={loading}
               disabled={loading}
             >
               Descargar
@@ -391,9 +403,9 @@ const PayrollReport = ({ permissions, ...props }) => {
           }}>
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item name={'name'} label="Nombre de la persona">
-                <Input allowClear />
-              </Form.Item>
+              {/*<Form.Item name={'name'} label="Nombre de la persona">*/}
+              {/*  <Input allowClear />*/}
+              {/*</Form.Item>*/}
             </Col>
             <Col  span={12}/>
             <Col span={8} >
@@ -458,11 +470,12 @@ const PayrollReport = ({ permissions, ...props }) => {
               <SelectTags name="tags" viewLabel="Etiquetas" multiple allowClear />
             </Col>
             <Col span={8}>
-              <Form.Item name={'report_type'} label="Reporte acomulado">
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                 />
+              <Form.Item name={'report_type'} label="Tipo de reporte" >
+                <Select 
+                  placeholder="Tipo de reporte"
+                  allowClear
+                  options={typeReports}
+                />
               </Form.Item>
             </Col>
           </Row>

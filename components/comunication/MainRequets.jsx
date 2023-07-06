@@ -1,6 +1,7 @@
 import React from "react";
 import esES from 'antd/lib/locale/es_ES';
 import MainLayoutInter from "../../layout/MainInter";
+import MainLayoutUser from "../../layout/MainLayout_user";
 import { Breadcrumb, ConfigProvider } from "antd";
 import { useRouter } from "next/router";
 import { verifyMenuNewForTenant } from "../../utils/functions";
@@ -8,7 +9,8 @@ import { verifyMenuNewForTenant } from "../../utils/functions";
 const MainRequets = ({
     children,
     pageKey = '',
-    extraBread = []
+    extraBread = [],
+    isAdmin = true
 }) => {
 
     const router = useRouter();
@@ -21,19 +23,23 @@ const MainRequets = ({
         }
     }
 
+    const Main = isAdmin ? MainLayoutInter : MainLayoutUser;
+
     return (
-        <MainLayoutInter
+        <Main
             currentKey={pageKey}
             defaultOpenKeys={["managementRH", "concierge", "requests"]}
         >
             <Breadcrumb>
                 <Breadcrumb.Item
                     className="pointer"
-                    onClick={() => router.push({ pathname: "/home/persons/" })}
+                    onClick={() => router.push({
+                        pathname: isAdmin ? "/home/persons/" : "/user"
+                    })}
                 >
                     Inicio
                 </Breadcrumb.Item>
-                {verifyMenuNewForTenant() &&
+                {verifyMenuNewForTenant() && isAdmin &&
                     <>
                         <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
                         <Breadcrumb.Item>Concierge</Breadcrumb.Item>
@@ -51,7 +57,7 @@ const MainRequets = ({
                     {children}
                 </ConfigProvider>
             </div>
-        </MainLayoutInter>
+        </Main>
     );
 };
 export default MainRequets;

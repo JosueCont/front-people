@@ -273,9 +273,9 @@ const homeScreen = ({
     }
   };
 
-  const downloadIndefiniteTermContract = async (item) => {
+  const downloadContractForWork = async (item) => {
     try {
-      let response = await WebApiPayroll.downloadIndefiniteTermContract(item.id)
+      let response = await WebApiPayroll.downloadContractForWork(item.id)
       const type = response.headers["content-type"];
       const blob = new Blob([response.data], {
         type: type,
@@ -283,7 +283,7 @@ const homeScreen = ({
       });
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = "Contrato por tiempo indeterminado.pdf"
+      link.download = "Contrato individual de trabajo por obra.pdf"
       link.click()
 
     } catch (error) {
@@ -853,6 +853,16 @@ const homeScreen = ({
           }
         >
           Descargar contrato de tiempo indeterminado
+        </Menu.Item>
+        <Menu.Item
+          icon={<DownloadOutlined />}
+          key="12"
+          onClick={() => {
+            downloadContractForWork(item)
+          }
+          }
+        >
+          Descargar contrato por obra
         </Menu.Item>
         {
           enableStore &&
@@ -1915,7 +1925,7 @@ const homeScreen = ({
                       <Row gutter={[10]} style={{ marginBottom: 10 }}>
                         <Col span={24}>
                           <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="name" label={"Nombre"}>
                                 <Input
                                   allowClear={true}
@@ -1923,7 +1933,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="flast_name" label={"Apellido"}>
                                 <Input
                                   allowClear={true}
@@ -1931,7 +1941,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="code" label={"Núm. empleado"}>
                                 <Input
                                   allowClear={true}
@@ -1939,26 +1949,24 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                          </Row>
-                          <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="gender" label="Género">
                                 <Select
-                                  options={genders}
-                                  notFoundContent={"No se encontraron resultados."}
-                                  placeholder="Todos"
+                                    options={genders}
+                                    notFoundContent={"No se encontraron resultados."}
+                                    placeholder="Todos"
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <SelectDepartment onChange={setDepSelect} />
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <SelectJob department={depSelect} />
                             </Col>
                           </Row>
                           <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="is_active" label="Estatus">
                                 <Select
                                   options={statusSelect}
@@ -1967,7 +1975,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="immediate_supervisor" label="Jefe inmediato">
                                 <Select
                                   showSearch
@@ -1985,7 +1993,7 @@ const homeScreen = ({
                             <Col
                               className="button-filter-person"
                               style={{ display: "flex", marginTop: "10px" }}
-                              xs={12} md={4}
+                              xs={8} md={4}
                             >
                               <Tooltip
                                 title="Filtrar"
@@ -1998,7 +2006,7 @@ const homeScreen = ({
                               </Tooltip>
                             </Col>
                             <Col
-                              xs={12} md={4}
+                              xs={8} md={4}
                               className="button-filter-person"
                               style={{ display: "flex", marginTop: "10px" }}
                             >
