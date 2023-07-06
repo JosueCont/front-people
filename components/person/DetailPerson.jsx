@@ -150,7 +150,10 @@ const DetailPerson = ({
           </Col>
         </Row>
         <DataPerson
-          setPerson={setPerson}
+          setPerson={(data)=> {
+            setPerson(data)
+            setRefreshTab10(true)
+          }}
           config={config}
           person={person}
           setLoading={setLoading}
