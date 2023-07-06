@@ -20,7 +20,8 @@ const VacactionForm = ({
     currentPerson,
     setCurrentPerson,
     action,
-    actionBack = () => { }
+    actionBack = () => { },
+    isAdmin,
 }) => {
 
     const {
@@ -28,6 +29,7 @@ const VacactionForm = ({
         load_persons
     } = useSelector(state => state.userStore);
     const {
+        user,
         current_node,
         general_config
     } = useSelector(state => state.userStore);
@@ -149,7 +151,7 @@ const VacactionForm = ({
     }
 
     const onChangeStart = (value) => {
-        if (value) return true;
+        // if (value) return true;
         formRequest.setFieldsValue({
             days_requested: undefined,
             return_date: undefined
@@ -230,7 +232,7 @@ const VacactionForm = ({
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_persons || action == 'edit'}
+                        disabled={load_persons || !isAdmin || action == 'edit'}
                         loading={load_persons}
                         placeholder='Seleccionar una opción'
                         notFoundContent='No se encontraron resultados'

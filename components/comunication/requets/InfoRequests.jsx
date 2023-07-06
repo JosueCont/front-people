@@ -19,7 +19,9 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-const InfoRequests = () => {
+const InfoRequests = ({
+    isAdmin = true
+}) => {
 
     const getUser = state => state.userStore.user;
     const current_user = useSelector(getUser);
@@ -139,7 +141,10 @@ const InfoRequests = () => {
             title: message,
             okText: 'Aceptar',
             onOk() {
-                router.push('/comunication/requests/holidays');
+                let url = isAdmin
+                    ? '/comunication/requests/holidays'
+                    : '/user/requests/holidays';
+                router.push(url);
             }
         })
     }
@@ -168,7 +173,10 @@ const InfoRequests = () => {
     })
 
     const actionBack = () => {
-        router.push('/comunication/requests/holidays')
+        let url = isAdmin
+            ? '/comunication/requests/holidays'
+            : '/user/requests/holidays';
+        router.push(url)
     }
 
     const showModal = (type) => {
@@ -255,6 +263,7 @@ const InfoRequests = () => {
                                     showModal={showModal}
                                     showConfirm={showConfirm}
                                     infoRequest={infoRequest}
+                                    isAdmin={isAdmin}
                                 />
                             </Form>
                         </Spin>
