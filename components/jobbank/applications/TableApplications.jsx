@@ -76,21 +76,21 @@ const TableApplications = ({
         })
     }
 
-    const menuItem = (item) => {
-        let valid = item.candidate?.user_person
-            && item.candidate?.person_assessment_list?.length > 0;
+    const menuItem = ({item, valid}) => {
         return (
             <Menu>
-                <Menu.Item
-                    key='1'
-                    icon={<DownloadOutlined />}
-                    onClick={() => downloadCustomFile({
-                        name: item.candidate?.cv?.split('/')?.at(-1),
-                        url: item.candidate.cv
-                    })}
-                >
-                    Descargar CV
-                </Menu.Item>
+                {item.candidate?.cv && (
+                    <Menu.Item
+                        key='1'
+                        icon={<DownloadOutlined />}
+                        onClick={() => downloadCustomFile({
+                            name: item.candidate?.cv?.split('/')?.at(-1),
+                            url: item.candidate.cv
+                        })}
+                    >
+                        Descargar CV
+                    </Menu.Item>
+                )}
                 {valid && (
                     <Menu.Item
                         key='2'
@@ -219,13 +219,15 @@ const TableApplications = ({
             width: 80,
             align: 'center',
             render: (item) => {
-                return (
-                    <Dropdown overlay={() => menuItem(item)}>
+                let valid = item.candidate?.user_person
+                && item.candidate?.person_assessment_list?.length > 0;
+                return (valid || item.candidate?.cv) ? (
+                    <Dropdown overlay={() => menuItem({item,valid})}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
-                )
+                ) : <></>
             }
             // render: (item) =>{
             //     return(

@@ -14,7 +14,8 @@ import {
     DeleteOutlined,
     EditOutlined,
     LinkOutlined,
-    CalendarOutlined
+    CalendarOutlined,
+    DownloadOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
@@ -22,7 +23,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import { getListSelection } from '../../../redux/jobBankDuck';
 import { optionsStatusSelection } from '../../../utils/constant';
 import ModalStatus from './ModalStatus';
-import { getPercentGenJB, copyContent } from '../../../utils/functions';
+import { getPercentGenJB, copyContent, downloadCustomFile } from '../../../utils/functions';
 
 const TableSelection = ({
     currentUser,
@@ -179,6 +180,18 @@ const TableSelection = ({
                         onClick={() => copyPermalink(item)}
                     >
                         Permalink de evaluaciones
+                    </Menu.Item>
+                )}
+                {item.candidate?.cv && (
+                    <Menu.Item
+                        key='1'
+                        icon={<DownloadOutlined />}
+                        onClick={() => downloadCustomFile({
+                            name: item.candidate?.cv?.split('/')?.at(-1),
+                            url: item.candidate.cv
+                        })}
+                    >
+                        Descargar CV
                     </Menu.Item>
                 )}
                 {/* {item.status_process == 2 && (
