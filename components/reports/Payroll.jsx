@@ -312,6 +312,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               }}
               onClick={() => onFinish(form.getFieldsValue(), "True")}
               key="btn_new"
+              loading={loading}
               disabled={loading}
             >
               Descargar
@@ -391,9 +392,9 @@ const PayrollReport = ({ permissions, ...props }) => {
           }}>
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item name={'name'} label="Nombre de la persona">
-                <Input allowClear />
-              </Form.Item>
+              {/*<Form.Item name={'name'} label="Nombre de la persona">*/}
+              {/*  <Input allowClear />*/}
+              {/*</Form.Item>*/}
             </Col>
             <Col  span={12}/>
             <Col span={8} >
@@ -458,7 +459,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               <SelectTags name="tags" viewLabel="Etiquetas" multiple allowClear />
             </Col>
             <Col span={8}>
-              <Form.Item name={'report_type'} label="Reporte acomulado">
+              <Form.Item name={'report_type'} label="Reporte acumulado">
                 <Switch
                   checkedChildren={<CheckOutlined />}
                   unCheckedChildren={<CloseOutlined />}
