@@ -1915,7 +1915,7 @@ const homeScreen = ({
                       <Row gutter={[10]} style={{ marginBottom: 10 }}>
                         <Col span={24}>
                           <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="name" label={"Nombre"}>
                                 <Input
                                   allowClear={true}
@@ -1923,7 +1923,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="flast_name" label={"Apellido"}>
                                 <Input
                                   allowClear={true}
@@ -1931,7 +1931,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="code" label={"Núm. empleado"}>
                                 <Input
                                   allowClear={true}
@@ -1939,26 +1939,24 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                          </Row>
-                          <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="gender" label="Género">
                                 <Select
-                                  options={genders}
-                                  notFoundContent={"No se encontraron resultados."}
-                                  placeholder="Todos"
+                                    options={genders}
+                                    notFoundContent={"No se encontraron resultados."}
+                                    placeholder="Todos"
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <SelectDepartment onChange={setDepSelect} />
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <SelectJob department={depSelect} />
                             </Col>
                           </Row>
                           <Row gutter={[10]} style={{ marginBottom: 10 }}>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="is_active" label="Estatus">
                                 <Select
                                   options={statusSelect}
@@ -1967,7 +1965,7 @@ const homeScreen = ({
                                 />
                               </Form.Item>
                             </Col>
-                            <Col xs={12} md={8}>
+                            <Col xs={8} md={4}>
                               <Form.Item name="immediate_supervisor" label="Jefe inmediato">
                                 <Select
                                   showSearch
@@ -1985,7 +1983,7 @@ const homeScreen = ({
                             <Col
                               className="button-filter-person"
                               style={{ display: "flex", marginTop: "10px" }}
-                              xs={12} md={4}
+                              xs={8} md={4}
                             >
                               <Tooltip
                                 title="Filtrar"
@@ -1998,7 +1996,7 @@ const homeScreen = ({
                               </Tooltip>
                             </Col>
                             <Col
-                              xs={12} md={4}
+                              xs={8} md={4}
                               className="button-filter-person"
                               style={{ display: "flex", marginTop: "10px" }}
                             >
