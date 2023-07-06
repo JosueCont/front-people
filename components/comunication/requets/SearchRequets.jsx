@@ -19,7 +19,9 @@ import { useFiltersRequests } from './useFiltersRequests';
 import { API_URL_TENANT } from '../../../config/config';
 
 const SearchRequests = ({
-    lastFilters = ""
+    lastFilters = "",
+    currentURL = '/comunication/requests/holidays',
+    isAdmin = true
 }) => {
 
     const router = useRouter();
@@ -47,7 +49,7 @@ const SearchRequests = ({
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/comunication/requests/holidays',
+        pathname: currentURL,
         query: filters
     }, undefined, {shallow: true});
 
@@ -126,6 +128,8 @@ const SearchRequests = ({
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
+                showCollaborator={isAdmin}
+                showSupervisor={isAdmin}
             />
         </>
     )
