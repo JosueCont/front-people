@@ -64,7 +64,7 @@ const AfilliateMovements = ({ node, id }) => {
   const getAfilliateMovements = async () => {
     try {
       setLoading(true);
-      let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}`;
+      let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}&offset=0&limit=1000`;
       const movements = await WebApiPeople.afilliateMovements(url);
       setLoading(false);
       processData(movements?.data?.results);
