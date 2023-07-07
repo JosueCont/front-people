@@ -166,8 +166,8 @@ const WidgetRequests = () => {
                                             renderItem={(item, idx) => (
                                                 <List.Item key={idx}>
                                                     <List.Item.Meta
-                                                        avatar={<Avatar size='large' src={getPhoto(item?.immediate_supervisor, '/images/profile-sq.jpg')} />}
-                                                        title={<a onClick={() => showModal(item, '1')}>{getFullName(item?.immediate_supervisor)}</a>}
+                                                        avatar={<Avatar size='large' src={getPhoto(item?.collaborator, '/images/profile-sq.jpg')} />}
+                                                        title={<a onClick={() => showModal(item, '1')}>{'Jefe Inmediato: ' + getFullName(item?.immediate_supervisor)}</a>}
                                                         description={getDescriptionRequests(item)}
                                                     />
                                                 </List.Item>
