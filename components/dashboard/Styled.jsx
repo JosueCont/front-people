@@ -5,12 +5,12 @@ import { Card } from 'antd';
 export const ContentVertical = styled.div`
     display: flex;
     flex-direction: column;
-    gap: ${({gap}) => gap ? `${gap}px` : '8px'};
+    gap: ${({ gap }) => gap ? `${gap}px` : '8px'};
 `;
 
 export const ContentCards = styled.div(({
     children
-}) =>{
+}) => {
     let max = children?.length > 1 ? '1fr' : 'min-content';
     return css`
         display: grid;
@@ -27,7 +27,7 @@ export const CardInfo = styled(ContentVertical)`
 `;
 
 export const CardItem = styled(Card)`
-    height: ${({hg}) => hg ? hg : '50%'};
+    height: ${({ hg }) => hg ? hg : '50%'};
     & .ant-card-extra{
         padding: 0px;
         font-size: 16px;
@@ -51,10 +51,10 @@ export const CardItem = styled(Card)`
     }
     & .ant-card-body{
         display: flex;
-        justify-content: ${({jc}) => jc ? jc : 'flex-start'};
-        align-items: ${({ai}) => ai ? ai : 'center'};
-        flex-direction: ${({fd}) => fd ? fd : 'row'};
-        padding: ${({pd}) => pd ? pd : '8px 24px'};
+        justify-content: ${({ jc }) => jc ? jc : 'flex-start'};
+        align-items: ${({ ai }) => ai ? ai : 'center'};
+        flex-direction: ${({ fd }) => fd ? fd : 'row'};
+        padding: ${({ pd }) => pd ? pd : '8px 24px'};
         height: calc(100% - 49px);
         max-height: calc(100% - 49px);
     }
@@ -69,4 +69,19 @@ export const CardScroll = styled.div`
     max-height: 100%;
     overflow-y: auto;
     width: 100%;
+`;
+
+export const ContentTabs = styled.div`
+    width: 100%;
+    height: 100%;
+    & .ant-tabs{
+        width: 100%;
+        height: 100%;
+    }
+    & .ant-tabs-content {
+        height: 100%;
+    }
+    & .ant-tabs-tabpane{
+        display: flex;
+    }
 `;

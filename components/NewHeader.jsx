@@ -15,7 +15,7 @@ import {
   Badge,
   Alert,
   Select,
-  Image, Grid,
+  Image, Grid, Tooltip,
 } from "antd";
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -131,7 +131,7 @@ const NewHeader = ({
               <br />
               <Text>{person.email}</Text>
               <br />
-              <small>
+              <small style={{ display:'block', width: 170, overflow: 'hidden', textOverflow:'ellipsis', whiteSpace: 'nowrap' }}>
                 <b>{props.currentNode ? props.currentNode.name : ""}</b>
               </small>
             </Col>
@@ -312,9 +312,13 @@ const NewHeader = ({
                 {!hideProfile && person && (
                   <>
                     {screens.sm && screens.md &&
-                      <span style={{ color: 'white' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
+                    <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
+                      <span style={{ color: 'white', maxWidth:500,  textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
                         {props.currentNode ? props.currentNode.name : ""}
-                      </span>}
+                      </span>
+                      </Tooltip>
+                    }
+                    
                     <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                       <div key="menu_apps_content">
                         <BsFillGrid3X3GapFill
