@@ -69,6 +69,22 @@ export const CardScroll = styled.div`
     max-height: 100%;
     overflow-y: auto;
     width: 100%;
+    & .ant-list-item-meta-avatar{
+        margin-right: 8px;
+    }
+    & .ant-list-item-meta-title{
+        margin-bottom: 0px;
+    }
+    & .ant-list-item-meta-description,
+    & .ant-list-item-meta-title{
+        max-width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    & .ant-list-item-meta-description{
+        font-size: 13px;
+    }
 `;
 
 export const ContentTabs = styled.div`

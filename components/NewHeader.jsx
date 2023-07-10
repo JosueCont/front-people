@@ -161,7 +161,8 @@ const NewHeader = ({
 
             {pathname !== "/select-company" && (
               <>
-                {verifyMenuNewForTenant() && verify_view_user() &&
+                {verifyMenuNewForTenant() && verify_view_user()
+                  && props.currentNode?.id == person?.node_user?.id &&
                   <p
                     className="text-menu"
                     onClick={() => router.push("/user")}

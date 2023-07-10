@@ -27,10 +27,10 @@ const index = ({
 
     const validFilters = () => {
         let params = { ...router.query};
-        params.status = router.query?.status
-            ? router.query?.status : '1';
+        params.status__in = router.query?.status__in
+            ? router.query?.status__in : '1';
         params.person__id = currentUser?.id;
-        if (params?.status == '6') delete params.status;
+        if (params?.status__in?.includes('6')) delete params.status__in;
         if (params.range) {
             let dates = params.range.split(',');
             params.start_date_filter = dates[0];

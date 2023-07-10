@@ -113,12 +113,18 @@ const TableRequests = ({
             title: 'Acciones',
             render: (item) => (
                 <Space>
-                    <EyeOutlined onClick={() => router.push(`holidays/${item.id}/details`)} />
+                    <EyeOutlined onClick={() => router.push({
+                        pathname: `holidays/${item.id}/details`,
+                        query: router.query
+                    })} />
                     {vacation.edit
                         && [1, 5].includes(item.status)
                         // && item.created_from == 2
                         && (
-                            <EditOutlined onClick={() => router.push(`holidays/${item.id}/edit`)} />
+                            <EditOutlined onClick={() => router.push({
+                                pathname:`holidays/${item.id}/edit`,
+                                query: router.query
+                            })} />
                         )}
                 </Space>
             )
