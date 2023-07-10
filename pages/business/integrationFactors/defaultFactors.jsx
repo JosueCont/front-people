@@ -5,29 +5,61 @@ import {
   Col,
   Row,
   Table,
-  Spin
+  Spin,
+  DatePicker,
+  Switch,
+  Form,
+  message
 } from "antd";
 import WebApiFiscal from '../../../api/WebApiFiscal';
 import { Breadcrumb } from 'antd';
 import { useRouter } from "next/router";
+import { locale } from "moment";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { connect } from 'react-redux';
+import WebApiPeople from "../../../api/WebApiPeople";
 
-const defaultFactors = () => {
+const defaultFactors = ({currentNode}) => {
 
   
   const route = useRouter()
   const query = route.query? route.query : {}
   const [loading, setLoading] = useState(false)
   const [detailFactor, setDetailFactor] = useState([])
-  const [filtersYears, setFiltersYears] = useState()
+  const [filtersYears, setFiltersYears] = useState()  
+  const [formNode] = Form.useForm();
 
   useEffect(() => {
-    getDetails()
+    let current_year = new Date().getFullYear()
+    getDetails(current_year)
+    if(currentNode){      
+      getBenefitsNdeConfig(currentNode.id)
+    }
   },[])
 
-  const getDetails = async () => {
+  const getBenefitsNdeConfig = async (node_id) =>{    
+    setLoading(true);   
+    try {
+      let response = await WebApiPeople.getBenefitsNodeConfig(node_id)
+      if (response){           
+        formNode.setFieldsValue({
+          distribute_benefits_with_previous_law: response.data.distribute_benefits
+        })     
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log('Error', error)      
+    } finally {      
+      setLoading(false)
+    }
+  }
+
+
+
+  const getDetails = async (year) => {    
     setLoading(true)
     try {
-      let response = await WebApiFiscal.defaultIntegratorFactor()
+      let response = await WebApiFiscal.defaultIntegratorFactor(year)
       if(response.data) {
         let filtersYearList = []
         
@@ -46,9 +78,40 @@ const defaultFactors = () => {
       }
     } catch (error) {
       console.log('Error', error)
-    } finally {
+      setDetailFactor([])
+    } finally {      
       setLoading(false)
     }
+  }
+
+  const onChange = (date, dateString) => {    
+    if (dateString) {
+     getDetails(dateString)
+    } 
+  }
+
+  const updateConfig = async (data) =>{
+    setLoading(true);   
+    try {
+      let response = await WebApiPeople.UpdateProportionalBenefits(data)
+      if (response){        
+        setLoading(false);
+        message.success("Se ha modificado la configuración para esta empresa");
+      }
+    } catch (error) {
+      message.error("Ocurrió un error");
+      console.log('Error', error)      
+    } finally {      
+      setLoading(false)
+    }
+  }
+
+  const changeChecked = (value) => {
+    let data = {
+      id: currentNode.id,
+       distribute_benefits: value
+      }
+      updateConfig(data);
   }
 
   const columns = [
@@ -114,19 +177,50 @@ const defaultFactors = () => {
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           <Row justify={"end"}>
-            <Col>
-                  <Button
-                    className="close_modal"
-                    htmlType="button"
-                    style={{ marginRight: 10 }}
-                    onClick={() =>
-                      route.push({ pathname: "/business/integrationFactors" })
-                    }
-                  >
-                    Cerrar
-                  </Button>
+            <Col span={12}>              
+              <DatePicker 
+                onChange={onChange}
+                picker="year"
+                moment={"YYYY"}
+                locale={locale}
+                placeholder="Filtrar por año"
+              />              
+            </Col>
+            <Col span={12}>           
+                <Button
+                  className="close_modal"
+                  htmlType="button"
+                  style={{ marginRight: 10, float: "right" }}
+                  onClick={() =>
+                    route.push({ pathname: "/business/integrationFactors" })
+                  }
+                >
+                  Cerrar
+                </Button>
               </Col>
-            </Row>
+          </Row>
+          <Row>
+          <Col span={12}>
+                  <Form
+                   layout={"vertical"}
+                   form={formNode}
+                  //  onFinish={updateConfig}
+                   size="large"
+                  >
+                    <Form.Item
+                      label="¿Repartir vacaciones con ley anterior?"
+                      name="distribute_benefits_with_previous_law"
+                      valuePropName="checked"                      
+                      >
+                        <Switch
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          onChange={changeChecked}
+                        />
+                    </Form.Item>
+                  </Form>                  
+                </Col>
+          </Row>
           <Row justify="end" style={{ marginTop: 30 }}>
           <Col span={24}>
             <Table 
@@ -150,4 +244,9 @@ const defaultFactors = () => {
   )
 }
 
-export default defaultFactors
+const mapState = (state) =>{
+  return {
+    currentNode: state.userStore.current_node      
+  }
+}
+export default connect(mapState)(defaultFactors);

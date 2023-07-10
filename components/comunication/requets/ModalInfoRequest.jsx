@@ -5,6 +5,7 @@ import { Row, Col, Input, Form, Button } from 'antd';
 import { useSelector } from 'react-redux';
 import { getFullName, getValueFilter } from '../../../utils/functions';
 import moment from 'moment';
+import { ActionTypes } from 'redux-devtools';
 
 const ContentFields = styled.div`
     background-color: #ffff;
@@ -42,7 +43,8 @@ const ModalInfoRequest = ({
     visible = true,
     close = () => { },
     actionForm = () => { },
-    itemRequest = {}
+    itemRequest = {},
+    actionType = '1'
 }) => {
 
     const {
@@ -72,7 +74,7 @@ const ModalInfoRequest = ({
         setLoading(true);
         setTimeout(()=>{
             setLoading(false)
-            actionForm[action](values)
+            actionForm[action](values,actionType)
             onClose()
         },2000)
     }
@@ -196,10 +198,12 @@ const ModalInfoRequest = ({
                         {vacation?.reject_vacation && (
                             <>
                                 <Button onClick={() => openAction('cancel')}>Cancelar</Button>
-                                <Button onClick={() => openAction('reject')}>Rechazar</Button>
+                                {actionType == '2' && (
+                                    <Button onClick={() => openAction('reject')}>Rechazar</Button>
+                                )}
                             </>
                         )}
-                        {vacation?.approve_vacation && (
+                        {vacation?.approve_vacation && actionType == '2' && (
                             <Button onClick={() => openAction('approve')}>Aprobar</Button>
                         )}
                     </Col>

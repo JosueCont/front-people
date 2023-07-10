@@ -724,6 +724,22 @@ class WebApiPeople {
       "get"
     );
   }
+
+  static getBenefitsNodeConfig(node_id) {
+    return WebApi.ApisType(
+      `/business/node/${node_id}/get_benefits_config/`,
+      "get"
+    );
+  }
+
+  static UpdateProportionalBenefits(data) {
+    return WebApi.ApisType(
+      `/business/node/change_benefits_proportional/`,
+      "post",
+      data
+    );
+  }
+
 }
 
 export default WebApiPeople;
