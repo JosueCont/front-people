@@ -156,15 +156,19 @@ const [filterName, setFilterName] = useState(null)
       } catch (error) {
         setSaving(false)
         if(error?.response?.data?.message){
-            let errors = []
-            Object.entries(error?.response?.data?.message).map(([key, value]) => {
-                let err = {
-                    name:key,
-                    errors: value
-                }
-                errors.push(err)
-            })
-            form.setFields(errors)
+            if(Array.isArray(error?.response?.data?.message)){
+                let errors = []
+                Object.entries(error?.response?.data?.message).map(([key, value]) => {
+                    let err = {
+                        name:key,
+                        errors: value
+                    }
+                    errors.push(err)
+                })
+                form.setFields(errors)
+            }else{
+                message.error(error?.response?.data?.message)
+            }
         }else{
             message("Dispersión no actualizada")
         }
