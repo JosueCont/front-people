@@ -207,7 +207,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setBenefits(item.benefits);
         setSelectPeriodicity(item.periodicity.id);
         if (item.belongs_to) {
-          setPolitics(true);
           checks.map((a) => {
             let checked = document.getElementById(a.name);
             if (a.name === "accumulate_vacation") {
@@ -306,6 +305,12 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     } else {
       value.incidence_start = 0;
     }
+    /* if(!value.belongs_to){
+      value.belongs_to = ""
+      value.vacation_bonus_payment = ""
+      value.calculation_employment_subsidy = ""
+      value.benefits = ""
+    } */
 
     if (idPaymentCalendar) {
       value.id = idPaymentCalendar;
@@ -749,12 +754,12 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item label="Políticas">
+              <Form.Item label={idPaymentCalendar ? "Ver Políticas" : "Políticas"}>
                 <Switch
                   // defaultChecked={politics}
                   checked={politics}
-                  checkedChildren="Personalizado"
-                  unCheckedChildren="Por defecto"
+                  checkedChildren={idPaymentCalendar ? "" : "Personalizado"}
+                  unCheckedChildren={idPaymentCalendar ? "" : "Por defecto"}
                   onChange={(value) => setPolitics(value)}
                 />
               </Form.Item>
