@@ -20,7 +20,8 @@ import {
 import moment from 'moment';
 
 const InfoRequests = ({
-    isAdmin = true
+    isAdmin = true,
+    newFilters
 }) => {
 
     const getUser = state => state.userStore.user;
@@ -41,7 +42,7 @@ const InfoRequests = ({
 
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
-    
+
     useEffect(() => {
         if (router?.query?.id) {
             getInfoRequest(router.query?.id)
@@ -135,16 +136,19 @@ const InfoRequests = ({
     const onSuccess = ({
         message = ''
     }) => {
+        let url = isAdmin
+            ? '/comunication/requests/holidays'
+            : '/user/requests/holidays';
         Modal.success({
             keyboard: false,
             maskClosable: false,
             title: message,
             okText: 'Aceptar',
             onOk() {
-                let url = isAdmin
-                    ? '/comunication/requests/holidays'
-                    : '/user/requests/holidays';
-                router.push(url);
+                router.push({
+                    pathname: url,
+                    query: newFilters
+                });
             }
         })
     }
@@ -176,7 +180,10 @@ const InfoRequests = ({
         let url = isAdmin
             ? '/comunication/requests/holidays'
             : '/user/requests/holidays';
-        router.push(url)
+        router.push({
+            pathname: url,
+            query: newFilters
+        })
     }
 
     const showModal = (type) => {

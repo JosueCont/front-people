@@ -7,7 +7,7 @@ import {
     ContentTabs
 } from './Styled';
 import {
-    ReloadOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApiPeople from '../../api/WebApiPeople';
@@ -20,6 +20,7 @@ import {
     injectIntl,
     FormattedMessage
 } from 'react-intl';
+import { useRouter } from 'next/router';
 import ModalInfoRequest from '../comunication/requets/ModalInfoRequest';
 
 const WidgetRequests = () => {
@@ -28,6 +29,7 @@ const WidgetRequests = () => {
         user,
         current_node
     } = useSelector(state => state.userStore);
+    const router = useRouter();
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false); 
@@ -146,16 +148,15 @@ const WidgetRequests = () => {
             <CardInfo>
                 <CardItem
                     jc='center' hg='100%' pd='0px 0px 16px 0px'
-                    ai={requests?.length > 0 ? 'flex-start' : 'center'}
                     title={<>
                         <img src='/images/requests.png' />
                         <p>Solicitudes de vacaciones</p>
                     </>}
-                // extra={<>{requests?.length ?? 0}</>}
+                    extra={<a onClick={() => router.push('user/requests/holidays')}>Ver</a>}
                 >
                     <ContentTabs>
                         <Tabs type='card' size='small'>
-                            <Tabs.TabPane key='p' tab={`Mis solicitudes (${myRequests?.length ?? 0})`}>
+                            <Tabs.TabPane key='1' tab={`Mis solicitudes (${myRequests?.length ?? 0})`}>
                                 {!fetching ? (
                                     <CardScroll className="scroll-bar">
                                         <List
@@ -167,17 +168,17 @@ const WidgetRequests = () => {
                                                 <List.Item key={idx}>
                                                     <List.Item.Meta
                                                         avatar={<Avatar size='large' src={getPhoto(item?.collaborator, '/images/profile-sq.jpg')} />}
-                                                        title={<a onClick={() => showModal(item, '1')}>{'Jefe Inmediato: ' + getFullName(item?.immediate_supervisor)}</a>}
+                                                        title={<a onClick={() => showModal(item, '1')}>Jefe inmediato: {getFullName(item?.immediate_supervisor)}</a>}
                                                         description={getDescriptionRequests(item)}
                                                     />
                                                 </List.Item>
                                             )}
                                         />
                                     </CardScroll>
-                                ) : <ReloadOutlined className="card-load" spin />}
+                                ) : <LoadingOutlined className="card-load" spin />}
 
                             </Tabs.TabPane>
-                            <Tabs.TabPane key='pp' tab={`Por aprobar (${requests?.length ?? 0})`}>
+                            <Tabs.TabPane key='2' tab={`Por aprobar (${requests?.length ?? 0})`}>
                                 {!loading ? (
                                     <CardScroll className="scroll-bar">
                                         <List
@@ -196,7 +197,7 @@ const WidgetRequests = () => {
                                             )}
                                         />
                                     </CardScroll>
-                                ) : <ReloadOutlined className="card-load" spin />}
+                                ) : <LoadingOutlined className="card-load" spin />}
                             </Tabs.TabPane>
                         </Tabs>
                     </ContentTabs>
