@@ -183,19 +183,24 @@ const [filterName, setFilterName] = useState(null)
         setSaving(false)
       } catch (error) {
         setSaving(false)
-        if(error?.response?.data?.message){
-            let errors = []
-            Object.entries(error?.response?.data?.message).map(([key, value]) => {
-                let err = {
-                    name:key,
-                    errors: value
+        console.log('err0r',error.response.data.message)
+            if(error?.response?.data?.message){
+                let errors = []
+                if(Array.isArray(error?.response?.data?.message)){
+                    Object.entries(error?.response?.data?.message).map(([key, value]) => {
+                        let err = {
+                            name:key,
+                            errors: value
+                        }
+                        errors.push(err)
+                    })
+                    form.setFields(errors)
+                }else{
+                    message.error(error?.response?.data?.message)
                 }
-                errors.push(err)
-            })
-            form.setFields(errors)
-        }else{
-            message("Dispersión no guardada")
-        }
+            }else{
+                message("Dispersión no guardada")
+            }   
       }
   }
 
