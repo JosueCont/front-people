@@ -149,8 +149,8 @@ class WebApiFiscal {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/details/`, "get")
   }
 
-  static defaultIntegratorFactor() {
-    return WebApi.ApisType('fiscal/integration-factors-default', 'get')
+  static defaultIntegratorFactor(year) {
+    return WebApi.ApisType(`fiscal/integration-factors-default?year=${year}`, 'get')
   }
 
   static deleteIntegrationFactor(id) {

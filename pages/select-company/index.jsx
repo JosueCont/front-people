@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../layout/MainInter";
 import {
   Row,
   Col,
