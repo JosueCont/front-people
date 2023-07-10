@@ -385,7 +385,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           setSuccessImport(false);
         }
 
-        setTitleMessage("Importación correcta");
+        setTitleMessage("Importación incompleta");
         // setInfoGenericModal();
         setDescriptionImport(text);
       } else {
