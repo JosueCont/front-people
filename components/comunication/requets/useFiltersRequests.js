@@ -12,7 +12,7 @@ export const useFiltersRequests = () => {
     const listKeys = {
         person__id: 'Colaborador',
         immediate_supervisor: 'Jefe inmediato',
-        status: 'Estatus',
+        status__in: 'Estatus',
         period: 'Periodo',
         range: 'Fechas'
     }
@@ -29,6 +29,13 @@ export const useFiltersRequests = () => {
         keyShow: 'label'
     })
 
+    const getStatusList = (value) =>{
+        if(value == '6') return 'Todas';
+        const reduce_ = (acc, item) => ([...acc, getStatus(item)]);
+        let status = value.split(',').reduce(reduce_, []);
+        return status?.join(', ');
+    }
+
     const getPerson = (id) => getValueFilter({
         value: id,
         list: persons_company,
@@ -42,7 +49,7 @@ export const useFiltersRequests = () => {
 
     const listGets = {
         range: getDate,
-        status: getStatus,
+        status__in: getStatusList,
         person__id: getPerson,
         immediate_supervisor: getPerson,
         period: getPeriod

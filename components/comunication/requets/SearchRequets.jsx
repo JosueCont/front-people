@@ -39,6 +39,8 @@ const SearchRequests = ({
     const showModal = () =>{
         let filters = {...router.query};
         filters.range = router.query?.range ? formatRange() : null;
+        filters.status__in = router.query?.status__in
+            ? router.query?.status__in?.split(',') : ['1'];
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
@@ -56,6 +58,8 @@ const SearchRequests = ({
     const onFinishSearch = (values) =>{        
         values.range = values.range ?
             `${values.range[0].format(format)},${values.range[1].format(format)}` : null;
+        values.status__in = values?.status__in?.length > 0
+            ? values.status__in?.join(',') : null;
         let filters = createFiltersJB(values);        
         setFilters(filters)
     }
@@ -77,10 +81,10 @@ const SearchRequests = ({
     }
 
     const defaultFilter = useMemo(()=>{
-        if(!router.query?.status) return {Estatus: 'Pendiente'};
-        let value = listGets['status'](router.query?.status);
-        return {Estatus: value == '6' ? 'Todas' : value};
-    },[router.query?.status])
+        let value = router.query?.status__in;
+        if(!value) return {Estatus: 'Pendiente'};
+        return {Estatus: listGets['status__in'](value)};
+    },[router.query?.status__in])
 
     return (
         <>
@@ -120,7 +124,7 @@ const SearchRequests = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
-                            discardKeys={['status']}
+                            discardKeys={['status__in']}
                             defaultFilters={defaultFilter}
                         />
                     </Col>  

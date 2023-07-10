@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, List, Empty, Avatar, message } from 'antd';
+import { Tabs, List, Empty, Avatar, message, Tag } from 'antd';
 import {
     CardInfo,
     CardItem,
@@ -13,7 +13,8 @@ import { useSelector } from 'react-redux';
 import WebApiPeople from '../../api/WebApiPeople';
 import {
     getFullName,
-    getPhoto
+    getPhoto,
+    getValueFilter
 } from '../../utils/functions';
 import moment from 'moment';
 import {
@@ -22,6 +23,7 @@ import {
 } from 'react-intl';
 import { useRouter } from 'next/router';
 import ModalInfoRequest from '../comunication/requets/ModalInfoRequest';
+import { optionsStatusVacation } from '../../utils/constant';
 
 const WidgetRequests = () => {
 
@@ -32,7 +34,7 @@ const WidgetRequests = () => {
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
-    const [fetching, setFetching] = useState(false); 
+    const [fetching, setFetching] = useState(false);
     const [requests, setRequests] = useState([]);
     const [myRequests, setMyRequests] = useState([]);
     const [typeAction, setTypeAction] = useState('1');
@@ -89,7 +91,7 @@ const WidgetRequests = () => {
     const getRequests = async () => {
         try {
             setLoading(true)
-            let query = `&status=1&immediate_supervisor=${user.id}`;
+            let query = `&status__in=1&immediate_supervisor=${user.id}`;
             let response = await WebApiPeople.getVacationRequest(current_node?.id, query);
             setRequests(response.data)
             setLoading(false)
@@ -103,7 +105,7 @@ const WidgetRequests = () => {
     const getMyRequests = async () => {
         try {
             setFetching(true)
-            let query = `&status=1&person__id=${user.id}`;
+            let query = `&status__in=1,5&person__id=${user.id}`;
             let response = await WebApiPeople.getVacationRequest(current_node?.id, query);
             setMyRequests(response.data)
             setFetching(false)
@@ -118,7 +120,7 @@ const WidgetRequests = () => {
     const getDescriptionRequests = (item) => {
         let start = moment(item?.departure_date, formatStart).format(formatEnd);
         let end = moment(item?.return_date, formatStart).format(formatEnd);
-        return `Días: ${item?.days_requested}, Fechas: ${start} - ${end}`;
+        return `Días: ${item?.days_requested}, Estatus: ${getStatus(item)}, Fechas: ${start} - ${end}`;
     }
 
     const showModal = (item, type) => {
@@ -142,6 +144,13 @@ const WidgetRequests = () => {
     const Void = (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<FormattedMessage id={'nodata'} />} />
     )
+
+    const getStatus = (item) => getValueFilter({
+        value: item?.status,
+        list: optionsStatusVacation,
+        keyEquals: 'value',
+        keyShow: 'label'
+    })
 
     return (
         <>
