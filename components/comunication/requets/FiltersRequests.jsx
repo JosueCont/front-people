@@ -148,21 +148,12 @@ const FiltersRequests = ({
                             </Form.Item>
                         </Col>
                     )}
-                    {/* <Col span={12}>
-                        <Form.Item
-                            label='Estatus'
-                            name='status'
-                        >
-                            <Select
-                                placeholder='Seleccionar una opción'
-                                options={[{ value: '6', key: '6', label: 'Todas' }].concat(optionsStatusVacation)}
-                            />
-                        </Form.Item>
-                    </Col> */}
                     <Col span={12}>
                         <Form.Item
                             label='Estatus'
                             name='status__in'
+                            tooltip={`El estatus predeterminado es "Pendiente",
+                                se activará en caso de que no se haya seleccionado ninguna opción.`}
                         >
                             <Select
                                 // allowClear
