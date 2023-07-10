@@ -11,6 +11,11 @@ const MainLayoutInter = ({
   hideSearch,
   hideLogo,
   autoregister = false,
+  hideProfile = false,
+  logoAlign,
+  showFooter,
+  contentFooter,
+  secondaryLogo,
   ...props
 }) => {
 
@@ -26,6 +31,11 @@ const MainLayoutInter = ({
             hideSearch={hideSearch}
             onClickImage={onClickImage}
             autoregister={autoregister}
+            hideProfile={hideProfile}
+            logoAlign={logoAlign}
+            showFooter={showFooter}s
+            contentFooter={contentFooter}
+            secondaryLogo={secondaryLogo}
         >
             {props.children}
         </MainLayoutAdmin>

@@ -3,17 +3,29 @@ import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
   SyncOutlined,
   SettingOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
-import { createFiltersJB } from '../../../utils/functions';
+import {
+    createFiltersJB,
+    downLoadFileBlob,
+    getDomain
+} from '../../../utils/functions';
 import FiltersRequests from './FiltersRequests';
 import { useFiltersRequests } from './useFiltersRequests';
+import { API_URL_TENANT } from '../../../config/config';
 
-const SearchRequests = () => {
+const SearchRequests = ({
+    lastFilters = "",
+    currentURL = '/comunication/requests/holidays',
+    isAdmin = true
+}) => {
 
     const router = useRouter();
+    const { current_node } = useSelector(state => state.userStore);
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const { listGets, listKeys } = useFiltersRequests();
@@ -27,6 +39,8 @@ const SearchRequests = () => {
     const showModal = () =>{
         let filters = {...router.query};
         filters.range = router.query?.range ? formatRange() : null;
+        filters.status__in = router.query?.status__in
+            ? router.query?.status__in?.split(',') : ['1'];
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
@@ -37,14 +51,16 @@ const SearchRequests = () => {
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/comunication/requests/holidays',
+        pathname: currentURL,
         query: filters
     }, undefined, {shallow: true});
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) =>{        
         values.range = values.range ?
             `${values.range[0].format(format)},${values.range[1].format(format)}` : null;
-        let filters = createFiltersJB(values);
+        values.status__in = values?.status__in?.length > 0
+            ? values.status__in?.join(',') : null;
+        let filters = createFiltersJB(values);        
         setFilters(filters)
     }
 
@@ -52,6 +68,23 @@ const SearchRequests = () => {
         formSearch.resetFields();
         setFilters()
     }
+
+    const downloadFile = async () => {  
+        const url = `/person/vacation?person__node__id=${current_node?.id}&download=true`                            
+        await downLoadFileBlob(
+            `${getDomain(API_URL_TENANT)}${url}${lastFilters}`,
+            "reporte_vacaciones.xlsx",
+            "GET",
+            null,
+            "No se encontraron resultados"
+        );
+    }
+
+    const defaultFilter = useMemo(()=>{
+        let value = router.query?.status__in;
+        if(!value) return {Estatus: 'Pendiente'};
+        return {Estatus: listGets['status__in'](value)};
+    },[router.query?.status__in])
 
     return (
         <>
@@ -73,7 +106,15 @@ const SearchRequests = () => {
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push('holidays/new')}>
+                                <Tooltip title='Descargar Excel'>
+                                    <Button onClick={()=> downloadFile()}>
+                                        <DownloadOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Button onClick={()=> router.push({
+                                    pathname: 'holidays/new',
+                                    query: {...router.query}
+                                })}>
                                     Agregar
                                 </Button>
                             </div>
@@ -83,6 +124,8 @@ const SearchRequests = () => {
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            discardKeys={['status__in']}
+                            defaultFilters={defaultFilter}
                         />
                     </Col>  
                 </Row>
@@ -92,6 +135,8 @@ const SearchRequests = () => {
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
+                showCollaborator={isAdmin}
+                showSupervisor={isAdmin}
             />
         </>
     )

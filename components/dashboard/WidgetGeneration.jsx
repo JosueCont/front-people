@@ -10,6 +10,7 @@ import {
     ReloadOutlined,
     ManOutlined,
     WomanOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApi from '../../api/webApi';
@@ -93,7 +94,7 @@ const WidgetGeneration = () => {
                             </p>
                         </>
                     ) : Void}
-                </div> : <ReloadOutlined className="card-load" spin />
+                </div> : <LoadingOutlined className="card-load" spin />
                 }
             </CardItem>
         </CardInfo>

@@ -26,6 +26,8 @@ const FormGeneral = ({
     setFileCV,
     infoCandidate,
     showVacant = false,
+    optionVacant = [],
+    loadVacant = false,
     onlyRead = false
 }) => {
 
@@ -67,12 +69,12 @@ const FormGeneral = ({
                             allowClear
                             showSearch
                             disabled
-                            loading={load_vacancies_options}
+                            loading={loadVacant}
                             placeholder='Seleccionar una opción'
                             notFoundContent='No se encontraron resultados'
                             optionFilterProp='children'
                         >
-                            {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
+                            {optionVacant.map(item => (
                                 <Select.Option value={item.id} key={item.id}>
                                     {item.job_position}
                                 </Select.Option>
@@ -156,7 +158,6 @@ const FormGeneral = ({
                     label='CV'
                     keyName='cv_name_read'
                     tooltip={`Archivos permitidos: ${typeFileCV.join(', ')}.`}
-                    isRequired={true}
                     urlPreview={infoCandidate?.cv}
                     download={true}
                     setFile={setFileCV}

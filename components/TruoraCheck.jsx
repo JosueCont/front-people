@@ -139,6 +139,20 @@ const TruoraCheck = ({person, ...props}) => {
         });
     }
 
+    const getLevelConfiance = (score) =>{
+      if(score <= 2){
+        return "Confianza muy baja"
+      }else if(score > 2 && score<=4){
+        return "Confianza baja"
+      }else if(score > 4 && score<=6){
+        return "Confianza media"
+      }else if(score > 6 && score<=8){
+        return "Confianza alta"
+      }else if(score > 8 && score<=10){
+        return "Confianza muy alta"
+      }
+    }
+
   return (
     <>
         <Global
@@ -268,9 +282,11 @@ const TruoraCheck = ({person, ...props}) => {
                 okText="Si"
                 cancelText="No"
               >
+                <Tooltip placement="left" title={"Consultar nuevamente"}>
                   <Button>
                     <SyncOutlined style={{ color:'white' }} />
                   </Button>
+                </Tooltip>  
                 </Popconfirm>
               <Button className='btnDownloadFileTruora' onClick={() => getBackgroundCheckFile()} icon={<FilePdfOutlined/>}>
                 Descargar reporte 
@@ -310,7 +326,7 @@ const TruoraCheck = ({person, ...props}) => {
                     <Progress style={{ marginTop:20 }} type="circle" percent={checkDetails?.score*100} format={() => (checkDetails?.score*10) }  />
                     <p style={{ marginBottom:0 }}>
                       <b>
-                      Confianza media
+                        {getLevelConfiance(checkDetails?.score*10)}
                       </b>
                     </p>
                     <p>

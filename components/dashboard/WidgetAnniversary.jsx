@@ -12,6 +12,7 @@ import {
 } from './Styled';
 import {
     ReloadOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApi from '../../api/webApi';
@@ -99,7 +100,7 @@ const WidgetAnniversary = ({
                                 </List.Item>
                             )}
                         />
-                    </CardScroll> : <ReloadOutlined className="card-load" spin />
+                    </CardScroll> : <LoadingOutlined className="card-load" spin />
                 }
             </CardItem>
         </CardInfo>

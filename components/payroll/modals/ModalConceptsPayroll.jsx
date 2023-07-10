@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   Row,
   Col,
@@ -15,6 +15,7 @@ import {
   Form,
   message,
   Select,
+  Typography,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
@@ -23,6 +24,8 @@ import locale from "antd/lib/date-picker/locale/es_ES";
 import { departureMotive } from "../../../utils/constant";
 import moment from "moment";
 import DatePickerHoliDays from "../DatePickerHolidays";
+import _ from "lodash";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -41,6 +44,8 @@ const ModalConceptsPayroll = ({
   payment_period = null,
   ...props
 }) => {
+  const { Text } = Typography;
+
   const [departureForm] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [concepts, setConcepts] = useState([]);
@@ -56,6 +61,10 @@ const ModalConceptsPayroll = ({
   const [antiquity, setAntiquity] = useState(false);
   const [motiveDeparture, setMotiveDeparture] = useState(null);
   const [departureDate, setDepartureDate] = useState("");
+  const [errorExtraHours, setErrorExtraHours] = useState({});
+  const [errorExistExtraHours, setErrorExistExtraHours] = useState(false);
+  const [daysActive, setDaysActive] = useState([]);
+  const [nonWorkingDays, setNonWorkingDays] = useState([]);
 
   useEffect(() => {
     if (
@@ -67,7 +76,7 @@ const ModalConceptsPayroll = ({
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
             item.apply_assimilated &&
-            item.perception_type.code !== "046" &&
+            // item.perception_type.code !== "046" &&
             item.node != null
         );
         props.deductions_int = props.deductions_int.filter(
@@ -82,18 +91,25 @@ const ModalConceptsPayroll = ({
       } else {
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
-            item.perception_type.is_payroll && item.node != null && item.show
+            item.perception_type.is_payroll &&
+            item.node != null &&
+            item.show &&
+            item.is_active
         );
         props.deductions_int = props.deductions_int.filter(
           (item) =>
             item.deduction_type.is_payroll &&
             item.node != null &&
             item.deduction_type.code !== "002" &&
-            item.show
+            item.show &&
+            item.is_active
         );
         props.other_payments_int = props.other_payments_int.filter(
           (item) =>
-            item.other_type_payment.is_payroll && item.node != null && item.show
+            item.other_type_payment.is_payroll &&
+            item.node != null &&
+            item.show &&
+            item.is_active
         );
       }
       setPerceptionsCat(
@@ -106,6 +122,8 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            perception_type: item.perception_type,
+            is_rest_day: item.is_rest_day,
           };
         })
       );
@@ -120,6 +138,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            deduction_type: item.deduction_type,
           };
         })
       );
@@ -134,6 +153,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            other_type_payment: item.other_type_payment,
           };
         })
       );
@@ -145,7 +165,18 @@ const ModalConceptsPayroll = ({
     visible,
   ]);
 
+  useEffect(() => {
+    console.log("errorExtraHours", errorExtraHours);
+  }, [errorExtraHours]);
+
   useEffect(() => {}, [payment_period]);
+
+  useEffect(() => {
+    if (props?.currentNode?.id) {
+      getWorkingWeek();
+      getNonWorkingDays();
+    }
+  }, []);
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -165,6 +196,62 @@ const ModalConceptsPayroll = ({
     );
   };
 
+  const getNonWorkingDays = async () => {
+    try {
+      let response = await WebApiPeople.getNonWorkingDays({
+        node: props?.currentNode?.id,
+        limit: 10000,
+      });
+      console.log("response getNonWorkingDays", response);
+      if (response.status === 200) {
+        let disabledDays = [];
+        response.data.results.map((day) => {
+          disabledDays.push(day.date);
+        });
+        setNonWorkingDays(disabledDays);
+      }
+    } catch (error) {
+      console.log("getNonWorkingDays", error.message);
+    }
+  };
+
+  const getWorkingWeek = async () => {
+    try {
+      let response = await WebApiPeople.getWorkingWeekDays(
+        props.currentNode.id
+      );
+      if (response.status == 200) {
+        let actives = [];
+        let days = response.data.results[0];
+        if (days["sunday"]) {
+          actives.push(0);
+        }
+        if (days["monday"]) {
+          actives.push(1);
+        }
+        if (days["tuesday"]) {
+          actives.push(2);
+        }
+        if (days["wednesday"]) {
+          actives.push(3);
+        }
+        if (days["thursday"]) {
+          actives.push(4);
+        }
+        if (days["friday"]) {
+          actives.push(5);
+        }
+        if (days["saturday"]) {
+          actives.push(6);
+        }
+
+        setDaysActive(actives);
+      }
+    } catch (error) {
+      console.log("error====Z", error);
+    }
+  };
+
   const resetperceptionsDeductions = () => {
     setConcepts([]);
     setPerceptions([]);
@@ -172,6 +259,56 @@ const ModalConceptsPayroll = ({
     setOtherPayments([]);
     createObjectSend();
   };
+
+  const extraHoursValidation = () => {
+    let errorsExist = false;
+
+    perceptions.map((item) => {
+      let _periodicity = props.periodicity;
+      //P119 es doble , P118 triple */
+      /* Validamos las horas dobles */
+      if (item.code == "P119") {
+        if (_periodicity.code == "02" && item.value > 9) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 10`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else if (
+          (_periodicity.code == "03" || _periodicity.code == "04") &&
+          item.value > 18
+        ) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 19`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else if (_periodicity.code == "05" && item.value > 36) {
+          setErrorExtraHours({
+            ...errorExtraHours,
+            [item.id]: `El valor debe ser menor a 37`,
+          });
+          setErrorExistExtraHours(true);
+          errorsExist = true;
+        } else {
+          setErrorExtraHours({ ...errorExtraHours, [item.id]: false });
+          setErrorExistExtraHours(false);
+        }
+      }
+    });
+
+    return errorsExist;
+  };
+
+  const resetErrors = (name) => {
+    setErrorExtraHours({ ...errorExtraHours, [name]: false });
+  };
+
+  const debouncedErrors = useMemo(() => {
+    return _.debounce((name) => resetErrors(name), 600);
+  }, []);
 
   const RenderConcept = ({ data = [], type }) => {
     return (
@@ -181,7 +318,15 @@ const ModalConceptsPayroll = ({
           return (
             <Col span={12}>
               <Row style={{ marginBottom: "8px" }}>
-                <Col span={16}>{item.description}</Col>
+                <Col span={16}>
+                  {item.description}
+                  {!_.isEmpty(errorExtraHours) &&
+                    item.id in errorExtraHours && (
+                      <p>
+                        <Text type="danger">{errorExtraHours[item.id]}</Text>
+                      </p>
+                    )}
+                </Col>
                 <Col span={6}>
                   {item.data_type === 1 && (
                     <span style={{ marginRight: "7px", marginTop: "3px" }}>
@@ -196,6 +341,7 @@ const ModalConceptsPayroll = ({
                     formatter={(value) => value.replace("-", "")}
                     controls={false}
                     onChange={(e) => changeHandler(type, item.id)(e, item)}
+                    onKeyUp={(e) => debouncedErrors(item.id)}
                   />
                   {item.data_type === 2 && (
                     <span style={{ marginLeft: "7px", marginTop: "3px" }}>
@@ -218,8 +364,9 @@ const ModalConceptsPayroll = ({
   };
 
   const changeHandler = (type, name) => (value, item_concept) => {
+    /* setErrorExtraHours({...errorExtraHours,[name]: false }) */
     let _periodicity = props.periodicity;
-    const {code,description} = item_concept; //P119 es doble , P118 triple
+    const { code, description } = item_concept; //P119 es doble , P118 triple
     //GDZUL --- validacion de conceptos
     //validar las horas extras dobles y triples
     if (type === 1)
@@ -240,6 +387,9 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
+    if (extraHoursValidation()) {
+      return;
+    }
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -248,6 +398,9 @@ const ModalConceptsPayroll = ({
     setCeros(false);
     setConcepts([]);
     let data = [];
+
+    /* extraHoursValidation(); */
+
     if (perceptions.length > 0)
       perceptions.map((item) => {
         data.push(item);
@@ -264,6 +417,7 @@ const ModalConceptsPayroll = ({
         if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
+
     currentStep == 0
       ? setCurrentStep(currentStep + 1)
       : is_cero && currentStep == 1
@@ -275,6 +429,26 @@ const ModalConceptsPayroll = ({
   };
 
   const createObjectSend = () => {
+    let errorAmount = false;
+    concepts.map((item) => {
+      let datesValue = 0;
+      if (item?.dates) {
+        item?.dates.map((date) => {
+          datesValue += date.value;
+        });
+
+        if (item.value > datesValue) {
+          errorAmount = true;
+          item["error_value"] = true;
+        }
+      }
+    });
+
+    if (errorAmount) {
+      console.log("error");
+      return;
+    }
+
     if (extraOrdinary) {
       if (
         departureDate == undefined ||
@@ -699,16 +873,25 @@ const ModalConceptsPayroll = ({
                   )}
                 />
                 <Column
-                  title={'Fechas'}
-                  align={'center'}
-                  key={'date'}
-                  render={(record)=>record.data_type == 2 ? (
+                  title={"Fechas"}
+                  align={"center"}
+                  key={"date"}
+                  render={(record) =>
+                    record.data_type == 2 ? (
                       <DatePickerHoliDays
-                          withData={record.code==='P118' || record.code==='P119'}
-                          concept={record}
-                          onChangeData={(dates)=>record.dates=dates}
-                          multiple={true} />
-                  ): 'No aplica'}
+                        daysActives={daysActive}
+                        disabledDays={nonWorkingDays}
+                        withData={
+                          record.code === "P118" || record.code === "P119"
+                        }
+                        concept={record}
+                        onChangeData={(dates) => (record.dates = dates)}
+                        multiple={true}
+                      />
+                    ) : (
+                      "No aplica"
+                    )
+                  }
                 />
                 <Column
                   title="Acciones"
@@ -754,6 +937,7 @@ const mapState = (state) => {
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
     other_payments_int: state.fiscalStore.other_payments_int,
+    currentNode: state.userStore.current_node,
   };
 };
 

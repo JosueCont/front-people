@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainInter";
 import {
+    Space,
     Typography
 } from "antd";
 import { connect } from "react-redux";
@@ -17,12 +18,16 @@ import WidgetGender from "../../components/dashboard/WidgetGender";
 import WidgetBirthday from "../../components/dashboard/WidgetBirthday";
 import WidgetGeneration from "../../components/dashboard/WidgetGeneration";
 import WidgetAnniversary from "../../components/dashboard/WidgetAnniversary";
+import { useRouter } from "next/router";
+import { SettingOutlined } from "@ant-design/icons";
 
 moment.locale("es-Mx");
 
 const Dashboard = ({
     currentNode
 }) => {
+
+    const router = useRouter()
 
     return (
         <>
@@ -31,7 +36,10 @@ const Dashboard = ({
                 <ContentVertical>
                     <div>
                         <Typography.Title style={{marginBottom:0}} level={1}>
-                            {currentNode && currentNode.name}
+                            <Space size={10}>
+                                <>{currentNode && currentNode.name}</>
+                                <SettingOutlined style={{ cursor:'pointer' }} onClick={()=> router.push(`/business/companies/${currentNode.id}`) } />
+                            </Space>
                         </Typography.Title>
                         <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>
                         {/*<ButtonChangeLang/>*/}

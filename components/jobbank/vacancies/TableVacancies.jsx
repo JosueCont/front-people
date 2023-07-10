@@ -22,7 +22,7 @@ import { getVacancies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import ListItems from '../../../common/ListItems';
-import { optionsStatusVacant } from '../../../utils/constant';
+import { optionsStatusVacant, optionsShowCustomerNameVacant } from '../../../utils/constant';
 import { copyContent } from '../../../utils/functions';
 
 const TableVacancies = ({
@@ -64,6 +64,17 @@ const TableVacancies = ({
         } catch (e) {
             console.log(e)
             message.error('Estatus no actualizado');
+        }
+    }
+
+    const actionShowCustomerName = async (value, item) =>{
+        try {
+            await WebApiJobBank.updateShowCustomerNameVacant(item.id, {show_customer_name: value});
+            getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
+            message.success('Información de la vacante actualizada');
+        } catch (e) {
+            console.log(e)
+            message.error('Información de la vacante no actualizada');
         }
     }
 
@@ -148,9 +159,9 @@ const TableVacancies = ({
     }
 
     const copyLinkPostulation = (item) =>{
-        let url = `${window.location.origin}/jobbank/autoregister/candidate`;
+        let url = `${window.location.origin}/jobbank/search/details`;
         copyContent({
-            text: `${url}?code=${currentNode.permanent_code}&vacant=${item.id}`,
+            text: `${url}?vacant=${item.id}`,
             onSucces: ()=> message.success('Link de postulación copiado'),
             onError: () => message.error('Link de postulación no copiado')
         })
@@ -247,6 +258,22 @@ const TableVacancies = ({
                     placeholder='Estatus'
                     options={optionsStatusVacant}
                     onChange={(e) => actionStatus(e, item)}
+                />
+            )
+        }
+    },
+    {
+        title: 'Mostrar nombre cliente',
+        render: (item) =>{
+            return (
+                <Select
+                    size='small'
+                    style={{width: 101}}
+                    defaultValue={item.show_customer_name}
+                    value={item.show_customer_name}
+                    placeholder='Seleccionar'
+                    options={optionsShowCustomerNameVacant}
+                    onChange={(e) => actionShowCustomerName(e, item)}
                 />
             )
         }

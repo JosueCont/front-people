@@ -4,10 +4,12 @@ import {
   Col,
   Typography,
   Divider,
+  Alert,
   Form,
   Button,
   message,
   Switch,
+  Spin,
   Input,
 } from "antd";
 import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
@@ -31,6 +33,9 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const [formLegalRep] = Form.useForm();
   const [fiscalData, setFiscalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
+  const [messageCert, setMessageCert] = useState(null);
+  const [loadingCert, setLoadingCert] = useState(false);
+  const [existsCSD, setExistsCSD] = useState(false);
 
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
@@ -45,6 +50,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
         .catch((error) => {
           console.error(error);
         });
+        validateCSDExists()
     }
   }, [node_id]);
 
@@ -73,19 +79,58 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     }
   };
 
+  const validateCSDExists=async ()=>{
+    setLoadingCert(true)
+    setExistsCSD(false)
+    try {
+      const response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id)
+      if(typeof response?.data?.message === 'boolean' && response?.data?.message===true){
+        setExistsCSD(true)
+      }
+    }catch (e){
+      console.log('error',e)
+      setExistsCSD(false)
+    }finally {
+      setLoadingCert(false)
+    }
+  }
+
+
   const uploadCsds = () => {
     if (password && certificate && key) {
+      setLoadingCert(true)
       let data = new FormData();
       data.append("node", node_id);
       data.append("cer", certificate);
       data.append("key", key);
       data.append("password", password);
-      WebApiFiscal.uploadCsdsMultiEmmiter(data)
+      setMessageCert(null);
+      setExistsCSD(false)
+      WebApiFiscal.uploadCsdsMultiEmmiter(data, node_id)
         .then((response) => {
-          message.success(messageUploadSuccess);
+          if(response?.data?.message){
+            //gdzul
+            if(typeof response?.data?.message?.status === 'boolean' && response?.data?.message?.status===true){
+              message.success(messageUploadSuccess);
+              setAcceptAgreement(false)
+              form.resetFields()
+            }else{
+              setMessageCert(response?.data?.message);
+            }
+            validateCSDExists()
+
+           // openNotification('info',response?.data?.message)
+          }else{
+            setMessageCert(null)
+            message.success(messageUploadSuccess);
+          }
+          setLoadingCert(false)
+
         })
         .catch((error) => {
+          console.log(error)
           message.error(messageError);
+          setLoadingCert(false)
         });
     }
   };
@@ -150,6 +195,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       <Row>
         <Col>
           <Divider style={{ marginTop: "2px" }} />
+          <Spin spinning={loadingCert}>
           <Row>
             <Col lg={2} xs={22} offset={1}>
               <Form form={form}>
@@ -170,6 +216,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
               </p>
             </Col>
           </Row>
+
           <div style={{ width: "100%" }}>
             {acceptAgreement && (
               <Form layout={"vertical"} form={form}>
@@ -205,8 +252,19 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
                     showList={true}
                   />
                 </Col>
+                <Col span={24}>
+                  {
+                    messageCert && <Alert
+                    message="Información"
+                    description={messageCert}
+                    type="info"
+                    showIcon
+                    />
+                  }
+                </Col>
                 <Row justify="end">
                   <Button
+                      loading={loadingCert}
                     disabled={password && certificate && key ? false : true}
                     onClick={() => uploadCsds()}
                   >
@@ -215,7 +273,19 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
                 </Row>
               </Form>
             )}
+            {
+                existsCSD && <Alert
+                    message="Archivos detectados"
+                    description="Se detectaron los CSD para esta empresa, la opción de subir nuevos Certificados
+                    y Sellos Digitales estará siempre disponible."
+                    type="success"
+                    showIcon
+                />
+            }
           </div>
+          </Spin>
+
+
         </Col>
       </Row>
     </>

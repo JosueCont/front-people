@@ -11,10 +11,11 @@ import {
   InputNumber,
   Tabs,
   Space,
+  Switch,
 } from "antd";
 import { API_URL_TENANT } from "../../config/config";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
-import { DownloadOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, DownloadOutlined } from "@ant-design/icons";
 import UploadFile from "../UploadFile";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import { toInteger } from "lodash";
@@ -38,6 +39,7 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
         vacation_percent: factor.vacation_percent,
         bonus_days: factor.bonus_days,
         description: factor.description,
+        distribute_with_previous_law: factor.distribute_with_previous_law
       });
       formExcel.setFieldsValue({
         excelDescription: factor.description,
@@ -227,6 +229,18 @@ const IntegrationFactorsForm = ({ nodeId, factor }) => {
                   style={{ width: "100%" }}
                   onFocus={clearErrors}
                 />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={12}>
+              <Form.Item
+                label="¿Repartir vacaciones con ley anterior?"
+                name="distribute_with_previous_law"
+                valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                  />
               </Form.Item>
             </Col>
 

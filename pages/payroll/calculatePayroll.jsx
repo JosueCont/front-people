@@ -21,6 +21,7 @@ import {
   Upload,
   DatePicker,
   Tag,
+  Tooltip,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -37,6 +38,8 @@ import {
   ExclamationCircleOutlined,
   DownloadOutlined,
   StopOutlined,
+  ClearOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -65,6 +68,7 @@ import moment from "moment";
 import NumericInput from "../../components/inputNumeric";
 import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
+import SelectCollaboratorItemForm from '../../components/selects/SelectCollaboratorItemForm'
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -98,6 +102,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [arrayCfdi, setArrayCfdi] = useState([]);
   const [totalPerceptions, setTotalPerceptions] = useState(null);
+  const [downloading, setDownloading] = useState(false)
   const [totalDeductions, setTotalDeductions] = useState(null);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -106,7 +111,7 @@ const CalculatePayroll = ({ ...props }) => {
     title: "Timbrado de nómina",
     title_message: "Timbrado de nómina exitoso",
     description:
-      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nóminas.",
     type_alert: "success",
 
     closeButton: "Cancelar",
@@ -167,6 +172,23 @@ const CalculatePayroll = ({ ...props }) => {
                 number={
                   item.daily_salary
                       ? item.daily_salary
+                      : 0.0
+                }
+            />
+          </div>
+      ),
+    },
+    {
+      title: "SDI",
+      key: "SDI",
+      className: "cursor_pointer",
+      render: (item) => (
+          <div>
+            <NumberFormat
+                prefix={"$"}
+                number={
+                  item.integrated_daily_salary
+                      ? item.integrated_daily_salary
                       : 0.0
                 }
             />
@@ -915,12 +937,24 @@ const CalculatePayroll = ({ ...props }) => {
         });
         setGenericModal(true);
         break;
+      case 6:
+        setInfoGenericModal({
+          title: data.title,
+          title_message: data.title_message,
+          description: data.description,
+          type_alert: data.type_alert,
+          action: data.action,
+          title_action_button: data.title_action_button,
+          viewActionButton: data.viewActionButton,          
+        });
+        setGenericModal(true);
+        break;
     }
 
     return;
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (calendarSelect) {
       const filter = {
         payment_period: periodSelected.id,
@@ -930,7 +964,7 @@ const CalculatePayroll = ({ ...props }) => {
       if (job) filter.job = job;
       sendCalculatePayroll(filter);
     }
-  }, [department, job]);
+  }, [department, job]); */
 
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
@@ -1101,6 +1135,40 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     });
   };
+  
+
+  const generateDispersion =  async () => {
+    let data;
+    setDownloading(true)
+    if (personStamp.length > 0){
+      let list = personStamp.map(item => item.payroll_cfdi_person.id)
+      data = {
+        cfdis: list
+      }
+    }else{
+      data = {
+        period_id: periodSelected.id
+      }
+    }
+    try {
+      let response = await WebApiPayroll.generateDispersion(data)
+      if (response.data.message){
+        message.error(response.data.message)
+      }else{
+        const blob = new Blob([response.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "Dispersión bancaria.txt";
+        link.click();
+        message.success("Archivo descargado")
+      }
+      setDownloading(false)
+    } catch (error) {
+      console.log('error', error)
+      setDownloading(false)
+    }
+  }
+  
 
   const importPayrollCaculate = (data) => {
     setLoading(true);
@@ -1118,6 +1186,7 @@ const CalculatePayroll = ({ ...props }) => {
           total_deductions += item.calculation.total_deductions;
         });
         setConsolidated(response.data.consolidated);
+        /*  */
         setPayroll(response.data.payroll);
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
@@ -1137,6 +1206,54 @@ const CalculatePayroll = ({ ...props }) => {
         message.error(messageError);
       });
   };
+
+  const onChangeJob = (value) => {
+    value && value != undefined ? setJob(value) : setJob(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const onchangeDeptop = (value) => {
+    value && value != undefined ? setDepartment(value) : setDepartment(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const sendForm = (values) => {
+    values['payment_period'] = periodSelected.id,
+    sendCalculatePayroll(values)
+  }
+
+  const deletePayroll = (consolidated_id) => {
+    let data = {
+      consolidated_id: consolidated_id,
+    };
+   
+    setLoading(true);
+    setGenericModal(false);
+    WebApiPayroll.deleteConsolidationPayroll(data)
+      .then((response) => {
+        message.success("Reiniciaro correctamente");
+        sendCalculatePayroll({ payment_period: periodSelected.id });
+      })
+      .catch((error) => {
+        if (error.response?.data?.message) {
+          message.error(error.response.data.message);
+        } else {
+          message.error(messageError);
+        }
+        setLoading(false);
+      });   
+  };
+
 
   return (
     <>
@@ -1196,7 +1313,7 @@ const CalculatePayroll = ({ ...props }) => {
           <Row gutter={[10, 10]}>
             <Col span={24}>
               <Card className="form_header">
-                <Form form={form} layout="vertical">
+                <Form form={form} layout="vertical" onFinish={sendForm}>
                   <Row gutter={[16, 8]}>
                     <Col xxs={24} xl={4}>
                       <Form.Item name="calendar" label="Calendario">
@@ -1228,9 +1345,9 @@ const CalculatePayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                sendCalculatePayroll({
+                                /* sendCalculatePayroll({
                                   payment_period: value,
-                                }),
+                                }), */
                                   setPeriodSelcted(
                                     calendarSelect.periods.find(
                                       (p) => p.id == value
@@ -1279,55 +1396,58 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setDepartment(value)
-                                : setDepartment(null)
-                            }
+                            onChange={onchangeDeptop}
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setJob(value)
-                                : setJob(null)
-                            }
+                            onChange={onChangeJob}
                           />
                         </Col>
+                        <Col xxs={24} xl={4}>
+                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
+                        </Col>
+                        <Col>
+                        <Tooltip title="Buscar">
+                            <Button htmlType="submit" icon={<SearchOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
+                        </Tooltip>
+                        </Col>
                         <Col xxs={24} xl={5}>
-                          <Button
-                            style={{ marginTop: "30px", marginRight: 20 }}
-                            size="sm"
-                            icon={<DownloadOutlined />}
-                            onClick={() => {
-                              downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
-                                "POST",
-                                {
-                                  payment_period: periodSelected.id,
-                                  department: department,
-                                  job: job,
-                                  payroll: payroll.map((item) => {
-                                    item.person_id = item.person.id;
-                                    return item;
-                                  }),
-                                }
-                              );
-                            }}
-                          >
-                            Descargar plantilla
-                          </Button>
+                          {
+                            step < 2 && <Button
+                                  style={{ marginTop: "30px", marginRight: 20 }}
+                                  size="sm"
+                                  icon={<DownloadOutlined />}
+                                  onClick={() => {
+                                    downLoadFileBlob(
+                                        `${getDomain(
+                                            API_URL_TENANT
+                                        )}/payroll/payroll-calculus`,
+                                        "Nomina.xlsx",
+                                        "POST",
+                                        {
+                                          payment_period: periodSelected.id,
+                                          department: department,
+                                          job: job,
+                                          payroll: payroll.map((item) => {
+                                            item.person_id = item.person.id;
+                                            return item;
+                                          }),
+                                        }
+                                    );
+                                  }}
+                              >
+                                Descargar plantilla
+                              </Button>
+                          }
+
                         </Col>
                         {(step === 0 ||
                           isOpen ||
                           (consolidated &&
                             !isOpen &&
-                            consolidated.status != 3)) && (
+                            consolidated.status != 3)) && step < 2 && (
                           <Col xxs={24} xl={5} style={{ paddingTop: "30px" }}>
                             <Upload
                               {...{
@@ -1403,15 +1523,15 @@ const CalculatePayroll = ({ ...props }) => {
                 >
                   <Row
                     justify="start"
+                    gutter={20}
                     style={{
                       textAlign: "center",
                       padding: "20px",
                     }}
                   >
-                    <Col md={4} style={{ minWidth: "200px" }}>
+                    <Col>
                       <Button
                         size="large"
-                        style={{ minWidth: "200px" }}
                         block
                         htmlType="button"
                         icon={<FileExcelOutlined />}
@@ -1421,7 +1541,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 `${getDomain(
                                   API_URL_TENANT
                                 )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
+                                `nomina_abierta_periodo${periodSelected.name}.xlsx`,
                                 "POST",
                                 {
                                   payment_period: periodSelected.id,
@@ -1437,10 +1557,10 @@ const CalculatePayroll = ({ ...props }) => {
                             : downLoadFileBlob(
                                 `${getDomain(
                                   API_URL_TENANT
-                                )}/payroll/payroll-report?payment_period=${
+                                )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
                                   periodSelected.id
                                 }`,
-                                "Nomina.xlsx",
+                                `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
                                 "GET"
                               );
                         }}
@@ -1452,14 +1572,9 @@ const CalculatePayroll = ({ ...props }) => {
                       <>
                         {consolidated && (
                           <>
-                            <Col
-                              md={4}
-                              offset={1}
-                              style={{ minWidth: "200px" }}
-                            >
+                            <Col >
                               <Button
                                 size="large"
-                                style={{ minWidth: "210px" }}
                                 block
                                 icon={<FileExcelOutlined />}
                                 htmlType="button"
@@ -1482,10 +1597,9 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
 
                         {step == 0 && calculate && (
-                          <Col md={4} offset={1} style={{ minWidth: "200px" }}>
+                          <Col md={4}  style={{ minWidth: "200px" }}>
                             <Button
                               size="large"
-                              style={{ minWidth: "200px" }}
                               block
                               htmlType="button"
                               onClick={() => reCalculatePayroll([...payroll])}
@@ -1499,12 +1613,9 @@ const CalculatePayroll = ({ ...props }) => {
                           consolidated.status <= 2 && (
                             <Col
                               md={4}
-                              offset={1}
-                              style={{ minWidth: "200px" }}
                             >
                               <Button
                                 size="large"
-                                style={{ minWidth: "200px" }}
                                 block
                                 icon={<UnlockOutlined />}
                                 htmlType="button"
@@ -1512,13 +1623,14 @@ const CalculatePayroll = ({ ...props }) => {
                                   setMessageModal(5, {
                                     title: "Abrir nómina",
                                     description:
-                                      "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                      "Al abrir la nómina tendrás acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el cual se abrirá.",
                                     type_alert: "warning",
                                     action: () => openPayroll(1),
                                     title_action_button: "Abrir nómina",
                                     components: (
                                       <>
                                         <Row
+                                          gutter={20}
                                           style={{
                                             width: "100%",
                                             marginTop: "5px",
@@ -1546,10 +1658,9 @@ const CalculatePayroll = ({ ...props }) => {
                               (consolidated.status <= 2 ||
                                 consolidated.status == 6)) ||
                               (isOpen && !consolidated)) && (
-                              <Col md={4} offset={1}>
+                              <Col md={4} >
                                 <Button
                                   size="large"
-                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<LockOutlined />}
                                   htmlType="button"
@@ -1559,17 +1670,38 @@ const CalculatePayroll = ({ ...props }) => {
                                 </Button>
                               </Col>
                             )}
+                            {/*  Reiniciar Nomina consolidada no timbrada */}
+                            {(step == 1 || step == 2) &&
+                              consolidated &&
+                              consolidated.status == 1 && (
+                              <Col md={4} >
+                                <Button
+                                  size="large"
+                                  block
+                                  icon={<ClearOutlined />}
+                                  htmlType="button"
+                                  onClick={() =>
+                                    setMessageModal(6, {
+                                      title: "Reiniciar Nómina",
+                                      description:
+                                        "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
+                                      type_alert: "warning",
+                                      action: () => deletePayroll(consolidated.id),
+                                      title_action_button: "Reiniciar nómina",                                     
+                                    })
+                                  }
+                                >
+                                  Reiniciar Nomina
+                                </Button>
+                              </Col>
+                            )}
+
                             {step == 2 &&
                               consolidated &&
                               consolidated.status < 3 && (
-                                <Col
-                                  md={4}
-                                  offset={1}
-                                  style={{ minWidth: "200px" }}
-                                >
+                                <Col >
                                   <Button
                                     size="large"
-                                    style={{ minWidth: "200px" }}
                                     block
                                     icon={<FileDoneOutlined />}
                                     htmlType="button"
@@ -1581,13 +1713,9 @@ const CalculatePayroll = ({ ...props }) => {
                               )}
                             {step == 3 && (
                               <Col
-                                md={4}
-                                offset={1}
-                                style={{ minWidth: "200px" }}
                               >
                                 <Button
                                   size="large"
-                                  style={{ minWidth: "200px" }}
                                   block
                                   icon={<StopOutlined />}
                                   htmlType="button"
@@ -1626,6 +1754,22 @@ const CalculatePayroll = ({ ...props }) => {
                         )}
                       </>
                     )}
+                    {
+                      consolidated &&
+                      (consolidated.status <= 3 || consolidated.status >= 6 ) &&
+                      step >= 2 &&
+                      <Col>
+                        <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          onClick={() => generateDispersion()}
+                          loading={downloading}
+                        >
+                          Generar dispersión
+                        </Button>
+                      </Col>
+                    }
                   </Row>
                 </div>
                 {previousStep && (
@@ -1689,7 +1833,7 @@ const CalculatePayroll = ({ ...props }) => {
                             : "No se encontraron resultados.",
                         }}
                         rowSelection={
-                          consolidated && step == 2 && consolidated.status < 3
+                          consolidated && step > 1 && (consolidated.status <= 3 || consolidated.status == 6)
                             ? rowSelectionPerson
                             : null
                         }

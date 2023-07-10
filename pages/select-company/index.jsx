@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import MainLayout from "../../layout/MainLayout";
+import React, { useEffect, useMemo, useState } from "react";
+import MainLayout from "../../layout/MainInter";
 import {
   Row,
   Col,
@@ -12,12 +12,14 @@ import {
   Table,
   Alert,
   Select,
+  Input,
 } from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import {
+  setNullCompany,
   companySelected,
   setUser,
   resetCurrentnode,
@@ -37,16 +39,18 @@ import router from "next/router";
 import { messageError } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import moment from "moment";
+import _, { debounce } from "lodash";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
   const { Meta } = Card;
 
   const [dataList, setDataList] = useState([]);
+  const [allCompanies, setAllCompanies] = useState([])
   const [loading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(null);
   const [admin, setAdmin] = useState(false);
-  const [treeTable, setTreeTable] = useState(true);
+  const [treeTable, setTreeTable] = useState(false);
   const [modalSwitch, setModalSwitch] = useState(false);
   const [createNode, setCreateNode] = useState(false);
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
@@ -62,7 +66,7 @@ const SelectCompany = ({ ...props }) => {
       setIsLoadCompany(true);
     }
   }, [router]);
-
+  
   useEffect(() => {}, [isLoadCompany]);
 
   useEffect(() => {
@@ -75,7 +79,7 @@ const SelectCompany = ({ ...props }) => {
     }
 
     if (isBrowser()) {
-      window.sessionStorage.setItem("image", null);
+      window.sessionStorage.removeItem("image");
     }
   }, []);
 
@@ -111,7 +115,10 @@ const SelectCompany = ({ ...props }) => {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
               let data = response.data.nodes.filter((a) => a.active);
-              setDataList(data);
+
+              let orderData = data.sort((x, y) => x.name - y.name);
+              setDataList(orderData);
+              setAllCompanies(orderData)
               setIsLoadCompany(false)
             } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
@@ -131,7 +138,9 @@ const SelectCompany = ({ ...props }) => {
     await WebApiPeople.getCompanys(personID)
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
-        setDataList(data);
+        let orderData = data.sort((x, y) => x.name - y.name);
+        setDataList(orderData);
+        setAllCompanies(orderData)
         if (router.query.company) {
           let filterQuery = data.filter(
             (item) => item.id === parseInt(router.query.company)
@@ -202,7 +211,7 @@ const SelectCompany = ({ ...props }) => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Empresa",
       key: "name",
       render: (text, record) => (
         <div
@@ -237,6 +246,19 @@ const SelectCompany = ({ ...props }) => {
   const handleOnError = (e) => {
     e.target.src = "/images/empresas.svg";
   };
+
+  const filterCompanies = (e) => {
+    let name = e.target.value
+    console.log('name', name)
+    console.log('allCompanies',allCompanies)
+    console.log('new_liest',new_liest)
+    let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
+    setDataList(new_liest)
+    
+    
+  }
+
+  const debouncedSearch = debounce(filterCompanies, 500);
 
   return (
     <>
@@ -331,6 +353,9 @@ const SelectCompany = ({ ...props }) => {
                       </Col>
                     </Row>
                   </Col>
+                  <Col span={24}>
+                    <Input style={{ width:400 }} placeholder="Buscar" onChange={debouncedSearch} allowClear />
+                  </Col>
                   {!treeTable &&
                     dataList.map((item) => (
                       <Col
@@ -378,7 +403,7 @@ const SelectCompany = ({ ...props }) => {
                           <Meta
                             className="meta_company"
                             title={item.name}
-                            description="Ultima vez: Hace 2 Hrs"
+                            // description="Ultima vez: Hace 2 Hrs"
                           />
                         </Card>
                       </Col>
@@ -427,7 +452,7 @@ const SelectCompany = ({ ...props }) => {
                 message={
                   <span>
                     <b>Importar xml:</b> Se crea la empresa y el histórico de
-                    nómina a base de una carga masiva de xml (nominas por
+                    nómina a base de una carga masiva de xml (nóminas por
                     persona). Por favor importa todo tu año {currentYear}
                   </span>
                 }

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@balkangraph/orgchart.js": "^8.11.2",
     "@emotion/babel-preset-css-prop": "^10.0.27",
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",

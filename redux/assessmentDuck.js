@@ -42,8 +42,8 @@ const initialData = {
   open_modal_edit_group: false,
   list_assessments: [],
   load_assessments: false,
-  list_groups_assets: [],
-  load_groups_assets: false
+  list_group_assessments: [],
+  load_group_assessments: false
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -176,10 +176,10 @@ const assessmentReducer = (state = initialData, action) => {
         list_assessments: action.payload,
         load_assessments: action.fetching
       }
-    case types.GROUPS_ASSETS:
+    case types.GET_GROUPS_ASSESSMENTS:
       return {...state,
-        list_groups_assets: action.payload,
-        load_groups_assets: action.fetching
+        list_group_assessments: action.payload,
+        load_group_assessments: action.fetching
       }
     default:
       return state;
@@ -760,14 +760,14 @@ export const getListAssets = (node, query = '') => async (dispatch) =>{
   }
 }
 
-export const getGroupAssets = (node, query = '') => async (dispatch) =>{
-  const action = {type: types.GROUPS_ASSETS, payload: [], fetching: false};
-  dispatch({...action, fetching: true})
+export const getGroupsAssessments = (node, query = '') => async (dispatch) =>{
+  const action = {type: types.GET_GROUPS_ASSESSMENTS, payload: [], fetching: false};
   try {
+    dispatch({...action, fetching: true})
     let response = await WebApiAssessment.getGroupsAssessments(node, query);
     dispatch({...action, payload: response.data})
   } catch (e) {
-    console.log()
+    console.log(e)
     dispatch(action)
   }
 }

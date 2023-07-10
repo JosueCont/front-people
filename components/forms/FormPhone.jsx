@@ -221,7 +221,7 @@ const FormPhone = ({ person_id = null }) => {
         layout={"vertical"}
         form={formPhone}
         onFinish={formFinishPhone}
-        className="inputs_form_responsive"
+        className="inputs_form_responsive form-details-person"
       >
         <Row justify="center">
           <Col span={23}>

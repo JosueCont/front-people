@@ -98,6 +98,10 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/disability-type/`, "get");
   }
 
+  static getInfoDisabilityType(id) {
+    return WebApi.ApisType(`/fiscal/disability-type/${id}/`, "get");
+  }
+
   static getPostalCode(data, version) {
     return WebApi.ApisType(
       `/fiscal/postal-code?limit=10&search=${data}`,
@@ -109,8 +113,12 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
 
-  static uploadCsdsMultiEmmiter(data) {
-    return WebApi.ApisType(`fiscal/csd-multi-emitter`, "post", data);
+  static uploadCsdsMultiEmmiter(data,node) {
+    return WebApi.ApisType(`fiscal/csd-multi-emitter-validate/${node}/`, "post", data);
+  }
+
+  static validateExistsCsdsMultiEmmiter(node) {
+    return WebApi.ApisType(`fiscal/csd-multi-emitter-validate/${node}/`, "get");
   }
 
   static ImssDelegation(data) {
@@ -141,8 +149,8 @@ class WebApiFiscal {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/details/`, "get")
   }
 
-  static defaultIntegratorFactor() {
-    return WebApi.ApisType('fiscal/integration-factors-default', 'get')
+  static defaultIntegratorFactor(year) {
+    return WebApi.ApisType(`fiscal/integration-factors-default?year=${year}`, 'get')
   }
 
   static deleteIntegrationFactor(id) {

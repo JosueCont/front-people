@@ -5,7 +5,7 @@ import RequestsForm from './RequestsForm';
 import { useSelector } from 'react-redux';
 import { getFullName, getPhoto, getValueFilter } from '../../../utils/functions';
 import WebApiPeople from '../../../api/WebApiPeople';
-import ModalRequests from './ModalRequests';
+import ModalRequests from '../ModalRequests';
 import ListItems from '../../../common/ListItems';
 import { message, Spin, Modal } from 'antd';
 import { optionsStatusVacation } from '../../../utils/constant';
@@ -19,7 +19,10 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-const InfoRequests = () => {
+const InfoRequests = ({
+    isAdmin = true,
+    newFilters
+}) => {
 
     const getUser = state => state.userStore.user;
     const current_user = useSelector(getUser);
@@ -32,7 +35,6 @@ const InfoRequests = () => {
     const [loading, setLoading] = useState(false);
     const [currentPerson, setCurrentPerson] = useState({});
     const [infoRequest, setInfoRequest] = useState({});
-    const [status, setStatus] = useState(null);
 
     const [typeModal, setTypeModal] = useState('cancel');
     const [openModal, setOpenModal] = useState(false);
@@ -59,22 +61,11 @@ const InfoRequests = () => {
             setLoading(true)
             let response = await WebApiPeople.getInfoVacation(id);
             setInfoRequest(response.data)
-            setStatus(response.data?.status)
-            getPerson(response.data?.collaborator?.id)
+            setCurrentPerson(response.data?.collaborator)
             setLoading(false)
         } catch (e) {
             console.log(e)
             setLoading(false)
-        }
-    }
-
-    const getPerson = async (id) => {
-        try {
-            let response = await WebApiPeople.getPerson(id);
-            setCurrentPerson(response.data)
-        } catch (e) {
-            console.log(e)
-            setCurrentPerson({})
         }
     }
 
@@ -145,13 +136,19 @@ const InfoRequests = () => {
     const onSuccess = ({
         message = ''
     }) => {
+        let url = isAdmin
+            ? '/comunication/requests/holidays'
+            : '/user/requests/holidays';
         Modal.success({
             keyboard: false,
             maskClosable: false,
             title: message,
             okText: 'Aceptar',
             onOk() {
-                router.push('/comunication/requests/holidays');
+                router.push({
+                    pathname: url,
+                    query: newFilters
+                });
             }
         })
     }
@@ -160,17 +157,15 @@ const InfoRequests = () => {
         let values = {};
         values.status = !noValid.includes(infoRequest?.status) ? getStatus(infoRequest?.status) : null;
         values.person = infoRequest?.collaborator ? getFullName(infoRequest?.collaborator) : null;
-        values.period = infoRequest?.period ? infoRequest.period : null;
         values.departure_date = infoRequest?.departure_date
             ? moment(infoRequest.departure_date, formatStart).format(formatEnd) : null;
         values.return_date = infoRequest?.return_date
             ? moment(infoRequest.return_date, formatStart).format(formatEnd) : null;
-        values.days_requested = !noValid.includes(infoRequest?.days_requested)
-            ? infoRequest?.days_requested : null;
-        // values.availableDays = !noValid.includes(infoRequest?.available_days_vacation)
-        //     ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? getFullName(infoRequest.immediate_supervisor) : null;
+        values.period = !noValid.includes(infoRequest?.period)
+            ? `${infoRequest?.period} - ${infoRequest?.period + 1}` : null;
+        values.days_requested = infoRequest?.days_requested;
         formRequest.setFieldsValue(values)
     }
 
@@ -182,7 +177,13 @@ const InfoRequests = () => {
     })
 
     const actionBack = () => {
-        router.push('/comunication/requests/holidays')
+        let url = isAdmin
+            ? '/comunication/requests/holidays'
+            : '/user/requests/holidays';
+        router.push({
+            pathname: url,
+            query: newFilters
+        })
     }
 
     const showModal = (type) => {
@@ -240,14 +241,13 @@ const InfoRequests = () => {
                                 <p className='title-action-text'>
                                     Detalle de la solicitud
                                 </p>
-                                {Object.keys(currentPerson).length > 0 && (
-                                    <p style={{ marginBottom: 0 }}>
-                                        Fecha de ingreso:&nbsp;
-                                        {currentPerson.date_of_admission
-                                            ? moment(currentPerson.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
-                                            : 'No disponible'}
-                                    </p>
-                                )}
+                                <p style={{ marginBottom: 0 }}>
+                                    Fecha de ingreso:&nbsp;
+                                    {currentPerson?.date_of_admission
+                                        ? moment(currentPerson?.date_of_admission, 'YYYY-MM-DD').format('DD-MM-YYYY')
+                                        : 'No disponible'
+                                    }
+                                </p>
                             </div>
                         </div>
                         <Button
@@ -269,7 +269,8 @@ const InfoRequests = () => {
                                     refSubmit={refSubmit}
                                     showModal={showModal}
                                     showConfirm={showConfirm}
-                                    status={status}
+                                    infoRequest={infoRequest}
+                                    isAdmin={isAdmin}
                                 />
                             </Form>
                         </Spin>

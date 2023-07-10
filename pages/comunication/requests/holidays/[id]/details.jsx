@@ -1,19 +1,21 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import MainRequets from '../../../../../components/comunication/requets/MainRequets';
+import React, { useEffect, useState } from 'react';
+import { withAuthSync } from '../../../../../libs/auth';
+import MainRequets from '../../../../../components/comunication/MainRequets';
 import InfoRequests from '../../../../../components/comunication/requets/InfoRequests';
-import { getPersonsCompany } from '../../../../../redux/UserDuck';
+import { useRouter } from 'next/router';
+import { deleteFiltersJb } from '../../../../../utils/functions';
 
-const index = ({
-    currentNode,
-    getPersonsCompany
-}) => {
+const index = () => {
 
-    // useEffect(() => {
-    //     if (currentNode) {
-    //         getPersonsCompany(currentNode.id);
-    //     };
-    // }, [currentNode])
+    const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id'];
+
+    useEffect(() => {
+        if (Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    }, [router.query])
 
     const ExtraBread = [
         { name: 'Vacaciones', URL: '/comunication/requests/holidays' },
@@ -24,20 +26,11 @@ const index = ({
         <MainRequets
             pageKey={['holidays']}
             extraBread={ExtraBread}
+            newFilters={newFilters}
         >
-            <InfoRequests/>
+            <InfoRequests newFilters={newFilters}/>
         </MainRequets>
     )
 }
 
-const mapState = (state) => {
-    return {
-        currentNode: state.userStore.current_node
-    }
-}
-
-export default connect(
-    mapState, {
-    getPersonsCompany
-}
-)(index);
+export default withAuthSync(index)

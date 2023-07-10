@@ -27,7 +27,7 @@ import {
   messageError,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
+import { EditOutlined, SyncOutlined, HistoryOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
 import {
@@ -37,8 +37,9 @@ import {
   ruleRequired,
 } from "../../../utils/rules";
 import Link from "next/link";
+import { connect } from "react-redux";
 
-const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ...props }) => {
+const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab=false, node, ...props }) => {
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [formInfonavitManual] = Form.useForm();
@@ -49,6 +50,9 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
   const [updateInfonavit, setUpdateInfonavit] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showModalHistory, setShowModalHistory] = useState(false)
+  const [loadingLogs, setLoadingLogs] = useState(false)
+  const [logs, setLogs] = useState([])
   const [nss, setNSS] = useState(null);
   const [loadingModal, setLoadingModal] = useState(false);
   const [isNewRegister, setIsNewRegister] = useState(false);
@@ -223,7 +227,8 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
     data.append("node", node);
     data.append("person", person_id);
     data.append("patronal_registration", patronal_registration);
-
+    data.append('requesting_user', userInfo.id)
+'pp.'
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
         setLoadingTable(false);
@@ -490,6 +495,48 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
     }
   };
 
+  const closeModalLogs = () => {
+    setShowModalHistory(false)
+    setLogs([])
+  }
+
+  const getInfonavitLogs =  async () => {
+    setShowModalHistory(true)
+    setLoadingLogs(true)
+    try {
+      const res = await WebApiPayroll.getLogsInfonavit(person_id);
+      if(res.status === 200){
+        setLogs(res.data)
+      }
+      setLoadingLogs(false)
+    } catch (error) {
+      setLoadingLogs(false)
+      console.log('error', error)
+    }
+
+  }
+
+  const columnLogs = [
+    {
+      title: "Solicitado por",
+      key: "requesting_user",
+      render: (row) => <>
+        {row?.requesting_user?.first_name}{" "}{row.requesting_user?.flast_name}
+      </>
+    },
+    {
+      title: "Fecha",
+      key: "date",
+      dataIndex: ['timestamp'],
+      render: (date) => <>{moment(date).format("DD/MM/YYYY HH:mm")}</>
+    },
+    {
+      title: "Respuesta",
+      key: "response",
+      dataIndex: "response_msg"
+    }
+  ]
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loadingIMSS}>
@@ -500,6 +547,7 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
           layout="vertical"
           form={formImssInfonavit}
           onFinish={formImmssInfonavitAct}
+          className="form-details-person"
         >
           <Row>
             <Col lg={6} xs={22} offset={1}>
@@ -635,6 +683,11 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
                   </Button>
                 </Tooltip>
               )}
+              <Tooltip title="Ver registros de consultas">
+                <Button onClick={getInfonavitLogs}>
+                  <HistoryOutlined style={{ fontSize: "20px" }}/>
+                </Button>
+              </Tooltip>
             </Space>
           </div>
         </Row>
@@ -665,6 +718,7 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
           layout="vertical"
           form={formInfonavitManual}
           onFinish={newInfonavit}
+          className="form-details-person"
         >
           <Row>
             <Col span={11}>
@@ -828,8 +882,31 @@ const FormImssInfonavit = ({ person, person_id = null,refreshtab=false, node, ..
           </Row>
         </Form>
       </Modal>
+      <Modal 
+        visible={showModalHistory}
+        width={800}
+        footer={[
+          <Button key="close" onClick={closeModalLogs}>
+            Ok
+          </Button>,
+        ]}
+      >
+        <Table 
+          loading={loadingLogs}
+          columns={columnLogs}
+          dataSource={logs}
+          pagination={false}
+        />
+      </Modal>
     </>
   );
 };
 
-export default FormImssInfonavit;
+const mapState = (state) => {
+  return {
+    userInfo: state.userStore.user
+  };
+};
+
+
+export default connect(mapState)(FormImssInfonavit);

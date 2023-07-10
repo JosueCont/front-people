@@ -8,8 +8,12 @@ import {
     getSubCategories,
     getAcademics,
     getCompetences,
-    getScholarship
+    getScholarship,
+    getListStates
 } from '../../../redux/jobBankDuck';
+import {
+    getGroupsAssessments
+} from '../../../redux/assessmentDuck';
 import { deleteFiltersJb } from '../../../utils/functions';
 import MainIndexJB from '../MainIndexJB';
 
@@ -21,7 +25,9 @@ const AddOrEditVacancies = ({
     getSubCategories,
     getAcademics,
     getCompetences,
-    getScholarship
+    getScholarship,
+    getListStates,
+    getGroupsAssessments
 }) => {
 
     const router = useRouter();
@@ -42,6 +48,9 @@ const AddOrEditVacancies = ({
             getAcademics(currentNode.id);
             getCompetences(currentNode.id);
             getScholarship(currentNode.id);
+            getListStates(currentNode.id);
+            if(action == 'add') return;
+            getGroupsAssessments(currentNode?.id);
         }
     },[currentNode])
 
@@ -77,6 +86,8 @@ export default connect(
         getSubCategories,
         getAcademics,
         getCompetences,
-        getScholarship
+        getScholarship,
+        getListStates,
+        getGroupsAssessments
     }
 )(AddOrEditVacancies);

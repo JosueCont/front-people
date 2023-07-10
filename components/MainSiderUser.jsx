@@ -23,9 +23,18 @@ import HowToRegOutlinedIcon from '@material-ui/icons/HowToRegOutlined';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
-import { getCurrentURL } from "../utils/constant";
-import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../config/config";
-import _ from "lodash"
+import {
+  getCurrentURL,
+  redirectTo
+} from "../utils/constant";
+import {
+  urlSocial,
+  urlSukha,
+  urlMyAccount,
+  urlKhorflx,
+  urlCareerlab
+} from "../config/config";
+import _ from "lodash";
 const { Sider, Header, Content, Footer } = Layout;
 
 const { useBreakpoint } = Grid;
@@ -46,7 +55,7 @@ const MainSider = ({
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
-
+  
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
@@ -61,66 +70,54 @@ const MainSider = ({
       label,
     };
   }
+  
+  const routeSukha = () =>{
+    const token = user?.jwt_data?.metadata?.at(-1)?.token;
+    let tenant = process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA;
+    let current = getCurrentURL(true, true);
+    if(tenant && tenant.includes(current)){
+      let url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
+      redirectTo(url)
+      return;
+    }
+  }
+
+  const routeKhorflix = () =>{
+    const token = user?.jwt_data?.metadata?.at(-1)?.token;
+    const url = `${getCurrentURL(true)}.${urlKhorflx}/validation?token=${token}`;
+    redirectTo(url)
+  }
+
+  const routeCareerlab = () =>{
+    const token = user?.jwt_data?.metadata?.at(-1)?.token;
+    const url = `https://platform.${urlCareerlab}`;
+    redirectTo(url)
+  }
+
+  const routeConnect = () =>{
+    const token = user.jwt_data.metadata.at(-1).token;
+    const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
+    redirectTo(url)
+  }
+
+  const pathRoutes = {
+    sukha: routeSukha,
+    khorflix: routeKhorflix,
+    careerlab: routeCareerlab,
+    connect: routeConnect,
+    myEvaluation: '/user/assessments/',
+    dashboard: '/user',
+    holidays: '/user/requests/holidays'
+  }
 
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
-    const pathRoutes = {};
-    switch (key){
-      case "sukha":
-        const token1 = user.jwt_data.metadata.at(-1).token;
-        let url1;
-        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
-          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
-            url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
-          }else{
-            url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
-          }
-        }else{
-          url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
-        }
-        // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
-        const link1 = document.createElement('a');
-        link1.href = url1;
-        link1.click();
-        break;
-      case "khorflix":
-        const token2 = user.jwt_data.metadata.at(-1).token;
-        const url2 = `${getCurrentURL(true)}.${urlKhorflx}/validation?token=${token2}`;
-        // const url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
-        const link2 = document.createElement('a');
-        link2.href = url2;
-        link2.click();
-        break;
-      case "careerlab":
-        const token3 = user.jwt_data.metadata.at(-1).token;
-        const link3 = document.createElement('a');
-        // link3.href = `https://platform.${urlCareerlab}/validation?token=${token3}`;
-        link3.href = `https://platform.${urlCareerlab}`;
-        link3.target = '_blank';
-        link3.click();
-        break;
-      case "connect":
-        const token4 = user.jwt_data.metadata.at(-1).token;
-        const url4 = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token4}`;
-        const link4 = document.createElement('a');
-        link4.href = url4;
-        link4.click();
-        break;
-      case "myEvaluation":
-        // const token5 = user.jwt_data.metadata.at(-1).token;
-        // const url5 = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token5}`;
-        // const link5 = document.createElement('a');
-        // link5.href = url5;
-        // link5.target = '_blank';
-        // link5.click();
-        router.push("/user/assessments/")
-        break;
-      case "dashboard":
-        router.push("/user")
-        break;
-      default:
-        router.push('#');
+    const action = pathRoutes[key] ? pathRoutes[key] : '#';
+    if(typeof action == 'function'){
+      action()
+      return;
     }
+    router.push(action)
   };
 
   let items = [];
@@ -140,6 +137,11 @@ const MainSider = ({
 
       // Dashboard
       items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
+
+      let subMenuRequests = [getItem("Vacaciones", "holidays")];
+      let subMenuConcierge = [getItem("Solicitudes", "requests", <></>, subMenuRequests)];
+      let subMenuRH = [getItem("Concierge", "concierge",<></>, subMenuConcierge)];
+      items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, subMenuRH));
 
       // Evaluación y diagnóstico
       let children1 = [getItem("Mis evaluaciones", "myEvaluation")]
@@ -170,11 +172,13 @@ const MainSider = ({
       // items.push(getItem("Desempeño", "performance", <PermDataSettingOutlinedIcon />))
 
       // Compromiso
-      if (user && (user.intranet_access === 2 || user.intranet_access === 3)){
-        let children3 = [getItem("KHOR Connect", "connect")]
+      let children3 = []
+      if ([2,3].includes(user?.intranet_access) && props.applications?.khorconnect?.active){
+        children3.push(getItem("KHOR Connect", "connect"))
+      }
+      if(children3?.length > 0){
         items.push(getItem("Compromiso", "commitment", <HowToRegOutlinedIcon />, children3))
       }
-
       // Analytics
       // items.push(getItem("Analytics", "analytics", <AssessmentOutlinedIcon />))
 

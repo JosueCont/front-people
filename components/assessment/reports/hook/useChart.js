@@ -13,8 +13,8 @@ const getOptions = (active, type) => ({
     aspectRatio: 1.5,
     scales: {
         r: {
+            beginAtZero: true,
             ticks: {
-                beginAtZero: true,
                 stepSize: getSize(type),
                 backdropPadding: {
                     y: 8

@@ -35,6 +35,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant/fields/?node=${node}`, 'post');
     }
 
+    static getVacanciesSearch(node, query){
+        return WebApi.ApisType(`/job-bank/vacant-search/?node=${node}${query}`, 'get');
+    }
+
     static getInfoVacant(id){
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'get');
     }
@@ -52,6 +56,10 @@ class WebApiJobBank {
     }
 
     static updateVacantStatus(id, data){
+        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+    }
+
+    static updateShowCustomerNameVacant(id, data){
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
     }
 
@@ -551,6 +559,12 @@ class WebApiJobBank {
     
     static editVacancyAssesmentCandidateVacancy(id, values){
         return WebApi.ApisType(`/job-bank/vacant-assessment-candidate-vacancy/${id}/`, 'put', values)
+    }
+
+    //SETUP
+
+    static getSetupConfig(){
+        return WebApi.ApisType('/job-bank/setup/', 'get');
     }
 }
 

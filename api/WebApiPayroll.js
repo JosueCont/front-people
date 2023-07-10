@@ -161,6 +161,27 @@ class WebApiPayroll {
       "get"
     );
   }
+  
+  static downloadContractForWork(id) {
+    return WebApi.ApisType(
+      `/payroll/contract-for-work?person_id=${id}&contract_code=CTO4`,
+      "get"
+    );
+  }
+
+  static downloadIndefiniteTermContract(id) {
+    return WebApi.ApisType(
+      `/payroll/indefinite-term-contract?person_id=${id}&contract_code=CTO3`,
+      "get"
+    );
+  }
+
+  static downloadFixedTermContract(id) {
+    return WebApi.ApisType(
+      `/payroll/fixed-term-contract?person_id=${id}&contract_code=CTO2`,
+      "get"
+    );
+  }
 
   static getPayrollList(data) {
     return WebApi.ApisType(
@@ -226,6 +247,14 @@ class WebApiPayroll {
     );
   }
 
+  static getLogsInfonavit(person_id){
+    console.log('request_person__id')
+    return WebApi.ApisType(
+      `payroll/infonavit-logs/?request_person__id=${person_id}`,
+      "get",
+    );
+  }
+
   static getExtraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
@@ -260,6 +289,15 @@ class WebApiPayroll {
       data
     );
   }
+
+  static importVacationModification(data){
+    return WebApi.ApisType(
+      `/payroll/payroll-person/import_vacation_modification/`,
+      "post",
+      data
+    );
+  }
+
 
   static importIMSSPerson(data) {
     //payroll/payroll-person/import_salary_modification/
@@ -334,6 +372,42 @@ class WebApiPayroll {
     
     return WebApi.ApisType(
       "/payroll/assign-calendar-employees",
+      "post",
+      data
+    );
+  }
+
+  static getPayrollSpred(filters){
+    return WebApi.ApisType(`/business/bank-dispersion/${filters}`,"get");
+  }
+
+  static savePayrollSpred(data){
+    return WebApi.ApisType(`/business/bank-dispersion/`,"post", data);
+  }
+
+  static updPayrollSpred(data, item){
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}/`,"put", data);
+  }
+
+  static deletePayrollSpred(item){
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}`,"delete");
+  }
+
+  static getBanks(){
+    return WebApi.ApisType(`/business/bank-dispersion/banks/`,"get");
+  }
+
+  static generateDispersion(data){
+    return WebApi.ApisType(`/payroll/payroll-dispersion`,"post", data);
+  }
+
+  static getSuaFile(data){
+    return WebApi.ApisType(`/payroll/sua`,"post", data);
+  }
+
+  static deleteConsolidationPayroll(data) {
+    return WebApi.ApisType(
+      `payroll/consolidated_payroll/delete_consolidation/`,
       "post",
       data
     );

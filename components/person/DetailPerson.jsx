@@ -150,7 +150,10 @@ const DetailPerson = ({
           </Col>
         </Row>
         <DataPerson
-          setPerson={setPerson}
+          setPerson={(data)=> {
+            setPerson(data)
+            setRefreshTab10(true)
+          }}
           config={config}
           person={person}
           setLoading={setLoading}
@@ -328,7 +331,7 @@ const DetailPerson = ({
           </TabPane>
 
           {
-            (props?.applications && (_.has(props.applications, "troura") && props.applications["troura"].active)) &&
+            (props?.applications && (_.has(props.applications, "truora") && props.applications["truora"].active)) &&
             <TabPane
               tab={
                 <Tooltip title="Usuario">

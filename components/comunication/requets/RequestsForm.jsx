@@ -11,7 +11,8 @@ import {
 const RequestsForm = ({
     showModal = () =>{},
     showConfirm = ()=>{},
-    status = null
+    infoRequest = {},
+    isAdmin
 }) => {
 
     const {
@@ -85,22 +86,22 @@ const RequestsForm = ({
                 </Form.Item>
             </Col>
             <Col span={24} className='content-end' style={{gap: 8}}>
-                {vacation?.reject_vacation && [1,5].includes(status) && (
+                {vacation?.reject_vacation && [1,5].includes(infoRequest?.status) && (
                     <Button onClick={()=> showModal('cancel')}>
                         Cancelar solicitud
                     </Button>
                 )}
-                {vacation?.reject_vacation && status == 1 && (
+                {vacation?.reject_vacation && infoRequest?.status == 1 && isAdmin && (
                     <Button onClick={()=> showModal('reject')}>
                         Rechazar solicitud
                     </Button>
                 )}
-                {vacation?.approve_vacation && status == 1 && (
+                {vacation?.approve_vacation && infoRequest?.status == 1 && isAdmin && (
                     <Button onClick={()=> showConfirm('approve')}>
                         Aprobar solicitud
                     </Button>
                 )}
-                {status == 2 && (
+                {infoRequest?.status == 2 && isAdmin && (
                     <Button onClick={()=> showConfirm('reopen')}>
                         Reabrir solicitud
                     </Button>

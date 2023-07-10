@@ -237,7 +237,7 @@
 } */
 
 .fade_in{
-    animation: fade-in 0.5s ease-in;
+    animation: fade-in 0.3s ease-in;
 }
 
 @keyframes fade-in {
@@ -347,12 +347,14 @@
     margin-bottom: 0px;
     font-size: 1.5rem;
     font-weight: 500;
+    line-height: 1.2;
 }
 
 .title-action-content{
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .title-action-border{
@@ -1123,7 +1125,7 @@ span.input-with-clear:focus{
 .competence_list{
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 400px);
     overflow: auto;
     gap: 16px;
 }
@@ -1192,3 +1194,32 @@ div.picker-range-jb{
 }
 
 /* Termina diseño para solicitud de vacaciones */
+
+@media (max-width: 768px) {
+    /* .header-card .title-action-content{
+        justify-content: flex-start;
+    } */
+    .header-card .title-action-content{
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .header-card .content-end{
+        width: 100%;
+    }
+    .header-card .title-action-text{
+        font-size: 1.25rem;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-card .title-action-text{
+        font-size: 1rem;
+    }
+}
+
+/* Vacaciones */
+.holidays-cancelled{
+    background-color: rgba(220, 53, 69, 0.2);
+}
