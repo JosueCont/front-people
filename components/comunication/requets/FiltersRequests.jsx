@@ -22,6 +22,7 @@ const FiltersRequests = ({
     } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
     const period = Form.useWatch('period', formSearch);
+    const statusIn = Form.useWatch('status__in', formSearch);
     const noWorking = ['saturday', 'sunday'];
 
     const onFinishSearch = (values) => {
@@ -62,6 +63,26 @@ const FiltersRequests = ({
         return current && (valid_start || valid_end || exist);
     }
 
+    const onChangeStatus = (value) => {
+        let valid = !value?.includes('6')
+            && value?.length
+            >= optionsStatusVacation?.length;
+        if (value.includes('6') || valid) {
+            formSearch.setFieldsValue({
+                status__in: ['6']
+            })
+            return;
+        }
+    }
+
+    const optionsStatus = useMemo(() => {
+        let all = [{ value: '6', key: '6', label: 'Todas' }];
+        let options = all.concat(optionsStatusVacation);
+        const map_ = item => ({ ...item, disabled: item.value !== '6' });
+        if (statusIn?.includes('6')) return options.map(map_);
+        return options;
+    }, [statusIn])
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -75,7 +96,7 @@ const FiltersRequests = ({
                 form={formSearch}
                 layout='vertical'
                 initialValues={{
-                    status: '1'
+                    status__in: ['1']
                 }}
             >
                 <Row gutter={[16, 0]}>
@@ -127,15 +148,30 @@ const FiltersRequests = ({
                             </Form.Item>
                         </Col>
                     )}
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             label='Estatus'
                             name='status'
                         >
                             <Select
-                                // allowClear
                                 placeholder='Seleccionar una opción'
                                 options={[{ value: '6', key: '6', label: 'Todas' }].concat(optionsStatusVacation)}
+                            />
+                        </Form.Item>
+                    </Col> */}
+                    <Col span={12}>
+                        <Form.Item
+                            label='Estatus'
+                            name='status__in'
+                        >
+                            <Select
+                                // allowClear
+                                showSearch
+                                mode='multiple'
+                                maxTagCount='responsive'
+                                placeholder='Seleccionar una opción'
+                                onChange={onChangeStatus}
+                                options={optionsStatus}
                             />
                         </Form.Item>
                     </Col>
