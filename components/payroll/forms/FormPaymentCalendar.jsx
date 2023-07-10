@@ -124,7 +124,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       console.log('getBankDispersion')
       getBankDispersion()
     }
-  }, [props])
+  }, [props?.currentNode?.id])
 
   useEffect(() => {
     if (idPaymentCalendar) {
