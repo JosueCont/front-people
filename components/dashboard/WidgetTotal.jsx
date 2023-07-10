@@ -6,7 +6,8 @@ import {
     CardScroll
 } from './Styled';
 import {
-    ReloadOutlined
+    ReloadOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import WebApi from '../../api/webApi';
 import { useSelector } from 'react-redux';
@@ -62,7 +63,7 @@ const WidgetTotal = () => {
                 >
                     {total}
                 </Typography.Title>
-                : <ReloadOutlined className="card-load" spin />
+                : <LoadingOutlined className="card-load" spin />
             }
         </CardItem>
     )
