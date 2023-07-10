@@ -111,7 +111,10 @@ const SearchRequests = ({
                                         <DownloadOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push('holidays/new')}>
+                                <Button onClick={()=> router.push({
+                                    pathname: 'holidays/new',
+                                    query: {...router.query}
+                                })}>
                                     Agregar
                                 </Button>
                             </div>

@@ -9,6 +9,7 @@ import {
     ReloadOutlined,
     ManOutlined,
     WomanOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApi from '../../api/webApi';
@@ -66,7 +67,7 @@ const WidgetGender = () => {
                         value={genders['Femenino'] ?? 0}
                     />
                     <Statistic title={<FormattedMessage id={'other'}/>} value={genders['Otro'] ?? 0} />
-                </>  : <ReloadOutlined className="card-load"  spin />
+                </>  : <LoadingOutlined className="card-load"  spin />
             }
         </CardItem>
     )

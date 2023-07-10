@@ -101,7 +101,7 @@ const ModalInfoRequest = ({
         <MyModal
             title='Detalle solicitud'
             visible={visible}
-            widthModal={450}
+            widthModal={500}
             close={onClose}
             closable={!loading}
         >
@@ -129,7 +129,7 @@ const ModalInfoRequest = ({
                         <FormField>
                             <Field>
                                 <p>Periodo:</p>
-                                <span>{itemRequest?.period}</span>
+                                <span>{itemRequest?.period} - {itemRequest?.period + 1}</span>
                             </Field>
                             <Field>
                                 <p>Días solicitados:</p>
