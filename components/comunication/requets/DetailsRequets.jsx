@@ -18,7 +18,8 @@ import moment from 'moment';
 
 const DetailsRequets = ({
     action,
-    isAdmin
+    isAdmin,
+    newFilters
 }) => {
 
     const {
@@ -134,7 +135,10 @@ const DetailsRequets = ({
         let url = isAdmin
             ? '/comunication/requests/holidays'
             : '/user/requests/holidays';
-        router.push(url)
+        router.push({
+            pathname: url,
+            query: newFilters
+        })
     }
 
     return (

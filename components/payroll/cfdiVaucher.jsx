@@ -391,7 +391,6 @@ const CfdiVaucher = ({
           item.key = item.id;
           return item;
         });
-        console.log('setCfdis', cfdi_data)
         setCfdis(cfdi_data);
         setLoading(false);
       })
@@ -409,7 +408,10 @@ const CfdiVaucher = ({
     setPage(1)
     setCalendarSelect(null);
     setCfdis([]);
-    getVoucher("");
+    setLenData(0)
+    setValuesFilter({})
+    
+    getVoucher(`&node=${props.currentNode.id}`, 1);
   };
 
   useEffect(() => {

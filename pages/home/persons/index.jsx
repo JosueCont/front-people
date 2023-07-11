@@ -2238,10 +2238,7 @@ const homeScreen = ({
               <Checkbox>Timbrado</Checkbox>
             </Form.Item>
 
-            <Form.Item
-              name="types_stamp"
-              valuePropName="checked"
-            >
+            <Form.Item >
               <Upload
                 {...{
                   showUploadList: false,

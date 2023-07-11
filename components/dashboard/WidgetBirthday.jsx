@@ -6,7 +6,8 @@ import {
     CardScroll
 } from './Styled';
 import {
-    ReloadOutlined
+    ReloadOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApi from '../../api/webApi';
@@ -95,7 +96,7 @@ const WidgetBirthday = ({
                             )}
                         />
                     </CardScroll>
-                    : <ReloadOutlined tlined className="card-load" spin />
+                    : <LoadingOutlined tlined className="card-load" spin />
                 }
             </CardItem>
         </CardInfo>
