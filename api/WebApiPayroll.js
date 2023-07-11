@@ -1,7 +1,21 @@
 import { get } from "lodash";
 import WebApi from "./webApi";
+import axiosApi from "./axiosApi";
 
 class WebApiPayroll {
+
+  // Se agregan apis existentes
+
+  static downloadConfronts(data) {
+    return axiosApi.post('/payroll/confront', data, { responseType: 'blob' });
+  }
+
+  static downloadTemplateSalary(data){
+    return axiosApi.post('/payroll/payroll-person/export_salary_modification/', data, {responseType: 'blob'});
+  }
+
+  // Termina
+
   static getCfdi(data) {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
@@ -161,7 +175,7 @@ class WebApiPayroll {
       "get"
     );
   }
-  
+
   static downloadContractForWork(id) {
     return WebApi.ApisType(
       `/payroll/contract-for-work?person_id=${id}&contract_code=CTO4`,
@@ -247,7 +261,7 @@ class WebApiPayroll {
     );
   }
 
-  static getLogsInfonavit(person_id){
+  static getLogsInfonavit(person_id) {
     console.log('request_person__id')
     return WebApi.ApisType(
       `payroll/infonavit-logs/?request_person__id=${person_id}`,
@@ -290,7 +304,7 @@ class WebApiPayroll {
     );
   }
 
-  static importVacationModification(data){
+  static importVacationModification(data) {
     return WebApi.ApisType(
       `/payroll/payroll-person/import_vacation_modification/`,
       "post",
@@ -361,15 +375,15 @@ class WebApiPayroll {
     );
   }
 
-  static getPeople(id,search,filter=null){
+  static getPeople(id, search, filter = null) {
     return WebApi.ApisType(
-      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search :''}${filter != null ? filter :''}`,
+      `/payroll/people-calendar?calendar_id=${id}&search=${search != null ? search : ''}${filter != null ? filter : ''}`,
       'get'
     );
   }
 
-  static addMassiveCalendar(data){
-    
+  static addMassiveCalendar(data) {
+
     return WebApi.ApisType(
       "/payroll/assign-calendar-employees",
       "post",
@@ -377,32 +391,32 @@ class WebApiPayroll {
     );
   }
 
-  static getPayrollSpred(filters){
-    return WebApi.ApisType(`/business/bank-dispersion/${filters}`,"get");
+  static getPayrollSpred(filters) {
+    return WebApi.ApisType(`/business/bank-dispersion/${filters}`, "get");
   }
 
-  static savePayrollSpred(data){
-    return WebApi.ApisType(`/business/bank-dispersion/`,"post", data);
+  static savePayrollSpred(data) {
+    return WebApi.ApisType(`/business/bank-dispersion/`, "post", data);
   }
 
-  static updPayrollSpred(data, item){
-    return WebApi.ApisType(`/business/bank-dispersion/${item.id}/`,"put", data);
+  static updPayrollSpred(data, item) {
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}/`, "put", data);
   }
 
-  static deletePayrollSpred(item){
-    return WebApi.ApisType(`/business/bank-dispersion/${item.id}`,"delete");
+  static deletePayrollSpred(item) {
+    return WebApi.ApisType(`/business/bank-dispersion/${item.id}`, "delete");
   }
 
-  static getBanks(){
-    return WebApi.ApisType(`/business/bank-dispersion/banks/`,"get");
+  static getBanks() {
+    return WebApi.ApisType(`/business/bank-dispersion/banks/`, "get");
   }
 
-  static generateDispersion(data){
-    return WebApi.ApisType(`/payroll/payroll-dispersion`,"post", data);
+  static generateDispersion(data) {
+    return WebApi.ApisType(`/payroll/payroll-dispersion`, "post", data);
   }
 
-  static getSuaFile(data){
-    return WebApi.ApisType(`/payroll/sua`,"post", data);
+  static getSuaFile(data) {
+    return WebApi.ApisType(`/payroll/sua`, "post", data);
   }
 
   static deleteConsolidationPayroll(data) {

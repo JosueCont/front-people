@@ -3,7 +3,7 @@ import { genders } from "../../utils/constant"
 import { getValueFilter } from "../../utils/functions"
 import { getFullName } from "../../utils/functions"
 
-export const useFiltersCollaborator = () =>{
+export const useFiltersPeople = () =>{
 
     const {
         cat_departments,

@@ -39,7 +39,10 @@ import {
     UsergroupAddOutlined,
     WarningOutlined
 } from '@ant-design/icons';
-import { BsHandIndex } from 'react-icons/bs';
+import {
+    BsHandIndex,
+    BsCurrencyDollar
+} from 'react-icons/bs';
 import ListItems from '../../common/ListItems';
 import WebApiPeople from '../../api/WebApiPeople';
 import WebApiPayroll from '../../api/WebApiPayroll';
@@ -47,13 +50,14 @@ import WebApiYnl from '../../api/WebApiYnl';
 import WebApiAssessment from '../../api/WebApiAssessment';
 import { getListPersons } from '../../redux/UserDuck';
 
-import ModalSupervisor from './Options/ModalSupervisor';
-import ModalPassword from './Options/ModalPassword';
-import PersonsGroup from './groups/PersonsGroup';
+import ModalSupervisor from './modals/ModalSupervisor';
+import ModalPassword from './modals/ModalPassword';
+import PersonsGroup from '../person/groups/PersonsGroup';
+import ModalSalary from './modals/ModalSalary';
 
-import AssignAssessments from './assignments/AssignAssessmentsCopy';
+import AssignAssessments from '../person/assignments/AssignAssessmentsCopy';
 
-const TableCollaborator = ({
+const TablePeople = ({
     currentNode,
     generalConfig,
     permissions,
@@ -78,12 +82,31 @@ const TableCollaborator = ({
     const [itemPerson, setItemPerson] = useState({});
 
     const [openGroup, setOpenGroup] = useState(false);
-
     const [openAssign, setOpenAssign] = useState(false);
+    const [openSalary, setOpenSalary] = useState(false);
 
-    // useEffect(() => {
-    //     console.log('las aps------->', applications)
-    // }, [applications])
+    const actionStatus = async (status, item) => {
+        try {
+            let body = { status, id: item?.id }
+            await WebApiPeople.changeStatusPerson(body);
+            message.success('Estatus actualizado')
+            getListPersons(currentNode?.id, { ...router.query });
+        } catch (e) {
+            console.log(e)
+            message.error('Estatus no actualizado')
+        }
+    }
+
+    const actionIntranet = async (intranet_access, item) => {
+        try {
+            let body = { intranet_access, id: item?.id };
+            let response = await WebApiPeople.changeIntranetAccess(body);
+            message.success('Permisos actualizados')
+        } catch (e) {
+            console.log(e)
+            message.error('Permisos no actualizados')
+        }
+    }
 
     const actionDelete = async () => {
         let ids = itemsSelected?.map(item => item.id);
@@ -232,20 +255,20 @@ const TableCollaborator = ({
         }
     }
 
-    const actionAssign = async (values) =>{
+    const actionAssign = async (values) => {
         let persons = itemsSelected?.map(item => item.id);
         try {
-            let body = {...values, persons, node: currentNode?.id};
+            let body = { ...values, persons, node: currentNode?.id };
             await WebApiAssessment.assignAssessments(body);
             let msg = persons?.length > 1
                 ? 'Asignaciones realizadas'
-                : 'Asignación realizada'; 
+                : 'Asignación realizada';
             message.success(msg)
         } catch (e) {
             console.log(e)
             let msg = persons?.length > 1
                 ? 'Asignaciones no realizadas'
-                : 'Asignación no realizada'; 
+                : 'Asignación no realizada';
             message.error(msg)
         }
     }
@@ -292,15 +315,21 @@ const TableCollaborator = ({
         setOpenGroup(false)
     }
 
-    const showAsssign = (item) =>{
+    const showAsssign = (item) => {
         setItemsSelected([item])
         setOpenAssign(true)
     }
 
-    const closeAssign = () =>{
+    const closeAssign = () => {
         setItemsKeys([])
         setItemsSelected([])
         setOpenAssign(false)
+    }
+
+    const closeSalary = () => {
+        setOpenSalary(false)
+        setItemsKeys([])
+        setItemsSelected([])
     }
 
     const showManyGroup = () => {
@@ -334,7 +363,7 @@ const TableCollaborator = ({
         message.error('Selecciona al menos dos colaboradores')
     }
 
-    const showManyAssign = () =>{
+    const showManyAssign = () => {
         if (itemsSelected.length > 1) {
             setOpenAssign(true)
             return;
@@ -369,6 +398,15 @@ const TableCollaborator = ({
             >
                 Eliminar
             </Menu.Item>
+            {generalConfig?.nomina_enabled && (
+                <Menu.Item
+                    key="8"
+                    icon={<BsCurrencyDollar />}
+                    onClick={() => setOpenSalary(true)}
+                >
+                    Actualizar salarios
+                </Menu.Item>
+            )}
             {applications?.kuiz?.active && (
                 <>
                     <Menu.Item
@@ -381,7 +419,7 @@ const TableCollaborator = ({
                     <Menu.Item
                         key="3"
                         icon={<UsergroupAddOutlined />}
-                        onClick={()=> showManyAssign()}
+                        onClick={() => showManyAssign()}
                     >
                         Asignar evaluaciones
                     </Menu.Item>
@@ -496,7 +534,7 @@ const TableCollaborator = ({
                         <Menu.Item
                             key="8"
                             icon={<BsHandIndex />}
-                            onClick={()=> showAsssign(item)}
+                            onClick={() => showAsssign(item)}
                         >
                             Asignar evaluaciones
                         </Menu.Item>
@@ -537,7 +575,7 @@ const TableCollaborator = ({
             title: 'Foto',
             show: true,
             render: (item) => (
-                <Avatar src={getPhoto(item, '/images/profile-sq.jpg')} />
+                <Avatar size='small' src={getPhoto(item, '/images/profile-sq.jpg')} />
             )
         },
         {
@@ -580,7 +618,7 @@ const TableCollaborator = ({
                     checked={item.is_active}
                     checkedChildren="Activo"
                     unCheckedChildren="Inactivo"
-                // onChange={(e) => actionStatus(e, item)}
+                    onChange={(e) => actionStatus(e, item)}
                 />
             )
         },
@@ -595,7 +633,7 @@ const TableCollaborator = ({
                     value={item.intranet_access}
                     placeholder='Acceso'
                     options={intranetAccess}
-                // onChange={(e) => actionStatus(e, item)}
+                    onChange={(e) => actionIntranet(e, item)}
                 />
             )
         },
@@ -619,7 +657,7 @@ const TableCollaborator = ({
             ) : <></>,
             show: true
         }
-    ].filter(col => col.show);
+    ];
 
     const modalTitle = {
         delete: itemsSelected?.length > 1
@@ -652,7 +690,7 @@ const TableCollaborator = ({
                 rowKey='id'
                 size='small'
                 dataSource={list_persons}
-                columns={columns}
+                columns={columns.filter(col => col.show)}
                 loading={fetch_persons}
                 rowSelection={rowSelection}
                 pagination={{
@@ -694,13 +732,18 @@ const TableCollaborator = ({
                 itemToEdit={{ name: null, persons: itemsSelected }}
             />
             <AssignAssessments
-                title={(itemsSelected?.length > 1 || itemsSelected?.length <=0)
+                title={(itemsSelected?.length > 1 || itemsSelected?.length <= 0)
                     ? 'Asignar evaluaciones'
-                    :  `Asignar evaluaciones a ${getFullName(itemsSelected?.at(-1))}`
+                    : `Asignar evaluaciones a ${getFullName(itemsSelected?.at(-1))}`
                 }
                 visible={openAssign}
                 close={closeAssign}
                 actionForm={actionAssign}
+            />
+            <ModalSalary
+                visible={openSalary}
+                close={closeSalary}
+                itemsKeys={itemsKeys}
             />
         </>
     )
@@ -722,4 +765,4 @@ export default connect(
     mapState, {
     getListPersons
 }
-)(TableCollaborator)
+)(TablePeople)

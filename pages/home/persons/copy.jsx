@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import esES from 'antd/lib/locale/es_ES';
 import { withAuthSync } from '../../../libs/auth';
 import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb, ConfigProvider } from 'antd';
 import { verifyMenuNewForTenant } from '../../../utils/functions';
-import SearchCollaborator from '../../../components/person/SearchCollaborator';
-import TableCollaborator from '../../../components/person/TableCollaborator';
+import SearchPeople from '../../../components/people/SearchPeople';
+import TablePeople from '../../../components/people/TablePeople';
+import { PeopleProvider } from '../../../components/people/PeopleContext';
 import { connect } from 'react-redux';
 import {
     getPersonsCompany,
@@ -14,9 +15,12 @@ import {
 import {
     getListAssets,
     getCategories,
-    getGroupAssets
+    getGroupsAssessments
 } from '../../../redux/assessmentDuck';
 import { useRouter } from 'next/router';
+import {
+    getPatronalRegistration
+} from '../../../redux/catalogCompany';
 
 const index = ({
     currentNode,
@@ -24,24 +28,28 @@ const index = ({
     getListPersons,
     getCategories,
     getListAssets,
-    getGroupAssets
+    getGroupsAssessments
 }) => {
 
     const router = useRouter();
+    // const [filtersObj, setFiltersObj] = useState({});
+    // const [filtersStr, setFiltersStr] = useState("");
 
-    useEffect(()=>{
-        if(!currentNode) return;
-        let filters = {...router.query};
+    useEffect(() => {
+        if (!currentNode) return;
+        let filters = { ...router.query };
+        // setFiltersObj(filters)
         getListPersons(currentNode?.id, filters)
-    },[currentNode, router?.query])
+    }, [currentNode, router?.query])
 
-    useEffect(()=>{
-        if(!currentNode) return;
+    useEffect(() => {
+        if (!currentNode) return;
         getPersonsCompany(currentNode?.id)
         getListAssets(currentNode?.id, '&is_active=true')
-        getGroupAssets(currentNode?.id)
+        getGroupsAssessments(currentNode?.id)
         getCategories()
-    },[currentNode])
+        getPatronalRegistration()
+    }, [currentNode])
 
     return (
         <MainLayout
@@ -62,8 +70,8 @@ const index = ({
                 gap: 24
             }}>
                 <ConfigProvider locale={esES}>
-                    <SearchCollaborator />
-                    <TableCollaborator />
+                    <SearchPeople />
+                    <TablePeople />
                 </ConfigProvider>
             </div>
         </MainLayout>
@@ -80,10 +88,10 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getPersonsCompany,
-        getListPersons,
-        getCategories,
-        getListAssets,
-        getGroupAssets
-    }
+    getPersonsCompany,
+    getListPersons,
+    getCategories,
+    getListAssets,
+    getGroupsAssessments
+}
 )(withAuthSync(index))

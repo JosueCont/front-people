@@ -1,4 +1,5 @@
 import WebApi from "./webApi";
+import axiosApi from "./axiosApi";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -11,12 +12,26 @@ class WebApiPeople {
 
   static getCompanys(personId = null, active = true) {
     return WebApi.ApisType(
-      `/business/node/?${active !== null ? `active=${active}` : ""}${
-        personId ? `&person=${personId}` : ""
+      `/business/node/?${active !== null ? `active=${active}` : ""}${personId ? `&person=${personId}` : ""
       }`,
       "get"
     );
   }
+
+  // Se agregan apis existentes
+  static downloadPeople(data){
+    return axiosApi.post('/person/person/export_person/', data, {responseType: 'blob'});
+  }
+
+  static downloadTemplate(node, query){
+    return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, {responseType: 'blob'});
+  }
+
+  static downloadVacation(data){
+    return axiosApi.post('/person/person/export-vacation-report/', data, {responseType: 'blob'});
+  }
+
+  // Termina
 
   static getCompany(data) {
     return WebApi.ApisType(`/business/node/${data}/`, "get");

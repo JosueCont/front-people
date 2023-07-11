@@ -6,7 +6,7 @@ import { ruleWhiteSpace } from '../../utils/rules';
 import { genders } from '../../utils/constant';
 import { getFullName } from '../../utils/functions';
 
-const FiltersCollaborator = ({
+const FiltersPeople = ({
     visible,
     close = () =>{},
     onFinish = ()=>{},
@@ -192,4 +192,4 @@ const FiltersCollaborator = ({
     )
 }
 
-export default FiltersCollaborator
+export default FiltersPeople

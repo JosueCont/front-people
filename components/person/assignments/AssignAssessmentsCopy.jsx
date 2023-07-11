@@ -36,8 +36,8 @@ const AssignAssessments = ({
         fetching,
         list_assessments,
         load_assessments,
-        load_groups_assets,
-        list_groups_assets
+        load_group_assessments,
+        list_group_assessments
     } = useSelector(state => state.assessmentStore);
     const {
         current_node
@@ -112,13 +112,13 @@ const AssignAssessments = ({
     const onChangeType = ({ target }) => {
         setIsIndividual(target.value)
         setTextForSearch("")
-        let list = target?.value ? list_assessments : list_groups_assets;
+        let list = target?.value ? list_assessments : list_group_assessments;
         setListSurveys(list)
     }
 
     const onSearchByName = ({ target }) => {
         setTextForSearch(target.value);
-        let list = isIndividual ? list_assessments : list_groups_assets;
+        let list = isIndividual ? list_assessments : list_group_assessments;
         const filter_ = item => valueToFilter(item.name).includes(valueToFilter(target.value));
         let results = target.value?.trim() ? list.filter(filter_) : list;
         setListSurveys(results)
@@ -141,7 +141,7 @@ const AssignAssessments = ({
             setListSurveys(list_assessments)
             return;
         }
-        setListSurveys(list_groups_assets)
+        setListSurveys(list_group_assessments)
     }
 
     const columnSelected = [
@@ -260,7 +260,7 @@ const AssignAssessments = ({
                         columns={columns}
                         showHeader={false}
                         dataSource={list_test}
-                        loading={load_assessments || load_groups_assets}
+                        loading={load_assessments || load_group_assessments}
                         size='small'
                         locale={{ emptyText: 'No se encontraron resultados' }}
                         scroll={{ y: 200 }}

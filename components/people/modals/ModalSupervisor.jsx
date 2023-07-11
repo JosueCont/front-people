@@ -23,8 +23,7 @@ const ModalSupervisor = ({
 
     const [formAssign] = Form.useForm();
     const [loading, setLoading] = useState(false);
-
-
+    
     const {
         load_persons,
         persons_company

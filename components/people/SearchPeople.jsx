@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Row, Col, Form, Tooltip, Card } from 'antd';
+import { Button, Row, Col, Form, Tooltip, Card, Menu } from 'antd';
 import {
     SyncOutlined,
     SettingOutlined,
@@ -9,11 +9,13 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../utils/functions';
 import TagFilters from '../jobbank/TagFilters';
-import FiltersCollaborator from './FiltersCollaborator';
-import { useFiltersCollaborator } from './useFiltersCollaborator';
-import OptionsCollaborator from './OptionsCollaborator';
+import FiltersPeople from './FiltersPeople';
+import { useFiltersPeople } from './useFiltersPeople';
+import OptionsPeople from './OptionsPeople';
+import DownloadPeople from './options/DownloadPeople';
+import ImportPeople from './options/ImportPeople';
 
-const SearchCollaborator = () => {
+const SearchPeople = () => {
 
     const {
         permissions
@@ -22,7 +24,7 @@ const SearchCollaborator = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersCollaborator();
+    const { listKeys, listGets } = useFiltersPeople();
 
     const showModal = () => {
         let filters = { ...router.query };
@@ -71,7 +73,7 @@ const SearchCollaborator = () => {
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <OptionsCollaborator />
+                                <OptionsPeople/>
                                 {permissions.person?.create && (
                                     <Button>
                                         Agregar
@@ -88,7 +90,7 @@ const SearchCollaborator = () => {
                     </Col>
                 </Row>
             </Card>
-            <FiltersCollaborator
+            <FiltersPeople
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -98,4 +100,4 @@ const SearchCollaborator = () => {
     )
 }
 
-export default SearchCollaborator
+export default SearchPeople
