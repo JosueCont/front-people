@@ -211,6 +211,19 @@ const SelectCompany = ({ ...props }) => {
 
   const columns = [
     {
+      title: "ID",
+      key: "id",
+      render: (text, record) => (
+          <div
+              style={{ cursor: "pointer" }}
+              size="middle"
+              onClick={() => setCompanySelect(record)}
+          >
+            <a>{record.id}</a>
+          </div>
+      ),
+    },
+    {
       title: "Empresa",
       key: "name",
       render: (text, record) => (

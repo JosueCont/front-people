@@ -228,6 +228,11 @@ const businessForm = ({currentNode, ...props}) => {
 
     const columns = [
         {
+            title: "ID",
+            dataIndex: "id",
+            key: "id",
+        },
+        {
             title: "Nombre",
             dataIndex: "name",
             key: "name",
@@ -366,6 +371,7 @@ const businessForm = ({currentNode, ...props}) => {
     const filterCompanies = (e) => {
         let name = e.target.value
         let new_liest = allBusiness.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
+        console.log(new_liest)
         setBusiness(new_liest)
     }
 
