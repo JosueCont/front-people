@@ -1255,6 +1255,18 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
 
+  const changePeriod = (period_id) => {
+    setPeriodSelcted(
+      calendarSelect.periods.find(
+        (p) => p.id == period_id
+      )
+    );
+
+    let values = form.getFieldsValue()
+    values['payment_period'] = period_id
+    sendCalculatePayroll(values)
+  }
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -1345,14 +1357,7 @@ const CalculatePayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                /* sendCalculatePayroll({
-                                  payment_period: value,
-                                }), */
-                                  setPeriodSelcted(
-                                    calendarSelect.periods.find(
-                                      (p) => p.id == value
-                                    )
-                                  );
+                                changePeriod(value)
                               }}
                               options={
                                 calendarSelect
