@@ -1010,7 +1010,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const validatedStatusPayroll = (data) => {
-    console.log(data);
+    
     if (data === null) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
@@ -1256,6 +1256,13 @@ const CalculatePayroll = ({ ...props }) => {
 
 
   const changePeriod = (period_id) => {
+
+    let period = calendarSelect.periods.find((p) => p.id == period_id);
+
+    form.setFieldsValue({
+      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`
+    });
+    
     setPeriodSelcted(
       calendarSelect.periods.find(
         (p) => p.id == period_id
