@@ -3,6 +3,8 @@ import MainRequets from '../MainRequets';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import DetailsRequets from './DetailsRequets';
+import { useRouter } from 'next/router';
+import { deleteFiltersJb } from '../../../utils/functions';
 
 const AddOrEditRequets = ({
     action = 'add',
@@ -11,10 +13,19 @@ const AddOrEditRequets = ({
     getPersonsCompany
 }) => {
 
+    const router = useRouter();
+    const [newFilters, setNewFilters] = useState({});
+    const deleteKeys = ['id'];
+
     useEffect(() => {
-        if (currentNode) {
-            getPersonsCompany(currentNode.id);
-        };
+        if (Object.keys(router.query).length <= 0) return;
+        let filters = deleteFiltersJb(router.query, deleteKeys);
+        setNewFilters(filters);
+    }, [router.query])
+
+    useEffect(() => {
+        if (!currentNode) return;
+        getPersonsCompany(currentNode.id);
     }, [currentNode])
 
     const ExtraBread = [
@@ -27,10 +38,12 @@ const AddOrEditRequets = ({
             pageKey={['holidays']}
             extraBread={ExtraBread}
             isAdmin={isAdmin}
+            newFilters={newFilters}
         >
             <DetailsRequets
                 action={action}
                 isAdmin={isAdmin}
+                newFilters={newFilters}
             />
         </MainRequets>
     )

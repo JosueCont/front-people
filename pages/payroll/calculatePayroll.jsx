@@ -21,6 +21,7 @@ import {
   Upload,
   DatePicker,
   Tag,
+  Tooltip,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -38,6 +39,7 @@ import {
   DownloadOutlined,
   StopOutlined,
   ClearOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -66,6 +68,7 @@ import moment from "moment";
 import NumericInput from "../../components/inputNumeric";
 import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
+import SelectCollaboratorItemForm from '../../components/selects/SelectCollaboratorItemForm'
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -951,7 +954,7 @@ const CalculatePayroll = ({ ...props }) => {
     return;
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (calendarSelect) {
       const filter = {
         payment_period: periodSelected.id,
@@ -961,7 +964,7 @@ const CalculatePayroll = ({ ...props }) => {
       if (job) filter.job = job;
       sendCalculatePayroll(filter);
     }
-  }, [department, job]);
+  }, [department, job]); */
 
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
@@ -1183,6 +1186,7 @@ const CalculatePayroll = ({ ...props }) => {
           total_deductions += item.calculation.total_deductions;
         });
         setConsolidated(response.data.consolidated);
+        /*  */
         setPayroll(response.data.payroll);
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
@@ -1203,6 +1207,30 @@ const CalculatePayroll = ({ ...props }) => {
       });
   };
 
+  const onChangeJob = (value) => {
+    value && value != undefined ? setJob(value) : setJob(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const onchangeDeptop = (value) => {
+    value && value != undefined ? setDepartment(value) : setDepartment(null)
+    form.setFields([
+      {
+        name:'person_id',
+        value: null
+      }
+    ])
+  }
+
+  const sendForm = (values) => {
+    values['payment_period'] = periodSelected.id,
+    sendCalculatePayroll(values)
+  }
 
   const deletePayroll = (consolidated_id) => {
     let data = {
@@ -1226,6 +1254,18 @@ const CalculatePayroll = ({ ...props }) => {
       });   
   };
 
+
+  const changePeriod = (period_id) => {
+    setPeriodSelcted(
+      calendarSelect.periods.find(
+        (p) => p.id == period_id
+      )
+    );
+
+    let values = form.getFieldsValue()
+    values['payment_period'] = period_id
+    sendCalculatePayroll(values)
+  }
 
   return (
     <>
@@ -1285,7 +1325,7 @@ const CalculatePayroll = ({ ...props }) => {
           <Row gutter={[10, 10]}>
             <Col span={24}>
               <Card className="form_header">
-                <Form form={form} layout="vertical">
+                <Form form={form} layout="vertical" onFinish={sendForm}>
                   <Row gutter={[16, 8]}>
                     <Col xxs={24} xl={4}>
                       <Form.Item name="calendar" label="Calendario">
@@ -1317,14 +1357,7 @@ const CalculatePayroll = ({ ...props }) => {
                               placeholder="Periodo"
                               size="large"
                               onChange={(value) => {
-                                sendCalculatePayroll({
-                                  payment_period: value,
-                                }),
-                                  setPeriodSelcted(
-                                    calendarSelect.periods.find(
-                                      (p) => p.id == value
-                                    )
-                                  );
+                                changePeriod(value)
                               }}
                               options={
                                 calendarSelect
@@ -1368,22 +1401,22 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setDepartment(value)
-                                : setDepartment(null)
-                            }
+                            onChange={onchangeDeptop}
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            onChange={(value) =>
-                              value && value != undefined
-                                ? setJob(value)
-                                : setJob(null)
-                            }
+                            onChange={onChangeJob}
                           />
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
+                        </Col>
+                        <Col>
+                        <Tooltip title="Buscar">
+                            <Button htmlType="submit" icon={<SearchOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
+                        </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
                           {

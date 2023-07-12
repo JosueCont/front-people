@@ -247,6 +247,14 @@ class WebApiPayroll {
     );
   }
 
+  static getLogsInfonavit(person_id){
+    console.log('request_person__id')
+    return WebApi.ApisType(
+      `payroll/infonavit-logs/?request_person__id=${person_id}`,
+      "get",
+    );
+  }
+
   static getExtraordinaryPayroll(data) {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }

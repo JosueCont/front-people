@@ -14,7 +14,10 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
   let nodeId = userCompanyId();
 
   const filterPerson = () => {
-    Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+    let filters = { node: nodeId }
+    if(props.department_id)filters['department'] = props.department_id
+    if(props.job_id)filters['job'] = props.job_id
+    Axios.post(API_URL + `/person/person/get_list_persons/`, filters )
       .then((response) => {
         let list = [];
         if (setAllPersons) {
@@ -32,6 +35,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
       })
       .catch((e) => {
         console.log(e);
+        setPersonList([]);
       });
   };
 
@@ -39,6 +43,11 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
     // getPersons();
     filterPerson();
   }, [route]);
+
+  useEffect(() => {
+    filterPerson()
+  }, [props.job_id, props.department_id ])
+  
 
   return (
     <Form.Item
@@ -53,6 +62,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         showSearch
         style={props.style ? props.style : null}
         allowClear
+        size={props.size}
         optionFilterProp="children"
         placeholder="Todos"
         notFoundContent={"No se encontraron resultado."}

@@ -654,6 +654,28 @@ const homeScreen = ({
       });
   };
 
+  const downloadIndefiniteTermContract = async (item) => {
+    try {
+      let response = await WebApiPayroll.downloadIndefiniteTermContract(item.id)
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Contrato por tiempo indeterminado.pdf"
+      link.click()
+    } catch (error) {
+      console.log('error',error)
+      error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        message.error(error.response.data.message)
+    }
+  }
+
   const menuGeneric = () => {
     return (
       <Menu>
@@ -2238,10 +2260,7 @@ const homeScreen = ({
               <Checkbox>Timbrado</Checkbox>
             </Form.Item>
 
-            <Form.Item
-              name="types_stamp"
-              valuePropName="checked"
-            >
+            <Form.Item >
               <Upload
                 {...{
                   showUploadList: false,

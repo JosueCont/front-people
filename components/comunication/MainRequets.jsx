@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import esES from 'antd/lib/locale/es_ES';
 import MainLayoutInter from "../../layout/MainInter";
 import MainLayoutUser from "../../layout/MainLayout_user";
@@ -10,18 +10,21 @@ const MainRequets = ({
     children,
     pageKey = '',
     extraBread = [],
-    isAdmin = true
+    isAdmin = true,
+    newFilters = {}
 }) => {
 
     const router = useRouter();
 
-    const breadProps = (item) => {
-        if (!item.URL) return {};
-        return {
+    const breadProps = useCallback((item)=>{
+        return item.URL ? {
             className: 'pointer',
-            onClick: () => router.push(item.URL)
-        }
-    }
+            onClick: ()=> router.push({
+                pathname: item.URL,
+                query: newFilters
+            })
+        } : {};
+    },[newFilters])
 
     const Main = isAdmin ? MainLayoutInter : MainLayoutUser;
 

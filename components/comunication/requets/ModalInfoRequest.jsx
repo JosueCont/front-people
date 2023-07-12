@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import MyModal from '../../../common/MyModal';
-import { Row, Col, Input, Form, Button } from 'antd';
+import { Row, Col, Input, Form, Button, Tag } from 'antd';
 import { useSelector } from 'react-redux';
-import { getFullName, getValueFilter } from '../../../utils/functions';
+import {
+    getFullName,
+    getValueFilter
+} from '../../../utils/functions';
 import moment from 'moment';
-import { ActionTypes } from 'redux-devtools';
+import { optionsStatusVacation } from '../../../utils/constant';
 
 const ContentFields = styled.div`
     background-color: #ffff;
@@ -70,16 +73,16 @@ const ModalInfoRequest = ({
         setAction("")
     }
 
-    const onFinish = (values = {}) =>{
+    const onFinish = (values = {}) => {
         setLoading(true);
-        setTimeout(()=>{
+        setTimeout(() => {
             setLoading(false)
-            actionForm[action](values,actionType)
+            actionForm[action](values, actionType)
             onClose()
-        },2000)
+        }, 2000)
     }
 
-    const onClose = () =>{
+    const onClose = () => {
         close()
         closeAction()
         formAction.resetFields()
@@ -101,7 +104,7 @@ const ModalInfoRequest = ({
         <MyModal
             title='Detalle solicitud'
             visible={visible}
-            widthModal={450}
+            widthModal={500}
             close={onClose}
             closable={!loading}
         >
@@ -128,8 +131,27 @@ const ModalInfoRequest = ({
                         </FormField>
                         <FormField>
                             <Field>
+                                <p>Estatus:</p>
+                                <span>
+                                    {getValueFilter({
+                                        value: itemRequest?.status,
+                                        list: optionsStatusVacation,
+                                        keyEquals: 'value',
+                                        keyShow: 'label'
+                                    })}
+                                </span>
+                            </Field>
+                            <Field>
                                 <p>Periodo:</p>
-                                <span>{itemRequest?.period}</span>
+                                <span>{itemRequest?.period} - {itemRequest?.period + 1}</span>
+                            </Field>
+                        </FormField>
+                        <FormField>
+                            <Field>
+                                <p>Fecha solicitud:</p>
+                                <span>
+                                    {moment(itemRequest?.timestamp).format(formatEnd)}
+                                </span>
                             </Field>
                             <Field>
                                 <p>Días solicitados:</p>
@@ -186,7 +208,7 @@ const ModalInfoRequest = ({
                                     <Button disabled={loading} onClick={() => closeAction()}>
                                         Cerrar
                                     </Button>
-                                    <Button loading={loading} onClick={()=> onFinish()}>
+                                    <Button loading={loading} onClick={() => onFinish()}>
                                         {textAction[action]}
                                     </Button>
                                 </div>

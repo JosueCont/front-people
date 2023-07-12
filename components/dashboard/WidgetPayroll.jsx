@@ -15,7 +15,8 @@ import {
     FileTextOutlined,
     ReloadOutlined,
     FilePdfOutlined,
-    EyeOutlined
+    EyeOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import WebApiPayroll from '../../api/WebApiPayroll';
@@ -151,7 +152,7 @@ const WidgetPayroll = () => {
                             )}
                         />
                     </CardScroll>
-                    : <ReloadOutlined className="card-load" spin />
+                    : <LoadingOutlined className="card-load" spin />
                 }
             </CardItem>
         </CardInfo>
