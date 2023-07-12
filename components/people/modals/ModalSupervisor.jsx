@@ -62,7 +62,7 @@ const ModalSupervisor = ({
         <MyModal
             title={typeAssign == 1
                 ? 'Asignar jefe inmediato'
-                : 'Asignar suplente de jefe inmediato'
+                : 'Asignar jefe suplente'
             }
             visible={visible}
             close={onClose}
@@ -103,7 +103,7 @@ const ModalSupervisor = ({
                     </Col>
                     {itemsSelected?.length > 0 && (
                         <Col span={24} style={{ marginBottom: 24 }}>
-                            <Space direction='vertical' style={{ width: '100%' }}>
+                            <Space size={[0,0]} direction='vertical' style={{ width: '100%' }}>
                                 <p style={{ marginBottom: 0, fontWeight: 500 }}>
                                     {itemsSelected?.length > 1
                                         ? 'Colaboradores a asignar'

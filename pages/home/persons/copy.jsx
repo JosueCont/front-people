@@ -3,14 +3,17 @@ import esES from 'antd/lib/locale/es_ES';
 import { withAuthSync } from '../../../libs/auth';
 import MainLayout from '../../../layout/MainInter';
 import { Breadcrumb, ConfigProvider } from 'antd';
-import { verifyMenuNewForTenant } from '../../../utils/functions';
+import {
+    verifyMenuNewForTenant,
+    getFiltersJB
+} from '../../../utils/functions';
 import SearchPeople from '../../../components/people/SearchPeople';
 import TablePeople from '../../../components/people/TablePeople';
 import { PeopleProvider } from '../../../components/people/PeopleContext';
 import { connect } from 'react-redux';
 import {
     getPersonsCompany,
-    getListPersons,
+    getCollaborators,
 } from '../../../redux/UserDuck';
 import {
     getListAssets,
@@ -25,7 +28,7 @@ import {
 const index = ({
     currentNode,
     getPersonsCompany,
-    getListPersons,
+    getCollaborators,
     getCategories,
     getListAssets,
     getGroupsAssessments
@@ -37,9 +40,10 @@ const index = ({
 
     useEffect(() => {
         if (!currentNode) return;
-        let filters = { ...router.query };
-        // setFiltersObj(filters)
-        getListPersons(currentNode?.id, filters)
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let size = router.query.size ? parseInt(router.query.size) : 10;
+        let filters = getFiltersJB({...router.query});
+        getCollaborators(currentNode.id, filters, page, size)
     }, [currentNode, router?.query])
 
     useEffect(() => {
@@ -48,7 +52,7 @@ const index = ({
         getListAssets(currentNode?.id, '&is_active=true')
         getGroupsAssessments(currentNode?.id)
         getCategories()
-        getPatronalRegistration()
+        getPatronalRegistration(currentNode?.id)
     }, [currentNode])
 
     return (
@@ -88,10 +92,10 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getPersonsCompany,
-    getListPersons,
-    getCategories,
-    getListAssets,
-    getGroupsAssessments
-}
+        getPersonsCompany,
+        getCollaborators,
+        getCategories,
+        getListAssets,
+        getGroupsAssessments
+    }
 )(withAuthSync(index))

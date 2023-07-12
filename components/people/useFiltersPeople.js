@@ -15,9 +15,10 @@ export const useFiltersPeople = () =>{
     } = useSelector(state => state.userStore)
 
     const listKeys = {
-        first_name: 'Nombre(s)',
-        flast_name: 'Apellido(s)',
-        code: 'No. empleado',
+        first_name__icontains: 'Nombre',
+        flast_name__icontains: 'Apellido paterno',
+        mlast_name__icontains: 'Apellido materno',
+        code__icontains: 'No. empleado',
         gender: 'Género',
         department: 'Departamento',
         job: 'Puesto',

@@ -118,7 +118,6 @@ const ModalSalary = ({
                 <Row>
                     <Col span={24} style={{ marginBottom: 12 }}>
                         <Alert
-                            showIcon
                             message={`Esta sección te permite actualizar salarios de manera masiva,
                                 descarga el template, modifica y vuelve a subirlo.`}
                             type='info'

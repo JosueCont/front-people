@@ -53,14 +53,15 @@ const AssignAssessments = ({
     const [surveySelected, setSurveySelected] = useState([]);
 
     useEffect(() => {
-        if(!visible) return;
+        if (!visible) return;
         setListSurveys(list_assessments)
     }, [list_assessments, visible])
-
+    
     const list_test = useMemo(() => {
         if (surveySelected?.length <= 0) return listSurveys;
         let ids = surveySelected.map(item => item.id);
-        const filter_ = item => !ids.includes(item) || !assigned.includes(item.id);
+        const filter_ = item => ids?.length > 0 && !ids.includes(item.id)
+            || assigned?.length > 0 && !assigned.includes(item.id);
         return listSurveys.filter(filter_);
     }, [listSurveys, surveySelected, assigned])
 
@@ -264,6 +265,7 @@ const AssignAssessments = ({
                         size='small'
                         locale={{ emptyText: 'No se encontraron resultados' }}
                         scroll={{ y: 200 }}
+                        className='table-assignments'
                         pagination={false}
                     />
                 </Col>

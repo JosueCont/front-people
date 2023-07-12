@@ -19,16 +19,9 @@ class WebApiPeople {
   }
 
   // Se agregan apis existentes
-  static downloadPeople(data){
-    return axiosApi.post('/person/person/export_person/', data, {responseType: 'blob'});
-  }
 
   static downloadTemplate(node, query){
     return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, {responseType: 'blob'});
-  }
-
-  static downloadVacation(data){
-    return axiosApi.post('/person/person/export-vacation-report/', data, {responseType: 'blob'});
   }
 
   // Termina
@@ -52,6 +45,18 @@ class WebApiPeople {
   static getPerson(data) {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
+
+  // Nuevas apis
+
+  static getCollaborators(node, query){
+    return WebApi.ApisType(`/person/search?node=${node}${query}`, 'get')
+  }
+
+  static downloadReportPeople(node, query){
+    return axiosApi.get(`/person/search?node=${node}${query}`, {responseType: 'blob'});
+  }
+
+  // Termina
 
   static updatePerson(data, id) {
     return WebApi.ApisType(`/person/person/${id}/`, "put", data);

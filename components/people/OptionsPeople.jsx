@@ -11,25 +11,10 @@ import {
     message
 } from 'antd';
 import {
-    SyncOutlined,
-    SearchOutlined,
-    PlusOutlined,
     DownloadOutlined,
     UploadOutlined,
     EllipsisOutlined,
-    ExclamationCircleOutlined,
-    EyeOutlined,
-    LinkOutlined,
-    EditOutlined,
-    DeleteOutlined,
     UserAddOutlined,
-    UserSwitchOutlined,
-    KeyOutlined,
-    SendOutlined,
-    CheckCircleOutlined,
-    CloseCircleOutlined,
-    UsergroupAddOutlined,
-    WarningOutlined
 } from '@ant-design/icons';
 import WebApiPeople from '../../api/WebApiPeople';
 import WebApiPayroll from '../../api/WebApiPayroll';
@@ -43,12 +28,14 @@ import { downloadBLOB } from '../../utils/functions';
 import ModalImport from './modals/ModalImport';
 import ModalConfronts from './modals/ModalConfronts';
 import ModalAddPersonCFI from '../modal/ModalAddPersonCFI';
+import ModalVacation from './modals/ModalVacation';
 
 const OptionsPeople = () => {
 
     const {
         user,
         permissions,
+        user_filters,
         current_node,
         general_config
     } = useSelector(state => state.userStore);
@@ -63,6 +50,7 @@ const OptionsPeople = () => {
     const [openImport, setOpenImport] = useState(false);
     const [openConfront, setOpenConfront] = useState(false);
     const [openCIF, setOpenCIF] = useState(false);
+    const [openVacation, setOpenVacation] = useState(false);
 
     const actionError = (e) => {
         let error = e.response?.data?.message;
@@ -72,8 +60,8 @@ const OptionsPeople = () => {
 
     const actionDownloadPeople = async () => {
         try {
-            let body = { ...router.query, node: current_node?.id };
-            let response = await WebApiPeople.downloadPeople(body);
+            let params = `&export=true${user_filters}`;
+            let response = await WebApiPeople.downloadReportPeople(current_node?.id, params);
             downloadBLOB({ data: response.data, name: 'Personas.xlsx' });
         } catch (e) {
             console.log(e)
@@ -131,8 +119,8 @@ const OptionsPeople = () => {
 
     const actionDownloadVacaction = async () => {
         try {
-            let body = { ...router.query, node: current_node?.id };
-            let response = await WebApiPeople.downloadVacation(body);
+            let params = `&export-vacation-report=true${user_filters}`;
+            let response = await WebApiPeople.downloadReportPeople(current_node?.id, params);
             downloadBLOB({ data: response.data, name: 'Reporte vacaciones.xlsx' });
         } catch (e) {
             console.log(e)
@@ -199,6 +187,13 @@ const OptionsPeople = () => {
                 >
                     Descargar reporte vacaciones
                 </Menu.Item>
+                <Menu.Item
+                    key='8'
+                    icon={<UploadOutlined />}
+                    onClick={() => setOpenVacation(true)}
+                >
+                    Actualizar vacaciones
+                </Menu.Item>
             </Menu>
         )
     }
@@ -226,6 +221,10 @@ const OptionsPeople = () => {
                 visible={openCIF}
                 setVisible={setOpenCIF}
                 node_id={current_node?.id}
+            />
+            <ModalVacation
+                visible={openVacation}
+                close={()=> setOpenVacation(false)}
             />
         </>
     )

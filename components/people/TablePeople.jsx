@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { intranetAccess } from '../../utils/constant';
 import { useRouter } from 'next/router';
@@ -6,7 +6,8 @@ import {
     getFullName,
     getPhoto,
     downloadFile,
-    copyContent
+    copyContent,
+    downloadBLOB
 } from '../../utils/functions';
 import {
     Table,
@@ -48,12 +49,14 @@ import WebApiPeople from '../../api/WebApiPeople';
 import WebApiPayroll from '../../api/WebApiPayroll';
 import WebApiYnl from '../../api/WebApiYnl';
 import WebApiAssessment from '../../api/WebApiAssessment';
-import { getListPersons } from '../../redux/UserDuck';
+import { getCollaborators } from '../../redux/UserDuck';
 
 import ModalSupervisor from './modals/ModalSupervisor';
 import ModalPassword from './modals/ModalPassword';
 import PersonsGroup from '../person/groups/PersonsGroup';
 import ModalSalary from './modals/ModalSalary';
+import ModalCompetences from '../person/ModalCompetences';
+import ModalSendUI from './modals/ModalSendUI';
 
 import AssignAssessments from '../person/assignments/AssignAssessmentsCopy';
 
@@ -61,11 +64,14 @@ const TablePeople = ({
     currentNode,
     generalConfig,
     permissions,
-    list_persons,
-    fetch_persons,
+    list_collaborators,
+    load_collaborators,
     applications,
     currentUser,
-    getListPersons
+    getCollaborators,
+    user_page,
+    user_filters,
+    user_page_size
 }) => {
 
     const router = useRouter();
@@ -84,13 +90,23 @@ const TablePeople = ({
     const [openGroup, setOpenGroup] = useState(false);
     const [openAssign, setOpenAssign] = useState(false);
     const [openSalary, setOpenSalary] = useState(false);
+    const [openStore, setOpenStore] = useState(false);
+
+    const [itemReport, setItemReport] = useState([]);
+    const [openReport, setOpenReport] = useState(false);
+
+    const actionError = (e) => {
+        let error = e.response?.data?.message;
+        let msg = error ? error : 'Error al descargar el archivo';
+        message.error(msg)
+    }
 
     const actionStatus = async (status, item) => {
         try {
             let body = { status, id: item?.id }
             await WebApiPeople.changeStatusPerson(body);
             message.success('Estatus actualizado')
-            getListPersons(currentNode?.id, { ...router.query });
+            getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
         } catch (e) {
             console.log(e)
             message.error('Estatus no actualizado')
@@ -100,8 +116,9 @@ const TablePeople = ({
     const actionIntranet = async (intranet_access, item) => {
         try {
             let body = { intranet_access, id: item?.id };
-            let response = await WebApiPeople.changeIntranetAccess(body);
+            await WebApiPeople.changeIntranetAccess(body);
             message.success('Permisos actualizados')
+            getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
         } catch (e) {
             console.log(e)
             message.error('Permisos no actualizados')
@@ -116,7 +133,7 @@ const TablePeople = ({
                 ? 'Personas eliminadas'
                 : 'Persona eliminada';
             message.success(msg)
-            getListPersons(currentNode?.id, { ...router.query })
+            getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
         } catch (e) {
             console.log(e)
             let msg = ids?.length > 1
@@ -135,7 +152,7 @@ const TablePeople = ({
                 ? response.data?.message
                 : 'Jefe inmediatto asignado';
             message.success({ content: msg, duration: 4 });
-            getListPersons(currentNode?.id, { ...router.query })
+            getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
         } catch (e) {
             console.log(e)
             let txt = e.response?.data?.message;
@@ -156,7 +173,7 @@ const TablePeople = ({
                 ? response.data?.message
                 : 'Suplente de jefe inmediato asignado';
             message.success({ content: msg, duration: 4 });
-            getListPersons(currentNode?.id, { ...router.query })
+            getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
         } catch (e) {
             console.log(e)
             let txt = e.response?.data?.message;
@@ -171,58 +188,21 @@ const TablePeople = ({
         try {
             let body = { khonnect_id: itemPerson?.khonnect_id, password: values?.passwordTwo };
             await WebApiPeople.validateChangePassword(body);
-            message.success('Contraseña reestablecida')
+            message.success('Contraseña actualizada')
         } catch (e) {
             console.log(e)
-            message.error('Contraseña no reestablecida')
+            message.error('Contraseña no actualizada')
         }
     }
 
-    const downloadResignationLetter = async (item) => {
-        const key = 'updatable';
+    const actionResignation = async (item) => {
         try {
-            message.loading({ content: 'Obteniendo información...', key })
             let response = await WebApiPayroll.downloadRenegationCart(item?.id);
-            const params = { type: response.headers["content-type"], encoding: "UTF-8" };
-            const blob = new Blob([response.data], params);
-            setTimeout(() => {
-                message.success({ content: 'Carta de renuncia encontrada', key })
-            }, 1000)
-            setTimeout(() => {
-                downloadFile({ resp: blob, name: 'Carta de renuncia' })
-            }, 2000)
+            let name = 'Carta de renuncia.pdf';
+            downloadBLOB({ data: response.data, name })
         } catch (e) {
             console.log(e)
-            let txt = e.response?.data?.message;
-            let msg = txt ? txt : 'Carta de renuncia no encontrada';
-            setTimeout(() => {
-                message.error({ content: msg, key, duration: 4 })
-            }, 2000)
-        }
-    }
-
-    const actionSendUI = async () => {
-        let persons_id = itemsSelected?.map(item => item.id);
-        try {
-            let body = { persons_id, node_id: currentNode?.id };
-            let response = await WebApiPeople.CreateUIStoreUsers(body);
-            let msg = persons_id.length > 1
-                ? 'Personas enviadas'
-                : 'Persona enviada';
-            message.success(msg)
-            // Pendiente la validacion para mostrar los errores
-            // let success = response.data?.success;
-            // let errors = response.data?.error_details || [];
-            // if(errors.length <=0){
-            //     message.success('Usuarios enviados')
-            //     return;
-            // }
-        } catch (e) {
-            console.log(e)
-            let msg = persons_id.length > 1
-                ? 'Personas no enviadas'
-                : 'Persona no enviada';
-            message.error(msg)
+            actionError(e)
         }
     }
 
@@ -270,6 +250,67 @@ const TablePeople = ({
                 ? 'Asignaciones no realizadas'
                 : 'Asignación no realizada';
             message.error(msg)
+        }
+    }
+
+    const actionReportCompetences = async (item) => {
+        const key = 'updatable';
+        message.loading({ content: 'Obteniendo información...', key })
+        try {
+            let body = {
+                node_id: currentNode?.id,
+                user_id: item?.id,
+                calculation_type: generalConfig?.calculation_type
+            }
+            let response = await WebApiAssessment.getReportCompetences(body);
+            setTimeout(() => {
+                message.success({ content: 'Información obtenida', key })
+                setItemPerson(item)
+                setItemReport(response.data)
+            }, 1000)
+            setTimeout(() => {
+                setOpenReport(true)
+            }, 2000)
+        } catch (e) {
+            console.log(e)
+            let error = e?.response?.data?.message;
+            let msg = error ? error : 'Información no obtenida';
+            setTimeout(() => {
+                message.error({ content: msg, key })
+            }, 2000)
+        }
+    }
+
+    const actionTermContract = async (item) => {
+        try {
+            let response = await WebApiPayroll.downloadFixedTermContract(item.id)
+            let name = 'Contrato por tiempo determinado.pdf';
+            downloadBLOB({ data: response.data, name });
+        } catch (e) {
+            console.log(e)
+            actionError(e)
+        }
+    }
+
+    const actionIndeterminateContract = async (item) => {
+        try {
+            let response = await WebApiPayroll.downloadIndefiniteTermContract(item.id)
+            let name = 'Contrato por tiempo indeterminado.pdf';
+            downloadBLOB({ data: response.data, name });
+        } catch (e) {
+            console.log(e)
+            actionError(e)
+        }
+    }
+
+    const actionContractForWork = async (item) => {
+        try {
+            let response = await WebApiPayroll.downloadContractForWork(item.id);
+            let name = 'Contrato individual de trabajo por obra.pdf';
+            downloadBLOB({ data: response.data, name });
+        } catch (e) {
+            console.log(e)
+            actionError(e)
         }
     }
 
@@ -330,6 +371,32 @@ const TablePeople = ({
         setOpenSalary(false)
         setItemsKeys([])
         setItemsSelected([])
+    }
+
+    const closeReport = () => {
+        setItemPerson({})
+        setItemReport([])
+        setOpenReport(false)
+    }
+
+    const showStore = (item) => {
+        setItemsSelected([item])
+        setOpenStore(true)
+    }
+
+    const closeStore = () => {
+        setItemsSelected([])
+        setItemsKeys([])
+        setOpenStore(false)
+    }
+
+    const showManyStore = () => {
+        if (itemsSelected?.length > 1) {
+            setOpenStore(true)
+            return;
+        }
+        setOpenStore(false)
+        message.error('Selecciona al menos dos colaboradores')
     }
 
     const showManyGroup = () => {
@@ -428,23 +495,23 @@ const TablePeople = ({
             <Menu.Item
                 key="4"
                 icon={<UsergroupAddOutlined />}
-                onClick={() => showManySupervisor(2)}
+                onClick={() => showManySupervisor(1)}
             >
-                Asignar suplente de jefe inmediato
+                Asignar jefe inmediato
             </Menu.Item>
             <Menu.Item
                 key="5"
                 icon={<UsergroupAddOutlined />}
                 onClick={() => showManySupervisor(2)}
             >
-                Asignar suplente de jefe inmediato
+                Asignar jefe suplente
             </Menu.Item>
             <Menu.Divider />
             {applications?.iuss?.active && (
                 <Menu.Item
                     key="6"
                     icon={<SendOutlined />}
-                    onClick={() => showManyList('sync_ui')}
+                    onClick={() => showManyStore()}
                 >
                     Enviar a UI Store
                 </Menu.Item>
@@ -497,7 +564,7 @@ const TablePeople = ({
                     icon={<UsergroupAddOutlined />}
                     onClick={() => showSupervisor(item, 2)}
                 >
-                    Asignar suplente de jefe inmediato
+                    Asignar jefe suplente
                 </Menu.Item>
             )}
             {currentUser?.is_admin && (
@@ -506,16 +573,41 @@ const TablePeople = ({
                     icon={<KeyOutlined />}
                     onClick={() => showPassword(item)}
                 >
-                    Reestablecer contraseña
+                    Restablecer contraseña
                 </Menu.Item>
             )}
+            <Menu.Divider />
             <Menu.Item
-                key="6"
+                key="13"
                 icon={<DownloadOutlined />}
-                onClick={() => downloadResignationLetter(item)}
+                onClick={() => actionResignation(item)}
             >
                 Descargar carta de renuncia
             </Menu.Item>
+            <Menu.Item
+                key="16"
+                icon={<DownloadOutlined />}
+                onClick={() => actionContractForWork(item)}
+            >
+                Descargar contrato por obra
+            </Menu.Item>
+            <Menu.SubMenu
+                title='Descargar contrato'
+                icon={<DownloadOutlined />}
+            >
+                <Menu.Item
+                    key="14"
+                    onClick={() => actionTermContract(item)}
+                >
+                    Tiempo determinado
+                </Menu.Item>
+                <Menu.Item
+                    key="15"
+                    onClick={() => actionIndeterminateContract(item)}
+                >
+                    Tiempo indeterminado
+                </Menu.Item>
+            </Menu.SubMenu>
             <Menu.Divider />
             {applications?.kuiz?.active && (
                 <>
@@ -529,7 +621,13 @@ const TablePeople = ({
                     >
                         Ver asignaciones
                     </Menu.Item>
-
+                    <Menu.Item
+                        key='12'
+                        icon={<EyeOutlined />}
+                        onClick={() => actionReportCompetences(item)}
+                    >
+                        Ver reporte competencias
+                    </Menu.Item>
                     {permissions.person?.create && (
                         <Menu.Item
                             key="8"
@@ -553,7 +651,7 @@ const TablePeople = ({
                 <Menu.Item
                     key="10"
                     icon={<SendOutlined />}
-                    onClick={() => showList(item, 'sync_ui')}
+                    onClick={() => showStore(item)}
                 >
                     Enviar a UI Store
                 </Menu.Item>
@@ -569,6 +667,14 @@ const TablePeople = ({
             )}
         </Menu>
     )
+
+    const onChangePage = ({ current, pageSize }) => {
+        let filters = { ...router.query, page: current, size: pageSize };
+        router.replace({
+            pathname: '/home/persons/copy',
+            query: filters
+        }, undefined, { shallow: true })
+    }
 
     const columns = [
         {
@@ -663,9 +769,6 @@ const TablePeople = ({
         delete: itemsSelected?.length > 1
             ? '¿Estás seguro eliminar estas personas?'
             : '¿Estás seguro de eliminar esta persona?',
-        sync_ui: itemsSelected?.length > 1
-            ? 'Enviar a estas personas en UI Store?'
-            : '¿Enviar a esta persona en UI Store?',
         sync_ynl: itemsSelected?.length > 1
             ? '¿Sincronizar a estas peronas con YNL?'
             : '¿Sincronizar a esta persona con YNL?'
@@ -674,13 +777,11 @@ const TablePeople = ({
 
     const modalText = {
         delete: 'Eliminar',
-        sync_ui: 'Crear',
         sync_ynl: 'Sincronizar'
     }
 
     const modalAction = {
         delete: actionDelete,
-        sync_ui: actionSendUI,
         sync_ynl: actionSendYNL
     }
 
@@ -689,13 +790,17 @@ const TablePeople = ({
             <Table
                 rowKey='id'
                 size='small'
-                dataSource={list_persons}
+                dataSource={list_collaborators?.results}
                 columns={columns.filter(col => col.show)}
-                loading={fetch_persons}
+                loading={load_collaborators}
                 rowSelection={rowSelection}
+                onChange={onChangePage}
+                className='ant-table-colla'
                 pagination={{
-                    hideOnSinglePage: true,
-                    showSizeChanger: false,
+                    total: list_collaborators?.count,
+                    pageSize: user_page_size,
+                    current: user_page,
+                    showSizeChanger: true
                 }}
             />
             <ListItems
@@ -745,6 +850,17 @@ const TablePeople = ({
                 close={closeSalary}
                 itemsKeys={itemsKeys}
             />
+            <ModalCompetences
+                visible={openReport}
+                close={closeReport}
+                itemReport={itemReport}
+                itemPerson={itemPerson}
+            />
+            <ModalSendUI
+                visible={openStore}
+                close={closeStore}
+                itemsSelected={itemsSelected}
+            />
         </>
     )
 }
@@ -754,8 +870,11 @@ const mapState = (state) => {
         currentNode: state.userStore.current_node,
         generalConfig: state.userStore.general_config,
         permissions: state.userStore.permissions,
-        list_persons: state.userStore.list_persons,
-        fetch_persons: state.userStore.fetch_persons,
+        list_collaborators: state.userStore.list_collaborators,
+        load_collaborators: state.userStore.load_collaborators,
+        user_page: state.userStore.user_page,
+        user_filters: state.userStore.user_filters,
+        user_page_size: state.userStore.user_page_size,
         applications: state.userStore.applications,
         currentUser: state.userStore.user,
     }
@@ -763,6 +882,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getListPersons
+    getCollaborators
 }
 )(TablePeople)

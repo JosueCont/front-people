@@ -49,33 +49,46 @@ const FiltersPeople = ({
                 <Row gutter={[16,0]}>
                     <Col span={12}>
                         <Form.Item
-                            name='first_name'
-                            label='Nombre(s)'
+                            name='first_name__icontains'
+                            label='Nombre'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input
                                 allowClear
                                 className='input-with-clear'
-                                placeholder='Nombre(s)'
+                                placeholder='Nombre'
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='flast_name'
-                            label='Apellido(s)'
+                            name='flast_name__icontains'
+                            label='Apellido paterno'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input
                                 allowClear
                                 className='input-with-clear'
-                                placeholder='Apellido(s)'
+                                placeholder='Apellido paterno'
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='code'
+                            name='mlast_name__icontains'
+                            label='Apellido materno'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input
+                                allowClear
+                                className='input-with-clear'
+                                placeholder='Apellido materno'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name='code__icontains'
                             label='No. empleado'
                             rules={[ruleWhiteSpace]}
                         >

@@ -8,3 +8,7 @@
 .form-details-person .ant-form-item .ant-form-item-label{
   font-weight: bold;
 }
+
+.ant-table-colla .ant-spin-container::after{
+  background-color: transparent;
+}
