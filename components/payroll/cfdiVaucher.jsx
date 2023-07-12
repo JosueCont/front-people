@@ -273,7 +273,7 @@ const CfdiVaucher = ({
             }
 
 
-            {!viewFilter && (
+            {!viewFilter && item.id_facturama && (
               <Tooltip title="Cancelar" color={"#3d78b9"} key={"#3d78b9"}>
                 <Button
                   type="primary"
