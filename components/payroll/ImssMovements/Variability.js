@@ -17,6 +17,7 @@ const Variability = ({ currentNode, user }) => {
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ filters, setFilters ] = useState(null)
     const [year, setYear] = useState(null)
+    const [loadingVariabilidad, setLoadingVariabilidad] = useState(false)
 
 
 
@@ -53,6 +54,7 @@ const Variability = ({ currentNode, user }) => {
     }
 
     const generateVariability = async (values) => {
+        setLoadingVariabilidad(true)
         if(!values.patronal_registration){
             message.error("Selecciona un registro patronal")
             return
@@ -77,23 +79,28 @@ const Variability = ({ currentNode, user }) => {
 
         setLoading(true)
         try {
-            let response = await WebApiPayroll.generateVariability(values);            
-            if (response){
-                if (values.download){
-                    const blob = new Blob([response.data]);
-                    const link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "Reporte_de_variabiliadad.xlsx";
-                    link.click();                      
+            if(values.download){
+                downLoadFileBlob(
+                    `${getDomain(API_URL_TENANT)}/payroll/variability/create_variability/`,
+                    "Reporte_de_variabiliadad.xlsx",
+                    "POST",
+                    values,
+                    "Intente nuevamente"
+                )
+            }else{
+                let response = await WebApiPayroll.generateVariability(values);
+                if (response){
+                    message.success(response?.data?.message)
                 }
-                else message.success(response.data.message)            
             }
+
         } catch (error) {
             if (error?.data?.message){
                 message.error(error.data.message)
             }            
         }finally{
             setLoading(false);
+            setLoadingVariabilidad(false)
         }
     }
    
@@ -155,7 +162,7 @@ const Variability = ({ currentNode, user }) => {
                 </Row>
                 <Row gutter={[10,0]}>
                     <Col span={24}>   
-                      <Button htmlType="submit"  disabled = { patronalSelected?  false : true }>
+                      <Button htmlType="submit" loading={loadingVariabilidad}  disabled = { patronalSelected?  false : true }>
                         Generar variabilidad    
                       </Button>
                     </Col>
