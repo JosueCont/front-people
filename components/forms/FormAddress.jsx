@@ -112,7 +112,6 @@ const FormAddress = ({ person_id, ...props }) => {
             <Form.Item
               name="street_type"
               label="Tipo de calle"
-              rules={[ruleRequired]}
             >
               <Select
                 options={typeStreet}
@@ -121,7 +120,7 @@ const FormAddress = ({ person_id, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
+            <Form.Item name="street" label="Calle" >
               <Input />
             </Form.Item>
           </Col>
@@ -129,7 +128,6 @@ const FormAddress = ({ person_id, ...props }) => {
             <Form.Item
               name="numberOne"
               label="Número exterior"
-              rules={[ruleRequired]}
             >
               <Input />
             </Form.Item>
@@ -180,13 +178,13 @@ const FormAddress = ({ person_id, ...props }) => {
             {/*</Form.Item>*/}
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="suburb" label="Colonia" rules={[ruleRequired]}>
+            <Form.Item name="suburb" label="Colonia">
               <Input />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="location" label="Ubicación" rules={[ruleRequired]}>
-              <Input />
+              <Input placeholder={'Estado, Ciudad'}/>
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
