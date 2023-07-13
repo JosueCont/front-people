@@ -412,6 +412,15 @@ class WebApiPayroll {
       data
     );
   }
+
+  static generateVariability(data) {
+    return WebApi.ApisType(
+      `payroll/variability/create_variability/`,
+      "post",
+      data
+    );
+  }
+
 }
 
 export default WebApiPayroll;
