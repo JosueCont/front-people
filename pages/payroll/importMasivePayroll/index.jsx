@@ -662,7 +662,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
   const UseInternalConcept = ({ use = false }) => {
     return (
-        <Form.Item label="Utilizar conceptos internos del sistema">
+        <Form.Item label="Utilizar conceptos internos del sistema en lugar de los míos.">
             <Switch
               defaultChecked={use}
               checkedChildren="Si"
