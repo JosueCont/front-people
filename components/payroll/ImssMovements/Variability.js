@@ -95,9 +95,11 @@ const Variability = ({ currentNode, user }) => {
             }
 
         } catch (error) {
-            if (error?.data?.message){
-                message.error(error.data.message)
-            }            
+            if (error?.response?.data?.message){
+                message.error(error?.response?.data?.message)
+            }else{
+                message.error("Hubo un error al descargar, intenta nuevamente.")
+            }
         }finally{
             setLoading(false);
             setLoadingVariabilidad(false)
