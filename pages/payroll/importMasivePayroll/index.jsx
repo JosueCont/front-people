@@ -581,7 +581,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
         xmlImport.companies.forEach((c)=>{
            if(!c.company.hasOwnProperty("use_internal_concepts")){
-             c.company.use_internal_concepts = true;
+             c.company.use_internal_concepts = false;
            }
         });
 
@@ -660,7 +660,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     );
   };
 
-  const UseInternalConcept = ({ use = true }) => {
+  const UseInternalConcept = ({ use = false }) => {
     return (
         <Form.Item label="Utilizar conceptos internos del sistema">
             <Switch
