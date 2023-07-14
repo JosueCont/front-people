@@ -20,7 +20,7 @@ const initialData = {
   cat_imss_subdelegation: [],
   cat_family_medical_unit: [],
   cat_geographic_area: [],
-  company_fiscal_information: [],
+  company_fiscal_information: null,
 };
 
 const BANKS = "BANKS";
@@ -148,17 +148,6 @@ export const doFiscalCatalogs =
       console.log(error);
     }
   };
-
-  export const getCompanyFiscalInformation = () => async (dispatch, getState) => {
-    try {
-      let current_node = getState().userStore.current_node;
-      if(current_node){
-        dispatch(CompanyFiscalInformation(current_node));
-      }      
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
 export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getBanks()
@@ -493,16 +482,17 @@ export const getGeographicArea =
       });
   };
 
-  export const CompanyFiscalInformation = (company_id) => async (dispatch, getState) => {   
-    await WebApiFiscal.getfiscalInformationNode(company_id)
-      .then((response) => {
-        dispatch({
-          type: COMPANY_FISCAL_INFORMATION,
-          payload: response.data.results,
-        });
-      })
-      .catch((error) => {
-        dispatch({ type: COMPANY_FISCAL_INFORMATION, payload: [] });
-        console.log(error);
-      });
+  export const getCompanyFiscalInformation = (company_id) => async (dispatch, getState) => {
+
+      try{
+          let current_node = company_id ? company_id : getState().userStore.current_node.id;
+          const res = await WebApiFiscal.getfiscalInformationNode(current_node);
+          dispatch({
+              type: COMPANY_FISCAL_INFORMATION,
+              payload: res.data,
+          });
+      }catch (error){
+          dispatch({ type: COMPANY_FISCAL_INFORMATION, payload: null });
+          console.log(error);
+      }
   };

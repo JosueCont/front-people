@@ -35,7 +35,7 @@ import locale from "antd/lib/date-picker/locale/es_ES";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { getCompanyFiscalInformation } from "../../../redux/fiscalDuck";
 
-const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
+const FormPaymentCalendar = ({ idPaymentCalendar = null,getCompanyFiscalInformation,companyFiscalInformation, ...props }) => {
   const router = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
@@ -49,7 +49,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [selectPeriodicity, setSelectPeriodicity] = useState(null);
   const currentYear = moment().year();
   const [bankDispersionList, setBankDispersionList] = useState([])
-  const [fiscalInformation, setFiscalInformation] = useState(null)
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -124,8 +123,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   useEffect(() => {
     if(props?.currentNode?.id){
-      console.log('getBankDispersion')     
-      getFiscalInformation(props.currentNode.id) 
+      console.log('getBankDispersion')
       getBankDispersion()      
     }
   }, [props?.currentNode?.id])
@@ -154,8 +152,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   }, [props.catCfdiVersion]);
 
   useEffect(() => {
-    if (props.catPerception && fiscalInformation) {
-      let code = fiscalInformation?.assimilated_pay ? "046" : "001"        
+    if (props.catPerception && props.catPerception.length>0) {
+      let code = companyFiscalInformation?.assimilated_pay ? "046" : "001"
       let perception_types = props.catPerception
         // .filter((item) => item.code == "001" || item.code == "046")
         .filter((item) => item.code == code)
@@ -163,17 +161,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           return { value: a.id, label: a.description };
         });
       setPerceptionType(perception_types);
+      getCompanyFiscalInformation();
       formPaymentCalendar.setFieldsValue({
-        perception_type: perception_types[0].value
+        perception_type: perception_types[0]?.value
       })
     }
-  }, [props.catPerception, fiscalInformation]);
+  }, [props.catPerception]);
 
-  useEffect(()=>{
-    if(props?.currentNode && perceptionType){
-      getFiscalInformation(props.currentNode.id)
-    }    
-  },[perceptionType])
 
   const getPaymentCalendar = async () => {
     setLoading(true);
@@ -184,7 +178,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       if (response.data) {
         setPaymentCalendar(response.data);
         let item = response.data;
-        console.log('item',item)
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
@@ -359,7 +352,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     return data.map((item, i) => {
       if (item.name != "import_issues") {
         return (
-          <Col lg={6} xs={22} md={12}>
+          <Col key={i} lg={6} xs={22} md={12}>
             <Form.Item
               initialValue={item.value}
               valuePropName="checked"
@@ -471,16 +464,16 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     }
   }
 
-  const getFiscalInformation = async (node_id) => {
-    try {      
-      let response = await WebApiPeople.getfiscalInformationNode(node_id)
-      if(response.status === 200){
-        setFiscalInformation(response.data)                 
-      }
-    } catch (error) {
-      console.log('error', error)
-    }
-  }
+  // const getFiscalInformation = async (node_id) => {
+  //   try {
+  //     let response = await WebApiPeople.getfiscalInformationNode(node_id)
+  //     if(response.status === 200){
+  //       setFiscalInformation(response.data)
+  //     }
+  //   } catch (error) {
+  //     console.log('error', error)
+  //   }
+  // }
 
   return (
     <>
@@ -874,7 +867,8 @@ const mapState = (state) => {
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     currentNode: state.userStore.current_node,
     periodicities: state.fiscalStore.payment_periodicity,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information
   };
 };
 
-export default connect(mapState)(FormPaymentCalendar, getCompanyFiscalInformation);
+export default connect(mapState, {getCompanyFiscalInformation})(FormPaymentCalendar);
