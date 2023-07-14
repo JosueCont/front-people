@@ -32,6 +32,8 @@ import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import WebApiPeople from "../../../api/WebApiPeople";
+import { getCompanyFiscalInformation } from "../../../redux/fiscalDuck";
 
 const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const router = useRouter();
@@ -47,6 +49,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [selectPeriodicity, setSelectPeriodicity] = useState(null);
   const currentYear = moment().year();
   const [bankDispersionList, setBankDispersionList] = useState([])
+  const [fiscalInformation, setFiscalInformation] = useState(null)
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -121,8 +124,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   useEffect(() => {
     if(props?.currentNode?.id){
-      console.log('getBankDispersion')
-      getBankDispersion()
+      console.log('getBankDispersion')     
+      getFiscalInformation(props.currentNode.id) 
+      getBankDispersion()      
     }
   }, [props?.currentNode?.id])
 
@@ -150,15 +154,26 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   }, [props.catCfdiVersion]);
 
   useEffect(() => {
-    if (props.catPerception) {
+    if (props.catPerception && fiscalInformation) {
+      let code = fiscalInformation?.assimilated_pay ? "046" : "001"        
       let perception_types = props.catPerception
-        .filter((item) => item.code == "001" || item.code == "046")
+        // .filter((item) => item.code == "001" || item.code == "046")
+        .filter((item) => item.code == code)
         .map((a) => {
           return { value: a.id, label: a.description };
         });
       setPerceptionType(perception_types);
+      formPaymentCalendar.setFieldsValue({
+        perception_type: perception_types[0].value
+      })
     }
-  }, [props.catPerception]);
+  }, [props.catPerception, fiscalInformation]);
+
+  useEffect(()=>{
+    if(props?.currentNode && perceptionType){
+      getFiscalInformation(props.currentNode.id)
+    }    
+  },[perceptionType])
 
   const getPaymentCalendar = async () => {
     setLoading(true);
@@ -450,6 +465,17 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           return {value: item.id, label: item.name}
         })
         setBankDispersionList(list)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  const getFiscalInformation = async (node_id) => {
+    try {      
+      let response = await WebApiPeople.getfiscalInformationNode(node_id)
+      if(response.status === 200){
+        setFiscalInformation(response.data)                 
       }
     } catch (error) {
       console.log('error', error)
@@ -851,4 +877,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(FormPaymentCalendar);
+export default connect(mapState)(FormPaymentCalendar, getCompanyFiscalInformation);

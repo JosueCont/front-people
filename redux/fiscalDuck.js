@@ -20,6 +20,7 @@ const initialData = {
   cat_imss_subdelegation: [],
   cat_family_medical_unit: [],
   cat_geographic_area: [],
+  company_fiscal_information: [],
 };
 
 const BANKS = "BANKS";
@@ -41,6 +42,7 @@ const IMSS_DELEGATION = "IMSS_DELEGATION";
 const IMSS_SUBDELEGATION = "IMSS_SUBDELEGATION";
 const FAMILY_MEDICAL_UNIT = "FAMILY_MEDICAL_UNIT";
 const GEOGRAPHIC_AREA = "GEOGRAPHIC_AREA";
+const COMPANY_FISCAL_INFORMATION = "COMPANY_FISCAL_INFORMATION";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -82,6 +84,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_family_medical_unit: action.payload };
     case GEOGRAPHIC_AREA:
       return { ...state, cat_geographic_area: action.payload };
+    case COMPANY_FISCAL_INFORMATION:
+      return { ...state, company_fiscal_information: action.payload}
     default:
       return state;
   }
@@ -144,6 +148,17 @@ export const doFiscalCatalogs =
       console.log(error);
     }
   };
+
+  export const getCompanyFiscalInformation = () => async (dispatch, getState) => {
+    try {
+      let current_node = getState().userStore.current_node;
+      if(current_node){
+        dispatch(CompanyFiscalInformation(current_node));
+      }      
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getBanks()
@@ -474,6 +489,20 @@ export const getGeographicArea =
         });
       })
       .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  export const CompanyFiscalInformation = (company_id) => async (dispatch, getState) => {   
+    await WebApiFiscal.getfiscalInformationNode(company_id)
+      .then((response) => {
+        dispatch({
+          type: COMPANY_FISCAL_INFORMATION,
+          payload: response.data.results,
+        });
+      })
+      .catch((error) => {
+        dispatch({ type: COMPANY_FISCAL_INFORMATION, payload: [] });
         console.log(error);
       });
   };
