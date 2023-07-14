@@ -31,6 +31,7 @@ import moment from "moment";
 const { Text } = Typography;
 import { ruleEmail, ruleRequired } from "../../../utils/rules";
 import dayjs from 'dayjs';
+import Variability from "../../../components/payroll/ImssMovements/Variability";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -386,6 +387,11 @@ const disabledMaxDate  = (current) => {
                     </Col>
                 </Row>
                 </Form>
+              </Panel>
+              <Panel header="Variabilidad" key="5">
+                <Col span={24}>
+                  <Variability currentNodeId={currentNodeId} />
+                </Col>
               </Panel>
             </Collapse>
           </div>

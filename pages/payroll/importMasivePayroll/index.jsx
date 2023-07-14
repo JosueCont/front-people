@@ -473,7 +473,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       if (company.patronal_registrations) {
         company.patronal_registrations.map((reg_pat) => {
           if (reg_pat.periodicities && reg_pat.periodicities.length > 0) {
-            debugger;
             reg_pat.periodicities.map((periodicity) => {
               let calendar = {
                 patronal_registration: reg_pat.patronal_registration,
@@ -579,6 +578,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         setDescriptionImport("Complete los campos del calendario");
         setVisibleMessageModal(true);
       } else {
+
+        xmlImport.companies.forEach((c)=>{
+           if(!c.company.hasOwnProperty("use_internal_concepts")){
+             c.company.use_internal_concepts = false;
+           }
+        });
+
         setLoading(true);
         let form_data = new FormData();
         files.map((item) => {
@@ -656,7 +662,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
   const UseInternalConcept = ({ use = false }) => {
     return (
-        <Form.Item label="Utilizar conceptos internos del sistema">
+        <Form.Item label="Utilizar conceptos internos del sistema en lugar de los míos.">
             <Switch
               defaultChecked={use}
               checkedChildren="Si"
@@ -859,14 +865,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                     </Col>
                                 }
 
-                                {
-                                    !isAddXMLS && <Col style={{ display: "flex" }}>
-                                        <UseInternalConcept use={xmlImport.companies[companySelect].company.use_internal_concepts}/>
-                                    </Col>
-                                }
-
                               </>
                             )}
+                            {
+                                !isAddXMLS && <Col style={{ display: "flex" }}>
+                                  <UseInternalConcept use={xmlImport.companies[companySelect].company.use_internal_concepts}/>
+                                </Col>
+                            }
                             {/* <Col style={{ display: "flex" }}>
                               <Form.Item label="Usar conceptos del sistema">
                                 <UseInternalConcept
