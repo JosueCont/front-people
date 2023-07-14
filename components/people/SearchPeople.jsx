@@ -23,19 +23,26 @@ import TagFilters from '../jobbank/TagFilters';
 import FiltersPeople from './FiltersPeople';
 import { useFiltersPeople } from './useFiltersPeople';
 import OptionsPeople from './OptionsPeople';
+import ModalPeople from './modals/ModalPeople';
+import { getCollaborators } from '../../redux/UserDuck';
+import { getWorkTitle } from '../../redux/catalogCompany';
 
 const SearchPeople = ({
+    currentNode,
     permissions,
     list_collaborators,
     load_collaborators,
     user_page,
     user_filters,
-    user_page_size
+    user_page_size,
+    getCollaborators,
+    getWorkTitle
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
+    const [openCreate, setOpenCreate] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
     const { listKeys, listGets } = useFiltersPeople();
 
@@ -67,8 +74,7 @@ const SearchPeople = ({
     }
 
     const onGeneralSearch = () =>{
-        let params = {...router.query, search: valueSearch};
-        let filters = createFiltersJB(params);
+        let filters = createFiltersJB({search: valueSearch});
         setFilters(filters)
     }
 
@@ -79,6 +85,11 @@ const SearchPeople = ({
 
     const onChangeSearch = ({ target }) => {
         setValueSearch(target.value?.trim())
+    }
+
+    const onReadyCreate = () =>{
+        getWorkTitle(currentNode?.id)
+        getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
     }
 
     return (
@@ -99,7 +110,6 @@ const SearchPeople = ({
                                         value={valueSearch}
                                         onChange={onChangeSearch}
                                         onPressEnter={onGeneralSearch}
-                                        
                                         style={{
                                             width: 'calc(100% - 32px)',
                                             borderTopLeftRadius: '10px',
@@ -131,7 +141,7 @@ const SearchPeople = ({
                                 </Tooltip>
                                 <OptionsPeople />
                                 {permissions.person?.create && (
-                                    <Button>
+                                    <Button onClick={()=> setOpenCreate(true)}>
                                         Agregar
                                     </Button>
                                 )}
@@ -153,12 +163,18 @@ const SearchPeople = ({
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
+            <ModalPeople
+                visible={openCreate}
+                close={()=> setOpenCreate(false)}
+                onReady={onReadyCreate}
+            />
         </>
     )
 }
 
 const mapState = (state) => {
     return {
+        currentNode: state.userStore.current_node,
         permissions: state.userStore.permissions,
         list_collaborators: state.userStore.list_collaborators,
         load_collaborators: state.userStore.load_collaborators,
@@ -168,4 +184,9 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState)(SearchPeople)
+export default connect(
+    mapState, {
+        getCollaborators,
+        getWorkTitle
+    }
+)(SearchPeople)

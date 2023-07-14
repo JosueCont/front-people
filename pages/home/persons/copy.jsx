@@ -22,7 +22,8 @@ import {
 } from '../../../redux/assessmentDuck';
 import { useRouter } from 'next/router';
 import {
-    getPatronalRegistration
+    getPatronalRegistration,
+    getPersonType
 } from '../../../redux/catalogCompany';
 
 const index = ({
@@ -31,12 +32,11 @@ const index = ({
     getCollaborators,
     getCategories,
     getListAssets,
-    getGroupsAssessments
+    getGroupsAssessments,
+    getPersonType
 }) => {
 
     const router = useRouter();
-    // const [filtersObj, setFiltersObj] = useState({});
-    // const [filtersStr, setFiltersStr] = useState("");
 
     useEffect(() => {
         if (!currentNode) return;
@@ -48,11 +48,12 @@ const index = ({
 
     useEffect(() => {
         if (!currentNode) return;
-        getPersonsCompany(currentNode?.id)
+        // getPersonsCompany(currentNode?.id)
         getListAssets(currentNode?.id, '&is_active=true')
         getGroupsAssessments(currentNode?.id)
         getCategories()
         getPatronalRegistration(currentNode?.id)
+        getPersonType(currentNode?.id)
     }, [currentNode])
 
     return (
@@ -96,6 +97,7 @@ export default connect(
         getCollaborators,
         getCategories,
         getListAssets,
-        getGroupsAssessments
+        getGroupsAssessments,
+        getPersonType
     }
 )(withAuthSync(index))

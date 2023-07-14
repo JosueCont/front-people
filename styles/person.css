@@ -5,10 +5,18 @@
   content: "hola";
 }
 
-.form-details-person .ant-form-item .ant-form-item-label{
+.form-details-person .ant-form-item .ant-form-item-label {
   font-weight: bold;
 }
 
-.ant-table-colla .ant-spin-container::after{
+.ant-table-colla .ant-spin-container::after {
   background-color: transparent;
+}
+
+.ant-label-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #d9d9d9;
 }
