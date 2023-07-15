@@ -35,7 +35,7 @@ import locale from "antd/lib/date-picker/locale/es_ES";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { getCompanyFiscalInformation } from "../../../redux/fiscalDuck";
 
-const FormPaymentCalendar = ({ idPaymentCalendar = null,getCompanyFiscalInformation,companyFiscalInformation, ...props }) => {
+const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInformation, companyFiscalInformation = null, ...props }) => {
   const router = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
@@ -151,8 +151,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null,getCompanyFiscalInformat
     }
   }, [props.catCfdiVersion]);
 
-  useEffect(() => {
-    if (props.catPerception && props.catPerception.length>0) {
+  useEffect(() => {    
+    if (props.catPerception && props.catPerception.length > 0) {
       let code = companyFiscalInformation?.assimilated_pay ? "046" : "001"
       let perception_types = props.catPerception
         // .filter((item) => item.code == "001" || item.code == "046")
@@ -166,7 +166,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null,getCompanyFiscalInformat
         perception_type: perception_types[0]?.value
       })
     }
-  }, [props.catPerception]);
+  }, [props.catPerception, companyFiscalInformation]);
 
 
   const getPaymentCalendar = async () => {
@@ -861,7 +861,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null,getCompanyFiscalInformat
   );
 };
 
-const mapState = (state) => {
+const mapState = (state) => {  
   return {
     catPerception: state.fiscalStore.cat_perceptions,
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
