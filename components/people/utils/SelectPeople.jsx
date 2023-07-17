@@ -28,6 +28,9 @@ const SelectPeople = ({
     disabled = false,
     onChangeSelect = () => { },
     itemSelected = [],
+    noStyle = false,
+    mode = false,
+    preserveHistory = false,
     watchCallback,
     watchParam
 }) => {
@@ -42,20 +45,20 @@ const SelectPeople = ({
     const [listPeople, setListPeople] = useState([]);
     const [openDrop, setOpenDrop] = useState(false);
 
-    useEffect(()=>{
-        if(itemSelected?.length <=0) return;
+    useEffect(() => {
+        if (itemSelected?.length <= 0) return;
         setOption(itemSelected)
-    },[itemSelected])
+    }, [itemSelected])
 
-    const getOptions = async (node, value) => {
+    const getOptions = async (value) => {
         try {
             setLoading(true)
             let params = `&paginate=0&search=${value}`;
-            let response = await WebApiPeople.getCollaborators(node, params);
+            let response = await WebApiPeople.getCollaborators(current_node?.id, params);
             setListPeople(response?.data || [])
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-            },500)
+            }, 300)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -64,13 +67,13 @@ const SelectPeople = ({
     }
 
     const onSearch = (value) => {
-        if (noValid.includes(value) || loading) return;
-        getOptions(current_node?.id, value?.toString().trim())
+        if (loading || noValid.includes(value)) return;
+        getOptions(value?.toString().trim())
     }
 
     const debouncedResults = useMemo(() => {
         return debounce(onSearch, 500)
-    }, [])
+    }, [current_node])
 
     useEffect(() => {
         return () => {
@@ -79,26 +82,38 @@ const SelectPeople = ({
     }, [])
 
     const onChange = (value) => {
-        onChangeSelect(value);
-        let exist = itemSelected.some(item => item?.id == value);
-        if (noValid.includes(value) || exist) return;
-        const find_ = item => item.id == value;
-        let record = listPeople.find(find_);
-        setOption([record])
+        // let exist = itemSelected.some(item => item?.id == value);
+        // if (noValid.includes(value) || exist) return;
+        let ids = !noValid.includes(value)
+            ? Array.isArray(value) ? value : [value] : [];
+        const filter_ = item => ids.includes(item.id);
+        let records = listPeople.filter(filter_);
+        if (preserveHistory) {
+            let results = validOptions(records);
+            onChangeSelect(value, results);
+            setOption(results)
+            return;
+        }
+        setOption(records)
+        onChangeSelect(value, listPeople);
+        // let optionsIds = [...option].map(item => item.id);
+        // let results = records.filter(item => !optionsIds.includes(item.id));
+        // let newOptions = [...option].concat(results);
+        // setOption(newOptions)
     }
 
-    const validOptions = () => {
-        let ids = option?.map(item => item?.id);
+    const validOptions = (records = []) => {
+        let ids = [...option]?.map(item => item?.id);
         const filter_ = item => !ids.includes(item.id);
-        let results = listPeople.filter(filter_);
-        return option.concat(results)
+        let results = records.filter(filter_);
+        return [...option].concat(results)
     }
 
     const optionsPeople = useMemo(() => {
         let valid = option?.length <= 0 && watchCallback;
         let check = option?.length > 0 && !watchCallback;
         if (valid) return watchCallback(listPeople);
-        let results = validOptions();
+        let results = validOptions(listPeople);
         if (check || !watchCallback) return results;
         return watchCallback(results);
     }, [listPeople, option, watchParam]);
@@ -109,6 +124,7 @@ const SelectPeople = ({
             label={label}
             rules={rules}
             dependencies={dependencies}
+            noStyle={noStyle}
         >
             <Select
                 allowClear
@@ -117,8 +133,10 @@ const SelectPeople = ({
                 disabled={disabled}
                 placeholder={placeholder}
                 filterOption={false}
+                mode={mode}
+                maxTagCount='responsive'
                 clearIcon={loading ? <LoadingOutlined /> : <CloseCircleFilled />}
-                suffixIcon={loading ? <LoadingOutlined/> : openDrop ? <SearchOutlined/> : <DownOutlined/>}
+                suffixIcon={loading ? <LoadingOutlined /> : openDrop ? <SearchOutlined /> : <DownOutlined />}
                 onChange={onChange}
                 notFoundContent='No se encontraron resultados'
                 onSearch={debouncedResults}
