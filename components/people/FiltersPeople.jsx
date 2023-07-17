@@ -4,7 +4,7 @@ import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import { ruleWhiteSpace } from '../../utils/rules';
 import { genders } from '../../utils/constant';
-import { getFullName } from '../../utils/functions';
+import SelectPeople from './utils/SelectPeople';
 
 const FiltersPeople = ({
     visible,
@@ -14,8 +14,7 @@ const FiltersPeople = ({
 }) => {
 
     const {
-        load_persons,
-        persons_company
+        user_filters_data
     } = useSelector(state => state.userStore);
     const {
         cat_departments,
@@ -167,26 +166,13 @@ const FiltersPeople = ({
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item
+                        <SelectPeople
                             name='immediate_supervisor'
                             label='Jefe inmediato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            itemSelected={user_filters_data?.immediate_supervisor
+                                ? [user_filters_data?.immediate_supervisor] : []
+                            }
+                        />
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>
                         <Button onClick={()=> close()}>

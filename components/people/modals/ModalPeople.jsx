@@ -47,8 +47,6 @@ const ModalPeople = ({
     const {
         user,
         current_node,
-        load_persons,
-        persons_company,
         general_config,
         applications
     } = useSelector(state => state.userStore);
@@ -80,11 +78,11 @@ const ModalPeople = ({
             setTimeout(() => {
                 setLoading(false)
                 onClose()
-            }, 2000)
+            }, 1000)
             setTimeout(() => {
                 message.success('Persona agregada')
                 onReady()
-            }, 3000)
+            }, 2000)
         } catch (e) {
             let error = e.response?.data?.message;
             let msg = error ? error : 'Person no agregda';

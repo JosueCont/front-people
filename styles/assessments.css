@@ -1250,3 +1250,7 @@ div.picker-range-jb{
     align-items: center;
     gap: 8px;
 }
+
+.ant-btn-simple .anticon{
+    color: rgba(0, 0, 0, 0.25);
+}

@@ -9,10 +9,8 @@ import {
 } from '../../../utils/functions';
 import SearchPeople from '../../../components/people/SearchPeople';
 import TablePeople from '../../../components/people/TablePeople';
-import { PeopleProvider } from '../../../components/people/PeopleContext';
 import { connect } from 'react-redux';
 import {
-    getPersonsCompany,
     getCollaborators,
 } from '../../../redux/UserDuck';
 import {
@@ -28,7 +26,6 @@ import {
 
 const index = ({
     currentNode,
-    getPersonsCompany,
     getCollaborators,
     getCategories,
     getListAssets,
@@ -48,7 +45,6 @@ const index = ({
 
     useEffect(() => {
         if (!currentNode) return;
-        // getPersonsCompany(currentNode?.id)
         getListAssets(currentNode?.id, '&is_active=true')
         getGroupsAssessments(currentNode?.id)
         getCategories()
@@ -93,7 +89,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getPersonsCompany,
         getCollaborators,
         getCategories,
         getListAssets,

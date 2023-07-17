@@ -166,7 +166,7 @@ const OptionsPeople = () => {
                 </Menu.Item>
                 {general_config?.nomina_enabled && (
                     <Menu.Item
-                        key='5'
+                        key='4'
                         icon={<DownloadOutlined />}
                         onClick={() => handleConfronts()}
                     >
@@ -174,21 +174,21 @@ const OptionsPeople = () => {
                     </Menu.Item>
                 )}
                 <Menu.Item
-                    key='7'
+                    key='5'
                     icon={<UserAddOutlined />}
                     onClick={() => setOpenCIF(true)}
                 >
                     Agregar persona usando CIF
                 </Menu.Item>
                 <Menu.Item
-                    key='8'
+                    key='6'
                     icon={<DownloadOutlined />}
                     onClick={() => actionDownloadVacaction()}
                 >
                     Descargar reporte vacaciones
                 </Menu.Item>
                 <Menu.Item
-                    key='8'
+                    key='7'
                     icon={<UploadOutlined />}
                     onClick={() => setOpenVacation(true)}
                 >
@@ -201,7 +201,7 @@ const OptionsPeople = () => {
     return (
         <>
             <Tooltip title='Opciones adicionales'>
-                <Dropdown overlay={<MenuOptions />}>
+                <Dropdown placement='bottomRight' overlay={<MenuOptions />}>
                     <Button>
                         <EllipsisOutlined />
                     </Button>

@@ -15,11 +15,23 @@ const TagFilters = ({
     const [tagFilters, SetTagFilters] = useState([]);
 
     useEffect(()=>{
-        SetTagFilters([])
-        if(Object.keys(router.query).length <= 0) return;
-        let filters = deleteFiltersJb({...router.query}, [...discardKeys, 'page','size']);
-        SetTagFilters(Object.entries(filters))
+        if(Object.keys(router.query).length <= 0){
+            SetTagFilters([])
+            return;
+        };
+        let querys = deleteFiltersJb({...router.query}, [...discardKeys, 'page','size']);
+        getValues(querys);
     },[router.query])
+
+    const getValues = async (querys) =>{
+        let values = Object.entries(querys);
+        let params = [];
+        for (const [key, val] of values) {
+            let response = listGets[key] ? await listGets[key](val, key) : val;
+            params.push([key, response]);
+        }
+        SetTagFilters(params)
+    }
     
     const removeFilter = (key) =>{
         let filters = deleteFiltersJb({...router.query}, [...deleteKeys, key]);
@@ -28,6 +40,7 @@ const TagFilters = ({
             query: filters
         }, undefined, {shallow:true})
     }
+
 
     return (
         <div className='body-list-items scroll-bar'>
@@ -41,7 +54,7 @@ const TagFilters = ({
                     ))}
                     {tagFilters.length > 0 && tagFilters.map(([key, val], idx) => (
                         <div className='item-list-row normal' key={"item_"+idx}>
-                            <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
+                            <p>{listKeys[key] ? listKeys[key] : key}: {val}</p>
                             <CloseOutlined onClick={()=> removeFilter(key)}/>
                         </div>
                     ))}

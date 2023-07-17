@@ -1,7 +1,9 @@
-import { useSelector } from "react-redux"
-import { genders } from "../../utils/constant"
-import { getValueFilter } from "../../utils/functions"
-import { getFullName } from "../../utils/functions"
+import { useSelector, useDispatch } from "react-redux";
+import { genders } from "../../utils/constant";
+import { getValueFilter } from "../../utils/functions";
+import { getFullName } from "../../utils/functions";
+import { setUserFiltersData } from "../../redux/UserDuck";
+import WebApiPeople from "../../api/WebApiPeople";
 
 export const useFiltersPeople = () =>{
 
@@ -9,10 +11,8 @@ export const useFiltersPeople = () =>{
         cat_departments,
         cat_job
     } = useSelector(state => state.catalogStore)
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore)
+    
+    const dispatch = useDispatch();
 
     const listKeys = {
         first_name__icontains: 'Nombre',
@@ -42,12 +42,18 @@ export const useFiltersPeople = () =>{
         value: id,
         list: cat_job
     })
-
-    const getSupervisor = (id) => getValueFilter({
-        value: id,
-        list: persons_company,
-        keyShow: e => getFullName(e)
-    })
+    
+    const getSupervisor = async (id, key) => {
+        try {
+            let response = await WebApiPeople.getPerson(id);
+            let value = {[key]: response.data};
+            dispatch(setUserFiltersData(value));
+            return getFullName(response.data);
+        } catch (e) {
+            console.log(e)
+            return id;
+        }
+    }
 
     const getStatus = (value) => value == 'true'
         ? 'Activos' : 'Inactivos' 

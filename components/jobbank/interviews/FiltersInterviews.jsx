@@ -3,11 +3,12 @@ import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
+import SelectPeople from '../../people/utils/SelectPeople';
 
 const FiltersInterviews = ({
     visible,
-    close = () =>{},
-    onFinish = ()=>{},
+    close = () => { },
+    onFinish = () => { },
     formSearch
 }) => {
 
@@ -17,7 +18,8 @@ const FiltersInterviews = ({
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
-        load_clients_options
+        load_clients_options,
+        jobbank_filters_data
     } = useSelector(state => state.jobBankStore);
     const {
         load_persons,
@@ -26,23 +28,23 @@ const FiltersInterviews = ({
     const [loading, setLoading] = useState(false);
     const customer = Form.useWatch('customer', formSearch);
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             close()
             setLoading(false)
             onFinish(values);
-        },1000)
+        }, 1000)
     }
 
-    const optionsVacant = useMemo(()=>{
-        if(!customer) return list_vacancies_options;
+    const optionsVacant = useMemo(() => {
+        if (!customer) return list_vacancies_options;
         const filter_ = item => item.customer?.id == customer;
         return list_vacancies_options.filter(filter_);
-    },[customer, list_vacancies_options])
+    }, [customer, list_vacancies_options])
 
-    const onChangeCustomer = (value) =>{
-        formSearch.setFieldsValue({vacant: null})
+    const onChangeCustomer = (value) => {
+        formSearch.setFieldsValue({ vacant: null })
     }
 
     return (
@@ -58,7 +60,7 @@ const FiltersInterviews = ({
                 form={formSearch}
                 layout='vertical'
             >
-                <Row gutter={[16,0]}>
+                <Row gutter={[16, 0]}>
                     <Col span={12}>
                         <Form.Item
                             name='customer'
@@ -105,7 +107,14 @@ const FiltersInterviews = ({
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item
+                        <SelectPeople
+                            name='recruiter'
+                            label='Reclutador'
+                            itemSelected={jobbank_filters_data?.recruiter
+                                ? [jobbank_filters_data?.recruiter] : []
+                            }
+                        />
+                        {/* <Form.Item
                             name='recruiter'
                             label='Reclutador'
                         >
@@ -124,7 +133,7 @@ const FiltersInterviews = ({
                                     </Select.Option>
                                 ))}
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
                     <Col span={12}>
                         <Form.Item
@@ -148,12 +157,12 @@ const FiltersInterviews = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={24} className='content-end' style={{gap: 8}}>
-                        <Button onClick={()=> close()}>
+                    <Col span={24} className='content-end' style={{ gap: 8 }}>
+                        <Button onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
-                            loading={loading} 
+                            loading={loading}
                             htmlType='submit'
                         >
                             Aplicar

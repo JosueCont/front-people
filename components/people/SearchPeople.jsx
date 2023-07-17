@@ -46,10 +46,10 @@ const SearchPeople = ({
     const [valueSearch, setValueSearch] = useState('');
     const { listKeys, listGets } = useFiltersPeople();
 
-    useEffect(()=>{
+    useEffect(() => {
         let value = router.query?.search;
         setValueSearch(value || '')
-    },[router.query?.search])
+    }, [router.query?.search])
 
     const showModal = () => {
         let filters = { ...router.query };
@@ -73,8 +73,8 @@ const SearchPeople = ({
         setFilters(filters)
     }
 
-    const onGeneralSearch = () =>{
-        let filters = createFiltersJB({search: valueSearch});
+    const onGeneralSearch = () => {
+        let filters = createFiltersJB({ search: valueSearch });
         setFilters(filters)
     }
 
@@ -87,7 +87,7 @@ const SearchPeople = ({
         setValueSearch(target.value?.trim())
     }
 
-    const onReadyCreate = () =>{
+    const onReadyCreate = () => {
         getWorkTitle(currentNode?.id)
         getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
     }
@@ -102,7 +102,7 @@ const SearchPeople = ({
                                 <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                     Personas
                                 </p>
-                                <Input.Group style={{width: 300}} compact>
+                                <Input.Group style={{ width: 300 }} compact>
                                     <Input
                                         allowClear
                                         className='input-jb-clear'
@@ -118,7 +118,7 @@ const SearchPeople = ({
                                     />
                                     <button
                                         className='ant-btn-simple'
-                                        onClick={()=> onGeneralSearch()}
+                                        onClick={() => onGeneralSearch()}
                                         style={{
                                             borderTopRightRadius: '10px',
                                             borderBottomRightRadius: '10px'
@@ -129,6 +129,7 @@ const SearchPeople = ({
                                 </Input.Group>
                             </div>
                             <div className='content-end' style={{ gap: 8 }}>
+                                <OptionsPeople />
                                 <Tooltip title='Configurar filtros'>
                                     <Button onClick={() => showModal()}>
                                         <SettingOutlined />
@@ -139,9 +140,8 @@ const SearchPeople = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <OptionsPeople />
                                 {permissions.person?.create && (
-                                    <Button onClick={()=> setOpenCreate(true)}>
+                                    <Button onClick={() => setOpenCreate(true)}>
                                         Agregar
                                     </Button>
                                 )}
@@ -165,7 +165,7 @@ const SearchPeople = ({
             />
             <ModalPeople
                 visible={openCreate}
-                close={()=> setOpenCreate(false)}
+                close={() => setOpenCreate(false)}
                 onReady={onReadyCreate}
             />
         </>
@@ -186,7 +186,7 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getCollaborators,
-        getWorkTitle
-    }
+    getCollaborators,
+    getWorkTitle
+}
 )(SearchPeople)

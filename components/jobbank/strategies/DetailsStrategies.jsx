@@ -1,25 +1,18 @@
 import React, {
     useEffect,
     useState,
-    useRef,
-    useLayoutEffect
 } from 'react';
 import {
-    Card,
-    Row,
-    Col,
-    Button,
-    Tabs,
     Form,
     Spin,
     message
 } from 'antd';
 import { connect } from 'react-redux';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useInfoStrategy } from '../hook/useInfoStrategy';
+import DetailsCustom from '../DetailsCustom';
 
 const DetailsStrategies = ({
     action,
@@ -27,13 +20,6 @@ const DetailsStrategies = ({
     newFilters = {}
 }) => {
 
-    const fetchingItem = { loading: false, disabled: true };
-    const fetchingParams = {
-        back: fetchingItem,
-        create: fetchingItem,
-        edit: fetchingItem
-    };
-    const btnSave = useRef(null);
     const router = useRouter();
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
@@ -43,33 +29,33 @@ const DetailsStrategies = ({
     const [optionVacant, setOptionVacant] = useState([]);
     const { createData, setValuesForm } = useInfoStrategy();
 
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
+    useEffect(() => {
+        if (router.query.id && action == 'edit') {
             getInfoStrategy(router.query.id);
         }
-    },[router.query?.id])
+    }, [router.query?.id])
 
-    useEffect(()=>{
-        if(router.query.client && action == 'add'){
+    useEffect(() => {
+        if (router.query.client && action == 'add') {
             formStrategies.resetFields()
             keepClient()
         }
-    },[router.query])
+    }, [router.query])
 
-    useEffect(()=>{
-        if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
+    useEffect(() => {
+        if (Object.keys(infoStrategy).length > 0 && action == 'edit') {
             formStrategies.resetFields();
             let allValues = setValuesForm(infoStrategy);
-            if(Object.keys(allValues.vacant).length > 0){
+            if (Object.keys(allValues.vacant).length > 0) {
                 setOptionVacant([allValues.vacant])
                 allValues.vacant = allValues.vacant.id;
             }
             formStrategies.setFieldsValue(allValues);
         }
-    },[infoStrategy])
+    }, [infoStrategy])
 
 
-    const getInfoStrategy = async (id) =>{
+    const getInfoStrategy = async (id) => {
         try {
             setFetching(true)
             let response = await WebApiJobBank.getInfoStrategy(id);
@@ -81,13 +67,13 @@ const DetailsStrategies = ({
         }
     }
 
-    const keepClient = () =>{
+    const keepClient = () => {
         formStrategies.setFieldsValue({
             customer: router.query.client
         })
     }
 
-    const onFinishUpdate = async (values) =>{
+    const onFinishUpdate = async (values) => {
         try {
             await WebApiJobBank.updateStrategy(infoStrategy.id, values);
             message.success('Estrategia actualizada');
@@ -101,9 +87,9 @@ const DetailsStrategies = ({
         }
     }
 
-    const onFinishCreate = async (values) =>{
+    const onFinishCreate = async (values) => {
         try {
-            let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
+            let response = await WebApiJobBank.createStrategy({ ...values, node: currentNode.id });
             message.success('Estrategia registrada');
             actionSaveAnd(response.data.id)
         } catch (e) {
@@ -116,7 +102,7 @@ const DetailsStrategies = ({
         }
     }
 
-    const onFinish = (values) =>{
+    const onFinish = (values) => {
         setFetching(true)
         const bodyData = createData(values);
         const actionFunction = {
@@ -126,7 +112,7 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionBack = () =>{
+    const actionBack = () => {
         let url = router.query?.back
             ? `/jobbank/${router.query?.back}`
             : '/jobbank/strategies';
@@ -136,116 +122,62 @@ const DetailsStrategies = ({
         });
     }
 
-    const actionCreate = () =>{
+    const actionCreate = () => {
         formStrategies.resetFields();
         if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
     }
 
-    const actionSaveAnd = (id) =>{
+    const actionSaveAnd = (id) => {
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
+            edit: () => router.replace({
                 pathname: '/jobbank/strategies/edit',
-                query: {...newFilters, id }
+                query: { ...newFilters, id }
             })
         }
         actionFunction[actionType]();
     }
 
-    const getSaveAnd = (type) =>{
-        setActionType(type)
-        const item = { loading: true, disabled: false };
-        setLoading({...fetchingParams, [type]: item });
-        btnSave.current.click();
+    const propsCustom = {
+        action,
+        loading,
+        fetching,
+        setLoading,
+        actionBack,
+        setActionType,
+        idForm: 'form-strategies',
+        titleCard: action == 'add'
+            ? 'Registrar nueva estrategia'
+            : 'Información de la estrategia'
     }
 
     return (
-        <Card>
-            <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content title-action-border'>
-                    <p className='title-action-text'>
-                        {action == 'add'
-                            ? 'Registrar nueva estrategia'
-                            : 'Información de la estrategia'
-                        }
-                    </p>
-                    <Button
-                        onClick={()=> actionBack()}
-                        icon={<ArrowLeftOutlined />}
-                    >
-                        Regresar
-                    </Button>
-                </Col>
-                <Col span={24}>
-                    <Spin spinning={fetching}>
-                        <Form
-                            id='form-strategies'
-                            form={formStrategies}
-                            layout='vertical'
-                            onFinish={onFinish}
-                            // requiredMark={false}
-                            onFinishFailed={()=> setLoading({})}
-                        >
-                            <FormStrategies
-                                infoStrategy={infoStrategy}
-                                optionVacant={optionVacant}
-                                formStrategies={formStrategies}
-                                disabledClient={router.query?.client}
-                            />
-                        </Form>
-                    </Spin>
-                </Col>
-                <Col span={24} className='tab-vacancies-btns'>
-                    {action == 'add' ? (
-                        <>
-                            <button
-                                htmlType='submit'
-                                form='form-strategies'
-                                ref={btnSave}
-                                style={{display:'none'}}
-                            />
-                            <Button
-                                onClick={()=>getSaveAnd('back')}
-                                disabled={loading['back']?.disabled}
-                                loading={loading['back']?.loading}
-                            >
-                                Guardar y regresar
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('create')}
-                                disabled={loading['create']?.disabled}
-                                loading={loading['create']?.loading}
-                            >
-                                Guardar y registrar otra
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('edit')}
-                                disabled={loading['edit']?.disabled}
-                                loading={loading['edit']?.loading}
-                            >
-                                Guardar y editar
-                            </Button>
-                        </>
-                    ):(
-                        <Button
-                            form='form-strategies'
-                            htmlType='submit'
-                            loading={fetching}
-                        >
-                            Actualizar
-                        </Button>
-                    )}
-                </Col>
-            </Row>
-        </Card>
+        <DetailsCustom {...propsCustom}>
+            <Spin spinning={fetching}>
+                <Form
+                    id='form-strategies'
+                    form={formStrategies}
+                    layout='vertical'
+                    onFinish={onFinish}
+                    onFinishFailed={() => setLoading({})}
+                >
+                    <FormStrategies
+                        infoStrategy={infoStrategy}
+                        optionVacant={optionVacant}
+                        formStrategies={formStrategies}
+                        disabledClient={router.query?.client}
+                    />
+                </Form>
+            </Spin>
+        </DetailsCustom>
     )
 }
 
-const mapState = (state) =>{
-    return{
+const mapState = (state) => {
+    return {
         currentNode: state.userStore.current_node
     }
 }

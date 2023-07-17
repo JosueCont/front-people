@@ -745,7 +745,7 @@ const TablePeople = ({
         },
         {
             title: () => permissions.person?.delete ? (
-                <Dropdown overlay={<MenuTable />}>
+                <Dropdown placement='bottomRight' overlay={<MenuTable />}>
                     <Button size='small'>
                         <EllipsisOutlined />
                     </Button>
@@ -753,6 +753,7 @@ const TablePeople = ({
             ) : <></>,
             render: (item) => (permissions.person?.edit || permissions.person?.delete) ? (
                 <Dropdown
+                    placement='bottomRight'
                     disabled={itemsKeys?.includes(item?.id)}
                     overlay={<MenuItem item={item} />}
                 >

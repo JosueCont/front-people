@@ -113,7 +113,7 @@ const TableProfiles = ({
         router.replace({
             pathname: '/jobbank/profiles',
             query: filters
-        })
+        }, undefined, {shallow: true})
     }
 
     const rowSelection = {
@@ -185,9 +185,10 @@ const TableProfiles = ({
             }
         },
         {
+            width: 60,
             title: ()=>{
                 return(
-                    <Dropdown overlay={menuTable}>
+                    <Dropdown placement='bottomRight' overlay={menuTable}>
                         <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>
@@ -196,7 +197,7 @@ const TableProfiles = ({
             },
             render: (item) =>{
                 return (
-                    <Dropdown overlay={()=> menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={()=> menuItem(item)}>
                         <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>

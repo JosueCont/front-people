@@ -6,20 +6,17 @@ import React, {
 } from 'react';
 import {
     Form,
-    Select,
-    AutoComplete,
-    Input
+    Select
 } from 'antd';
-import {
-    getFullName,
-    createFiltersJB
-} from '../../../utils/functions';
+import { getFullName } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { debounce } from 'lodash';
 import {
     LoadingOutlined,
-    CloseCircleFilled
+    CloseCircleFilled,
+    SearchOutlined,
+    DownOutlined
 } from '@ant-design/icons';
 
 const SelectPeople = ({
@@ -30,6 +27,7 @@ const SelectPeople = ({
     placeholder = 'Buscar...',
     disabled = false,
     onChangeSelect = () => { },
+    itemSelected = [],
     watchCallback,
     watchParam
 }) => {
@@ -40,16 +38,24 @@ const SelectPeople = ({
 
     const noValid = [undefined, null, "", " "];
     const [loading, setLoading] = useState(false);
-    const [itemSelected, setItemSelected] = useState([]);
+    const [option, setOption] = useState([]);
     const [listPeople, setListPeople] = useState([]);
+    const [openDrop, setOpenDrop] = useState(false);
 
-    const getOptions = async (value) => {
+    useEffect(()=>{
+        if(itemSelected?.length <=0) return;
+        setOption(itemSelected)
+    },[itemSelected])
+
+    const getOptions = async (node, value) => {
         try {
             setLoading(true)
             let params = `&paginate=0&search=${value}`;
-            let response = await WebApiPeople.getCollaborators(current_node?.id, params);
-            setLoading(false)
+            let response = await WebApiPeople.getCollaborators(node, params);
             setListPeople(response?.data || [])
+            setTimeout(()=>{
+                setLoading(false)
+            },500)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -58,8 +64,8 @@ const SelectPeople = ({
     }
 
     const onSearch = (value) => {
-        if (noValid.includes(value)) return;
-        getOptions(value?.toString().trim())
+        if (noValid.includes(value) || loading) return;
+        getOptions(current_node?.id, value?.toString().trim())
     }
 
     const debouncedResults = useMemo(() => {
@@ -73,28 +79,29 @@ const SelectPeople = ({
     }, [])
 
     const onChange = (value) => {
-        onChangeSelect(value)
-        if (noValid.includes(value)) return;
+        onChangeSelect(value);
+        let exist = itemSelected.some(item => item?.id == value);
+        if (noValid.includes(value) || exist) return;
         const find_ = item => item.id == value;
         let record = listPeople.find(find_);
-        setItemSelected([record])
+        setOption([record])
     }
 
     const validOptions = () => {
-        let ids = itemSelected?.map(item => item.id);
+        let ids = option?.map(item => item?.id);
         const filter_ = item => !ids.includes(item.id);
         let results = listPeople.filter(filter_);
-        return itemSelected.concat(results)
+        return option.concat(results)
     }
 
     const optionsPeople = useMemo(() => {
-        let valid = itemSelected?.length <= 0 && watchCallback;
-        let check = itemSelected?.length > 0 && !watchCallback;
+        let valid = option?.length <= 0 && watchCallback;
+        let check = option?.length > 0 && !watchCallback;
         if (valid) return watchCallback(listPeople);
         let results = validOptions();
-        if (check) return results;
+        if (check || !watchCallback) return results;
         return watchCallback(results);
-    }, [listPeople, watchParam]);
+    }, [listPeople, option, watchParam]);
 
     return (
         <Form.Item
@@ -106,16 +113,18 @@ const SelectPeople = ({
             <Select
                 allowClear
                 showSearch
+                open={openDrop}
                 disabled={disabled}
                 placeholder={placeholder}
                 filterOption={false}
-                clearIcon={loading ? <LoadingOutlined/> : <CloseCircleFilled/>}
+                clearIcon={loading ? <LoadingOutlined /> : <CloseCircleFilled />}
+                suffixIcon={loading ? <LoadingOutlined/> : openDrop ? <SearchOutlined/> : <DownOutlined/>}
                 onChange={onChange}
                 notFoundContent='No se encontraron resultados'
                 onSearch={debouncedResults}
+                onDropdownVisibleChange={setOpenDrop}
             >
-
-                {optionsPeople.length > 0 && optionsPeople.map(item => (
+                {optionsPeople?.length > 0 && optionsPeople.map(item => (
                     <Select.Option value={item.id} key={item.id}>
                         {getFullName(item)}
                     </Select.Option>
