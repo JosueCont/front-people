@@ -27,6 +27,7 @@ import { IntranetIcon } from "./CustomIcons";
 import _ from "lodash"
 import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../config/config";
 import { getCurrentURL } from "../utils/constant";
+import {getCompanyFiscalInformation} from "./../redux/fiscalDuck"
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -39,6 +40,8 @@ const MainSider = ({
   hideProfile = true,
   onClickImage = true,
   user,
+  getCompanyFiscalInformation,
+  companyFiscalInformation = null,
   ...props
 }) => {
   const router = useRouter();
@@ -50,6 +53,7 @@ const MainSider = ({
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
+      getCompanyFiscalInformation();
     }
   }, [props.config]);
 
@@ -170,9 +174,12 @@ const MainSider = ({
       let children0 = [
         getItem("Empresas", "business"),
         getItem("Prestaciones", "integrationFactors"),
-        getItem("Registros patronales", "patronal"),
+        // getItem("Registros patronales", "patronal"),
 
       ]
+      if(companyFiscalInformation?.assimilated_pay == false){
+        children0.push(getItem("Registros patronales", "patronal"))
+      }
       let children0101 = [
         getItem("Personas", "persons"),
         getItem("Grupos de personas", "groups_people"),
@@ -195,8 +202,11 @@ const MainSider = ({
           getItem("Comprobantes fiscales", "payrollVoucher"),
           getItem("Calculadora", "calculatorSalary"),
           getItem("Importar nómina con XML", "importMassivePayroll"),
-          getItem("Movimientos IMSS", "imssMovements"),
+          // getItem("Movimientos IMSS", "imssMovements"),
         ];
+        if(companyFiscalInformation?.assimilated_pay == false){
+          children001.push(getItem("Movimientos IMSS", "imssMovements"))
+        }
         children01.push(getItem("Nómina", "payroll",<></>, children001))
       }
       let children0001 =[
@@ -732,6 +742,7 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,
     applications: state.userStore.applications,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information,
   };
 };
-export default connect(mapState)(MainSider);
+export default connect(mapState, {getCompanyFiscalInformation})(MainSider);
