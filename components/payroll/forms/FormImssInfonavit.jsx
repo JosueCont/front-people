@@ -623,9 +623,10 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                 rules={[fourDecimal, ruleRequired]}
               >
                 <Input
-                  disabled={
-                    updateCredit && updateCredit.is_registered ? true : false
-                  }
+                  // disabled={
+                  //   updateCredit && updateCredit.is_registered ? true : false
+                  // }
+                  disabled={true}
                   maxLength={10}
                 />
               </Form.Item>
