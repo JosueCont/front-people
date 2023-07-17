@@ -16,6 +16,9 @@ import {
     EllipsisOutlined,
     UserAddOutlined,
 } from '@ant-design/icons';
+import {
+    BsCurrencyDollar
+} from 'react-icons/bs';
 import WebApiPeople from '../../api/WebApiPeople';
 import WebApiPayroll from '../../api/WebApiPayroll';
 import {
@@ -29,6 +32,7 @@ import ModalImport from './modals/ModalImport';
 import ModalConfronts from './modals/ModalConfronts';
 import ModalAddPersonCFI from '../modal/ModalAddPersonCFI';
 import ModalVacation from './modals/ModalVacation';
+import ModalSalary from './modals/ModalSalary';
 
 const OptionsPeople = () => {
 
@@ -51,6 +55,7 @@ const OptionsPeople = () => {
     const [openConfront, setOpenConfront] = useState(false);
     const [openCIF, setOpenCIF] = useState(false);
     const [openVacation, setOpenVacation] = useState(false);
+    const [openSalary, setOpenSalary] = useState(false);
 
     const actionError = (e) => {
         let error = e.response?.data?.message;
@@ -165,13 +170,22 @@ const OptionsPeople = () => {
                     Descargar plantilla
                 </Menu.Item>
                 {general_config?.nomina_enabled && (
-                    <Menu.Item
-                        key='4'
-                        icon={<DownloadOutlined />}
-                        onClick={() => handleConfronts()}
-                    >
-                        Generar confronta
-                    </Menu.Item>
+                    <>
+                        <Menu.Item
+                            key='4'
+                            icon={<DownloadOutlined />}
+                            onClick={() => handleConfronts()}
+                        >
+                            Generar confronta
+                        </Menu.Item>
+                        <Menu.Item
+                            key='8'
+                            icon={<BsCurrencyDollar />}
+                            onClick={() => setOpenSalary(true)}
+                        >
+                            Actualizar salarios
+                        </Menu.Item>
+                    </>
                 )}
                 <Menu.Item
                     key='5'
@@ -224,7 +238,11 @@ const OptionsPeople = () => {
             />
             <ModalVacation
                 visible={openVacation}
-                close={()=> setOpenVacation(false)}
+                close={() => setOpenVacation(false)}
+            />
+            <ModalSalary
+                visible={openSalary}
+                close={() => setOpenSalary(false)}
             />
         </>
     )

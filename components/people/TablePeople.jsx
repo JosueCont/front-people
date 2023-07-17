@@ -21,28 +21,19 @@ import {
 } from 'antd';
 import {
     SyncOutlined,
-    SearchOutlined,
-    PlusOutlined,
     DownloadOutlined,
-    UploadOutlined,
     EllipsisOutlined,
-    ExclamationCircleOutlined,
     EyeOutlined,
     LinkOutlined,
     EditOutlined,
     DeleteOutlined,
-    UserAddOutlined,
     UserSwitchOutlined,
     KeyOutlined,
     SendOutlined,
-    CheckCircleOutlined,
-    CloseCircleOutlined,
-    UsergroupAddOutlined,
-    WarningOutlined
+    UsergroupAddOutlined
 } from '@ant-design/icons';
 import {
-    BsHandIndex,
-    BsCurrencyDollar
+    BsHandIndex
 } from 'react-icons/bs';
 import ListItems from '../../common/ListItems';
 import WebApiPeople from '../../api/WebApiPeople';
@@ -54,7 +45,6 @@ import { getCollaborators } from '../../redux/UserDuck';
 import ModalSupervisor from './modals/ModalSupervisor';
 import ModalPassword from './modals/ModalPassword';
 import PersonsGroup from '../person/groups/PersonsGroup';
-import ModalSalary from './modals/ModalSalary';
 import ModalCompetences from '../person/ModalCompetences';
 import ModalSendUI from './modals/ModalSendUI';
 
@@ -89,7 +79,6 @@ const TablePeople = ({
 
     const [openGroup, setOpenGroup] = useState(false);
     const [openAssign, setOpenAssign] = useState(false);
-    const [openSalary, setOpenSalary] = useState(false);
     const [openStore, setOpenStore] = useState(false);
 
     const [itemReport, setItemReport] = useState([]);
@@ -367,12 +356,6 @@ const TablePeople = ({
         setOpenAssign(false)
     }
 
-    const closeSalary = () => {
-        setOpenSalary(false)
-        setItemsKeys([])
-        setItemsSelected([])
-    }
-
     const closeReport = () => {
         setItemPerson({})
         setItemReport([])
@@ -465,15 +448,6 @@ const TablePeople = ({
             >
                 Eliminar
             </Menu.Item>
-            {generalConfig?.nomina_enabled && (
-                <Menu.Item
-                    key="8"
-                    icon={<BsCurrencyDollar />}
-                    onClick={() => setOpenSalary(true)}
-                >
-                    Actualizar salarios
-                </Menu.Item>
-            )}
             {applications?.kuiz?.active && (
                 <>
                     <Menu.Item
@@ -845,11 +819,6 @@ const TablePeople = ({
                 visible={openAssign}
                 close={closeAssign}
                 actionForm={actionAssign}
-            />
-            <ModalSalary
-                visible={openSalary}
-                close={closeSalary}
-                itemsKeys={itemsKeys}
             />
             <ModalCompetences
                 visible={openReport}

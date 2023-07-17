@@ -58,7 +58,7 @@ const ModalImport = ({
                 layout="vertical"
             >
                 <Row>
-                    {!general_config?.nomina_enabled && (
+                    {general_config?.nomina_enabled && (
                         <>
                             <Col span={24}>
                                 <label style={{ padding: '0px 0px 8px' }}>

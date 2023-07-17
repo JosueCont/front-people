@@ -32,7 +32,6 @@ const ModalSalary = ({
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState([]);
     const [personsError, setPersonsError] = useState([]);
-    const [showError, setShowError] = useState(false);
     const typeFile = ['xlsx'];
 
     const generate = Form.useWatch('generate_movement', formSalary);
@@ -78,11 +77,9 @@ const ModalSalary = ({
         setFile([])
         setPersonsError([])
         close()
-        setShowError(false)
     }
 
     const downloadTemplate = async () => {
-        setShowError(false)
         try {
             let body = {
                 person_id_array: itemsKeys,
@@ -93,9 +90,6 @@ const ModalSalary = ({
             downloadBLOB({ data: response.data, name: 'Actualizar salarios.xlsx' })
         } catch (e) {
             console.log(e)
-            setTimeout(()=>{
-                setShowError(true)
-            },1000)
         }
     }
 
@@ -123,11 +117,6 @@ const ModalSalary = ({
                             type='info'
                         />
                     </Col>
-                    <Col span={24} style={{marginBottom: 4}}>
-                        <label style={{ padding: '0px 0px 8px' }}>
-                            Personas seleccionadas ({itemsKeys?.length})
-                        </label>
-                    </Col>
                     <Col span={16}>
                         <Form.Item
                             name='generate_movement'
@@ -142,14 +131,7 @@ const ModalSalary = ({
                             <FileExcelOutlined /> Descargar plantilla
                         </Typography.Link>
                     </Col>
-                    <Col span={24} style={{ marginBottom: 12 }}>
-                        {showError && (
-                            <Typography.Text type='danger'>
-                                No se encontraron personas con nómina de la lista seleccionada
-                            </Typography.Text>
-                        )}
-                    </Col>
-                    <Col span={24}>
+                    <Col span={24} style={{marginTop: 12}}>
                         <FileUpload
                             label='Seleccionar archivo'
                             keyName='file_name'
@@ -158,7 +140,6 @@ const ModalSalary = ({
                             setFile={setFile}
                             typeFile={typeFile}
                             revertColor={true}
-                            style={{ marginBottom: personsError?.length > 0 ? 0 : 24 }}
                             setNameFile={e => formSalary.setFieldsValue({
                                 file_name: e
                             })}
