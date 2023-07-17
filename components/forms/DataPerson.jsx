@@ -54,6 +54,7 @@ const DataPerson = ({
   setPerson,
   list_admin_roles_options,
   load_admin_roles_options,
+  assimilated_pay = null,
   ...props
 }) => {
   const { Title } = Typography;
@@ -99,7 +100,7 @@ const DataPerson = ({
       filters.node = currentNode.id
       filterPersonName(filters)
     }
-  }, [currentNode]);
+  }, [currentNode]); 
 
   const filterPersonName = async (node_id) => {
     try {
@@ -893,23 +894,27 @@ const DataPerson = ({
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24} md={12}>
-                <Form.Item
-                  name="imss"
-                  label="IMSS"
-                  rules={[onlyNumeric, minLengthNumber]}
-                >
-                  <Input maxLength={11} />
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24} md={12}>
-                <SelectPatronalRegistration
-                  name={"patronal_registration"}
-                  value_form={"patronal_registration"}
-                  textLabel={"Registro Patronal"}
-                  currentNode={currentNode}
-                />
-              </Col>
+              {assimilated_pay == false && 
+              <>
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="imss"
+                    label="IMSS"
+                    rules={[onlyNumeric, minLengthNumber]}
+                  >
+                    <Input maxLength={11} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={24} md={12}>
+                  <SelectPatronalRegistration
+                    name={"patronal_registration"}
+                    value_form={"patronal_registration"}
+                    textLabel={"Registro Patronal"}
+                    currentNode={currentNode}
+                  />
+                </Col>
+              </>}
+              
               {/* {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
               <Form.Item
                   name="is_admin"

@@ -165,6 +165,7 @@ const DetailPerson = ({
           person={person}
           setLoading={setLoading}
           hideProfileSecurity={hideProfileSecurity}
+          assimilated_pay={companyFiscalInformation?.assimilated_pay}
         />
         <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
         <Tabs onTabClick={(tabcode) => processTabs(tabcode)} tabPosition="left">
@@ -192,9 +193,11 @@ const DetailPerson = ({
               key="tab_10"
             >
               <FormPayrollPerson
-                  refreshtab={refreshTab10}
-                  onFinishRefresh={()=>setRefreshTab10(false)}
-                  person={person} node={person.node} />
+                refreshtab={refreshTab10}
+                onFinishRefresh={()=>setRefreshTab10(false)}
+                person={person} node={person.node}
+                assimilated_pay={companyFiscalInformation?.assimilated_pay}
+              />
             </TabPane>
           )}          
           {companyFiscalInformation?.assimilated_pay == false && 
