@@ -196,6 +196,11 @@ class WebApi {
     return WebApi.ApisType(`/person/dashboard/?node_id=${node}${params}`, "get");
   }
 
+  static uploadAllCatalogs(data) {
+    return WebApi.ApisType(`/business/all-catalogs/`, "post", data);
+  }
+
+
 }
 
 export default WebApi;
