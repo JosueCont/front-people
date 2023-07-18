@@ -89,7 +89,7 @@ const WidgetPayroll = () => {
 
     return applications?.payroll?.active ? (
         <CardInfo>
-            <CardItem jc='center' hg='100%' pd='16px 0px'
+            <CardItem pd='16px 0px'
                 ai={payrolls?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
                     <img src='/images/voucher.png' />

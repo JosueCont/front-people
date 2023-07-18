@@ -379,7 +379,7 @@ const ModalPeople = ({
                         <SelectPeople
                             name='immediate_supervisor'
                             label='Jefe inmediato'
-                            // onChangeSelect={onChangeSupervisor}
+                            onChangeSelect={onChangeSupervisor}
                             watchParam={idSubstitute}
                             watchCallback={optionsSupervisor}
                         />

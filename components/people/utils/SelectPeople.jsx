@@ -6,7 +6,8 @@ import React, {
 } from 'react';
 import {
     Form,
-    Select
+    Select,
+    Divider
 } from 'antd';
 import { getFullName } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
@@ -18,6 +19,7 @@ import {
     SearchOutlined,
     DownOutlined
 } from '@ant-design/icons';
+import { RiCloseLine } from 'react-icons/ri';
 
 const SelectPeople = ({
     name = '',
@@ -40,14 +42,17 @@ const SelectPeople = ({
     } = useSelector(state => state.userStore);
 
     const noValid = [undefined, null, "", " "];
+    const modeType = ['multiple', 'tags'];
     const [loading, setLoading] = useState(false);
-    const [option, setOption] = useState([]);
+    const [selected, setSelected] = useState([]);
     const [listPeople, setListPeople] = useState([]);
     const [openDrop, setOpenDrop] = useState(false);
 
     useEffect(() => {
         if (itemSelected?.length <= 0) return;
-        setOption(itemSelected)
+        const map_ = item => ({ ...item, selected: true });
+        let items = itemSelected?.map(map_);
+        setSelected(items);
     }, [itemSelected])
 
     const getOptions = async (value) => {
@@ -81,42 +86,86 @@ const SelectPeople = ({
         }
     }, [])
 
-    const onChange = (value) => {
-        // let exist = itemSelected.some(item => item?.id == value);
-        // if (noValid.includes(value) || exist) return;
-        let ids = !noValid.includes(value)
-            ? Array.isArray(value) ? value : [value] : [];
-        const filter_ = item => ids.includes(item.id);
-        let records = listPeople.filter(filter_);
-        if (preserveHistory) {
-            let results = validOptions(records);
-            onChangeSelect(value, results);
-            setOption(results)
-            return;
-        }
-        setOption(records)
-        onChangeSelect(value, listPeople);
-        // let optionsIds = [...option].map(item => item.id);
-        // let results = records.filter(item => !optionsIds.includes(item.id));
-        // let newOptions = [...option].concat(results);
-        // setOption(newOptions)
+    const getHistory = (selected_ = [], prevIds = []) => {
+        let ids = [...selected]?.map(item => item?.id);
+        const filter_ = item => !ids.includes(item.id);
+        const map_ = item => ({ ...item, selected: prevIds.includes(item.id) });
+        return selected.concat(selected_.filter(filter_)).map(map_);
     }
 
-    const validOptions = (records = []) => {
-        let ids = [...option]?.map(item => item?.id);
+    const onChange = (value) => {
+        let ids = !noValid.includes(value)
+            ? Array.isArray(value) ? value : [value] : [];
+
+        // Se filtra las opciones seleccionadas
+        const filter_ = item => ids.includes(item.id);
+        let selected_ = listPeople.filter(filter_);
+
+        // Se valida si se desea mantener el historial
+        if (modeType.includes(mode)) {
+            let history_ = getHistory(selected_, ids);
+            onChangeSelect(value, history_);
+            setSelected(history_);
+            return;
+        }
+        // Continua el flujo sin mantener el historial
+        setSelected(selected_)
+        onChangeSelect(value, listPeople);
+    }
+
+    const validOptions = () => {
+        if (selected?.length <= 0) return listPeople;
+        let ids = [...selected]?.map(item => item?.id);
         const filter_ = item => !ids.includes(item.id);
-        let results = records.filter(filter_);
-        return [...option].concat(results)
+        return selected.concat(listPeople.filter(filter_));
+    }
+
+    const clasifOptions = (list = []) => {
+        return list?.reduce((acc, item) => {
+            let results = acc['results'] ?? [];
+            let history = acc['history'] ?? [];
+            let selected = acc['selected'] ?? [];
+            if (!item?.hasOwnProperty('selected')) {
+                results.push(item);
+                return { ...acc, results };
+            };
+            if (!item?.selected) {
+                history.push(item);
+                return { ...acc, history };
+            }
+            selected.push(item)
+            return { ...acc, selected };
+        }, { history: [], results: [], selected: [] });
+    }
+
+    const validClasif = (options) => {
+        if (!preserveHistory) return options;
+        return clasifOptions(options);
     }
 
     const optionsPeople = useMemo(() => {
-        let valid = option?.length <= 0 && watchCallback;
-        let check = option?.length > 0 && !watchCallback;
-        if (valid) return watchCallback(listPeople);
-        let results = validOptions(listPeople);
-        if (check || !watchCallback) return results;
-        return watchCallback(results);
-    }, [listPeople, option, watchParam]);
+        let options = validOptions();
+        if (!watchCallback) return validClasif(options);
+        let records = watchCallback(options);
+        return validClasif(records);
+    }, [listPeople, selected, watchParam]);
+
+    // const optionsPeople = useMemo(() => {
+    //     let valid = selected?.length <= 0 && watchCallback;
+    //     let check = selected?.length > 0 && !watchCallback;
+    //     if (valid) return watchCallback(listPeople);
+    //     let results = validOptions(listPeople);
+    //     if (check || !watchCallback) return results;
+    //     return watchCallback(results);
+    // }, [listPeople, selected, watchParam]);
+
+    const deleteDefault = (e, item) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const filter_ = record => record.id != item.id
+        let newList = selected.filter(filter_);
+        setSelected(newList)
+    };
 
     return (
         <Form.Item
@@ -141,12 +190,46 @@ const SelectPeople = ({
                 notFoundContent='No se encontraron resultados'
                 onSearch={debouncedResults}
                 onDropdownVisibleChange={setOpenDrop}
+                className='ant-select-people'
             >
-                {optionsPeople?.length > 0 && optionsPeople.map(item => (
-                    <Select.Option value={item.id} key={item.id}>
-                        {getFullName(item)}
-                    </Select.Option>
-                ))}
+                {preserveHistory && modeType.includes(mode) ? (
+                    <>
+                        {optionsPeople?.selected?.length > 0 && (
+                            <Select.OptGroup label='Seleccionados'>
+                                {optionsPeople?.selected?.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                    </Select.Option>
+                                ))}
+                            </Select.OptGroup>
+                        )}
+                        {optionsPeople?.history?.length > 0 && (
+                            <Select.OptGroup label='Historial'>
+                                {optionsPeople?.history?.map((item) => (
+                                    <Select.Option value={item.id} key={item.id} className='ant-option-history'>
+                                        <>{getFullName(item)}</>
+                                        <RiCloseLine onClick={e => deleteDefault(e, item)}/>
+                                    </Select.Option>
+                                ))}
+                            </Select.OptGroup>
+                        )}
+                        {optionsPeople?.results?.length > 0 && (
+                            <Select.OptGroup label='Última búsqueda'>
+                                {optionsPeople?.results?.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {getFullName(item)}
+                                    </Select.Option>
+                                ))}
+                            </Select.OptGroup>
+                        )}
+                    </>
+                ) : optionsPeople?.length > 0 && (
+                    <>{optionsPeople?.map(item => (
+                        <Select.Option value={item.id} key={item.id}>
+                            {getFullName(item)}
+                        </Select.Option>
+                    ))}</>
+                )}
             </Select>
         </Form.Item>
     )
