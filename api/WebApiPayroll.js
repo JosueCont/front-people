@@ -421,6 +421,14 @@ class WebApiPayroll {
     );
   }
 
+  static getCalculateCreditNote(data) {
+    return WebApi.ApisType(
+      `payroll/calculate_credit_note`,
+      "post",
+      data
+    );
+  }
+
 }
 
 export default WebApiPayroll;
