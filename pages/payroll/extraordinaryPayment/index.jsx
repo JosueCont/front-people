@@ -50,12 +50,12 @@ const ExtraordinaryPayment = ({...props}) => {
                             /* onClick={() => downloadReceipt(item)} */
                             style={{ fontSize: "25px" }}
                         />
+                        </Tooltip>
                         <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
                             <FileTextTwoTone
                                 /* onClick={() => downLoadFile(item, 1)} */
                                 style={{ fontSize: "25px" }}
                             />
-                        </Tooltip>
                     </Tooltip>
                 </>
             )
