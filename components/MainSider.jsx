@@ -17,6 +17,7 @@ import Icon, {
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
+import {getCompanyFiscalInformation} from "./../redux/fiscalDuck"
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -26,6 +27,8 @@ const MainSider = ({
   defaultOpenKeys = null,
   hideProfile = true,
   onClickImage = true,
+  getCompanyFiscalInformation,
+  companyFiscalInformation = null,
   ...props
 }) => {
   const router = useRouter();
@@ -36,6 +39,7 @@ const MainSider = ({
   useLayoutEffect(() => {
     if (props.config) {
       setintanetAccess(props.config.intranet_enabled);
+      getCompanyFiscalInformation();
     }
   }, [props.config]);
 
@@ -119,8 +123,8 @@ const MainSider = ({
           getItem("Organigrama", "chartOrg"),
           getItem("Empresas", "business"),
           getItem("Prestaciones", "integrationFactors")
-        ];
-        if (props?.config && props?.config?.nomina_enabled) {
+        ];        
+        if (props?.config && props?.config?.nomina_enabled && companyFiscalInformation?.assimilated_pay == false) {          
           children.push(getItem("Registros patronales", "patronal"));
         }
         items.push(getItem("Empresa", "company", <BankOutlined />, children));
@@ -204,8 +208,14 @@ const MainSider = ({
           getItem("Comprobantes fiscales", "payrollVoucher"),
           getItem("Calculadora", "calculatorSalary"),
           getItem("Importar nómina con XML", "importMassivePayroll"),
-          getItem("Movimientos IMSS", "imssMovements"),
+          // getItem("Movimientos IMSS", "imssMovements"),
         ];
+        // Solo se muestra si la empresa no paga asimilados
+        if (companyFiscalInformation?.assimilated_pay == false){
+          children.push(
+            getItem("Movimientos IMSS", "imssMovements"),
+          )
+        }
         items.push(getItem("Nómina", "payroll", <DollarOutlined />, children));
       }
 
@@ -728,12 +738,13 @@ const MainSider = ({
   );*/
 };
 
-const mapState = (state) => {
+const mapState = (state) => {  
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,
     applications: state.userStore.applications,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information
   };
 };
-export default connect(mapState)(MainSider);
+export default connect(mapState, {getCompanyFiscalInformation})(MainSider);

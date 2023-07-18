@@ -39,6 +39,7 @@ const FormPayrollPerson = ({
   person = null,
   refreshtab = false,
   node = null,
+  assimilated_pay = null,
   ...props
 }) => {
   const { Title } = Typography;
@@ -77,14 +78,24 @@ const FormPayrollPerson = ({
   }, [props.catPerception]);
 
   useEffect(() => {
-    if (props.catHiringRegime) {
+    if (props.catHiringRegime) {      
       let data = props.catHiringRegime.map((item) => {
         return {
           label: item.code !== "02" ? item.description : "Sueldos",
           value: item.id,
+          code: item.code
         };
       });
-      setHiringRegimeType(data);
+      let regime = []
+      if(assimilated_pay == false){
+        regime = data.filter((item) => item.code == "02")
+      }
+      else{
+        regime = data.filter((item) => item.code == "05" || item.code == "06" || item.code == "07" 
+        || item.code == "08" || item.code == "09" || item.code == "10" || item.code == "11")
+      }
+
+      setHiringRegimeType(regime);
     }
   }, [props.catTaxRegime]);
 
@@ -589,6 +600,7 @@ const FormPayrollPerson = ({
                       }
                       notFoundContent={"No se encontraron resultados."}
                       allowClear
+                      disabled={assimilated_pay}
                     />
                   </Form.Item>
                 </Col>
@@ -601,6 +613,7 @@ const FormPayrollPerson = ({
                     <Switch
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
+                      disabled={true}
                     />
                   </Form.Item>
                 </Col>
