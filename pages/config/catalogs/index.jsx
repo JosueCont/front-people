@@ -1,6 +1,6 @@
 import { withAuthSync } from "../../../libs/auth";
 import MainLayout from "../../../layout/MainInter";
-import { Breadcrumb, Tabs, Card, Tooltip, Button, Row, Col, Space } from "antd";
+import { Breadcrumb, Tabs, Card, Tooltip, Button, Row, Col, Space, message } from "antd";
 import {
   ApartmentOutlined,
   GoldOutlined,
@@ -40,17 +40,38 @@ import MainIndexConfig from "../../../components/config/MainConfig";
 import ModalUploadCatalog from '../../../components/catalogs/ModalUploadCatalog'
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
+import axios from "axios";
+import { typeHttp } from "../../../config/config";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
   const [showModal, setShowModal] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
-  const downloadAllCatalogs = () => {
-    downLoadFileBlob(
-      `${getDomain(API_URL_TENANT)}/business/all-catalogs/?node_id=${props?.currentNode?.id}`,
-      "Catalogos.xlsx",
-      "GET"
-  );
+  const downloadAllCatalogs = async () => {
+    setDownloading(true)
+    try {
+      let headers = {
+        method: "GET",
+        responseType: "blob",
+      };
+      let respfile = await axios(
+        `${typeHttp}://${getDomain(API_URL_TENANT)}/business/all-catalogs/?node_id=${props?.currentNode?.id}`,
+        headers
+      )
+      if (respfile?.status == 200){
+        console.log('respFile', respfile)
+        const blob = new Blob([respfile.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'Catalogos.xlsx';
+        link.click();
+        setDownloading(false)
+      }
+    } catch (error) {
+      message.error("No se pudo descargar el archivo")
+      setDownloading(false)
+    }
   }
 
   return (
@@ -70,10 +91,10 @@ const configBusiness = ({ ...props }) => {
                 </Col>
                 <Col>
                 <Space>
-                  <Button icon={<DownloadOutlined />} onClick={() => downloadAllCatalogs()} >
+                  <Button loading={downloading} icon={<DownloadOutlined />} onClick={() => downloadAllCatalogs()} >
                     Descargar todos los catalogos
                   </Button>
-                  <Button icon={<UploadOutlined />} onClick={() => setShowModal(true)} >
+                  <Button disabled={downloading} icon={<UploadOutlined />} onClick={() => setShowModal(true)} >
                     Carga masiva de catalogos
                   </Button>
                   </Space>

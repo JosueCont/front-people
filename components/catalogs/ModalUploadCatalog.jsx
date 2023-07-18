@@ -101,18 +101,25 @@ const ModalUploadCatalog = ({isVisible=false, setIsVisible=null, node, ...props}
                         },
                     }}
                     >
-                    <Button
-                        size="middle"
-                        icon={<UploadOutlined />}
-                        style={{ marginBottom: "10px" }}
-                        disabled={loading}
-                    >
-                        Importar datos
-                    </Button>
+                    {
+                        !uploadFinally &&    
+                            <Button
+                            size="middle"
+                            icon={<UploadOutlined />}
+                            style={{ marginBottom: "10px" }}
+                            disabled={loading}
+                        >
+                            Importar datos
+                        </Button>
+                    }
                     </Upload>
-                    <p>
-                    {"     "} {fileName}
-                    </p>
+                    {
+                        fileName &&
+                        <p style={{ fontWeight:'bold' }}>
+                            {"Archivo: "} {fileName}
+                        </p>
+                    }
+                    
                 </Space>
             </Col>
             <Col span={24}>
