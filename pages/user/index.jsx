@@ -1,8 +1,7 @@
 import React from 'react';
 import MainLayout from '../../layout/MainLayout_user'
 import {
-    Typography,
-    Row
+    Typography
 } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../libs/auth';
@@ -35,15 +34,16 @@ const index = ({
                     <Title style={{ marginBottom: 0 }} level={1}>{currentNode && currentNode.name}</Title>
                     <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p>
                 </div>
+                <ContentCards>
+                    {
+                        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetRequests />
+                    }
 
-                    <Row gutter={[16,16]}>
-                        {
-                            applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetRequests />
-                        }
-
-                        <WidgetPayroll/>
-                        <WidgetBirthday redirectPerson={false} />
-                    </Row>
+                    {
+                        applications && (_.has(applications, "payroll") && applications["payroll"].active) && <WidgetPayroll/>
+                    }
+                    <WidgetBirthday redirectPerson={false} />
+                </ContentCards>
             </ContentVertical>
         </MainLayout>
     )

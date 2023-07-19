@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Empty, Avatar, Col, Row } from 'antd';
+import { List, Empty, Avatar } from 'antd';
 import {
     CardInfo,
     CardItem,
@@ -62,47 +62,44 @@ const WidgetBirthday = ({
     )
 
     return (
-        <Col md={8} xs={24} lg={12}>
-            <CardInfo>
-                <CardItem jc='center' hg='100%' pd='16px 0px'
-                          ai={birthdays?.length > 0 ? 'flex-start' : 'center'}
-                          title={<>
-                              <img src='/images/ballon.png'/>
-                              <p><FormattedMessage id={'dashboard.birthdaymonth'} /></p>
-                          </>}
-                          extra={<>{birthdays?.length ?? 0}</>}
-                >
-                    {!loading ?
-                        <CardScroll className="scroll-bar">
-                            <List
-                                size="small"
-                                itemLayout="horizontal"
-                                dataSource={birthdays}
-                                locale={{ emptyText: Void }}
-                                renderItem={(item, idx) => (
-                                    <List.Item key={idx}>
-                                        <List.Item.Meta
-                                            avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
-                                            title={redirectPerson
-                                                ? <a onClick={() => router.push(`/home/persons/${item.id}`)}>{getFullName(item)}</a>
-                                                : getFullName(item)}
-                                            description={`Fecha de cumpleaños: 
+        <CardInfo>
+            <CardItem jc='center' hg='100%' pd='16px 0px'
+                ai={birthdays?.length > 0 ? 'flex-start' : 'center'}
+                title={<>
+                    <img src='/images/ballon.png'/>
+                    <p><FormattedMessage id={'dashboard.birthdaymonth'} /></p>
+                </>}
+                extra={<>{birthdays?.length ?? 0}</>}
+            >
+                {!loading ?
+                    <CardScroll className="scroll-bar">
+                        <List
+                            size="small"
+                            itemLayout="horizontal"
+                            dataSource={birthdays}
+                            locale={{ emptyText: Void }}
+                            renderItem={(item, idx) => (
+                                <List.Item key={idx}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
+                                        title={redirectPerson
+                                            ? <a onClick={() => router.push(`/home/persons/${item.id}`)}>{getFullName(item)}</a>
+                                            : getFullName(item)}
+                                        description={`Fecha de cumpleaños: 
                                             ${item.birth_date
                                                 ? moment(item?.birth_date, formatStart).format(formatEnd)
                                                 : 'No disponible'
                                             }
                                         `}
-                                        />
-                                    </List.Item>
-                                )}
-                            />
-                        </CardScroll>
-                        : <LoadingOutlined tlined className="card-load" spin />
-                    }
-                </CardItem>
-            </CardInfo>
-        </Col>
-
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </CardScroll>
+                    : <LoadingOutlined tlined className="card-load" spin />
+                }
+            </CardItem>
+        </CardInfo>
     )
 }
 
