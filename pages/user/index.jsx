@@ -2,6 +2,7 @@ import React from 'react';
 import MainLayout from '../../layout/MainLayout_user'
 import {
     Typography,
+    Row
 } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../libs/auth';
@@ -13,6 +14,7 @@ import {
 import WidgetRequests from '../../components/dashboard/WidgetRequests';
 import WidgetBirthday from '../../components/dashboard/WidgetBirthday';
 import WidgetPayroll from '../../components/dashboard/WidgetPayroll';
+import _ from "lodash";
 
 moment.locale("es-mx");
 
@@ -33,11 +35,15 @@ const index = ({
                     <Title style={{ marginBottom: 0 }} level={1}>{currentNode && currentNode.name}</Title>
                     <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p>
                 </div>
-                <ContentCards>
-                    <WidgetRequests />
-                    <WidgetPayroll/>
-                    <WidgetBirthday redirectPerson={false} />
-                </ContentCards>
+
+                    <Row gutter={[16,16]}>
+                        {
+                            applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetRequests />
+                        }
+
+                        <WidgetPayroll/>
+                        <WidgetBirthday redirectPerson={false} />
+                    </Row>
             </ContentVertical>
         </MainLayout>
     )

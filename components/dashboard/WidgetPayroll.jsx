@@ -3,7 +3,9 @@ import {
     List,
     Empty,
     Avatar,
-    Tooltip
+    Tooltip,
+    Col,
+    Row
 } from 'antd';
 import {
     CardInfo,
@@ -88,6 +90,7 @@ const WidgetPayroll = () => {
     )
 
     return applications?.payroll?.active ? (
+        <Col md={8} xs={24} lg={12}>
         <CardInfo>
             <CardItem jc='center' hg='100%' pd='16px 0px'
                 ai={payrolls?.length > 0 ? 'flex-start' : 'center'}
@@ -156,6 +159,7 @@ const WidgetPayroll = () => {
                 }
             </CardItem>
         </CardInfo>
+        </Col>
     ) : <></>;
 }
 

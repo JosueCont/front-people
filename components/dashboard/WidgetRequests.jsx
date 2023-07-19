@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, List, Empty, Avatar, message, Tag } from 'antd';
+import { Tabs, List, Empty, Avatar, message, Tag, Col, Row } from 'antd';
 import {
     CardInfo,
     CardItem,
@@ -153,7 +153,7 @@ const WidgetRequests = () => {
     })
 
     return (
-        <>
+        <Col md={8} xs={24} lg={12}>
             <CardInfo>
                 <CardItem
                     jc='center' hg='100%' pd='0px 0px 16px 0px'
@@ -219,7 +219,7 @@ const WidgetRequests = () => {
                 actionForm={actionFormModal}
                 actionType={typeAction}
             />
-        </>
+        </Col>
     )
 }
 
