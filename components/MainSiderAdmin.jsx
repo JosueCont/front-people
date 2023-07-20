@@ -73,6 +73,7 @@ const MainSider = ({
       business: "/business/companies",
       // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
+      centers: "/business/centers",
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
@@ -174,6 +175,7 @@ const MainSider = ({
       let children0 = [
         getItem("Empresas", "business"),
         getItem("Prestaciones", "integrationFactors"),
+        getItem("Centros de trabajo", "centers"),
         // getItem("Registros patronales", "patronal"),
 
       ]
