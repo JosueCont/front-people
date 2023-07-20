@@ -223,8 +223,17 @@ const MainSider = ({
         getItem("Comunicados", "releases"),
         getItem("Eventos", "events")
       ]
-      children01.push(getItem("Concierge", "concierge",<></>, children002))
-      items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
+
+      if (props?.applications && (_.has(props.applications, "concierge") && props.applications["concierge"].active)) {
+        children01.push(getItem("Concierge", "concierge",<></>, children002))
+      }
+
+      if(children01.length>0){
+        items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
+      }
+
+
+
 
       // Reclutamiento y selección
       if (props?.applications && (_.has(props.applications, "jobbank") && props.applications["jobbank"].active)) {
