@@ -71,6 +71,46 @@ export const downLoadFileBlob = async (
     });
 };
 
+export const downLoadFileBlobAwait = async (
+  url,
+  name = "Example.xlsx",
+  type = "POST",
+  params = null,
+  Textmessage = null,
+  setLoading=null,
+) => {
+  if(setLoading) setLoading(true)
+  let headers = {
+    method: type,
+    responseType: "blob",
+  };
+  if (params) headers.data = params;
+  axios(
+    url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
+    headers
+  )
+    .then((response) => {
+      const blob = new Blob([response.data]);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      if(setLoading) setLoading(false)
+    })
+    .catch((e) => {
+      console.log('Error xd', e.response)
+      let errorMessage = e.response?.data?.message || ""
+       if (errorMessage !== ""){
+        message.error(errorMessage)
+      } else if(Textmessage){
+        message.error(Textmessage)
+      }else if(e?.response?.status===404){
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      } 
+      if(setLoading) setLoading(false)
+    });
+};
+
 export const UserPermissions = (permits = null, is_admin = false) => {
   let perms = {
     person: {

@@ -429,6 +429,22 @@ class WebApiPayroll {
     );
   }
 
+  static UploadCreditNoteLayout(data){
+    return WebApi.ApisType(
+      `payroll/read_credit_note_layout`,
+    "post",
+    data
+    )
+  }
+
+  static saveConsolidationCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/save_consolidation_credit_note`,
+    "post",
+    data
+    )
+  }
+
 }
 
 export default WebApiPayroll;
