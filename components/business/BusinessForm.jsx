@@ -29,7 +29,6 @@ import {
     StopOutlined,
     TableOutlined,
 } from "@ant-design/icons";
-import { FiMapPin } from 'react-icons/fi';
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainInter";
@@ -267,17 +266,6 @@ const businessForm = ({ currentNode, ...props }) => {
                     </>
                 );
             },
-        },
-        {
-            title: 'Centros de trabajo',
-            render: (item) => (
-                <Tooltip title='Agregar'>
-                    <FiMapPin style={{cursor: 'pointer'}} onClick={()=> router.push({
-                        pathname: '/business/companies/centers',
-                        query: {id: item.id}
-                    })}/>
-                </Tooltip>
-            )
         },
         {
             title: "Acciones",
