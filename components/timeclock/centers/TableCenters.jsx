@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import { connect } from 'react-redux';
 import { getWorkCenters } from '../../../redux/timeclockDuck';
-import WebApiPeople from '../../../api/WebApiPeople';
+import WebApiTimeclock from '../../../api/WebApiTimeclock';
 import ListItems from '../../../common/ListItems';
 import {
     EllipsisOutlined,
@@ -34,7 +34,7 @@ const TableCenters = ({
 
     const actionStatus = async (is_active, item) => {
         try {
-            await WebApiPeople.updateWorkCenter(item.id, { is_active });
+            await WebApiTimeclock.updateWorkCenter(item.id, { is_active });
             getWorkCenters(timeclock_filters, timeclock_page, timeclock_page_size);
             message.success('Estatus actualizado')
         } catch (e) {
@@ -46,7 +46,7 @@ const TableCenters = ({
     const actionDelete = async () =>{
         try {
             let id = itemsSelected?.at(-1)?.id;
-            await WebApiPeople.deleteWorkCenter(id);
+            await WebApiTimeclock.deleteWorkCenter(id);
             getWorkCenters(timeclock_filters, timeclock_page, timeclock_page_size);
             message.success('Centro eliminado')
         } catch (e) {
