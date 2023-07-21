@@ -16,7 +16,7 @@ import {
     Tooltip,
     Upload
 } from "antd";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
     DeleteOutlined,
     EditOutlined,
@@ -30,21 +30,21 @@ import {
     TableOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import Router, {useRouter} from "next/router";
+import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainInter";
 import NodeTreeView from "./TreeView/treeview";
-import {userId} from "../../libs/auth";
-import {connect} from "react-redux";
+import { userId } from "../../libs/auth";
+import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
-import {messageDeleteSuccess, messageError, messageSaveSuccess, messageUpdateSuccess} from "../../utils/constant";
-import {verifyMenuNewForTenant} from "../../utils/functions";
+import { messageDeleteSuccess, messageError, messageSaveSuccess, messageUpdateSuccess } from "../../utils/constant";
+import { verifyMenuNewForTenant } from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 import _, { debounce } from "lodash";
 
-const {TextArea} = Input;
-const {Option} = Select;
+const { TextArea } = Input;
+const { Option } = Select;
 
-const businessForm = ({currentNode, ...props}) => {
+const businessForm = ({ currentNode, ...props }) => {
     let router = useRouter();
     const [business, setBusiness] = useState([]);
     const [allBusiness, setAllBusiness] = useState([]);
@@ -65,7 +65,7 @@ const businessForm = ({currentNode, ...props}) => {
     let personId = userId();
     const [admin, setAdmin] = useState(false);
     const [addB, setAddB] = useState(false);
-    
+
 
     const onFinish = (values) => {
         if (isDeleted) {
@@ -281,7 +281,7 @@ const businessForm = ({currentNode, ...props}) => {
                                     <Col className="gutter-row" span={6}>
                                         <Link href={`/business/companies/${item.id}`}>
                                             <Tooltip title="Configuración">
-                                                <SettingOutlined/>
+                                                <SettingOutlined />
                                             </Tooltip>
                                         </Link>
                                     </Col>
@@ -289,7 +289,7 @@ const businessForm = ({currentNode, ...props}) => {
                             {props.permissions && props.permissions.edit && (
                                 <Col className="gutter-row" span={6}>
                                     <Tooltip title="Editar">
-                                        <EditOutlined onClick={() => showModal("edit", item)}/>
+                                        <EditOutlined onClick={() => showModal("edit", item)} />
                                     </Tooltip>
                                 </Col>
                             )}
@@ -297,7 +297,7 @@ const businessForm = ({currentNode, ...props}) => {
                                 <Col className="gutter-row" span={6}>
                                     {item.id == props.user.node ? (
                                         <Tooltip title="No puedes eliminar la empresa a la que estas registrada">
-                                            <StopOutlined/>
+                                            <StopOutlined />
                                         </Tooltip>
                                     ) : (
                                         <Tooltip title="Eliminar">
@@ -386,8 +386,8 @@ const businessForm = ({currentNode, ...props}) => {
 
     const uploadButton = (
         <div>
-            {loadingLogo ? <LoadingOutlined/> : <PlusOutlined/>}
-            <div style={{marginTop: 8}}>Upload</div>
+            {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Upload</div>
         </div>
     );
 
@@ -434,7 +434,7 @@ const businessForm = ({currentNode, ...props}) => {
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={"pointer"}
-                    onClick={() => router.push({pathname: "/home/persons/"})}
+                    onClick={() => router.push({ pathname: "/home/persons/" })}
                 >
                     Inicio
                 </Breadcrumb.Item>
@@ -443,13 +443,13 @@ const businessForm = ({currentNode, ...props}) => {
                 }
                 <Breadcrumb.Item>Empresa</Breadcrumb.Item>
                 <Breadcrumb.Item
-                    // className={"pointer"}
-                    // onClick={() => (treeTable ? "" : setTreeTable(true))}
+                // className={"pointer"}
+                // onClick={() => (treeTable ? "" : setTreeTable(true))}
                 >
                     Empresas
                 </Breadcrumb.Item>
             </Breadcrumb>
-            <div className="container" style={{width: "100%"}}>
+            <div className="container" style={{ width: "100%" }}>
                 <Row justify={"end"}>
                     <Col>
                         {props.permissions && props.permissions.create && (
@@ -461,22 +461,22 @@ const businessForm = ({currentNode, ...props}) => {
                                 }}
                                 onClick={() => showModal("add")}
                             >
-                                <PlusOutlined/>
+                                <PlusOutlined />
                                 Agregar empresa
                             </Button>
                         )}
                     </Col>
                 </Row>
                 <Row justify={"end"}>
-                    <Col style={{margin: "1%"}}>
+                    <Col style={{ margin: "1%" }}>
                         {treeTable ? (
                             <Button onClick={changeView}>
-                                <NodeExpandOutlined/>
+                                <NodeExpandOutlined />
                                 Vista de árbol
                             </Button>
                         ) : (
                             <Button onClick={changeView}>
-                                <TableOutlined/>
+                                <TableOutlined />
                                 Tabla
                             </Button>
                         )}
@@ -486,10 +486,10 @@ const businessForm = ({currentNode, ...props}) => {
                     <Col span={24}>
                         {treeTable ? (
                             <ConfigProvider locale={esES}>
-                                <Input onChange={debouncedSearch} style={{ width:300 }} allowClear />
+                                <Input onChange={debouncedSearch} style={{ width: 300 }} allowClear />
                                 <Table
                                     className={"mainTable"}
-                                    scroll={{x: 300}}
+                                    scroll={{ x: 300 }}
                                     size="small"
                                     columns={columns}
                                     dataSource={business}
@@ -505,7 +505,7 @@ const businessForm = ({currentNode, ...props}) => {
                                 />
                             </ConfigProvider>
                         ) : (
-                            <NodeTreeView/>
+                            <NodeTreeView />
                         )}
                     </Col>
                 </Row>
@@ -538,13 +538,13 @@ const businessForm = ({currentNode, ...props}) => {
                     layout={"vertical"}
                     form={formBusiness}
                 >
-                    <Form.Item name="id" label="id" style={{display: "none"}}>
-                        <Input type="text"/>
+                    <Form.Item name="id" label="id" style={{ display: "none" }}>
+                        <Input type="text" />
                     </Form.Item>
                     <Form.Item label="Logo">
                         <Upload {...configUpload}>
                             {imageUrl ? (
-                                <img src={imageUrl} alt="avatar" style={{width: "100%"}}/>
+                                <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
                             ) : (
                                 uploadButton
                             )}
@@ -553,16 +553,16 @@ const businessForm = ({currentNode, ...props}) => {
                     <Form.Item
                         name="name"
                         label="Nombre"
-                        rules={[{required: true, message: "Ingresa un nombre"}]}
+                        rules={[{ required: true, message: "Ingresa un nombre" }]}
                     >
-                        <Input placeholder="Nombre de la empresa"/>
+                        <Input placeholder="Nombre de la empresa" />
                     </Form.Item>
                     <Form.Item
                         name="description"
                         label="Descripción"
-                        rules={[{required: true, message: "Ingresa una descripción"}]}
+                        rules={[{ required: true, message: "Ingresa una descripción" }]}
                     >
-                        <TextArea rows={4} showCount maxLength={200}/>
+                        <TextArea rows={4} showCount maxLength={200} />
                     </Form.Item>
                     <Form.Item name="FNode" label="Nodo padre">
                         <Select
@@ -610,8 +610,8 @@ const businessForm = ({currentNode, ...props}) => {
                     layout={"vertical"}
                     form={formBusiness}
                 >
-                    <Form.Item name="id" label="id" style={{display: "none"}}>
-                        <Input type="text"/>
+                    <Form.Item name="id" label="id" style={{ display: "none" }}>
+                        <Input type="text" />
                     </Form.Item>
                     <Alert
                         type="warning"

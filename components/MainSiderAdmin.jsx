@@ -16,7 +16,8 @@ import Icon, {
   FunnelPlotOutlined,
   SolutionOutlined,
   PieChartFilled,
-  SafetyCertificateOutlined
+  SafetyCertificateOutlined,
+  ClockCircleOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -118,7 +119,9 @@ const MainSider = ({
       jb_selection: "/jobbank/selection",
       jb_preselection: "/jobbank/preselection",
       jb_interviews: "/jobbank/interviews",
-      jb_applications: "/jobbank/applications"
+      jb_applications: "/jobbank/applications",
+      tm_centers: "/timeclock/centers",
+      tm_logs: "/timeclock/logs"
     };
     switch (key){
       case "sukha":
@@ -221,8 +224,23 @@ const MainSider = ({
         getItem("Comunicados", "releases"),
         getItem("Eventos", "events")
       ]
-      children01.push(getItem("Concierge", "concierge",<></>, children002))
-      items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
+
+      if (props?.applications && (_.has(props.applications, "concierge") && props.applications["concierge"].active)) {
+        children01.push(getItem("Concierge", "concierge",<></>, children002))
+      }
+
+      if(children01.length>0){
+        items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
+      }
+      
+      let subTimeClock = [
+        getItem("Centros de trabajo", "tm_centers"),
+        getItem("Logs de eventos", "tm_logs")
+      ];
+
+      if(props?.applications && (_.has(props.applications, "timeclock") && props.applications["timeclock"].active)){
+        items.push(getItem("Rejol checador", "timeclock", <ClockCircleOutlined />, subTimeClock))
+      }
 
       // Reclutamiento y selección
       if (props?.applications && (_.has(props.applications, "jobbank") && props.applications["jobbank"].active)) {

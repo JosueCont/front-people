@@ -473,7 +473,7 @@ export const createFiltersJB = (obj = {}, discard = []) => {
 
 export const getFiltersJB = (obj = {}, discard = []) => {
   if (Object.keys(obj).length <= 0) return '';
-  return Object.entries(obj).reduce((query, [key, val]) => {
+  return Object.entries(obj).reduce((query, [key, val], idx) => {
     if (["size", ...discard].includes(key)) return query;
     if (key == "page") {
       const find_ = item => item[0] == "size";
@@ -554,20 +554,16 @@ export const downloadCustomFile = async ({
   try {
     let config = { url, method: 'GET', responseType: 'blob' };
     let response = await axios(config);
-    downloadBLOB({data: response.data, name});
+    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = name;
+    link.target = "_blank";
+    link.click();
+    window.URL.revokeObjectURL(urlBlob);
   } catch (e) {
     console.log(e)
   }
-}
-
-export const downloadBLOB = ({data, name}) => {
-  const urlBlob = window.URL.createObjectURL(new Blob([data]));
-  const link = document.createElement('a');
-  link.href = urlBlob;
-  link.download = name;
-  link.target = "_blank";
-  link.click();
-  window.URL.revokeObjectURL(urlBlob);
 }
 
 export const getPercentGenJB = (assets) => {

@@ -759,7 +759,7 @@ class WebApiPeople {
       data
     );
   }
-
+  
 }
 
 export default WebApiPeople;
