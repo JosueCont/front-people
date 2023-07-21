@@ -21,7 +21,7 @@ export const useFiltersCenters = () => {
 
     const getCompany = (id) => getValueFilter({
         value: id,
-        list: list_companies?.results
+        list: list_companies
     })
 
     const listGets = {

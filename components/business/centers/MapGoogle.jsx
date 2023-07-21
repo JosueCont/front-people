@@ -175,7 +175,6 @@ const MapGoogle = ({
     }
 
     const resetDrawing = () => {
-        setPolygon([])
         setIsDrawing(false)
         instance.map.setOptions({ draggable: true })
         manager.setMap(null)
@@ -191,8 +190,10 @@ const MapGoogle = ({
             return;
         }
 
+        setPolygon([])
         shape.setMap(null)
         setShape({})
+
     }
 
     const getCenter = (polygon) => {
