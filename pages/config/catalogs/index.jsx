@@ -1,6 +1,6 @@
 import { withAuthSync } from "../../../libs/auth";
 import MainLayout from "../../../layout/MainInter";
-import { Breadcrumb, Tabs, Card, Tooltip } from "antd";
+import { Breadcrumb, Tabs, Card, Tooltip, Button, Row, Col, Space, message } from "antd";
 import {
   ApartmentOutlined,
   GoldOutlined,
@@ -11,6 +11,8 @@ import {
   DollarCircleOutlined,
   ReadOutlined,
   TagsOutlined,
+  UploadOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Router from "next/router";
@@ -31,13 +33,46 @@ import TagCatalog from "../../../components/catalogs/TagCatalog";
 import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
 import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 import {FormattedMessage} from "react-intl";
-import React from "react";
+import React, { useState } from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
 import MainIndexConfig from "../../../components/config/MainConfig";
+import ModalUploadCatalog from '../../../components/catalogs/ModalUploadCatalog'
+import { downLoadFileBlob, getDomain } from "../../../utils/functions";
+import { API_URL_TENANT } from "../../../config/config";
+import axios from "axios";
+import { typeHttp } from "../../../config/config";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
+  const [showModal, setShowModal] = useState(false)
+  const [downloading, setDownloading] = useState(false)
+
+  const downloadAllCatalogs = async () => {
+    setDownloading(true)
+    try {
+      let headers = {
+        method: "GET",
+        responseType: "blob",
+      };
+      let respfile = await axios(
+        `${typeHttp}://${getDomain(API_URL_TENANT)}/business/all-catalogs/?node_id=${props?.currentNode?.id}`,
+        headers
+      )
+      if (respfile?.status == 200){
+        console.log('respFile', respfile)
+        const blob = new Blob([respfile.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'Catalogos.xlsx';
+        link.click();
+        setDownloading(false)
+      }
+    } catch (error) {
+      message.error("No se pudo descargar el archivo")
+      setDownloading(false)
+    }
+  }
 
   return (
     <>
@@ -48,9 +83,23 @@ const configBusiness = ({ ...props }) => {
         >
           <Card bordered={true}>
             <>
-              <Title style={{ fontSize: "25px" }}>
-                Catálogos de {props.currentNode && props.currentNode.name}
-              </Title>
+              <Row justify="space-between">
+                <Col>
+                  <Title style={{ fontSize: "25px" }}>
+                    Catálogos de {props.currentNode && props.currentNode.name}
+                  </Title>
+                </Col>
+                <Col>
+                <Space>
+                  <Button loading={downloading} icon={<DownloadOutlined />} onClick={() => downloadAllCatalogs()} >
+                    Descargar todos los catalogos
+                  </Button>
+                  <Button disabled={downloading} icon={<UploadOutlined />} onClick={() => setShowModal(true)} >
+                    Carga masiva de catalogos
+                  </Button>
+                  </Space>
+                </Col>
+              </Row>
               <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"}>
                 {props.permissions.department.view && (
                   <TabPane
@@ -258,6 +307,7 @@ const configBusiness = ({ ...props }) => {
             </>
           </Card>
         </div>
+        <ModalUploadCatalog isVisible={showModal} setIsVisible={setShowModal} node={props.currentNode && props.currentNode} />
       </MainIndexConfig>
     </>
   );

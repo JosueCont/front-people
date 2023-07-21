@@ -47,16 +47,19 @@ import { useRouter } from "next/router";
 import Router from "next/router";
 import WebApiPeople from "../../api/WebApiPeople";
 import { connect } from "react-redux";
+import { getCompanyFiscalInformation } from "../../redux/fiscalDuck";
 
 /** */
 
 const DetailPerson = ({
   config,
-  person,
+  person=null,
   setLoading,
   deletePerson = true,
   hideProfileSecurity = true,
-  setPerson,
+  setPerson,  
+  getCompanyFiscalInformation,
+  companyFiscalInformation = null,
   ...props
 }) => {
   const { Title } = Typography;
@@ -66,6 +69,10 @@ const DetailPerson = ({
   const router = useRouter();
   const [refreshTab12,setRefreshTab12] = useState(false)
   const [refreshTab10,setRefreshTab10] = useState(false)
+
+  useEffect(()=>{
+    getCompanyFiscalInformation();
+  },[person])
 
   const showModal = () => {
     modal ? setModal(false) : setModal(true);
@@ -127,7 +134,7 @@ const DetailPerson = ({
 
   return (
     <>
-      <Title level={3}>Información Personal</Title>
+      <Title level={3}>Información Personal</Title>      
       <Card bordered={true}>
         <Row>
           <Col span={12}>
@@ -159,6 +166,7 @@ const DetailPerson = ({
           person={person}
           setLoading={setLoading}
           hideProfileSecurity={hideProfileSecurity}
+          assimilated_pay={companyFiscalInformation?.assimilated_pay}
         />
         <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
         <Tabs onTabClick={(tabcode) => processTabs(tabcode)} tabPosition="left">
@@ -186,12 +194,15 @@ const DetailPerson = ({
               key="tab_10"
             >
               <FormPayrollPerson
-                  refreshtab={refreshTab10}
-                  onFinishRefresh={()=>setRefreshTab10(false)}
-                  person={person} node={person.node} />
+                refreshtab={refreshTab10}
+                onFinishRefresh={()=>setRefreshTab10(false)}
+                person={person} node={person.node}
+                assimilated_pay={companyFiscalInformation?.assimilated_pay}
+              />
             </TabPane>
-          )}
-          <TabPane
+          )}          
+          {companyFiscalInformation?.assimilated_pay == false && 
+           <TabPane
             tab={
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
@@ -207,7 +218,8 @@ const DetailPerson = ({
               person_id={person.id}
               node={person.node}
             />
-          </TabPane>
+          </TabPane>}
+         
           <TabPane
             tab={
                 <div className="container-title-tab">
@@ -407,7 +419,8 @@ const mapState = (state) => {
   return {
     applications: state.userStore.applications,
     userStore: state.userStore.user,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information
   };
 };
 
-export default connect(mapState)(DetailPerson);
+export default connect(mapState, {getCompanyFiscalInformation})(DetailPerson);

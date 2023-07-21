@@ -176,6 +176,13 @@ class WebApiFiscal {
   static get_geograp_area(year) {
     return WebApi.ApisType(`/fiscal/geographic-area/?period=${year}`, 'get')
   }
+  
+  static getfiscalInformationNode(data) {
+    return WebApi.ApisType(
+      `/business/fiscal-information/?node=${data}&active=True`,
+      "get"
+    );
+  }
 }
 
 export default WebApiFiscal;
