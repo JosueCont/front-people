@@ -5,10 +5,10 @@ import React, {
     useCallback
 } from 'react';
 import esES from 'antd/lib/locale/es_ES';
-import MainInter from '../../../layout/MainInter';
+import MainInter from '../../layout/MainInter';
 import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
-import { verifyMenuNewForTenant } from '../../../utils/functions';
+import { verifyMenuNewForTenant } from '../../utils/functions';
 
 const MainBusiness = ({
     children,
@@ -32,7 +32,7 @@ const MainBusiness = ({
     return (
         <MainInter
             currentKey={pageKey}
-            defaultOpenKeys={["strategyPlaning", "company"]}
+            defaultOpenKeys={["timeclock"]}
         >
             <Breadcrumb>
                 <Breadcrumb.Item
@@ -41,10 +41,7 @@ const MainBusiness = ({
                 >
                     Inicio
                 </Breadcrumb.Item>
-                {verifyMenuNewForTenant() &&
-                    <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Empresa</Breadcrumb.Item>
+                <Breadcrumb.Item>Reloj checador</Breadcrumb.Item>
                 {extraBread.map((item, idx) =>(
                     <Breadcrumb.Item key={"bread_"+idx} {...breadProps(item)}>
                         {item.name}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withAuthSync } from '../../../libs/auth';
-import AddOrEditCenter from '../../../components/business/centers/AddOrEditCenter';
+import AddOrEditCenter from '../../../components/timeclock/centers/AddOrEditCenter';
 
 const add = () => {
     return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { withAuthSync } from '../../../libs/auth';
-import MainBusiness from '../../../components/business/centers/MainBusiness';
-import SearchCenters from '../../../components/business/centers/SearchCenters';
-import TableCenters from '../../../components/business/centers/TableCenters';
+import MainIndexTM from '../../../components/timeclock/MainIndexTM';
+import SearchCenters from '../../../components/timeclock/centers/SearchCenters';
+import TableCenters from '../../../components/timeclock/centers/TableCenters';
 import { getWorkCenters, getCompanies } from '../../../redux/UserDuck';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -32,13 +32,13 @@ const index = ({
     }, [router.query])
 
     return (
-        <MainBusiness
-            pageKey={["centers"]}
+        <MainIndexTM
+            pageKey={["tm_centers"]}
             extraBread={[{ name: 'Centros de trabajo' }]}
         >
             <SearchCenters />
             <TableCenters />
-        </MainBusiness>
+        </MainIndexTM>
     )
 }
 

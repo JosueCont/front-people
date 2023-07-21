@@ -31,7 +31,6 @@ const DetailsCenter = ({
     const [loading, setLoading] = useState(false);
     const [polygon, setPolygon] = useState([]);
     const [shape, setShape] = useState({});
-
     const [infoWOrk, setInfoWork] = useState({});
 
     useEffect(() => {
@@ -39,6 +38,14 @@ const DetailsCenter = ({
             getInfoWorkCenter();
         }
     }, [router.query?.id])
+
+    useEffect(() => {
+        if (currentNode && action == 'add') {
+            formCenter.setFieldsValue({
+                node: currentNode?.id
+            })
+        }
+    }, [currentNode])
 
     useEffect(() => {
         if (Object.keys(infoWOrk)?.length <= 0) return;
@@ -52,7 +59,7 @@ const DetailsCenter = ({
             setInfoWork(response.data)
             let name = response.data?.name;
             let paths = response.data?.polygon;
-            setShape({name, paths})
+            setShape({ name, paths })
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -84,7 +91,7 @@ const DetailsCenter = ({
         }
     }
 
-    const setValuesForm = () =>{
+    const setValuesForm = () => {
         formCenter.resetFields();
         let values = {};
         values.node = infoWOrk.node ? infoWOrk.node?.id : null;
@@ -116,7 +123,7 @@ const DetailsCenter = ({
 
     const actionBack = () => {
         router.push({
-            pathname: '/business/centers',
+            pathname: '/timeclock/centers',
             query: newFilters
         })
     }

@@ -68,7 +68,7 @@ const TableCenters = ({
     const onChangePage = ({current, pageSize}) =>{
         let filters = {...router.query, page: current, size: pageSize};
         router.replace({
-            pathname: '/business/centers',
+            pathname: '/timeclock/centers',
             query: filters
         }, undefined, {shallow: true})
     }
@@ -80,7 +80,7 @@ const TableCenters = ({
                 key='1'
                 icon={<EditOutlined />}
                 onClick={() => router.push({
-                    pathname: '/business/centers/edit',
+                    pathname: '/timeclock/centers/edit',
                     query: { ...router.query, id: item.id }
                 })}
             >

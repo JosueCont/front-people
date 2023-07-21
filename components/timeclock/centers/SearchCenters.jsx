@@ -20,7 +20,7 @@ const SearchCenters = () => {
     const { listKeys, listGets } = useFiltersCenters();
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/business/centers/',
+        pathname: '/timeclock/centers',
         query: filters
     }, undefined, {shallow: true});
 
@@ -66,7 +66,7 @@ const SearchCenters = () => {
                                     </Button>
                                 </Tooltip>
                                 <Button onClick={()=> router.push({
-                                    pathname: '/business/centers/add',
+                                    pathname: '/timeclock/centers/add',
                                     query: router.query
                                 })}>
                                     Agregar

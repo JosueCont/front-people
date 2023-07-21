@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import MainBusiness from './MainBusiness';
+import MainIndexTM from '../MainIndexTM';
 import DetailsCenter from './DetailsCenter';
 import { getCompanies } from '../../../redux/UserDuck';
 import { connect } from 'react-redux';
@@ -30,13 +30,13 @@ const AddOrEditCenter = ({
     },[currentUser])
 
     const ExtraBread = [
-        {name: 'Centros de trabajo', URL: '/business/centers'},
+        {name: 'Centros de trabajo', URL: '/timeclock/centers'},
         {name: action == 'add' ? 'Registrar' : 'Información'}
     ]
 
     return (
-        <MainBusiness
-            pageKey={["centers"]}
+        <MainIndexTM
+            pageKey={["tm_centers"]}
             extraBread={ExtraBread}
             newFilters={newFilters}
         >
@@ -44,7 +44,7 @@ const AddOrEditCenter = ({
                 action={action}
                 newFilters={newFilters}
             />
-        </MainBusiness>
+        </MainIndexTM>
     )
 }
 const mapState = (state) =>{
