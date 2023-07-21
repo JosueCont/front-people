@@ -21,7 +21,14 @@ const initialData = {
   load_persons: false,
   info_current_rol: {},
   load_current_rol: false,
-  lang: 'es-mx'
+  lang: 'es-mx',
+  list_work_centers: {},
+  load_work_centers: false,
+  list_companies: [],
+  load_companies: false,
+  user_page: 1,
+  user_filters: "",
+  user_page_size: 10
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -38,6 +45,8 @@ const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 const CHANGE_LANG = "CHANGE_LANG";
+const GET_WORK_CENTERS = "GET_WORK_CENTERS";
+const GET_COMPANIES = "GET_COMPANIES";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -72,9 +81,24 @@ const webReducer = (state = initialData, action) => {
         load_persons: action.fetching
       }
     case GET_CURRENT_ROL:
-      return {...state,
+      return {
+        ...state,
         info_current_rol: action.payload,
         load_current_rol: action.fetching
+      }
+    case GET_WORK_CENTERS:
+      return {
+        ...state,
+        list_work_centers: action.payload,
+        load_work_centers: action.fetching,
+        user_page: action.page,
+        user_filters: action.query,
+        user_page_size: action.size
+      }
+    case GET_COMPANIES:
+      return {...state,
+        list_companies: action.payload,
+        load_companies: action.fetching
       }
     default:
       return state;
@@ -105,7 +129,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
       }
     })
 
-    .catch((error) => {});
+    .catch((error) => { });
 };
 
 export const showScreenError = () => async (dispatch, getState) => {
@@ -113,29 +137,29 @@ export const showScreenError = () => async (dispatch, getState) => {
     dispatch({
       type: ERROR,
     });
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const showLoading = (data) => async (dispatch, getState) => {
   try {
     if (data) dispatch({ type: LOADING_WEB });
     else dispatch({ type: LOADING_WEB_SUCCESS });
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const setNullCompany = () => async (dispatch, getState) => {
   try {
     sessionStorage.removeItem("image");
     sessionStorage.removeItem("data");
-    dispatch({ type: COMPANY_SELCTED, payload:null });
+    dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {
     console.log('error', error)
   }
 }
 
-export const companySelected = (data, config, hideCompany=false) => async (dispatch, getState) => {
+export const companySelected = (data, config, hideCompany = false) => async (dispatch, getState) => {
   try {
-    
+
     if (!data && !hideCompany) data = userCompanyId();
     if (data && config) {
       let response = await WebApiPeople.getCompany(data);
@@ -143,7 +167,7 @@ export const companySelected = (data, config, hideCompany=false) => async (dispa
       dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
-      dispatch(getListAppsBackdoor(response.data.id,1))
+      dispatch(getListAppsBackdoor(response.data.id, 1))
       if (config.nomina_enabled) {
         dispatch(doCompanySelectedPayroll(response.data.id));
         dispatch(getCfdiVersion());
@@ -182,12 +206,12 @@ export const setDataUpload = (data) => async (dispatch, getState) => {
   }
 };
 
-export const changeLanguage = (lang='es-mx') => async (dispatch, getState) => {
+export const changeLanguage = (lang = 'es-mx') => async (dispatch, getState) => {
   try {
-    if(!lang){
+    if (!lang) {
       lang = localStorage.getItem("userLang");
-    }else{
-      localStorage.setItem('userLang',lang)
+    } else {
+      localStorage.setItem('userLang', lang)
     }
 
     dispatch({ type: CHANGE_LANG, payload: lang });
@@ -206,7 +230,7 @@ export const setUser = () => async (dispatch, getState) => {
     dispatch(setUserPermissions(response.data.jwt_data.perms, response.data.is_admin));
     let profile = response?.data?.administrator_profile;
     let have_rol = profile ? Object.keys(profile).length > 0 : false;
-    if(!(response.data?.is_admin && have_rol)) return;
+    if (!(response.data?.is_admin && have_rol)) return;
     dispatch(getCurrentRol(profile.id))
     return true;
   } catch (error) {
@@ -226,7 +250,7 @@ export const setUserPermissions =
     }
   };
 
-export const resetCurrentnode = () => async (dispatch, getState) => {  
+export const resetCurrentnode = () => async (dispatch, getState) => {
   try {
     dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {
@@ -234,7 +258,7 @@ export const resetCurrentnode = () => async (dispatch, getState) => {
   }
 };
 
-export const saveCurrentNode = (data) => async (dispatch) =>{
+export const saveCurrentNode = (data) => async (dispatch) => {
   dispatch({ type: COMPANY_SELCTED, payload: data });
 }
 
@@ -249,12 +273,36 @@ export const getPersonsCompany = (data) => async (dispatch, getState) => {
   }
 };
 
-export const getCurrentRol = (id_rol) => async (dispatch) =>{
-  const typeFunction = { type: GET_CURRENT_ROL, payload: {}, fetching: false};
-  dispatch({...typeFunction, fetching: true})
+export const getCurrentRol = (id_rol) => async (dispatch) => {
+  const typeFunction = { type: GET_CURRENT_ROL, payload: {}, fetching: false };
+  dispatch({ ...typeFunction, fetching: true })
   try {
     let response = await WebApiPeople.getInfoAdminRole(id_rol);
-    dispatch({...typeFunction, payload: response.data})
+    dispatch({ ...typeFunction, payload: response.data })
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}
+
+export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
+  const typeFunction = { type: GET_WORK_CENTERS, payload: {}, fetching: false, query, page, size };
+  dispatch({ ...typeFunction, fetching: true })
+  try {
+    let response = await WebApiPeople.getWorkCenters(query);
+    dispatch({ ...typeFunction, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(typeFunction)
+  }
+}
+
+export const getCompanies = (query = '') => async (dispatch) => {
+  const typeFunction = { type: GET_COMPANIES, payload: [], fetching: false};
+  dispatch({ ...typeFunction, fetching: true })
+  try {
+    let response = await WebApiPeople.getCompanies(query);
+    dispatch({ ...typeFunction, payload: response.data?.results })
   } catch (e) {
     console.log(e)
     dispatch(typeFunction)
