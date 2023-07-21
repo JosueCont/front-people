@@ -12,7 +12,6 @@ import {
     EditOutlined,
     DeleteOutlined
 } from '@ant-design/icons';
-import { SlLocationPin } from 'react-icons/sl';
 import { FiMapPin } from 'react-icons/fi';
 
 const TableLogs = ({
@@ -62,11 +61,11 @@ const TableLogs = ({
             title: 'Acciones',
             width: 80,
             render: (item) => (
-                <Dropdown placement='bottomRight'>
+                // <Dropdown placement='bottomRight'>
                     <Button size='small'>
                         <EllipsisOutlined />
                     </Button>
-                </Dropdown>
+                // </Dropdown>
             )
         }
     ]
