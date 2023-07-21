@@ -5,7 +5,6 @@ import {
   SyncOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
 import FiltersCenters from './FiltersCenters';
