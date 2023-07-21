@@ -105,12 +105,14 @@ const TableCenters = ({
         {
             title: 'Nombre',
             key: 'name',
-            dataIndex: 'name'
+            dataIndex: 'name',
+            ellipsis: true,
         },
         {
             title: 'Dirección',
             key: 'address',
-            dataIndex: 'address'
+            dataIndex: 'address',
+            ellipsis: true
         },
         {
             title: 'Estatus',
