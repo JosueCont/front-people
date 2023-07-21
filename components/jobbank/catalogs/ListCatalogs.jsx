@@ -23,7 +23,7 @@ const ListCatalogs = () => {
         setTimeout(()=>{
             setLisCatalogs(values);
             setLoading(false)
-        },1000)
+        },500)
     }
 
     const onFilter = () =>{

@@ -27,7 +27,7 @@ export const CardInfo = styled(ContentVertical)`
 `;
 
 export const CardItem = styled(Card)`
-    height: ${({ hg }) => hg ? hg : '50%'};
+    height: ${({ hg }) => hg ? hg : '100%'};
     & .ant-card-extra{
         padding: 0px;
         font-size: 16px;

@@ -554,16 +554,20 @@ export const downloadCustomFile = async ({
   try {
     let config = { url, method: 'GET', responseType: 'blob' };
     let response = await axios(config);
-    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = urlBlob;
-    link.download = name;
-    link.target = "_blank";
-    link.click();
-    window.URL.revokeObjectURL(urlBlob);
+    downloadBLOB({ data: response.data, name });
   } catch (e) {
     console.log(e)
   }
+}
+
+export const downloadBLOB = ({ data, name }) => {
+  const urlBlob = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement('a');
+  link.href = urlBlob;
+  link.download = name;
+  link.target = "_blank";
+  link.click();
+  window.URL.revokeObjectURL(urlBlob);
 }
 
 export const getPercentGenJB = (assets) => {
