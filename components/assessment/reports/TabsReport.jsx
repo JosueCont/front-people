@@ -51,6 +51,13 @@ const TabsReport = () => {
         }
     }
 
+    const onChangeTab = (e) =>{
+        setTypeReport(e)
+        setLoading(false)
+        setInfoReport([])
+        setColumnsMany(columns_many)
+    }
+
     const reportProps = {
         infoReport,
         setInfoReport,
@@ -62,13 +69,6 @@ const TabsReport = () => {
         columns_many,
         loadGroups,
         groupsPersons
-    }
-
-    const onChangeTab = (e) =>{
-        setTypeReport(e)
-        setLoading(false)
-        setInfoReport([])
-        setColumnsMany(columns_many)
     }
 
     return (

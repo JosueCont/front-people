@@ -81,7 +81,7 @@ const WidgetGeneration = () => {
 
     return (
         <CardInfo>
-            <CardItem jc='center' hg='100%' title={<>
+            <CardItem jc='center' title={<>
                 <img src='/images/people.png' />
                 <p><FormattedMessage id={'generations'} /></p>
             </>}>

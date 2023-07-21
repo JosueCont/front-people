@@ -72,6 +72,7 @@ const SearchInterviews = ({
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
+        if(router.query?.view) filters.view = router.query?.view;
         setFilters(filters);
     }
 

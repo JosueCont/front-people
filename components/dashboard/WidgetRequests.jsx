@@ -156,7 +156,7 @@ const WidgetRequests = () => {
         <>
             <CardInfo>
                 <CardItem
-                    jc='center' hg='100%' pd='0px 0px 16px 0px'
+                    pd='0px 0px 16px 0px'
                     title={<>
                         <img src='/images/requests.png' />
                         <p>Solicitudes de vacaciones</p>

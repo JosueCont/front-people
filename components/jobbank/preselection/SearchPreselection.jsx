@@ -10,6 +10,7 @@ import { createFiltersJB } from '../../../utils/functions';
 import TagFilters from '../TagFilters';
 import FiltersPreselection from './FiltersPreselection';
 import { useFiltersPreselection } from '../hook/useFiltersPreselection';
+import WebApiPeople from '../../../api/WebApiPeople';
 
 const SearchPreselection = ({
     currentNode,
@@ -20,7 +21,8 @@ const SearchPreselection = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listDefault } = useFiltersPreselection();
+    const { listKeys, listGets } = useFiltersPreselection();
+
     const idVacant = router.query?.vacant ?? null;
     const match = router.query?.applyMatch ?? null;
 
@@ -43,8 +45,10 @@ const SearchPreselection = ({
 
     const showModal = () =>{
         let filters = {...router.query};
-        filters.language = router.query?.language ? parseInt(router.query.language) : null;
-        filters.status_level_study = router.query?.status_level_study ? parseInt(router.query.status_level_study) : null;
+        filters.language = router.query?.language
+            ? parseInt(router.query.language) : null;
+        filters.status_level_study = router.query?.status_level_study
+            ? parseInt(router.query.status_level_study) : null;
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }

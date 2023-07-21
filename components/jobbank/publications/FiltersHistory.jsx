@@ -69,6 +69,7 @@ const FiltersHistory = ({
                             <DatePicker.RangePicker
                                 style={{width: '100%'}}
                                 format='DD-MM-YYYY'
+                                dropdownClassName='picker-range-jb'
                             />
                         </Form.Item>
                     </Col>

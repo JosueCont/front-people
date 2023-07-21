@@ -322,9 +322,10 @@ const TableAssign = ({
         },
         {
             title: "Acciones",
+            width: 80,
             render: (item) => {
                 return (
-                    <Dropdown overlay={() => menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={() => menuItem(item)}>
                         <Button size="small">
                             <EllipsisOutlined />
                         </Button>
