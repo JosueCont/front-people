@@ -3,7 +3,7 @@ import { withAuthSync } from '../../../libs/auth';
 import MainIndexTM from '../../../components/timeclock/MainIndexTM';
 import SearchCenters from '../../../components/timeclock/centers/SearchCenters';
 import TableCenters from '../../../components/timeclock/centers/TableCenters';
-import { getWorkCenters, getCompanies } from '../../../redux/UserDuck';
+import { getWorkCenters, getCompanies } from '../../../redux/timeclockDuck';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';

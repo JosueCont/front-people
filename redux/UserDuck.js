@@ -21,14 +21,7 @@ const initialData = {
   load_persons: false,
   info_current_rol: {},
   load_current_rol: false,
-  lang: 'es-mx',
-  list_work_centers: {},
-  load_work_centers: false,
-  list_companies: [],
-  load_companies: false,
-  user_page: 1,
-  user_filters: "",
-  user_page_size: 10
+  lang: 'es-mx'
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -45,8 +38,6 @@ const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 const CHANGE_LANG = "CHANGE_LANG";
-const GET_WORK_CENTERS = "GET_WORK_CENTERS";
-const GET_COMPANIES = "GET_COMPANIES";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -85,20 +76,6 @@ const webReducer = (state = initialData, action) => {
         ...state,
         info_current_rol: action.payload,
         load_current_rol: action.fetching
-      }
-    case GET_WORK_CENTERS:
-      return {
-        ...state,
-        list_work_centers: action.payload,
-        load_work_centers: action.fetching,
-        user_page: action.page,
-        user_filters: action.query,
-        user_page_size: action.size
-      }
-    case GET_COMPANIES:
-      return {...state,
-        list_companies: action.payload,
-        load_companies: action.fetching
       }
     default:
       return state;
@@ -279,30 +256,6 @@ export const getCurrentRol = (id_rol) => async (dispatch) => {
   try {
     let response = await WebApiPeople.getInfoAdminRole(id_rol);
     dispatch({ ...typeFunction, payload: response.data })
-  } catch (e) {
-    console.log(e)
-    dispatch(typeFunction)
-  }
-}
-
-export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
-  const typeFunction = { type: GET_WORK_CENTERS, payload: {}, fetching: false, query, page, size };
-  dispatch({ ...typeFunction, fetching: true })
-  try {
-    let response = await WebApiPeople.getWorkCenters(query);
-    dispatch({ ...typeFunction, payload: response.data})
-  } catch (e) {
-    console.log(e)
-    dispatch(typeFunction)
-  }
-}
-
-export const getCompanies = (query = '') => async (dispatch) => {
-  const typeFunction = { type: GET_COMPANIES, payload: [], fetching: false};
-  dispatch({ ...typeFunction, fetching: true })
-  try {
-    let response = await WebApiPeople.getCompanies(query);
-    dispatch({ ...typeFunction, payload: response.data?.results })
   } catch (e) {
     console.log(e)
     dispatch(typeFunction)
