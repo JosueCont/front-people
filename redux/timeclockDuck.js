@@ -31,7 +31,7 @@ const timeclockReducer = (state = initialState, action) => {
             return {
                 ...state,
                 list_logs_events: action.payload,
-                load_work_centers: action.fetching,
+                load_logs_events: action.fetching,
                 timeclock_page: action.page,
                 timeclock_filters: action.query,
                 timeclock_page_size: action.size
@@ -52,6 +52,19 @@ export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispat
     dispatch({ ...typeFunction, fetching: true })
     try {
         let response = await WebApiTimeclock.getWorkCenters(query);
+        dispatch({ ...typeFunction, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getLogsEvents = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
+    const typeFunction = { type: GET_LOGS_EVENTS, payload: {}, fetching: false, query, page, size };
+    dispatch({ ...typeFunction, fetching: true })
+    try {
+        let response = await WebApiTimeclock.getLogsEvents(query);
+        console.log("🚀 ~ file: timeclockDuck.js:67 ~ getLogsEvents ~ response:", response)
         dispatch({ ...typeFunction, payload: response.data })
     } catch (e) {
         console.log(e)

@@ -26,6 +26,10 @@ class WebApiTimeclock {
     static deleteWorkCenter(id) {
         return WebApi.ApisType(`/timeclock/workcenter/${id}/`, 'delete');
     }
+
+    static getLogsEvents(query = '') {
+        return WebApi.ApisType(`/timeclock/entrylog/${query}`, 'get');
+    }
 }
 
 export default WebApiTimeclock
