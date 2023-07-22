@@ -18,18 +18,21 @@ const index = ({
     const router = useRouter();
 
     useEffect(() => {
-        if(!currentUser) return;
+        if (!currentUser) return;
         let query = `?person=${currentUser?.id}`;
         getCompanies(query)
     }, [currentUser])
 
     useEffect(() => {
-        let page = router.query.page ? parseInt(router.query.page) : 1;
-        let size = router.query.size ? parseInt(router.query.size) : 10;
-        let filters = getFiltersJB({ ...router.query });
-        let params = `?is_deleted=false${filters}`;
-        getWorkCenters(params, page, size)
-    }, [router.query])
+        if (currentNode) {
+            let params = {...router.query};
+            let page = params.page ? parseInt(params.page) : 1;
+            let size = params.size ? parseInt(params.size) : 10;
+            let node = params.node ? params.node : currentNode?.id;
+            let filters = getFiltersJB(params);
+            getWorkCenters(node, `&is_deleted=false${filters}`, page, size)
+        }
+    }, [currentNode, router.query])
 
     return (
         <MainIndexTM
@@ -51,7 +54,7 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getWorkCenters,
-        getCompanies
-    }
+    getWorkCenters,
+    getCompanies
+}
 )(withAuthSync(index));
