@@ -9,6 +9,9 @@ import { connect } from 'react-redux';
 import { withAuthSync } from "../../../libs/auth";
 import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined, FilePdfTwoTone, FileTextTwoTone, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { CancelOutlined } from '@material-ui/icons';
+import { tr } from 'faker/lib/locales';
+
+
 
 const ExtraordinaryPayment = ({...props}) => {
     const route = useRouter();
@@ -27,6 +30,21 @@ const ExtraordinaryPayment = ({...props}) => {
     const [fileName, setFileName] = useState(null)
     const [openModal, setOpenModal] = useState(false)
     const [consolidation, setConsolidation] = useState(null)
+
+    /* Estado para botones */
+
+    const [disabledSave, setDisabledSave] = useState(true)
+
+    const [disabledOpen, setDisabledOpen] = useState(false)
+
+
+    const [disabledClose, setDisabledClose] = useState(false)
+
+    
+    const [disabledStamp, setDisabledStamp] = useState(false) 
+
+    const [onlySelection, setOnlySelection] = useState(null)
+
 
     const isEditing = (record) => record.key === editingKey;
 
@@ -64,14 +82,49 @@ const ExtraordinaryPayment = ({...props}) => {
 
         },
         {
-            title: "cantidad",
+            title: "Cantidad",
             dataIndex: ["concept", "amount"],
             editable: true,
 
         },
         {
+            title: "Estatus",
+            dataIndex: "employee_credit_note",
+            render: (employee_credit_note) =>{
+                return !employee_credit_note ? "N/A" : employee_credit_note.status === 0 ? "Abierto" : employee_credit_note.status === 1 ? "Cerrado" : "Timbrado"
+                
+            }
+
+        },
+        {
+            title: "UUID",
+            key: "uuid",
+            render: (record) => 
+                    <>{ record?.employee_credit_note?.uuid }</>
+        },
+        {
             title: "Acciones",
             render: (record) => {
+                if(record?.employee_credit_note?.status === 2) return (
+                    <>
+                        <Tooltip title="Comprobante" key={record.person_id} color={"#3d78b9"}>
+                            <FilePdfTwoTone
+                                twoToneColor="#34495E"
+                                disabled={loading}
+                                onClick={() => downLoadFile(record, 2)}
+                                style={{ fontSize: "25px" }}
+                            />
+                            </Tooltip>
+                            <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                                <FileTextTwoTone
+                                    disabled={loading}
+                                    onClick={() => downLoadFile(record, 1)}
+                                    style={{ fontSize: "25px" }}
+                                />
+                        </Tooltip>
+                    </>
+                )
+
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
@@ -84,7 +137,7 @@ const ExtraordinaryPayment = ({...props}) => {
                             </Typography.Link>
                         </Tooltip>
                         <Tooltip title="Cancelar">
-                            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                            <Popconfirm title="¿Cancelar edición?" onConfirm={cancel}>
                                 <CloseOutlined />
                             </Popconfirm>
                         </Tooltip>
@@ -96,26 +149,6 @@ const ExtraordinaryPayment = ({...props}) => {
                 )
             }
         },
-        {
-            title: "",
-            render: (item) => {
-                return <>
-                    <Tooltip title="Comprobante" key={item.person_id} color={"#3d78b9"}>
-                        <FilePdfTwoTone
-                            twoToneColor="#34495E"
-                            /* onClick={() => downloadReceipt(item)} */
-                            style={{ fontSize: "25px" }}
-                        />
-                        </Tooltip>
-                        <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-                            <FileTextTwoTone
-                                /* onClick={() => downLoadFile(item, 1)} */
-                                style={{ fontSize: "25px" }}
-                            />
-                    </Tooltip>
-                </>
-            }
-        }
     ]
 
     const rowSelection = {
@@ -125,7 +158,27 @@ const ExtraordinaryPayment = ({...props}) => {
           Table.SELECTION_ALL,
           Table.SELECTION_INVERT,
           Table.SELECTION_NONE,
-        ]
+        ],
+        getCheckboxProps: (record) => {
+            let flag = false
+            if(record?.employee_credit_note?.status >= 2){
+                flag = true
+            }
+            if(onlySelection === "X" && record.employee_credit_note){
+                flag= true
+            }
+            if(onlySelection === 0 && record.employee_credit_note.status !== 0){
+                flag = true
+            }
+
+            if(onlySelection === 1 && record.employee_credit_note.status !== 1){
+                flag = true
+            }
+
+            return {
+                disabled: flag,
+            }
+        }
       };
 
     const getPaymentCalendars = async (value) => {
@@ -177,7 +230,10 @@ const ExtraordinaryPayment = ({...props}) => {
     }, [props.currentNode]);
 
     const changePeriod = (period_id) => {
+        let period = calendarSelect.periods.find((p) => p.id == period_id);
+        setPeriodSelcted(period);
         getCalculateCreditNote(period_id)
+        setSelectedRowKeys([])
     }
 
     const getCalculateCreditNote = async (id) => {
@@ -186,7 +242,7 @@ const ExtraordinaryPayment = ({...props}) => {
             let data = { payment_period : id }
             let resp = await WebApiPayroll.getCalculateCreditNote(data)
             if(resp.status === 200){
-                setConsolidation(resp?.data?.consolidation)
+                setConsolidation(resp?.data.consolidation)
                 let dataInfo = resp?.data?.credit_notes?.map(item => {
                     item.key = item.person_id
                     return item
@@ -205,9 +261,6 @@ const ExtraordinaryPayment = ({...props}) => {
         }
     }
 
-    const sendData = () => {
-        console.log('rowSelections', rowSelection.selectedRowKeys)
-    }
 
     const EditableCell = ({
         editing,
@@ -297,8 +350,17 @@ const ExtraordinaryPayment = ({...props}) => {
             let data = {
                 payment_period: periodSelected.id,
                 status: status,
-                credit_notes: dataList
+                credit_notes: dataList,
             }   
+            if(selectedRowKeys.length > 0 && status === 1){
+                let selecteds = []
+                dataList.map(element => {
+                    if(selectedRowKeys.includes(element.person_id) ){
+                        selecteds.push(element)
+                    }    
+                })
+                data['credit_notes'] = selecteds
+            }
             let resp = await WebApiPayroll.saveConsolidationCreditNote(data)
             if(resp.status === 200){
                 if(status===0){
@@ -309,8 +371,40 @@ const ExtraordinaryPayment = ({...props}) => {
                 getCalculateCreditNote(periodSelected.id)
             }
             setLoading(false)
+            setSelectedRowKeys([])
         } catch (error) {
             setLoading(false)
+            setSelectedRowKeys([])
+            message.error(error?.response?.data?.message)
+        }   
+    }
+
+    const OpenList = async () => {
+        try {
+            setLoading(true)
+            let data = {
+                consolidation_id: consolidation.id
+            }   
+            if(selectedRowKeys.length > 0){
+                let credit_note_ids = []
+                dataList.map(item => {
+                    if(selectedRowKeys.includes(item.person_id)){
+                        credit_note_ids.push(item.employee_credit_note.id)
+                    }
+                })
+                data['credit_note_ids'] = credit_note_ids
+            }
+            let resp = await WebApiPayroll.openConsolidationCreditNote(data)
+            if(resp.status === 200){
+                message.success(resp?.data?.message)
+                getCalculateCreditNote(periodSelected.id)
+            }
+            setLoading(false)
+            setSelectedRowKeys([])
+        } catch (error) {
+            console.log('error', error)
+            setLoading(false)
+            setSelectedRowKeys([])
             message.error(error?.response?.data?.message)
         }   
     }
@@ -339,6 +433,45 @@ const ExtraordinaryPayment = ({...props}) => {
             "No se encontraron resultados",
             setLoading
         )
+    }
+
+    const stampCreditNote = async () => {
+        console.log('o0k')
+        console.log('selectedRowKeys',selectedRowKeys)
+        
+        try {
+            setLoading(true)
+            let data = {
+                "consolidation_id": consolidation.id,
+                "credit_notes_id": []
+            }
+
+            if(selectedRowKeys.length > 0){
+                let credit_notes_id = []
+                for (let i = 0; i < dataList.length; i++) {   
+                    if(selectedRowKeys.includes(dataList[i].person_id) ){
+                        if(!dataList[i].employee_credit_note || dataList[i].employee_credit_note.status < 1){
+                            message.error("Solo pueden enviar cuentas cerradas")
+                            break;
+                        }
+                        credit_notes_id.push(dataList[i].employee_credit_note.id)
+                    }    
+                }
+                data['credit_notes_id'] = credit_notes_id
+            }
+            let resp = await WebApiPayroll.stampCreditNote(data)
+            if(resp.status === 200){
+                message.success(resp?.data?.message)
+                getCalculateCreditNote(periodSelected.id)
+            }
+            setLoading(false)
+            setSelectedRowKeys([])
+        } catch (error) {
+            setLoading(false)
+            if(error.response.data.message){
+                message.error(error.response.data.message)
+            }
+        }
     }
 
     const UpListByExcel = (newArray) => {
@@ -371,6 +504,149 @@ const ExtraordinaryPayment = ({...props}) => {
         }
     }
 
+    useEffect(() => {
+        if(selectedRowKeys.length > 0){
+            let nSaves = 0
+            let nClosed = 0
+            let nOpen = 0
+            selectedRowKeys.map((key, index) => {
+                const idx = dataList.findIndex((item) => key === item.key);
+                if (idx > -1) {
+                    /* Validamos si es la primera selección para saber que tipo de fila vamos a seleccionar */
+                    let item = dataList[idx]
+                    /* Validamos los que no se han guardado */
+                    /* if(!item.employee_credit_note){
+                        if(index === 0){
+                            setOnlySelection('X')
+                        }
+                        nOpen++;
+                    } */
+                    /* Validamos los que estan abiertos */
+                    if(item.employee_credit_note?.status === 0){
+                        if(index === 0){
+                            setOnlySelection(0)
+                        }
+                        nOpen++;
+                    }else if(item?.employee_credit_note?.status === 1){
+                        if(index === 0){
+                            setOnlySelection(1)
+                        }
+                        nClosed++;
+                    }
+                }
+            })
+            /* Validamos el numero de los abiertos */
+            /* if(nOpen <= 0){
+                setDisabledClose(true)
+            }else{
+                setDisabledClose(false)
+            } */
+
+            /* Validamos el numero de cerrados seleccionados */
+            /* if(nClosed <= 0){
+                setDisabledStamp(true)
+                setDisabledOpen(true)
+            }else{
+                setDisabledStamp(false)
+                setDisabledOpen(false)
+            } */
+
+            /* Validamos el numero de todos los abiertos selecionados */
+            /* if(nOpen <= 0){
+                setDisabledOpen(true)
+            }else{
+                setDisabledOpen(false)
+            } */
+            console.log('nOpen',nOpen)
+            if(nOpen > 0){
+                setDisabledOpen(true)
+                setDisabledClose(false)
+                setDisabledStamp(true)
+            }else if(nClosed > 0){
+                setDisabledOpen(false)
+                setDisabledClose(true)
+                setDisabledStamp(false)
+            }
+        }else{
+            setDisabledStamp(false)
+            setOnlySelection(null)
+            setDisabledOpen(false)
+            setDisabledClose(false)
+        }
+    }, [selectedRowKeys])
+    
+
+
+    useEffect(() => {
+        let itemClosed = 0
+        let itemOpen = 0
+        let itemStamp = 0
+        dataList.map((item) =>{
+            if(item.employee_credit_note?.status == 1){
+                itemClosed++;
+            }
+            if(item.employee_credit_note?.status == 1){
+                itemOpen++;
+            }
+            if(item.employee_credit_note?.status == 2){
+                itemStamp++;
+            }
+        })
+        /* if(itemClosed>0){
+            setShowStamp(true)
+        }else{
+            setShowStamp(false)
+        } */
+
+        /* deshabilitamos el guardar si todos estan timbrados */
+        if(itemStamp === dataList.length){
+            setDisabledSave(true)
+            setDisabledClose(true)
+            setDisabledStamp(true)
+            setDisabledOpen(true)
+        }else if(itemClosed <= 0){
+            setDisabledSave(false)
+            setDisabledClose(false)
+            setDisabledStamp(true)
+            setDisabledOpen(true)
+        }else{
+            setDisabledSave(false)
+            setDisabledClose(false)
+            setDisabledStamp(false)
+            setDisabledOpen(false)
+        }
+        /* if(itemOpen>0){
+            setShowStamp(true)
+        }else{
+            setShowStamp(false)
+        } */
+
+
+    }, [dataList])
+    
+
+    const downLoadFile = (element, type_file) => {
+        console.log(element)
+        let data = {
+            "type_request": 3,
+            "type_file": type_file,
+            "credit_note_stamp_id": element?.employee_credit_note?.id_stamp,
+            "node": props.currentNode.id,
+        };
+    
+        let url = `${getDomain(
+          API_URL_TENANT
+        )}/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`;
+    
+        downLoadFileBlobAwait(
+          url,
+          `${element.rfc}_${periodSelected.start_date}_${periodSelected.end_date}.${type_file == 1 ? "xml" : "pdf"}`,
+          "POST",
+          data,
+          "No se encontraron resultados",
+          setLoading
+        );        
+      };
 
   return (
     <MainLayout
@@ -467,20 +743,26 @@ const ExtraordinaryPayment = ({...props}) => {
                                 </Col>
                                 <Col span={24}>
                                     <Space>
-                                        <Button onClick={() => saveCloseList(0)} disabled={loading}>
-                                            Guardar cambios
-                                        </Button>
                                         {
-                                            consolidation && 
-                                            <Button  onClick={() => saveCloseList(1)} style={{ width:150 }} disabled={loading}>
-                                                Cerrar
+                                            <Button onClick={() => saveCloseList(0)} disabled={loading || disabledSave}>
+                                                Guardar cambios
+                                            </Button>
+                                        }
+                                            
+                                            <Button  onClick={() => saveCloseList(1)} style={{ minWidth:150 }} disabled={loading || disabledClose}>
+                                                 {selectedRowKeys.length > 0 ? "Cerrar seleccionados" : "Cerrar todo" } 
+                                            </Button>
+                                        {
+                                            <Button  onClick={() => OpenList()} style={{ minWidth:150 }} disabled={loading || disabledOpen}>
+                                                { selectedRowKeys.length > 0 ? "Abrir seleccionados" : "Abrir todo" }
                                             </Button>
                                         }
                                         {
-                                            consolidation && consolidation.status === 1 &&
-                                            <Button  style={{ width:150 }} onClick={sendData} disabled={loading}>
-                                                Timbrar
-                                            </Button>
+                                            <Tooltip title={"Se timbraran los elementos que esten cerrados"}>
+                                                <Button disabled={disabledStamp || loading}  style={{ width:150 }} onClick={stampCreditNote}>
+                                                    Timbrar
+                                                </Button>
+                                            </Tooltip>
                                         }
                                         
                                     </Space>

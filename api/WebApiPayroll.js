@@ -445,6 +445,23 @@ class WebApiPayroll {
     )
   }
 
+  static openConsolidationCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/open_consolidation_credit_note`,
+      "post",
+      data
+    )
+  }
+
+  static stampCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/stamp_credit_note`,
+      "post",
+      data
+    )
+  }
+
+
 }
 
 export default WebApiPayroll;
