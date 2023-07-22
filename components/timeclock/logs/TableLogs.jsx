@@ -13,6 +13,7 @@ import {
     DeleteOutlined
 } from '@ant-design/icons';
 import { FiMapPin } from 'react-icons/fi';
+import { useRouter } from 'next/router';
 
 const TableLogs = ({
     currentNode,
@@ -23,7 +24,16 @@ const TableLogs = ({
     timeclock_page_size
 }) => {
 
+    const router = useRouter();
     const formatEnd = 'DD-MM-YYYY hh:mm a';
+
+    const onChangePage = ({ current, pageSize }) => {
+        let filters = { ...router.query, page: current, size: pageSize };
+        router.replace({
+            pathname: '/timeclock/logs',
+            query: filters
+        }, undefined, { shallow: true })
+    }
 
     const columns = [
         {
@@ -43,31 +53,42 @@ const TableLogs = ({
         },
         {
             title: 'Centro de trabajo',
-            dataIndex: ['workcenter','name'],
-            key: ['workcenter','name']
+            dataIndex: ['workcenter', 'name'],
+            key: ['workcenter', 'name']
+        },
+        {
+            title: 'Empresa',
+            dataIndex: ['node','name'],
+            key: ['node','name'],
+            ellipsis: true
         },
         {
             title: 'Checkin',
+            width: 85,
             render: (item) => (
                 <Button
                     size='small'
+                    onClick={()=> router.push({
+                        pathname: '/timeclock/logs/details',
+                        query: {...router.query, id: item.id}
+                    })}
                 >
                     Ver
-                    <FiMapPin style={{color: '#ffff', marginInlineStart: 4}}/>
+                    <FiMapPin style={{ color: '#ffff', marginInlineStart: 4 }} />
                 </Button>
             )
         },
-        {
-            title: 'Acciones',
-            width: 80,
-            render: (item) => (
-                // <Dropdown placement='bottomRight'>
-                    <Button size='small'>
-                        <EllipsisOutlined />
-                    </Button>
-                // </Dropdown>
-            )
-        }
+        // {
+        //     title: 'Acciones',
+        //     width: 80,
+        //     render: (item) => (
+        //         <Dropdown placement='bottomRight'>
+        //             <Button size='small'>
+        //                 <EllipsisOutlined />
+        //             </Button>
+        //         </Dropdown>
+        //     )
+        // }
     ]
 
     return (
@@ -77,7 +98,7 @@ const TableLogs = ({
             columns={columns}
             dataSource={list_logs_events?.results}
             loading={load_logs_events}
-            // onChange={onChangePage}
+            onChange={onChangePage}
             pagination={{
                 total: list_logs_events?.count,
                 current: timeclock_page,

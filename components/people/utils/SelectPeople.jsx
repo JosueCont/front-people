@@ -94,8 +94,10 @@ const SelectPeople = ({
     }
 
     const onChange = (value) => {
-        let ids = !noValid.includes(value)
-            ? Array.isArray(value) ? value : [value] : [];
+        if(noValid.includes(value)) return;
+
+        let ids = Array.isArray(value) ? value : [value];
+        if(itemSelected.some(item => ids.includes(item.id))) return;
 
         // Se filtra las opciones seleccionadas
         const filter_ = item => ids.includes(item.id);
@@ -208,7 +210,7 @@ const SelectPeople = ({
                                 {optionsPeople?.history?.map((item) => (
                                     <Select.Option value={item.id} key={item.id} className='ant-option-history'>
                                         <>{getFullName(item)}</>
-                                        <RiCloseLine onClick={e => deleteDefault(e, item)}/>
+                                        <RiCloseLine onClick={e => deleteDefault(e, item)} />
                                     </Select.Option>
                                 ))}
                             </Select.OptGroup>

@@ -7,7 +7,7 @@ export const useFiltersCenters = () => {
     const {
         list_companies,
         load_companies
-    } = useSelector(state => state.userStore);
+    } = useSelector(state => state.timeclockStore);
     
     const listKeys = {
         name__icontains: 'Nombre',

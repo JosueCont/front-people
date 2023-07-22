@@ -41,12 +41,12 @@ const DetailsCenter = ({
     }, [router.query?.id])
 
     useEffect(() => {
-        if (currentNode && action == 'add') {
-            formCenter.setFieldsValue({
-                node: currentNode?.id
-            })
-        }
-    }, [currentNode])
+        let value = router.query?.node;
+        if(currentNode && action == 'add'){
+            let node = value ? parseInt(value) : currentNode?.id;
+            formCenter.setFieldsValue({node})
+        }        
+    }, [currentNode, router.query?.node])
 
     useEffect(() => {
         if (Object.keys(infoWOrk)?.length <= 0) return;
@@ -102,6 +102,8 @@ const DetailsCenter = ({
         formCenter.setFieldsValue(values)
     }
 
+    // Se formatea la lista de las cordenadas para enviarlas
+    // como un string
     const createData = (values) => {
         const map_ = item => (`(${Object.values(item).join(',')})`);
         let shape = polygon.map(map_).join(',');

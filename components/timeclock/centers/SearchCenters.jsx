@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
   SearchOutlined,
@@ -10,8 +10,11 @@ import TagFilters from '../../jobbank/TagFilters';
 import FiltersCenters from './FiltersCenters';
 import { useFiltersCenters } from './useFiltersCenters';
 import { createFiltersJB } from '../../../utils/functions';
+import { connect } from 'react-redux';
 
-const SearchCenters = () => {
+const SearchCenters = ({
+    currentNode
+}) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
@@ -40,9 +43,16 @@ const SearchCenters = () => {
 
     const showModal = () =>{
         let values = {...router.query};
+        values.node = values.node ? parseInt(values.node) : currentNode?.id;
         formSearch.setFieldsValue(values);
         setOpenModal(true)
     }
+
+    const defaultFilters = useMemo(()=>{
+        let node = router.query?.node;
+        if(!node) return {'Empresa': currentNode?.name};
+        return {'Empresa': listGets['node'](node)};
+    },[currentNode, router.query?.node])
 
     return (
         <>
@@ -77,6 +87,8 @@ const SearchCenters = () => {
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            discardKeys={['node']}
+                            defaultFilters={defaultFilters}
                         />
                     </Col>  
                 </Row>
@@ -91,4 +103,12 @@ const SearchCenters = () => {
     )
 }
 
-export default SearchCenters;
+const mapState = (state) => {
+    return {
+        currentNode: state.userStore.current_node
+    }
+}
+
+export default connect(
+    mapState, {}
+)(SearchCenters);

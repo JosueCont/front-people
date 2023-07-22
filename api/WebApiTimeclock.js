@@ -7,8 +7,8 @@ class WebApiTimeclock {
         return WebApi.ApisType(`/business/node/${query}`, 'get')
     }
 
-    static getWorkCenters(query = '') {
-        return WebApi.ApisType(`/timeclock/workcenter/${query}`, 'get');
+    static getWorkCenters(node, query = '') {
+        return WebApi.ApisType(`/timeclock/workcenter/?node=${node}${query}`, 'get');
     }
 
     static getInfoWorkCenter(id) {
@@ -27,8 +27,14 @@ class WebApiTimeclock {
         return WebApi.ApisType(`/timeclock/workcenter/${id}/`, 'delete');
     }
 
-    static getLogsEvents(query = '') {
-        return WebApi.ApisType(`/timeclock/entrylog/${query}`, 'get');
+    // Logs de eventos
+
+    static getLogsEvents(node, query) {
+        return WebApi.ApisType(`/timeclock/entrylog/?node=${node}${query}`, 'get');
+    }
+
+    static getInfoLogEvent(id) {
+        return WebApi.ApisType(`/timeclock/entrylog/${id}/`, 'get');
     }
 }
 

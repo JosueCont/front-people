@@ -54,12 +54,14 @@ const MapGoogle = ({
     action = 'add',
     setPolygon = () => { },
     polygonShape = {},
+    showControls = true
 }) => {
 
     const [manager, setManager] = useState({});
     const [instance, setInstance] = useState({});
     const [isDrawing, setIsDrawing] = useState(false);
     const [infoWindow, setInfoWindow] = useState(false);
+    const [marker, setMarker] = useState({});
     const [shape, setShape] = useState({});
 
     useEffect(() => {
@@ -145,7 +147,10 @@ const MapGoogle = ({
 
     const createPolygon = () => {
         setIsDrawing(false)
-        if (Object.keys(shape)?.length > 0) shape.setMap(null);
+        if (Object.keys(shape)?.length > 0){
+            shape.setMap(null);
+            setShape({})
+        }
         const polygon = new instance.maps.Polygon({
             paths: polygonShape?.paths,
             strokeWeight: 0
@@ -153,6 +158,24 @@ const MapGoogle = ({
         polygon.setMap(instance.map)
         callbackEvents(polygon)
         getCenter(polygon)
+
+        let exist = Object.keys(marker)?.length > 0;
+        if(exist && polygonShape.marker){
+            marker.setOptions({
+                position: polygonShape.marker
+            })
+            return;
+        }
+        if(polygonShape.marker){
+            const location = new instance.maps.Marker({
+                position: polygonShape.marker
+            });
+            location.setMap(instance.map);
+            setMarker(location)
+            return;
+        }
+
+        setMarker({})
     }
 
     const startDrawing = () => {
@@ -235,21 +258,23 @@ const MapGoogle = ({
 
     return (
         <ContentVertical>
-            <ContentBetween>
-                <Space>
-                    <Button disabled={isDrawing} onClick={() => startDrawing()}>
-                        {action == 'edit' ? 'Actualizar área' : 'Seleccionar área'}
-                    </Button>
-                    <Button disabled={!isDrawing} onClick={() => resetDrawing()}>
-                        Reiniciar
-                    </Button>
-                </Space>
-                <Space>
-                    <Button disabled={isDrawing} onClick={() => getLocation()}>
-                        Obtener mi ubicación
-                    </Button>
-                </Space>
-            </ContentBetween>
+            {showControls && (
+                <ContentBetween>
+                    <Space>
+                        <Button disabled={isDrawing} onClick={() => startDrawing()}>
+                            {action == 'edit' ? 'Actualizar área' : 'Seleccionar área'}
+                        </Button>
+                        <Button disabled={!isDrawing} onClick={() => resetDrawing()}>
+                            Reiniciar
+                        </Button>
+                    </Space>
+                    <Space>
+                        <Button disabled={isDrawing} onClick={() => getLocation()}>
+                            Obtener mi ubicación
+                        </Button>
+                    </Space>
+                </ContentBetween>
+            )}
             <ContentMap>
                 <GoogleMapReact
                     options={{
@@ -268,7 +293,6 @@ const MapGoogle = ({
                     yesIWantToUseGoogleMapApiInternals
                     onGoogleApiLoaded={setInstance}
                 >
-
                 </GoogleMapReact>
             </ContentMap>
         </ContentVertical>
