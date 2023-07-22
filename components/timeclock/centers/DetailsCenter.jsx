@@ -105,8 +105,9 @@ const DetailsCenter = ({
     // Se formatea la lista de las cordenadas para enviarlas
     // como un string
     const createData = (values) => {
+        let first = polygon.slice(0, 1);
         const map_ = item => (`(${Object.values(item).join(',')})`);
-        let shape = polygon.map(map_).join(',');
+        let shape = polygon.concat(first).map(map_).join(',');
         return { ...values, polygon: shape }
     }
 
