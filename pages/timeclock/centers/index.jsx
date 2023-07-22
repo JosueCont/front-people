@@ -29,7 +29,7 @@ const index = ({
             let page = params.page ? parseInt(params.page) : 1;
             let size = params.size ? parseInt(params.size) : 10;
             let node = params.node ? params.node : currentNode?.id;
-            let filters = getFiltersJB(params);
+            let filters = getFiltersJB(params, ['node']);
             getWorkCenters(node, `&is_deleted=false${filters}`, page, size)
         }
     }, [currentNode, router.query])
