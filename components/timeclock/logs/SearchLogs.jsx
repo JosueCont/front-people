@@ -14,13 +14,15 @@ import { createFiltersJB } from '../../../utils/functions';
 import moment from 'moment';
 
 const SearchLogs = ({
-    currentNode
+    currentNode,
+    list_companies,
+    load_companies
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersLogs();
+    const { listKeys, listGets, listAwait } = useFiltersLogs();
 
     const format = 'YYYY-MM-DD';
 
@@ -50,6 +52,8 @@ const SearchLogs = ({
     const showModal = () =>{
         let values = {...router.query};
         values.node = values.node ? parseInt(values.node) : currentNode?.id;
+        values.timestamp__date = values?.timestamp__date
+            ? moment(values?.timestamp__date, 'DD-MM-YYYY') : null;
         formSearch.setFieldsValue(values);
         setOpenModal(true)
     }
@@ -58,7 +62,7 @@ const SearchLogs = ({
         let node = router.query?.node;
         if(!node) return {'Empresa': currentNode?.name};
         return {'Empresa': listGets['node'](node)};
-    },[currentNode, router.query?.node])
+    },[currentNode, router.query?.node, list_companies])
 
     return (
         <>
@@ -87,6 +91,7 @@ const SearchLogs = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            listAwait={listAwait}
                             discardKeys={['node']}
                             defaultFilters={defaultFilters}
                         />
@@ -105,7 +110,9 @@ const SearchLogs = ({
 
 const mapState = (state) => {
     return {
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_companies: state.timeclockStore.list_companies,
+        load_companies: state.timeclockStore.load_companies
     }
 }
 

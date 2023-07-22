@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { getFullName, getValueFilter } from "../../../utils/functions";
+import { getFullName, getValueFilter, getWork } from "../../../utils/functions";
 import { optionsTypeEvents } from "../../../utils/constant";
 import { setTimeclockFiltersData } from "../../../redux/timeclockDuck";
 
@@ -8,7 +8,9 @@ export const useFiltersLogs = () => {
     
     const {
         list_companies,
-        load_companies
+        load_companies,
+        list_work_centers_options,
+        load_work_centers_options,
     } = useSelector(state => state.timeclockStore);
     const dispatch = useDispatch();
 
@@ -16,7 +18,8 @@ export const useFiltersLogs = () => {
         person: 'Colaborador',
         type: 'Tipo',
         timestamp__date: 'Fecha',
-        node: 'Empresa'
+        node: 'Empresa',
+        workcenter: 'Centro de trabajo'
     }
 
     const getPerson = async (id, key) =>{
@@ -43,15 +46,25 @@ export const useFiltersLogs = () => {
         list: list_companies
     })
 
+    const getWork = (id) => getValueFilter({
+        value: id,
+        list: list_work_centers_options
+    })
+
+    const listAwait = {
+        person: getPerson
+    }
+
     const listGets = {
-        person: getPerson,
         type: getType,
-        node: getNode
+        node: getNode,
+        workcenter: getWork
     }
 
     return {
         listKeys,
-        listGets
+        listGets,
+        listAwait
     }
 
 }

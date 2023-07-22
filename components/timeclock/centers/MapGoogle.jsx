@@ -78,7 +78,7 @@ const MapGoogle = ({
     const initialize = () => {
 
         const { map, maps } = instance;
-
+        
         const info = new maps.InfoWindow();
         const drawingManager = new maps.drawing.DrawingManager({
             drawingMode: maps.drawing.OverlayType.POLYGON,
@@ -147,7 +147,7 @@ const MapGoogle = ({
 
     const createPolygon = () => {
         setIsDrawing(false)
-        if (Object.keys(shape)?.length > 0){
+        if (Object.keys(shape)?.length > 0) {
             shape.setMap(null);
             setShape({})
         }
@@ -160,13 +160,13 @@ const MapGoogle = ({
         getCenter(polygon)
 
         let exist = Object.keys(marker)?.length > 0;
-        if(exist && polygonShape.marker){
+        if (exist && polygonShape.marker) {
             marker.setOptions({
                 position: polygonShape.marker
             })
             return;
         }
-        if(polygonShape.marker){
+        if (polygonShape.marker) {
             const location = new instance.maps.Marker({
                 position: polygonShape.marker
             });
@@ -236,8 +236,10 @@ const MapGoogle = ({
                 infoWindow.setPosition(pos)
                 infoWindow.setContent('Mi ubicación')
                 infoWindow.open(instance.map)
-                instance.map.setCenter(pos)
-
+                instance.map.setOptions({
+                    center: pos,
+                    zoom: 16
+                })
             }, () => {
                 locationError(true)
             }, { enableHighAccuracy: true })

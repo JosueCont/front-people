@@ -13,7 +13,9 @@ import { createFiltersJB } from '../../../utils/functions';
 import { connect } from 'react-redux';
 
 const SearchCenters = ({
-    currentNode
+    currentNode,
+    list_companies,
+    load_companies
 }) => {
 
     const router = useRouter();
@@ -52,7 +54,7 @@ const SearchCenters = ({
         let node = router.query?.node;
         if(!node) return {'Empresa': currentNode?.name};
         return {'Empresa': listGets['node'](node)};
-    },[currentNode, router.query?.node])
+    },[currentNode, router.query?.node, list_companies])
 
     return (
         <>
@@ -105,7 +107,9 @@ const SearchCenters = ({
 
 const mapState = (state) => {
     return {
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        list_companies: state.timeclockStore.list_companies,
+        load_companies: state.timeclockStore.load_companies
     }
 }
 

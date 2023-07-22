@@ -757,8 +757,6 @@ button.custom-btn {
     align-items: center;
     flex-flow: row wrap;
     transition: all 1s;
-    /* max-height: 100px; */
-    overflow: auto;
 }
 
 .item-list-row{
