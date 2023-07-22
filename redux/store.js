@@ -12,6 +12,7 @@ import ynlReducer from "./ynlDuck";
 import backdoorReducer from "./backdoorDuck";
 import jobBankReducer from "./jobBankDuck";
 import NotificationReducer from "./NotificationDuck";
+import timeclockReducer from "./timeclockDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
   ynlStore: ynlReducer,
   backdoorStore: backdoorReducer,
   jobBankStore: jobBankReducer,
-  NotificationStore:NotificationReducer
+  NotificationStore:NotificationReducer,
+  timeclockStore: timeclockReducer
 });
 const composeEnhancers =
     typeof window === 'object' &&

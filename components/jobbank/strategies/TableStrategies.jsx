@@ -176,7 +176,7 @@ const TableStrategies = ({
         {
             title: ()=> {
                 return(
-                    <Dropdown overlay={menuTable}>
+                    <Dropdown placement='bottomRight' overlay={menuTable}>
                         <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>
@@ -186,7 +186,7 @@ const TableStrategies = ({
             width: 60, 
             render: (item) =>{
                 return (
-                    <Dropdown overlay={()=> menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={()=> menuItem(item)}>
                         <Button size={'small'}>
                             <EllipsisOutlined />
                         </Button>

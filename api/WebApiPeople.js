@@ -1,4 +1,5 @@
 import WebApi from "./webApi";
+import axiosApi from "./axiosApi";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -11,12 +12,19 @@ class WebApiPeople {
 
   static getCompanys(personId = null, active = true) {
     return WebApi.ApisType(
-      `/business/node/?${active !== null ? `active=${active}` : ""}${
-        personId ? `&person=${personId}` : ""
+      `/business/node/?${active !== null ? `active=${active}` : ""}${personId ? `&person=${personId}` : ""
       }`,
       "get"
     );
   }
+
+  // Se agregan apis existentes
+
+  static downloadTemplate(node, query){
+    return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, {responseType: 'blob'});
+  }
+
+  // Termina
 
   static getCompany(data) {
     return WebApi.ApisType(`/business/node/${data}/`, "get");
@@ -37,6 +45,18 @@ class WebApiPeople {
   static getPerson(data) {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
+
+  // Nuevas apis
+
+  static getCollaborators(node, query){
+    return WebApi.ApisType(`/person/search?node=${node}${query}`, 'get')
+  }
+
+  static downloadReportPeople(node, query){
+    return axiosApi.get(`/person/search?node=${node}${query}`, {responseType: 'blob'});
+  }
+
+  // Termina
 
   static updatePerson(data, id) {
     return WebApi.ApisType(`/person/person/${id}/`, "put", data);
@@ -739,7 +759,7 @@ class WebApiPeople {
       data
     );
   }
-
+  
 }
 
 export default WebApiPeople;

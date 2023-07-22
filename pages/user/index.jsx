@@ -44,7 +44,7 @@ const index = ({
                     }
 
                     {
-                        applications && (_.has(applications, "payroll") && applications["payroll"].active) && <WidgetBirthday redirectPerson={false} />
+                        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetBirthday redirectPerson={false} />
                     }
 
                 </ContentCards>

@@ -1,17 +1,17 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { optionsStatusVacant } from "../../../utils/constant";
 import { getFullName } from "../../../utils/functions";
 import { getValueFilter } from "../../../utils/functions";
+import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 export const useFiltersVacancies = () =>{
+
     const {
         list_clients_options,
-        load_clients_options
+        load_clients_options,
     } = useSelector(state => state.jobBankStore);
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
+    const dispatch = useDispatch();
     const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
 
     const listKeys = {
@@ -32,11 +32,17 @@ export const useFiltersVacancies = () =>{
         list: list_clients_options
     })
 
-    const getRecruiter = (id) => getValueFilter({
-        value: id,
-        list: persons_company,
-        keyShow: getFullName
-    })
+    const getRecruiter = async (id, key) => {
+        try {
+            let response = await WebApiPeople.getPerson(id);
+            let value = {[key]: response.data};
+            dispatch(setJobbankFiltersData(value))
+            return getFullName(response.data);
+        } catch (e) {
+            console.log(e)
+            return id;
+        }
+    }
 
     const listGets = {
         status: getStatus,

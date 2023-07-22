@@ -27,7 +27,8 @@ const FileUpload = ({
     download = false,
     revertColor = false,
     hideOptions = false,
-    sizeInput = 'default'
+    sizeInput = 'default',
+    style = {}
 }) => {
 
     const inputFile = useRef(null);
@@ -64,7 +65,7 @@ const FileUpload = ({
     }
 
     return (
-        <Form.Item>
+        <Form.Item style={style}>
             <div className='custom-label-form'>
                 <label className={isRequired ? 'custom-required' : ''}>
                     {label} {tooltip && (<Tooltip title={tooltip}><QuestionCircleOutlined /></Tooltip>)}
@@ -119,58 +120,6 @@ const FileUpload = ({
                 ref={inputFile}
                 onChange={onChangeFile}
             />
-            {/* <Input.Group compact>
-                <Form.Item
-                    noStyle
-                    name={keyName}
-                    dependencies={dependencies}
-                    rules={[isRequired ? ruleRequired : {}]}
-                >
-                    <Input
-                        readOnly
-                        disabled={disabled}
-                        placeholder='Ningún archivo seleccionado'
-                        style={{
-                            width: 'calc(100% - 64px)',
-                            borderTopLeftRadius: 10,
-                            borderBottomLeftRadius: 10
-                        }}
-                    />
-                </Form.Item>
-                {urlPreview ? (
-                    <Button
-                        className='custom-btn'
-                        onClick={()=> download
-                            ? downloadCustomFile({url: urlPreview, name: urlPreview?.split('/')?.at(-1)})
-                            : redirectTo(urlPreview, true)
-                        }
-                        icon={download ? <DownloadOutlined/> : <EyeOutlined />}
-                    />
-                ): (
-                    <Button
-                        className='custom-btn'
-                        onClick={()=> resetImg()}
-                        icon={<DeleteOutlined />}
-                        disabled={disabled}
-                    />
-                )}
-                <Button
-                    icon={<ToTopOutlined />}
-                    onClick={()=> openFile()}
-                    disabled={disabled}
-                    style={{
-                        borderTopRightRadius: 10,
-                        borderBottomRightRadius: 10
-                    }}
-                />
-                <input
-                    type='file'
-                    style={{display: 'none'}}
-                    accept={typeFile.reduce((acc, item) => `${acc}.${item}, `,'')}
-                    ref={inputFile}
-                    onChange={onChangeFile}
-                />
-            </Input.Group> */}
         </Form.Item>
     )
 }

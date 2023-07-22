@@ -195,7 +195,7 @@ const TablePublications = ({
                             query: router.query
                         })}
                     >
-                        Ver historial
+                        Ver historial ({item?.history?.length})
                     </Menu.Item>
                 )}
             </Menu>
@@ -266,9 +266,10 @@ const TablePublications = ({
             //     )
             // },
             title: 'Acciones',
+            width: 80,
             render: (item) =>{
                 return (
-                    <Dropdown overlay={()=> menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={()=> menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>

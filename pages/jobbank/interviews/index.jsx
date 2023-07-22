@@ -22,7 +22,7 @@ const calendar = ({
     currentNode,
     getCandidatesOptions,
     getVacanciesOptions,
-    getPersonsCompany,
+    // getPersonsCompany,
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
@@ -43,7 +43,7 @@ const calendar = ({
         if(currentNode){
             getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getPersonsCompany(currentNode.id);
+            // getPersonsCompany(currentNode.id);
             getSelectionOpions(currentNode.id);
             getConnectionsOptions(currentNode.id, '&code=GC');
             getClientsOptions(currentNode.id)
@@ -61,9 +61,7 @@ const calendar = ({
     return (
         <MainIndexJB
             pageKey='jb_interviews'
-            extraBread={[
-                {name: 'Entrevistas'},
-            ]}
+            extraBread={[{name: 'Entrevistas'}]}
         >
             <InterviewProvider>
                 <SearchInterviews/>
@@ -83,7 +81,7 @@ export default connect(
     mapState, {
         getCandidatesOptions,
         getVacanciesOptions,
-        getPersonsCompany,
+        // getPersonsCompany,
         getInterviews,
         getSelectionOpions,
         getClientsOptions,
