@@ -154,7 +154,7 @@ const DetailsClients = ({
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
+            edit: ()=> router.push({
                 pathname: '/jobbank/clients/edit',
                 query: {...newFilters, id }
             }),

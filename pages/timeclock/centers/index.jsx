@@ -25,14 +25,21 @@ const index = ({
 
     useEffect(() => {
         if (currentNode) {
-            let params = {...router.query};
-            let page = params.page ? parseInt(params.page) : 1;
-            let size = params.size ? parseInt(params.size) : 10;
-            let node = params.node ? params.node : currentNode?.id;
-            let filters = getFiltersJB(params, ['node']);
-            getWorkCenters(node, `&is_deleted=false${filters}`, page, size)
+            let page = router.query?.page ? parseInt(router.query?.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
+            let filters = getFiltersJB(validFilters());
+            let params = `?is_deleted=false${filters}`;
+            getWorkCenters(params, page, size)
         }
     }, [currentNode, router.query])
+
+    const validFilters = () => {
+        let params = { ...router.query };
+        params.node = router.query?.node
+            ? router.query?.node : currentNode?.id;
+        if (params.node == 'all') delete params.node;
+        return params;
+    }
 
     return (
         <MainIndexTM

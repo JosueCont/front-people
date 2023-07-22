@@ -109,7 +109,6 @@ const FiltersLogs = ({
                             name='node'
                         >
                             <Select
-                                allowClear
                                 showSearch
                                 disabled={load_companies}
                                 loading={load_companies}
@@ -117,6 +116,7 @@ const FiltersLogs = ({
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
+                                <Select.Option value='all' key='all'>Todas</Select.Option>
                                 {list_companies?.length > 0
                                     && list_companies?.map(item => (
                                     <Select.Option value={item.id} key={item.id}>

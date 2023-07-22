@@ -56,15 +56,22 @@ export const useFiltersPeople = () =>{
     }
 
     const getStatus = (value) => value == 'true'
-        ? 'Activos' : 'Inactivos' 
+        ? 'Activos' : 'Inactivos';
+    
+    const listAwait = {
+        immediate_supervisor: getSupervisor,
+    }
 
     const listGets = {
         gender: getGender,
         department: getDepartment,
         job: getJob,
-        immediate_supervisor: getSupervisor,
         is_active: getStatus
     }
 
-    return { listKeys, listGets }
+    return {
+        listKeys,
+        listGets,
+        listAwait
+    }
 }

@@ -72,12 +72,12 @@ export const setTimeclockFiltersData = (data = {}) => (dispatch) => {
     dispatch({ type: SET_FILTERS_DATA, payload: data })
 }
 
-export const getWorkCenters = (node, query = '', page = 1, size = 10) => async (dispatch) => {
+export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch) => {
     const typeFunction = { type: GET_WORK_CENTERS, payload: {}, fetching: false, query, page, size };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let response = await WebApiTimeclock.getWorkCenters(node, query);
-        dispatch({ ...typeFunction, payload: response.data })
+        let response = await WebApiTimeclock.getWorkCenters(query);
+        dispatch({ ...typeFunction, payload: response.data });
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -97,11 +97,11 @@ export const getWorkCentersOptions = (node, query = '') => async (dispatch) => {
     }
 }
 
-export const getLogsEvents = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {
+export const getLogsEvents = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
     const typeFunction = { type: GET_LOGS_EVENTS, payload: {}, fetching: false, query, page, size };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let response = await WebApiTimeclock.getLogsEvents(node, query);
+        let response = await WebApiTimeclock.getLogsEvents(query);
         dispatch({ ...typeFunction, payload: response.data })
     } catch (e) {
         console.log(e)

@@ -3,12 +3,12 @@ import { axiosApi } from './axiosApi';
 
 class WebApiTimeclock {
     
-    static getCompanies(query = '') {
+    static getCompanies(query) {
         return WebApi.ApisType(`/business/node/${query}`, 'get')
     }
 
-    static getWorkCenters(node, query = '') {
-        return WebApi.ApisType(`/timeclock/workcenter/?node=${node}${query}`, 'get');
+    static getWorkCenters(query) {
+        return WebApi.ApisType(`/timeclock/workcenter/${query}`, 'get');
     }
 
     static getInfoWorkCenter(id) {
@@ -29,8 +29,8 @@ class WebApiTimeclock {
 
     // Logs de eventos
 
-    static getLogsEvents(node, query) {
-        return WebApi.ApisType(`/timeclock/entrylog/?node=${node}${query}`, 'get');
+    static getLogsEvents(query) {
+        return WebApi.ApisType(`/timeclock/entrylog/${query}`, 'get');
     }
 
     static getInfoLogEvent(id) {
