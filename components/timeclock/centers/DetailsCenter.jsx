@@ -43,7 +43,7 @@ const DetailsCenter = ({
     useEffect(() => {
         let value = router.query?.node;
         if(currentNode && action == 'add'){
-            let node = value ? parseInt(18) : currentNode?.id;
+            let node = value ? parseInt(node) : currentNode?.id;
             formCenter.setFieldsValue({node})
         }        
     }, [currentNode, router.query?.node])
