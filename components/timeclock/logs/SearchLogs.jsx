@@ -52,6 +52,8 @@ const SearchLogs = ({
     const showModal = () =>{
         let values = {...router.query};
         values.node = values.node ? parseInt(values.node) : currentNode?.id;
+        values.timestamp__date = values?.timestamp__date
+            ? moment(values?.timestamp__date, 'DD-MM-YYYY') : null;
         formSearch.setFieldsValue(values);
         setOpenModal(true)
     }
