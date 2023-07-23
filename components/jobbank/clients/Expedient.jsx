@@ -4,9 +4,9 @@ import { pdf } from '@react-pdf/renderer';
 import DocExpedient from './DocExpedient';
 import {
     DownloadOutlined,
-    EyeOutlined
+    EyeOutlined,
+    EllipsisOutlined
 } from "@ant-design/icons";
-// import { info } from 'console';
 
 const Expedient = ({
     infoClient,
@@ -15,67 +15,71 @@ const Expedient = ({
 
     const [loading, setLoading] = useState(false);
 
-    const MyDoc = () => 
+    const MyDoc = () =>
         <DocExpedient
-            infoClient = { infoClient }
-            contactList = { contactList }
+            infoClient={infoClient}
+            contactList={contactList}
         />
-    
 
-    const linkTo = (url, download = false ) =>{
+
+    const linkTo = (url, download = false) => {
         let nameFile = `${infoClient.name}`;
         const link = document.createElement("a");
         link.href = url;
         link.target = "_black";
-        if(download) link.download = nameFile;
+        if (download) link.download = nameFile;
         link.click();
     }
 
-    const generatePDF = async (download) =>{
+    const generatePDF = async (download) => {
         const key = 'updatable';
-        message.loading({content: 'Generando PDF...', key});
+        message.loading({ content: 'Generando PDF...', key });
         try {
             setLoading(true)
             let resp = await pdf(<MyDoc />).toBlob();
             let url = URL.createObjectURL(resp);
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false);
-                message.success({content: 'PDF generado', key})
+                message.success({ content: 'PDF generado', key })
             }, 1000)
-            setTimeout(()=>{  
-                linkTo(url+'#toolbar=0', download);
-            },2000)
+            setTimeout(() => {
+                linkTo(url + '#toolbar=0', download);
+            }, 2000)
         } catch (e) {
             console.log(e)
-            setTimeout(()=>{
+            setTimeout(() => {
                 setLoading(false)
-                message.error({content: 'PDF no generado', key});
-            },2000)
+                message.error({ content: 'PDF no generado', key });
+            }, 2000)
         }
     }
 
+    const menuItems = (
+        <Menu>
+            <Menu.Item
+                key='1'
+                icon={<EyeOutlined />}
+                onClick={() => generatePDF()}
+            >
+                Visualizar expediente
+            </Menu.Item>
+            <Menu.Item
+                key='2'
+                icon={<DownloadOutlined />}
+                onClick={() => generatePDF(true)}
+            >
+                Descargar expediente
+            </Menu.Item>
+        </Menu>
+    )
+
 
     return (
-        <>
-            <Tooltip title='Visualizar expediente'>
-                <Button
-                    loading={loading}
-                    icon={<EyeOutlined/>}
-                    onClick={()=> generatePDF()}
-                >
-                    Expediente
-                </Button>
-            </Tooltip>
-            <Tooltip title='Descargar expediente'>
-                    <Button
-                    loading={loading}
-                    icon={<DownloadOutlined/>}
-                    onClick={()=> generatePDF(true)}
-                >
-                    Descargar expediente
-                </Button>
-            </Tooltip>
-        </>
+        <Dropdown placement='bottomRight' overlay={menuItems}>
+            <Button loading={loading}>
+                <EllipsisOutlined />
+            </Button>
+        </Dropdown>
     )
 }
 

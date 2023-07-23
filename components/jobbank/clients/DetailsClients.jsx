@@ -9,14 +9,16 @@ import {
     Spin,
     message
 } from 'antd';
+import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import Expedient from './Expedient';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
 import DetailsCustom from '../DetailsCustom';
+
+const Expedient = dynamic(()=> import('./Expedient'), {ssr: false});
 
 const DetailsClients = ({
     action,
@@ -182,6 +184,13 @@ const DetailsClients = ({
             : currentKey;
     },[router.query, currentKey, action])
 
+    const ExtraActions = () => action == 'edit' ? (
+        <Expedient
+            infoClient={infoClient}
+            contactList={contactList}
+        />
+    ) : <></>;
+
     const propsCustom = {
         action,
         loading,
@@ -189,6 +198,7 @@ const DetailsClients = ({
         setLoading,
         actionBack,
         setActionType,
+        ExtraActions,
         isAutoRegister,
         idForm: 'form-clients',
         titleCard: action == 'add'
