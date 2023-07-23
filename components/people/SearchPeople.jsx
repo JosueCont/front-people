@@ -44,7 +44,7 @@ const SearchPeople = ({
     const [openModal, setOpenModal] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
-    const { listKeys, listGets } = useFiltersPeople();
+    const { listKeys, listGets, listAwait } = useFiltersPeople();
 
     useEffect(() => {
         let value = router.query?.search;
@@ -152,6 +152,7 @@ const SearchPeople = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            listAwait={listAwait}
                             discardKeys={['search']}
                         />
                     </Col>

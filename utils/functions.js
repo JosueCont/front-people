@@ -471,8 +471,13 @@ export const createFiltersJB = (obj = {}, discard = []) => {
   }, {});
 }
 
-export const getFiltersJB = (obj = {}, discard = []) => {
+export const getFiltersJB = (obj = {}, discard = [], isFirst = false) => {
   if (Object.keys(obj).length <= 0) return '';
+
+  const getQuery = (param, query, idx) => isFirst && idx == 0
+    ? `?${query}${param}`
+    : `${query}&${param}`;
+
   return Object.entries(obj).reduce((query, [key, val], idx) => {
     if (["size", ...discard].includes(key)) return query;
     if (key == "page") {
@@ -480,9 +485,10 @@ export const getFiltersJB = (obj = {}, discard = []) => {
       let result = Object.entries(obj).find(find_);
       let limit = result ? parseInt(result[1]) : 10;
       let offset = (parseInt(val) - 1) * limit;
-      return `${query}&limit=${limit}&offset=${offset}`;
+      let param = `limit=${limit}&offset=${offset}`;
+      return getQuery(param, query, idx);
     }
-    return `${query}&${key}=${val}`;
+    return getQuery(`${key}=${val}`, query, idx);
   }, '');
 }
 

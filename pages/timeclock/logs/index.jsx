@@ -32,17 +32,18 @@ const index = ({
 
     useEffect(() => {
         if (currentNode) {
-            let params = {...router.query};
-            let page = params.page ? parseInt(params.page) : 1;
-            let size = params.size ? parseInt(router.query.size) : 10;
-            let node = params.node ? params.node : currentNode?.id;
-            let filters = getFiltersJB(validFilters(), ['node']);
-            getLogsEvents(node, filters, page, size)
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let size = router.query.size ? parseInt(router.query.size) : 10;
+            let filters = getFiltersJB(validFilters(), [], true);
+            getLogsEvents(filters, page, size)
         }
     }, [currentNode, router.query])
 
     const validFilters = () =>{
         let params = {...router.query};
+        params.node = router.query?.node
+            ? router.query?.node : currentNode?.id;
+        if(params.node == 'all') delete params.node;
         if(params.timestamp__date){
             let value = moment(params.timestamp__date, 'DD-MM-YYYY').format('YYYY-MM-DD');
             params.timestamp__date = value;

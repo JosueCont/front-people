@@ -44,11 +44,18 @@ export const useFiltersVacancies = () =>{
         }
     }
 
-    const listGets = {
-        status: getStatus,
-        customer: getCustomer,
+    const listAwait = {
         strategy__recruiter_id: getRecruiter
     }
 
-    return { listKeys, listGets }
+    const listGets = {
+        status: getStatus,
+        customer: getCustomer
+    }
+
+    return {
+        listKeys,
+        listGets,
+        listAwait
+    }
 }
