@@ -24,12 +24,6 @@ export const useFiltersInterviews = () =>{
         customer: 'Cliente'
     }
 
-    // const getRecruiter = (id) => getValueFilter({
-    //     value: id,
-    //     list: persons_company,
-    //     keyShow: getFullName
-    // })
-
     const getRecruiter = async (id, key) => {
         try {
             let response = await WebApiPeople.getPerson(id);
@@ -59,12 +53,19 @@ export const useFiltersInterviews = () =>{
         list: list_clients_options
     })
 
-    const listGets = {
+    const listAwait = {
         recruiter: getRecruiter,
+    }
+
+    const listGets = {
         candidate: getCandidate,
         vacant: getVacant,
         customer: getCustomer
     }
 
-    return { listKeys, listGets };
+    return {
+        listKeys,
+        listGets,
+        listAwait
+    };
 }
