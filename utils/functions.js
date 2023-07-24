@@ -71,6 +71,46 @@ export const downLoadFileBlob = async (
     });
 };
 
+export const downLoadFileBlobAwait = async (
+  url,
+  name = "Example.xlsx",
+  type = "POST",
+  params = null,
+  Textmessage = null,
+  setLoading=null,
+) => {
+  if(setLoading) setLoading(true)
+  let headers = {
+    method: type,
+    responseType: "blob",
+  };
+  if (params) headers.data = params;
+  axios(
+    url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
+    headers
+  )
+    .then((response) => {
+      const blob = new Blob([response.data]);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      if(setLoading) setLoading(false)
+    })
+    .catch((e) => {
+      console.log('Error xd', e.response)
+      let errorMessage = e.response?.data?.message || ""
+       if (errorMessage !== ""){
+        message.error(errorMessage)
+      } else if(Textmessage){
+        message.error(Textmessage)
+      }else if(e?.response?.status===404){
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      } 
+      if(setLoading) setLoading(false)
+    });
+};
+
 export const UserPermissions = (permits = null, is_admin = false) => {
   let perms = {
     person: {
@@ -471,8 +511,13 @@ export const createFiltersJB = (obj = {}, discard = []) => {
   }, {});
 }
 
-export const getFiltersJB = (obj = {}, discard = []) => {
+export const getFiltersJB = (obj = {}, discard = [], isFirst = false) => {
   if (Object.keys(obj).length <= 0) return '';
+
+  const getQuery = (param, query, idx) => isFirst && idx == 0
+    ? `?${query}${param}`
+    : `${query}&${param}`;
+
   return Object.entries(obj).reduce((query, [key, val], idx) => {
     if (["size", ...discard].includes(key)) return query;
     if (key == "page") {
@@ -480,9 +525,10 @@ export const getFiltersJB = (obj = {}, discard = []) => {
       let result = Object.entries(obj).find(find_);
       let limit = result ? parseInt(result[1]) : 10;
       let offset = (parseInt(val) - 1) * limit;
-      return `${query}&limit=${limit}&offset=${offset}`;
+      let param = `limit=${limit}&offset=${offset}`;
+      return getQuery(param, query, idx);
     }
-    return `${query}&${key}=${val}`;
+    return getQuery(`${key}=${val}`, query, idx);
   }, '');
 }
 
@@ -554,16 +600,20 @@ export const downloadCustomFile = async ({
   try {
     let config = { url, method: 'GET', responseType: 'blob' };
     let response = await axios(config);
-    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = urlBlob;
-    link.download = name;
-    link.target = "_blank";
-    link.click();
-    window.URL.revokeObjectURL(urlBlob);
+    downloadBLOB({ data: response.data, name });
   } catch (e) {
     console.log(e)
   }
+}
+
+export const downloadBLOB = ({ data, name }) => {
+  const urlBlob = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement('a');
+  link.href = urlBlob;
+  link.download = name;
+  link.target = "_blank";
+  link.click();
+  window.URL.revokeObjectURL(urlBlob);
 }
 
 export const getPercentGenJB = (assets) => {

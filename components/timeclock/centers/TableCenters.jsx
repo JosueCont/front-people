@@ -9,8 +9,8 @@ import {
     Menu
 } from 'antd';
 import { connect } from 'react-redux';
-import { getWorkCenters } from '../../../redux/UserDuck';
-import WebApiPeople from '../../../api/WebApiPeople';
+import { getWorkCenters } from '../../../redux/timeclockDuck';
+import WebApiTimeclock from '../../../api/WebApiTimeclock';
 import ListItems from '../../../common/ListItems';
 import {
     EllipsisOutlined,
@@ -23,9 +23,9 @@ const TableCenters = ({
     getWorkCenters,
     list_work_centers,
     load_work_centers,
-    user_page,
-    user_filters,
-    user_page_size
+    timeclock_page,
+    timeclock_filters,
+    timeclock_page_size
 }) => {
 
     const router = useRouter();
@@ -34,8 +34,8 @@ const TableCenters = ({
 
     const actionStatus = async (is_active, item) => {
         try {
-            await WebApiPeople.updateWorkCenter(item.id, { is_active });
-            getWorkCenters(user_filters, user_page, user_page_size);
+            await WebApiTimeclock.updateWorkCenter(item.id, { is_active });
+            getWorkCenters(timeclock_filters, timeclock_page, timeclock_page_size);
             message.success('Estatus actualizado')
         } catch (e) {
             console.log(e)
@@ -46,8 +46,8 @@ const TableCenters = ({
     const actionDelete = async () =>{
         try {
             let id = itemsSelected?.at(-1)?.id;
-            await WebApiPeople.deleteWorkCenter(id);
-            getWorkCenters(user_filters, user_page, user_page_size);
+            await WebApiTimeclock.deleteWorkCenter(id);
+            getWorkCenters(timeclock_filters, timeclock_page, timeclock_page_size);
             message.success('Centro eliminado')
         } catch (e) {
             console.log(e)
@@ -105,12 +105,14 @@ const TableCenters = ({
         {
             title: 'Nombre',
             key: 'name',
-            dataIndex: 'name'
+            dataIndex: 'name',
+            ellipsis: true,
         },
         {
             title: 'Dirección',
             key: 'address',
-            dataIndex: 'address'
+            dataIndex: 'address',
+            ellipsis: true
         },
         {
             title: 'Estatus',
@@ -149,8 +151,8 @@ const TableCenters = ({
                 onChange={onChangePage}
                 pagination={{
                     total: list_work_centers?.count,
-                    current: user_page,
-                    pageSize: user_page_size,
+                    current: timeclock_page,
+                    pageSize: timeclock_page_size,
                     hideOnSinglePage: true,
                     showSizeChanger: true
                 }}
@@ -171,11 +173,11 @@ const TableCenters = ({
 const mapState = (state) => {
     return {
         currentNode: state.userStore.current_node,
-        list_work_centers: state.userStore.list_work_centers,
-        load_work_centers: state.userStore.load_work_centers,
-        user_page: state.userStore.user_page,
-        user_filters: state.userStore.user_filters,
-        user_page_size: state.userStore.user_page_size
+        list_work_centers: state.timeclockStore.list_work_centers,
+        load_work_centers: state.timeclockStore.load_work_centers,
+        timeclock_page: state.timeclockStore.timeclock_page,
+        timeclock_filters: state.timeclockStore.timeclock_filters,
+        timeclock_page_size: state.timeclockStore.timeclock_page_size
     }
 }
 

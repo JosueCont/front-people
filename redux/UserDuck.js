@@ -22,13 +22,12 @@ const initialData = {
   info_current_rol: {},
   load_current_rol: false,
   lang: 'es-mx',
-  list_work_centers: {},
-  load_work_centers: false,
-  list_companies: [],
-  load_companies: false,
+  list_collaborators: {},
+  load_collaborators: false,
   user_page: 1,
   user_filters: "",
-  user_page_size: 10
+  user_page_size: 10,
+  user_filters_data: {}
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -45,8 +44,8 @@ const APPLICATIONS = "APPLICATIONS";
 const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 const CHANGE_LANG = "CHANGE_LANG";
-const GET_WORK_CENTERS = "GET_WORK_CENTERS";
-const GET_COMPANIES = "GET_COMPANIES";
+const GET_COLLABORATORS = "GET_COLLABORATORS";
+const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -86,19 +85,22 @@ const webReducer = (state = initialData, action) => {
         info_current_rol: action.payload,
         load_current_rol: action.fetching
       }
-    case GET_WORK_CENTERS:
+    case GET_COLLABORATORS:
       return {
         ...state,
-        list_work_centers: action.payload,
-        load_work_centers: action.fetching,
+        list_collaborators: action.payload,
+        load_collaborators: action.fetching,
         user_page: action.page,
         user_filters: action.query,
         user_page_size: action.size
       }
-    case GET_COMPANIES:
-      return {...state,
-        list_companies: action.payload,
-        load_companies: action.fetching
+    case SET_FILTERS_DATA:
+      return {
+        ...state,
+        user_filters_data: {
+          ...state.user_filters_data,
+          ...action.payload
+        }
       }
     default:
       return state;
@@ -262,10 +264,10 @@ export const saveCurrentNode = (data) => async (dispatch) => {
   dispatch({ type: COMPANY_SELCTED, payload: data });
 }
 
-export const getPersonsCompany = (data) => async (dispatch, getState) => {
+export const getPersonsCompany = (data, query = {}) => async (dispatch, getState) => {
   dispatch({ type: PERSONS_COMPANY, payload: [], fetching: true });
   try {
-    let response = await WebApiPeople.filterPerson({ node: data });
+    let response = await WebApiPeople.filterPerson({ ...query, node: data });
     dispatch({ type: PERSONS_COMPANY, payload: response.data, fetching: false });
   } catch (error) {
     dispatch({ type: PERSONS_COMPANY, payload: [], fetching: false });
@@ -273,36 +275,29 @@ export const getPersonsCompany = (data) => async (dispatch, getState) => {
   }
 };
 
+export const setUserFiltersData = (data = {}) => async (dispatch) =>{
+  dispatch({type: SET_FILTERS_DATA, payload: data})
+}
+
+export const getCollaborators = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {
+  const { userStore: { list_collaborators } } = getState();
+  const action = { type: GET_COLLABORATORS, payload: list_collaborators, fetching: false, query, page, size };
+  dispatch({ ...action, fetching: true })
+  try {
+    let response = await WebApiPeople.getCollaborators(node, query)
+    dispatch({...action, payload: response.data})
+  } catch (e) {
+    console.log(e)
+    dispatch(action)
+  }
+}
+
 export const getCurrentRol = (id_rol) => async (dispatch) => {
   const typeFunction = { type: GET_CURRENT_ROL, payload: {}, fetching: false };
   dispatch({ ...typeFunction, fetching: true })
   try {
     let response = await WebApiPeople.getInfoAdminRole(id_rol);
     dispatch({ ...typeFunction, payload: response.data })
-  } catch (e) {
-    console.log(e)
-    dispatch(typeFunction)
-  }
-}
-
-export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
-  const typeFunction = { type: GET_WORK_CENTERS, payload: {}, fetching: false, query, page, size };
-  dispatch({ ...typeFunction, fetching: true })
-  try {
-    let response = await WebApiPeople.getWorkCenters(query);
-    dispatch({ ...typeFunction, payload: response.data})
-  } catch (e) {
-    console.log(e)
-    dispatch(typeFunction)
-  }
-}
-
-export const getCompanies = (query = '') => async (dispatch) => {
-  const typeFunction = { type: GET_COMPANIES, payload: [], fetching: false};
-  dispatch({ ...typeFunction, fetching: true })
-  try {
-    let response = await WebApiPeople.getCompanies(query);
-    dispatch({ ...typeFunction, payload: response.data?.results })
   } catch (e) {
     console.log(e)
     dispatch(typeFunction)

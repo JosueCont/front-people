@@ -1,21 +1,21 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Table,
-  Button,
-  Menu,
-  Dropdown,
-  message,
-  Select,
-  Tag,
-  Tooltip
+    Table,
+    Button,
+    Menu,
+    Dropdown,
+    message,
+    Select,
+    Tag,
+    Tooltip
 } from 'antd';
 import {
-  EllipsisOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CopyOutlined,
-  SettingOutlined,
-  UserAddOutlined
+    EllipsisOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    CopyOutlined,
+    SettingOutlined,
+    UserAddOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getVacancies } from '../../../redux/jobBankDuck';
@@ -42,10 +42,10 @@ const TableVacancies = ({
     const [useWithAction, setUseWithAction] = useState(true);
     const [useToCopy, setUseToCopy] = useState(false);
 
-    const actionDelete = async () =>{
-        let ids = itemsToDelete.map(item=> item.id);
+    const actionDelete = async () => {
+        let ids = itemsToDelete.map(item => item.id);
         try {
-            await WebApiJobBank.deleteVacant({ids});
+            await WebApiJobBank.deleteVacant({ ids });
             getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             let msg = ids.length > 1 ? 'Vacantes eliminadas' : 'Vacante eliminada';
             message.success(msg)
@@ -56,9 +56,9 @@ const TableVacancies = ({
         }
     }
 
-    const actionStatus = async (value, item) =>{
+    const actionStatus = async (value, item) => {
         try {
-            await WebApiJobBank.updateVacantStatus(item.id, {status: value});
+            await WebApiJobBank.updateVacantStatus(item.id, { status: value });
             getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             message.success('Estatus actualizado');
         } catch (e) {
@@ -67,9 +67,9 @@ const TableVacancies = ({
         }
     }
 
-    const actionShowCustomerName = async (value, item) =>{
+    const actionShowCustomerName = async (value, item) => {
         try {
-            await WebApiJobBank.updateShowCustomerNameVacant(item.id, {show_customer_name: value});
+            await WebApiJobBank.updateShowCustomerNameVacant(item.id, { show_customer_name: value });
             getVacancies(currentNode.id, jobbank_filters, jobbank_page, jobbank_page_size);
             message.success('Información de la vacante actualizada');
         } catch (e) {
@@ -78,7 +78,7 @@ const TableVacancies = ({
         }
     }
 
-    const actionDuplicate = async () =>{
+    const actionDuplicate = async () => {
         try {
             let id = itemsToDelete?.at(-1)?.id;
             await WebApiJobBank.duplicateVacant(id);
@@ -90,17 +90,17 @@ const TableVacancies = ({
         }
     }
 
-    const openModalManyDelete = () =>{
+    const openModalManyDelete = () => {
         const filter_ = item => item.has_strategy;
         let notDelete = itemsToDelete.filter(filter_);
-        if(notDelete.length > 0){
+        if (notDelete.length > 0) {
             setUseWithAction(false)
             setOpenModalDelete(true)
             setItemsToDelete(notDelete)
             return;
         }
         setUseWithAction(true);
-        if(itemsToDelete.length > 1){
+        if (itemsToDelete.length > 1) {
             setOpenModalDelete(true)
             return;
         }
@@ -108,19 +108,19 @@ const TableVacancies = ({
         message.error('Selecciona al menos dos vacantes')
     }
 
-    const openModalRemove = (item) =>{
+    const openModalRemove = (item) => {
         setUseWithAction(!item?.has_strategy)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
-    const openModalDuplicate = (item) =>{
+    const openModalDuplicate = (item) => {
         setUseToCopy(true)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
-    const closeModalDelete = () =>{
+    const closeModalDelete = () => {
         setOpenModalDelete(false)
         setUseWithAction(true)
         setUseToCopy(false)
@@ -128,22 +128,22 @@ const TableVacancies = ({
         setItemsToDelete([])
     }
 
-    const titleDelete = useMemo(()=>{
-        if(!useWithAction){
+    const titleDelete = useMemo(() => {
+        if (!useWithAction) {
             return itemsToDelete.length > 1
-            ? `Estas vacantes no se pueden eliminar, ya que
+                ? `Estas vacantes no se pueden eliminar, ya que
                 se encuentran asociadas a una estrategia`
-            : `Esta vacante no se puede eliminar, ya que
+                : `Esta vacante no se puede eliminar, ya que
                 se encuentra asociada a una estrategia`;
         }
-        if(useToCopy) return '¿Estás seguro de duplicar esta vacante?';
+        if (useToCopy) return '¿Estás seguro de duplicar esta vacante?';
         return itemsToDelete.length > 1
             ? '¿Estás seguro de eliminar estas vacantes?'
             : '¿Estás seguro de eliminar esta vacante?';
-    },[useWithAction, useToCopy, itemsToDelete])
-    
-    const onChangePage = ({current, pageSize}) =>{
-        let filters = {...router.query, page: current, size: pageSize};
+    }, [useWithAction, useToCopy, itemsToDelete])
+
+    const onChangePage = ({ current, pageSize }) => {
+        let filters = { ...router.query, page: current, size: pageSize };
         router.replace({
             pathname: '/jobbank/vacancies',
             query: filters
@@ -158,11 +158,11 @@ const TableVacancies = ({
         }
     }
 
-    const copyLinkPostulation = (item) =>{
+    const copyLinkPostulation = (item) => {
         let url = `${window.location.origin}/jobbank/search/details`;
         copyContent({
             text: `${url}?vacant=${item.id}`,
-            onSucces: ()=> message.success('Link de postulación copiado'),
+            onSucces: () => message.success('Link de postulación copiado'),
             onError: () => message.error('Link de postulación no copiado')
         })
     }
@@ -172,8 +172,8 @@ const TableVacancies = ({
             <Menu>
                 <Menu.Item
                     key={1}
-                    icon={<DeleteOutlined/>}
-                    onClick={()=>openModalManyDelete()}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalManyDelete()}
                 >
                     Eliminar
                 </Menu.Item>
@@ -186,25 +186,25 @@ const TableVacancies = ({
             <Menu>
                 <Menu.Item
                     key='1'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
+                    icon={<EditOutlined />}
+                    onClick={() => router.push({
                         pathname: `/jobbank/vacancies/edit`,
-                        query: {...router.query, id: item.id }
+                        query: { ...router.query, id: item.id }
                     })}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='2'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
                 <Menu.Item
                     key='3'
                     icon={<CopyOutlined />}
-                    onClick={()=> openModalDuplicate(item)}
+                    onClick={() => openModalDuplicate(item)}
                 >
                     Duplicar
                 </Menu.Item>
@@ -223,7 +223,7 @@ const TableVacancies = ({
                         <Menu.Item
                             key='5'
                             icon={<UserAddOutlined />}
-                            onClick={()=> copyLinkPostulation(item)}
+                            onClick={() => copyLinkPostulation(item)}
                         >
                             Postulación
                         </Menu.Item>
@@ -233,136 +233,137 @@ const TableVacancies = ({
         );
     };
 
-  const columns = [
-    {
-        title: 'Vacante',
-        dataIndex: 'job_position',
-        key: 'job_position',
-        ellipsis: true
-    },
-    {
-        title: 'Cliente',
-        dataIndex: ['customer', 'name'],
-        key: ['customer', 'name'],
-        ellipsis: true
-    },
-    {
-        title: 'Estatus',
-        render: (item) =>{
-            return (
-                <Select
-                    size='small'
-                    style={{width: 101}}
-                    defaultValue={item.status}
-                    value={item.status}
-                    placeholder='Estatus'
-                    options={optionsStatusVacant}
-                    onChange={(e) => actionStatus(e, item)}
-                />
-            )
-        }
-    },
-    {
-        title: 'Mostrar nombre cliente',
-        render: (item) =>{
-            return (
-                <Select
-                    size='small'
-                    style={{width: 101}}
-                    defaultValue={item.show_customer_name}
-                    value={item.show_customer_name}
-                    placeholder='Seleccionar'
-                    options={optionsShowCustomerNameVacant}
-                    onChange={(e) => actionShowCustomerName(e, item)}
-                />
-            )
-        }
-    },
-    {
-        title: 'Estrategia',
-        render: (item) =>{
-            return item.has_strategy ? (
-                <a
-                    style={{color: '#1890ff'}}
-                    onClick={()=> router.push({
-                        pathname: '/jobbank/strategies/edit',
-                        query: {...router.query, id: item.has_strategy, back: 'vacancies'}
-                    })}
-                >
-                    Ver estrategia
-                </a>
-            ) : <></>;
-        }
-    },
-    {
-        title: 'Reclutador',
-        dataIndex: ['recruiter', 'full_name'],
-        key: ['recruiter', 'full_name'],
-        ellipsis: true
-    },
-    {
-        title: ()=> {
-            return(
-                <Dropdown overlay={menuTable}>
-                    <Button size='small'>
-                        <EllipsisOutlined />
-                    </Button>
-                </Dropdown>
-            )
+    const columns = [
+        {
+            title: 'Vacante',
+            dataIndex: 'job_position',
+            key: 'job_position',
+            ellipsis: true
         },
-        width: 60, 
-        render: (item) =>{
-            return (
-                <Dropdown overlay={()=> menuItem(item)}>
-                    <Button size='small'>
-                        <EllipsisOutlined />
-                    </Button>
-                </Dropdown>
-            )
+        {
+            title: 'Cliente',
+            dataIndex: ['customer', 'name'],
+            key: ['customer', 'name'],
+            ellipsis: true
+        },
+        {
+            title: 'Estatus',
+            render: (item) => {
+                return (
+                    <Select
+                        size='small'
+                        style={{ width: 101 }}
+                        defaultValue={item.status}
+                        value={item.status}
+                        placeholder='Estatus'
+                        options={optionsStatusVacant}
+                        onChange={(e) => actionStatus(e, item)}
+                    />
+                )
+            }
+        },
+        {
+            title: 'Mostrar nombre cliente',
+            render: (item) => {
+                return (
+                    <Select
+                        size='small'
+                        style={{ width: 101 }}
+                        defaultValue={item.show_customer_name}
+                        value={item.show_customer_name}
+                        placeholder='Seleccionar'
+                        options={optionsShowCustomerNameVacant}
+                        onChange={(e) => actionShowCustomerName(e, item)}
+                    />
+                )
+            }
+        },
+        {
+            title: 'Estrategia',
+            render: (item) => {
+                return item.has_strategy ? (
+                    <a
+                        style={{ color: '#1890ff' }}
+                        onClick={() => router.push({
+                            pathname: '/jobbank/strategies/edit',
+                            query: { ...router.query, id: item.has_strategy, back: 'vacancies' }
+                        })}
+                    >
+                        Ver estrategia
+                    </a>
+                ) : <></>;
+            }
+        },
+        {
+            title: 'Reclutador',
+            dataIndex: ['recruiter', 'full_name'],
+            key: ['recruiter', 'full_name'],
+            ellipsis: true
+        },
+        {
+            title: () => {
+                return (
+                    <Dropdown placement='bottomRight' overlay={menuTable}>
+                        <Button size='small'>
+                            <EllipsisOutlined />
+                        </Button>
+                    </Dropdown>
+                )
+            },
+            width: 60,
+            render: (item) => {
+                return (
+                    <Dropdown placement='bottomRight' overlay={() => menuItem(item)}>
+                        <Button size='small'>
+                            <EllipsisOutlined />
+                        </Button>
+                    </Dropdown>
+                )
+            }
         }
-    }
-  ]
+    ]
 
-  return (
-    <>
-        <Table
-            size='small'
-            rowKey='id'
-            columns={columns}
-            loading={load_vacancies}
-            rowSelection={rowSelection}
-            onChange={onChangePage}
-            dataSource={list_vacancies.results}
-            locale={{ emptyText: load_vacancies
-                ? 'Cargando...'
-                : 'No se encontraron resultados'
-            }}
-            pagination={{
-                total: list_vacancies.count,
-                pageSize: jobbank_page_size,
-                current: jobbank_page,
-                hideOnSinglePage: list_vacancies?.count < 10,
-                showSizeChanger: list_vacancies?.count > 10
-            }}
-        />
-        <ListItems
-            title={titleDelete}
-            visible={openModalDelete}
-            keyTitle='job_position'
-            keyDescription='customer, name'
-            close={closeModalDelete}
-            itemsToList={itemsToDelete}
-            actionConfirm={useToCopy ? actionDuplicate : actionDelete}
-            textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
-            textConfirm={useToCopy ? 'Duplicar' : 'Eliminar'}
-            useWithAction={useWithAction}
-        />
-    </>
-  )
+    return (
+        <>
+            <Table
+                size='small'
+                rowKey='id'
+                columns={columns}
+                loading={load_vacancies}
+                rowSelection={rowSelection}
+                onChange={onChangePage}
+                dataSource={list_vacancies.results}
+                locale={{
+                    emptyText: load_vacancies
+                        ? 'Cargando...'
+                        : 'No se encontraron resultados'
+                }}
+                pagination={{
+                    total: list_vacancies.count,
+                    pageSize: jobbank_page_size,
+                    current: jobbank_page,
+                    hideOnSinglePage: list_vacancies?.count < 10,
+                    showSizeChanger: list_vacancies?.count > 10
+                }}
+            />
+            <ListItems
+                title={titleDelete}
+                visible={openModalDelete}
+                keyTitle='job_position'
+                keyDescription='customer, name'
+                close={closeModalDelete}
+                itemsToList={itemsToDelete}
+                actionConfirm={useToCopy ? actionDuplicate : actionDelete}
+                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+                textConfirm={useToCopy ? 'Duplicar' : 'Eliminar'}
+                useWithAction={useWithAction}
+            />
+        </>
+    )
 }
 
-const mapState = (state) =>{
-    return{
+const mapState = (state) => {
+    return {
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
         jobbank_page: state.jobBankStore.jobbank_page,

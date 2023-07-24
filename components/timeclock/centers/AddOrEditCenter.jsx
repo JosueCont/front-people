@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MainIndexTM from '../MainIndexTM';
 import DetailsCenter from './DetailsCenter';
-import { getCompanies } from '../../../redux/UserDuck';
+import { getCompanies } from '../../../redux/timeclockDuck';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { deleteFiltersJb } from '../../../utils/functions';

@@ -63,7 +63,7 @@ const WidgetBirthday = ({
 
     return (
         <CardInfo>
-            <CardItem jc='center' hg='100%' pd='16px 0px'
+            <CardItem pd='16px 0px'
                 ai={birthdays?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
                     <img src='/images/ballon.png'/>

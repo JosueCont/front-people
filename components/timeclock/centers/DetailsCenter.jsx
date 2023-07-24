@@ -15,11 +15,12 @@ import { useRouter } from 'next/router';
 import MapGoogle from './MapGoogle';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
-import WebApiPeople from '../../../api/WebApiPeople';
+import WebApiTimeclock from '../../../api/WebApiTimeclock';
 import { connect } from 'react-redux';
 
 const DetailsCenter = ({
     currentNode,
+    currentUser,
     action,
     newFilters = {},
     list_companies,
@@ -40,12 +41,13 @@ const DetailsCenter = ({
     }, [router.query?.id])
 
     useEffect(() => {
-        if (currentNode && action == 'add') {
-            formCenter.setFieldsValue({
-                node: currentNode?.id
-            })
-        }
-    }, [currentNode])
+        let value = router.query?.node;
+        if(currentNode && action == 'add'){
+            let node = value ? value == 'all'
+                ? currentNode?.id : parseInt(value) : currentNode?.id;
+            formCenter.setFieldsValue({node})
+        }        
+    }, [currentNode, router.query?.node])
 
     useEffect(() => {
         if (Object.keys(infoWOrk)?.length <= 0) return;
@@ -55,7 +57,7 @@ const DetailsCenter = ({
     const getInfoWorkCenter = async () => {
         try {
             setLoading(true)
-            let response = await WebApiPeople.getInfoWorkCenter(router.query?.id);
+            let response = await WebApiTimeclock.getInfoWorkCenter(router.query?.id);
             setInfoWork(response.data)
             let name = response.data?.name;
             let paths = response.data?.polygon;
@@ -69,7 +71,7 @@ const DetailsCenter = ({
 
     const onFinishCreate = async (values) => {
         try {
-            await WebApiPeople.createWorkCenter(values);
+            await WebApiTimeclock.createWorkCenter(values);
             message.success('Centro registrado')
             actionBack();
         } catch (e) {
@@ -81,7 +83,7 @@ const DetailsCenter = ({
 
     const onFinishUpdate = async (values) => {
         try {
-            await WebApiPeople.updateWorkCenter(router.query?.id, values);
+            await WebApiTimeclock.updateWorkCenter(router.query?.id, values);
             message.success('Centro actualizado')
             getInfoWorkCenter();
         } catch (e) {
@@ -101,9 +103,12 @@ const DetailsCenter = ({
         formCenter.setFieldsValue(values)
     }
 
+    // Se formatea la lista de las cordenadas para enviarlas
+    // como un string
     const createData = (values) => {
+        let first = polygon.slice(0, 1);
         const map_ = item => (`(${Object.values(item).join(',')})`);
-        let shape = polygon.map(map_).join(',');
+        let shape = polygon.concat(first).map(map_).join(',');
         return { ...values, polygon: shape }
     }
 
@@ -211,7 +216,7 @@ const DetailsCenter = ({
                                         </Col>
                                         <Col span={24} className='content-end'>
                                             <Button htmlType='submit'>
-                                                Guardar
+                                               {action == 'add' ? 'Guardar' : 'Actualizar'}
                                             </Button>
                                         </Col>
                                     </Row>
@@ -235,9 +240,9 @@ const DetailsCenter = ({
 const mapState = (state) => {
     return {
         currentNode: state.userStore.current_node,
-        list_companies: state.userStore.list_companies,
-        load_companies: state.userStore.load_companies,
-        user: state.userStore.user
+        currentUser: state.userStore.user,
+        list_companies: state.timeclockStore.list_companies,
+        load_companies: state.timeclockStore.load_companies,
     }
 }
 

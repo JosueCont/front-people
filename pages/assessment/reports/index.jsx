@@ -4,105 +4,56 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { Breadcrumb, Tabs } from "antd";
 import { withAuthSync } from "../../../libs/auth";
-import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
-import { getPersonsCompany } from "../../../redux/UserDuck";
-import ReportsCompetences from "../../../components/assessment/reports/ReportsCompetences";
+import { getProfiles } from "../../../redux/assessmentDuck";
 import { verifyMenuNewForTenant } from "../../../utils/functions"
 import TabsReport from "../../../components/assessment/reports/TabsReport";
 
 const Index = ({
-  currentNode,
-  getProfiles,
-  getCompetences,
-  getPersonsCompany,
-  ...props
+    currentNode,
+    getProfiles
 }) => {
 
-  const router = useRouter();
-  const [currentKey, setCurrentKey] = useState("p");
-  const { TabPane } = Tabs;
+    const router = useRouter();
+    const [currentKey, setCurrentKey] = useState("p");
+    const { TabPane } = Tabs;
 
-  useEffect(()=>{
-    if(currentNode){
-        getPersonsCompany(currentNode.id)
-        getProfiles(currentNode.id, '')
-        // getCompetences()
-    }
-  },[currentNode])
-  
-  return (
-    <MainLayout currentKey={["assessment_reports"]} defaultOpenKeys={["evaluationDiagnosis","kuiz"]}>
-      <Breadcrumb>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home/persons/" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        {verifyMenuNewForTenant() && 
-          <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+    useEffect(() => {
+        if (currentNode) {
+            getProfiles(currentNode.id, '')
         }
-          <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
-        <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
-      </Breadcrumb>
-        {/* <Tabs activeKey={currentKey} onChange={(key) => setCurrentKey(key)} type="card">
-            <TabPane tab="Persona" key="p">
-              <ReportsCompetences
-                showCardUser={true}
-                showSelectProfile={false}
-                showTitleWork={true}
-                currentKey={currentKey}
-              />
-            </TabPane>
-            <TabPane tab="Persona-Perfil" key="pp">
-              <ReportsCompetences
-                showCardUser={true}
-                showChart={true}
-                showTitleProfile={true}
-                currentKey={currentKey}
-              />
-            </TabPane>
-            <TabPane tab="Personas-Perfil" key="psp">
-              <ReportsCompetences
-                showListUser={true}
-                showCardProfile={true}
-                labelUser='Seleccionar usuarios'
-                currentKey={currentKey}
-              />
-            </TabPane>
-            <TabPane tab="Persona-Perfiles" key="pps">
-              <ReportsCompetences
-                showListProfile={true}
-                showCardUser={true}
-                showTitleWork={true}
-                labelProfile='Seleccionar perfiles'
-                currentKey={currentKey}
-              />
-            </TabPane>
-            <TabPane tab="Personas-Competencias" key="psc">
-              <ReportsCompetences
-                showListUser={true}
-                showCardProfile={true}
-                labelUser='Seleccionar usuarios'
-                currentKey={currentKey}
-              />
-            </TabPane>
-        </Tabs> */}
-        <TabsReport/>
-    </MainLayout>
-  );
+    }, [currentNode])
+
+    return (
+        <MainLayout
+            currentKey={["assessment_reports"]}
+            defaultOpenKeys={["evaluationDiagnosis", "kuiz"]}
+        >
+            <Breadcrumb>
+                <Breadcrumb.Item
+                    className={"pointer"}
+                    onClick={() => router.push({ pathname: "/home/persons/" })}
+                >
+                    Inicio
+                </Breadcrumb.Item>
+                {verifyMenuNewForTenant() &&
+                    <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+                }
+                <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
+                <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
+            </Breadcrumb>
+            <TabsReport />
+        </MainLayout>
+    );
 };
 
 const mapState = (state) => {
-  return {
-    currentNode: state.userStore.current_node,
-  };
+    return {
+        currentNode: state.userStore.current_node,
+    };
 };
 
 export default connect(
-  mapState, {
-    getCompetences,
-    getPersonsCompany,
+    mapState, {
     getProfiles
-  }
+}
 )(withAuthSync(Index));

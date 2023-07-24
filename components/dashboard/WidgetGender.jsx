@@ -48,7 +48,7 @@ const WidgetGender = () => {
     }
 
     return (
-        <CardItem title={<>
+        <CardItem hg='50%' title={<>
             <img src='/images/bygender.png'/>
             <p><FormattedMessage id={'gender'}/></p>
         </>}>

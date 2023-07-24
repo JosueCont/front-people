@@ -797,3 +797,8 @@ export const optionsCategoryIMSS = [
     { value: 1, key: 1, label: "Inicial" },
     { value: 2, key: 2, label: "Unica" },
 ];
+
+export const optionsTypeEvents = [
+    {value: '1', key: '1', label:'Entrada'},
+    {value: '2', key: '2', label: 'Salida'}
+];

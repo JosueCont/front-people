@@ -8,7 +8,6 @@ import {
     getVacancies,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
@@ -24,7 +23,6 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             getClientsOptions(currentNode.id);
-            getPersonsCompany(currentNode.id);
         }
     },[currentNode])
 
@@ -57,7 +55,6 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getVacancies,
-        getClientsOptions,
-        getPersonsCompany
+        getClientsOptions
     }
 )(withAuthSync(index));
