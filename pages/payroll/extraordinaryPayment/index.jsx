@@ -50,11 +50,15 @@ const ExtraordinaryPayment = ({...props}) => {
 
     const edit = (record) => {
         console.log('record', record)
+        let concept = {
+            'description': record?.concept?.description,
+            'amount':record?.concept?.amount
+        }
+
         formTable.setFieldsValue({ 
-            "concept": {description: record.concept.description},
-            "concept": {amount:record.concept.amount}
+            "concept": concept
         })
-        console.log('formTable',formTable)
+        
         setEditingKey(record.key);
     };
 
