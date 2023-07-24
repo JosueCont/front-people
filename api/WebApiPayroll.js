@@ -435,6 +435,47 @@ class WebApiPayroll {
     );
   }
 
+  static getCalculateCreditNote(data) {
+    return WebApi.ApisType(
+      `payroll/calculate_credit_note`,
+      "post",
+      data
+    );
+  }
+
+  static UploadCreditNoteLayout(data){
+    return WebApi.ApisType(
+      `payroll/read_credit_note_layout`,
+    "post",
+    data
+    )
+  }
+
+  static saveConsolidationCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/save_consolidation_credit_note`,
+    "post",
+    data
+    )
+  }
+
+  static openConsolidationCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/open_consolidation_credit_note`,
+      "post",
+      data
+    )
+  }
+
+  static stampCreditNote(data){
+    return WebApi.ApisType(
+      `payroll/stamp_credit_note`,
+      "post",
+      data
+    )
+  }
+
+
 }
 
 export default WebApiPayroll;

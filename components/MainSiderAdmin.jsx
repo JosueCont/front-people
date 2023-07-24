@@ -91,6 +91,7 @@ const MainSider = ({
       bank_accounts: "/comunication/requests/bank_accounts",
       calculatePayroll: "/payroll/calculatePayroll",
       extraordinaryPayroll: "/payroll/extraordinaryPayroll",
+      extraordinaryPayment: "/payroll/extraordinaryPayment",
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
@@ -201,6 +202,7 @@ const MainSider = ({
         let children001 = [
           getItem("Cálculo de nómina", "calculatePayroll"),
           getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
+          getItem("Pagos extraordinarios", "extraordinaryPayment"),
           getItem("Calendario de pagos", "paymentCalendar"),
           getItem("Comprobantes fiscales", "payrollVoucher"),
           getItem("Calculadora", "calculatorSalary"),
