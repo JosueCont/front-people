@@ -82,29 +82,6 @@ const FiltersLogs = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label='Centro de trabajo'
-                            name='workcenter'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_work_centers_options}
-                                loading={load_work_centers_options}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {list_work_centers_options?.length > 0
-                                    && list_work_centers_options?.map(item => (
-                                    <Select.Option value={`${item.id}`} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
                             label='Empresa'
                             name='node'
                         >
@@ -120,6 +97,29 @@ const FiltersLogs = ({
                                 {list_companies?.length > 0
                                     && list_companies?.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Centro de trabajo'
+                            name='workcenter'
+                        >
+                            <Select
+                                allowClear
+                                showSearch
+                                disabled={load_work_centers_options}
+                                loading={load_work_centers_options}
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                            >
+                                {list_work_centers_options?.length > 0
+                                    && list_work_centers_options?.map(item => (
+                                    <Select.Option value={`${item.id}`} key={item.id}>
                                         {item.name}
                                     </Select.Option>
                                 ))}
