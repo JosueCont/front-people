@@ -43,6 +43,9 @@ const FiltersLogs = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
+                initialValues={{
+                    workcenter: 'all'
+                }}
             >
                 <Row gutter={[16, 0]}>
                     <Col span={12}>
@@ -76,31 +79,8 @@ const FiltersLogs = ({
                             <DatePicker
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
-                                style={{width: '100%'}}
+                                style={{ width: '100%' }}
                             />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Centro de trabajo'
-                            name='workcenter'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_work_centers_options}
-                                loading={load_work_centers_options}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {list_work_centers_options?.length > 0
-                                    && list_work_centers_options?.map(item => (
-                                    <Select.Option value={`${item.id}`} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -119,10 +99,33 @@ const FiltersLogs = ({
                                 <Select.Option value='all' key='all'>Todas</Select.Option>
                                 {list_companies?.length > 0
                                     && list_companies?.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Centro de trabajo'
+                            name='workcenter'
+                        >
+                            <Select
+                                showSearch
+                                disabled={load_work_centers_options}
+                                loading={load_work_centers_options}
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                            >
+                                <Select.Option value='all' key='all'>Todas</Select.Option>
+                                {list_work_centers_options?.length > 0
+                                    && list_work_centers_options?.map(item => (
+                                        <Select.Option value={`${item.id}`} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
                             </Select>
                         </Form.Item>
                     </Col>
