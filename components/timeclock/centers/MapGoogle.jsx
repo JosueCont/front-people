@@ -223,7 +223,7 @@ const MapGoogle = ({
         const bounds = new instance.maps.LatLngBounds();
         polygon?.getPath().forEach(item => { bounds.extend(item) });
         let center = bounds.getCenter();
-        instance.map.setCenter(center);
+        instance.map.setOptions({center})
     }
 
     const getLocation = () => {
