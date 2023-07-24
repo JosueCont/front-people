@@ -500,6 +500,10 @@ const ExtraordinaryPayment = ({...props}) => {
                 UpListByExcel(resp.data)
             }
         } catch (error) {
+            if(error.response.data.message){
+                setLoading(false)
+                message.error(error.response.data.message)
+            }
             console.log('error', error)
         }
     }
