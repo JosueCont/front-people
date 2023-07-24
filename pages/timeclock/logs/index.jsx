@@ -40,10 +40,11 @@ const index = ({
     }, [currentNode, router.query])
 
     const validFilters = () =>{
+        let node = router.query?.node;
         let params = {...router.query};
-        params.node = router.query?.node
-            ? router.query?.node : currentNode?.id;
+        params.node = node ? node : currentNode?.id;
         if(params.node == 'all') delete params.node;
+        if(params.workcenter == 'all') delete params.workcenter;
         if(params.timestamp__date){
             let value = moment(params.timestamp__date, 'DD-MM-YYYY').format('YYYY-MM-DD');
             params.timestamp__date = value;
