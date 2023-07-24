@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, Row, Select, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { typeStreet } from "../../utils/constant";
+import { typeStreet, personStreetType } from "../../utils/constant";
 import { connect } from 'react-redux';
 import WebApiFiscal from "../../api/WebApiFiscal";
 import WebApi from "../../api/webApi";
@@ -21,22 +21,39 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
         try {
           let response = await WebApi.getFiscalAddress(person_id);
           console.log('response===>',response)
-          /* formAddress.setFieldsValue({
-            street_type: response.data[0].street_type,
-            street: response.data[0].street,
-            numberOne: response.data[0].numberOne,
-            numberTwo: response.data[0].numberTwo,
-            building: response.data[0].building,
-            postalCode: response.data[0].postalCode,
-            suburb: response.data[0].suburb,
-            location: response.data[0].location,
-            reference: response.data[0].reference,
-          }); */
-          /* setIdAddress(response.data[0].id); */
+          if(response.status === 200){
+            setIdAddress(response?.data?.id)
+            form.setFieldsValue({
+              street_type: response?.data?.street_type,
+              street: response?.data?.street,
+              numberOne: response?.data?.numberOne,
+              numberTwo: response?.data?.numberTwo,
+              between_street_one: response?.data?.between_street_one,
+              between_street_two: response?.data?.between_street_two,
+              postalCode: response?.data?.postalCode,
+              suburb: response?.data?.suburb,
+              location: response?.data?.locality,
+              state: response?.data?.state,
+              email: response?.data?.email,
+              dial_code: response?.data?.dial_code,
+              phone_number: response?.data?.phone_number
+            });
+          }
         } catch (error) {
           console.log(error);
         }
       };
+
+      const updFiscalAddress = async (values) => {
+        try {
+          if (idAddress){
+            let response = await WebApi.updFiscalAddress(idAddress, values);
+          }
+          
+        } catch (error) {
+          console.log('error', error)
+        }
+      }
     
 
     const getPostalCode = (value) => {
@@ -58,7 +75,7 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
         <Form
             layout={"vertical"}
             form={form}
-            /* onFinish={formAddressPerson} */
+            onFinish={saveAddress}
             className="form-details-person"
         >
             <Row>
@@ -68,7 +85,7 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
                         label="Tipo de calle"
                     >
                         <Select
-                            options={typeStreet}
+                            options={personStreetType}
                             notFoundContent={"No se encontraron resultado."}
                         />
                     </Form.Item>
@@ -146,17 +163,17 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="state" label="Correo electrónico">
+            <Form.Item name="email" label="Correo electrónico">
               <Input />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="state" label="Lada">
+            <Form.Item name="dial_code" label="Lada">
               <Input />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="state" label="Telefono">
+            <Form.Item name="phone_number" label="Telefono">
               <Input />
             </Form.Item>
           </Col>

@@ -105,6 +105,10 @@ class WebApi {
     return WebApi.ApisType(`/person/person/${data}/fiscal_address/`, "get");
   }
 
+  static updFiscalAddress(id, data) {
+    return WebApi.ApisType(`/person/fiscal-address/${id}/`, "put", data);
+  }
+
   static createAddress(data) {
     return WebApi.ApisType(`/person/address/`, "post", data);
   }
