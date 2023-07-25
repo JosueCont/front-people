@@ -629,3 +629,8 @@ export const getPercentGenJB = (assets) => {
   let percent = 100 / (codes?.length * 100);
   return (percent * progress).toFixed(2);
 }
+
+
+export const gerErrorMesagesPayroll = (response) => {
+  console.log('response======================>', response)
+}
