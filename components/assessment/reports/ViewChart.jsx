@@ -215,7 +215,9 @@ const ViewChart = ({
     // }
 
     const generateConfig = () =>{
-        let params = actions[typeReport](infoReport?.at(-1));
+        const selected = actions[typeReport];
+        if(!selected) return;
+        let params = selected(infoReport?.at(-1));
         setActiveCircular(params.circular)
         setFullName(params.fullName)
         setParameters(params.data)

@@ -80,6 +80,7 @@ const FiltersLogs = ({
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
                                 style={{ width: '100%' }}
+                                inputReadOnly
                             />
                         </Form.Item>
                     </Col>

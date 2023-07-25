@@ -94,10 +94,9 @@ const SelectPeople = ({
     }
 
     const onChange = (value) => {
-        if(noValid.includes(value)) return;
 
-        let ids = Array.isArray(value) ? value : [value];
-        if(itemSelected.some(item => ids.includes(item.id))) return;
+        let ids = !noValid.includes(value) ? Array.isArray(value)
+            ? value : [value] : [];
 
         // Se filtra las opciones seleccionadas
         const filter_ = item => ids.includes(item.id);
@@ -151,16 +150,7 @@ const SelectPeople = ({
         let records = watchCallback(options);
         return validClasif(records);
     }, [listPeople, selected, watchParam]);
-
-    // const optionsPeople = useMemo(() => {
-    //     let valid = selected?.length <= 0 && watchCallback;
-    //     let check = selected?.length > 0 && !watchCallback;
-    //     if (valid) return watchCallback(listPeople);
-    //     let results = validOptions(listPeople);
-    //     if (check || !watchCallback) return results;
-    //     return watchCallback(results);
-    // }, [listPeople, selected, watchParam]);
-
+    
     const deleteDefault = (e, item) => {
         e.stopPropagation();
         e.preventDefault();
