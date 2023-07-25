@@ -286,27 +286,24 @@ const ExtraordinaryPayment = ({...props}) => {
             }
         ]
 
-        /* Obtenemos el tipo de valor para realizar la validación */
         let max = 13
         let type = "string"
-          if(editing && dataIndex.includes('description')){
+        
+        /* Obtenemos el tipo de valor para realizar la validación */
+        if(editing && dataIndex.includes('description')){
             max = 100
             type = "string"
             rules.push(ruleWhiteSpace)
-          }else if(editing && dataIndex.includes('amount')){
+        }else if(editing && dataIndex.includes('amount')){
             max = 13
             type = "number"
             rules.push({
                 pattern: /^\d+(?:\.\d{1,2})?$/,
-                message: "El campo no puede tener más de dos decimales",
+                message: "Ingresa un valor numerivo válido, máximo de dos decimales",
             })
-          }
-          /* rules.push({
-            max:max,
-            message: `Máximo ${max} caracteres`,
-        }) */
+        }
 
-          const inputNode = inputType === 'number' ? <InputNumber maxLength={10} /> : <Input maxLength={max} />;
+        const inputNode =  <Input maxLength={max} />
 
         return (
           <td {...restProps}>
