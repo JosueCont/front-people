@@ -130,7 +130,7 @@ const ExtraordinaryPayment = ({...props}) => {
                             </Tooltip>
                         </>
                     )
-                }else if(record?.employee_credit_note?.status < 1) {
+                }else if(record?.employee_credit_note === null || record?.employee_credit_note?.status < 1) {
                     const editable = isEditing(record);
                     return editable ? (
                         <span>
@@ -222,7 +222,7 @@ const ExtraordinaryPayment = ({...props}) => {
         if (!period) period = calendar.periods[0];
 
     
-        
+        setOnlySelection(null)
         setPeriodSelcted(period);
         setCalendarSelect(calendar);
         getCalculateCreditNote(period.id)
@@ -241,6 +241,7 @@ const ExtraordinaryPayment = ({...props}) => {
         setPeriodSelcted(period);
         getCalculateCreditNote(period_id)
         setSelectedRowKeys([])
+        setOnlySelection(null)
     }
 
     const getCalculateCreditNote = async (id) => {
@@ -395,7 +396,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 if(status===0){
                     message.success("Información de pagos guardada")
                 }else if(status===1){
-                    message.success("información cerrada")
+                    message.success("Información cerrada")
                 }
                 getCalculateCreditNote(periodSelected.id)
             }
@@ -545,13 +546,6 @@ const ExtraordinaryPayment = ({...props}) => {
                 if (idx > -1) {
                     /* Validamos si es la primera selección para saber que tipo de fila vamos a seleccionar */
                     let item = dataList[idx]
-                    /* Validamos los que no se han guardado */
-                    /* if(!item.employee_credit_note){
-                        if(index === 0){
-                            setOnlySelection('X')
-                        }
-                        nOpen++;
-                    } */
                     /* Validamos los que estan abiertos */
                     if(item.employee_credit_note?.status === 0){
                         if(index === 0){
@@ -566,29 +560,6 @@ const ExtraordinaryPayment = ({...props}) => {
                     }
                 }
             })
-            /* Validamos el numero de los abiertos */
-            /* if(nOpen <= 0){
-                setDisabledClose(true)
-            }else{
-                setDisabledClose(false)
-            } */
-
-            /* Validamos el numero de cerrados seleccionados */
-            /* if(nClosed <= 0){
-                setDisabledStamp(true)
-                setDisabledOpen(true)
-            }else{
-                setDisabledStamp(false)
-                setDisabledOpen(false)
-            } */
-
-            /* Validamos el numero de todos los abiertos selecionados */
-            /* if(nOpen <= 0){
-                setDisabledOpen(true)
-            }else{
-                setDisabledOpen(false)
-            } */
-            console.log('nOpen',nOpen)
             if(nOpen > 0){
                 setDisabledOpen(true)
                 setDisabledClose(false)
@@ -599,6 +570,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 setDisabledStamp(false)
             }
         }else{
+            setOnlySelection(null)
             validateDataList()
         }
     }, [selectedRowKeys])
@@ -612,6 +584,7 @@ const ExtraordinaryPayment = ({...props}) => {
         let itemClosed = 0
         let itemOpen = 0
         let itemStamp = 0
+
         dataList.map((item) =>{
             if(item.employee_credit_note?.status == 1){
                 itemClosed++;
@@ -632,12 +605,22 @@ const ExtraordinaryPayment = ({...props}) => {
             setDisabledStamp(true)
             setDisabledOpen(true)
         }else if(itemStamp === dataList.length){
-            console.log('1')
             setDisabledSave(true)
             setDisabledClose(true)
             setDisabledStamp(true)
             setDisabledOpen(true)
-        }else if(itemOpen > 0 && itemClosed > 0){
+        }else if(itemOpen === dataList.length){
+            setDisabledSave(false)
+            setDisabledClose(false)
+            setDisabledStamp(true)
+            setDisabledOpen(true)
+        }else if(itemClosed === dataList.length){
+            setDisabledSave(true)
+            setDisabledClose(true)
+            setDisabledStamp(false)
+            setDisabledOpen(false)
+        }
+        else if(itemOpen > 0 && itemClosed > 0){
             setDisabledSave(false)
             setDisabledClose(false)
             setDisabledStamp(false)
@@ -786,7 +769,7 @@ const ExtraordinaryPayment = ({...props}) => {
                                         }
                                             
                                             <Button  onClick={() => saveCloseList(1)} style={{ minWidth:150 }} disabled={loading || disabledClose}>
-                                                 {selectedRowKeys.length > 0 ? "Cerrar seleccionados" : "Cerrar abirtos" } 
+                                                 {selectedRowKeys.length > 0 ? "Cerrar seleccionados" : "Cerrar abiertos" } 
                                             </Button>
                                         {
                                             <Button  onClick={() => OpenList()} style={{ minWidth:150 }} disabled={loading || disabledOpen}>
