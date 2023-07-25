@@ -153,7 +153,7 @@ const TableCenters = ({
                     total: list_work_centers?.count,
                     current: timeclock_page,
                     pageSize: timeclock_page_size,
-                    hideOnSinglePage: true,
+                    hideOnSinglePage: false,
                     showSizeChanger: true
                 }}
             />
