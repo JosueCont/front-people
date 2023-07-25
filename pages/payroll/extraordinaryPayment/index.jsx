@@ -110,48 +110,48 @@ const ExtraordinaryPayment = ({...props}) => {
         {
             title: "Acciones",
             render: (record) => {
-                if(record?.employee_credit_note?.status === 2) return (
-                    <>
-                        <Tooltip title="Comprobante" key={record.person_id} color={"#3d78b9"}>
-                            <FilePdfTwoTone
-                                twoToneColor="#34495E"
-                                disabled={loading}
-                                onClick={() => downLoadFile(record, 2)}
-                                style={{ fontSize: "25px" }}
-                            />
-                            </Tooltip>
-                            <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-                                <FileTextTwoTone
+                if(record?.employee_credit_note?.status === 2){ 
+                    return (
+                        <>
+                            <Tooltip title="Comprobante" key={record.person_id} color={"#3d78b9"}>
+                                <FilePdfTwoTone
+                                    twoToneColor="#34495E"
                                     disabled={loading}
-                                    onClick={() => downLoadFile(record, 1)}
+                                    onClick={() => downLoadFile(record, 2)}
                                     style={{ fontSize: "25px" }}
                                 />
-                        </Tooltip>
-                    </>
-                )
-
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Tooltip title="Guardar">
-                            <Typography.Link
-                                onClick={() => save(record.key) }
-                                style={{ marginRight: 8 }}
-                            >
-                                <CheckOutlined />
-                            </Typography.Link>
-                        </Tooltip>
-                        <Tooltip title="Cancelar">
-                            <Popconfirm title="¿Cancelar edición?" onConfirm={cancel}>
-                                <CloseOutlined />
-                            </Popconfirm>
-                        </Tooltip>
-                    </span>
-                ) : (
-                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                        <EditOutlined/>
-                    </Typography.Link>
-                )
+                                </Tooltip>
+                                <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                                    <FileTextTwoTone
+                                        disabled={loading}
+                                        onClick={() => downLoadFile(record, 1)}
+                                        style={{ fontSize: "25px" }}
+                                    />
+                            </Tooltip>
+                        </>
+                    )
+                }else if(record?.employee_credit_note?.status < 1) {
+                    const editable = isEditing(record);
+                    return editable ? (
+                        <span>
+                            <Tooltip title="Guardar">
+                                <Typography.Link
+                                    onClick={() => save(record.key) }
+                                    style={{ marginRight: 8 }}
+                                >
+                                    <CheckOutlined />
+                                </Typography.Link>
+                            </Tooltip>
+                            <Tooltip title="Cancelar">
+                                <CloseOutlined onClick={cancel} />
+                            </Tooltip>
+                        </span>
+                    ) : (
+                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                            <EditOutlined/>
+                        </Typography.Link>
+                    )   
+                }
             }
         },
     ]
@@ -159,11 +159,7 @@ const ExtraordinaryPayment = ({...props}) => {
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
-        selections: [
-          Table.SELECTION_ALL,
-          Table.SELECTION_INVERT,
-          Table.SELECTION_NONE,
-        ],
+        hideSelectAll: true,
         getCheckboxProps: (record) => {
             let flag = false
             if(record?.employee_credit_note?.status >= 2){
@@ -172,11 +168,11 @@ const ExtraordinaryPayment = ({...props}) => {
             if(onlySelection === "X" && record.employee_credit_note){
                 flag= true
             }
-            if(onlySelection === 0 && record.employee_credit_note.status !== 0){
+            if(onlySelection === 0 && record.employee_credit_note?.status !== 0){
                 flag = true
             }
 
-            if(onlySelection === 1 && record.employee_credit_note.status !== 1){
+            if(onlySelection === 1 && record.employee_credit_note?.status !== 1){
                 flag = true
             }
 
@@ -220,13 +216,19 @@ const ExtraordinaryPayment = ({...props}) => {
           return;
         }
         const calendar = paymentCalendars.find((item) => item.id === value);
+
+        /* Periodo */
         let period = calendar.periods.find((p) => p.active == true);
         if (!period) period = calendar.periods[0];
+
+    
+        
         setPeriodSelcted(period);
         setCalendarSelect(calendar);
         getCalculateCreditNote(period.id)
         form.setFieldsValue({
-          period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+            periodicity: calendar.periodicity.description,
+            period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
         });
     };
 
