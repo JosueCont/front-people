@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MainLayout from "../../../layout/MainInter";
 import { Breadcrumb, Button, Card, Col, Form, Input, InputNumber, Modal, Popconfirm, Row, Select, Space, Spin, Table, Tooltip, Typography, Upload, message } from 'antd';
 import router, { useRouter } from "next/router";
-import { verifyMenuNewForTenant, downLoadFileBlobAwait, getDomain } from "../../../utils/functions";
+import { verifyMenuNewForTenant, downLoadFileBlobAwait, getDomain, gerErrorMesagesPayroll } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from 'react-redux';
@@ -527,6 +527,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 UpListByExcel(resp.data)
             }
         } catch (error) {
+            gerErrorMesagesPayroll(error)
             if(error.response.data.message){
                 setLoading(false)
                 message.error(error.response.data.message)
@@ -751,7 +752,7 @@ const ExtraordinaryPayment = ({...props}) => {
                                     <Col span={6}>
                                         <Space style={{ marginTop:30 }} >
                                             <Button icon={<DownloadOutlined/>}  style={{ width:'100%' }} onClick={SendList}>
-                                                Descargar
+                                                Descargar.
                                             </Button>               
                                             <Button icon={<UploadOutlined/>} style={{ width:'100%' }} onClick={() => showModal()}>
                                                 Cargar
@@ -808,7 +809,7 @@ const ExtraordinaryPayment = ({...props}) => {
                     </Row>
                 </Card>
                 <Modal
-                    title={"Cargar layout"}
+                    title={"Cargar plantilla"}
                     visible={openModal}
                     onOk={() => uploadLayout()}
                     onCancel={() => closeModal()}
