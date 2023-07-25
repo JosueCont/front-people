@@ -221,6 +221,19 @@ const PaymentCalendars = ({ ...props }) => {
                   );
                 }}
               />
+                <Column
+                    title="Activo"
+                    key="active"
+                    render={(text, record) => {
+                        return (
+                            <>
+                                {record.active
+                                    ? "Si"
+                                    : "No"}
+                            </>
+                        );
+                    }}
+                />
               <Column title="Año" dataIndex="period" key="period" />
               <Column
                 title="Acciones"
