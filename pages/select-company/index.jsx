@@ -367,7 +367,7 @@ const SelectCompany = ({ ...props }) => {
                     </Row>
                   </Col>
                   <Col span={24}>
-                    <Input style={{ width:400 }} placeholder="Buscar" onChange={debouncedSearch} allowClear />
+                    <Input style={{ width:400 }} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
                   </Col>
                   {!treeTable &&
                     dataList.map((item) => (
