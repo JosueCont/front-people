@@ -24,9 +24,6 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [countItemsForPagination, setCountItemsForPagination] = useState(0)
 
-    const defaulPhoto =
-    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
-
     useEffect(() => {
         getCalendars();
         formCalendar.setFieldsValue({payment_calendar:null,search_person:null, add:1})
@@ -86,6 +83,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
             getPeopleCompany(value.payment_calendar,null);
             setIdCalendar(value.payment_calendar)
             setCurrentStep(1);
+            setCheck([])
         }
 
         // significa que cambió los radios
@@ -98,8 +96,12 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
         }
 
+    }
 
-
+    const checkAll=()=>{
+        let ids = people.map(ele=>ele?.person?.id)
+        console.log(ids, people)
+        setCheck(ids)
     }
 
     const getPeopleCompany = async(id,search,page=1,filter_type=1) => {
@@ -235,6 +237,9 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                     <Radio value={3}>Reasignación</Radio>
                                 </Radio.Group>
                             </Form.Item>
+
+                            <Button onClick={()=> checkAll()}>Elegir todos</Button>
+                            <Button onClick={()=> setCheck([])}>Limpiar selección</Button>
 
                             {people.length > 0 ? (
                                 <>
