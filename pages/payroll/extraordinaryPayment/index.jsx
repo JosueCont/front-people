@@ -395,7 +395,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 if(status===0){
                     message.success("Información de pagos guardada")
                 }else if(status===1){
-                    message.success("información cerrada")
+                    message.success("Información cerrada")
                 }
                 getCalculateCreditNote(periodSelected.id)
             }
