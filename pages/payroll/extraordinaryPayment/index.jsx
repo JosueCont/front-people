@@ -9,7 +9,8 @@ import { connect } from 'react-redux';
 import { withAuthSync } from "../../../libs/auth";
 import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined, FilePdfTwoTone, FileTextTwoTone, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { CancelOutlined } from '@material-ui/icons';
-import { tr } from 'faker/lib/locales';
+
+import {ruleWhiteSpace, onlyNumeric, twoDecimal} from '../../../utils/rules'
 
 
 
@@ -276,7 +277,37 @@ const ExtraordinaryPayment = ({...props}) => {
         children,
         ...restProps
       }) => {
-        const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+
+        /* rules para los inputs */
+        let rules = [
+            {
+              required: true,
+              message: `${title}, es un campo requerido`,
+            }
+        ]
+
+        /* Obtenemos el tipo de valor para realizar la validación */
+        let max = 13
+        let type = "string"
+          if(editing && dataIndex.includes('description')){
+            max = 100
+            type = "string"
+            rules.push(ruleWhiteSpace)
+          }else if(editing && dataIndex.includes('amount')){
+            max = 13
+            type = "number"
+            rules.push({
+                pattern: /^\d+(?:\.\d{1,2})?$/,
+                message: "El campo no puede tener más de dos decimales",
+            })
+          }
+          /* rules.push({
+            max:max,
+            message: `Máximo ${max} caracteres`,
+        }) */
+
+          const inputNode = inputType === 'number' ? <InputNumber maxLength={10} /> : <Input maxLength={max} />;
+
         return (
           <td {...restProps}>
             {editing ? (
@@ -285,12 +316,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 style={{
                   margin: 0,
                 }}
-                rules={[
-                  {
-                    required: true,
-                    message: `Please Input ${title}!`,
-                  },
-                ]}
+                rules={rules}
               >
                 {inputNode}
               </Form.Item>
@@ -577,7 +603,6 @@ const ExtraordinaryPayment = ({...props}) => {
         }
     }, [selectedRowKeys])
     
-
 
     useEffect(() => {
         validateDataList()
