@@ -184,7 +184,7 @@ const FormVacationRecord = ({ person, person_id = null, node }) => {
       <Spin tip="Cargando..." spinning={loadingForm}>
         <Row>
           <Title style={{ fontSize: "20px" }}>
-            Vacaciones corresponientes del periodo{" "}
+            Vacaciones correspondientes del periodo{" "}
             {updateRegister ? updateRegister.period : ""}
           </Title>
         </Row>
