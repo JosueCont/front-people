@@ -60,7 +60,7 @@ const DetailsCenter = ({
             let response = await WebApiTimeclock.getInfoWorkCenter(router.query?.id);
             setInfoWork(response.data)
             let name = response.data?.name;
-            let paths = response.data?.polygon;
+            let paths = response.data?.polygon?.slice(0, -1);
             setShape({ name, paths })
             setLoading(false)
         } catch (e) {
@@ -103,12 +103,12 @@ const DetailsCenter = ({
         formCenter.setFieldsValue(values)
     }
 
-    // Se formatea la lista de las cordenadas para enviarlas
-    // como un string
     const createData = (values) => {
-        let first = polygon.slice(0, 1);
+        let first = Object.values(polygon.at(0)).join('');
+        let last = Object.values(polygon.at(-1)).join('');
+        let coords = first == last ? polygon : polygon.concat(polygon[0]);
         const map_ = item => (`(${Object.values(item).join(',')})`);
-        let shape = polygon.concat(first).map(map_).join(',');
+        let shape = coords.map(map_).join(',');
         return { ...values, polygon: shape }
     }
 
@@ -226,7 +226,8 @@ const DetailsCenter = ({
                         <Col span={24}>
                             <MapGoogle
                                 action={action}
-                                setPolygon={setPolygon}
+                                // setPolygon={setPolygon}
+                                setPolygon={e => console.log('esto llgea------->', e)}
                                 polygonShape={shape}
                             />
                         </Col>

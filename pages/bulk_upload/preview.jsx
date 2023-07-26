@@ -9,7 +9,8 @@ import {
   message,
   Modal,
   Alert,
-  Result
+  Result,
+  Space
 } from "antd";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -21,9 +22,11 @@ import {
   ArrowLeftOutlined,
   CloseCircleTwoTone,
   CheckCircleTwoTone,
+  WarningOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import WebApiPeople from "../../api/WebApiPeople";
+
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
   const [loading, setLoading] = useState(true);
@@ -67,11 +70,11 @@ const PreviewBulkUpload = ({ ...props }) => {
       key: "actions",
       render: (item) => {
         return (
-          !item.status &&
-          item.message && (
+          item.status_log &&
+          (
             <EyeOutlined
               className="icon_actions"
-              onClick={() => viewDetails(item.message)}
+              onClick={() => viewDetails(item.status_log)}
             />
           )
         );
@@ -80,7 +83,8 @@ const PreviewBulkUpload = ({ ...props }) => {
   ];
 
   const viewDetails = (data, type) => {
-    setErrors(data);
+    let errors_list = data.split(",")
+    setErrors(errors_list);
     setIsModalVisible(true);
   };
 
@@ -88,6 +92,7 @@ const PreviewBulkUpload = ({ ...props }) => {
     if (props.formData) {
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
+          
           setArrColumns(columns);
           setDataUpload(response.data.data);
           setTemplateType(response.data.type);
@@ -98,7 +103,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           setLoading(false);
           setErrorImportar(true)
           message.error("Error al importar.");
-          console.log('errors a l importar',e);
+          
         });
     }
   }, [props.formData]);
@@ -106,6 +111,75 @@ const PreviewBulkUpload = ({ ...props }) => {
   const handleOk = () => {
     setIsModalVisible(false);
   };
+
+  const viewErrosDetail = (errorsSection) =>{
+    let errors_list = []
+    /* Validamos si el error es de khonnect_id */
+
+    if('khonnect_id' in errorsSection){
+      errors_list = errorsSection['khonnect_id'] !== "" ? [errorsSection['khonnect_id']] : ["Usuario no generado"]
+    }
+    
+    
+    if(errorsSection['message']){
+      if(errors_list.length === 0){
+        errors_list = [errorsSection['message']]
+      }else{
+        errors_list.push(errorsSection['message'])
+      }
+    }
+    
+    
+    setErrors(errors_list);
+    setIsModalVisible(true);
+    
+  }
+  
+  const shoeDetailsPerson = (info, dataIndex) =>{
+    
+    for (let i = 0; i < info?.length; i++) {
+      if(dataIndex ===  info[i]['section']  && info[i]['saved'] == false){
+        return <>
+          <WarningOutlined
+              className="icon_actions"
+              onClick={() => viewErrosDetail(info[i])}
+            />
+        </>
+        break;
+      }else if(dataIndex ===  info[i]['section']  && info[i]['saved'] == true){
+        return <CheckCircleTwoTone twoToneColor="#52c41a" />
+      }
+    }
+  }
+
+
+  const addColumns = (dataPerson) =>{
+    let currentColumns = [...arrColumns]
+  
+    dataPerson.map(person => {
+      person?.sections.map(section => {
+        let idx = currentColumns.findIndex(column => column.key === section.section)
+        if(idx <= -1){
+          let nameColumn =  section.section === "worktitle" ? "Plaza" : 
+                            section.section === "khonnect" ? "Usuario" :
+                            section.section === "bank account" ? "Cuenta bancaria" :
+                            section.section === "payroll" ? "Nomina" :
+                            section.section === "fiscal address" ? "Dirección fiscal" :
+                            section.section === "infonavit_credit" ? "Infonavit" :
+                            section.section === "social_security" ? "Red social" : ""
+          currentColumns.push({
+            title: nameColumn,
+            key: section.section,
+            dataIndex: 'sections',
+            render: (infoSections) => shoeDetailsPerson(infoSections, section.section)
+          })
+        }
+      })
+    })
+
+    setArrColumns(currentColumns)
+
+  }
 
   const savePersons = () => {
     Modal.confirm({
@@ -127,10 +201,14 @@ const PreviewBulkUpload = ({ ...props }) => {
           const data = {
             persons: dataUpload,
             type: templateType,
+            node_id: props?.currentNode?.id
           };
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
-              setDataUpload(response.data.persons);
+              if(response.status === 200){
+                addColumns(response.data.people) 
+              }
+              setDataUpload(response.data.people);
               if (response.data.saved_persons > 0) {
                 message.success("Cargado correctamente");
                 setMessageSave(response.data.message);
@@ -143,8 +221,9 @@ const PreviewBulkUpload = ({ ...props }) => {
             })
             .catch((response) => {
               setLoading(false);
-              setDataUpload(response.data.persons);
-              setMessageSave(response.data.message);
+              
+              /* setDataUpload(response.data.persons);
+              setMessageSave(response.data.message); */
               message.error("Error al agregar, intente de nuevo");
             });
         } else {
@@ -235,7 +314,14 @@ const PreviewBulkUpload = ({ ...props }) => {
         closable={false}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        {errors && <p>{errors}</p>}
+        
+        <Space direction="vertical" >
+          {errors &&
+          errors.map(item => (
+              <Alert message={item} type="warning" showIcon />
+          ))
+          }
+        </Space>
       </Modal>
     </MainLayout>
   );
@@ -244,6 +330,7 @@ const PreviewBulkUpload = ({ ...props }) => {
 const mapState = (state) => {
   return {
     formData: state.userStore.data_upload,
+    currentNode: state.userStore.current_node
   };
 };
 

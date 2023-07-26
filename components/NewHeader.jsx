@@ -313,7 +313,7 @@ const NewHeader = ({
                   <>
                     {screens.sm && screens.md &&
                     <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
-                      <span style={{ color: 'white', maxWidth:500,  textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
+                      <span style={{ color: 'white', maxWidth:500, cursor:'pointer',  textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
                         {props.currentNode ? props.currentNode.name : ""}
                       </span>
                       </Tooltip>

@@ -380,6 +380,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
   const disablePeriod = (current) => {
     let month = moment(current).month() + 1;
     let year = moment(current).year();
+    let validYear = period ? period : currentYear
 
     let date = {
       month,
@@ -388,11 +389,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
 
     if (
       (date.month !== 1 && date.month !== 12) ||
-      date.year < currentYear - 1
+      date.year < validYear - 1
     ) {
       return true;
     } else {
-      if (date.month === 1 && date.year < currentYear) return true;
+      if (date.month === 1 && date.year < validYear) return true;
       return false;
     }
   };
@@ -637,7 +638,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                   onChange={onChangePeriod}
                   picker="year"
                   moment={"YYYY"}
-                  disabledDate={(currentDate) => currentDate.year() < 2022}
+                  disabledDate={(currentDate) => currentDate.year() < 2017}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
