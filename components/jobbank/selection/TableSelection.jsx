@@ -256,12 +256,11 @@ const TableSelection = ({
         },
         {
             title: 'Estatus',
-            width: 170,
             render: (item) => {
                 return (
                     <Select
                         size='small'
-                        style={{ width: 150 }}
+                        style={{ width: 155 }}
                         defaultValue={item.status_process}
                         value={item.status_process}
                         placeholder='Estatus'
@@ -272,18 +271,20 @@ const TableSelection = ({
             }
         },
         {
-            title: () => {
-                return (
-                    <Dropdown overlay={menuTable}>
-                        <Button size='small'>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
-                )
-            },
+            width: 80,
+            // title: () => {
+            //     return (
+            //         <Dropdown placement='bottomRight' overlay={menuTable}>
+            //             <Button size='small'>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render: (item) => {
                 return (
-                    <Dropdown overlay={() => menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={() => menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>

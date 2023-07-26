@@ -5,15 +5,15 @@ import { typeHttp } from "../config/config";
 import { tenant_ } from "../api/axiosApi";
 
 
-export const verifyMenuNewForTenant=() => {
-  let tenantList = process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU?process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU:null
-  if (tenantList){
-    if (tenantList.includes(tenant_)){
+export const verifyMenuNewForTenant = () => {
+  let tenantList = process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU ? process.env.NEXT_PUBLIC_TENANT_USE_NEW_MENU : null
+  if (tenantList) {
+    if (tenantList.includes(tenant_)) {
       return true
-    }else{
+    } else {
       return false
     }
-  }else{
+  } else {
     return false
   }
 }
@@ -61,6 +61,45 @@ export const downLoadFileBlob = async (
     .catch((e) => {
       console.log('Error xd', e.response)
       let errorMessage = e.response?.data?.message || ""
+      if (errorMessage !== "") {
+        message.error(errorMessage)
+      } else if (Textmessage) {
+        message.error(Textmessage)
+      } else if (e?.response?.status === 404) {
+        message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
+      }
+    });
+};
+
+export const downLoadFileBlobAwait = async (
+  url,
+  name = "Example.xlsx",
+  type = "POST",
+  params = null,
+  Textmessage = null,
+  setLoading=null,
+) => {
+  if(setLoading) setLoading(true)
+  let headers = {
+    method: type,
+    responseType: "blob",
+  };
+  if (params) headers.data = params;
+  axios(
+    url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
+    headers
+  )
+    .then((response) => {
+      const blob = new Blob([response.data]);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      if(setLoading) setLoading(false)
+    })
+    .catch((e) => {
+      console.log('Error xd', e.response)
+      let errorMessage = e.response?.data?.message || ""
        if (errorMessage !== ""){
         message.error(errorMessage)
       } else if(Textmessage){
@@ -68,6 +107,7 @@ export const downLoadFileBlob = async (
       }else if(e?.response?.status===404){
         message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
       } 
+      if(setLoading) setLoading(false)
     });
 };
 
@@ -402,9 +442,9 @@ export const getDifferenceDays = (startDate, endDate) => {
 export const valueToFilter = (value) => {
   let newVal = value
     ? value
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
     : "";
   return newVal.trim();
 };
@@ -442,54 +482,60 @@ export const getPhoto = (person, picture = null) => {
   return person?.photo_thumbnail
     ? person?.photo_thumbnail
     : person?.photo
-    ? person?.photo
-    : picture ? picture : "/images/usuario.png";
+      ? person?.photo
+      : picture ? picture : "/images/usuario.png";
 };
 
 export const getWork = ({ work_title }) => {
   return work_title ? (work_title.job ? work_title.job.name : "N/A") : "N/A";
 };
 
-export const validateNum = (e) =>{
-  if(e.which != 8
+export const validateNum = (e) => {
+  if (e.which != 8
     && isNaN(String.fromCharCode(e.which))
   ) e.preventDefault();
 }
 
-export const validateMaxLength = (e) =>{
-  if(e.which == 32) e.preventDefault();
-  if(e.target.value.length >= e.target?.maxLength) e.preventDefault();
+export const validateMaxLength = (e) => {
+  if (e.which == 32) e.preventDefault();
+  if (e.target.value.length >= e.target?.maxLength) e.preventDefault();
 }
 
-export const createFiltersJB = (obj = {}, discard = []) =>{
+export const createFiltersJB = (obj = {}, discard = []) => {
   let noValid = [undefined, null, "", " "];
-  return Object.entries(obj).reduce((filters, [key, val])=>{
-    if(discard.includes(key)) return filters
+  return Object.entries(obj).reduce((filters, [key, val]) => {
+    if (discard.includes(key)) return filters
     let value = val?.toString().trim();
-    if(noValid.includes(value)) return filters;
-    return {...filters, [key]: value}
+    if (noValid.includes(value)) return filters;
+    return { ...filters, [key]: value }
   }, {});
 }
 
-export const getFiltersJB = (obj = {}, discard = []) =>{
-  if(Object.keys(obj).length <=0) return '';
-  return Object.entries(obj).reduce((query, [key, val])=>{
-    if(["size", ...discard].includes(key)) return query;
-    if(key == "page"){
+export const getFiltersJB = (obj = {}, discard = [], isFirst = false) => {
+  if (Object.keys(obj).length <= 0) return '';
+
+  const getQuery = (param, query, idx) => isFirst && idx == 0
+    ? `?${query}${param}`
+    : `${query}&${param}`;
+
+  return Object.entries(obj).reduce((query, [key, val], idx) => {
+    if (["size", ...discard].includes(key)) return query;
+    if (key == "page") {
       const find_ = item => item[0] == "size";
       let result = Object.entries(obj).find(find_);
       let limit = result ? parseInt(result[1]) : 10;
       let offset = (parseInt(val) - 1) * limit;
-      return `${query}&limit=${limit}&offset=${offset}`;
+      let param = `limit=${limit}&offset=${offset}`;
+      return getQuery(param, query, idx);
     }
-    return `${query}&${key}=${val}`;
+    return getQuery(`${key}=${val}`, query, idx);
   }, '');
 }
 
-export const deleteFiltersJb = (obj = {}, listDelete = []) =>{
-  return Object.entries(obj).reduce((filters, [key, val]) =>{
-    if(listDelete.includes(key)) return filters;
-    return {...filters, [key]: val};
+export const deleteFiltersJb = (obj = {}, listDelete = []) => {
+  return Object.entries(obj).reduce((filters, [key, val]) => {
+    if (listDelete.includes(key)) return filters;
+    return { ...filters, [key]: val };
   }, {});
 }
 
@@ -499,8 +545,8 @@ export const getFileExtension = (filename) => {
 
 export const copyContent = async ({
   text = '',
-  onSucces =()=>{},
-  onError =()=>{}
+  onSucces = () => { },
+  onError = () => { }
 }) => {
   try {
     await navigator?.clipboard?.writeText(text);
@@ -516,12 +562,12 @@ export const getValueFilter = ({
   list = [],
   keyEquals = 'id',
   keyShow = 'name'
-}) =>{
+}) => {
   let novalid = [undefined, null, "", ""];
-  if(novalid.includes(value)) return value;
+  if (novalid.includes(value)) return value;
   const find_ = item => item[keyEquals] == value;
   let result = list.find(find_);
-  if(novalid.includes(result)) return value;
+  if (novalid.includes(result)) return value;
   return typeof keyShow == 'function'
     ? keyShow(result) : result[keyShow];
 }
@@ -532,7 +578,7 @@ export const popupPDF = ({
   tip = 'Enlace roto o cambió de ubicación'
 }) => {
   if (typeof window !== "undefined") {
-    let viewer = window.open("","_blank","width=800,height=800");
+    let viewer = window.open("", "_blank", "width=800,height=800");
     viewer.document.write(`
       <object data=${url} style="width: 100%; height: 100%;">
         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
@@ -550,32 +596,41 @@ export const popupPDF = ({
 export const downloadCustomFile = async ({
   url = '',
   name = ''
-}) =>{
+}) => {
   try {
-    let config = {url, method: 'GET', responseType: 'blob'};
+    let config = { url, method: 'GET', responseType: 'blob' };
     let response = await axios(config);
-    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = urlBlob;
-    link.download = name;
-    link.target = "_blank";
-    link.click();
-    window.URL.revokeObjectURL(urlBlob);
+    downloadBLOB({ data: response.data, name });
   } catch (e) {
     console.log(e)
   }
 }
 
-export const getPercentGenJB = (assets) =>{
-  if(!assets || assets.length <= 0) return null;
-  let {codes, progress} = assets.reduce((acc, current) =>{
+export const downloadBLOB = ({ data, name }) => {
+  const urlBlob = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement('a');
+  link.href = urlBlob;
+  link.download = name;
+  link.target = "_blank";
+  link.click();
+  window.URL.revokeObjectURL(urlBlob);
+}
+
+export const getPercentGenJB = (assets) => {
+  if (!assets || assets.length <= 0) return null;
+  let { codes, progress } = assets.reduce((acc, current) => {
     const some_ = item => item == current.code;
-    if(acc.codes?.some(some_)) return acc;
+    if (acc.codes?.some(some_)) return acc;
     let codes = acc.codes ? [...acc.codes, current.code] : [];
-    if(!current?.applys[0]) return {...acc, codes};
+    if (!current?.applys[0]) return { ...acc, codes };
     let progress = acc.progress + current.applys[0]?.progress;
-    return {...acc, codes, progress};
-  }, {codes: [], progress: 0});
+    return { ...acc, codes, progress };
+  }, { codes: [], progress: 0 });
   let percent = 100 / (codes?.length * 100);
   return (percent * progress).toFixed(2);
+}
+
+
+export const gerErrorMesagesPayroll = (response) => {
+  console.log('response======================>', response)
 }

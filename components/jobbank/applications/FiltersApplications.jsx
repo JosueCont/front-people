@@ -148,6 +148,7 @@ const FiltersApplications = ({
                         >
                              <DatePicker.RangePicker
                                 style={{width: '100%'}}
+                                dropdownClassName='picker-range-jb'
                                 format='DD-MM-YYYY'
                             />
                         </Form.Item>

@@ -16,7 +16,8 @@ import Icon, {
   FunnelPlotOutlined,
   SolutionOutlined,
   PieChartFilled,
-  SafetyCertificateOutlined
+  SafetyCertificateOutlined,
+  ClockCircleOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -90,6 +91,7 @@ const MainSider = ({
       bank_accounts: "/comunication/requests/bank_accounts",
       calculatePayroll: "/payroll/calculatePayroll",
       extraordinaryPayroll: "/payroll/extraordinaryPayroll",
+      extraordinaryPayment: "/payroll/extraordinaryPayment",
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
@@ -118,7 +120,9 @@ const MainSider = ({
       jb_selection: "/jobbank/selection",
       jb_preselection: "/jobbank/preselection",
       jb_interviews: "/jobbank/interviews",
-      jb_applications: "/jobbank/applications"
+      jb_applications: "/jobbank/applications",
+      tm_centers: "/timeclock/centers",
+      tm_logs: "/timeclock/logs"
     };
     switch (key){
       case "sukha":
@@ -198,6 +202,7 @@ const MainSider = ({
         let children001 = [
           getItem("Cálculo de nómina", "calculatePayroll"),
           getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
+          getItem("Pagos extraordinarios", "extraordinaryPayment"),
           getItem("Calendario de pagos", "paymentCalendar"),
           getItem("Comprobantes fiscales", "payrollVoucher"),
           getItem("Calculadora", "calculatorSalary"),
@@ -229,9 +234,15 @@ const MainSider = ({
       if(children01.length>0){
         items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
       }
+      
+      let subTimeClock = [
+        getItem("Centros de trabajo", "tm_centers"),
+        getItem("Logs de eventos", "tm_logs")
+      ];
 
-
-
+      if(props?.applications && (_.has(props.applications, "timeclock") && props.applications["timeclock"].active)){
+        items.push(getItem("Rejol checador", "timeclock", <ClockCircleOutlined />, subTimeClock))
+      }
 
       // Reclutamiento y selección
       if (props?.applications && (_.has(props.applications, "jobbank") && props.applications["jobbank"].active)) {

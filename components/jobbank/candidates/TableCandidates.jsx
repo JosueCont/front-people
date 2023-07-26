@@ -293,9 +293,10 @@ const TableCandidates = ({
             }
         },
         {
+            width: 60,
             title: () => {
                 return (
-                    <Dropdown overlay={menuTable}>
+                    <Dropdown placement='bottomRight' overlay={menuTable}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
@@ -304,7 +305,7 @@ const TableCandidates = ({
             },
             render: (item) => {
                 return (
-                    <Dropdown overlay={() => menuItem(item)}>
+                    <Dropdown placement='bottomRight' overlay={() => menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>

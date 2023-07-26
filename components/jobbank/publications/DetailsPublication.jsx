@@ -1,24 +1,18 @@
 import React, {
     useEffect,
-    useState,
-    useRef
+    useState
 } from 'react';
 import {
-    Card,
-    Row,
-    Col,
-    Button,
-    Tabs,
     Form,
     Spin,
     message
 } from 'antd';
 import { connect } from 'react-redux';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormPublications from './FormPublications';
 import { useInfoProfile } from '../hook/useInfoProfile';
+import DetailsCustom from '../DetailsCustom';
 
 const DetailsPublication = ({
     action,
@@ -29,13 +23,6 @@ const DetailsPublication = ({
     load_connections_options
 }) => {
 
-    const fetchingItem = { loading: false, disabled: true };
-    const fetchingParams = {
-        back: fetchingItem,
-        create: fetchingItem,
-        edit: fetchingItem
-    };
-    const btnSave = useRef(null);
     const router = useRouter();
     const [formPublications] = Form.useForm();
     const [loading, setLoading] = useState({});
@@ -46,20 +33,20 @@ const DetailsPublication = ({
     const [fetching, setFetching] = useState(false);
     const { createData, formatData } = useInfoProfile();
 
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
+    useEffect(() => {
+        if (router.query.id && action == 'edit') {
             getInfoPublication(router.query.id);
         }
-    },[router.query?.id])
+    }, [router.query?.id])
 
-    useEffect(()=>{
-        if(Object.keys(infoPublication).length > 0 && action == 'edit'){
+    useEffect(() => {
+        if (Object.keys(infoPublication).length > 0 && action == 'edit') {
             formPublications.resetFields();
             setValuesForm();
         }
-    },[infoPublication, list_connections_options])
+    }, [infoPublication, list_connections_options])
 
-    const getInfoPublication = async (id) =>{
+    const getInfoPublication = async (id) => {
         try {
             setFetching(true)
             let response = await WebApiJobBank.getInfoPublication(id);
@@ -71,7 +58,7 @@ const DetailsPublication = ({
         }
     }
 
-    const setValuesForm = () =>{
+    const setValuesForm = () => {
         let selected = infoPublication.account_to_share?.length > 0 ? infoPublication.account_to_share : [];
         const filter_ = item => selected.includes(item.code) && item.is_active;
         let account_to_share = list_connections_options.filter(filter_).map(item => item.code);
@@ -80,9 +67,9 @@ const DetailsPublication = ({
         let results = existFields && !existFieldsName
             ? formatData(infoPublication.fields)
             : existFieldsName && !existFields
-            ? formatData(infoPublication.profile.fields_name)
-            : {};
-            
+                ? formatData(infoPublication.profile.fields_name)
+                : {};
+
         let all_info = {
             ...results,
             account_to_share,
@@ -92,13 +79,13 @@ const DetailsPublication = ({
         }
         setValuesDefault(all_info)
         formPublications.setFieldsValue(all_info);
-        if(infoPublication.profile) setDisabledField(true);
+        if (infoPublication.profile) setDisabledField(true);
         else setDisabledField(false);
     }
 
-    const onFinishUpdate = async (values) =>{
+    const onFinishUpdate = async (values) => {
         try {
-            let body = {...values, node: currentNode.id, created_by: currentUser.id};
+            let body = { ...values, node: currentNode.id, created_by: currentUser.id };
             await WebApiJobBank.updatePublication(infoPublication.id, body);
             message.success('Publicación actualizada');
             getInfoPublication(infoPublication.id);
@@ -109,9 +96,9 @@ const DetailsPublication = ({
         }
     }
 
-    const onFinishCreate = async (values) =>{
+    const onFinishCreate = async (values) => {
         try {
-            let body = {...values, node: currentNode.id, created_by: currentUser.id};
+            let body = { ...values, node: currentNode.id, created_by: currentUser.id };
             let response = await WebApiJobBank.createPublication(body);
             message.success('Publicación registrada');
             actionSaveAnd(response.data.id);
@@ -123,12 +110,12 @@ const DetailsPublication = ({
         }
     }
 
-    const onFinish = (values) =>{
+    const onFinish = (values) => {
         setFetching(true)
         let bodyData = createData(values, 'fields');
-        if(bodyData.profile) bodyData.fields = {};
+        if (bodyData.profile) bodyData.fields = {};
         let exist = Object.keys(bodyData.fields).length > 0;
-        if(!bodyData.profile && !exist){
+        if (!bodyData.profile && !exist) {
             message.error('Seleccionar los campos de la publicación');
             setFetching(false)
             setLoading({})
@@ -141,14 +128,14 @@ const DetailsPublication = ({
         actionFunction[action](bodyData);
     }
 
-    const actionBack = () =>{
+    const actionBack = () => {
         router.push({
             pathname: '/jobbank/publications',
             query: newFilters
         });
     }
 
-    const actionCreate = () =>{
+    const actionCreate = () => {
         formPublications.resetFields();
         keepValues();
         setDisabledField(false);
@@ -156,108 +143,55 @@ const DetailsPublication = ({
         setLoading({})
     }
 
-    const actionSaveAnd = (id) =>{
+    const actionSaveAnd = (id) => {
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
+            edit: () => router.replace({
                 pathname: '/jobbank/publications/edit',
-                query: {...newFilters, id }
+                query: { ...newFilters, id }
             })
         }
         actionFunction[actionType]();
     }
 
-    const getSaveAnd = (type) =>{
-        setActionType(type)
-        const item = { loading: true, disabled: false };
-        setLoading({...fetchingParams, [type]: item });
-        btnSave.current.click();
-  }
+    const propsCustom = {
+        action,
+        loading,
+        fetching,
+        setLoading,
+        actionBack,
+        setActionType,
+        idForm: 'form-publications',
+        titleCard: action == 'add'
+            ? 'Registrar nueva publicación'
+            : 'Información de la publicación'
+    }
 
     return (
-        <Card>
-            <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content title-action-border'>
-                    <p className='title-action-text'>
-                        {action == 'add'
-                            ? 'Registrar nueva publicación'
-                            : 'Información de la publicación'
-                        }
-                    </p>
-                    <Button
-                        onClick={()=> actionBack()}
-                        icon={<ArrowLeftOutlined />}
-                    >
-                        Regresar
-                    </Button>
-                </Col>
-                <Col span={24}>
-                    <Spin spinning={fetching}>
-                        <Form
-                            id='form-publications'
-                            form={formPublications}
-                            layout='vertical'
-                            onFinish={onFinish}
-                            onFinishFailed={()=> setLoading({})}
-                        >
-                            <FormPublications
-                                formPublications={formPublications}
-                                disableField={disableField}
-                                setDisabledField={setDisabledField}
-                                valuesDefault={valuesDefault}
-                            />
-                        </Form>
-                    </Spin>
-                </Col>
-                <Col span={24} className='tab-vacancies-btns'>
-                    {action == 'add' ? (
-                        <>
-                            <button
-                                htmlType='submit'
-                                form='form-publications'
-                                ref={btnSave}
-                                style={{display:'none'}}
-                            />
-                            <Button
-                                onClick={()=>getSaveAnd('back')}
-                                disabled={loading['back']?.disabled}
-                                loading={loading['back']?.loading}
-                            >
-                                Guardar y regresar
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('create')}
-                                disabled={loading['create']?.disabled}
-                                loading={loading['create']?.loading}
-                            >
-                                Guardar y registrar otra
-                            </Button>
-                            <Button
-                                onClick={()=>getSaveAnd('edit')}
-                                disabled={loading['edit']?.disabled}
-                                loading={loading['edit']?.loading}
-                            >
-                                Guardar y editar
-                            </Button>
-                        </>
-                    ):(
-                        <Button
-                            form='form-publications'
-                            htmlType='submit'
-                            loading={fetching}
-                        >
-                            Actualizar
-                        </Button>
-                    )}
-                </Col>
-            </Row>
-        </Card>
+        <DetailsCustom {...propsCustom}>
+            <Spin spinning={fetching}>
+                <Form
+                    id='form-publications'
+                    form={formPublications}
+                    layout='vertical'
+                    onFinish={onFinish}
+                    onFinishFailed={() => setLoading({})}
+                >
+                    <FormPublications
+                        formPublications={formPublications}
+                        disableField={disableField}
+                        setDisabledField={setDisabledField}
+                        valuesDefault={valuesDefault}
+                    />
+                </Form>
+            </Spin>
+        </DetailsCustom>
     )
 }
 
-const mapState = (state) =>{
-  return{
+const mapState = (state) => {
+    return {
         currentUser: state.userStore.user,
         currentNode: state.userStore.current_node,
         list_connections_options: state.jobBankStore.list_connections_options,

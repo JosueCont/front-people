@@ -83,6 +83,49 @@ export const typeStreet = [
     },
 ];
 
+export const personStreetType = [
+    {
+        label: "Avenida",
+        value: 1,
+    },
+    {
+        label: "Boulevard",
+        value: 2,
+    },
+    {
+        label: "Calle",
+        value: 3,
+    },
+    {
+        label: "Callejón",
+        value: 4,
+    },
+    {
+        label: "Calzada",
+        value: 5,
+    },
+    {
+        label: "Periférico",
+        value: 6,
+    },
+    {
+        label: "Privada",
+        value: 7,
+    },
+    {
+        label: "Carretera",
+        value: 8,
+    },
+    {
+        label: "Camino",
+        value: 9,
+    },
+    {
+        label: "Otro",
+        value: 10,
+    }
+];
+
 export const typeEmployee = [
     {
         label: "Trab. permanente",
@@ -753,4 +796,9 @@ export const optionsCategoryIMSS = [
     { value: 0, key: 0, label: "No aplica" },
     { value: 1, key: 1, label: "Inicial" },
     { value: 2, key: 2, label: "Unica" },
+];
+
+export const optionsTypeEvents = [
+    {value: '1', key: '1', label:'Entrada'},
+    {value: '2', key: '2', label: 'Salida'}
 ];

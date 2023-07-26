@@ -316,6 +316,10 @@ header.ant-layout-header
   border-bottom: none;
 } */
 
+.table-assignments .ant-table-small .ant-table-tbody > tr > td {
+  padding: 4px 8px;
+}
+
 .table-assignments .ant-table-container table > tbody > tr:nth-child(2) {
   border-top-left-radius: 10px;
 }

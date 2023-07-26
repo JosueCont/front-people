@@ -48,7 +48,7 @@ const WidgetTotal = () => {
     }
 
     return (
-        <CardItem
+        <CardItem hg='50%'
             title={<>
                 <img src='/images/people.png' />
                 <p><FormattedMessage id={'dashboard.totalpeople'} /></p>

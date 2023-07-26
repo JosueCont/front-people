@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     Form,
     Button,
@@ -8,195 +8,186 @@ import {
     Select,
     Table,
     message,
+    Input,
+    Typography
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import { ruleRequired } from "../../../utils/rules";
-import { CustomInput } from "../../assessment/groups/Styled";
 import { getFullName } from "../../../utils/functions";
+import { useSelector } from "react-redux";
 
-const PersonsGroup = ({...props}) =>{
+const PersonsGroup = ({
+    title = '',
+    visible = false,
+    close = () => { },
+    actionForm = () => { },
+    itemToEdit = {}
+}) => {
+
+    const {
+        load_persons,
+        persons_company
+    } = useSelector(state => state.userStore);
 
     const [formGroup] = Form.useForm();
-    const { Option } = Select;
-    const [itemsSelected, setItemsSelected] = useState();
-    const [membersSelect, setMembersSelect] = useState([]);
     const [membersTable, setMembersTable] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadAdd, setLoadAdd] = useState(false);
+    const [showError, setShowError] = useState(false);
 
-    useEffect(() => {
-        if(props.personList && props.loadData.persons){
-            formGroup.setFieldsValue({name: props.loadData.name})
-            filterMembers(props.loadData.persons)
-        }else if(props.personList){
-            setMembersSelect(props.personList)
-        }
-    },[]);
+    useEffect(()=>{
+        if(Object.keys(itemToEdit)?.length <=0) return;
+        formGroup.setFieldsValue({name: itemToEdit?.name});
+        setMembersTable(itemToEdit?.persons)
+    },[itemToEdit])
 
-    const orderElements = (array)=>{
-        const order =(x, y) =>{
+    const membersSelect = useMemo(() => {
+        if (membersTable?.length <= 0) return persons_company;
+        let ids = membersTable?.map(item => item.id);
+        return persons_company?.filter(item => !ids.includes(item.id));
+    }, [persons_company, membersTable])
+
+    const orderElements = (array) => {
+        const order = (x, y) => {
             return x.first_name.localeCompare(y.first_name);
         }
         let ordered = array.sort(order);
         return ordered;
     }
 
-    const filterMembers = (dataTable) =>{
-        let select = [];
-        let table = [];       
-        props.personList.map((a)=>{
-            let result = dataTable.some(b => a.id === b.id);
-            if(result){
-                table.push(a)
-            }else{
-                select.push(a)
-            }
-        })
-        let orderedSelect = orderElements(select)
-        let orderedTable = orderElements(table)
-        setMembersSelect(orderedSelect)
-        setMembersTable(orderedTable)
-    }
-
-    const onCloseModal = () =>{
-        props.close();
-        setMembersTable([])
-        setMembersSelect([])
-    }
-
-    const getOnlyIds = () => {
-        let ids = [];
-        membersTable.map((item) => {
-            ids.push(item.id);
-        })
-        return ids;
-    };
-
-    const onFinish = (values) =>{
-        if(membersTable.length > 1){
-            const ids = getOnlyIds();
-            setLoadAdd(true)
-            setTimeout(()=>{
-                onCloseModal()
-                setLoadAdd(false)
-                props.actionForm({name: values.name, persons: ids})
-            },2000)
-        }else{
-            message.error("Selecciona al menos dos personas")
+    const onFinish = (values) => {
+        setShowError(false)
+        if(membersTable?.length < 1){
+            showError(true);
+            return;
         }
+        let persons = membersTable.map(item => item.id);
+        let body = {name: values.name, persons};
+        setLoading(true)
+        setTimeout(()=>{
+            actionForm(body)
+            setLoading(false)
+            onClose()
+        },2000)
+    }
+
+    const onClose = () => {
+        close()
+        setMembersTable([])
+        setShowError(false)
+        formGroup.resetFields()
+    }
+
+    const onChangePerson = async (value) => {
+        let result = persons_company.find(item => item.id == value);
+        let newList = [...membersTable, result];
+        setMembersTable(newList)
+        formGroup.setFieldsValue({ person: null })
+    }
+
+    const deleteItem = (index) => {
+        let newList = [...membersTable];
+        newList.splice(index, 1);
+        setMembersTable(newList)
     }
 
     const colums = [
         {
             title: "Nombre",
-            render: (item) => {
-                return (
-                    <div>
-                        {item.first_name} {item.flast_name} {item.mlast_name}
-                    </div>
-                );
-            },
-            
+            render: (item) => getFullName(item),
         },
         {
             title: "Acciones",
             width: 50,
-            render: (item, record, index) => {
-                return (
-                    <DeleteOutlined
-                        onClick={()=>deleteItem(index)}
-                    />
-                )
-            },
+            render: (item, record, index) => (
+                <DeleteOutlined
+                    onClick={() => deleteItem(index)}
+                />
+            ),
         }
     ]
 
-    const onChangePerson = async (value) =>{
-        let result = props.personList.filter(item => item.id === value)
-        let newList = [...membersTable, result.at(-1)]
-        filterMembers(newList)
-        formGroup.setFieldsValue({person:null})
-    }
-
-    const deleteItem = (index) =>{
-        let newList = [...membersTable];
-        newList.splice(index, 1);
-        filterMembers(newList);
-    }
-
-    return(
+    return (
         <MyModal
-            title={props.title}
-            visible={props.visible}
-            close={onCloseModal}
+            title={title}
+            visible={visible}
+            close={onClose}
+            closable={!loading}
         >
             <Form
                 onFinish={onFinish}
                 form={formGroup}
-                requiredMark={false}
-                layout={'vertical'}
+                layout='vertical'
             >
-                <Row gutter={[8,16]}>
+                <Row gutter={[24, 0]}>
                     <Col span={12}>
                         <Form.Item
-                            name={'name'}
-                            label={'Nombre del grupo'}
-                            style={{marginBottom: '0px'}}
+                            name='name'
+                            label='Nombre del grupo'
                             rules={[ruleRequired]}
                         >
-                            <CustomInput
+                            <Input
+                                allowClear
                                 maxLength={50}
-                                allowClear={true}
                                 placeholder="Ingresa un nombre"
+                                style={{ border: '1px solid black' }}
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name={'person'} label={'Seleccionar persona'} style={{marginBottom: '0px'}}>
+                        <Form.Item
+                            name='person'
+                            label='Seleccionar persona'
+                        >
                             <Select
                                 showSearch
-                                placeholder="Seleccionar persona"
-                                onChange={onChangePerson}
+                                disabled={load_persons}
+                                loading={load_persons}
+                                placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
-                                optionFilterProp="children"
+                                optionFilterProp='children'
+                                onChange={onChangePerson}
                             >
-                                {membersSelect.length > 0 && membersSelect.map((item) => (
-                                    <Option key={item.id} value={item.id}>
+                                {membersSelect.length > 0 && membersSelect.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
                                         {getFullName(item)}
-                                    </Option>
+                                    </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
                     <Col span={24}>
-                        <Form.Item label={'Personas seleccionadas'}>
+                        <Form.Item
+                            required
+                            label={`Personas seleccionadas (${membersTable?.length})`}
+                            style={{ marginBottom: showError ? 8 : 24 }}
+                        >
                             <Table
-                                rowKey={'id'}
+                                rowKey='id'
                                 columns={colums}
                                 showHeader={false}
                                 dataSource={membersTable}
-                                loading={loading}
-                                size={'small'}
-                                locale={{
-                                    emptyText: loading ?
-                                    "Cargando..." :
-                                    "No se encontraron resultados."
-                                }}
-                                scroll={{y: 200}}
-                                pagination={{ position: ['bottomLeft'], hideOnSinglePage: true }}
+                                size='small'
+                                locale={{ emptyText: "No se encontraron resultados" }}
+                                scroll={{ y: 200 }}
+                                pagination={false}
                             />
                         </Form.Item>
+                        {showError && (
+                            <Typography.Text type='danger'>
+                                Selecciona al menos dos colaboradores
+                            </Typography.Text>
+                        )}
                     </Col>
                 </Row>
-                <Row align={'end'}>
+                <Row align='end'>
                     <Space>
-                        <Button key="back" onClick={() => props.close()}>
+                        <Button disabled={loading} onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
                             htmlType="submit"
-                            loading={loadAdd}
+                            loading={loading}
                         >
                             Guardar
                         </Button>

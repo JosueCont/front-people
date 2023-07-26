@@ -131,6 +131,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     if(router?.query){
       if(router?.query?.action==='addxmls'){
         setIsAddXMLS(true)
+
       }else{
         setIsAddXMLS(false)
       }

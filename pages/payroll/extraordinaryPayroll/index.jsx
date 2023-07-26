@@ -267,7 +267,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
-              <Tooltip placement="top" title="Agrrgar conceptos">
+              <Tooltip placement="top" title="Agregar conceptos">
                 <Button
                   size="small"
                   onClick={() => {

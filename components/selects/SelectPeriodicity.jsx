@@ -14,12 +14,25 @@ const SelectPeriodicity = ({
 
   useEffect(() => {
     if (props.periodicity) {
-      let data = props.periodicity.map((item) => {
-        return {
-          value: item.id,
-          label: item.description,
-          key: item.description + item.id,
-        };
+      let data = props.periodicity.filter((item) => {
+        if(item.code === '02' ||
+            item.code === '03' ||
+            item.code === '04' ||
+            item.code==='05' ){
+          return {
+            value: item.id,
+            label: item.description,
+            key: item.description + item.id,
+          };
+        }
+      });
+
+      data = data.map((item) => {
+          return {
+            value: item.id,
+            label: item.description,
+            key: item.description + item.id,
+          };
       });
       setOptions(data);
     }
@@ -47,14 +60,17 @@ const SelectPeriodicity = ({
           onChange={(e) => onChangePeriodicy && onChangePeriodicy(e)}
         >
           {options.map((item) => {
-            return (
-              <>
-                <Option key={item.value} value={item.value}>
-                  {item.label}
-                </Option>
-                ;
-              </>
-            );
+            if(item?.value){
+              return (
+                  <>
+                    <Option key={item?.key} value={item?.value}>
+                      {item?.label}
+                    </Option>
+                    ;
+                  </>
+              );
+            }
+
           })}
         </Select>
       </Form.Item>

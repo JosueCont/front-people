@@ -62,7 +62,7 @@ const ModalCompetences = ({
                     </div>
                 ))}
             </div>
-            <div className='content-end' style={{ gap: 8 }}>
+            <div className='content-end' style={{ gap: 8, marginTop: 12 }}>
                 <OptionsExport
                     typeReport='p'
                     infoReport={itemReport}

@@ -12,7 +12,6 @@ import {
 } from '../../../redux/jobBankDuck';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../utils/functions';
 import { InterviewProvider } from '../../../components/jobbank/context/InterviewContext';
@@ -22,7 +21,6 @@ const calendar = ({
     currentNode,
     getCandidatesOptions,
     getVacanciesOptions,
-    getPersonsCompany,
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
@@ -43,7 +41,6 @@ const calendar = ({
         if(currentNode){
             getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getPersonsCompany(currentNode.id);
             getSelectionOpions(currentNode.id);
             getConnectionsOptions(currentNode.id, '&code=GC');
             getClientsOptions(currentNode.id)
@@ -61,9 +58,7 @@ const calendar = ({
     return (
         <MainIndexJB
             pageKey='jb_interviews'
-            extraBread={[
-                {name: 'Entrevistas'},
-            ]}
+            extraBread={[{name: 'Entrevistas'}]}
         >
             <InterviewProvider>
                 <SearchInterviews/>
@@ -83,7 +78,6 @@ export default connect(
     mapState, {
         getCandidatesOptions,
         getVacanciesOptions,
-        getPersonsCompany,
         getInterviews,
         getSelectionOpions,
         getClientsOptions,

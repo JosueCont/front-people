@@ -21,7 +21,7 @@ const SearchVacancies = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersVacancies();
+    const { listKeys, listGets, listAwait } = useFiltersVacancies();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -50,13 +50,6 @@ const SearchVacancies = ({
         setFilters()
     }
 
-    const showAll = () =>{
-        if(list_vacancies.results.length <= 0) return;
-        let filters = {...router.query, size: list_vacancies.count};
-        if(list_vacancies.count <= 10) delete filters.size;
-        setFilters(filters)
-    }
-
     return (
        <>
             <Card bodyStyle={{padding: 12}}>
@@ -77,11 +70,6 @@ const SearchVacancies = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                {/* <Tooltip title='Ver toda la lista'>
-                                    <Button onClick={()=> showAll()} >
-                                        <TableOutlined />
-                                    </Button>
-                                </Tooltip> */}
                                 <Button onClick={()=> router.push({
                                     pathname: '/jobbank/vacancies/add',
                                     query: router.query
@@ -95,6 +83,7 @@ const SearchVacancies = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            listAwait={listAwait}
                         />
                     </Col>  
                 </Row>

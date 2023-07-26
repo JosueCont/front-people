@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
     getClientsOptions,
     getVacanciesOptions,
@@ -14,7 +13,6 @@ import MainIndexJB from '../MainIndexJB';
 const AddOrEditStrategies = ({
     action = 'add',
     currentNode,
-    getPersonsCompany,
     getClientsOptions,
     getVacanciesOptions,
     getJobBoards
@@ -22,26 +20,25 @@ const AddOrEditStrategies = ({
 
     const router = useRouter();
     const [newFilters, setNewFilters] = useState({});
-    const deleteKeys = ['id','client','back'];
+    const deleteKeys = ['id', 'client', 'back'];
 
-    useEffect(()=>{
-        if(Object.keys(router.query).length <= 0) return;
+    useEffect(() => {
+        if (Object.keys(router.query).length <= 0) return;
         let filters = deleteFiltersJb(router.query, deleteKeys);
         setNewFilters(filters);
-    },[router.query])
+    }, [router.query])
 
-    useEffect(()=>{
-        if(currentNode){
+    useEffect(() => {
+        if (currentNode) {
             getClientsOptions(currentNode.id);
-            getVacanciesOptions(currentNode.id,'&status=1&has_strategy=0');
-            getPersonsCompany(currentNode.id);
+            getVacanciesOptions(currentNode.id, '&status=1&has_strategy=0');
             getJobBoards(currentNode.id);
         }
-    },[currentNode])
+    }, [currentNode])
 
     const ExtraBread = [
-        {name: 'Estrategias', URL: '/jobbank/strategies'},
-        {name: action == 'add' ? 'Nueva' : 'Expediente'}
+        { name: 'Estrategias', URL: '/jobbank/strategies' },
+        { name: action == 'add' ? 'Nueva' : 'Expediente' }
     ]
 
     return (
@@ -58,17 +55,16 @@ const AddOrEditStrategies = ({
     )
 }
 
-const mapState = (state) =>{
-  return{
-    currentNode: state.userStore.current_node
-  }
+const mapState = (state) => {
+    return {
+        currentNode: state.userStore.current_node
+    }
 }
 
 export default connect(
-  mapState,{
-    getPersonsCompany,
-    getClientsOptions,
-    getVacanciesOptions,
-    getJobBoards
-  }
+    mapState, {
+        getClientsOptions,
+        getVacanciesOptions,
+        getJobBoards
+    }
 )(AddOrEditStrategies);

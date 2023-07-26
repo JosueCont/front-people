@@ -222,7 +222,7 @@ const TableApplications = ({
                 let valid = item.candidate?.user_person
                 && item.candidate?.person_assessment_list?.length > 0;
                 return (valid || item.candidate?.cv) ? (
-                    <Dropdown overlay={() => menuItem({item,valid})}>
+                    <Dropdown placement='bottomRight' overlay={() => menuItem({item,valid})}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
