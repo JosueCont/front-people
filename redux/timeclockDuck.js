@@ -76,7 +76,8 @@ export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispat
     const typeFunction = { type: GET_WORK_CENTERS, payload: {}, fetching: false, query, page, size };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let response = await WebApiTimeclock.getWorkCenters(query);
+        let params = `?is_deleted=false${query}`
+        let response = await WebApiTimeclock.getWorkCenters(params);
         dispatch({ ...typeFunction, payload: response.data });
     } catch (e) {
         console.log(e)
@@ -88,7 +89,7 @@ export const getWorkCentersOptions = (node, query = '') => async (dispatch) => {
     const typeFunction = { type: GET_WORK_CENTERS_OPTIONS, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let params = `?paginate=0&node=${node}${query}`;
+        let params = `?paginate=0&node=${node}&is_deleted=false&is_active=true`;
         let response = await WebApiTimeclock.getWorkCenters(params);
         dispatch({ ...typeFunction, payload: response.data })
     } catch (e) {

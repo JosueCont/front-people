@@ -28,8 +28,7 @@ const index = ({
             let page = router.query?.page ? parseInt(router.query?.page) : 1;
             let size = router.query.size ? parseInt(router.query.size) : 10;
             let filters = getFiltersJB(validFilters());
-            let params = `?is_deleted=false${filters}`;
-            getWorkCenters(params, page, size)
+            getWorkCenters(filters, page, size)
         }
     }, [currentNode, router.query])
 
