@@ -645,7 +645,7 @@ const TablePeople = ({
     const onChangePage = ({ current, pageSize }) => {
         let filters = { ...router.query, page: current, size: pageSize };
         router.replace({
-            pathname: '/home/persons/copy',
+            pathname: '/home/persons/',
             query: filters
         }, undefined, { shallow: true })
     }
