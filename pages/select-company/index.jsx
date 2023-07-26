@@ -413,11 +413,12 @@ const SelectCompany = ({ ...props }) => {
                         >
                           <EditOutlined />
                         </span> */}
-                          <Meta
-                            className="meta_company"
-                            title={item.name}
-                            // description="Ultima vez: Hace 2 Hrs"
-                          />
+                          {/*<Meta*/}
+                          {/*  className="meta_company"*/}
+                          {/*  title={item.name}*/}
+                          {/*  // description="Ultima vez: Hace 2 Hrs"*/}
+                          {/*/>*/}
+                          <p style={{fontSize:15, color:'white'}}>{item.name}</p>
                         </Card>
                       </Col>
                     ))}

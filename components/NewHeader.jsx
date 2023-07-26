@@ -182,22 +182,22 @@ const NewHeader = ({
               </>
             )}
 
-            {props.config &&
-              props.config.applications &&
-              props.config.applications.find(
-                (item) => item.app === "PAYROLL" && item.is_active
-              ) && (
-                <>
-                  <p
-                    className="text-menu"
-                    onClick={() => setModalCfdiVersion(true)}
-                  >
-                    <Text>Cambiar version de CDFI</Text>
-                  </p>
-                </>
+            {/*{props.config &&*/}
+            {/*  props.config.applications &&*/}
+            {/*  props.config.applications.find(*/}
+            {/*    (item) => item.app === "PAYROLL" && item.is_active*/}
+            {/*  ) && (*/}
+            {/*    <>*/}
+            {/*      <p*/}
+            {/*        className="text-menu"*/}
+            {/*        onClick={() => setModalCfdiVersion(true)}*/}
+            {/*      >*/}
+            {/*        <Text>Cambiar version de CDFI</Text>*/}
+            {/*      </p>*/}
+            {/*    </>*/}
 
 
-              )}
+            {/*  )}*/}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
