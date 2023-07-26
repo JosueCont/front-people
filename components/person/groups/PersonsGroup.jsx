@@ -79,8 +79,8 @@ const PersonsGroup = ({
     }
 
     const watchCallback = (options) =>{
+        if(membersTable?.length <=0) return options;
         let ids = membersTable.map(item => item.id);
-        if(ids?.length <=0) return options;
         return options.filter(item => !ids.includes(item.id));
     }
 
