@@ -5,9 +5,7 @@ import {
     Row,
     Col,
     Space,
-    Select,
     Table,
-    message,
     Input,
     Typography
 } from "antd";
@@ -15,7 +13,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import { ruleRequired } from "../../../utils/rules";
 import { getFullName } from "../../../utils/functions";
-import { useSelector } from "react-redux";
+import SelectPeople from "../../people/utils/SelectPeople";
 
 const PersonsGroup = ({
     title = '',
@@ -25,27 +23,16 @@ const PersonsGroup = ({
     itemToEdit = {}
 }) => {
 
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
-
     const [formGroup] = Form.useForm();
     const [membersTable, setMembersTable] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
 
-    useEffect(()=>{
-        if(Object.keys(itemToEdit)?.length <=0) return;
-        formGroup.setFieldsValue({name: itemToEdit?.name});
+    useEffect(() => {
+        if (Object.keys(itemToEdit)?.length <= 0) return;
+        formGroup.setFieldsValue({ name: itemToEdit?.name });
         setMembersTable(itemToEdit?.persons)
-    },[itemToEdit])
-
-    const membersSelect = useMemo(() => {
-        if (membersTable?.length <= 0) return persons_company;
-        let ids = membersTable?.map(item => item.id);
-        return persons_company?.filter(item => !ids.includes(item.id));
-    }, [persons_company, membersTable])
+    }, [itemToEdit])
 
     const orderElements = (array) => {
         const order = (x, y) => {
@@ -57,18 +44,18 @@ const PersonsGroup = ({
 
     const onFinish = (values) => {
         setShowError(false)
-        if(membersTable?.length < 1){
-            showError(true);
+        if (membersTable?.length < 1) {
+            setShowError(true);
             return;
         }
         let persons = membersTable.map(item => item.id);
-        let body = {name: values.name, persons};
+        let body = { name: values.name, persons };
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             actionForm(body)
             setLoading(false)
             onClose()
-        },2000)
+        }, 2000)
     }
 
     const onClose = () => {
@@ -78,8 +65,8 @@ const PersonsGroup = ({
         formGroup.resetFields()
     }
 
-    const onChangePerson = async (value) => {
-        let result = persons_company.find(item => item.id == value);
+    const onChangePerson = (value, list) => {
+        let result = list.find(item => item.id == value);
         let newList = [...membersTable, result];
         setMembersTable(newList)
         formGroup.setFieldsValue({ person: null })
@@ -89,6 +76,12 @@ const PersonsGroup = ({
         let newList = [...membersTable];
         newList.splice(index, 1);
         setMembersTable(newList)
+    }
+
+    const watchCallback = (options) =>{
+        let ids = membersTable.map(item => item.id);
+        if(ids?.length <=0) return options;
+        return options.filter(item => !ids.includes(item.id));
     }
 
     const colums = [
@@ -135,26 +128,13 @@ const PersonsGroup = ({
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item
+                        <SelectPeople
                             name='person'
-                            label='Seleccionar persona'
-                        >
-                            <Select
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                                onChange={onChangePerson}
-                            >
-                                {membersSelect.length > 0 && membersSelect.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            label='Seleccionar una persona'
+                            onChangeSelect={onChangePerson}
+                            watchParam={membersTable}
+                            watchCallback={watchCallback}
+                        />
                     </Col>
                     <Col span={24}>
                         <Form.Item
