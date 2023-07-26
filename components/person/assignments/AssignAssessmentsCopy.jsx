@@ -192,6 +192,8 @@ const AssignAssessments = ({
             title={title}
             visible={visible}
             close={onCloseModal}
+            closable={!loading}
+            widthModal={650}
         >
             <Row gutter={[16, 16]}>
                 <Col span={isIndividual ? 12 : 24}>
@@ -287,7 +289,7 @@ const AssignAssessments = ({
                         scroll={{ y: 200 }}
                         pagination={false}
                     />
-                    {showError && (
+                    {showError && surveySelected?.length <= 0 && (
                         <Typography.Text type='danger'>
                             Seleccionar grupo o evaluación
                         </Typography.Text>
@@ -300,6 +302,7 @@ const AssignAssessments = ({
                         </Button>
                         <Button
                             loading={loading}
+                            htmlType="submit"
                             onClick={() => onFinish()}
                         >
                             Guardar
