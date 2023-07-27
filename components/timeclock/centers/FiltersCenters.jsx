@@ -43,7 +43,7 @@ const FiltersCenters = ({
                     <Col span={12}>
                         <Form.Item
                             label='Nombre'
-                            name='name__icontains'
+                            name='name__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input
@@ -57,7 +57,7 @@ const FiltersCenters = ({
                     <Col span={12}>
                         <Form.Item
                             label='Dirección'
-                            name='address__icontains'
+                            name='address__unaccent__icontains'
                             rules={[ruleWhiteSpace]}
                         >
                             <Input

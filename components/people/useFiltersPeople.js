@@ -5,13 +5,13 @@ import { getFullName } from "../../utils/functions";
 import { setUserFiltersData } from "../../redux/UserDuck";
 import WebApiPeople from "../../api/WebApiPeople";
 
-export const useFiltersPeople = () =>{
+export const useFiltersPeople = () => {
 
     const {
         cat_departments,
         cat_job
     } = useSelector(state => state.catalogStore)
-    
+
     const dispatch = useDispatch();
 
     const listKeys = {
@@ -42,11 +42,11 @@ export const useFiltersPeople = () =>{
         value: id,
         list: cat_job
     })
-    
+
     const getSupervisor = async (id, key) => {
         try {
             let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
+            let value = { [key]: response.data };
             dispatch(setUserFiltersData(value));
             return getFullName(response.data);
         } catch (e) {
@@ -57,7 +57,11 @@ export const useFiltersPeople = () =>{
 
     const getStatus = (value) => value == 'true'
         ? 'Activos' : 'Inactivos';
-    
+
+    const deleteState = (key) => {
+        dispatch(setUserFiltersData({ [key]: null }))
+    }
+
     const listAwait = {
         immediate_supervisor: getSupervisor,
     }
@@ -69,9 +73,14 @@ export const useFiltersPeople = () =>{
         is_active: getStatus
     }
 
+    const listDelete = {
+        immediate_supervisor: deleteState
+    }
+
     return {
         listKeys,
         listGets,
-        listAwait
+        listAwait,
+        listDelete
     }
 }

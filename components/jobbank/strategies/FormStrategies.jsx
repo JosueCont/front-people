@@ -135,6 +135,18 @@ const FormStrategies = ({
         }
     })
 
+    const itemRecruiter = useMemo(()=>{
+        let recruiter = infoStrategy?.recruiter || {};
+        if(Object.keys(recruiter).length > 0) return [recruiter];
+        return [];
+    },[infoStrategy?.recruiter])
+
+    const itemExecutive = useMemo(()=>{
+        let executive = infoStrategy?.business_executive || {};
+        if(Object.keys(executive).length > 0) return [executive];
+        return [];
+    },[infoStrategy?.business_executive])
+
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -156,8 +168,7 @@ const FormStrategies = ({
                     name='recruiter'
                     label='Reclutador'
                     rules={[ruleRequired]}
-                    itemSelected={infoStrategy?.recruiter
-                        ? [infoStrategy?.recruiter] : []}
+                    itemSelected={itemRecruiter}
                 />
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -203,8 +214,7 @@ const FormStrategies = ({
                 <SelectPeople
                     name='business_executive'
                     label='Ejecutivo comercial'
-                    itemSelected={infoStrategy?.business_executive
-                        ? [infoStrategy?.business_executive] : []}
+                    itemSelected={itemExecutive}
                 />
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
