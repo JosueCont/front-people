@@ -226,8 +226,7 @@ const DetailsCenter = ({
                         <Col span={24}>
                             <MapGoogle
                                 action={action}
-                                // setPolygon={setPolygon}
-                                setPolygon={e => console.log('esto llgea------->', e)}
+                                setPolygon={setPolygon}
                                 polygonShape={shape}
                             />
                         </Col>
