@@ -32,7 +32,7 @@ const FiltersLogs = ({
     }
 
     const itemPerson = useMemo(()=>{
-        let person = timeclock_filters_data?.person;
+        let person = timeclock_filters_data?.person || {};
         if(Object.keys(person).length > 0) return [person];
         return person;
     },[timeclock_filters_data?.person])
