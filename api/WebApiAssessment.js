@@ -35,12 +35,10 @@ class WebApiAssessment {
 
 
 
-  static getListSurveys(nodeId, queryParam = "") {
-    return WebApi.ApisType(
-      `/person/assessment/?companies=${nodeId}${queryParam}`,
-      "get"
-    );
+  static getListSurveys(node, query = '') {
+    return WebApi.ApisType(`/person/assessment/?companies=${node}${query}`, 'get');
   }
+
   static createGroupAssessments(data) {
     return WebApi.ApisType(`/person/group-assessments/`, "post", data);
   }

@@ -10,7 +10,7 @@ import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
 import { verifyMenuNewForTenant } from '../../utils/functions';
 
-const MainIndexTM = ({
+const MainKuiz = ({
     children,
     newFilters = {},
     pageKey = '',
@@ -19,36 +19,39 @@ const MainIndexTM = ({
 
     const router = useRouter();
 
-    const breadProps = useCallback((item)=>{
+    const breadProps = useCallback((item) => {
         return item.URL ? {
             className: 'pointer',
-            onClick: ()=> router.push({
+            onClick: () => router.push({
                 pathname: item.URL,
                 query: newFilters
             })
         } : {};
-    },[newFilters])
+    }, [newFilters])
 
     return (
         <MainInter
             currentKey={pageKey}
-            defaultOpenKeys={["timeclock"]}
+            defaultOpenKeys={["evaluationDiagnosis", "kuiz"]}
         >
             <Breadcrumb>
                 <Breadcrumb.Item
                     className='pointer'
-                    onClick={() => router.push({ pathname: '/home/persons/'})}
+                    onClick={() => router.push({ pathname: '/home/persons/' })}
                 >
                     Inicio
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Reloj checador</Breadcrumb.Item>
-                {extraBread.map((item, idx) =>(
-                    <Breadcrumb.Item key={"bread_"+idx} {...breadProps(item)}>
+                {verifyMenuNewForTenant() &&
+                    <Breadcrumb.Item>Evaluación y diagnóstico</Breadcrumb.Item>
+                }
+                <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
+                {extraBread.map((item, idx) => (
+                    <Breadcrumb.Item key={"bread_" + idx} {...breadProps(item)}>
                         {item.name}
                     </Breadcrumb.Item>
                 ))}
             </Breadcrumb>
-            <div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
+            <div style={{ display: 'flex', gap: 24, flexDirection: 'column' }}>
                 <ConfigProvider locale={esES}>
                     {children}
                 </ConfigProvider>
@@ -56,5 +59,5 @@ const MainIndexTM = ({
         </MainInter>
     )
 }
-  
-export default MainIndexTM;
+
+export default MainKuiz;
