@@ -34,20 +34,20 @@ const index = ({
                     <Title style={{ marginBottom: 0 }} level={1}>{currentNode && currentNode.name}</Title>
                     <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p>
                 </div>
-                <ContentCards>
-                    {
-                        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetRequests />
-                    }
+                {/*<ContentCards>*/}
+                {/*    {*/}
+                {/*        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetRequests />*/}
+                {/*    }*/}
 
-                    {
-                        applications && (_.has(applications, "payroll") && applications["payroll"].active) && <WidgetPayroll/>
-                    }
+                {/*    {*/}
+                {/*        applications && (_.has(applications, "payroll") && applications["payroll"].active) && <WidgetPayroll/>*/}
+                {/*    }*/}
 
-                    {
-                        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetBirthday redirectPerson={false} />
-                    }
+                {/*    {*/}
+                {/*        applications && (_.has(applications, "concierge") && applications["concierge"].active) && <WidgetBirthday redirectPerson={false} />*/}
+                {/*    }*/}
 
-                </ContentCards>
+                {/*</ContentCards>*/}
             </ContentVertical>
         </MainLayout>
     )
