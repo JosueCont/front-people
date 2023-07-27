@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select, DatePicker } from 'antd';
 import { ruleWhiteSpace } from '../../../utils/rules';
@@ -31,6 +31,12 @@ const FiltersLogs = ({
         }, 1000)
     }
 
+    const itemPerson = useMemo(()=>{
+        let person = timeclock_filters_data?.person;
+        if(Object.keys(person).length > 0) return [person];
+        return person;
+    },[timeclock_filters_data?.person])
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -52,10 +58,7 @@ const FiltersLogs = ({
                         <SelectPeople
                             name='person'
                             label='Colaborador'
-                            itemSelected={timeclock_filters_data?.person
-                                ? [timeclock_filters_data.person]
-                                : []
-                            }
+                            itemSelected={itemPerson}
                         />
                     </Col>
                     <Col span={12}>

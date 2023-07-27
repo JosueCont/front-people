@@ -1,13 +1,12 @@
 import { optionsStatusVacation } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import WebApiPeople from "../../../api/WebApiPeople";
+import { setUserFiltersData } from "../../../redux/UserDuck";
 
 export const useFiltersRequests = () => {
-
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
+    
+    const dispatch = useDispatch();
 
     const listKeys = {
         person__id: 'Colaborador',
@@ -29,31 +28,54 @@ export const useFiltersRequests = () => {
         keyShow: 'label'
     })
 
-    const getStatusList = (value) =>{
-        if(value == '6') return 'Todas';
+    const getStatusList = (value) => {
+        if (value == '6') return 'Todas';
         const reduce_ = (acc, item) => ([...acc, getStatus(item)]);
         let status = value.split(',').reduce(reduce_, []);
         return status?.join(', ');
     }
 
-    const getPerson = (id) => getValueFilter({
-        value: id,
-        list: persons_company,
-        keyShow: e => getFullName(e)
-    })
+    const getPerson = async (id, key) => {
+        try {
+            let response = await WebApiPeople.getPerson(id);
+            let value = {[key]: response.data};
+            dispatch(setUserFiltersData(value))
+            return getFullName(response.data);
+        } catch (e) {
+            console.log(e)
+            return id;
+        }
+    }
+
+    const deleteState = (key) =>{
+        dispatch(setUserFiltersData({[key] : null}))
+    }
 
     const getPeriod = (value) => {
         let year = parseInt(value);
         return `${year} - ${year + 1}`;
     }
 
+    const listAwait = {
+        person__id: getPerson,
+        immediate_supervisor: getPerson,
+    }
+
     const listGets = {
         range: getDate,
         status__in: getStatusList,
-        person__id: getPerson,
-        immediate_supervisor: getPerson,
         period: getPeriod
     }
 
-    return { listKeys, listGets }
+    const listDelete = {
+        person__id: deleteState,
+        immediate_supervisor: deleteState
+    }
+
+    return {
+        listKeys,
+        listGets,
+        listAwait,
+        listDelete
+    }
 }

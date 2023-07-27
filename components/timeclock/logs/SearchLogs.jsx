@@ -24,7 +24,7 @@ const SearchLogs = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait } = useFiltersLogs();
+    const { listKeys, listGets, listAwait, listDelete } = useFiltersLogs();
 
     const format = 'YYYY-MM-DD';
 
@@ -108,6 +108,7 @@ const SearchLogs = ({
                             listKeys={listKeys}
                             listGets={listGets}
                             listAwait={listAwait}
+                            listDelete={listDelete}
                             discardKeys={['node', 'workcenter']}
                             defaultFilters={defaultFilters}
                         />

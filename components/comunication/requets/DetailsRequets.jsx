@@ -35,15 +35,15 @@ const DetailsRequets = ({
     // Keys
     const period = 'current_vacation_period';
 
-    useEffect(()=>{
-        if(user && action  == 'add' && !isAdmin){
+    useEffect(() => {
+        if (user && action == 'add' && !isAdmin) {
             setCurrentPerson(user)
             formRequest.setFieldsValue({
                 person: user?.id,
                 immediate_supervisor: user?.immediate_supervisor?.id
             })
         }
-    },[user])
+    }, [user])
 
     useEffect(() => {
         if (router?.query?.id && action == 'edit') {
@@ -103,27 +103,28 @@ const DetailsRequets = ({
     }
 
     const setValuesForm = () => {
-        let values = {...infoRequest};
+        let values = {};
         values.person = infoRequest?.collaborator ? infoRequest.collaborator?.id : null;
         values.departure_date = infoRequest?.departure_date
             ? moment(infoRequest.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoRequest?.return_date
             ? moment(infoRequest.return_date, 'YYYY-MM-DD') : null;
-        values.availableDays = infoRequest?.available_days_vacation
-            ? infoRequest?.available_days_vacation : null;
         values.immediate_supervisor = infoRequest?.immediate_supervisor
             ? infoRequest.immediate_supervisor?.id : null;
+        values.period = infoRequest?.period;
+        values.days_requested = infoRequest?.days_requested;
+        values.availableDays = infoRequest?.available_days_vacation;
         formRequest.setFieldsValue(values)
     }
 
-    const onFinish = (values) => {        
+    const onFinish = (values) => {
         setLoading(true)
         values.created_from = 2; // 2 es que se hizo desde la web
         values.current_available_days = values.availableDays // Dias disponibles al momento de la solicitud
         values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
-            ? values.return_date?.format('YYYY-MM-DD') : null;        
+            ? values.return_date?.format('YYYY-MM-DD') : null;
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate
@@ -188,6 +189,7 @@ const DetailsRequets = ({
                                 action={action}
                                 actionBack={actionBack}
                                 isAdmin={isAdmin}
+                                infoRequest={infoRequest}
                             />
                         </Form>
                     </Spin>

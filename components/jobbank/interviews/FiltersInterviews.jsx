@@ -43,6 +43,12 @@ const FiltersInterviews = ({
         return list_vacancies_options.filter(filter_);
     }, [customer, list_vacancies_options])
 
+    const itemRecruiter = useMemo(()=>{
+        let recruiter = jobbank_filters_data?.recruiter || {};
+        if(Object.keys(recruiter).length > 0) return [recruiter];
+        return [];
+    },[jobbank_filters_data?.recruiter])
+
     const onChangeCustomer = (value) => {
         formSearch.setFieldsValue({ vacant: null })
     }
@@ -110,30 +116,8 @@ const FiltersInterviews = ({
                         <SelectPeople
                             name='recruiter'
                             label='Reclutador'
-                            itemSelected={jobbank_filters_data?.recruiter
-                                ? [jobbank_filters_data?.recruiter] : []
-                            }
+                            itemSelected={itemRecruiter}
                         />
-                        {/* <Form.Item
-                            name='recruiter'
-                            label='Reclutador'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
                     </Col>
                     <Col span={12}>
                         <Form.Item

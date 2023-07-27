@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MainRequets from '../MainRequets';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import DetailsRequets from './DetailsRequets';
 import { useRouter } from 'next/router';
 import { deleteFiltersJb } from '../../../utils/functions';
@@ -9,8 +8,7 @@ import { deleteFiltersJb } from '../../../utils/functions';
 const AddOrEditRequets = ({
     action = 'add',
     isAdmin = true,
-    currentNode,
-    getPersonsCompany
+    currentNode
 }) => {
 
     const router = useRouter();
@@ -22,11 +20,6 @@ const AddOrEditRequets = ({
         let filters = deleteFiltersJb(router.query, deleteKeys);
         setNewFilters(filters);
     }, [router.query])
-
-    useEffect(() => {
-        if (!currentNode) return;
-        getPersonsCompany(currentNode.id);
-    }, [currentNode])
 
     const ExtraBread = [
         { name: 'Vacaciones', URL: isAdmin ? '/comunication/requests/holidays' : '/user/requests/holidays' },
@@ -57,6 +50,5 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getPersonsCompany
-}
+    }
 )(AddOrEditRequets);

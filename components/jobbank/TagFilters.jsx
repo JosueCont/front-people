@@ -7,6 +7,7 @@ const TagFilters = ({
     listKeys = {},
     listGets = {},
     listAwait = {},
+    listDelete = {},
     deleteKeys = [],
     discardKeys = [],
     defaultFilters = {},
@@ -57,6 +58,9 @@ const TagFilters = ({
     }
 
     const removeFilter = (key) => {
+        const selected = listDelete[key];
+        if(selected) selected(key);
+
         let ignore = [...deleteKeys, key];
         let filters = deleteFiltersJb(router.query, ignore);
         router.replace({
