@@ -486,7 +486,7 @@ const businessForm = ({ currentNode, ...props }) => {
                     <Col span={24}>
                         {treeTable ? (
                             <ConfigProvider locale={esES}>
-                                <Input onChange={debouncedSearch} style={{ width: 300 }} allowClear />
+                                <Input placeholder="Buscar empresa" onChange={debouncedSearch} style={{ width: 300 }} allowClear />
                                 <Table
                                     className={"mainTable"}
                                     scroll={{ x: 300 }}

@@ -48,7 +48,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                 people: check
             };
             const addCalendars =  await WebApiPayroll.addMassiveCalendar(sendData);
-            if(addCalendars.data.massive_assign.success) {
+            if(addCalendars?.data?.massive_assign?.success) {
                 setLoading(false);
                 message.success(`Se ha realizado exitosamente del calendario a ${addCalendars.data.massive_assign.saved_count} personas `);
                 setCheck([]);
@@ -100,8 +100,8 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     const checkAll=()=>{
         let ids = people.map(ele=>ele?.person?.id)
-        console.log(ids, people)
-        setCheck(ids)
+        ids = [...check,ids]
+        setCheck(...ids)
     }
 
     const getPeopleCompany = async(id,search,page=1,filter_type=1) => {
@@ -238,8 +238,8 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                 </Radio.Group>
                             </Form.Item>
 
-                            <Button onClick={()=> checkAll()}>Elegir todos</Button>
-                            <Button onClick={()=> setCheck([])}>Limpiar selección</Button>
+                            {/*<Button onClick={()=> checkAll()}>Elegir todos</Button>*/}
+                            {/*<Button onClick={()=> setCheck([])}>Limpiar selección</Button>*/}
 
                             {people.length > 0 ? (
                                 <>

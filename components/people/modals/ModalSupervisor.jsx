@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, {
+    useState,
+    useMemo
+} from 'react';
 import MyModal from '../../../common/MyModal';
 import {
     Form,
@@ -12,6 +14,7 @@ import {
 import { ruleRequired } from '../../../utils/rules';
 import { getFullName } from '../../../utils/functions';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import SelectPeople from '../utils/SelectPeople';
 
 const ModalSupervisor = ({
     visible = false,
@@ -23,11 +26,6 @@ const ModalSupervisor = ({
 
     const [formAssign] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
 
     const onFinish = (values) => {
         setLoading(true)
@@ -50,13 +48,13 @@ const ModalSupervisor = ({
         return !itemsSelected?.some(some_);
     },[itemsSelected, typeAssign])
 
-    const list_to_select = useMemo(() => {
-        if (typeAssign == 1) return persons_company;
-        if (itemsSelected?.length <= 0) return persons_company;
-        if (itemsSelected?.length > 1) return persons_company;
+    const watchCallback = (options) =>{
+        if (typeAssign == 1) return options;
+        if (itemsSelected?.length <= 0) return options;
+        if (itemsSelected?.length > 1) return options;
         let ids = itemsSelected.map(item => item?.immediate_supervisor?.id);
-        return persons_company.filter(item => !ids.includes(item.id));
-    }, [itemsSelected, persons_company, typeAssign])
+        return options.filter(item => !ids.includes(item.id));
+    }
 
     return (
         <MyModal
@@ -76,30 +74,16 @@ const ModalSupervisor = ({
             >
                 <Row>
                     <Col span={24}>
-                        <Form.Item
+                        <SelectPeople
                             name='immediate_supervisor'
                             label={typeAssign == 1
                                 ? 'Jefe inmediato'
                                 : 'Suplete de jefe inmediato'
                             }
                             rules={[ruleRequired]}
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {list_to_select.length > 0 && list_to_select.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            watchParam={itemsSelected}
+                            watchCallback={watchCallback}
+                        />
                     </Col>
                     {itemsSelected?.length > 0 && (
                         <Col span={24} style={{ marginBottom: 24 }}>
@@ -130,7 +114,8 @@ const ModalSupervisor = ({
                                             border: '1px solid #ddd',
                                             backgroundColor: '#ffff',
                                             padding: '4px 8px',
-                                            borderRadius: 10
+                                            borderRadius: 10,
+                                            marginTop: 4
                                         }}>
                                             <ExclamationCircleOutlined style={{ color: 'red', marginRight: 8 }} />
                                             No se asignará el suplente a personas sin un jefe inmediato

@@ -82,8 +82,7 @@ const ButtonWizardLight=({data=null})=>{
                              message=""
                              showIcon
                              description={
-                                 <p>Para mas detalle del uso de la plataforma puedes consultar nuestro manual <a
-                                     href="https://rise.articulate.com/share/4aYIEFbd7yUZlU-ZK_paazBEVDQPXmzz#/" target={'_blank'}>aquí</a></p>
+                                 <p><a  href="https://rise.articulate.com/share/4aYIEFbd7yUZlU-ZK_paazBEVDQPXmzz#/" target={'_blank'}>Visita el manual haciendo clic aquí</a></p>
                              }
                              type="info"
                          />

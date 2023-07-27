@@ -64,7 +64,7 @@ const SearchPeople = ({
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/home/persons/copy',
+        pathname: '/home/persons',
         query: filters
     }, undefined, { shallow: true });
 
