@@ -132,6 +132,9 @@ const CalendarImport = ({
                           periodicities[calendarSelect].calendar.periodicity
                       ).description}
                   </span>
+                  <span style={{ display: 'block', lineHeight: 1, textAlign:'center' }}>
+                    {calendarSelect +1 } / { periodicities.length}
+                  </span>
                 </Col>
                 {periodicities.length > 1 && (
                   <Col align="center" span={1}>

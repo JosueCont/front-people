@@ -415,6 +415,11 @@ const CfdiVaucher = ({
   };
 
   useEffect(() => {
+    getVoucher(`&node=${props.currentNode.id}`, 1);
+  }, [props.currentNode])
+  
+
+  useEffect(() => {
     let periodos = [];
     if (calendarSelect && props.payment_calendar.length > 0) {
       periodos = props.payment_calendar.find(
