@@ -138,12 +138,12 @@ const MainSider = ({
       // Dashboard
       items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
 
-      if (props?.applications && (_.has(props.applications, "concierge") && props.applications["concierge"].active)) {
+      /*if (props?.applications && (_.has(props.applications, "concierge") && props.applications["concierge"].active)) {
         let subMenuRequests = [getItem("Vacaciones", "holidays")];
         let subMenuConcierge = [getItem("Solicitudes", "requests", <></>, subMenuRequests)];
         let subMenuRH = [getItem("Concierge", "concierge",<></>, subMenuConcierge)];
         items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, subMenuRH));
-      }
+      }*/
 
 
       // Evaluación y diagnóstico

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
@@ -31,6 +31,12 @@ const FiltersPeople = ({
             onFinish(values);
         },1000)
     }
+
+    const itemSupervisor = useMemo(()=>{
+        let supervisor = user_filters_data?.immediate_supervisor || {};
+        if(Object.keys(supervisor).length > 0) return [supervisor];
+        return [];
+    },[user_filters_data?.immediate_supervisor])
 
     return (
         <MyModal
@@ -169,9 +175,7 @@ const FiltersPeople = ({
                         <SelectPeople
                             name='immediate_supervisor'
                             label='Jefe inmediato'
-                            itemSelected={user_filters_data?.immediate_supervisor
-                                ? [user_filters_data?.immediate_supervisor] : []
-                            }
+                            itemSelected={itemSupervisor}
                         />
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>

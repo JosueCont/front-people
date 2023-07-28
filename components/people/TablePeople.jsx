@@ -551,37 +551,53 @@ const TablePeople = ({
                 </Menu.Item>
             )}
             <Menu.Divider />
-            <Menu.Item
-                key="13"
-                icon={<DownloadOutlined />}
-                onClick={() => actionResignation(item)}
-            >
-                Descargar carta de renuncia
-            </Menu.Item>
-            <Menu.Item
-                key="16"
-                icon={<DownloadOutlined />}
-                onClick={() => actionContractForWork(item)}
-            >
-                Descargar contrato por obra
-            </Menu.Item>
-            <Menu.SubMenu
-                title='Descargar contrato'
-                icon={<DownloadOutlined />}
-            >
+            {
+                currentNode?.resignation_letter &&
                 <Menu.Item
-                    key="14"
-                    onClick={() => actionTermContract(item)}
+                    key="13"
+                    icon={<DownloadOutlined />}
+                    onClick={() => actionResignation(item)}
                 >
-                    Tiempo determinado
+                    Descargar carta de renuncia
                 </Menu.Item>
-                <Menu.Item
-                    key="15"
-                    onClick={() => actionIndeterminateContract(item)}
+
+            }
+            {
+                (currentNode?.contract_for_work || currentNode?.fixed_term_contract || currentNode?.indefinite_term_contract) &&
+                <Menu.SubMenu
+                    title='Descargar contrato'
+                    icon={<DownloadOutlined />}
                 >
-                    Tiempo indeterminado
-                </Menu.Item>
-            </Menu.SubMenu>
+                    {
+                        currentNode?.contract_for_work &&
+                        <Menu.Item
+                            key="16"
+                            icon={<DownloadOutlined />}
+                            onClick={() => actionContractForWork(item)}
+                        >
+                            Descargar contrato por obra
+                        </Menu.Item>
+                    }
+                    {
+                        currentNode?.fixed_term_contract &&
+                        <Menu.Item
+                            key="14"
+                            onClick={() => actionTermContract(item)}
+                        >
+                            Tiempo determinado
+                        </Menu.Item>
+                    }
+                    {
+                        currentNode?.indefinite_term_contract && 
+                        <Menu.Item
+                            key="15"
+                            onClick={() => actionIndeterminateContract(item)}
+                        >
+                            Tiempo indeterminado
+                        </Menu.Item>
+                    }
+                </Menu.SubMenu>
+            }
             <Menu.Divider />
             {applications?.kuiz?.active && (
                 <>
@@ -759,6 +775,11 @@ const TablePeople = ({
         delete: actionDelete,
         sync_ynl: actionSendYNL
     }
+
+    useEffect(() => {
+      console.log('currentNode',currentNode)
+    }, [currentNode])
+    
 
     return (
         <>

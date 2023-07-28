@@ -14,6 +14,7 @@ import {
     Button
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
+import SelectPeople from '../../people/utils/SelectPeople';
 
 const VacactionForm = ({
     formRequest,
@@ -22,6 +23,7 @@ const VacactionForm = ({
     action,
     actionBack = () => { },
     isAdmin,
+    infoRequest = {}
 }) => {
 
     const {
@@ -112,7 +114,7 @@ const VacactionForm = ({
 
     const setValuesByUser = (person) => {
         let values = {};
-        values.availableDays = person[days] ? person[days] : null;
+        values.availableDays = person[days];
         values.period = person[period] ? person[period] : null;
         values.immediate_supervisor = person?.immediate_supervisor
             ? person?.immediate_supervisor?.id : null,
@@ -122,16 +124,16 @@ const VacactionForm = ({
         formRequest.setFieldsValue(values);
     }
 
-    const getPerson = (id) => {
+    const getPerson = (id, list) => {
         if (!id) return {};
         const find_ = item => item.id == id;
-        let result = persons_company.find(find_);
+        let result = list.find(find_);
         if (!result) return {};
         return result;
     }
 
-    const onChangePerson = (value) => {
-        let person = getPerson(value);
+    const onChangePerson = (value, list) => {
+        let person = getPerson(value, list);
         setCurrentPerson(person)
 
         if (!value) formRequest.resetFields();
@@ -221,32 +223,35 @@ const VacactionForm = ({
         return current && (valid_start || valid_end || exist);
     }
 
+    const itemPerson = useMemo(()=>{
+        let person = infoRequest?.collaborator || {};
+        if(Object.keys(person).length > 0) return [person];
+        return [];
+    },[infoRequest?.collaborator])
+
+    const itemSupervisor = useMemo(()=>{
+        let item = currentPerson?.immediate_supervisor;
+        let record = infoRequest?.immediate_supervisor;
+        let supervisor = item ? item : record || {};
+        if(Object.keys(supervisor).length > 0) return [supervisor];
+        return [];
+    },[
+        currentPerson?.immediate_supervisor,
+        infoRequest?.immediate_supervisor
+    ])
+
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} xl={8}>
-                <Form.Item
+                <SelectPeople
                     name='person'
                     label='Colaborador'
+                    size='large'
                     rules={[ruleRequired]}
-                >
-                    <Select
-                        allowClear
-                        showSearch
-                        disabled={load_persons || !isAdmin || action == 'edit'}
-                        loading={load_persons}
-                        placeholder='Seleccionar una opción'
-                        notFoundContent='No se encontraron resultados'
-                        optionFilterProp='children'
-                        onChange={onChangePerson}
-                        size='large'
-                    >
-                        {persons_company.length > 0 && persons_company.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {getFullName(item)}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                    onChangeSelect={onChangePerson}
+                    disabled={!isAdmin || action == 'edit'}
+                    itemSelected={itemPerson}
+                />
             </Col>
             <Col xs={24} md={12} xl={8}>
                 <Form.Item
@@ -362,29 +367,15 @@ const VacactionForm = ({
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8}>
-                <Form.Item
+                <SelectPeople
+                    disabled={true}
                     name='immediate_supervisor'
                     label='Jefe inmediato'
                     rules={[ruleRequired]}
+                    size='large'
                     tooltip='Esta información la puedes asignar desde el expediente de la persona'
-                >
-                    <Select
-                        allowClear
-                        showSearch
-                        disabled
-                        loading={load_persons}
-                        placeholder='Seleccionar una opción'
-                        notFoundContent='No se encontraron resultados'
-                        optionFilterProp='children'
-                        size='large'
-                    >
-                        {persons_company.length > 0 && persons_company.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {getFullName(item)}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                    itemSelected={itemSupervisor}
+                />
             </Col>
             <Col span={24} className='content-end' style={{ gap: 8 }}>
                 <Button htmlType='button' onClick={() => actionBack()}>
