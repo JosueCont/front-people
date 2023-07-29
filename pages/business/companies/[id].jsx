@@ -10,6 +10,7 @@ import FiscalInformationNode from "../../../components/payroll/FiscalInformation
 import PatronalRegistration from "../../../components/payroll/PatronalRegistration";
 import NonWorkingDays from "../../../components/business/NonWorkingDays";
 import PayrollSpread from '../../../components/business/PayrollSpread'
+import PayrollSheets from '../../../components/business/PayrollSheets'
 import WorkingDays from "../../../components/business/WorkingDays";
 import UiStore from "../../../components/business/UiStore";
 
@@ -109,6 +110,10 @@ const ConfigCompany = ({ ...props }) => {
                 <PayrollSpread node_id={company && company.id} />
               </TabPane>
             }
+
+              <TabPane tab="Folios" key={"7"}>
+                <PayrollSheets node_id={company && company.id} />
+              </TabPane>
 
             {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />
