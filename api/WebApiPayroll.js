@@ -488,6 +488,9 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/payroll-sheets/${id}/`, "put", data)
   }
 
+  static delPayrollSheets(id){
+    return WebApi.ApisType(`payroll/payroll-sheets/${id}/`, "delete")
+  }
 
 }
 

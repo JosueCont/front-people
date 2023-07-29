@@ -211,8 +211,21 @@ const PayrollSheets = ({ node_id, ...props }) => {
         setShowModalDelete(false)
     }
 
-    const deleteFolio = () => {
+    const deleteFolio = async () => {
         console.log('forDelete', forDelete)
+        try {
+            let resp = await WebApiPayroll.delPayrollSheets(forDelete.id)
+            if(resp.status === 204){
+                message.success("Folio eliminado correctamente")
+                setForDelete(null)
+                formFilter.submit()
+                setShowModalDelete(false)
+                updAvailables()
+                
+            }
+        } catch (error) {
+            console.log('error', error)
+        }
     }
 
     useEffect(() => {
