@@ -67,7 +67,7 @@ const TableConnections = ({
             <Menu>
                 <Menu.Item
                     key='1'
-                    disabled={item.code == 'LK'}
+                    disabled={item.code == ''}
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: '/jobbank/settings/connections/edit',
