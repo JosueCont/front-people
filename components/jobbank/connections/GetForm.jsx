@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import FormFBIG from './forms/FormFBIG';
 import FormWP from './forms/FormWP';
 import FormGC from './forms/FormGC';
+import FormLK from './forms/FormLK';
 
 const GetForm = ({...props}) => {
 
@@ -15,6 +16,7 @@ const GetForm = ({...props}) => {
         IG: FormFBIG,
         WP: FormWP,
         GC: FormGC,
+        LK: FormLK,
         __default__: ()=> <></>
     }
     
