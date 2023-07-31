@@ -10,8 +10,8 @@ export const useFiltersCenters = () => {
     } = useSelector(state => state.timeclockStore);
     
     const listKeys = {
-        name__icontains: 'Nombre',
-        address__icontains: 'Dirección',
+        name__unaccent__icontains: 'Nombre',
+        address__unaccent__icontains: 'Dirección',
         is_active: 'Estatus',
         node: 'Empresa'
     }

@@ -2,7 +2,8 @@ import React, {
     useState,
     useEffect,
     useMemo,
-    useCallback
+    useCallback,
+    memo
 } from 'react';
 import {
     Form,
@@ -29,12 +30,14 @@ const SelectPeople = ({
     placeholder = 'Buscar...',
     disabled = false,
     onChangeSelect = () => { },
-    itemSelected = [],
+    itemSelected,
     noStyle = false,
     mode = false,
     preserveHistory = false,
     watchCallback,
-    watchParam
+    watchParam,
+    tooltip = '',
+    size = 'middle'
 }) => {
 
     const {
@@ -49,10 +52,12 @@ const SelectPeople = ({
     const [openDrop, setOpenDrop] = useState(false);
 
     useEffect(() => {
-        if (itemSelected?.length <= 0) return;
-        const map_ = item => ({ ...item, selected: true });
-        let items = itemSelected?.map(map_);
-        setSelected(items);
+        if (itemSelected?.length > 0) {
+            const map_ = item => ({ ...item, selected: true });
+            let items = itemSelected?.map(map_);
+            setSelected(items);
+            return;
+        } else setSelected([]);
     }, [itemSelected])
 
     const getOptions = async (value) => {
@@ -150,7 +155,7 @@ const SelectPeople = ({
         let records = watchCallback(options);
         return validClasif(records);
     }, [listPeople, selected, watchParam]);
-    
+
     const deleteDefault = (e, item) => {
         e.stopPropagation();
         e.preventDefault();
@@ -166,6 +171,7 @@ const SelectPeople = ({
             rules={rules}
             dependencies={dependencies}
             noStyle={noStyle}
+            tooltip={tooltip}
         >
             <Select
                 allowClear
@@ -175,6 +181,7 @@ const SelectPeople = ({
                 placeholder={placeholder}
                 filterOption={false}
                 mode={mode}
+                size={size}
                 maxTagCount='responsive'
                 clearIcon={loading ? <LoadingOutlined /> : <CloseCircleFilled />}
                 suffixIcon={loading ? <LoadingOutlined /> : openDrop ? <SearchOutlined /> : <DownOutlined />}
