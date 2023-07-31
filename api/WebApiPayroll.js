@@ -476,6 +476,22 @@ class WebApiPayroll {
   }
 
 
+  static getPayrollSheets(filter){
+    return WebApi.ApisType(`payroll/payroll-sheets/?${filter}`, "get")
+  }
+
+  static addPayrollSheets(data){
+    return WebApi.ApisType(`payroll/payroll-sheets/`, "post", data)
+  }
+
+  static updPayrollSheets(id, data){
+    return WebApi.ApisType(`payroll/payroll-sheets/${id}/`, "put", data)
+  }
+
+  static delPayrollSheets(id){
+    return WebApi.ApisType(`payroll/payroll-sheets/${id}/`, "delete")
+  }
+
 }
 
 export default WebApiPayroll;

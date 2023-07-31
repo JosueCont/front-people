@@ -232,6 +232,10 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/get-facebook-token/', 'post', data);
     }
 
+    static getTokenLK (data){
+        return WebApi.ApisType('/job-bank/get-linkedIn-token/', 'post', data);
+    }
+
     static getPublications(node, query){
         return WebApi.ApisType(`/job-bank/post-vacant/?node=${node}${query}`, 'get');
     }

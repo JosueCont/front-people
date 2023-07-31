@@ -595,7 +595,7 @@ export const optionsTypeConnection = [
 export const optionsConnectionsJB = [
     { label: "Facebook", value: "FB", key: "FB", type: 1 },
     { label: "Instagram", value: "IG", key: "IG", type: 1 },
-    { label: "Linkedin", value: "LK", key: "LK", type: 1, disabled: true },
+    { label: "Linkedin", value: "LK", key: "LK", type: 1 },
     { label: "WhatsApp", value: "WP", key: "WP", type: 2 },
     { label: "Google Calendar", value: "GC", key: "GC", type: 3 },
 ];
