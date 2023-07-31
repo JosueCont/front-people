@@ -21,6 +21,7 @@ const FormLK = ({
     const [infoConfig, setInfoConfig] = useState({});
     const { formatData } = useInfoConnection();
     const userKey = 'user_access_token';
+    const url_redirect = typeof window !== "undefined" ? window.location.origin + "/linkedin" : "https://www.linkedin.com/developers/tools/oauth/redirect";
 
     const existPreConfig = useMemo(()=>{
         let current = infoConnection?.data_config ?? {};
@@ -60,28 +61,36 @@ const FormLK = ({
         }
     }
 
-    const onSuccess = async (response) =>{
+    const onSuccess = async (resp) =>{
         const key = 'updatable';
         let msgError = 'Acceso no obtenido';
         message.loading({content: 'Guardando acceso...', key})
         try {
-            if(!response){
+            let response = await WebApiJobBank.getTokenLK({
+                code: resp,
+                client_id: infoConnection.data_config?.app_id,
+                client_secret: infoConnection.data_config?.secret_key,
+                redirect_uri: url_redirect
+            });
+            console.log(response);
+            if(!response.data?.acess_token || !response.data?.user_code){
                 message.error({content: msgError, key});
                 return;
             }
             formConnection.setFieldsValue({
                 is_valid: true,
-                'data_config|user_access_token': response
+                'data_config|user_access_token': response.data?.acess_token,
+                'data_config|ig_user_id': response.data?.user_code
             });
             setTimeout(()=>{
                 btnSubmit.current.click();
-            },1000)
+            },1000) 
         }
         catch (e) {
-        console.log(e)
-        let txtError = e.response;
-        let msg = txtError ?? msgError;
-        message.error({content: msg, key})
+            console.log(e)
+            let txtError = e.response?.data?.message;
+            let msg = txtError ?? msgError;
+            message.error({content: msg, key})
        }
     }
 
@@ -135,15 +144,6 @@ const FormLK = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='data_config|redirect_uri'
-                    label='Url de redirección(Login)'
-                    rules={[ruleRequired, ruleWhiteSpace]}
-                >
-                    <Input placeholder='Ej. https://www.linkedin.com/developers/tools/oauth/redirect'/>
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
                     name='data_config|app_id'
                     label='Identificador (ClientID)'
                     rules={[ruleRequired, ruleWhiteSpace]}
@@ -191,8 +191,7 @@ const FormLK = ({
                     <BtnLoginLK
                         loading={loading}
                         clientID={infoConnection.data_config?.app_id}
-                        client_secret={infoConnection.data_config?.secret_key}
-                        redirect_uri={infoConnection.data_config?.redirect_uri}
+                        redirectURL={url_redirect}
                         onSuccess={onSuccess}
                     />  
                 )}
