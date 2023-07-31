@@ -72,14 +72,13 @@ const FormLK = ({
                 client_secret: infoConnection.data_config?.secret_key,
                 redirect_uri: url_redirect
             });
-            console.log(response);
-            if(!response.data?.acess_token || !response.data?.user_code){
+            if(!response.data?.access_token || !response.data?.user_code){
                 message.error({content: msgError, key});
                 return;
             }
             formConnection.setFieldsValue({
                 is_valid: true,
-                'data_config|user_access_token': response.data?.acess_token,
+                'data_config|user_access_token': response.data?.access_token,
                 'data_config|ig_user_id': response.data?.user_code
             });
             setTimeout(()=>{
