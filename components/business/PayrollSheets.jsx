@@ -54,6 +54,11 @@ const PayrollSheets = ({ node_id, ...props }) => {
             key: "initial_folio"
         },
         {
+            title: "Folio actual",
+            dataIndex: "actual_folio",
+            key: "actual_folio"
+        },
+        {
             title: "Folio final",
             dataIndex: "final_folio",
             key: "final_folio"
@@ -82,6 +87,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
 
     const getPayrollSheets = async (filters=null) => {
         try {
+            console.log('filters=>', filters)
             setLoading(true)
             let resp = await WebApiPayroll.getPayrollSheets(filters)
             if(resp.status === 200){
@@ -133,6 +139,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
         if(values['final_folio']){
             filters += `&final_folio=${values['final_folio']}`
         }
+        console.log('getPayrollSheets=================',filters)
         getPayrollSheets(filters)
     }
 
@@ -157,7 +164,11 @@ const PayrollSheets = ({ node_id, ...props }) => {
                 message.success("Folio actualizado correctamente")
             }
             closeModal()
-            formFilter.submit()
+            if(filterActive === true){
+                formFilter.submit()
+            } else {
+                getPayrollSheets(`&node=${node_id}`)
+            }
             setLoading(false)
         } catch (error) {
             setLoading(false)
@@ -165,11 +176,22 @@ const PayrollSheets = ({ node_id, ...props }) => {
         }   
     }
 
-    const updAvailables = (dataSuccess) => {
-        
-        let tempList = [...typesAvailables]
+    useEffect(() => {
+      updAvailables()
+    }, [dataList])
+    
 
-        let list = tempList.filter(item => item.value !== dataSuccess.invoice_type)
+    const updAvailables = () => {
+        let typesUsed = []
+        let tempList = [...invoices_type_options]
+
+        dataList.map(item => {            
+            typesUsed.push(item.invoice_type)
+        })
+        
+        console.log('tempList',tempList)
+        console.log('typesUsed', typesUsed)
+        let list = tempList.filter(item => typesUsed.indexOf(item.value) === -1)
         setTypesAvailables(list)
     }
 
@@ -181,11 +203,15 @@ const PayrollSheets = ({ node_id, ...props }) => {
             let resp = await WebApiPayroll.addPayrollSheets(data)
             if( resp.status === 201 ){
                 message.success("Folio agregado correctamente")
-                updAvailables(resp?.data)
+                console.log('filterActive',filterActive)
+                if(filterActive === true){
+                    formFilter.submit()
+                } else {
+                    getPayrollSheets(`&node=${node_id}`)
+                }
             }
             closeModal()
             setLoading(false)
-            formFilter.submit()
         } catch (error) {
             setLoading(false)
             console.log('error', error)
@@ -218,10 +244,12 @@ const PayrollSheets = ({ node_id, ...props }) => {
             if(resp.status === 204){
                 message.success("Folio eliminado correctamente")
                 setForDelete(null)
-                formFilter.submit()
+                if(filterActive === true){
+                    formFilter.submit()
+                } else {
+                    getPayrollSheets(`&node=${node_id}`)
+                }
                 setShowModalDelete(false)
-                updAvailables()
-                
             }
         } catch (error) {
             console.log('error', error)
@@ -241,7 +269,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
     <>
         <Row>
             <Col span={20}>
-                <Form form={formFilter} layout="vertical" scrollToFirstError onFinish={onSearch}>
+                <Form form={formFilter} layout="vertical" scrollToFirstError onFinish={(values) => onSearch(values)}>
                     <Row gutter={10}>
                         <Col span={8}>
                             <Form.Item label="Tipo de factura" name={'invoice_type'} style={{ marginBottom:10 }}>
@@ -299,6 +327,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
             </Col>
         </Row>
         <Modal visible={showModal} 
+            title={idEdit ? "Editar Folios" : "Agregar Folios"}
             onOk={form.submit}
             onCancel={closeModal}
             width={600}
@@ -326,7 +355,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
                         </Col>
                         <Col span={8}>
                             <Form.Item label="Folio actual" name={'actual_folio'} style={{ marginBottom:10 }} >
-                                <Input disabled />
+                                <Input />
                             </Form.Item>
                         </Col>
                         <Col span={8}>
