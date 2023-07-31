@@ -15,7 +15,8 @@ import {
     EllipsisOutlined,
     PlusOutlined,
     EditOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    UnorderedListOutlined
 } from '@ant-design/icons';
 import { getAssessments } from '../../../redux/kuizDuck';
 import WebApiAssessment from '../../../api/WebApiAssessment';
@@ -128,7 +129,7 @@ const TableAssessments = ({
                 icon={<EditOutlined />}
                 onClick={() => router.push({
                     pathname: '/kuiz/assessments/edit',
-                    query: {...router.query, id: item.id}
+                    query: { ...router.query, id: item.id }
                 })}
             >
                 Editar
@@ -140,6 +141,16 @@ const TableAssessments = ({
             >
                 Eliminar
             </Menu.Item>
+            <Menu.Item
+                key='3'
+                icon={<UnorderedListOutlined />}
+                onClick={() => router.push({
+                    pathname: `/kuiz/sections`,
+                    query: {assessment: item.id, ...router.query }
+                })}
+            >
+                Agregar sección
+            </Menu.Item>
         </Menu>
     )
 
@@ -149,11 +160,16 @@ const TableAssessments = ({
             dataIndex: 'name',
             key: 'name'
         },
+        // {
+        //     title: 'Código',
+        //     dataIndex: 'code',
+        //     key: 'code'
+        // },
         {
             title: 'Tipo',
             dataIndex: 'category',
             render: (item) => item == 'A'
-                ? 'Assessments' : item == 'Q'
+                ? 'Assessment' : item == 'Q'
                     ? 'Quiz' : 'Khor'
         },
         {
@@ -169,14 +185,15 @@ const TableAssessments = ({
             ) : item.is_active ? 'Activo' : 'Inactivo'
         },
         {
-            width: 60,
-            title: () => (
-                <Dropdown placement='bottomLeft' overlay={<MenuTable />}>
-                    <Button size='small'>
-                        <EllipsisOutlined />
-                    </Button>
-                </Dropdown>
-            ),
+            width: 80,
+            // title: () => (
+            //     <Dropdown placement='bottomLeft' overlay={<MenuTable />}>
+            //         <Button size='small'>
+            //             <EllipsisOutlined />
+            //         </Button>
+            //     </Dropdown>
+            // ),
+            title: 'Acciones',
             render: (item) => item.category == 'K' ? (
                 <Dropdown placement='bottomLeft' overlay={<MenuItem item={item} />}>
                     <Button size='small'>
@@ -216,6 +233,7 @@ const TableAssessments = ({
                 itemGroup={{ name: null, assessments: itemsSelected }}
                 title='Crear nuevo grupo'
                 actionForm={actionGroup}
+                showOptions={false}
             />
         </>
     )

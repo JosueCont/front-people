@@ -10,11 +10,13 @@ import {
     Form,
     Input,
     Select,
-    Spin
+    Spin,
+    message
 } from 'antd';
 import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
+import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { ruleRequired } from '../../../utils/rules';
@@ -23,7 +25,11 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 const EditorHTML = dynamic(() => import('../../jobbank/EditorHTML'), { ssr: false });
 
 const DetailsAssessment = ({
-    action
+    action,
+    newFilters = {},
+    currentNode,
+    list_categories,
+    load_categories
 }) => {
 
     const router = useRouter();
@@ -82,11 +88,39 @@ const DetailsAssessment = ({
     }
 
     const onFinishCreate = async (values) =>{
-
+        try {
+            let body = {...values, node: currentNode?.id};
+            let response = await WebApiAssessment.createAssessments(body);
+            let txt = response?.data?.code;
+            if(Array.isArray(txt)){
+                setLoading(false)
+                formAssessment.setFields([{name: 'code', errors: txt}]);
+                return;
+            }
+            message.success('Evaluación registrada')
+            actionBack()
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            message.error('Evaluación no registrada')
+        }
     }
 
     const onFinisUpdate = async (values) =>{
-
+        try {
+            let response = await WebApiAssessment.updateAssessments(router.query?.id, values);
+            let txt = response?.data?.code;
+            if(Array.isArray(txt)){
+                setLoading(false)
+                formAssessment.setFields([{name: 'code', errors: txt}]);
+                return;
+            }
+            message.success('Evaluación actualizada')
+            getInfoAssessment()
+        } catch (e) {
+            console.log(e)
+            message.error('Evaluación no actualizada')
+        }
     }
 
     const onFinish = (values) =>{
@@ -97,6 +131,13 @@ const DetailsAssessment = ({
             add: onFinishCreate
         };
         actionFunction[action](body);
+    }
+
+    const actionBack = () =>{
+        router.push({
+            pathname: '/kuiz/assessments',
+            query: newFilters
+        })
     }
 
     return (
@@ -110,7 +151,7 @@ const DetailsAssessment = ({
                     </p>
                     <div className='content-end' style={{ gap: 8 }}>
                         <Button
-                            // onClick={() => actionBack()}
+                            onClick={() => actionBack()}
                             icon={<ArrowLeftOutlined />}
                             disabled={loading}
                         >
@@ -120,7 +161,7 @@ const DetailsAssessment = ({
                 </div>
             </Col>
             <Col span={24} className='ant-spinning'>
-                <Spin spinning={false}>
+                <Spin spinning={loading}>
                     <Card bodyStyle={{ padding: 18 }}>
                         <Form
                             layout='vertical'
@@ -166,10 +207,17 @@ const DetailsAssessment = ({
                                             allowClear
                                             showSearch
                                             mode='multiple'
+                                            disabled={load_categories}
+                                            loading={load_categories}
                                             placeholder='Seleccionar una opción'
                                             notFoundContent='No se encontraron resultados'
                                             optionFilterProp='children'
                                         >
+                                            {list_categories?.length > 0 && list_categories.map(item => (
+                                                <Select.Option value={item.id} key={item.id}>
+                                                    {item.name}
+                                                </Select.Option>
+                                            ))}
                                         </Select>
                                     </Form.Item>
                                 </Col>
@@ -209,4 +257,12 @@ const DetailsAssessment = ({
     )
 }
 
-export default DetailsAssessment
+const mapState = (state) => {
+    return {
+        currentNode: state.userStore.current_node,
+        list_categories: state.kuizStore.list_categories,
+        load_categories: state.kuizStore.load_categories
+    }
+}
+
+export default connect(mapState)(DetailsAssessment);

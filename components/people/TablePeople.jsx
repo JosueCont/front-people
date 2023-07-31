@@ -551,8 +551,7 @@ const TablePeople = ({
                 </Menu.Item>
             )}
             <Menu.Divider />
-            {
-                currentNode?.resignation_letter &&
+            {currentNode?.resignation_letter && (
                 <Menu.Item
                     key="13"
                     icon={<DownloadOutlined />}
@@ -560,45 +559,39 @@ const TablePeople = ({
                 >
                     Descargar carta de renuncia
                 </Menu.Item>
-
-            }
-            {
-                (currentNode?.contract_for_work || currentNode?.fixed_term_contract || currentNode?.indefinite_term_contract) &&
+            )}
+            {(currentNode?.contract_for_work || currentNode?.fixed_term_contract || currentNode?.indefinite_term_contract) && (
                 <Menu.SubMenu
                     title='Descargar contrato'
                     icon={<DownloadOutlined />}
                 >
-                    {
-                        currentNode?.contract_for_work &&
+                    {currentNode?.contract_for_work && (
                         <Menu.Item
                             key="16"
                             icon={<DownloadOutlined />}
                             onClick={() => actionContractForWork(item)}
                         >
-                            Descargar contrato por obra
+                            Por obra
                         </Menu.Item>
-                    }
-                    {
-                        currentNode?.fixed_term_contract &&
+                    )}
+                    {currentNode?.fixed_term_contract && (
                         <Menu.Item
                             key="14"
                             onClick={() => actionTermContract(item)}
                         >
                             Tiempo determinado
                         </Menu.Item>
-                    }
-                    {
-                        currentNode?.indefinite_term_contract && 
+                    )}
+                    {currentNode?.indefinite_term_contract && (
                         <Menu.Item
                             key="15"
                             onClick={() => actionIndeterminateContract(item)}
                         >
                             Tiempo indeterminado
                         </Menu.Item>
-                    }
+                    )}
                 </Menu.SubMenu>
-            }
-            <Menu.Divider />
+            )}
             {applications?.kuiz?.active && (
                 <>
                     <Menu.Item
@@ -777,9 +770,9 @@ const TablePeople = ({
     }
 
     useEffect(() => {
-      console.log('currentNode',currentNode)
+        console.log('currentNode', currentNode)
     }, [currentNode])
-    
+
 
     return (
         <>
