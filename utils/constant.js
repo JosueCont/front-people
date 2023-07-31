@@ -83,6 +83,49 @@ export const typeStreet = [
     },
 ];
 
+export const personStreetType = [
+    {
+        label: "Avenida",
+        value: 1,
+    },
+    {
+        label: "Boulevard",
+        value: 2,
+    },
+    {
+        label: "Calle",
+        value: 3,
+    },
+    {
+        label: "Callejón",
+        value: 4,
+    },
+    {
+        label: "Calzada",
+        value: 5,
+    },
+    {
+        label: "Periférico",
+        value: 6,
+    },
+    {
+        label: "Privada",
+        value: 7,
+    },
+    {
+        label: "Carretera",
+        value: 8,
+    },
+    {
+        label: "Camino",
+        value: 9,
+    },
+    {
+        label: "Otro",
+        value: 10,
+    }
+];
+
 export const typeEmployee = [
     {
         label: "Trab. permanente",

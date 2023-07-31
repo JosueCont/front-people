@@ -51,6 +51,10 @@ export const useFiltersLogs = () => {
         list: list_work_centers_options
     })
 
+    const deleteState = (key) => {
+        dispatch(setTimeclockFiltersData({ [key]: null }))
+    }
+
     const listAwait = {
         person: getPerson
     }
@@ -61,10 +65,15 @@ export const useFiltersLogs = () => {
         workcenter: getWork
     }
 
+    const listDelete = {
+        person: deleteState
+    }
+
     return {
         listKeys,
         listGets,
-        listAwait
+        listAwait,
+        listDelete
     }
 
 }

@@ -101,7 +101,7 @@ const DetailsLogs = ({
                                                 label='Empresa'
                                                 name='node'
                                             >
-                                                <Input placeholder='Empresa' readOnly />
+                                                <Input placeholder='Empresa' disabled />
                                             </Form.Item>
                                         </Col>
                                         <Col xs={24} md={12} xl={8}>
@@ -109,7 +109,7 @@ const DetailsLogs = ({
                                                 label='Centro de trabajo'
                                                 name='workcenter'
                                             >
-                                                <Input placeholder='Centro de trabajo' readOnly />
+                                                <Input placeholder='Centro de trabajo' disabled />
                                             </Form.Item>
                                         </Col>
                                         <Col xs={24} md={12} xl={8}>
@@ -117,7 +117,7 @@ const DetailsLogs = ({
                                                 name='person'
                                                 label='Colaborador'
                                             >
-                                                <Input placeholder='Colaborador' readOnly />
+                                                <Input placeholder='Colaborador' disabled />
                                             </Form.Item>
                                         </Col>
                                         <Col xs={24} md={12} xl={8}>
@@ -125,7 +125,7 @@ const DetailsLogs = ({
                                                 name='type'
                                                 label='Tipo'
                                             >
-                                                <Input placeholder='Tipo' readOnly />
+                                                <Input placeholder='Tipo' disabled />
                                             </Form.Item>
                                         </Col>
                                         <Col xs={24} md={12} xl={8}>
@@ -133,7 +133,7 @@ const DetailsLogs = ({
                                                 name='timestamp'
                                                 label='Fecha'
                                             >
-                                                <Input placeholder='Fecha' readOnly />
+                                                <Input placeholder='Fecha' disabled />
                                             </Form.Item>
                                         </Col>
                                     </Row>

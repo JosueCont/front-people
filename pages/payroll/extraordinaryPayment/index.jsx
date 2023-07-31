@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import MainLayout from "../../../layout/MainInter";
-import { Breadcrumb, Button, Card, Col, Form, Input, InputNumber, Modal, Popconfirm, Row, Select, Space, Spin, Table, Tooltip, Typography, Upload, message } from 'antd';
+import { Alert, Breadcrumb, Button, Card, Col, Form, Input, InputNumber, List, Modal, Popconfirm, Row, Select, Space, Spin, Table, Tooltip, Typography, Upload, message } from 'antd';
 import router, { useRouter } from "next/router";
-import { verifyMenuNewForTenant, downLoadFileBlobAwait, getDomain } from "../../../utils/functions";
+import { verifyMenuNewForTenant, downLoadFileBlobAwait, getDomain, gerErrorMesagesPayroll } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from 'react-redux';
 import { withAuthSync } from "../../../libs/auth";
 import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined, FilePdfTwoTone, FileTextTwoTone, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { CancelOutlined } from '@material-ui/icons';
-import { tr } from 'faker/lib/locales';
+
+import {ruleWhiteSpace, onlyNumeric, twoDecimal} from '../../../utils/rules'
+
 
 
 
@@ -30,6 +32,8 @@ const ExtraordinaryPayment = ({...props}) => {
     const [fileName, setFileName] = useState(null)
     const [openModal, setOpenModal] = useState(false)
     const [consolidation, setConsolidation] = useState(null)
+    const [errorsDetails, setErrorsDetails] = useState(null)
+    const [showModalErrors, setShowModalErrors] = useState(false)
 
     /* Estado para botones */
 
@@ -49,12 +53,16 @@ const ExtraordinaryPayment = ({...props}) => {
     const isEditing = (record) => record.key === editingKey;
 
     const edit = (record) => {
-        console.log('record', record)
+        
+        let concept = {
+            'description': record?.concept?.description,
+            'amount':record?.concept?.amount
+        }
+
         formTable.setFieldsValue({ 
-            "concept": {description: record.concept.description},
-            "concept": {amount:record.concept.amount}
+            "concept": concept
         })
-        console.log('formTable',formTable)
+        
         setEditingKey(record.key);
     };
 
@@ -105,48 +113,48 @@ const ExtraordinaryPayment = ({...props}) => {
         {
             title: "Acciones",
             render: (record) => {
-                if(record?.employee_credit_note?.status === 2) return (
-                    <>
-                        <Tooltip title="Comprobante" key={record.person_id} color={"#3d78b9"}>
-                            <FilePdfTwoTone
-                                twoToneColor="#34495E"
-                                disabled={loading}
-                                onClick={() => downLoadFile(record, 2)}
-                                style={{ fontSize: "25px" }}
-                            />
-                            </Tooltip>
-                            <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-                                <FileTextTwoTone
+                if(record?.employee_credit_note?.status === 2){ 
+                    return (
+                        <>
+                            <Tooltip title="Comprobante" key={record.person_id} color={"#3d78b9"}>
+                                <FilePdfTwoTone
+                                    twoToneColor="#34495E"
                                     disabled={loading}
-                                    onClick={() => downLoadFile(record, 1)}
+                                    onClick={() => downLoadFile(record, 2)}
                                     style={{ fontSize: "25px" }}
                                 />
-                        </Tooltip>
-                    </>
-                )
-
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Tooltip title="Guardar">
-                            <Typography.Link
-                                onClick={() => save(record.key) }
-                                style={{ marginRight: 8 }}
-                            >
-                                <CheckOutlined />
-                            </Typography.Link>
-                        </Tooltip>
-                        <Tooltip title="Cancelar">
-                            <Popconfirm title="¿Cancelar edición?" onConfirm={cancel}>
-                                <CloseOutlined />
-                            </Popconfirm>
-                        </Tooltip>
-                    </span>
-                ) : (
-                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                        <EditOutlined/>
-                    </Typography.Link>
-                )
+                                </Tooltip>
+                                <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                                    <FileTextTwoTone
+                                        disabled={loading}
+                                        onClick={() => downLoadFile(record, 1)}
+                                        style={{ fontSize: "25px" }}
+                                    />
+                            </Tooltip>
+                        </>
+                    )
+                }else if(record?.employee_credit_note === null || record?.employee_credit_note?.status < 1) {
+                    const editable = isEditing(record);
+                    return editable ? (
+                        <span>
+                            <Tooltip title="Guardar">
+                                <Typography.Link
+                                    onClick={() => save(record.key) }
+                                    style={{ marginRight: 8 }}
+                                >
+                                    <CheckOutlined />
+                                </Typography.Link>
+                            </Tooltip>
+                            <Tooltip title="Cancelar">
+                                <CloseOutlined onClick={cancel} />
+                            </Tooltip>
+                        </span>
+                    ) : (
+                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                            <EditOutlined/>
+                        </Typography.Link>
+                    )   
+                }
             }
         },
     ]
@@ -154,11 +162,7 @@ const ExtraordinaryPayment = ({...props}) => {
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
-        selections: [
-          Table.SELECTION_ALL,
-          Table.SELECTION_INVERT,
-          Table.SELECTION_NONE,
-        ],
+        hideSelectAll: true,
         getCheckboxProps: (record) => {
             let flag = false
             if(record?.employee_credit_note?.status >= 2){
@@ -167,11 +171,11 @@ const ExtraordinaryPayment = ({...props}) => {
             if(onlySelection === "X" && record.employee_credit_note){
                 flag= true
             }
-            if(onlySelection === 0 && record.employee_credit_note.status !== 0){
+            if(onlySelection === 0 && record.employee_credit_note?.status !== 0){
                 flag = true
             }
 
-            if(onlySelection === 1 && record.employee_credit_note.status !== 1){
+            if(onlySelection === 1 && record.employee_credit_note?.status !== 1){
                 flag = true
             }
 
@@ -196,7 +200,7 @@ const ExtraordinaryPayment = ({...props}) => {
             setLoadingCalendars(false)
           })
           .catch((error) => {
-            console.log(error);
+            
             message.error(messageError);
           });
       };
@@ -209,19 +213,25 @@ const ExtraordinaryPayment = ({...props}) => {
       };
 
     const changeCalendar = (value) => {
-        console.log('value', value)
+        
         if (!value) {
           resetState();
           return;
         }
         const calendar = paymentCalendars.find((item) => item.id === value);
+
+        /* Periodo */
         let period = calendar.periods.find((p) => p.active == true);
         if (!period) period = calendar.periods[0];
+
+    
+        setOnlySelection(null)
         setPeriodSelcted(period);
         setCalendarSelect(calendar);
         getCalculateCreditNote(period.id)
         form.setFieldsValue({
-          period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+            periodicity: calendar.periodicity.description,
+            period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
         });
     };
 
@@ -234,6 +244,7 @@ const ExtraordinaryPayment = ({...props}) => {
         setPeriodSelcted(period);
         getCalculateCreditNote(period_id)
         setSelectedRowKeys([])
+        setOnlySelection(null)
     }
 
     const getCalculateCreditNote = async (id) => {
@@ -272,7 +283,34 @@ const ExtraordinaryPayment = ({...props}) => {
         children,
         ...restProps
       }) => {
-        const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+
+        /* rules para los inputs */
+        let rules = [
+            {
+              required: true,
+              message: `${title}, es un campo requerido`,
+            }
+        ]
+
+        let max = 13
+        let type = "string"
+        
+        /* Obtenemos el tipo de valor para realizar la validación */
+        if(editing && dataIndex.includes('description')){
+            max = 100
+            type = "string"
+            rules.push(ruleWhiteSpace)
+        }else if(editing && dataIndex.includes('amount')){
+            max = 13
+            type = "number"
+            rules.push({
+                pattern: /^\d+(?:\.\d{1,2})?$/,
+                message: "Ingresa un valor numerivo válido, máximo de dos decimales",
+            })
+        }
+
+        const inputNode =  <Input maxLength={max} />
+
         return (
           <td {...restProps}>
             {editing ? (
@@ -281,12 +319,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 style={{
                   margin: 0,
                 }}
-                rules={[
-                  {
-                    required: true,
-                    message: `Please Input ${title}!`,
-                  },
-                ]}
+                rules={rules}
               >
                 {inputNode}
               </Form.Item>
@@ -366,7 +399,7 @@ const ExtraordinaryPayment = ({...props}) => {
                 if(status===0){
                     message.success("Información de pagos guardada")
                 }else if(status===1){
-                    message.success("información cerrada")
+                    message.success("Información cerrada")
                 }
                 getCalculateCreditNote(periodSelected.id)
             }
@@ -402,7 +435,7 @@ const ExtraordinaryPayment = ({...props}) => {
             setLoading(false)
             setSelectedRowKeys([])
         } catch (error) {
-            console.log('error', error)
+            
             setLoading(false)
             setSelectedRowKeys([])
             message.error(error?.response?.data?.message)
@@ -436,9 +469,6 @@ const ExtraordinaryPayment = ({...props}) => {
     }
 
     const stampCreditNote = async () => {
-        console.log('o0k')
-        console.log('selectedRowKeys',selectedRowKeys)
-        
         try {
             setLoading(true)
             let data = {
@@ -500,11 +530,16 @@ const ExtraordinaryPayment = ({...props}) => {
                 UpListByExcel(resp.data)
             }
         } catch (error) {
+            gerErrorMesagesPayroll(error)
             if(error.response.data.message){
                 setLoading(false)
                 message.error(error.response.data.message)
             }
-            console.log('error', error)
+            if(error.response?.data?.details){
+                setErrorsDetails(error.response?.data)
+                setShowModalErrors(true)
+            }
+            
         }
     }
 
@@ -518,13 +553,6 @@ const ExtraordinaryPayment = ({...props}) => {
                 if (idx > -1) {
                     /* Validamos si es la primera selección para saber que tipo de fila vamos a seleccionar */
                     let item = dataList[idx]
-                    /* Validamos los que no se han guardado */
-                    /* if(!item.employee_credit_note){
-                        if(index === 0){
-                            setOnlySelection('X')
-                        }
-                        nOpen++;
-                    } */
                     /* Validamos los que estan abiertos */
                     if(item.employee_credit_note?.status === 0){
                         if(index === 0){
@@ -539,29 +567,6 @@ const ExtraordinaryPayment = ({...props}) => {
                     }
                 }
             })
-            /* Validamos el numero de los abiertos */
-            /* if(nOpen <= 0){
-                setDisabledClose(true)
-            }else{
-                setDisabledClose(false)
-            } */
-
-            /* Validamos el numero de cerrados seleccionados */
-            /* if(nClosed <= 0){
-                setDisabledStamp(true)
-                setDisabledOpen(true)
-            }else{
-                setDisabledStamp(false)
-                setDisabledOpen(false)
-            } */
-
-            /* Validamos el numero de todos los abiertos selecionados */
-            /* if(nOpen <= 0){
-                setDisabledOpen(true)
-            }else{
-                setDisabledOpen(false)
-            } */
-            console.log('nOpen',nOpen)
             if(nOpen > 0){
                 setDisabledOpen(true)
                 setDisabledClose(false)
@@ -572,65 +577,84 @@ const ExtraordinaryPayment = ({...props}) => {
                 setDisabledStamp(false)
             }
         }else{
-            setDisabledStamp(false)
             setOnlySelection(null)
-            setDisabledOpen(false)
-            setDisabledClose(false)
+            validateDataList()
         }
     }, [selectedRowKeys])
     
 
-
     useEffect(() => {
+        validateDataList()
+    }, [dataList])
+
+    const validateDataList = () => {
         let itemClosed = 0
         let itemOpen = 0
         let itemStamp = 0
+
         dataList.map((item) =>{
             if(item.employee_credit_note?.status == 1){
                 itemClosed++;
             }
-            if(item.employee_credit_note?.status == 1){
+            if(item.employee_credit_note?.status == 0){
                 itemOpen++;
             }
             if(item.employee_credit_note?.status == 2){
                 itemStamp++;
             }
         })
-        /* if(itemClosed>0){
-            setShowStamp(true)
-        }else{
-            setShowStamp(false)
-        } */
+
 
         /* deshabilitamos el guardar si todos estan timbrados */
-        if(itemStamp === dataList.length){
+        if(!consolidation){
+            setDisabledSave(false)
+            setDisabledClose(true)
+            setDisabledStamp(true)
+            setDisabledOpen(true)
+        }else if(itemStamp === dataList.length){
             setDisabledSave(true)
             setDisabledClose(true)
             setDisabledStamp(true)
             setDisabledOpen(true)
-        }else if(itemClosed <= 0){
+        }else if(itemOpen === dataList.length){
             setDisabledSave(false)
             setDisabledClose(false)
             setDisabledStamp(true)
             setDisabledOpen(true)
-        }else{
+        }else if(itemClosed === dataList.length){
+            setDisabledSave(true)
+            setDisabledClose(true)
+            setDisabledStamp(false)
+            setDisabledOpen(false)
+        }
+        else if(itemOpen > 0 && itemClosed > 0){
+            setDisabledSave(false)
+            setDisabledClose(false)
+            setDisabledStamp(false)
+            setDisabledOpen(false)
+        }else if(itemOpen > 0 && itemClosed == 0){
+            setDisabledSave(false)
+            setDisabledClose(false)
+            setDisabledStamp(true)
+            setDisabledOpen(true)
+        }
+        else{
+            
             setDisabledSave(false)
             setDisabledClose(false)
             setDisabledStamp(false)
             setDisabledOpen(false)
         }
-        /* if(itemOpen>0){
-            setShowStamp(true)
-        }else{
-            setShowStamp(false)
-        } */
+    }
 
-
-    }, [dataList])
+    const closeModalError = () => {
+        setShowModalErrors(false)
+        setErrorsDetails(null)
+    }
     
 
     const downLoadFile = (element, type_file) => {
-        console.log(element)
+        
         let data = {
             "type_request": 3,
             "type_file": type_file,
@@ -651,6 +675,25 @@ const ExtraordinaryPayment = ({...props}) => {
           setLoading
         );        
       };
+
+    const AlertError = (personDetail=null) =>{
+        let name = personDetail?.person?.name
+        return <Alert
+                style={{ width:'100%' }}
+                message={name}
+                description={
+                    <List dataSource={personDetail?.person?.errors} 
+                        renderItem={(item) => (
+                            <List.Item>
+                                {item}
+                            </List.Item>
+                      )}
+                    />
+                }
+                type="warning"
+                showIcon
+            />
+    }
 
   return (
     <MainLayout
@@ -675,7 +718,7 @@ const ExtraordinaryPayment = ({...props}) => {
             <Col span={24}>
                 <Card className="form_header">
                     <Row justify='space-between'>
-                        <Col span={20}>
+                        <Col span={18}>
                             <Form form={form} layout="vertical">
                                 <Row gutter={[16, 8]}>
                                     <Col xxs={24} xl={6}>
@@ -695,7 +738,7 @@ const ExtraordinaryPayment = ({...props}) => {
                                     </Col>
                                     {periodSelected && (
                                         <>
-                                            <Col xxs={24} xl={6}>
+                                            <Col xxs={24} xl={8}>
                                                 <Form.Item name="periodicity" label="Periodicidad">
                                                     <Input
                                                     size="large"
@@ -705,7 +748,7 @@ const ExtraordinaryPayment = ({...props}) => {
                                                     />
                                                 </Form.Item>
                                             </Col>
-                                            <Col xxs={24} xl={8}>
+                                            <Col xxs={24} xl={9}>
                                                 <Form.Item name="period" label="Periodo">
                                                     <Select
                                                     placeholder="Periodo"
@@ -735,16 +778,19 @@ const ExtraordinaryPayment = ({...props}) => {
                         {
                             calendarSelect &&
                             <>
-                                <Col span={4}>
-                                    <Space direction="vertical">
-                                        <Button icon={<DownloadOutlined/>}  style={{ width:'100%' }} onClick={SendList}>
-                                            Descargar
-                                        </Button>               
-                                        <Button icon={<UploadOutlined/>} style={{ width:'100%' }} onClick={() => showModal()}>
-                                            Cargar
-                                        </Button>               
-                                    </Space>
-                                </Col>
+                                {
+                                    !disabledSave &&
+                                    <Col span={6}>
+                                        <Space style={{ marginTop:30 }} >
+                                            <Button icon={<DownloadOutlined/>}  style={{ width:'100%' }} onClick={SendList}>
+                                                Descargar.
+                                            </Button>               
+                                            <Button icon={<UploadOutlined/>} style={{ width:'100%' }} onClick={() => showModal()}>
+                                                Cargar
+                                            </Button>               
+                                        </Space>
+                                    </Col>
+                                }
                                 <Col span={24}>
                                     <Space>
                                         {
@@ -754,11 +800,11 @@ const ExtraordinaryPayment = ({...props}) => {
                                         }
                                             
                                             <Button  onClick={() => saveCloseList(1)} style={{ minWidth:150 }} disabled={loading || disabledClose}>
-                                                 {selectedRowKeys.length > 0 ? "Cerrar seleccionados" : "Cerrar todo" } 
+                                                 {selectedRowKeys.length > 0 ? "Cerrar seleccionados" : "Cerrar abiertos" } 
                                             </Button>
                                         {
                                             <Button  onClick={() => OpenList()} style={{ minWidth:150 }} disabled={loading || disabledOpen}>
-                                                { selectedRowKeys.length > 0 ? "Abrir seleccionados" : "Abrir todo" }
+                                                { selectedRowKeys.length > 0 ? "Abrir seleccionados" : "Abrir cerrados" }
                                             </Button>
                                         }
                                         {
@@ -794,7 +840,7 @@ const ExtraordinaryPayment = ({...props}) => {
                     </Row>
                 </Card>
                 <Modal
-                    title={"Cargar layout"}
+                    title={"Cargar plantilla"}
                     visible={openModal}
                     onOk={() => uploadLayout()}
                     onCancel={() => closeModal()}
@@ -862,6 +908,21 @@ const ExtraordinaryPayment = ({...props}) => {
                             </Col>
                         </Row>
                     </Spin>
+                </Modal>
+                <Modal visible={showModalErrors}
+                    footer={<Button onClick={() => closeModalError()} >Aceptar</Button>}
+                    title={<>{errorsDetails?.message}</>}
+                    onCancel={() => closeModalError()}
+                >
+                    
+                    <Space direction="vertical" style={{ width:'100%' }}>
+                    {
+                        
+                        errorsDetails?.details?.map(person => {
+                            return <AlertError  person={person} />
+                        })
+                    }
+                    </Space>
                 </Modal>
             </Col>
         </Row>

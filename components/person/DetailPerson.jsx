@@ -12,6 +12,7 @@ import {
 import FormTraining from "../forms/FormTraining";
 import FormPhone from "../forms/FormPhone";
 import FormAddress from "../forms/FormAddress";
+import FiscalAddressPerson from '../forms/FiscalAddressPerson'
 import DataPerson from "../forms/DataPerson";
 import FormFamily from "../forms/FormFamily";
 import FormEmergencyContact from "../forms/FormEmergencyContact";
@@ -257,6 +258,7 @@ const DetailPerson = ({
             key="tab_3"
           >
             <FormAddress person_id={person.id} />
+            <FiscalAddressPerson person_id={person.id} />
           </TabPane>
           <TabPane
             tab={

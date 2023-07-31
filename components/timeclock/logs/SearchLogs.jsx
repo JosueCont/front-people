@@ -16,13 +16,15 @@ import moment from 'moment';
 const SearchLogs = ({
     currentNode,
     list_companies,
-    load_companies
+    load_companies,
+    list_work_centers_options,
+    load_work_centers_options,
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait } = useFiltersLogs();
+    const { listKeys, listGets, listAwait, listDelete } = useFiltersLogs();
 
     const format = 'YYYY-MM-DD';
 
@@ -61,10 +63,22 @@ const SearchLogs = ({
 
     const defaultFilters = useMemo(() => {
         let node = router.query?.node;
-        if (!node) return { 'Empresa': currentNode?.name };
-        if (node == 'all') return { 'Empresa': 'Todas' };
-        return { 'Empresa': listGets['node'](node) };
-    }, [currentNode, router.query?.node, list_companies])
+        let place = router.query?.workcenter;
+        let value = node ? node == 'all'
+            ? 'Todas' : listGets['node'](node) : currentNode?.name;
+        let center = place && place != 'all'
+            ? listGets['workcenter'](place) : 'Todas';
+        return {
+            'Empresa': value,
+            'Centro de trabajo': center
+        }
+    }, [
+        currentNode,
+        list_companies,
+        list_work_centers_options,
+        router.query?.node,
+        router.query?.workcenter
+    ])
 
     return (
         <>
@@ -94,7 +108,8 @@ const SearchLogs = ({
                             listKeys={listKeys}
                             listGets={listGets}
                             listAwait={listAwait}
-                            discardKeys={['node']}
+                            listDelete={listDelete}
+                            discardKeys={['node', 'workcenter']}
                             defaultFilters={defaultFilters}
                         />
                     </Col>
@@ -114,7 +129,9 @@ const mapState = (state) => {
     return {
         currentNode: state.userStore.current_node,
         list_companies: state.timeclockStore.list_companies,
-        load_companies: state.timeclockStore.load_companies
+        load_companies: state.timeclockStore.load_companies,
+        list_work_centers_options: state.timeclockStore.list_work_centers_options,
+        load_work_centers_options: state.timeclockStore.load_work_centers_options
     }
 }
 

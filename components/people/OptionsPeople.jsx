@@ -15,6 +15,7 @@ import {
     UploadOutlined,
     EllipsisOutlined,
     UserAddOutlined,
+    UndoOutlined
 } from '@ant-design/icons';
 import {
     BsCurrencyDollar
@@ -144,6 +145,14 @@ const OptionsPeople = () => {
     const MenuOptions = () => {
         return (
             <Menu>
+                <Menu.Item
+                    key='9'
+                    icon={<UndoOutlined/>}
+                    onClick={()=> router.push('/home/persons/old')}
+                >
+                    Ver versión anterior
+                </Menu.Item>
+                <Menu.Divider/>
                 {permissions?.person?.export_csv_person && (
                     <Menu.Item
                         key='1'

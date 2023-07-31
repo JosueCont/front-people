@@ -53,6 +53,10 @@ export const useFiltersInterviews = () =>{
         list: list_clients_options
     })
 
+    const deleteState = (key) =>{
+        dispatch(setJobbankFiltersData({[key] : null}))
+    }
+
     const listAwait = {
         recruiter: getRecruiter,
     }
@@ -63,9 +67,14 @@ export const useFiltersInterviews = () =>{
         customer: getCustomer
     }
 
+    const listDelete = {
+        recruiter: deleteState
+    }
+
     return {
         listKeys,
         listGets,
-        listAwait
+        listAwait,
+        listDelete
     };
 }

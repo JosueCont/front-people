@@ -21,7 +21,7 @@ const SearchVacancies = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait } = useFiltersVacancies();
+    const { listKeys, listGets, listAwait, listDelete } = useFiltersVacancies();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -84,6 +84,7 @@ const SearchVacancies = ({
                             listKeys={listKeys}
                             listGets={listGets}
                             listAwait={listAwait}
+                            listDelete={listDelete}
                         />
                     </Col>  
                 </Row>

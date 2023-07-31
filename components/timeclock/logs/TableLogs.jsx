@@ -52,15 +52,15 @@ const TableLogs = ({
             key: 'type'
         },
         {
-            title: 'Centro de trabajo',
-            dataIndex: ['workcenter', 'name'],
-            key: ['workcenter', 'name']
-        },
-        {
             title: 'Empresa',
             dataIndex: ['node','name'],
             key: ['node','name'],
             ellipsis: true
+        },
+        {
+            title: 'Centro de trabajo',
+            dataIndex: ['workcenter', 'name'],
+            key: ['workcenter', 'name']
         },
         {
             title: 'Checkin',

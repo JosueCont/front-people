@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select, DatePicker } from 'antd';
 import { ruleWhiteSpace } from '../../../utils/rules';
@@ -31,6 +31,12 @@ const FiltersLogs = ({
         }, 1000)
     }
 
+    const itemPerson = useMemo(()=>{
+        let person = timeclock_filters_data?.person || {};
+        if(Object.keys(person).length > 0) return [person];
+        return person;
+    },[timeclock_filters_data?.person])
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -43,16 +49,16 @@ const FiltersLogs = ({
                 onFinish={onFinishSearch}
                 form={formSearch}
                 layout='vertical'
+                initialValues={{
+                    workcenter: 'all'
+                }}
             >
                 <Row gutter={[16, 0]}>
                     <Col span={12}>
                         <SelectPeople
                             name='person'
                             label='Colaborador'
-                            itemSelected={timeclock_filters_data?.person
-                                ? [timeclock_filters_data.person]
-                                : []
-                            }
+                            itemSelected={itemPerson}
                         />
                     </Col>
                     <Col span={12}>
@@ -76,31 +82,9 @@ const FiltersLogs = ({
                             <DatePicker
                                 placeholder='Seleccionar una fecha'
                                 format='DD-MM-YYYY'
-                                style={{width: '100%'}}
+                                style={{ width: '100%' }}
+                                inputReadOnly
                             />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label='Centro de trabajo'
-                            name='workcenter'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_work_centers_options}
-                                loading={load_work_centers_options}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {list_work_centers_options?.length > 0
-                                    && list_work_centers_options?.map(item => (
-                                    <Select.Option value={`${item.id}`} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -119,10 +103,33 @@ const FiltersLogs = ({
                                 <Select.Option value='all' key='all'>Todas</Select.Option>
                                 {list_companies?.length > 0
                                     && list_companies?.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label='Centro de trabajo'
+                            name='workcenter'
+                        >
+                            <Select
+                                showSearch
+                                disabled={load_work_centers_options}
+                                loading={load_work_centers_options}
+                                placeholder='Seleccionar una opción'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='children'
+                            >
+                                <Select.Option value='all' key='all'>Todas</Select.Option>
+                                {list_work_centers_options?.length > 0
+                                    && list_work_centers_options?.map(item => (
+                                        <Select.Option value={`${item.id}`} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
                             </Select>
                         </Form.Item>
                     </Col>

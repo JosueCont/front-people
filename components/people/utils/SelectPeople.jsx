@@ -2,7 +2,8 @@ import React, {
     useState,
     useEffect,
     useMemo,
-    useCallback
+    useCallback,
+    memo
 } from 'react';
 import {
     Form,
@@ -29,12 +30,14 @@ const SelectPeople = ({
     placeholder = 'Buscar...',
     disabled = false,
     onChangeSelect = () => { },
-    itemSelected = [],
+    itemSelected,
     noStyle = false,
     mode = false,
     preserveHistory = false,
     watchCallback,
-    watchParam
+    watchParam,
+    tooltip = '',
+    size = 'middle'
 }) => {
 
     const {
@@ -49,10 +52,12 @@ const SelectPeople = ({
     const [openDrop, setOpenDrop] = useState(false);
 
     useEffect(() => {
-        if (itemSelected?.length <= 0) return;
-        const map_ = item => ({ ...item, selected: true });
-        let items = itemSelected?.map(map_);
-        setSelected(items);
+        if (itemSelected?.length > 0) {
+            const map_ = item => ({ ...item, selected: true });
+            let items = itemSelected?.map(map_);
+            setSelected(items);
+            return;
+        } else setSelected([]);
     }, [itemSelected])
 
     const getOptions = async (value) => {
@@ -94,10 +99,9 @@ const SelectPeople = ({
     }
 
     const onChange = (value) => {
-        if(noValid.includes(value)) return;
 
-        let ids = Array.isArray(value) ? value : [value];
-        if(itemSelected.some(item => ids.includes(item.id))) return;
+        let ids = !noValid.includes(value) ? Array.isArray(value)
+            ? value : [value] : [];
 
         // Se filtra las opciones seleccionadas
         const filter_ = item => ids.includes(item.id);
@@ -152,15 +156,6 @@ const SelectPeople = ({
         return validClasif(records);
     }, [listPeople, selected, watchParam]);
 
-    // const optionsPeople = useMemo(() => {
-    //     let valid = selected?.length <= 0 && watchCallback;
-    //     let check = selected?.length > 0 && !watchCallback;
-    //     if (valid) return watchCallback(listPeople);
-    //     let results = validOptions(listPeople);
-    //     if (check || !watchCallback) return results;
-    //     return watchCallback(results);
-    // }, [listPeople, selected, watchParam]);
-
     const deleteDefault = (e, item) => {
         e.stopPropagation();
         e.preventDefault();
@@ -176,6 +171,7 @@ const SelectPeople = ({
             rules={rules}
             dependencies={dependencies}
             noStyle={noStyle}
+            tooltip={tooltip}
         >
             <Select
                 allowClear
@@ -185,6 +181,7 @@ const SelectPeople = ({
                 placeholder={placeholder}
                 filterOption={false}
                 mode={mode}
+                size={size}
                 maxTagCount='responsive'
                 clearIcon={loading ? <LoadingOutlined /> : <CloseCircleFilled />}
                 suffixIcon={loading ? <LoadingOutlined /> : openDrop ? <SearchOutlined /> : <DownOutlined />}

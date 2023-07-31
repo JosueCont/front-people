@@ -44,7 +44,7 @@ const SearchPeople = ({
     const [openModal, setOpenModal] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
-    const { listKeys, listGets, listAwait } = useFiltersPeople();
+    const { listKeys, listGets, listAwait, listDelete } = useFiltersPeople();
 
     useEffect(() => {
         let value = router.query?.search;
@@ -64,7 +64,7 @@ const SearchPeople = ({
     }
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/home/persons/copy',
+        pathname: '/home/persons',
         query: filters
     }, undefined, { shallow: true });
 
@@ -153,6 +153,7 @@ const SearchPeople = ({
                             listKeys={listKeys}
                             listGets={listGets}
                             listAwait={listAwait}
+                            listDelete={listDelete}
                             discardKeys={['search']}
                         />
                     </Col>

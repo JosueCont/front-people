@@ -78,7 +78,7 @@ const MapGoogle = ({
     const initialize = () => {
 
         const { map, maps } = instance;
-        
+
         const info = new maps.InfoWindow();
         const drawingManager = new maps.drawing.DrawingManager({
             drawingMode: maps.drawing.OverlayType.POLYGON,
@@ -147,30 +147,31 @@ const MapGoogle = ({
 
     const createPolygon = () => {
         setIsDrawing(false)
+
         if (Object.keys(shape)?.length > 0) {
             shape.setMap(null);
             setShape({})
         }
+
         const polygon = new instance.maps.Polygon({
             paths: polygonShape?.paths,
-            strokeWeight: 0
+            strokeWeight: 0,
+            map: instance.map
         })
-        polygon.setMap(instance.map)
+
         callbackEvents(polygon)
         getCenter(polygon)
 
         let exist = Object.keys(marker)?.length > 0;
         if (exist && polygonShape.marker) {
-            marker.setOptions({
-                position: polygonShape.marker
-            })
+            marker.setOptions({ position: polygonShape.marker })
             return;
         }
         if (polygonShape.marker) {
             const location = new instance.maps.Marker({
-                position: polygonShape.marker
+                position: polygonShape.marker,
+                map: instance.map
             });
-            location.setMap(instance.map);
             setMarker(location)
             return;
         }
@@ -181,49 +182,64 @@ const MapGoogle = ({
     const startDrawing = () => {
         setIsDrawing(true)
         instance.map.setOptions({ draggable: false })
-        manager.setMap(instance?.map)
+
+        const { OverlayType } = instance?.maps?.drawing;
+        let mode = action == 'add' ? OverlayType.POLYGON : null;
+        manager.setOptions({
+            map: instance.map,
+            drawingMode: mode
+        })
 
         let exist = Object.keys(shape)?.length > 0;
-        if (exist && action == 'edit') {
-            manager.setDrawingMode(null)
-            shape.setOptions({
-                editable: true,
-                draggable: true,
-            })
-            return;
-        }
-
-        let mode = instance?.maps.drawing.OverlayType.POLYGON;
-        manager.setDrawingMode(mode)
+        if (!(exist && action == 'edit')) return;
+        shape.setOptions({
+            editable: true,
+            draggable: true,
+        })
     }
 
     const resetDrawing = () => {
         setIsDrawing(false)
         instance.map.setOptions({ draggable: true })
-        manager.setMap(null)
+        manager.setOptions({ map: null, drawingMode: null })
 
-        let exist = Object.keys(shape)?.length > 0;
-        if (exist && action == 'edit') {
-            shape.setOptions({
-                paths: polygonShape?.paths,
-                strokeWeight: 0,
-                editable: false,
-                draggable: false,
-            })
+        if (Object.keys(shape)?.length > 0) {
+            shape.setMap(null);
+            setShape({});
+        }
+
+        if (action == 'add') {
+            setPolygon([]);
             return;
         }
 
+        const polygon = new instance.maps.Polygon({
+            paths: polygonShape?.paths,
+            strokeWeight: 0,
+            editable: false,
+            draggable: false,
+            map: instance.map
+        })
+        callbackEvents(polygon)
+    }
+
+    const clearShape = () => {
+        const { OverlayType } = instance?.maps?.drawing;
+        manager.setDrawingMode(OverlayType?.POLYGON)
+
         setPolygon([])
+
+        let exist = Object.keys(shape)?.length > 0;
+        if (!exist) return;
         shape.setMap(null)
         setShape({})
-
     }
 
     const getCenter = (polygon) => {
         const bounds = new instance.maps.LatLngBounds();
         polygon?.getPath().forEach(item => { bounds.extend(item) });
         let center = bounds.getCenter();
-        instance.map.setCenter(center);
+        instance.map.setOptions({ center, zoom: 16 })
     }
 
     const getLocation = () => {
@@ -263,15 +279,30 @@ const MapGoogle = ({
             {showControls && (
                 <ContentBetween>
                     <Space>
-                        <Button disabled={isDrawing} onClick={() => startDrawing()}>
+                        <Button
+                            disabled={isDrawing}
+                            onClick={() => startDrawing()}
+                        >
                             {action == 'edit' ? 'Actualizar área' : 'Seleccionar área'}
                         </Button>
-                        <Button disabled={!isDrawing} onClick={() => resetDrawing()}>
+                        <Button
+                            disabled={!isDrawing || Object.keys(shape)?.length <= 0}
+                            onClick={() => clearShape()}
+                        >
+                            Limpiar área
+                        </Button>
+                        <Button
+                            disabled={!isDrawing}
+                            onClick={() => resetDrawing()}
+                        >
                             Reiniciar
                         </Button>
                     </Space>
                     <Space>
-                        <Button disabled={isDrawing} onClick={() => getLocation()}>
+                        <Button
+                            disabled={isDrawing}
+                            onClick={() => getLocation()}
+                        >
                             Obtener mi ubicación
                         </Button>
                     </Space>

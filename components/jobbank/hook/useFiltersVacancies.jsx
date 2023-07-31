@@ -44,6 +44,10 @@ export const useFiltersVacancies = () =>{
         }
     }
 
+    const deleteState = (key) =>{
+        dispatch(setJobbankFiltersData({[key] : null}))
+    }
+
     const listAwait = {
         strategy__recruiter_id: getRecruiter
     }
@@ -53,9 +57,14 @@ export const useFiltersVacancies = () =>{
         customer: getCustomer
     }
 
+    const listDelete = {
+        strategy__recruiter_id: deleteState
+    }
+
     return {
         listKeys,
         listGets,
-        listAwait
+        listAwait,
+        listDelete
     }
 }

@@ -15,7 +15,7 @@ import {
 } from "@ant-design/icons";
 import PersonsGroup from "./PersonsGroup";
 
-const PersonsGroupSearch = ({...props}) =>{
+const PersonsGroupSearch = ({ ...props }) => {
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
     const currenNode = useSelector(state => state.userStore.current_node);
@@ -27,31 +27,31 @@ const PersonsGroupSearch = ({...props}) =>{
         props.setNumPage(1)
     };
 
-    const HandleCreateGroup = () =>{
+    const HandleCreateGroup = () => {
         setShowModalCreate(true)
     }
 
-    const HandleClose = ()=>{
+    const HandleClose = () => {
         setShowModalCreate(false)
     }
 
-    const onFinishAdd = async (values) =>{
+    const onFinishAdd = async (values) => {
         props.setLoading(true)
         props.createGroup(values)
     }
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let name = "";
-        if((values.name).trim()){
+        if ((values.name).trim()) {
             name = `&name__icontains=${values.name}`;
-        }else{
+        } else {
             name = "";
             form.resetFields();
         }
         props.searchGroup(name, "")
     }
 
-    return(
+    return (
         <>
             <Row>
                 <Col span={18}>
@@ -75,7 +75,7 @@ const PersonsGroupSearch = ({...props}) =>{
                                 </div>
                                 <div style={{ float: "left", marginLeft: "5px" }}>
                                     <Form.Item>
-                                        <Button onClick={()=>HandleFilterReset()}>
+                                        <Button onClick={() => HandleFilterReset()}>
                                             <SyncOutlined />
                                         </Button>
                                     </Form.Item>
@@ -96,12 +96,10 @@ const PersonsGroupSearch = ({...props}) =>{
             </Row>
             {showModalCreate && (
                 <PersonsGroup
-                    loadData={{}}
-                    title={"Crear nuevo grupo"}
+                    title="Crear nuevo grupo"
                     visible={showModalCreate}
                     close={HandleClose}
                     actionForm={onFinishAdd}
-                    personList={props.personList}
                 />
             )}
         </>

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
+import {getPaymentCalendar} from "../../redux/payrollDuck";
 const { Option } = Select;
 const SelectPaymentCalendar = ({
   disabled,
   viewLabel = true,
   rules = [],
+  getPaymentCalendar,
+  currentNode,
   ...props
 }) => {
   const [calendar, setCalendar] = useState([]);
@@ -19,6 +22,10 @@ const SelectPaymentCalendar = ({
       setCalendar(cats);
     }
   }, [props.payment_alendar]);
+
+  useEffect(()=>{
+    getPaymentCalendar(currentNode?.id)
+  },[])
 
   const setCalendarSelect = (value) => {
     props.setCalendarId(value);
@@ -34,10 +41,10 @@ const SelectPaymentCalendar = ({
         showSearch
         optionFilterProp="children"
       >
-        {calendar.map((item) => {
+        {calendar.map((item,i) => {
           return (
             <>
-              <Option key={item.value} value={item.value}>
+              <Option key={item.value+i} value={item.value}>
                 {item.label}
               </Option>
               ;
@@ -52,7 +59,8 @@ const SelectPaymentCalendar = ({
 const mapState = (state) => {
   return {
     payment_alendar: state.payrollStore.payment_calendar,
+    currentNode: state.userStore.current_node,
   };
 };
 
-export default connect(mapState)(SelectPaymentCalendar);
+export default connect(mapState,{getPaymentCalendar})(SelectPaymentCalendar);
