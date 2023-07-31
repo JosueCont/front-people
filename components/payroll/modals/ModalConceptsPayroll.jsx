@@ -44,7 +44,7 @@ const ModalConceptsPayroll = ({
   payment_period = null,
   ...props
 }) => {
-  const { Text } = Typography;
+  const { Text, Title } = Typography;
 
   const [departureForm] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
@@ -176,6 +176,7 @@ const ModalConceptsPayroll = ({
       getWorkingWeek();
       getNonWorkingDays();
     }
+    console.log('payment_period',payment_period)
   }, []);
 
   const RenderCheckConcept = ({ data, type }) => {
@@ -655,8 +656,25 @@ const ModalConceptsPayroll = ({
       onCancel={() => {
         clearConcept(), setVisible(false);
       }}
-      title="Conceptos de nómina"
+      title={'Conceptos de nómina'}
     >
+      <Row justify="center" style={{ marginBottom:30 }}>
+          <Col>
+            <Space size={50}>
+              <Text>
+                <b>Periodicidad:</b> {props?.periodicity?.description}
+              </Text>
+              <Text>
+                <b>Periodo:</b> {payment_period.name} - {payment_period.start_date} - {payment_period.end_date}
+              </Text>
+              <Text>
+                <b>Periodo incidencia:</b> {payment_period?.incidences?.start_date} - {payment_period?.incidences?.end_date}
+              </Text>
+            </Space>
+          </Col>
+          <Col>
+          </Col>
+        </Row>
       <Row>
         <Steps
           current={currentStep}
