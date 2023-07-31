@@ -82,6 +82,7 @@ export const getSections = (id) => async (dispatch) =>{
     dispatch({...type, fetching: true})
     try {
         let response = await WebApiAssessment.assessmentSections(id);
+        console.log("🚀 ~ file: kuizDuck.js:85 ~ getSections ~ response:", response)
         dispatch({...type, payload: response.data})
     } catch (e) {
         console.log(e)

@@ -212,7 +212,7 @@ const TableAssessments = ({
                 columns={columns}
                 className='ant-table-colla'
                 dataSource={list_assessments?.results}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 loading={load_assessments}
                 pagination={{
                     hideOnSinglePage: false,

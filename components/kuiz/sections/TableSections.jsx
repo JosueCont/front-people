@@ -6,6 +6,7 @@ import {
     Dropdown,
     Button
 } from 'antd';
+import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getSections } from '../../../redux/kuizDuck';
 import {
@@ -22,6 +23,8 @@ const TableSections = ({
     load_sections,
     getSections
 }) => {
+
+    const router = useRouter();
 
     const MenuItem = ({item}) => (
         <Menu>
@@ -40,6 +43,10 @@ const TableSections = ({
             <Menu.Item
                 key='5'
                 icon={<PlusOutlined/>}
+                onClick={()=> router.push({
+                    pathname: '/kuiz/questions',
+                    query: {...router.query, section: item.id}
+                })}
             >
                 Agregar pregunta
             </Menu.Item>
@@ -63,6 +70,11 @@ const TableSections = ({
             title: 'Sección',
             dataIndex: 'name',
             key: 'name'
+        },
+        {
+            title: 'No. preguntas',
+            dataIndex: 'num_questions',
+            key: 'num_questions'
         },
         {
             title: 'Acciones',

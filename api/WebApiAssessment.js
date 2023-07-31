@@ -165,6 +165,9 @@ class WebApiAssessment {
   static createSection(data) {
     return Axios.post(urlKuizBaseApiWithTenant + "/assessments/section/", data);
   }
+  static getInfoSection(id){
+    return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/section/${id}/`);
+  }
   static updateSection(id, data) {
     return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/section/${id}/`, data);
   }
