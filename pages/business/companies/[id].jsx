@@ -110,11 +110,11 @@ const ConfigCompany = ({ ...props }) => {
                 <PayrollSpread node_id={company && company.id} />
               </TabPane>
             }
-
+            { props.config && props.config.nomina_enabled && 
               <TabPane tab="Folios" key={"7"}>
                 <PayrollSheets node_id={company && company.id} />
               </TabPane>
-
+            }
             {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />
             </TabPane> */}
