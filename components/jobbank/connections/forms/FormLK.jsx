@@ -79,7 +79,8 @@ const FormLK = ({
             formConnection.setFieldsValue({
                 is_valid: true,
                 'data_config|user_access_token': response.data?.access_token,
-                'data_config|ig_user_id': response.data?.user_code
+                'data_config|ig_user_id': response.data?.user_code,
+                'data_config|date_token': response.data?.date_token
             });
             setTimeout(()=>{
                 btnSubmit.current.click();
@@ -166,6 +167,14 @@ const FormLK = ({
                     tooltip='Parámetro necesario para publicar en LinkedIn'
                 >
                     <Input disabled placeholder='ID del usuario'/>
+                </Form.Item>
+            </Col>
+            <Col xs={24} md={12} xl={8} xxl={6}>
+                <Form.Item
+                    name='data_config|date_token'
+                    label='Fecha creación Token'
+                >
+                    <Input disabled placeholder='25-10-2023'/>
                 </Form.Item>
             </Col>
             <Col span={24}>
