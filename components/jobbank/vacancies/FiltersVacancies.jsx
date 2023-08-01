@@ -30,10 +30,11 @@ const FiltersVacancies = ({
     }
 
     const itemRecruiter = useMemo(()=>{
+        if(!visible) return [];
         let recruiter = jobbank_filters_data?.strategy__recruiter_id || {};
-        if(Object.keys(recruiter).length > 0) return [recruiter];
-        return [];
-    },[jobbank_filters_data?.strategy__recruiter_id])
+        if(Object.keys(recruiter).length <= 0) return [];
+        return [recruiter];
+    },[jobbank_filters_data?.strategy__recruiter_id, visible])
 
     return (
         <MyModal

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { optionsStatusVacation } from '../../../utils/constant';
 import SelectPeople from '../../people/utils/SelectPeople';
+import { useRouter } from 'next/router';
 
 const FiltersRequests = ({
     visible,
@@ -83,16 +84,18 @@ const FiltersRequests = ({
     }, [statusIn])
 
     const itemPerson = useMemo(()=>{
+        if(!visible) return [];
         let person = user_filters_data?.person__id || {};
-        if(Object.keys(person).length > 0) return [person];
-        return [];
-    },[user_filters_data?.person__id])
+        if(Object.keys(person).length <=0) return [];
+        return [person];
+    },[user_filters_data?.person__id, visible])
 
     const itemSupervisor = useMemo(()=>{
+        if(!visible) return [];
         let supervisor = user_filters_data?.immediate_supervisor || {};
-        if(Object.keys(supervisor).length > 0) return [supervisor];
-        return [];
-    },[user_filters_data?.immediate_supervisor])
+        if(Object.keys(supervisor).length <= 0) return [];
+        return [supervisor];
+    },[user_filters_data?.immediate_supervisor, visible])
 
     return (
         <MyModal

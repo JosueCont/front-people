@@ -480,7 +480,7 @@ const TablePeople = ({
             >
                 Asignar jefe suplente
             </Menu.Item>
-            <Menu.Divider />
+            {/* <Menu.Divider /> */}
             {applications?.iuss?.active && (
                 <Menu.Item
                     key="6"
@@ -551,8 +551,7 @@ const TablePeople = ({
                 </Menu.Item>
             )}
             <Menu.Divider />
-            {
-                currentNode?.resignation_letter &&
+            {currentNode?.resignation_letter && (
                 <Menu.Item
                     key="13"
                     icon={<DownloadOutlined />}
@@ -560,45 +559,45 @@ const TablePeople = ({
                 >
                     Descargar carta de renuncia
                 </Menu.Item>
-
-            }
-            {
-                (currentNode?.contract_for_work || currentNode?.fixed_term_contract || currentNode?.indefinite_term_contract) &&
-                <Menu.SubMenu
-                    title='Descargar contrato'
-                    icon={<DownloadOutlined />}
-                >
-                    {
-                        currentNode?.contract_for_work &&
-                        <Menu.Item
-                            key="16"
-                            icon={<DownloadOutlined />}
-                            onClick={() => actionContractForWork(item)}
-                        >
-                            Descargar contrato por obra
-                        </Menu.Item>
-                    }
-                    {
-                        currentNode?.fixed_term_contract &&
-                        <Menu.Item
-                            key="14"
-                            onClick={() => actionTermContract(item)}
-                        >
-                            Tiempo determinado
-                        </Menu.Item>
-                    }
-                    {
-                        currentNode?.indefinite_term_contract && 
-                        <Menu.Item
-                            key="15"
-                            onClick={() => actionIndeterminateContract(item)}
-                        >
-                            Tiempo indeterminado
-                        </Menu.Item>
-                    }
-                </Menu.SubMenu>
-            }
-            <Menu.Divider />
+            )}
+            {(currentNode?.contract_for_work 
+                || currentNode?.fixed_term_contract
+                || currentNode?.indefinite_term_contract
+            ) && (
+                <>
+                    <Menu.SubMenu
+                        title='Descargar contrato'
+                        icon={<DownloadOutlined />}
+                    >
+                        {currentNode?.contract_for_work && (
+                            <Menu.Item
+                                key="16"
+                                icon={<DownloadOutlined />}
+                                onClick={() => actionContractForWork(item)}
+                            >
+                                Por obra
+                            </Menu.Item>
+                        )}
+                        {currentNode?.fixed_term_contract && (
+                            <Menu.Item
+                                key="14"
+                                onClick={() => actionTermContract(item)}
+                            >
+                                Tiempo determinado
+                            </Menu.Item>
+                        )}
+                        {currentNode?.indefinite_term_contract && (
+                            <Menu.Item
+                                key="15"
+                                onClick={() => actionIndeterminateContract(item)}
+                            >
+                                Tiempo indeterminado
+                            </Menu.Item>
+                        )}
+                    </Menu.SubMenu>
+                    <Menu.Divider />
+                </>
+            )}
             {applications?.kuiz?.active && (
                 <>
                     <Menu.Item
@@ -681,16 +680,28 @@ const TablePeople = ({
             show: true,
         },
         {
-            title: 'Nombre',
+            title: 'Apellido paterno',
+            dataIndex: 'flast_name',
+            key: 'flast_name',
+            show: true
+        },
+        {
+            title: 'Apellido materno',
+            dataIndex: 'mlast_name',
+            key: 'mlast_name',
+            show: true
+        },
+        {
+            title: 'Nombres',
             show: true,
             render: (item) => (permissions.person?.edit || permissions.person?.delete) ? (
                 <a onClick={() => router.push({
                     pathname: `/home/persons/${item.id}`,
                     query: router.query
                 })}>
-                    {getFullName(item)}
+                    {item?.first_name}
                 </a>
-            ) : getFullName(item)
+            ) : item.first_name
         },
         {
             title: 'Jefe inmediato',
@@ -698,12 +709,12 @@ const TablePeople = ({
             show: true,
             render: (item) => item ? getFullName(item) : <></>
         },
-        {
-            title: 'Jefe suplente',
-            dataIndex: 'substitute_immediate_supervisor',
-            show: true,
-            render: (item) => item ? getFullName(item) : <></>
-        },
+        // {
+        //     title: 'Jefe suplente',
+        //     dataIndex: 'substitute_immediate_supervisor',
+        //     show: true,
+        //     render: (item) => item ? getFullName(item) : <></>
+        // },
         {
             title: 'Estatus',
             show: true,
@@ -718,21 +729,21 @@ const TablePeople = ({
                 />
             )
         },
-        {
-            title: 'Intranet',
-            show: generalConfig?.intranet_enabled,
-            render: (item) => (
-                <Select
-                    size='small'
-                    style={{ width: 90 }}
-                    defaultValue={item.intranet_access}
-                    value={item.intranet_access}
-                    placeholder='Acceso'
-                    options={intranetAccess}
-                    onChange={(e) => actionIntranet(e, item)}
-                />
-            )
-        },
+        // {
+        //     title: 'Intranet',
+        //     show: generalConfig?.intranet_enabled,
+        //     render: (item) => (
+        //         <Select
+        //             size='small'
+        //             style={{ width: 90 }}
+        //             defaultValue={item.intranet_access}
+        //             value={item.intranet_access}
+        //             placeholder='Acceso'
+        //             options={intranetAccess}
+        //             onChange={(e) => actionIntranet(e, item)}
+        //         />
+        //     )
+        // },
         {
             title: () => permissions.person?.delete ? (
                 <Dropdown placement='bottomRight' overlay={<MenuTable />}>
@@ -763,7 +774,6 @@ const TablePeople = ({
         sync_ynl: itemsSelected?.length > 1
             ? '¿Sincronizar a estas peronas con YNL?'
             : '¿Sincronizar a esta persona con YNL?'
-
     }
 
     const modalText = {
@@ -775,12 +785,7 @@ const TablePeople = ({
         delete: actionDelete,
         sync_ynl: actionSendYNL
     }
-
-    useEffect(() => {
-      console.log('currentNode',currentNode)
-    }, [currentNode])
     
-
     return (
         <>
             <Table
