@@ -19,7 +19,7 @@ const SearchApplications = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersApplications();
+    const { listKeys, listGets, listAwait, listDelete } = useFiltersApplications();
     const format = 'YYYY-MM-DD';
 
     const formatRange = () =>{
@@ -31,6 +31,7 @@ const SearchApplications = ({
         let filters = {...router.query};
         filters.status = router.query?.status ? parseInt(router.query.status) : null;
         filters.date = router.query?.date ? formatRange() : null;
+        filters.candidate = router.query?.candidate ? parseInt(router.query?.candidate) : null;
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
@@ -85,6 +86,8 @@ const SearchApplications = ({
                         <TagFilters
                             listKeys={listKeys}
                             listGets={listGets}
+                            listAwait={listAwait}
+                            listDelete={listDelete}
                         />
                     </Col>  
                 </Row>
