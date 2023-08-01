@@ -32,7 +32,7 @@ const FiltersSelection = ({
         if(!visible) return [];
         let candidate = jobbank_filters_data?.candidate || {};
         if(Object.keys(candidate).length <=0) return [];
-        return [recruiter];
+        return [candidate];
     },[jobbank_filters_data?.candidate, visible])
 
     return (

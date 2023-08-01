@@ -8,8 +8,8 @@ import TableApplications from '../../../components/jobbank/applications/TableApp
 import {
     getApplications,
     getVacanciesOptions,
-    getApplicationsCandidates,
-    getClientsOptions
+    getClientsOptions,
+    setJobbankFiltersData
 } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import moment from 'moment';
@@ -18,8 +18,8 @@ const index = ({
     currentNode,
     getApplications,
     getVacanciesOptions,
-    getApplicationsCandidates,
-    getClientsOptions
+    getClientsOptions,
+    setJobbankFiltersData
 }) => {
 
     const router = useRouter();
@@ -29,9 +29,13 @@ const index = ({
         if(currentNode){
             getClientsOptions(currentNode.id)
             getVacanciesOptions(currentNode.id, '&status=1');
-            getApplicationsCandidates(currentNode.id);
         }
     },[currentNode])
+
+    useEffect(() => {
+        let valid = Object.keys(router.query).length <= 0;
+        if(valid) setJobbankFiltersData({}, false);
+    }, [router.query])
 
     const validFilters = () =>{
         let params = {...router.query};
@@ -74,7 +78,7 @@ export default connect(
     mapState,{
         getApplications,
         getVacanciesOptions,
-        getApplicationsCandidates,
-        getClientsOptions
+        getClientsOptions,
+        setJobbankFiltersData
     }
 )(withAuthSync(index));
