@@ -97,10 +97,10 @@ const webReducer = (state = initialData, action) => {
     case SET_FILTERS_DATA:
       return {
         ...state,
-        user_filters_data: {
+        user_filters_data: action.keep ?{
           ...state.user_filters_data,
           ...action.payload
-        }
+        } : action.payload
       }
     default:
       return state;
@@ -275,8 +275,8 @@ export const getPersonsCompany = (data, query = {}) => async (dispatch, getState
   }
 };
 
-export const setUserFiltersData = (data = {}) => async (dispatch) =>{
-  dispatch({type: SET_FILTERS_DATA, payload: data})
+export const setUserFiltersData = (data = {}, keep = true) => async (dispatch) =>{
+  dispatch({type: SET_FILTERS_DATA, payload: data, keep})
 }
 
 export const getCollaborators = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {

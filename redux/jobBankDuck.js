@@ -368,10 +368,10 @@ const jobBankReducer = (state = initialState, action) => {
         case SET_FILTERS_DATA:
             return {
                 ...state,
-                jobbank_filters_data: {
+                jobbank_filters_data: action.keep ? {
                     ...state.jobbank_filters_data,
                     ...action.payload
-                }
+                } : action.payload
             }
         default:
             return state;
@@ -386,8 +386,8 @@ export const setJobbankFilters = (data) => (dispatch) => {
     dispatch({ type: SET_FILTERS, payload: data })
 }
 
-export const setJobbankFiltersData = (data = {}) => (dispatch) => {
-    dispatch({ type: SET_FILTERS_DATA, payload: data })
+export const setJobbankFiltersData = (data = {}, keep = true) => (dispatch) => {
+    dispatch({ type: SET_FILTERS_DATA, payload: data, keep })
 }
 
 export const getClients = (node, query = '', page = 1, size = 10) => async (dispatch) => {
