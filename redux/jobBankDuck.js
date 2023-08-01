@@ -749,6 +749,10 @@ export const getApplications = (node, query = '', page = 1, size = 10) => async 
     }
 }
 
+/**
+ * Se sustituyó por el componente de SelectCandidates
+ * @deprecated
+ * */
 export const getApplicationsCandidates = (node, query = '') => async (dispatch) => {
     const typeFunction = { type: GET_APPLICATIONS_CANDIDATES, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
