@@ -21,8 +21,9 @@ import {
   Menu,
   message,
   Upload,
+  Spin,
 } from "antd";
-import { downLoadFileBlob, getDomain } from "../../../utils/functions";
+import { downLoadFileBlob, downLoadFileBlobAwait, getDomain } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState } from "react";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -248,24 +249,28 @@ const ButtonAltaImssImport = ({
                   {"     "} {fileName}
                 </p>
               </Space>
-              <a
-                href={"."}
+              <a type="link" 
                 className={"ml-20 "}
                 style={buttonLink}
+                disabled={loading}
                 onClick={(e) => {
                   e.preventDefault();
-                  downLoadFileBlob(
+                  downLoadFileBlobAwait(
                     `${getDomain(API_URL_TENANT)}${
                       currentMovement.urlDownload
                     }`,
                     currentMovement.nameTemplate,
                     currentMovement.type,
-                    currentMovement.paramsDownload
+                    currentMovement.paramsDownload,
+                    "",
+                    setLoading
                   );
                 }}
-              >
-                <FileExcelOutlined style={{ color: "#2682FE" }} /> Descargar
-                plantilla
+              > 
+                {
+                  loading ? <Spin spinning={loading} /> : <FileExcelOutlined style={{ color: "#2682FE" }} /> 
+                }
+                Descargar plantilla 
               </a>
             </Space>
           </Col>

@@ -100,7 +100,7 @@ const configBusiness = ({ ...props }) => {
                   </Space>
                 </Col>
               </Row>
-              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"}>
+              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
@@ -302,7 +302,6 @@ const configBusiness = ({ ...props }) => {
                   
                   />
                 </TabPane>
-                )
               </Tabs>
             </>
           </Card>
