@@ -3,7 +3,6 @@ import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 import CalendarView from '../../../components/jobbank/interviews/CalendarView';
 import SearchInterviews from '../../../components/jobbank/interviews/SearchInterviews';
 import {
-    getCandidatesOptions,
     getVacanciesOptions,
     getInterviews,
     getSelectionOpions,
@@ -19,7 +18,6 @@ import { InterviewProvider } from '../../../components/jobbank/context/Interview
 
 const calendar = ({
     currentNode,
-    getCandidatesOptions,
     getVacanciesOptions,
     getPersonsCompany,
     getInterviews,
@@ -32,7 +30,6 @@ const calendar = ({
 
     useEffect(()=>{
         if(currentNode){
-            getCandidatesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
             getSelectionOpions(currentNode.id);
@@ -73,7 +70,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getCandidatesOptions,
         getVacanciesOptions,
         getPersonsCompany,
         getInterviews,
