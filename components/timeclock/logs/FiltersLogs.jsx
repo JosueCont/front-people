@@ -32,10 +32,11 @@ const FiltersLogs = ({
     }
 
     const itemPerson = useMemo(()=>{
+        if(!visible) return [];
         let person = timeclock_filters_data?.person || {};
-        if(Object.keys(person).length > 0) return [person];
-        return person;
-    },[timeclock_filters_data?.person])
+        if(Object.keys(person).length <= 0) return [];
+        return [person];
+    },[timeclock_filters_data?.person, visible])
 
     return (
         <MyModal
