@@ -524,7 +524,7 @@ export const getCandidates = (node, query = '', page = 1, size = 10) => async (d
 }
 
 /**
- * Se sustituó por el componente de SelectCandidates
+ * Se sustituyó por el componente de SelectCandidates
  * @deprecated
  * */
 export const getCandidatesOptions = (node) => async (dispatch) => {
