@@ -155,6 +155,7 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   const addColumns = (dataPerson) =>{
     let currentColumns = [...arrColumns]
+    currentColumns = currentColumns.filter(item => item.key !== 'actions')
   
     dataPerson.map(person => {
       person?.sections.map(section => {
@@ -209,14 +210,8 @@ const PreviewBulkUpload = ({ ...props }) => {
                 addColumns(response.data.people) 
               }
               setDataUpload(response.data.people);
-              if (response.data.saved_persons > 0) {
-                message.success("Cargado correctamente");
-                setMessageSave(response.data.message);
-              } else {
-                message.error("Error al guardar");
-                setMessageSave(response.data.message + ", revise los detalles");
-              }
-
+              setMessageSave(response.data.message);
+              message.info(response.data.message);
               setLoading(false);
             })
             .catch((response) => {

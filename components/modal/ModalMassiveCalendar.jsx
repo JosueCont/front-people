@@ -4,11 +4,12 @@ import {  CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import {
     Modal, Form, Row, Select, Typography, Input, Radio,
     List, Checkbox, Avatar, Col, Space, Button, message,
-    Spin, Steps, Alert
+    Spin, Steps, Alert, Empty
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import {getFiltersJB} from "../../utils/functions";
+import _ from 'lodash'
 
 const {Text} = Typography
 
@@ -18,7 +19,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
     const [people, setPeople] = useState([]);
     const [idCalendar,setIdCalendar] = useState('');
     const [filterData,setFilterData] = useState([]);
-    const [check, setCheck] = useState([]);
+    const [check, setCheck] = useState([]); // los seleccionados
     const [loading,setLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -100,8 +101,13 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
     const checkAll=()=>{
         let ids = people.map(ele=>ele?.person?.id)
-        ids = [...check,ids]
-        setCheck(...ids)
+        if(check.length>0){
+            let merge = _.union(ids, check)
+            setCheck(merge)
+        }else{
+            setCheck(ids)
+        }
+
     }
 
     const getPeopleCompany = async(id,search,page=1,filter_type=1) => {
@@ -238,8 +244,15 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                 </Radio.Group>
                             </Form.Item>
 
-                            {/*<Button onClick={()=> checkAll()}>Elegir todos</Button>*/}
-                            {/*<Button onClick={()=> setCheck([])}>Limpiar selección</Button>*/}
+                            {
+                                people && people.length>0 &&
+                                <Space style={{marginBottom:20}}>
+                                    <Button size={'small'} onClick={()=> checkAll()}>Elegir todos ({check.length})</Button>
+                                    <Button size={'small'} onClick={()=> setCheck([])}>Limpiar selección</Button>
+                                </Space>
+                            }
+
+
 
                             {people.length > 0 ? (
                                 <>
@@ -260,7 +273,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
                                             <List.Item >
                                                 <Checkbox
                                                     onChange={onChange}
-                                                    checked={ check.find(element => element === item.person.id)}
+                                                    checked={check.find(element => element === item.person.id)}
                                                     value={item.person.id}
                                                     style={{margin:'10px 20px'}}
                                                 />
@@ -272,14 +285,7 @@ const ModalMassiveCalendar = ({visible,setVisible, calendars}) => {
 
                                     </List>
                                 </>) : (
-                                <Typography.Text
-                                    style={{
-                                        display:'flex',
-                                        alignSelf:'center',
-                                        margin:'0 20px',
-                                        color:'gray'}}>
-                                    No se encontraron resultados
-                                </Typography.Text>
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
                             )}
                         </Col>
                         <div style={{display:'flex',flex:1, flexDirection:'column'}}>

@@ -67,7 +67,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
       ? [
           {
             name: "applied_isr_christmas_bonus",
-            label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+            label: "Aplicar art. 174 para calculo de ISR en nomina extraordinaria",
             value: false,
           },
           {
@@ -89,7 +89,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
       : [
           {
             name: "applied_isr_christmas_bonus",
-            label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+            label: "Aplicar art. 174 para calculo de ISR en nomina extraordinaria",
             value: false,
           },
 
@@ -135,6 +135,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
     } else {
       formPaymentCalendar.setFieldsValue({
         belongs_to: BelongTo[0].value,
+        calculation_employment_subsidy: 1,
+        salary_days: 1,
       });
     }
   }, [idPaymentCalendar]);
@@ -706,9 +708,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                       <span>
@@ -720,9 +722,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                     </div>
@@ -731,7 +733,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
               >
                 <Input
                   maxLength={10}
-                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  // disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -812,10 +814,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                   <Form.Item
                     name="calculation_employment_subsidy"
                     label="Cálculo de subsidio al empleo"
-                    rules={[ruleRequired]}
+                    rules={[ruleRequired]}                    
                   >
                     <Select
-                      maxLength={100}
+                      disabled={true}
+                      maxLength={100}                     
                       options={CalculationEmploymentSubsidy}
                     />
                   </Form.Item>

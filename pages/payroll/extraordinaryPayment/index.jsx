@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import MainLayout from "../../../layout/MainInter";
-import { Breadcrumb, Button, Card, Col, Form, Input, InputNumber, Modal, Popconfirm, Row, Select, Space, Spin, Table, Tooltip, Typography, Upload, message } from 'antd';
+import { Alert, Breadcrumb, Button, Card, Col, Form, Input, InputNumber, List, Modal, Popconfirm, Row, Select, Space, Spin, Table, Tooltip, Typography, Upload, message } from 'antd';
 import router, { useRouter } from "next/router";
 import { verifyMenuNewForTenant, downLoadFileBlobAwait, getDomain, gerErrorMesagesPayroll } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
@@ -11,6 +11,7 @@ import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined, FilePdfTw
 import { CancelOutlined } from '@material-ui/icons';
 
 import {ruleWhiteSpace, onlyNumeric, twoDecimal} from '../../../utils/rules'
+
 
 
 
@@ -31,6 +32,8 @@ const ExtraordinaryPayment = ({...props}) => {
     const [fileName, setFileName] = useState(null)
     const [openModal, setOpenModal] = useState(false)
     const [consolidation, setConsolidation] = useState(null)
+    const [errorsDetails, setErrorsDetails] = useState(null)
+    const [showModalErrors, setShowModalErrors] = useState(false)
 
     /* Estado para botones */
 
@@ -50,7 +53,7 @@ const ExtraordinaryPayment = ({...props}) => {
     const isEditing = (record) => record.key === editingKey;
 
     const edit = (record) => {
-        console.log('record', record)
+        
         let concept = {
             'description': record?.concept?.description,
             'amount':record?.concept?.amount
@@ -197,7 +200,7 @@ const ExtraordinaryPayment = ({...props}) => {
             setLoadingCalendars(false)
           })
           .catch((error) => {
-            console.log(error);
+            
             message.error(messageError);
           });
       };
@@ -210,7 +213,7 @@ const ExtraordinaryPayment = ({...props}) => {
       };
 
     const changeCalendar = (value) => {
-        console.log('value', value)
+        
         if (!value) {
           resetState();
           return;
@@ -432,7 +435,7 @@ const ExtraordinaryPayment = ({...props}) => {
             setLoading(false)
             setSelectedRowKeys([])
         } catch (error) {
-            console.log('error', error)
+            
             setLoading(false)
             setSelectedRowKeys([])
             message.error(error?.response?.data?.message)
@@ -532,7 +535,11 @@ const ExtraordinaryPayment = ({...props}) => {
                 setLoading(false)
                 message.error(error.response.data.message)
             }
-            console.log('error', error)
+            if(error.response?.data?.details){
+                setErrorsDetails(error.response?.data)
+                setShowModalErrors(true)
+            }
+            
         }
     }
 
@@ -632,17 +639,22 @@ const ExtraordinaryPayment = ({...props}) => {
             setDisabledOpen(true)
         }
         else{
-            console.log('3')
+            
             setDisabledSave(false)
             setDisabledClose(false)
             setDisabledStamp(false)
             setDisabledOpen(false)
         }
     }
+
+    const closeModalError = () => {
+        setShowModalErrors(false)
+        setErrorsDetails(null)
+    }
     
 
     const downLoadFile = (element, type_file) => {
-        console.log(element)
+        
         let data = {
             "type_request": 3,
             "type_file": type_file,
@@ -663,6 +675,25 @@ const ExtraordinaryPayment = ({...props}) => {
           setLoading
         );        
       };
+
+    const AlertError = (personDetail=null) =>{
+        let name = personDetail?.person?.name
+        return <Alert
+                style={{ width:'100%' }}
+                message={name}
+                description={
+                    <List dataSource={personDetail?.person?.errors} 
+                        renderItem={(item) => (
+                            <List.Item>
+                                {item}
+                            </List.Item>
+                      )}
+                    />
+                }
+                type="warning"
+                showIcon
+            />
+    }
 
   return (
     <MainLayout
@@ -877,6 +908,21 @@ const ExtraordinaryPayment = ({...props}) => {
                             </Col>
                         </Row>
                     </Spin>
+                </Modal>
+                <Modal visible={showModalErrors}
+                    footer={<Button onClick={() => closeModalError()} >Aceptar</Button>}
+                    title={<>{errorsDetails?.message}</>}
+                    onCancel={() => closeModalError()}
+                >
+                    
+                    <Space direction="vertical" style={{ width:'100%' }}>
+                    {
+                        
+                        errorsDetails?.details?.map(person => {
+                            return <AlertError  person={person} />
+                        })
+                    }
+                    </Space>
                 </Modal>
             </Col>
         </Row>

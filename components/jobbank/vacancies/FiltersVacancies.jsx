@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
@@ -20,8 +20,6 @@ const FiltersVacancies = ({
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
 
-    const recruiter = 'strategy__recruiter_id';
-
     const onFinishSearch = (values) =>{
         setLoading(true)
         setTimeout(()=>{
@@ -30,6 +28,13 @@ const FiltersVacancies = ({
             onFinish(values);
         },1000)
     }
+
+    const itemRecruiter = useMemo(()=>{
+        if(!visible) return [];
+        let recruiter = jobbank_filters_data?.strategy__recruiter_id || {};
+        if(Object.keys(recruiter).length <= 0) return [];
+        return [recruiter];
+    },[jobbank_filters_data?.strategy__recruiter_id, visible])
 
     return (
         <MyModal
@@ -94,11 +99,9 @@ const FiltersVacancies = ({
                     </Col>
                     <Col span={12}>
                         <SelectPeople
-                            name={recruiter}
+                            name='strategy__recruiter_id'
                             label='Reclutador'
-                            itemSelected={jobbank_filters_data[recruiter]
-                                ? [jobbank_filters_data[recruiter]] : []
-                            }
+                            itemSelected={itemRecruiter}
                         />
                     </Col>
                     <Col span={24} className='content-end' style={{gap: 8}}>

@@ -22,6 +22,8 @@ import {
   DatePicker,
   Tag,
   Tooltip,
+  Dropdown,
+  Menu,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -40,13 +42,14 @@ import {
   StopOutlined,
   ClearOutlined,
   SearchOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
 import {
-  downLoadFileBlob,
+  downLoadFileBlobAwait,
   getDomain,
   verifyMenuNewForTenant,
 } from "../../utils/functions";
@@ -459,6 +462,9 @@ const CalculatePayroll = ({ ...props }) => {
               bordered
               locale={{ emptyText: "Aún no hay datos" }}
             />
+            <small>
+            Subsidio causado: ${ new Intl.NumberFormat().format(data?.calculation?.allowance_creditable)}
+            </small>
           </Col>
           <br />
           <Col span={10}>
@@ -1274,6 +1280,149 @@ const CalculatePayroll = ({ ...props }) => {
     sendCalculatePayroll(values)
   }
 
+  const ButtonsDownloads = () => (
+    <Menu sty>
+        <Menu.Item
+            key='1'
+            icon={<DeleteOutlined />}
+            /* onClick={() => showManyDelete()} */
+        >
+            Eliminar
+        </Menu.Item>
+    </Menu>
+  )
+
+
+  
+
+    /* {
+      key: '1',
+      label: (
+        <a rel="noopener noreferrer" href="#">
+          Nomina
+        </a>
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+          2nd menu item
+        </a>
+      ),
+    },
+    {
+      key: '3',
+      label: (
+        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+          3rd menu item
+        </a>
+      ),
+    },
+  ]; */
+
+  const downloadNomina = () => {
+    isOpen
+    ? downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-calculus`,
+        `nomina_abierta_periodo${periodSelected.name}.xlsx`,
+        "POST",
+        {
+          payment_period: periodSelected.id,
+          extended_report: "True",
+          department: department,
+          job: job,
+          payroll: payroll.map((item) => {
+            item.person_id = item.person.id;
+            return item;
+          }),
+        },
+        "",
+        setDownloading
+      )
+    : downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
+          periodSelected.id
+        }`,
+        `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
+        "GET",
+        "",
+        "",
+        setDownloading
+      );
+  }
+
+  const downloadNominaProv = () => {
+    downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
+          periodSelected.id
+        }`,
+        `nomina_proviciones_${periodSelected.name}.xlsx`,
+        "GET",
+        "",
+        "",
+        setDownloading
+      );
+  }
+
+
+  const downloadActions = ({ key }) => {
+    console.log('key', key)
+    if(key === 'nom'){
+      downloadNomina()
+    }else if(key === 'nomprov'){
+      downloadNominaProv()
+    }else if(key === 'raya'){
+      downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/consolidated-payroll-report?period=${
+          periodSelected.id
+        }`,
+        "hoja_rayas.xlsx",
+        "GET",
+        "",
+        "No se encontraron resultados",
+        setDownloading
+      )
+    }
+  }
+
+  
+
+  const downloads_options = (
+    <Menu onClick={downloadActions} >
+      <Menu.Item  key={'nom'} >
+        <a >
+          Nómina
+        </a>
+      </Menu.Item>
+      {
+        payroll.length > 0 && !genericModal && consolidated && (
+          <>
+            <Menu.Item key={'nomprov'}>
+              <a>
+                Nómina + provisiones
+              </a>
+            </Menu.Item>
+            <Menu.Item key={'raya'}>
+              <a>
+                Hoja de raya
+              </a>
+            </Menu.Item>
+          </>
+        )
+      }
+    </Menu>
+  );
+
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -1542,71 +1691,19 @@ const CalculatePayroll = ({ ...props }) => {
                     }}
                   >
                     <Col>
-                      <Button
-                        size="large"
+                    <Dropdown overlay={downloads_options} placement="bottomLeft">
+                      <Button size="large"
                         block
                         htmlType="button"
                         icon={<FileExcelOutlined />}
-                        onClick={() => {
-                          isOpen
-                            ? downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/payroll-calculus`,
-                                `nomina_abierta_periodo${periodSelected.name}.xlsx`,
-                                "POST",
-                                {
-                                  payment_period: periodSelected.id,
-                                  extended_report: "True",
-                                  department: department,
-                                  job: job,
-                                  payroll: payroll.map((item) => {
-                                    item.person_id = item.person.id;
-                                    return item;
-                                  }),
-                                }
-                              )
-                            : downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
-                                  periodSelected.id
-                                }`,
-                                `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
-                                "GET"
-                              );
-                        }}
-                      >
-                        Descargar nómina
+                        loading={downloading}
+                        >
+                        Descargar
                       </Button>
+                    </Dropdown>
                     </Col>
                     {payroll.length > 0 && !genericModal && (
                       <>
-                        {consolidated && (
-                          <>
-                            <Col >
-                              <Button
-                                size="large"
-                                block
-                                icon={<FileExcelOutlined />}
-                                htmlType="button"
-                                onClick={() =>
-                                  downLoadFileBlob(
-                                    `${getDomain(
-                                      API_URL_TENANT
-                                    )}/payroll/consolidated-payroll-report?period=${
-                                      periodSelected.id
-                                    }`,
-                                    "hoja_rayas.xlsx",
-                                    "GET"
-                                  )
-                                }
-                              >
-                                Descargar hoja de raya
-                              </Button>
-                            </Col>
-                          </>
-                        )}
 
                         {step == 0 && calculate && (
                           <Col md={4}  style={{ minWidth: "200px" }}>
@@ -1769,7 +1866,7 @@ const CalculatePayroll = ({ ...props }) => {
                     {
                       consolidated &&
                       (consolidated.status <= 3 || consolidated.status >= 6 ) &&
-                      step >= 2 &&
+                      step >= 2 && calendarSelect.bank_dispersion &&
                       <Col>
                         <Button
                           size="large"
@@ -1932,6 +2029,7 @@ const CalculatePayroll = ({ ...props }) => {
         <ModalConceptsPayroll
           visible={modalVisible}
           setVisible={setModalVisible}
+          payment_period={periodSelected}
           calendar={{
             payment_period: periodSelected.id,
           }}

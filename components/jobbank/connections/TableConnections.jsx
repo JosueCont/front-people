@@ -57,6 +57,9 @@ const TableConnections = ({
         if(['GC'].includes(item.code)) return item.is_valid
             && item.data_config?.API_KEY
             && item.data_config?.CLIENT_ID;
+        if(['LK'].includes(item.code)) return item.is_valid
+            && item.data_config?.ig_user_id
+            && item.data_config?.user_access_token;
         return item.is_valid
             && item.data_config?.page_access_token
             && item.data_config?.user_access_token;
@@ -67,7 +70,7 @@ const TableConnections = ({
             <Menu>
                 <Menu.Item
                     key='1'
-                    disabled={item.code == 'LK'}
+                    disabled={item.code == ''}
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: '/jobbank/settings/connections/edit',

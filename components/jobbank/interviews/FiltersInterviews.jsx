@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
 import SelectPeople from '../../people/utils/SelectPeople';
+import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersInterviews = ({
     visible,
@@ -13,18 +13,12 @@ const FiltersInterviews = ({
 }) => {
 
     const {
-        load_candidates_options,
-        list_candidates_options,
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
         load_clients_options,
         jobbank_filters_data
     } = useSelector(state => state.jobBankStore);
-    const {
-        load_persons,
-        persons_company
-    } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
     const customer = Form.useWatch('customer', formSearch);
 
@@ -46,6 +40,20 @@ const FiltersInterviews = ({
     const onChangeCustomer = (value) => {
         formSearch.setFieldsValue({ vacant: null })
     }
+
+    const itemRecruiter = useMemo(()=>{
+        if(!visible) return [];
+        let recruiter = jobbank_filters_data?.recruiter || {};
+        if(Object.keys(recruiter).length <=0) return [];
+        return [recruiter];
+    },[jobbank_filters_data?.recruiter, visible])
+
+    const itemCandidate = useMemo(()=>{
+        if(!visible) return [];
+        let candidate = jobbank_filters_data?.candidate || {};
+        if(Object.keys(candidate).length <=0) return [];
+        return [recruiter];
+    },[jobbank_filters_data?.candidate, visible])
 
     return (
         <MyModal
@@ -110,52 +118,15 @@ const FiltersInterviews = ({
                         <SelectPeople
                             name='recruiter'
                             label='Reclutador'
-                            itemSelected={jobbank_filters_data?.recruiter
-                                ? [jobbank_filters_data?.recruiter] : []
-                            }
+                            itemSelected={itemRecruiter}
                         />
-                        {/* <Form.Item
-                            name='recruiter'
-                            label='Reclutador'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
                     </Col>
                     <Col span={12}>
-                        <Form.Item
+                        <SelectCandidates
                             name='candidate'
                             label='Candidato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                disabled={load_candidates_options}
-                                loading={load_candidates_options}
-                                optionFilterProp='children'
-                            >
-                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.first_name} {item.last_name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            itemSelected={itemCandidate}
+                        />
                     </Col>
                     <Col span={24} className='content-end' style={{ gap: 8 }}>
                         <Button onClick={() => close()}>

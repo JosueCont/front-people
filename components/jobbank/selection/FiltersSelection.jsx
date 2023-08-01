@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Input, Row, Col, Form, Select, Checkbox } from 'antd';
+import { Button, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
-import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
 import { optionsStatusSelection } from '../../../utils/constant';
+import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersSelection = ({
     visible,
@@ -15,8 +15,7 @@ const FiltersSelection = ({
     const {
         list_vacancies_options,
         load_vacancies_options,
-        load_candidates_options,
-        list_candidates_options,
+        jobbank_filters_data
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
 
@@ -28,6 +27,13 @@ const FiltersSelection = ({
             onFinish(values);
         },1000)
     }
+
+    const itemCandidate = useMemo(()=>{
+        if(!visible) return [];
+        let candidate = jobbank_filters_data?.candidate || {};
+        if(Object.keys(candidate).length <=0) return [];
+        return [recruiter];
+    },[jobbank_filters_data?.candidate, visible])
 
     return (
         <MyModal
@@ -44,26 +50,11 @@ const FiltersSelection = ({
             >
                 <Row gutter={[16,0]}>
                     <Col span={24}>
-                        <Form.Item
+                        <SelectCandidates
                             name='candidate'
                             label='Candidato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                disabled={load_candidates_options}
-                                loading={load_candidates_options}
-                                optionFilterProp='children'
-                            >
-                                {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.first_name} {item.last_name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            itemSelected={itemCandidate}
+                        />
                     </Col>
                     <Col span={24}>
                         <Form.Item

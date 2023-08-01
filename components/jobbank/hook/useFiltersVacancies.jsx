@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import { optionsStatusVacant } from "../../../utils/constant";
-import { getFullName } from "../../../utils/functions";
 import { getValueFilter } from "../../../utils/functions";
-import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
+import { getFullName } from "../../../utils/functions";
 
 export const useFiltersVacancies = () =>{
 
@@ -12,8 +12,7 @@ export const useFiltersVacancies = () =>{
         load_clients_options,
     } = useSelector(state => state.jobBankStore);
     const dispatch = useDispatch();
-    const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
-
+    
     const listKeys = {
         job_position__unaccent__icontains: 'Nombre',
         status: 'Estatus',
@@ -24,7 +23,8 @@ export const useFiltersVacancies = () =>{
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusVacant,
-        ...paramsOptions
+        keyEquals: 'value',
+        keyShow: 'label'
     })
 
     const getCustomer = (id) => getValueFilter({
@@ -35,13 +35,17 @@ export const useFiltersVacancies = () =>{
     const getRecruiter = async (id, key) => {
         try {
             let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
+            let value = { [key]: response.data };
             dispatch(setJobbankFiltersData(value))
             return getFullName(response.data);
         } catch (e) {
             console.log(e)
             return id;
         }
+    }
+
+    const deleteState = (key) => {
+        dispatch(setJobbankFiltersData({ [key]: null }))
     }
 
     const listAwait = {
@@ -53,9 +57,14 @@ export const useFiltersVacancies = () =>{
         customer: getCustomer
     }
 
+    const listDelete = {
+        strategy__recruiter_id: deleteState
+    }
+
     return {
         listKeys,
         listGets,
-        listAwait
+        listAwait,
+        listDelete
     }
 }

@@ -5,24 +5,17 @@ import SearchRequets from '../../../../components/comunication/requets/SearchReq
 import TableRequests from '../../../../components/comunication/requets/TableRequests';
 import WebApiPeople from '../../../../api/WebApiPeople';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../../redux/UserDuck';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../../utils/functions';
 
 const index = ({
-    currentNode,
-    getPersonsCompany
+    currentNode
 }) => {
 
     const router = useRouter();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [lastFilters, setLastFilters] = useState("");
-
-    useEffect(() => {
-        if(!currentNode) return;
-        getPersonsCompany(currentNode?.id)
-    }, [currentNode])
 
     useEffect(() => {
         if (currentNode) {
@@ -80,6 +73,5 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getPersonsCompany
     }
 )(withAuthSync(index));

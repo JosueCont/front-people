@@ -33,14 +33,7 @@ const EventForm = ({
 
     const {
         load_clients_options,
-        load_profiles_types,
-        list_profiles_types,
         list_clients_options,
-        list_vacancies_fields,
-        load_vacancies_options,
-        list_vacancies_options,
-        load_candidates_options,
-        list_candidates_options,
         list_selection_options,
         load_selection_options
     } = useSelector(state => state.jobBankStore);
@@ -289,52 +282,6 @@ const EventForm = ({
                                 </Select>
                             </Form.Item>
                         </Col>
-                        {/* <Col span={12}>
-                            <Form.Item
-                                name='vacant'
-                                label='Vacante'
-                            >
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    disabled
-                                    className='select-jb'
-                                    loading={load_vacancies_options}
-                                    placeholder='Seleccionar una opción'
-                                    notFoundContent='No se encontraron resultados'
-                                    optionFilterProp='children'
-                                >
-                                    {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
-                                        <Select.Option value={item.id} key={item.id}>
-                                            {item.job_position}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col> */}
-                        {/* <Col span={12}>
-                            <Form.Item
-                                name='candidate'
-                                label='Candidato'
-                            >
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    disabled
-                                    className='select-jb'
-                                    placeholder='Seleccionar una opción'
-                                    notFoundContent='No se encontraron resultados'
-                                    loading={load_candidates_options}
-                                    optionFilterProp='children'
-                                >
-                                    {list_candidates_options?.length > 0 && list_candidates_options.map(item => (
-                                        <Select.Option value={item.email} key={item.email}>
-                                            {item.first_name} {item.last_name}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col> */}
                         <Col span={12}>
                             <Form.Item
                                 label='Fecha'

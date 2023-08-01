@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
@@ -8,8 +8,8 @@ import SelectPeople from './utils/SelectPeople';
 
 const FiltersPeople = ({
     visible,
-    close = () =>{},
-    onFinish = ()=>{},
+    close = () => { },
+    onFinish = () => { },
     formSearch
 }) => {
 
@@ -23,14 +23,21 @@ const FiltersPeople = ({
 
     const [loading, setLoading] = useState(false);
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             close()
             setLoading(false)
             onFinish(values);
-        },1000)
+        }, 1000)
     }
+
+    const itemSupervisor = useMemo(() => {
+        if (!visible) return [];
+        let supervisor = user_filters_data?.immediate_supervisor || {};
+        if (Object.keys(supervisor).length <= 0) return [];
+        return [supervisor];
+    }, [user_filters_data?.immediate_supervisor, visible])
 
     return (
         <MyModal
@@ -45,7 +52,7 @@ const FiltersPeople = ({
                 form={formSearch}
                 layout='vertical'
             >
-                <Row gutter={[16,0]}>
+                <Row gutter={[16, 0]}>
                     <Col span={12}>
                         <Form.Item
                             name='first_name__icontains'
@@ -122,7 +129,7 @@ const FiltersPeople = ({
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {cat_departments.length > 0 && cat_departments.map(item=> (
+                                {cat_departments.length > 0 && cat_departments.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -142,7 +149,7 @@ const FiltersPeople = ({
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {cat_job.length > 0 && cat_job.map(item=> (
+                                {cat_job.length > 0 && cat_job.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -159,8 +166,8 @@ const FiltersPeople = ({
                                 allowClear
                                 placeholder='Seleccionar una opción'
                                 options={[
-                                    {value: 'true', label: 'Activos'},
-                                    {value: 'false', label: 'Inactivos'}
+                                    { value: 'true', label: 'Activos' },
+                                    { value: 'false', label: 'Inactivos' }
                                 ]}
                             />
                         </Form.Item>
@@ -169,17 +176,15 @@ const FiltersPeople = ({
                         <SelectPeople
                             name='immediate_supervisor'
                             label='Jefe inmediato'
-                            itemSelected={user_filters_data?.immediate_supervisor
-                                ? [user_filters_data?.immediate_supervisor] : []
-                            }
+                            itemSelected={itemSupervisor}
                         />
                     </Col>
-                    <Col span={24} className='content-end' style={{gap: 8}}>
-                        <Button onClick={()=> close()}>
+                    <Col span={24} className='content-end' style={{ gap: 8 }}>
+                        <Button onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
-                            loading={loading} 
+                            loading={loading}
                             htmlType='submit'
                         >
                             Aplicar

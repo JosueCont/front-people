@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import { getFullName } from '../../../utils/functions';
 import { optionsStatusVacation } from '../../../utils/constant';
+import SelectPeople from '../../people/utils/SelectPeople';
+import { useRouter } from 'next/router';
 
 const FiltersRequests = ({
     visible,
@@ -17,8 +18,7 @@ const FiltersRequests = ({
 }) => {
 
     const {
-        persons_company,
-        load_persons
+        user_filters_data
     } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
     const period = Form.useWatch('period', formSearch);
@@ -83,6 +83,20 @@ const FiltersRequests = ({
         return options;
     }, [statusIn])
 
+    const itemPerson = useMemo(()=>{
+        if(!visible) return [];
+        let person = user_filters_data?.person__id || {};
+        if(Object.keys(person).length <=0) return [];
+        return [person];
+    },[user_filters_data?.person__id, visible])
+
+    const itemSupervisor = useMemo(()=>{
+        if(!visible) return [];
+        let supervisor = user_filters_data?.immediate_supervisor || {};
+        if(Object.keys(supervisor).length <= 0) return [];
+        return [supervisor];
+    },[user_filters_data?.immediate_supervisor, visible])
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -102,50 +116,20 @@ const FiltersRequests = ({
                 <Row gutter={[16, 0]}>
                     {showCollaborator && (
                         <Col span={12}>
-                            <Form.Item
+                            <SelectPeople
                                 name='person__id'
                                 label='Colaborador'
-                            >
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    disabled={load_persons}
-                                    loading={load_persons}
-                                    placeholder='Seleccionar una opción'
-                                    notFoundContent='No se encontraron resultados'
-                                    optionFilterProp='children'
-                                >
-                                    {persons_company.length > 0 && persons_company.map(item => (
-                                        <Select.Option value={item.id} key={item.id}>
-                                            {getFullName(item)}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
+                                itemSelected={itemPerson}
+                            />
                         </Col>
                     )}
                     {showSupervisor && (
                         <Col span={12}>
-                            <Form.Item
+                            <SelectPeople
                                 name='immediate_supervisor'
                                 label='Jefe inmediato'
-                            >
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    disabled={load_persons}
-                                    loading={load_persons}
-                                    placeholder='Seleccionar una opción'
-                                    notFoundContent='No se encontraron resultados'
-                                    optionFilterProp='children'
-                                >
-                                    {persons_company.length > 0 && persons_company.map(item => (
-                                        <Select.Option value={item.id} key={item.id}>
-                                            {getFullName(item)}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
+                                itemSelected={itemSupervisor}
+                            />
                         </Col>
                     )}
                     <Col span={12}>
