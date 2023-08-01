@@ -58,18 +58,18 @@ const timeclockReducer = (state = initialState, action) => {
         case SET_FILTERS_DATA:
             return {
                 ...state,
-                timeclock_filters_data: {
+                timeclock_filters_data: action.keep ? {
                     ...state.timeclock_filters_data,
                     ...action.payload
-                }
+                } : action.payload
             }
         default:
             return state;
     }
 }
 
-export const setTimeclockFiltersData = (data = {}) => (dispatch) => {
-    dispatch({ type: SET_FILTERS_DATA, payload: data })
+export const setTimeclockFiltersData = (data = {}, keep = true) => (dispatch) => {
+    dispatch({ type: SET_FILTERS_DATA, payload: data, keep })
 }
 
 export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch) => {

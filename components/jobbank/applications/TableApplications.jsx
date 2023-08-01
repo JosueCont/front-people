@@ -20,7 +20,7 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { optionsStatusApplications } from '../../../utils/constant';
-import { getApplications, getApplicationsCandidates } from '../../../redux/jobBankDuck';
+import { getApplications } from '../../../redux/jobBankDuck';
 import { downloadCustomFile, getPercentGenJB, copyContent } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import moment from 'moment';
@@ -32,8 +32,7 @@ const TableApplications = ({
     jobbank_page,
     jobbank_filters,
     jobbank_page_size,
-    getApplications,
-    getApplicationsCandidates
+    getApplications
 }) => {
 
     const router = useRouter();
@@ -286,7 +285,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getApplications,
-    getApplicationsCandidates
+    getApplications
 }
 )(TableApplications);
