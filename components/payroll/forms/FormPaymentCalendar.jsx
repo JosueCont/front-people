@@ -708,9 +708,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                       <span>
@@ -722,9 +722,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
-                          disabled={
-                            paymentCalendar ? paymentCalendar.locked : false
-                          }
+                          // disabled={
+                          //   paymentCalendar ? paymentCalendar.locked : false
+                          // }
                         />
                       </span>
                     </div>
@@ -733,7 +733,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
               >
                 <Input
                   maxLength={10}
-                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  // disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
