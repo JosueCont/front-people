@@ -85,14 +85,16 @@ const SearchHistory = ({
     }
 
     const listKeys = {
-        account: 'Cuenta',
-        dates: 'Fecha'
-    };
-
-    const listGets = {
-        account: getAccount,
-        dates: getDates
-    };
+        account: {
+            name: 'Cuenta',
+            get: getAccount,
+            loading: load_connections_options
+        },
+        dates: {
+            name: 'Fecha',
+            get: getDates
+        }
+    }
 
     return (
         <>
@@ -132,7 +134,6 @@ const SearchHistory = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             deleteKeys={['id']}
                             discardKeys={['id']}
                         />

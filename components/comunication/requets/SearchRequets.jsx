@@ -28,7 +28,7 @@ const SearchRequests = ({
     const { current_node } = useSelector(state => state.userStore);
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys, listAwait, listDelete } = useFiltersRequests();
+    const { listKeys, listAwait} = useFiltersRequests();
     const format = 'YYYY-MM-DD';
 
     const formatRange = () =>{
@@ -82,7 +82,7 @@ const SearchRequests = ({
 
     const defaultFilter = useMemo(()=>{
         let value = router.query?.status__in;
-        let name = value ? listGets['status__in'](value) : 'Pendiente';
+        let name = value ? listKeys['status__in'].get(value) : 'Pendiente';
         return {Estatus: name}
     },[router.query?.status__in])
 
@@ -123,9 +123,7 @@ const SearchRequests = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                             discardKeys={['status__in']}
                             defaultFilters={defaultFilter}
                         />

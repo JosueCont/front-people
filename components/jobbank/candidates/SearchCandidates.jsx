@@ -18,7 +18,7 @@ const SearchCandidates = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys } = useFiltersCandidate();
+    const { listKeys } = useFiltersCandidate();
 
     const showModal = () =>{
         let state = router.query?.state ? parseInt(router.query.state) : null;
@@ -80,7 +80,6 @@ const SearchCandidates = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                         />
                     </Col>  
                 </Row>

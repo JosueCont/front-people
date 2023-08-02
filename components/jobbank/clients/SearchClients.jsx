@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Row, Col, Form, Card, Tooltip} from 'antd';
+import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
     SyncOutlined,
     SettingOutlined
@@ -18,49 +18,49 @@ const SearchClients = () => {
     const setFilters = (filters = {}) => router.replace({
         pathname: '/jobbank/clients',
         query: filters
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let filters = createFiltersJB(values);
         setFilters(filters)
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
         setFilters()
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
 
-    const showModal = () =>{
+    const showModal = () => {
         formSearch.setFieldsValue(router.query);
         setOpenModal(true)
     }
 
     return (
         <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Clientes
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push({
+                                <Button onClick={() => router.push({
                                     pathname: '/jobbank/clients/add',
                                     query: router.query
                                 })}>
@@ -72,15 +72,17 @@ const SearchClients = () => {
                     <Col span={24}>
                         <TagFilters
                             listKeys={{
-                                name__unaccent__icontains: 'Nombre',
-                                is_active: 'Estatus'
-                            }}
-                            listGets={{
-                                is_active: e => e == 'true'
-                                    ? 'Activo' : 'Inactivo'
+                                name__unaccent__icontains: {
+                                    name: 'Nombre'
+                                },
+                                is_active: {
+                                    name: 'Estatus',
+                                    get: e => e == 'true'
+                                        ? 'Activo' : 'Inactivo'
+                                }
                             }}
                         />
-                    </Col>  
+                    </Col>
                 </Row>
             </Card>
             <FiltersClients

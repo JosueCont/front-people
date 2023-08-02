@@ -3,6 +3,7 @@ import { optionsStatusSelection } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
 import WebApiJobBank from "../../../api/WebApiJobBank";
 import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
+import { useState } from "react";
 
 export const useFiltersSelection = () => {
 
@@ -11,12 +12,7 @@ export const useFiltersSelection = () => {
         load_vacancies_options,
     } = useSelector(state => state.jobBankStore);
     const dispatch = useDispatch();
-
-    const listKeys = {
-        status_process: 'Estatus',
-        vacant: 'Vacante',
-        candidate: 'Candidato'
-    }
+    const [loading, setLoading] = useState(false);
 
     const getStatus = (value) => getValueFilter({
         value,
@@ -33,12 +29,15 @@ export const useFiltersSelection = () => {
 
     const getCandidate = async (id, key) =>{
         try {
+            setLoading(true)
             let response = await WebApiJobBank.getInfoCandidate(id);
             let value = {[key]: response.data};
             dispatch(setJobbankFiltersData(value));
+            setLoading(false)
             return `${response.data?.first_name} ${response.data?.last_name}`;
         } catch (e) {
             console.log(e)
+            setLoading(false)
             return id;
         }
     }
@@ -47,23 +46,29 @@ export const useFiltersSelection = () => {
         dispatch(setJobbankFiltersData({[key] : null}))
     }
 
-    const listGets = {
-        status_process: getStatus,
-        vacant: getVacant
-    }
-
     const listAwait = {
         candidate: getCandidate
     }
 
-    const listDelete = {
-        candidate: deleteState
+    const listKeys = {
+        status_process: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        candidate: {
+            name: 'Candidato',
+            loading: loading,
+            delete: deleteState
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     };
 }
