@@ -479,9 +479,12 @@ const DataPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-              <Col lg={8} xs={12}>
-                <SelectPersonType label="Tipo de persona" />
-              </Col>
+                {
+                  props.cat_person_type.length > 0 && 
+                  <Col lg={8} xs={12}>
+                  <SelectPersonType label="Tipo de persona" />
+                </Col>
+                }
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="date_of_admission"
