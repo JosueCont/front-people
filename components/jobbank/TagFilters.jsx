@@ -1,65 +1,62 @@
 import React, { useMemo, useEffect, useState, memo } from 'react';
 import { useRouter } from 'next/router';
+import { Skeleton } from 'antd';
+import styled from '@emotion/styled';
 import { CloseOutlined } from '@ant-design/icons';
 import { deleteFiltersJb } from '../../utils/functions';
 
+const LoadTag = styled(Skeleton.Input)`
+    height: 26px;
+    border-radius: 12px;
+    & .ant-skeleton-input-sm {
+        height: 26px;
+        line-height: 26px;
+    }
+`;
+
 const TagFilters = ({
     listKeys = {},
-    listGets = {},
     listAwait = {},
-    listDelete = {},
     deleteKeys = [],
     discardKeys = [],
     defaultFilters = {},
 }) => {
 
     const router = useRouter();
-    const [params, setParamms] = useState([]);
-    const [querys, setQuerys] = useState([]);
+    const [params, setParams] = useState([]);
+    const [values, setValues] = useState({});
 
     useEffect(() => {
         if (Object.keys(router.query).length > 0) {
             let ignore = [...discardKeys, 'page', 'size'];
             let filters = deleteFiltersJb(router.query, ignore);
-            getValues(filters);
+            getValuesFilters(filters)
+            setParams(Object.entries(filters))
             return;
         }
-        setParamms([])
-        setQuerys([])
+        setParams([])
+        setValues({})
     }, [router.query])
 
-    const getValues = async (querys) => {
+    const getValuesFilters = async (querys) => {
         let keys = Object.keys(listAwait);
         let values = Object.entries(querys);
-        if(keys?.length <=0){
-            setQuerys([])
-            setParamms(values)
-            return;
-        }
 
         const filter_ = item => keys.includes(item[0]);
         let records = values.filter(filter_);
         if (records?.length <= 0) {
-            setQuerys([])
-            setParamms(values)
+            setValues({})
             return;
         }
 
-        let results = [];
-        const rows_ = item => !keys.includes(item[0]);
-        let rows = values.filter(rows_);
         for (const [key, val] of records) {
             let response = listAwait[key] ? await listAwait[key](val, key) : val;
-            results.push([key, response]);
+            setValues(prev => ({...prev, [key]: response}))
         }
-
-        setParamms(rows)
-        setQuerys(results)
     }
 
-    const removeFilter = (key) => {
-        const selected = listDelete[key];
-        if(selected) selected(key);
+    const removeFilter = (record, key) => {
+        if (record.delete) record.delete(key);
 
         let ignore = [...deleteKeys, key];
         let filters = deleteFiltersJb(router.query, ignore);
@@ -69,31 +66,32 @@ const TagFilters = ({
         }, undefined, { shallow: true })
     }
 
-    const showFilters = useMemo(() => {
-        return params?.length > 0
-            || querys?.length > 0
-            || Object.keys(defaultFilters)?.length > 0
-    }, [defaultFilters, params, querys])
-
-    const TagItem = ({ item: [key, val], type = 'default' }) => (
-        <div className={`item-list-row ${type}`}>
-            <p>{listKeys[key] ?? key}: {listGets[key] ? listGets[key](val) : val}</p>
-            {type == 'normal' && <CloseOutlined onClick={() => removeFilter(key)} />}
-        </div>
-    )
+    const TagItem = ({ item: [key, val], type = 'default' }) => {
+        const record = listKeys[key];
+        let value_ = values[key] ? values[key]
+            : record?.get ? record.get(val) : val;
+        return !record?.loading ? (
+            <div className={`item-list-row ${type}`}>
+                <p>{record?.name ? record.name : key}: {value_}</p>
+                {type == 'normal' && <CloseOutlined onClick={() => removeFilter(record, key)} />}
+            </div>
+        ) : <LoadTag active size='small' />
+    }
 
     const default_ = useMemo(() => Object.entries(defaultFilters), [defaultFilters]);
-    const filters_ = useMemo(() => ([...params, ...querys]), [params, querys]);
+    const showTags = useMemo(() => {
+        return params?.length > 0 || Object.keys(defaultFilters)?.length > 0;
+    }, [defaultFilters, params])
 
     return (
         <div className='body-list-items'>
-            {showFilters ? (
+            {showTags ? (
                 <>
                     {default_?.length > 0 && default_.map((item, idx) => (
                         <TagItem item={item} key={idx} />
                     ))}
-                    {filters_?.length > 0 && filters_.map((item, idx) => (
-                        <TagItem item={item} type='normal' key={idx} />
+                    {params.length > 0 && params.map((item, idx) => (
+                        <TagItem item={item} key={idx} type='normal' />
                     ))}
                 </>
             ) : (

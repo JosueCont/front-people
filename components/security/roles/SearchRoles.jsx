@@ -41,12 +41,13 @@ const SearchRoles = () => {
     }
 
     const listKeys = {
-        name__unaccent__icontains: 'Nombre',
-        is_active: 'Estatus'
-    }
-
-    const listGets = {
-        is_active: e => e == 'true' ? 'Activo' : 'Inactivo'
+        name__unaccent__icontains: {
+            name: 'Nombre'
+        },
+        is_active: {
+            name: 'Estatus',
+            get: e => e == 'true' ? 'Activo' : 'Inactivo'
+        }
     }
 
     return (
@@ -81,7 +82,6 @@ const SearchRoles = () => {
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                         />
                     </Col>  
                 </Row>

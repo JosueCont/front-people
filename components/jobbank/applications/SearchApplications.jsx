@@ -19,7 +19,7 @@ const SearchApplications = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait, listDelete } = useFiltersApplications();
+    const { listKeys, listAwait } = useFiltersApplications();
     const format = 'YYYY-MM-DD';
 
     const formatRange = () =>{
@@ -85,9 +85,7 @@ const SearchApplications = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                         />
                     </Col>  
                 </Row>

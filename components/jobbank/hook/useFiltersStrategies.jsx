@@ -11,13 +11,6 @@ export const useFiltersStrategies = () =>{
         load_clients_options
     } = useSelector(state => state.jobBankStore);
 
-    const listKeys = {
-        product__unaccent__icontains: 'Producto',
-        customer: 'Cliente',
-        vacant: 'Vacante',
-        vacant__status: 'Estatus vacante'
-    }
-
     const getCustomer = (id) => getValueFilter({
         value: id,
         list: list_clients_options
@@ -36,12 +29,26 @@ export const useFiltersStrategies = () =>{
         keyShow: 'label'
     })
 
-    const listGets = {
-        customer: getCustomer,
-        vacant: getVacant,
-        vacant__status: getVacanStatus
+    const listKeys = {
+        product__unaccent__icontains: {
+            name: 'Producto',
+        },
+        customer: {
+            name: 'Cliente',
+            get: getCustomer,
+            loading: load_clients_options
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        vacant__status: {
+            name: 'Estatus vacante',
+            get: getVacanStatus
+        }
     }
 
-    return { listKeys, listGets }
+    return { listKeys }
 
 }

@@ -8,13 +8,6 @@ export const useFiltersCenters = () => {
         list_companies,
         load_companies
     } = useSelector(state => state.timeclockStore);
-    
-    const listKeys = {
-        name__unaccent__icontains: 'Nombre',
-        address__unaccent__icontains: 'Dirección',
-        is_active: 'Estatus',
-        node: 'Empresa'
-    }
 
     const getStatus = value => value == 'true'
         ? 'Activo' : 'Inactivo';
@@ -24,14 +17,26 @@ export const useFiltersCenters = () => {
         list: list_companies
     })
 
-    const listGets = {
-        is_active: getStatus,
-        node: getCompany
+    const listKeys = {
+        name__unaccent__icontains: {
+            name: 'Nombre',
+        },
+        address__unaccent__icontains: {
+            name: 'Dirección'
+        },
+        is_active: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        node: {
+            name: 'Empresa',
+            get: getCompany,
+            loading: load_companies
+        }
     }
 
     return {
-        listKeys,
-        listGets
+        listKeys
     }
 
 }

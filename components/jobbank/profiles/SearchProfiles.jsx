@@ -78,14 +78,17 @@ const SearchProfiles = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={{
-                                name__unaccent__icontains: 'Nombre',
-                                customer: 'Cliente'
-                            }}
-                            listGets={{
-                                customer: e => getValueFilter({
-                                    value: e,
-                                    list: list_clients_options
-                                })
+                                name__unaccent__icontains: {
+                                    name: 'Nombre'
+                                },
+                                customer: {
+                                    name: 'Cliente',
+                                    loading: load_clients_options,
+                                    get: e => getValueFilter({
+                                        value: e,
+                                        list: list_clients_options
+                                    })
+                                }
                             }}
                         />
                     </Col>  

@@ -21,7 +21,7 @@ const SearchPreselection = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersPreselection();
+    const { listKeys } = useFiltersPreselection();
 
     const idVacant = router.query?.vacant ?? null;
     const match = router.query?.applyMatch ?? null;
@@ -35,7 +35,7 @@ const SearchPreselection = ({
         return {
             'Cliente': result?.customer?.name,
             'Vacante': result.job_position,
-            'Género': listGets['gender'](result.gender) ?? 'N/A',
+            'Género': listKeys['gender'].get(result.gender) ?? 'N/A',
             'Puestos': result.qty ?? 0,
             'Aceptados': result.candidates_accepted,
             'En proceso': result.candidates_in_process,
@@ -150,7 +150,6 @@ const SearchPreselection = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             discardKeys={['vacant','applyMatch']}
                             defaultFilters={defaultFilters}
                         />
