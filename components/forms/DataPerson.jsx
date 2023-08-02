@@ -119,7 +119,6 @@ const DataPerson = ({
 
   const setFormPerson = (person) => {
     setPersonWT(false);
-    console.log('person=========>', person)
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,
