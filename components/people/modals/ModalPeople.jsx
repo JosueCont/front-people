@@ -91,12 +91,12 @@ const ModalPeople = ({
                 onClose()
             }, 1000)
             setTimeout(() => {
-                message.success('Persona agregada')
+                message.success('Persona registrada')
                 onReady()
             }, 2000)
         } catch (e) {
             let error = e.response?.data?.message;
-            let msg = error ? error : 'Person no agregda';
+            let msg = error ? error : 'Person no registrada';
             setTxtError(msg)
             setLoading(false)
             console.log(e)
@@ -110,7 +110,7 @@ const ModalPeople = ({
             formPeople.setFields([{ name: 'passwordTwo', errors }]);
             return;
         }
-        values.groups = values?.groups ? [values?.groups] : null;
+        if(values.groups) values.groups = [values.groups];
         values.birth_date = values.birth_date ? values.birth_date?.format(format) : null;
         actionCreate(values)
     }

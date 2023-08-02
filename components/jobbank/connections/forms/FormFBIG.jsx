@@ -163,7 +163,7 @@ const FormFBIG = ({
                     </Form.Item>
                 </Col>
             )}
-            <FormConnection/>
+            <FormConnection showActive={infoConnection.is_valid}/>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <FileUpload
                     label='Imagen predeterminada'

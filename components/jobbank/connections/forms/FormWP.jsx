@@ -4,11 +4,12 @@ import FormConnection from '../FormConnection';
 import { ruleURL, ruleRequired, ruleWhiteSpace } from '../../../../utils/rules';
 
 const FormWP = ({
+    infoConnection,
     loading
 }) => {
     return (
         <>
-            <FormConnection/>
+            <FormConnection showActive={infoConnection.is_valid}/>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|APP_URL'

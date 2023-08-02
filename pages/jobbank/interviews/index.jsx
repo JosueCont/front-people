@@ -7,7 +7,8 @@ import {
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
-    getConnectionsOptions
+    getConnectionsOptions,
+    setJobbankFiltersData
 } from '../../../redux/jobBankDuck';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
@@ -22,11 +23,12 @@ const calendar = ({
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
-    getConnectionsOptions
+    getConnectionsOptions,
+    setJobbankFiltersData
 }) => {
 
     const router = useRouter();
-    const discard = ['type','view','mth'];
+    const discard = ['type', 'view', 'mth'];
     const watchQuerys = [
         router.query?.year,
         router.query?.customer,
@@ -35,48 +37,54 @@ const calendar = ({
         router.query?.candidate
     ];
 
-    useEffect(()=>{
-        if(currentNode){
+    useEffect(() => {
+        if (currentNode) {
             getVacanciesOptions(currentNode.id);
             getSelectionOpions(currentNode.id);
             getConnectionsOptions(currentNode.id, '&code=GC');
             getClientsOptions(currentNode.id)
         }
-    },[currentNode])
+    }, [currentNode])
 
-    useEffect(()=>{
-        if(currentNode){
+    useEffect(() => {
+        let valid = Object.keys(router.query).length <= 0;
+        if(valid) setJobbankFiltersData({}, false);
+    }, [router.query])
+
+    useEffect(() => {
+        if (currentNode) {
             let year = router.query?.year ? parseInt(router.query.year) : moment().year();
-            let filters = getFiltersJB({...router.query, year}, discard);
+            let filters = getFiltersJB({ ...router.query, year }, discard);
             getInterviews(currentNode.id, filters)
         }
-    },[currentNode, ...watchQuerys])
+    }, [currentNode, ...watchQuerys])
 
     return (
         <MainIndexJB
             pageKey='jb_interviews'
-            extraBread={[{name: 'Entrevistas'}]}
+            extraBread={[{ name: 'Entrevistas' }]}
         >
             <InterviewProvider>
-                <SearchInterviews/>
-                <CalendarView/>
+                <SearchInterviews />
+                <CalendarView />
             </InterviewProvider>
         </MainIndexJB>
     )
 }
 
 const mapState = (state) => {
-    return{
+    return {
         currentNode: state.userStore.current_node,
     }
 }
 
 export default connect(
     mapState, {
-        getVacanciesOptions,
-        getInterviews,
-        getSelectionOpions,
-        getClientsOptions,
-        getConnectionsOptions
-    }
+    getVacanciesOptions,
+    getInterviews,
+    getSelectionOpions,
+    getClientsOptions,
+    getConnectionsOptions,
+    setJobbankFiltersData
+}
 )(withAuthSync(calendar));

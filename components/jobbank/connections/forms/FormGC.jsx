@@ -4,11 +4,12 @@ import FormConnection from '../FormConnection';
 import { ruleWhiteSpace, ruleRequired } from '../../../../utils/rules';
 
 const FormGC = ({
+    infoConnection,
     loading
 }) => {
     return (
         <>
-            <FormConnection/>
+            <FormConnection showActive={infoConnection.is_valid}/>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|API_KEY'

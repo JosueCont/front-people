@@ -5,7 +5,12 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import SearchLogs from '../../../components/timeclock/logs/SearchLogs';
 import TableLogs from '../../../components/timeclock/logs/TableLogs';
-import { getLogsEvents, getCompanies, getWorkCentersOptions } from '../../../redux/timeclockDuck';
+import {
+    getLogsEvents,
+    getCompanies,
+    getWorkCentersOptions,
+    setTimeclockFiltersData
+} from '../../../redux/timeclockDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import moment from 'moment';
 
@@ -14,7 +19,8 @@ const index = ({
     currentUser,
     getLogsEvents,
     getCompanies,
-    getWorkCentersOptions
+    getWorkCentersOptions,
+    setTimeclockFiltersData
 }) => {
 
     const router = useRouter();
@@ -38,6 +44,11 @@ const index = ({
             getLogsEvents(filters, page, size)
         }
     }, [currentNode, router.query])
+
+    useEffect(() => {
+        let valid = Object.keys(router.query).length <= 0;
+        if(valid) setTimeclockFiltersData({}, false);
+    }, [router.query])
 
     const validFilters = () =>{
         let node = router.query?.node;
@@ -74,6 +85,7 @@ export default connect(
     mapState, {
     getLogsEvents,
     getCompanies,
-    getWorkCentersOptions
+    getWorkCentersOptions,
+    setTimeclockFiltersData
 }
 )(withAuthSync(index));
