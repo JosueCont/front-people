@@ -560,7 +560,7 @@ const TablePeople = ({
                     Descargar carta de renuncia
                 </Menu.Item>
             )}
-            {(currentNode?.contract_for_work 
+            {(currentNode?.contract_for_work
                 || currentNode?.fixed_term_contract
                 || currentNode?.indefinite_term_contract
             ) && (
@@ -665,6 +665,17 @@ const TablePeople = ({
         }, undefined, { shallow: true })
     }
 
+    const PersonField = ({item, field}) => {
+        return (permissions.person?.edit || permissions.person?.delete) ? (
+            <a onClick={() => router.push({
+                pathname: `/home/persons/${item.id}`,
+                query: router.query
+            })}>
+                {item[field]}
+            </a>
+        ) : item[field];
+    }
+
     const columns = [
         {
             title: 'Foto',
@@ -675,33 +686,23 @@ const TablePeople = ({
         },
         {
             title: 'No. empleado',
-            dataIndex: 'code',
-            key: 'code',
+            render: item => <PersonField item={item} field='code'/>,
             show: true,
         },
         {
             title: 'Apellido paterno',
-            dataIndex: 'flast_name',
-            key: 'flast_name',
+            render: item => <PersonField item={item} field='flast_name'/>,
             show: true
         },
         {
             title: 'Apellido materno',
-            dataIndex: 'mlast_name',
-            key: 'mlast_name',
+            render: item => <PersonField item={item} field='mlast_name'/>,
             show: true
         },
         {
             title: 'Nombres',
+            render: item => <PersonField item={item} field='first_name'/>,
             show: true,
-            render: (item) => (permissions.person?.edit || permissions.person?.delete) ? (
-                <a onClick={() => router.push({
-                    pathname: `/home/persons/${item.id}`,
-                    query: router.query
-                })}>
-                    {item?.first_name}
-                </a>
-            ) : item.first_name
         },
         {
             title: 'Jefe inmediato',
@@ -785,7 +786,7 @@ const TablePeople = ({
         delete: actionDelete,
         sync_ynl: actionSendYNL
     }
-    
+
     return (
         <>
             <Table
