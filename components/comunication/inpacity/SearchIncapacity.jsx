@@ -15,7 +15,7 @@ const SearchIncapacity = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys } = useFiltersIncapacity();
+    const { listKeys } = useFiltersIncapacity();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -73,7 +73,6 @@ const SearchIncapacity = () => {
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                         />
                     </Col>  
                 </Row>

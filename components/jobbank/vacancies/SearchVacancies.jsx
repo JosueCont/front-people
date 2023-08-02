@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Button, Row, Col, Form, Tooltip, Card } from 'antd';
 import {
     SyncOutlined,
-    SettingOutlined,
-    TableOutlined
+    SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -21,7 +20,7 @@ const SearchVacancies = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait, listDelete } = useFiltersVacancies();
+    const {listAwait, listKeys } = useFiltersVacancies();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -82,9 +81,7 @@ const SearchVacancies = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                         />
                     </Col>  
                 </Row>

@@ -25,7 +25,7 @@ const SearchPublications = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersPublications();
+    const { listKeys } = useFiltersPublications();
 
     const setFilters = (filters = {}) => router.replace({
         pathname: '/jobbank/publications',
@@ -89,7 +89,6 @@ const SearchPublications = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                         />
                     </Col>  
                 </Row>

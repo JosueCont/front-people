@@ -35,7 +35,7 @@ const FiltersStrategies = ({
     }
 
     const optionsVacant = useMemo(() =>{
-        if(!client) return [];
+        if(!client) return list_vacancies_options;
         const options = item => item.customer?.id === client;
         return list_vacancies_options.filter(options);
     }, [client, list_vacancies_options])
@@ -98,7 +98,7 @@ const FiltersStrategies = ({
                             <Select
                                 allowClear
                                 showSearch
-                                disabled={optionsVacant.length <= 0}
+                                disabled={load_vacancies_options}
                                 loading={load_vacancies_options}
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'

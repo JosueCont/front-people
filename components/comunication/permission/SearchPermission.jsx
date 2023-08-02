@@ -15,7 +15,7 @@ const SearchPermission = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listGets, listKeys } = useFiltersPermission();
+    const { listKeys, listAwait} = useFiltersPermission();
 
     const showModal = () =>{
         let filters = {...router.query};
@@ -73,7 +73,7 @@ const SearchPermission = () => {
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
+                            listAwait={listAwait}
                         />
                     </Col>  
                 </Row>

@@ -16,7 +16,6 @@ const index = ({
     getVacancies,
     currentNode,
     getClientsOptions,
-    getPersonsCompany,
     setJobbankFiltersData
 }) => {
 

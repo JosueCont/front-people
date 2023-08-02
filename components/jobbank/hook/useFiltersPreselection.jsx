@@ -17,23 +17,6 @@ export const useFiltersPreselection = () =>{
         list_scholarship
     } = useSelector(state => state.jobBankStore);
     const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
-
-    const listKeys = {
-        first_name__unaccent__icontains: 'Nombre',
-        last_name__unaccent__icontains: 'Apellidos',
-        email__unaccent__icontains: 'Correo',
-        main_category: 'Categoría',
-        gender: 'Género',
-        state: 'Estado',
-        municipality__unaccent__icontains: 'Municipio',
-        study_level: 'Nivel de estudios',
-        status_level_study: 'Estatus académico',
-        last_job: 'Puesto',
-        // age: 'Edad',
-        language: 'Idioma',
-        age_start: 'Edad mínima',
-        age_end: 'Edad máxima'
-    }
     
     const getCategory = (id) => getValueFilter({
         value: id,
@@ -68,15 +51,57 @@ export const useFiltersPreselection = () =>{
         ...paramsOptions
     })
 
-    const listGets = {
-        main_category: getCategory,
-        state: getState,
-        gender: getGender,
-        study_level: getStudy,
-        status_level_study: getStatus,
-        language: getLang
+    const listKeys = {
+        first_name__unaccent__icontains: {
+            name: 'Nombre'
+        },
+        last_name__unaccent__icontains: {
+            name: 'Apellidos'
+        },
+        email__unaccent__icontains: {
+            name: 'Correo electrónico'
+        },
+        main_category: {
+            name: 'Categoría',
+            get: getCategory,
+            loading: load_main_categories
+        },
+        gender: {
+            name: 'Género',
+            get: getGender
+        },
+        state: {
+            name: 'Estado',
+            get: getState,
+            loading: load_states
+        },
+        municipality__unaccent__icontains: {
+            name: 'Municipio'
+        },
+        study_level: {
+            name: 'Nivel de estudios',
+            get: getStudy,
+            loading: load_scholarship
+        },
+        status_level_study: {
+            name: 'Estatus académico',
+            get: getStatus
+        },
+        last_job: {
+            name: 'Puesto'
+        },
+        language: {
+            name: 'Idioma',
+            get: getLang
+        },
+        age_start: {
+            name: 'Edad mínima'
+        },
+        age_end: {
+            name: 'Edad máxima'
+        }
     }
 
-    return { listKeys, listGets };
+    return { listKeys };
 
 }

@@ -166,8 +166,8 @@ const FiltersPeople = ({
                                 allowClear
                                 placeholder='Seleccionar una opción'
                                 options={[
-                                    { value: 'true', label: 'Activos' },
-                                    { value: 'false', label: 'Inactivos' }
+                                    { value: 'true', label: 'Activo' },
+                                    { value: 'false', label: 'Inactivo' }
                                 ]}
                             />
                         </Form.Item>

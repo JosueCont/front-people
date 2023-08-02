@@ -15,7 +15,7 @@ const SearchSelection = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait, listDelete } = useFiltersSelection();
+    const { listKeys, listAwait } = useFiltersSelection();
 
     const onFinishSearch = (values) =>{
         let filters = createFiltersJB(values);
@@ -68,9 +68,7 @@ const SearchSelection = () => {
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                         />
                     </Col>  
                 </Row>
