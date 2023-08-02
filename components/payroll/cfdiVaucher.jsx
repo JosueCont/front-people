@@ -479,7 +479,7 @@ const CfdiVaucher = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col md={3} xs={12}>
+                <Col md={4} xs={12}>
                   <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendarSelect(value)}
                     name="calendar"
@@ -487,18 +487,17 @@ const CfdiVaucher = ({
                   />
                 </Col>
                 {calendarSelect && (
-                  <Col md={3} xs={12}>
+                  <Col md={4} xs={12}>
                     <Form.Item name="period" label="Periodo">
                       <Select
                         options={periods}
-                        style={{ width: 250 }}
                         placeholder="Periodo"
                         allowClear
                       />
                     </Form.Item>
                   </Col>
                 )}
-                <Col md={3} xs={12}>
+                <Col md={4} xs={12}>
                   <SelectCollaborator  showSearch={true} name="person" style={{width:'100%'}}  />
                 </Col>
                 {!calendarSelect && (
