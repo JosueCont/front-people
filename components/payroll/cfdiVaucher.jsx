@@ -414,9 +414,9 @@ const CfdiVaucher = ({
     getVoucher(`&node=${props.currentNode.id}`, 1);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     getVoucher(`&node=${props.currentNode.id}`, 1);
-  }, [props.currentNode])
+  }, [props.currentNode]) */
   
 
   useEffect(() => {
