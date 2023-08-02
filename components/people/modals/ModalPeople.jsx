@@ -19,7 +19,8 @@ import {
     Drawer,
     Switch,
     message,
-    Popconfirm
+    Popconfirm,
+    Spin
 } from 'antd';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,6 +42,7 @@ import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../utils/SelectPeople';
 import { PlusOneOutlined } from '@material-ui/icons';
 import { PlusOutlined } from '@ant-design/icons';
+import SelectWorkTitle from '../../selects/SelectWorkTitle';
 
 const ModalPeople = ({
     visible = false,
@@ -73,6 +75,7 @@ const ModalPeople = ({
     const [searchValue, setSearchValue] = useState(null)
     const [workTitleFocus, setWorkTitleFocus] = useState(false)
     const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
+    
 
     const idSuperivor = Form.useWatch('immediate_supervisor', formPeople);
     const idSubstitute = Form.useWatch('substitute_immediate_supervisor', formPeople);
@@ -84,6 +87,7 @@ const ModalPeople = ({
     const actionCreate = async (values) => {
         try {
             setLoading(true)
+            
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
@@ -155,17 +159,25 @@ const ModalPeople = ({
         let places = cat_work_title.filter(item => !item?.person);
         const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
         let list = places.filter(filter_)
-        console.log('list',list)
         setOptionsWorkPlace(list)
     }
 
     useEffect(() => {
         reloadOptionsWorkPlaces()
+        formPeople.setFieldsValue({'work_title_id': null})
     }, [idDepartment, idJob])
 
     useEffect(() => {
         reloadOptionsWorkPlaces()
     }, [cat_work_title])
+
+    useEffect(() => {
+        console.log('cat_groups',cat_groups)
+      if(cat_groups.length === 1){
+        formPeople.setFieldsValue({'groups': cat_groups[0].id})
+      }
+    }, [cat_groups])
+    
     
     
 
@@ -199,6 +211,7 @@ const ModalPeople = ({
 
     const addWorkTitle = async () => {
         try {
+            setLoading(true)
             let data_form = formPeople.getFieldsValue()
             let data = {
                 "name": searchValue,
@@ -206,26 +219,25 @@ const ModalPeople = ({
                 "job": data_form?.job,
                 "node": current_node?.id
             }
-            console.log('data',data)
             const res = await WebApiPeople.createRegisterCatalogs(
                 "/business/work-title/",
                 data
             );
-            console.log('resp=====>', res)
             if(res.status === 201){
                 dispatch(getWorkTitle(current_node?.id))
+                setLoading(false)
             }
             /* message.success(messageSaveSuccess); */
             /* setLoading(false); */
           } catch (error) {
             console.log('error===>', error)
+            setLoading(false)
             /* setLoading(false);
             console.log(error);
             message.error(messageError); */
-          }
-            
-        
+          }   
     }
+    
 
 
     const ButtonAddWorkTitle = () => {
@@ -237,10 +249,13 @@ const ModalPeople = ({
                         okText="Si"
                         cancelText="No"
                         disabled={!searchValue}
-                    >
-                        <a href='#' style={{ cursor: 'pointer' }} >
-                            <Typography.Text ><PlusOutlined/> Agregar</Typography.Text> 
-                        </a>
+                    >   
+                        
+                        <Spin spinning={loading}>
+                            <a href='#' style={{ cursor: 'pointer' }} >
+                                <Typography.Text ><PlusOutlined/> Agregar</Typography.Text> 
+                            </a>
+                        </Spin>
                     </Popconfirm>
                 </div>)
     }
@@ -274,7 +289,7 @@ const ModalPeople = ({
                     </Button>
                     <Button
                         htmlType='submit'
-                        loading={loading}
+                        loading={loading === true}
                         form='form_people'
                     >
                         Guardar
@@ -419,7 +434,19 @@ const ModalPeople = ({
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item
+                        <SelectWorkTitle
+                            name='work_title_id'
+                            viewLabel={true}
+                            department={idDepartment}
+                            job={idJob}
+                            labelText='Plaza laboral'
+                            dependencies={['person_department', 'job']}
+                            rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
+                            placeholder='Seleccionar una opción'
+                            disabled={!idDepartment || !idJob}
+                        />
+
+                        {/* <Form.Item
                             name='work_title_id'
                             label='Plaza laboral'
                             dependencies={['person_department', 'job']}
@@ -434,9 +461,15 @@ const ModalPeople = ({
                                 notFoundContent={ searchValue ? <ButtonAddWorkTitle /> : "No se encontraron resultados"}
                                 optionFilterProp='children'
                                 onSearch={(val) => setSearchValue(val)}
-                                open={searchValue || workTitleFocus}
+                                open={ searchValue || workTitleFocus}
                                 onFocus={() => setWorkTitleFocus(true)}
                                 onBlur={() => setWorkTitleFocus(false)}
+                                onSelect={(val) => {
+                                        setSearchValue(null), 
+                                        setWorkTitleFocus(false)
+                                        
+                                    } 
+                                }
                             >
                                 {optionsWorkPlace.length > 0 && optionsWorkPlace.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -444,7 +477,7 @@ const ModalPeople = ({
                                     </Select.Option>
                                 ))}
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
                     <Col span={8}>
                         <Form.Item
