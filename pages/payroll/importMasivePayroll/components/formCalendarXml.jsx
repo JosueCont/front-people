@@ -77,6 +77,7 @@ const FormCaledanrXml = ({
       type_tax: isAddXMLS ? calendar.type_tax : calendar.calendar.type_tax,
       salary_days: isAddXMLS ? calendar.salary_days : calendar.calendar.salary_days,
     });
+    calendar.calendar.name = calendar.name ? calendar.name : `${calendar.period} - ${periodicity_str}`
 
     
     
