@@ -100,26 +100,26 @@ const CardApps = ({ user, config, ...props }) => {
       true
     )}.${urlMyAccount}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3001/validation?token=${token}`;
-    redirectTo(url, true);
+    redirectTo(url);
   };
 
   const linkToPeople = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlPeople}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
-    redirectTo(url, true);
+    redirectTo(url);
   };
 
   const linktToSocial = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
-    redirectTo(url, true);
+    redirectTo(url);
   };
 
   const linkToKhor = () =>{
     const url = props.is_admin ? `${getCurrentURL(true)}.${urlPeople}/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.${urlPeople}/validationKhor`;
     // const url = props.is_admin ? `${getCurrentURL(true)}.localhost:3000/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.localhost:3000/validationKhor`;
-    redirectTo(url,true);
+    redirectTo(url);
   }
 
   const linkToExternalApp = (app_name) => {
@@ -138,25 +138,25 @@ const CardApps = ({ user, config, ...props }) => {
         }else{
           url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
         }
-        redirectTo(url1, true);
+        redirectTo(url1);
         break;
       case "careerlab":
         const token2 = user.jwt_data.metadata.at(-1).token;
         // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
         // const url2 = `https://platform.${urlCareerlab}/validation?token=${token2}`
         const url2 = `https://platform.${urlCareerlab}`
-        redirectTo(url2, true);
+        redirectTo(url2);
         break;
       case "khorflix":
         const token3 = user.jwt_data.metadata.at(-1).token;
         // const url2 = `${getCurrentURL(true)}.${url}/validation?token=${token2}`;
         const url3 = `${getCurrentURL(true)}.${urlKhorflx}/validation?token=${token3}`
-        redirectTo(url3, true);
+        redirectTo(url3);
         break;
       default:
         const token = user.jwt_data.metadata.at(-1).token;
         const url = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token}`;
-        redirectTo(url, true);
+        redirectTo(url);
         break;
     }
   };
