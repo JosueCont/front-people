@@ -16,6 +16,7 @@ import {
   Typography, Alert, Divider, Select, Form, DatePicker,
 } from "antd";
 import {CaretRightOutlined, SyncOutlined} from "@ant-design/icons";
+import GenericModal from "../../../components/modal/genericModal";
 import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
@@ -32,6 +33,9 @@ const { Text } = Typography;
 import { ruleEmail, ruleRequired } from "../../../utils/rules";
 import dayjs from 'dayjs';
 import Variability from "../../../components/payroll/ImssMovements/Variability";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import AfilliateMovements from "../../business/AfilliateMovements";
+import WithHoldingNotice from "../../business/WithHoldingNotice";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -39,6 +43,7 @@ const ImssMovements = ({ ...props }) => {
   const [showList, setShowList] = useState(false);
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [patronalSelected, setPatronalSelected] = useState(null);
+  const [patronalSelectedInfonavit, setPatronalSelectedInfonavit] = useState(null);
   const [files, setFiles] = useState([]);
   const [totalFiles, setTotalFiles] = useState(0)
   const [file, setFile] = useState(null);
@@ -47,8 +52,17 @@ const ImssMovements = ({ ...props }) => {
   const [loadingSua, setLoadingSua] = useState(false)
   const [loadingSyncEmas, setLoadingSyncEmas] = useState(false)
   const [movType, setMovType] = useState(null)
+  const [modal, setModal] = useState(false);
+  const [disabledBimester, setDisabledBimester] = useState(true);
+  const [bimester, setBimester] = useState(null);
+  const [year, setYear] = useState("");
+  const [scraperActive, setScraperActive] = useState(false)
+
   const router = useRouter();
   const [formSua] = Form.useForm()
+
+  const {Title} = Typography
+  const { Option } = Select
 
   const movSuaTypes = [
     { label: 'Asegurados', value: 'ASEG' },
@@ -214,11 +228,104 @@ const disabledMaxDate  = (current) => {
     }
   }
 
+  const validateScraper = async () => {
+    let valid = await WebApiPeople.getCredentials('infonavit', patronalSelectedInfonavit)
+    const results = valid?.data?.results
+    console.log('result', results)
+    setScraperActive(results?.credentials)
+    //credentials
+  }
+
+  useEffect(() => {
+    if(patronalSelectedInfonavit){
+      validateScraper()
+    }
+  }, [patronalSelectedInfonavit])
+  
+
   const validTypeMov = () => {
     let type = formSua.getFieldValue('type')
     console.log('type', type)
     return type
   }
+
+  const verifyPeriod = async () => {
+    try {
+      setModal(false);
+      setLoading(true);
+      let period = moment(year).format("YYYY").slice(2, 4).concat(bimester);
+      let data = {
+        period,
+        node: props.currentNode?.id,
+        patronal_registration: patronalSelectedInfonavit,
+      };
+      const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
+      if (syncMovements?.data?.message)
+        message.success(syncMovements?.data?.message);
+      else message.error("Hubo un problema, intentalo más tarde");
+    } catch (e) {
+      console.log(e?.response.data?.message);
+      if (e?.response.data?.message) {
+        message.error(e?.response.data?.message);
+      } else {
+        message.error("Hubo un problema, intentalo más tarde");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getOptions = () => {
+    let options = [];
+    let period = 1;
+    for (period; period <= 6; period++) {
+      options.push(
+        <Option key={period.toString()} value={`0${period.toString()}`}>
+          0{period}
+        </Option>
+      );
+    }
+    return options;
+  };
+
+  const changeYear = (value) => {
+    if (value) {
+      setYear(value);
+      setDisabledBimester(false);
+    } else {
+      setDisabledBimester(true);
+      setBimester(null);
+    }
+  };
+
+  const changeBimester = (value) => {
+    if (value) {
+      setBimester(value);
+    }
+  };
+
+  const syncUpData = async () => {
+    try {
+      setLoading(true);
+      let dataSend = {
+        patronal_registration_id: patronalSelectedInfonavit,
+        node_id: props.currentNode?.id
+      };
+      const syncData = await WebApiPeople.withHoldingNotice(dataSend);
+      if (syncData?.data?.message) message.success(syncData?.data?.message);
+    } catch (e) {
+      console.log(e);
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error.response?.data?.message) {
+        msg = error.response?.data?.message;
+      }
+      message.error(msg);
+
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <>
@@ -394,6 +501,79 @@ const disabledMaxDate  = (current) => {
                 </Col>
               </Panel>
             </Collapse>
+
+            <Divider>
+              {" "}
+              <img src={"/images/logoinfonavit.png"} width={40} />{" "}
+              Movimientos de Infonavit
+            </Divider>
+            <Row>
+                <Col>
+                <SelectPatronalRegistration
+                    currentNode={props?.currentNode?.id}
+                    onChange={(value) => setPatronalSelectedInfonavit(value)}
+                  />
+                </Col>
+            </Row>
+            {
+              patronalSelectedInfonavit && 
+              <>
+                {
+                  !scraperActive  ?
+                  <>
+                    <Alert
+                      description={<>No se encuentra la configuración de Infonavit para este Reg. Patronal.  <br/>
+                      <a onClick={()=> router.push("/business/patronalRegistrationNode") } >Configuralo aquí</a> </>}
+                      type="warning"
+                      showIcon
+                      closable
+                    />
+                  </>
+                  :
+                  <>
+                    <Row justify="space-between">
+                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
+                        Movimientos afiliatorios
+                      </Title>
+                      <Button
+                        onClick={() => setModal(true)}
+                        form="formGeneric"
+                        htmlType="submit"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        Sincronizar / Solicitar
+                      </Button>
+                    </Row>
+                    <Divider style={{ marginTop: "2px" }} />
+                    <Spin spinning={loading}>
+                      <AfilliateMovements
+                        id={patronalSelectedInfonavit}
+                        node={props?.currentNode?.id}
+                      />
+                    </Spin>
+                    <Row justify="space-between" style={{ marginTop: 50 }}>
+                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
+                        Avisos de retenciones
+                      </Title>
+                      <Button
+                        onClick={syncUpData}
+                        form="formGeneric"
+                        htmlType="submit"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        Sincronizar / Solicitar
+                      </Button>
+                    </Row>
+                    <Divider style={{ marginTop: "2px" }} />
+                    <Spin spinning={loading}>
+                      <WithHoldingNotice
+                        patronalData={{id: patronalSelectedInfonavit , node: props?.currentNode?.id}}
+                      />
+                    </Spin>
+                  </>
+                }
+              </>
+            }
           </div>
         </Spin>
       </MainLayout>
@@ -457,6 +637,55 @@ const disabledMaxDate  = (current) => {
           </Col>
         </Row>
       </Modal>
+      <GenericModal
+        visible={modal}
+        setVisible={() => setModal(false)}
+        title="Solicitar movimientos"
+        actionButton={() => verifyPeriod()}
+        width="30%"
+        //disabledSave={disabeldSave}
+      >
+        <Row justify="center">
+          <Col span={24}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: "10px",
+              }}
+            >
+              <span>Año</span>
+              <DatePicker
+                style={{ width: "100%", marginBottom: "10px" }}
+                onChange={changeYear}
+                picker="year"
+                moment={"YYYY"}
+                disabledDate={(currentDate) =>
+                  currentDate.year() > new Date().getFullYear()
+                }
+                placeholder="Selecciona año"
+                locale={locale}
+              />
+
+              <span>Bimestre</span>
+              <Select
+                size="middle"
+                key={"period"}
+                disabled={disabledBimester}
+                val={bimester}
+                onChange={changeBimester}
+                allowClear
+                notFoundContent={"No se encontraron resultados."}
+                showSearch
+                optionFilterProp="children"
+                placeholder="Selecciona bimestre"
+              >
+                {getOptions()}
+              </Select>
+            </div>
+          </Col>
+        </Row>
+      </GenericModal>
     </>
   );
 };
