@@ -66,16 +66,22 @@ const FormCaledanrXml = ({
       (item) => item.id == calendar.calendar.periodicity
     ).description;
     setPeriodicityCode(periodicity_code);
+    let periodicity_str = paymentPeriodicity.find((item) => item.id == calendar.calendar.periodicity).description
     formCalendar.setFieldsValue({
-      name: isAddXMLS ? calendar.name : calendar.calendar.name,
+      name: isAddXMLS ? calendar.name : `${calendar.period} - ${periodicity_str}`,
       perception_type: calendar.calendar.perception_type,
-      period: calendar.calendar.period,
+      period: moment().set('year', calendar.calendar.period),
       periodicity: isAddXMLS ? calendar.periodicity:calendar.calendar.periodicity ,
       start_date:isAddXMLS ? moment(calendar.start_date) : moment(calendar.calendar.start_date),
       activation_date:isAddXMLS ?  moment(calendar.activation_date) :  moment(calendar.calendar.activation_date),
       type_tax: isAddXMLS ? calendar.type_tax : calendar.calendar.type_tax,
       salary_days: isAddXMLS ? calendar.salary_days : calendar.calendar.salary_days,
     });
+
+    
+    
+    
+
     setlastPeriodDate(calendar.calendar.activation_date);
   }, [calendar]);
 
@@ -155,7 +161,9 @@ const FormCaledanrXml = ({
               </Col>
               <Col>
                 <Form.Item name="period" label="Periodo">
-                  <Input type={"number"} readOnly />
+                  <DatePicker 
+                    picker="year"
+                  />
                 </Form.Item>
               </Col>
               <Col>
