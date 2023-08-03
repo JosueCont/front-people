@@ -1,7 +1,11 @@
-import { connect } from "react-redux";
-import { Form, Select } from "antd";
+import { connect, useDispatch } from "react-redux";
+import { Form, Popconfirm, Select, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { deprecate } from "util";
+import WebApiPeople from "../../api/WebApiPeople";
+import { getWorkTitle } from "../../redux/catalogCompany";
+import { PlusOutlined } from "@ant-design/icons";
+
 const { Option } = Select;
 const SelectWorkTitle = ({
   viewLabel = true,
@@ -14,6 +18,12 @@ const SelectWorkTitle = ({
   ...props
 }) => {
   const [options, setOptions] = useState([]);
+  const [searchValue, setSearchValue] = useState(null)
+  const [workTitleFocus, setWorkTitleFocus] = useState(false)
+  const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log('jobs', job)
@@ -61,7 +71,67 @@ const SelectWorkTitle = ({
 
       setOptions(data);
     }
-  }, [department, job]);
+  }, [department, job, props.cat_work_title]);
+
+  const validateWorkTitle = () => {
+    let department = formPeople.getFieldValue('person_department')
+    let job = formPeople.getFieldValue('job')
+    if(department && job){
+        return false
+    }else{
+        formPeople.setFieldsValue({'work_title_id': null})
+        return true
+    }
+}
+
+  const addWorkTitle = async () => {
+    console.log('props?.currentNode',props?.currentNode)
+    try {
+        setLoading(true)
+        let data = {
+            "name": searchValue,
+            "department": department,
+            "job": job,
+            "node": props?.currentNode?.id
+        }
+        const res = await WebApiPeople.createRegisterCatalogs(
+            "/business/work-title/",
+            data
+        );
+        if(res.status === 201){
+            dispatch(getWorkTitle(props?.currentNode?.id))
+            setLoading(false)
+        }
+        /* message.success(messageSaveSuccess); */
+        /* setLoading(false); */
+      } catch (error) {
+        console.log('error===>', error)
+        setLoading(false)
+        /* setLoading(false);
+        console.log(error);
+        message.error(messageError); */
+      }   
+}
+
+  const ButtonAddWorkTitle = () => {
+
+    return (<div style={{ width:'100%', textAlign:'end' }} > 
+                <Popconfirm
+                    title="¿Agregar nueva plaza laboral?"
+                    onConfirm={addWorkTitle}
+                    okText="Si"
+                    cancelText="No"
+                    disabled={!searchValue}
+                >   
+                
+                    <Spin spinning={loading}>
+                        <a href='#' style={{ cursor: 'pointer' }} >
+                            <Typography.Text ><PlusOutlined/> Agregar</Typography.Text> 
+                        </a>
+                    </Spin>
+                </Popconfirm>
+            </div>)
+}
 
   return (
     <Form.Item
@@ -69,20 +139,34 @@ const SelectWorkTitle = ({
       name={name ? name : "cat_work_title"}
       label={viewLabel ? labelText : ""}
       rules={options.length >0 ? rules : []}
+      dependencies={props.dependencies ? props.dependencies : null}
+      
     >
       <Select
         disabled={disabled}
         key="SelectPlace"
         // options={options}
-        placeholder="Plaza laboral"
+        placeholder={props.placeholder ? props.placeholder : "Plaza laboral"}
         allowClear
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}
-        notFoundContent={"No se encontraron resultados."}
+        notFoundContent={ searchValue ? <ButtonAddWorkTitle /> : "No se encontraron resultados"}
         showSearch
         optionFilterProp="children"
         mode={props.multiple ? "multiple" : null}
         maxTagCount="responsive"
+
+        onSearch={(val) => setSearchValue(val)}
+        open={ searchValue || workTitleFocus}
+        onFocus={() => setWorkTitleFocus(true)}
+        onBlur={() => setWorkTitleFocus(false)}
+        onSelect={(val) => {
+                setSearchValue(null), 
+                setWorkTitleFocus(false)
+                
+            } 
+        }
+
       >
         {options.map((item) => {
           return (
@@ -104,6 +188,7 @@ const SelectWorkTitle = ({
 const mapState = (state) => {
   return {
     cat_work_title: state.catalogStore.cat_work_title,
+    currentNode: state.userStore.current_node,
   };
 };
 

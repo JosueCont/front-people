@@ -8,11 +8,6 @@ export const useFiltersIncapacity = () =>{
         persons_company,
         load_persons
     } = useSelector(state => state.userStore);
-
-    const listKeys = {
-        person__id: 'Colaborador',
-        status: 'Estatus'
-    }
     
     const getStatus = (value) => getValueFilter({
         value,
@@ -27,10 +22,17 @@ export const useFiltersIncapacity = () =>{
         keyShow: e => getFullName(e)
     })
 
-    const listGets = {
-        status: getStatus,
-        person__id: getPerson
+    const listKeys = {
+        person__id: {
+            name: 'Colaborador',
+            get: getPerson,
+            loading: load_persons
+        },
+        status: {
+            name: 'Estatus',
+            get: getStatus
+        }
     }
 
-    return { listKeys, listGets }
+    return { listKeys }
 }

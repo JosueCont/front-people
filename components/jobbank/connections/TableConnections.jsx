@@ -130,7 +130,7 @@ const TableConnections = ({
                 return(
                     <Switch
                         size='small'
-                        disabled={item.code == 'LK'}
+                        disabled={!item.is_valid}
                         defaultChecked={item.is_active}
                         checked={item.is_active}
                         checkedChildren="Activo"

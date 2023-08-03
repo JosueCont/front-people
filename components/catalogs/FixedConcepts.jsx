@@ -124,7 +124,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                               </Row>
                               <Row>
                                 <span style={{ fontWeight: "bold" }}>
-                                  Conceptos
+                                  Conceptos: 
                                 </span>
                               </Row>
                               {item.fixed_concept.map((a) => {
@@ -147,9 +147,9 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                                 return (
                                   <Row>
                                     <span style={{ fontWeight: "bold" }}>
-                                      {a.label}:
+                                      {a.label.replaceAll(".", "")}:
                                     </span>
-                                    {item[a.name] ? "Si" : "No"}
+                                    {item[a.name] ? " Si" : " No"}
                                   </Row>
                                 );
                               })}

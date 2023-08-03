@@ -4,7 +4,8 @@ import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
 import { getFullName } from "../../../utils/functions";
 import WebApiJobBank from "../../../api/WebApiJobBank";
 import WebApiPeople from "../../../api/WebApiPeople";
- 
+import { useState } from "react";
+
 export const useFiltersInterviews = () => {
 
     const {
@@ -13,14 +14,11 @@ export const useFiltersInterviews = () => {
         list_clients_options,
         load_clients_options
     } = useSelector(state => state.jobBankStore);
-    const dispatch = useDispatch();
 
-    const listKeys = {
-        recruiter: 'Reclutador',
-        candidate: 'Candidato',
-        vacant: 'Vacante',
-        customer: 'Cliente'
-    }
+    const [loading, setLoading] = useState(true);
+    const [loadRecruiter, setLoadRecruiter] = useState(true);
+    
+    const dispatch = useDispatch();
 
     const getVacant = (id) => getValueFilter({
         value: id,
@@ -35,24 +33,30 @@ export const useFiltersInterviews = () => {
 
     const getRecruiter = async (id, key) => {
         try {
+            setLoadRecruiter(true)
             let response = await WebApiPeople.getPerson(id);
             let value = { [key]: response.data };
             dispatch(setJobbankFiltersData(value))
+            setLoadRecruiter(false)
             return getFullName(response.data);
         } catch (e) {
             console.log(e)
+            setLoadRecruiter(false)
             return id;
         }
     }
 
     const getCandidate = async (id, key) => {
         try {
+            setLoading(true)
             let response = await WebApiJobBank.getInfoCandidate(id);
             let value = { [key]: response.data };
             dispatch(setJobbankFiltersData(value));
+            setLoading(false)
             return `${response.data?.first_name} ${response.data?.last_name}`;
         } catch (e) {
             console.log(e)
+            setLoading(false)
             return id;
         }
     }
@@ -66,20 +70,31 @@ export const useFiltersInterviews = () => {
         candidate: getCandidate
     }
 
-    const listGets = {
-        vacant: getVacant,
-        customer: getCustomer
-    }
-
-    const listDelete = {
-        recruiter: deleteState,
-        candidate: deleteState
+    const listKeys = {
+        recruiter: {
+            name: 'Reclutador',
+            loading: loadRecruiter,
+            delete: deleteState
+        },
+        candidate: {
+            name: 'Candidato',
+            loading: loading,
+            delete: deleteState
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        customer: {
+            name: 'Cliente',
+            get: getCustomer,
+            loading: load_clients_options
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     };
 }

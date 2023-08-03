@@ -1577,11 +1577,12 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={5}>
                           {
                             step < 2 && <Button
+                                  loading={downloading}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
                                   onClick={() => {
-                                    downLoadFileBlob(
+                                    downLoadFileBlobAwait(
                                         `${getDomain(
                                             API_URL_TENANT
                                         )}/payroll/payroll-calculus`,
@@ -1595,11 +1596,13 @@ const CalculatePayroll = ({ ...props }) => {
                                             item.person_id = item.person.id;
                                             return item;
                                           }),
-                                        }
+                                        },
+                                        "",
+                                        setDownloading
                                     );
                                   }}
                               >
-                                Descargar plantilla
+                                Descargar plantilla_
                               </Button>
                           }
 

@@ -1,22 +1,17 @@
+import { useState } from "react";
 import { optionsStatusPermits } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import WebApiPeople from "../../../api/WebApiPeople";
+import { setUserFiltersData } from "../../../redux/UserDuck";
 
 export const useFiltersPermission = () =>{
-
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
+    
     const {
         cat_departments
     } = useSelector(state => state.catalogStore);
-
-    const listKeys = {
-        person__id: 'Colaborador',
-        status: 'Estatus',
-        department__id: 'Departamento'
-    }
+    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
     
     const getStatus = (value) => getValueFilter({
         value,
@@ -25,22 +20,49 @@ export const useFiltersPermission = () =>{
         keyShow: 'label'
     })
 
-    const getPerson = (id) => getValueFilter({
-        value: id,
-        list: persons_company,
-        keyShow: e => getFullName(e)
-    })
+    const getPerson = async (id, key) => {
+        try {
+            setLoading(true)
+            let response = await WebApiPeople.getPerson(id);
+            let value = {[key]: response.data};
+            dispatch(setUserFiltersData(value))
+            setLoading(false)
+            return getFullName(response.data);
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            return id;
+        }
+    }
+
+    const deleteState = (key) =>{
+        dispatch(setUserFiltersData({[key] : null}))
+    }
 
     const getDeparment = (id) => getValueFilter({
         value: id,
         list: cat_departments
     })
 
-    const listGets = {
-        status: getStatus,
-        person__id: getPerson,
-        department__id: getDeparment
+    const listAwait = {
+        person__id: getPerson
     }
 
-    return { listKeys, listGets }
+    const listKeys = {
+        person__id: {
+            name: 'Colaborador',
+            loading: loading,
+            delete: deleteState
+        },
+        status: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        department__id:{
+            name: 'Departamento',
+            get: getDeparment
+        }
+    }
+
+    return { listKeys, listAwait }
 }

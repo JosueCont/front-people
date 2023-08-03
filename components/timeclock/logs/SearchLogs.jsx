@@ -24,7 +24,7 @@ const SearchLogs = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets, listAwait, listDelete } = useFiltersLogs();
+    const { listKeys, listAwait } = useFiltersLogs();
 
     const format = 'YYYY-MM-DD';
 
@@ -65,9 +65,9 @@ const SearchLogs = ({
         let node = router.query?.node;
         let place = router.query?.workcenter;
         let value = node ? node == 'all'
-            ? 'Todas' : listGets['node'](node) : currentNode?.name;
+            ? 'Todas' : listKeys['node'].get(node) : currentNode?.name;
         let center = place && place != 'all'
-            ? listGets['workcenter'](place) : 'Todas';
+            ? listKeys['workcenter'].get(place) : 'Todas';
         return {
             'Empresa': value,
             'Centro de trabajo': center
@@ -106,9 +106,7 @@ const SearchLogs = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                             discardKeys={['node', 'workcenter']}
                             defaultFilters={defaultFilters}
                         />

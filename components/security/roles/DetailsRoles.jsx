@@ -169,6 +169,7 @@ const DetailsRoles = ({
                                 <Input
                                     allowClear
                                     maxLength={150}
+                                    className='input-with-clear'
                                     placeholder='Ej. Administrador, Ejecutivo, Reclutador, etc.'
                                 />
                             </Form.Item>

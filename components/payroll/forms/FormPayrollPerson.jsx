@@ -197,7 +197,7 @@ const FormPayrollPerson = ({
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid
               ? moment(item.last_day_paid)
-              : null,
+              : moment(person.date_of_admission).subtract(1, 'day') ,
             integrated_daily_salary: item.integrated_daily_salary,
             apply_monthly_adjustment: item.apply_monthly_adjustment,
             tag: item?.tag,
@@ -507,6 +507,11 @@ const FormPayrollPerson = ({
     }
   };
 
+
+  useEffect(() => {
+    console.log('person', person)
+  }, [person])
+  
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
