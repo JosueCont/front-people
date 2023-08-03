@@ -173,6 +173,7 @@ const TableRoles = ({
         },
         {
             title: 'Acciones',
+            width: 80,
             render: (item) =>{
                 return(
                     <Dropdown overlay={()=> menuItem(item)}>

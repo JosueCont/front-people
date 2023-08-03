@@ -3,6 +3,7 @@ import WebApiPeople from "../../../api/WebApiPeople";
 import { getFullName, getValueFilter, getWork } from "../../../utils/functions";
 import { optionsTypeEvents } from "../../../utils/constant";
 import { setTimeclockFiltersData } from "../../../redux/timeclockDuck";
+import { useState } from "react";
 
 export const useFiltersLogs = () => {
     
@@ -12,24 +13,20 @@ export const useFiltersLogs = () => {
         list_work_centers_options,
         load_work_centers_options,
     } = useSelector(state => state.timeclockStore);
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
-
-    const listKeys = {
-        person: 'Colaborador',
-        type: 'Tipo',
-        timestamp__date: 'Fecha',
-        node: 'Empresa',
-        workcenter: 'Centro de trabajo'
-    }
 
     const getPerson = async (id, key) =>{
         try {
+            setLoading(true)
             let response = await WebApiPeople.getPerson(id);
             let value = {[key]: response.data};
             dispatch(setTimeclockFiltersData(value))
+            setLoading(false)
             return getFullName(response.data);
         } catch (e) {
             console.log(e)
+            setLoading(false)
             return id;
         }
     }
@@ -59,21 +56,34 @@ export const useFiltersLogs = () => {
         person: getPerson
     }
 
-    const listGets = {
-        type: getType,
-        node: getNode,
-        workcenter: getWork
-    }
-
-    const listDelete = {
-        person: deleteState
+    const listKeys = {
+        person: {
+            name: 'Colaborador',
+            loading: loading,
+            delete: deleteState
+        },
+        type: {
+            name: 'Tipo',
+            get: getType
+        },
+        timestamp__date: {
+            name: 'Fecha'
+        },
+        node: {
+            name: 'Empresa',
+            get: getNode,
+            loading: load_companies
+        },
+        workcenter: {
+            name: 'Centro de trabajo',
+            get: getWork,
+            loading: load_work_centers_options
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     }
 
 }

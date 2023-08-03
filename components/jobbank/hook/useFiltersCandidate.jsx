@@ -13,22 +13,6 @@ export const useFiltersCandidate = () =>{
         list_sub_categories
     } = useSelector(state => state.jobBankStore);
 
-    const listKeys = {
-        first_name__unaccent__icontains: 'Nombre',
-        last_name__unaccent__icontains: 'Apellidos',
-        email__unaccent__icontains: 'Correo',
-        cell_phone: 'Teléfono',
-        last_job: 'Puesto',
-        is_active: 'Estatus',
-        main_category: 'Categoría',
-        sector: 'Sector',
-        state: 'Estado',
-        municipality__unaccent__icontains: 'Municipio',
-        sub_category: 'Subcategoría',
-        age_start: 'Edad mínima',
-        age_end: 'Edad máxima'
-    }
-
     const getCategory = (id) =>{
         if(!id) return id;
         const find_ = item => item.id == id;
@@ -65,14 +49,57 @@ export const useFiltersCandidate = () =>{
         return value == 'true' ? 'Activo' : 'Inactivo';
     }
 
-    const listGets = {
-        main_category: getCategory,
-        state: getState,
-        is_active: getStatus,
-        sector: getSector,
-        sub_category: getSubCategory
+    const listKeys = {
+        first_name__unaccent__icontains: {
+            name: 'Nombre'
+        },
+        last_name__unaccent__icontains: {
+            name: 'Apellidos'
+        },
+        email__unaccent__icontains: {
+            name: 'Correo'
+        },
+        cell_phone: {
+            name: 'Teléfono'
+        },
+        last_job: {
+            name: 'Puesto'
+        },
+        is_active: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        main_category: {
+            name: 'Categoría',
+            get: getCategory,
+            loading: load_main_categories
+        },
+        sector: {
+            name: 'Sector',
+            get: getSector,
+            loading: load_sectors
+        },
+        state: {
+            name: 'Estado',
+            get: getState,
+            loading: load_states
+        },
+        municipality__unaccent__icontains: {
+            name: 'Municipio'
+        },
+        sub_category: {
+            name: 'Subcategoría',
+            get: getSubCategory,
+            loading: load_sub_categories
+        },
+        age_start: {
+            name: 'Edad mínima'
+        },
+        age_end: {
+            name: 'Edad máxima'
+        }
     }
 
-    return { listKeys, listGets };
+    return { listKeys };
 
 }

@@ -1,46 +1,24 @@
 import { useSelector, useDispatch } from "react-redux";
-import { getFullName } from "../../../utils/functions";
 import { getValueFilter } from "../../../utils/functions";
 import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
+import { getFullName } from "../../../utils/functions";
+import WebApiJobBank from "../../../api/WebApiJobBank";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { useState } from "react";
 
-export const useFiltersInterviews = () =>{
+export const useFiltersInterviews = () => {
 
     const {
-        load_candidates_options,
-        list_candidates_options,
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
         load_clients_options
     } = useSelector(state => state.jobBankStore);
+
+    const [loading, setLoading] = useState(true);
+    const [loadRecruiter, setLoadRecruiter] = useState(true);
     
     const dispatch = useDispatch();
-
-    const listKeys = {
-        recruiter: 'Reclutador',
-        candidate: 'Candidato',
-        vacant: 'Vacante',
-        customer: 'Cliente'
-    }
-
-    const getRecruiter = async (id, key) => {
-        try {
-            let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
-            dispatch(setJobbankFiltersData(value))
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            return id;
-        }
-    }
-
-    const getCandidate = (id) => getValueFilter({
-        value: id,
-        list: list_candidates_options,
-        keyShow: e => `${e?.first_name} ${e?.last_name}`
-    })
 
     const getVacant = (id) => getValueFilter({
         value: id,
@@ -53,28 +31,70 @@ export const useFiltersInterviews = () =>{
         list: list_clients_options
     })
 
-    const deleteState = (key) =>{
-        dispatch(setJobbankFiltersData({[key] : null}))
+    const getRecruiter = async (id, key) => {
+        try {
+            setLoadRecruiter(true)
+            let response = await WebApiPeople.getPerson(id);
+            let value = { [key]: response.data };
+            dispatch(setJobbankFiltersData(value))
+            setLoadRecruiter(false)
+            return getFullName(response.data);
+        } catch (e) {
+            console.log(e)
+            setLoadRecruiter(false)
+            return id;
+        }
+    }
+
+    const getCandidate = async (id, key) => {
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getInfoCandidate(id);
+            let value = { [key]: response.data };
+            dispatch(setJobbankFiltersData(value));
+            setLoading(false)
+            return `${response.data?.first_name} ${response.data?.last_name}`;
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            return id;
+        }
+    }
+
+    const deleteState = (key) => {
+        dispatch(setJobbankFiltersData({ [key]: null }))
     }
 
     const listAwait = {
         recruiter: getRecruiter,
+        candidate: getCandidate
     }
 
-    const listGets = {
-        candidate: getCandidate,
-        vacant: getVacant,
-        customer: getCustomer
-    }
-
-    const listDelete = {
-        recruiter: deleteState
+    const listKeys = {
+        recruiter: {
+            name: 'Reclutador',
+            loading: loadRecruiter,
+            delete: deleteState
+        },
+        candidate: {
+            name: 'Candidato',
+            loading: loading,
+            delete: deleteState
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        customer: {
+            name: 'Cliente',
+            get: getCustomer,
+            loading: load_clients_options
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     };
 }

@@ -30,9 +30,10 @@ import { setVersionCfdi } from "../redux/fiscalDuck";
 import { setNullCompany } from '../redux/UserDuck'
 import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
-import { getCurrentURL } from "../utils/constant";
+import { getCurrentURL, redirectTo } from "../utils/constant";
 import ButtonWizardLight from "./payroll/ButtonWizardLight";
 import { userId } from "../libs/auth";
+import { urlSocial } from "../config/config";
 
 const { useBreakpoint } = Grid;
 
@@ -113,6 +114,12 @@ const NewHeader = ({
     }
   }
 
+  const linkToSocial = () =>{
+    const token = person.jwt_data.metadata.at(-1).token;
+    const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
+    redirectTo(url);
+  }
+
   const userCardDisplay = () => (
     <>
       <Card className="card_menu">
@@ -165,10 +172,11 @@ const NewHeader = ({
                   && props.currentNode?.id == person?.node_user?.id &&
                   <p
                     className="text-menu"
-                    onClick={() => router.push("/user")}
+                    // onClick={() => router.push("/user")}
+                    onClick={()=> linkToSocial()}
 
                   >
-                    <Text>Cambiar a la vista de Usuario</Text>
+                    <Text>Ir al portal de colaborador</Text>
                   </p>}
                 <p
                   className="text-menu"

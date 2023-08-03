@@ -1,11 +1,8 @@
-import React, {
-    useState
-} from 'react';
-import { getFullName } from '../../../utils/functions';
-import WebApiPeople from '../../../api/WebApiPeople';
-import SelectSearch from '../../jobbank/SelectSearch';
+import React, { useEffect, useState } from 'react';
+import SelectSearch from '../SelectSearch';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
-const SelectPeople = ({
+const SelectCandidates = ({
     ...props
 }) => {
 
@@ -16,7 +13,7 @@ const SelectPeople = ({
         try {
             setLoading(true)
             let params = `&paginate=0&search=${value}`;
-            let response = await WebApiPeople.getCollaborators(currentNode?.id, params);
+            let response = await WebApiJobBank.getCandidatesList(currentNode?.id, params);
             setOptions(response?.data || [])
             setTimeout(() => {
                 setLoading(false)
@@ -34,9 +31,9 @@ const SelectPeople = ({
             loading={loading}
             listOptions={options}
             getOptions={getOptions}
-            getLabelOption={getFullName}
+            getLabelOption={e => `${e?.first_name} ${e?.last_name}`}
         />
     )
 }
 
-export default SelectPeople
+export default SelectCandidates

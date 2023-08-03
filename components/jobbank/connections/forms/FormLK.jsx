@@ -1,12 +1,9 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Row, Col, Input, Form, Button, message, Alert } from 'antd';
 import { ruleRequired, ruleWhiteSpace, ruleURL } from '../../../../utils/rules';
-import { useSelector } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { useRouter } from 'next/router';
 import BtnLoginLK from '../../BtnLoginLK';
 import FormConnection from '../FormConnection';
-import { useInfoConnection } from '../../hook/useInfoConnection';
 
 const FormLK = ({
     infoConnection,
@@ -14,74 +11,38 @@ const FormLK = ({
     formConnection
 }) => {
 
-    const getNode = state => state.userStore.current_node;
-    const currentNode = useSelector(getNode);
-    const router = useRouter();
     const btnSubmit = useRef(null);
-    const [infoConfig, setInfoConfig] = useState({});
-    const { formatData } = useInfoConnection();
-    const userKey = 'user_access_token';
+    const url_redirect = typeof window !== "undefined" ? window.location.origin + "/linkedin" : "https://www.linkedin.com/developers/tools/oauth/redirect";
 
-    const existPreConfig = useMemo(()=>{
-        let current = infoConnection?.data_config ?? {};
-        let exist = infoConfig?.data_config ?? {}; 
-        if(current[userKey]) return false;
-        if(!exist[userKey]) return false;
-        return true;
-    },[infoConnection, infoConfig])
-
-    useEffect(()=>{
-        if(!currentNode) return;
-        getExistConfig(currentNode.id, `&code='LK'`);
-    },[currentNode, router.query?.code])
-
-    useEffect(()=>{
-        if(Object.keys(infoConnection).length <= 0) return;
-        setValuesForm()
-    },[infoConnection, infoConfig])
-
-    const setValuesForm = () =>{
-        formConnection.resetFields();
-        let details = existPreConfig
-            ? {...infoConnection,
-                data_config: infoConfig.data_config,
-                is_valid: infoConfig.is_valid,
-            } : infoConnection;
-        let values = formatData(details);
-        formConnection.setFieldsValue({...values});
-    }
-
-    const getExistConfig = async (node, query) =>{
-        try {
-            let response = await WebApiJobBank.getConnections(node, query);
-            setInfoConfig(response.data?.results?.at(-1))
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const onSuccess = async (response) =>{
+    const onSuccess = async (resp) =>{
         const key = 'updatable';
         let msgError = 'Acceso no obtenido';
         message.loading({content: 'Guardando acceso...', key})
         try {
-            if(!response){
+            let response = await WebApiJobBank.getTokenLK({
+                code: resp,
+                client_id: infoConnection.data_config?.app_id,
+                client_secret: infoConnection.data_config?.secret_key,
+                redirect_uri: url_redirect
+            });
+            if(!response.data?.access_token || !response.data?.user_code){
                 message.error({content: msgError, key});
                 return;
             }
             formConnection.setFieldsValue({
                 is_valid: true,
-                'data_config|user_access_token': response
+                'data_config|user_access_token': response.data?.access_token,
+                'data_config|ig_user_id': response.data?.user_code
             });
             setTimeout(()=>{
                 btnSubmit.current.click();
-            },1000)
+            },1000) 
         }
         catch (e) {
-        console.log(e)
-        let txtError = e.response;
-        let msg = txtError ?? msgError;
-        message.error({content: msg, key})
+            console.log(e)
+            let txtError = e.response?.data?.message;
+            let msg = txtError ?? msgError;
+            message.error({content: msg, key})
        }
     }
 
@@ -95,14 +56,6 @@ const FormLK = ({
         return { message, type };
     },[infoConnection.is_valid])
 
-    const msgPreConfig = {
-        message: `Se han precargado algunos parámetros de
-            isLinkedin, ya que la mayoría son similares
-            para esta conexión, para guardarlos es necesario "Actualizar" y posteriormente
-            llenar los datos faltantes para completar la configuración.`,
-        type: 'warning'
-    };
-
     return (
         <>
             {infoConnection.data_config?.user_access_token && (
@@ -112,14 +65,7 @@ const FormLK = ({
                     </Form.Item>
                 </Col>
             )}
-            {existPreConfig && (
-                <Col span={24}>
-                    <Form.Item>
-                        <Alert {...msgPreConfig} showIcon/>
-                    </Form.Item>
-                </Col>
-            )}
-            <FormConnection/>
+            <FormConnection showActive={infoConnection.is_valid}/>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='data_config|app_url'
@@ -131,15 +77,6 @@ const FormLK = ({
                     ]}
                 >
                     <Input placeholder='Ej. https://api.linkedin.com'/>
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='data_config|redirect_uri'
-                    label='Url de redirección(Login)'
-                    rules={[ruleRequired, ruleWhiteSpace]}
-                >
-                    <Input placeholder='Ej. https://www.linkedin.com/developers/tools/oauth/redirect'/>
                 </Form.Item>
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
@@ -191,8 +128,7 @@ const FormLK = ({
                     <BtnLoginLK
                         loading={loading}
                         clientID={infoConnection.data_config?.app_id}
-                        client_secret={infoConnection.data_config?.secret_key}
-                        redirect_uri={infoConnection.data_config?.redirect_uri}
+                        redirectURL={url_redirect}
                         onSuccess={onSuccess}
                     />  
                 )}

@@ -1,27 +1,24 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { optionsStatusSelection } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
+import WebApiJobBank from "../../../api/WebApiJobBank";
+import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
+import { useState } from "react";
 
-export const useFiltersSelection = () =>{
+export const useFiltersSelection = () => {
 
     const {
         list_vacancies_options,
         load_vacancies_options,
-        load_candidates_options,
-        list_candidates_options,
     } = useSelector(state => state.jobBankStore);
-    const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
-
-    const listKeys = {
-        status_process: 'Estatus',
-        vacant: 'Vacante',
-        candidate: 'Candidato'
-    }
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
 
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusSelection,
-        ...paramsOptions
+        keyEquals: 'value',
+        keyShow: 'label'
     })
 
     const getVacant = (id) => getValueFilter({
@@ -30,17 +27,48 @@ export const useFiltersSelection = () =>{
         keyShow: 'job_position'
     })
 
-    const getCandidate = (id) => getValueFilter({
-        value: id,
-        list: list_candidates_options,
-        keyShow: e => `${e?.first_name} ${e.last_name}`
-    })
+    const getCandidate = async (id, key) =>{
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getInfoCandidate(id);
+            let value = {[key]: response.data};
+            dispatch(setJobbankFiltersData(value));
+            setLoading(false)
+            return `${response.data?.first_name} ${response.data?.last_name}`;
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            return id;
+        }
+    }
 
-    const listGets = {
-        status_process: getStatus,
-        vacant: getVacant,
+    const deleteState = (key) =>{
+        dispatch(setJobbankFiltersData({[key] : null}))
+    }
+
+    const listAwait = {
         candidate: getCandidate
     }
 
-    return { listKeys, listGets };
+    const listKeys = {
+        status_process: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        candidate: {
+            name: 'Candidato',
+            loading: loading,
+            delete: deleteState
+        }
+    }
+
+    return {
+        listKeys,
+        listAwait
+    };
 }

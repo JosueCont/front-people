@@ -5,6 +5,7 @@ import React, {
     useCallback
 } from 'react';
 import MyModal from '../../../common/MyModal';
+import { getWorkTitle } from '../../../redux/catalogCompany';
 import {
     Button,
     Form,
@@ -17,10 +18,12 @@ import {
     DatePicker,
     Drawer,
     Switch,
-    message
+    message,
+    Popconfirm,
+    Spin
 } from 'antd';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     ruleRequired,
     nameLastname,
@@ -37,6 +40,9 @@ import {
 } from '../../../utils/constant';
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../utils/SelectPeople';
+import { PlusOneOutlined } from '@material-ui/icons';
+import { PlusOutlined } from '@ant-design/icons';
+import SelectWorkTitle from '../../selects/SelectWorkTitle';
 
 const ModalPeople = ({
     visible = false,
@@ -50,6 +56,10 @@ const ModalPeople = ({
         general_config,
         applications
     } = useSelector(state => state.userStore);
+
+
+    const dispatch = useDispatch();
+
     const {
         cat_job,
         cat_groups,
@@ -62,6 +72,10 @@ const ModalPeople = ({
     const [loading, setLoading] = useState(false);
     const [txtError, setTxtError] = useState(null);
     const [payrollActive, setPayrollActive] = useState(true);
+    const [searchValue, setSearchValue] = useState(null)
+    const [workTitleFocus, setWorkTitleFocus] = useState(false)
+    const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
+    
 
     const idSuperivor = Form.useWatch('immediate_supervisor', formPeople);
     const idSubstitute = Form.useWatch('substitute_immediate_supervisor', formPeople);
@@ -73,6 +87,7 @@ const ModalPeople = ({
     const actionCreate = async (values) => {
         try {
             setLoading(true)
+            
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
@@ -80,12 +95,12 @@ const ModalPeople = ({
                 onClose()
             }, 1000)
             setTimeout(() => {
-                message.success('Persona agregada')
+                message.success('Persona registrada')
                 onReady()
             }, 2000)
         } catch (e) {
             let error = e.response?.data?.message;
-            let msg = error ? error : 'Person no agregda';
+            let msg = error ? error : 'Person no registrada';
             setTxtError(msg)
             setLoading(false)
             console.log(e)
@@ -99,7 +114,7 @@ const ModalPeople = ({
             formPeople.setFields([{ name: 'passwordTwo', errors }]);
             return;
         }
-        values.groups = values?.groups ? [values?.groups] : null;
+        if(values.groups) values.groups = [values.groups];
         values.birth_date = values.birth_date ? values.birth_date?.format(format) : null;
         actionCreate(values)
     }
@@ -139,12 +154,36 @@ const ModalPeople = ({
         }
     })
 
-    const optionsWorkPlace = useMemo(() => {
+    const reloadOptionsWorkPlaces = () => {
         if (!idDepartment || !idJob) return [];
         let places = cat_work_title.filter(item => !item?.person);
         const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
-        return places.filter(filter_);
+        let list = places.filter(filter_)
+        setOptionsWorkPlace(list)
+    }
+
+    useEffect(() => {
+        reloadOptionsWorkPlaces()
+        formPeople.setFieldsValue({'work_title_id': null})
     }, [idDepartment, idJob])
+
+    useEffect(() => {
+        reloadOptionsWorkPlaces()
+    }, [cat_work_title])
+
+    useEffect(() => {
+        console.log('cat_groups',cat_groups)
+      if(cat_groups.length === 1){
+        formPeople.setFieldsValue({'groups': cat_groups[0].id})
+      }
+    }, [cat_groups])
+    
+    
+    
+
+    /* const optionsWorkPlace = useMemo(() => {
+        
+    }, [idDepartment, idJob]) */
 
     const optionsSupervisor = (options) =>{
         if(!idSubstitute) return options;
@@ -156,6 +195,69 @@ const ModalPeople = ({
         if (!idSuperivor) return options;
         const filter_ = item => item.id !== idSuperivor;
         return options.filter(filter_);
+    }
+    
+
+    const validateWorkTitle = () => {
+        let department = formPeople.getFieldValue('person_department')
+        let job = formPeople.getFieldValue('job')
+        if(department && job){
+            return false
+        }else{
+            formPeople.setFieldsValue({'work_title_id': null})
+            return true
+        }
+    }
+
+    const addWorkTitle = async () => {
+        try {
+            setLoading(true)
+            let data_form = formPeople.getFieldsValue()
+            let data = {
+                "name": searchValue,
+                "department": data_form?.person_department,
+                "job": data_form?.job,
+                "node": current_node?.id
+            }
+            const res = await WebApiPeople.createRegisterCatalogs(
+                "/business/work-title/",
+                data
+            );
+            if(res.status === 201){
+                dispatch(getWorkTitle(current_node?.id))
+                setLoading(false)
+            }
+            /* message.success(messageSaveSuccess); */
+            /* setLoading(false); */
+          } catch (error) {
+            console.log('error===>', error)
+            setLoading(false)
+            /* setLoading(false);
+            console.log(error);
+            message.error(messageError); */
+          }   
+    }
+    
+
+
+    const ButtonAddWorkTitle = () => {
+
+        return (<div style={{ width:'100%', textAlign:'end' }} >
+                    <Popconfirm
+                        title="¿Agregar nueva plaza laboral?"
+                        onConfirm={addWorkTitle}
+                        okText="Si"
+                        cancelText="No"
+                        disabled={!searchValue}
+                    >   
+                        
+                        <Spin spinning={loading}>
+                            <a href='#' style={{ cursor: 'pointer' }} >
+                                <Typography.Text ><PlusOutlined/> Agregar</Typography.Text> 
+                            </a>
+                        </Spin>
+                    </Popconfirm>
+                </div>)
     }
 
     return (
@@ -187,7 +289,7 @@ const ModalPeople = ({
                     </Button>
                     <Button
                         htmlType='submit'
-                        loading={loading}
+                        loading={loading === true}
                         form='form_people'
                     >
                         Guardar
@@ -267,26 +369,30 @@ const ModalPeople = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={8}>
-                        <Form.Item
-                            name='person_type'
-                            label='Tipo de persona'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
+                    {
+                        cat_person_type?.length > 0 &&
+                        <Col span={8}>
+                            <Form.Item
+                                name='person_type'
+                                label='Tipo de persona'
                             >
-                                {cat_person_type?.length > 0 && cat_person_type.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder='Seleccionar una opción'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                >
+                                    {cat_person_type?.length > 0 && cat_person_type.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    }
+                    
                     <Col span={8}>
                         <Form.Item
                             name='person_department'
@@ -328,19 +434,42 @@ const ModalPeople = ({
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item
+                        <SelectWorkTitle
+                            name='work_title_id'
+                            viewLabel={true}
+                            department={idDepartment}
+                            job={idJob}
+                            labelText='Plaza laboral'
+                            dependencies={['person_department', 'job']}
+                            rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
+                            placeholder='Seleccionar una opción'
+                            disabled={!idDepartment || !idJob}
+                        />
+
+                        {/* <Form.Item
                             name='work_title_id'
                             label='Plaza laboral'
                             dependencies={['person_department', 'job']}
                             rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
+                            
                         >
                             <Select
+                                disabled={validateWorkTitle()}
                                 allowClear
                                 showSearch
-                                disabled={optionsWorkPlace?.length <= 0}
                                 placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
+                                notFoundContent={ searchValue ? <ButtonAddWorkTitle /> : "No se encontraron resultados"}
                                 optionFilterProp='children'
+                                onSearch={(val) => setSearchValue(val)}
+                                open={ searchValue || workTitleFocus}
+                                onFocus={() => setWorkTitleFocus(true)}
+                                onBlur={() => setWorkTitleFocus(false)}
+                                onSelect={(val) => {
+                                        setSearchValue(null), 
+                                        setWorkTitleFocus(false)
+                                        
+                                    } 
+                                }
                             >
                                 {optionsWorkPlace.length > 0 && optionsWorkPlace.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -348,7 +477,7 @@ const ModalPeople = ({
                                     </Select.Option>
                                 ))}
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
                     <Col span={8}>
                         <Form.Item

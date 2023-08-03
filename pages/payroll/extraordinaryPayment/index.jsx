@@ -782,7 +782,7 @@ const ExtraordinaryPayment = ({...props}) => {
                                     !disabledSave &&
                                     <Col span={6}>
                                         <Space style={{ marginTop:30 }} >
-                                            <Button icon={<DownloadOutlined/>}  style={{ width:'100%' }} onClick={SendList}>
+                                            <Button loading={loading} icon={<DownloadOutlined/>}  style={{ width:'100%' }} onClick={SendList}>
                                                 Descargar.
                                             </Button>               
                                             <Button icon={<UploadOutlined/>} style={{ width:'100%' }} onClick={() => showModal()}>

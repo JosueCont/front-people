@@ -368,10 +368,10 @@ const jobBankReducer = (state = initialState, action) => {
         case SET_FILTERS_DATA:
             return {
                 ...state,
-                jobbank_filters_data: {
+                jobbank_filters_data: action.keep ? {
                     ...state.jobbank_filters_data,
                     ...action.payload
-                }
+                } : action.payload
             }
         default:
             return state;
@@ -386,8 +386,8 @@ export const setJobbankFilters = (data) => (dispatch) => {
     dispatch({ type: SET_FILTERS, payload: data })
 }
 
-export const setJobbankFiltersData = (data = {}) => (dispatch) => {
-    dispatch({ type: SET_FILTERS_DATA, payload: data })
+export const setJobbankFiltersData = (data = {}, keep = true) => (dispatch) => {
+    dispatch({ type: SET_FILTERS_DATA, payload: data, keep })
 }
 
 export const getClients = (node, query = '', page = 1, size = 10) => async (dispatch) => {
@@ -523,6 +523,10 @@ export const getCandidates = (node, query = '', page = 1, size = 10) => async (d
     }
 }
 
+/**
+ * Se sustituyó por el componente de SelectCandidates
+ * @deprecated
+ * */
 export const getCandidatesOptions = (node) => async (dispatch) => {
     const typeFunction = { type: GET_CANDIDATES_OPTIONS, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
@@ -745,6 +749,10 @@ export const getApplications = (node, query = '', page = 1, size = 10) => async 
     }
 }
 
+/**
+ * Se sustituyó por el componente de SelectCandidates
+ * @deprecated
+ * */
 export const getApplicationsCandidates = (node, query = '') => async (dispatch) => {
     const typeFunction = { type: GET_APPLICATIONS_CANDIDATES, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })

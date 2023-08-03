@@ -13,14 +13,6 @@ export const useFiltersPublications = () =>{
         load_profiles_options
     } = useSelector(state => state.jobBankStore);
 
-    const listKeys = {
-        account_to_share: 'Cuenta',
-        vacant: 'Vacante',
-        vacant__status: 'Estatus vacante',
-        profile: 'Template',
-        is_published: 'Estatus'
-    }
-
     const getVacant = (id) => getValueFilter({
         value: id,
         list: list_vacancies_options,
@@ -56,13 +48,31 @@ export const useFiltersPublications = () =>{
         }, '')
     }
 
-    const listGets = {
-        account_to_share: getAccount,
-        vacant: getVacant,
-        vacant__status: getVacantStatus,
-        profile: getTemplate,
-        is_published: getStatus
+    const listKeys = {
+        account_to_share: {
+            name: 'Cuenta',
+            get: getAccount,
+            loading: load_connections_options
+        },
+        vacant: {
+            name: 'Vacante',
+            get: getVacant,
+            loading: load_vacancies_options
+        },
+        vacant__status: {
+            name: 'Estatus vacante',
+            get: getVacantStatus
+        },
+        profile: {
+            name: 'Template',
+            get: getTemplate,
+            loading: load_profiles_options
+        },
+        is_published: {
+            name: 'Estatus',
+            get: getStatus
+        }
     }
 
-    return { listKeys, listGets }
+    return { listKeys }
 }

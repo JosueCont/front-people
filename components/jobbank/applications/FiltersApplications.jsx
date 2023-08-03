@@ -1,47 +1,52 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Input, Row, Col, Form, Select, InputNumber, DatePicker } from 'antd';
+import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
-import { onlyNumeric, ruleWhiteSpace } from '../../../utils/rules';
-import RangeAge from '../RangeAge';
 import { optionsStatusApplications } from '../../../utils/constant';
+import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersApplications = ({
     visible,
-    close = () =>{},
-    onFinish = ()=>{},
+    close = () => { },
+    onFinish = () => { },
     formSearch
 }) => {
 
     const {
-        list_applications_candidates,
-        load_applications_candidates,
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
-        load_clients_options
+        load_clients_options,
+        jobbank_filters_data
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
     const client = Form.useWatch('vacant__customer', formSearch);
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             close()
             setLoading(false)
             onFinish(values);
-        },1000)
+        }, 1000)
     }
 
-    const onChangeClient = (value) =>{
-        formSearch.setFieldsValue({vacant: null});
+    const onChangeClient = (value) => {
+        formSearch.setFieldsValue({ vacant: null });
     }
 
-    const optionsVacant = useMemo(() =>{
-        if(!client) return [];
+    const optionsVacant = useMemo(() => {
+        if (!client) return [];
         const options = item => item.customer?.id === client;
         return list_vacancies_options.filter(options);
     }, [client, list_vacancies_options])
+
+    const itemCandidate = useMemo(()=>{
+        if(!visible) return [];
+        let candidate = jobbank_filters_data?.candidate || {};
+        if(Object.keys(candidate).length <=0) return [];
+        return [candidate];
+    },[jobbank_filters_data?.candidate, visible])
 
     return (
         <MyModal
@@ -56,7 +61,7 @@ const FiltersApplications = ({
                 form={formSearch}
                 layout='vertical'
             >
-                <Row gutter={[16,0]}>
+                <Row gutter={[16, 0]}>
                     <Col span={12}>
                         <Form.Item
                             label='Cliente'
@@ -72,7 +77,7 @@ const FiltersApplications = ({
                                 optionFilterProp='children'
                                 onChange={onChangeClient}
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item=> (
+                                {list_clients_options.length > 0 && list_clients_options.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -94,7 +99,7 @@ const FiltersApplications = ({
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {optionsVacant.map(item=> (
+                                {optionsVacant.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.job_position}
                                     </Select.Option>
@@ -103,27 +108,11 @@ const FiltersApplications = ({
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item
+                        <SelectCandidates
                             name='candidate'
                             label='Candidato'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_applications_candidates}
-                                loading={load_applications_candidates}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {list_applications_candidates.length > 0 &&
-                                    list_applications_candidates.map(item => (
-                                    <Select.Option value={item.id+""} key={item.id+""}>
-                                        {item.first_name} {item.last_name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            itemSelected={itemCandidate}
+                        />
                     </Col>
                     <Col span={12}>
                         <Form.Item
@@ -146,19 +135,19 @@ const FiltersApplications = ({
                             //     de manera interna se filtra por el mes actual.
                             // `}
                         >
-                             <DatePicker.RangePicker
-                                style={{width: '100%'}}
+                            <DatePicker.RangePicker
+                                style={{ width: '100%' }}
                                 dropdownClassName='picker-range-jb'
                                 format='DD-MM-YYYY'
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={24} className='content-end' style={{gap: 8}}>
-                        <Button onClick={()=> close()}>
+                    <Col span={24} className='content-end' style={{ gap: 8 }}>
+                        <Button onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
-                            loading={loading} 
+                            loading={loading}
                             htmlType='submit'
                         >
                             Aplicar

@@ -156,7 +156,7 @@ const DataPerson = ({
       formPerson.setFieldsValue({
         person_department: person.work_title.department.id,
         job: person.work_title.job.id,
-        work_title: person.work_title.name,
+        work_title_id: person.work_title.id,
       });
     }
     if (person.person_type)
@@ -479,9 +479,12 @@ const DataPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-              <Col lg={8} xs={12}>
-                <SelectPersonType label="Tipo de persona" />
-              </Col>
+                {
+                  props.cat_person_type.length > 0 && 
+                  <Col lg={8} xs={12}>
+                  <SelectPersonType label="Tipo de persona" />
+                </Col>
+                }
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="date_of_admission"
@@ -629,7 +632,6 @@ const DataPerson = ({
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
-                {personWT ? (
                   <SelectWorkTitle
                     viewLabel={true}
                     department={departmentSelected}
@@ -637,12 +639,9 @@ const DataPerson = ({
                     person={personWT}
                     name={"work_title_id"}
                     rules={[ruleRequired]}
+                    dependencies={['person_department', 'job']}
+                    placeholder='Seleccionar una opción'
                   />
-                ) : (
-                  <Form.Item name="work_title" label="Plaza laboral">
-                    <Input readOnly />
-                  </Form.Item>
-                )}
               </Col>
               {props.config &&
                 props.config.enabled_nomina(
