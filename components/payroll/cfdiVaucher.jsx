@@ -320,7 +320,7 @@ const CfdiVaucher = ({
       if (department) filter = filter + `&department=${department}`;
       if (job) filter = filter + `&job=${job}`;
       if (movementType) filter = filter + `&movement_type=${movementType}`;
-      console.log('filter',filter)
+      
       getVoucher(filter);
     }
   }, [router.query]);
@@ -381,7 +381,7 @@ const CfdiVaucher = ({
   };
 
   const getVoucher = (data, new_page) => {
-    console.log('data',data)
+    
     data = data + generate_url(new_page);
 
     setLoading(true);
@@ -398,7 +398,7 @@ const CfdiVaucher = ({
       })
       .catch((error) => {
         message.error(messageError);
-        console.log(error);
+        
         setLoading(false);
       });
   };
