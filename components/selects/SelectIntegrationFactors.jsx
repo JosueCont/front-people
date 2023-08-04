@@ -39,7 +39,7 @@ const SelectIntegrationFactors = ({
   return (
     <Form.Item
       name='benefits'
-      label="Beneficios"
+      label="Prestaciones"
       rules={rules}
     >
       <Select
