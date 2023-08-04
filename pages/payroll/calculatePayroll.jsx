@@ -1602,7 +1602,7 @@ const CalculatePayroll = ({ ...props }) => {
                                     );
                                   }}
                               >
-                                Descargar plantilla_
+                                Descargar plantilla
                               </Button>
                           }
 
@@ -1913,6 +1913,7 @@ const CalculatePayroll = ({ ...props }) => {
                       department={department}
                       job={job}
                       clickCancelStamp={cancelOneStamp}
+                      movementType={'0'}
                     />
                   ) : (
                     <>

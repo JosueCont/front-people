@@ -60,8 +60,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
   const [benefits, setBenefits] = useState(null);
+  const [checks, setChecks] = useState([])
 
-  const checks =
+  useEffect(() => {
+    const checks_data =
     selectPeriodicity &&
     selectPeriodicity !== "95efb4e793974e318e6cb49ab30a1269"
       ? [
@@ -120,6 +122,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             value: true,
           },
         ];
+
+    setChecks(checks_data)
+  }, [])
+
 
   useEffect(() => {
     if(props?.currentNode?.id){
@@ -204,6 +210,17 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
         });
+
+
+        formPaymentCalendar.setFieldsValue({
+          applied_isr_christmas_bonus: item.applied_isr_christmas_bonus,
+          seventh_day_breakdown: item.seventh_day_breakdown,
+          seventh_day_discount: item.seventh_day_discount,
+          sua_absenteeism: item.sua_absenteeism,
+          import_issues: item.import_issues,
+          accumulate_vacation: item.accumulate_vacation
+        })
+
         setAnnualAdjustment(item.annual_adjustment);
         setMonthlyAdjustment(item.monthly_adjustment);
         setPeriodActive(item.active);
@@ -224,7 +241,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                 checked.click();
               }
             } else {
-              if (item[a.name]) checked.click();
+              if (item[a.name]) checked?.click();
             }
           });
         }
@@ -350,30 +367,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
     setPaymentSunday(checked);
   };
 
-  const RenderChecks = ({ data }) => {
-    return data.map((item, i) => {
-      if (item.name != "import_issues") {
-        return (
-          <Col key={i} lg={6} xs={22} md={12}>
-            <Form.Item
-              initialValue={item.value}
-              valuePropName="checked"
-              name={item.name}
-              label={" "}
-            >
-              <Checkbox
-                id={item.name}
-                key={item.value + i}
-                className="CheckGroup"
-              >
-                <span style={{ color: "black" }}>{item.label}</span>
-              </Checkbox>
-            </Form.Item>
-          </Col>
-        );
-      }
-    });
-  };
+  
 
   // const disabledDate = (current) => {
   //   return current && moment(current).year() < currentYear;
@@ -467,6 +461,32 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
     }
   }
 
+  const RenderChecks = ({ data }) => {
+    
+    return data.map((item, i) => {
+      if (item.name != "import_issues") {
+        return (
+          <Col key={i} lg={6} xs={22} md={12}>
+            <Form.Item
+              initialValue={item.value}
+              valuePropName="checked"
+              name={item.name}
+              label={" "}
+            >
+              <Checkbox
+                id={item.name}
+                key={item.value + i}
+                className="CheckGroup"
+              >
+                <span style={{ color: "black" }}>{item.label}</span>
+              </Checkbox>
+            </Form.Item>
+          </Col>
+        );
+      }
+    });
+  };
+
   // const getFiscalInformation = async (node_id) => {
   //   try {
   //     let response = await WebApiPeople.getfiscalInformationNode(node_id)
@@ -477,6 +497,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
   //     console.log('error', error)
   //   }
   // }
+  
 
   return (
     <>
@@ -833,8 +854,30 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                     chengeBenefit={selectBenefit}
                   />
                 </Col>
-                {<div style={{ width: "100%" }}></div>}
-                <RenderChecks data={checks} />
+                {
+                  checks.map((item, i) => {
+                    if (item.name != "import_issues") {
+                      return (
+                        <Col key={i} lg={6} xs={22} md={12}>
+                          <Form.Item
+                            initialValue={item.value}
+                            valuePropName="checked"
+                            name={item.name}
+                            label={" "}
+                          >
+                            <Checkbox
+                              id={item.name}
+                              key={item.value + i}
+                              className="CheckGroup"
+                            >
+                              <span style={{ color: "black" }}>{item.label}</span>
+                            </Checkbox>
+                          </Form.Item>
+                        </Col>
+                      );
+                    }
+                  })
+                }
               </Row>
             </>
           )}

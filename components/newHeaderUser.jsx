@@ -205,7 +205,7 @@ const NewHeader = ({
                   router.push("/select-company")
                 }}
               >
-                <Text>Cambiar de empresa_</Text>
+                <Text>Cambiar de empresa</Text>
               </p>
             )}
 

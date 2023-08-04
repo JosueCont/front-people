@@ -41,7 +41,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
       state: data?.state?.id,
       municipality: data?.municipality?.id,
       street: data.street,
-      suburb: data.suburb ? data.suburb.id : null,
+      suburb: data.suburb_name ? data.suburb_name : null,
       outdoor_number: data.outdoor_number,
       interior_number: data.interior_number,
     });
@@ -108,10 +108,17 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
             <SelectMunicipality state={state && state} />
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectSuburb
-              postal_code={postalCodeSelect && postalCodeSelect.id}
+          <Form.Item
+            key="itemPlace"
+            name={"suburb"}
+            label={"Colonia"}
+          >
+            <Input />
+          </Form.Item>
+            {/* <SelectSuburb
+               postal_code={postalCodeSelect && postalCodeSelect.id}
               suburb={suburb}
-            />
+            /> */}
           </Col>
           <Col lg={8} xs={22} md={6}>
             <Form.Item name="street" label="Calle">
