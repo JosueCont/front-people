@@ -36,7 +36,7 @@ import {FormattedMessage} from "react-intl";
 import React, { useState } from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
-import MainIndexConfig from "../../../components/config/MainConfig";
+import MainConfig from "../../../components/config/MainConfig";
 import ModalUploadCatalog from '../../../components/catalogs/ModalUploadCatalog'
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
@@ -76,7 +76,7 @@ const configBusiness = ({ ...props }) => {
 
   return (
     <>
-      <MainIndexConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
+      <MainConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
         <div
           className="site-layout-background"
           style={{ minHeight: 380, height: "100%" }}
@@ -307,7 +307,7 @@ const configBusiness = ({ ...props }) => {
           </Card>
         </div>
         <ModalUploadCatalog isVisible={showModal} setIsVisible={setShowModal} node={props.currentNode && props.currentNode} />
-      </MainIndexConfig>
+      </MainConfig>
     </>
   );
 };

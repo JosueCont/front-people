@@ -802,3 +802,18 @@ export const optionsTypeEvents = [
     {value: '1', key: '1', label:'Entrada'},
     {value: '2', key: '2', label: 'Salida'}
 ];
+
+export const catalogsCompany = [
+    { name: 'Departamentos', catalog: 'departments' },
+    { name: 'Puestos de trabajo', catalog: 'jobs' },
+    { name: 'Tipos de personas', catalog: 'persons' },
+    { name: 'Parentescos', catalog: 'relatives' },
+    { name: 'Tipos de documentos', catalog: 'documents' },
+    // { name: 'Plazas', catalog: 'places' },
+    { name: 'Conceptos internos', catalog: 'internal' },
+    { name: 'Conceptos fijos', catalog: 'fixed' },
+    { name: 'Cuentas contables', catalog: 'accounts' },
+    { name: 'Centros de costos', catalog: 'centers' },
+    { name: 'Etiquetas', catalog: 'tags' },
+    { name: 'Sucursales', catalog: 'offices' }
+]
