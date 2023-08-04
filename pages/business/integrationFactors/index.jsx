@@ -244,7 +244,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
               size="large"
             >
               <PlusCircleOutlined />
-              <small style={{ marginLeft: 10 }}>Agregar Configuración</small>
+              <small style={{ marginLeft: 10 }}>Agregar prestación</small>
             </Button>
           </Col>
         </Row>

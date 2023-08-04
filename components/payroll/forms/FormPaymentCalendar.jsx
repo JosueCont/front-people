@@ -47,6 +47,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
   const [selectPeriodicity, setSelectPeriodicity] = useState(null);
+  const [selectPeriodicityCode, setSelectPeriodicityCode] = useState(null);
   const currentYear = moment().year();
   const [bankDispersionList, setBankDispersionList] = useState([])
 
@@ -64,8 +65,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
 
   useEffect(() => {
     const checks_data =
-    selectPeriodicity &&
-    selectPeriodicity !== "95efb4e793974e318e6cb49ab30a1269"
+    selectPeriodicityCode &&
+    selectPeriodicityCode !== "02"
       ? [
           {
             name: "applied_isr_christmas_bonus",
@@ -159,6 +160,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
     }
   }, [props.catCfdiVersion]);
 
+  useEffect(() => {
+    getCompanyFiscalInformation();
+  }, [])
+
   useEffect(() => {    
     if (props.catPerception && props.catPerception.length > 0) {
       let code = companyFiscalInformation?.assimilated_pay ? "046" : "001"
@@ -169,7 +174,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           return { value: a.id, label: a.description };
         });
       setPerceptionType(perception_types);
-      getCompanyFiscalInformation();
+
+
       formPaymentCalendar.setFieldsValue({
         perception_type: perception_types[0]?.value
       })
@@ -233,6 +239,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
         setLocked(item.locked);
         setBenefits(item.benefits);
         setSelectPeriodicity(item.periodicity.id);
+        setSelectPeriodicityCode(item.periodicity.code);
         if (item.belongs_to) {
           checks.map((a) => {
             let checked = document.getElementById(a.name);
