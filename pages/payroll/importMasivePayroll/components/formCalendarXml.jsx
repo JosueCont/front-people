@@ -71,7 +71,7 @@ const FormCaledanrXml = ({
     let periodicity_str = paymentPeriodicity.find((item) => item.id == calendar.calendar.periodicity).description
 
     formCalendar.setFieldsValue({
-      name: isAddXMLS ? calendar.name : `${calendar.period} - ${periodicity_str}`,
+      name: isAddXMLS ? calendar.name : `${periodicity_str} ${calendar.period}`,
       perception_type: calendar.calendar.perception_type,
       period: moment().set('year', calendar.calendar.period),
       periodicity: isAddXMLS ? calendar.periodicity:calendar.calendar.periodicity ,
@@ -90,7 +90,7 @@ const FormCaledanrXml = ({
 
     
 
-    calendar.calendar.name = calendar.name ? calendar.name : `${calendar.period} - ${periodicity_str}`
+    calendar.calendar.name = calendar.name ? calendar.name : `${periodicity_str} ${calendar.period}`
 
     
     
