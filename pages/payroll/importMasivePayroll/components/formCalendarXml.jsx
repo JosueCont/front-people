@@ -6,6 +6,8 @@ import { ruleRequired } from "../../../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from "moment";
 import { useState } from "react";
+import { connect } from "react-redux";
+import { withAuthSync } from "../../../../libs/auth";
 const { Panel } = Collapse;
 
 const FormCaledanrXml = ({
@@ -67,8 +69,9 @@ const FormCaledanrXml = ({
     ).description;
     setPeriodicityCode(periodicity_code);
     let periodicity_str = paymentPeriodicity.find((item) => item.id == calendar.calendar.periodicity).description
+
     formCalendar.setFieldsValue({
-      name: isAddXMLS ? calendar.name : `${calendar.period} - ${periodicity_str}`,
+      name: isAddXMLS ? calendar.name : `${periodicity_str} ${calendar.period}`,
       perception_type: calendar.calendar.perception_type,
       period: moment().set('year', calendar.calendar.period),
       periodicity: isAddXMLS ? calendar.periodicity:calendar.calendar.periodicity ,
@@ -77,6 +80,17 @@ const FormCaledanrXml = ({
       type_tax: isAddXMLS ? calendar.type_tax : calendar.calendar.type_tax,
       salary_days: isAddXMLS ? calendar.salary_days : calendar.calendar.salary_days,
     });
+
+    if(props?.type_tax?.length === 1){
+      formCalendar.setFieldsValue({
+        type_tax: props?.type_tax[0]?.id,
+      })
+      calendar.calendar.type_tax = props?.type_tax[0]?.id
+    }
+
+    
+
+    calendar.calendar.name = calendar.name ? calendar.name : `${periodicity_str} ${calendar.period}`
 
     
     
@@ -310,4 +324,10 @@ const FormCaledanrXml = ({
   );
 };
 
-export default FormCaledanrXml;
+const mapState = (state) => {
+  return {
+    type_tax: state.fiscalStore.type_tax,
+  };
+};
+
+export default connect(mapState)(withAuthSync(FormCaledanrXml));
