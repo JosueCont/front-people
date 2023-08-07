@@ -582,13 +582,18 @@ const CfdiVaucher = ({
                 marginTop: 10,
               }}
             >
-              <Pagination
-                current={currentPage}
-                total={lenData}
-                onChange={pagination}
-                showSizeChanger={false}
-                // defaultPageSize={10}
-              />
+              {
+                props.pageSize < 100 &&
+                  <Pagination
+                  pageSize={props.pageSize? props.pageSize : 10}
+                  current={currentPage}
+                  total={lenData}
+                  onChange={pagination}
+                  showSizeChanger={false}
+                  // defaultPageSize={10}
+                />
+              }
+              
             </Col>
           )}
         </Row>
