@@ -19,6 +19,7 @@ import ListItems from '../../../../common/ListItems';
 const TablePersons = ({
     currentNode,
     nameCatalog,
+    permissions,
     getPersonType,
     cat_person_type,
     load_person_type
@@ -110,8 +111,8 @@ const TablePersons = ({
             width: 80,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             )
         }
@@ -122,6 +123,7 @@ const TablePersons = ({
             <SearchCatalogs
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
+                showAdd={permissions?.create}
             />
             <Table
                 rowKey='id'
@@ -163,7 +165,8 @@ const mapState = (state) => {
     return {
         cat_person_type: state.catalogStore.cat_person_type,
         load_person_type: state.catalogStore.load_person_type,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        permissions: state.userStore.permissions.person_type
     };
 };
 

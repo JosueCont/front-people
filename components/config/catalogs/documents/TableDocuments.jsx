@@ -19,6 +19,7 @@ import ListItems from '../../../../common/ListItems';
 const TableDocuments = ({
     currentNode,
     nameCatalog,
+    permissions,
     getDocumentType,
     cat_document_type,
     load_documents
@@ -110,8 +111,8 @@ const TableDocuments = ({
             width: 80,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             )
         }
@@ -122,6 +123,7 @@ const TableDocuments = ({
             <SearchCatalogs
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
+                showAdd={permissions?.create}
             />
             <Table
                 rowKey='id'
@@ -163,7 +165,8 @@ const mapState = (state) => {
     return {
         cat_document_type: state.catalogStore.cat_document_type,
         load_documents: state.catalogStore.load_documents,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        permissions: state.userStore.permissions.document_type
     };
 };
 

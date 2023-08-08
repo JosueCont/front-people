@@ -10,7 +10,8 @@ import OptionsCatalogs from './OptionsCatalogs';
 const SearchCatalogs = ({
     title = '',
     currentNode,
-    actionAdd,
+    showAdd = true,
+    actionAdd = () =>{},
     showOptions = false,
     showBack = true
 }) => {
@@ -36,7 +37,7 @@ const SearchCatalogs = ({
                                     </Button>
                                 )}
                                 {showOptions && <OptionsCatalogs />}
-                                {actionAdd && (
+                                {showAdd && (
                                     <Button onClick={() => actionAdd()}>
                                         Agregar
                                     </Button>

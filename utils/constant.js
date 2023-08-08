@@ -804,11 +804,11 @@ export const optionsTypeEvents = [
 ];
 
 export const catalogsCompany = [
-    { name: 'Departamentos', catalog: 'departments' },
-    { name: 'Puestos de trabajo', catalog: 'jobs' },
-    { name: 'Tipos de personas', catalog: 'persons' },
-    { name: 'Parentescos', catalog: 'relatives' },
-    { name: 'Tipos de documentos', catalog: 'documents' },
+    { name: 'Departamentos', catalog: 'departments', key: 'department' },
+    { name: 'Puestos de trabajo', catalog: 'jobs', key: 'job' },
+    { name: 'Tipos de personas', catalog: 'persons', key: 'person_type' },
+    { name: 'Parentescos', catalog: 'relatives', key: 'relationship' },
+    { name: 'Tipos de documentos', catalog: 'documents', key: 'document_type'},
     // { name: 'Plazas', catalog: 'places' },
     { name: 'Conceptos internos', catalog: 'internal' },
     { name: 'Conceptos fijos', catalog: 'fixed' },

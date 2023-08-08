@@ -19,6 +19,7 @@ import ListItems from '../../../../common/ListItems';
 const TableRelatives = ({
     currentNode,
     nameCatalog,
+    permissions,
     getRelationship,
     cat_relationship,
     load_relationship
@@ -105,8 +106,8 @@ const TableRelatives = ({
             width: 80,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             )
         }
@@ -117,6 +118,7 @@ const TableRelatives = ({
             <SearchCatalogs
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
+                showAdd={permissions?.create}
             />
             <Table
                 rowKey='id'
@@ -158,7 +160,8 @@ const mapState = (state) => {
     return {
         cat_relationship: state.catalogStore.cat_relationship,
         load_relationship: state.catalogStore.load_relationship,
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        permissions: state.userStore.permissions.relationship
     };
 };
 

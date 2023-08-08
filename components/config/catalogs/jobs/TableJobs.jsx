@@ -21,6 +21,7 @@ import ListCatalogData from '../../../forms/ListCatalogData';
 const TableJobs = ({
     currentNode,
     nameCatalog,
+    permissions,
     getJobs,
     cat_job,
     load_jobs,
@@ -140,8 +141,8 @@ const TableJobs = ({
             show: true,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             )
         }
@@ -152,6 +153,7 @@ const TableJobs = ({
             <SearchCatalogs
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
+                showAdd={permissions?.create}
             />
             <Table
                 rowKey='id'
@@ -195,6 +197,7 @@ const mapState = (state) => {
         load_jobs: state.catalogStore.load_jobs,
         currentNode: state.userStore.current_node,
         general_config: state.userStore.general_config,
+        permissions: state.userStore.permissions.job
     };
 };
 

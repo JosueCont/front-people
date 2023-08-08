@@ -18,6 +18,7 @@ import ListItems from '../../../../common/ListItems';
 
 const TableDepartments = ({
     currentNode,
+    permissions,
     nameCatalog,
     getDepartmets,
     cat_departments,
@@ -113,8 +114,8 @@ const TableDepartments = ({
             width: 80,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={()=> showDelete(item)}/>
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={()=> showDelete(item)}/>}
                 </Space>
             )
         }
@@ -125,6 +126,7 @@ const TableDepartments = ({
             <SearchCatalogs
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
+                showAdd={permissions?.create}
             />
             <Table
                 rowKey='id'
@@ -167,7 +169,7 @@ const mapState = (state) => {
         cat_departments: state.catalogStore.cat_departments,
         load_departments: state.catalogStore.load_departments,
         currentNode: state.userStore.current_node,
-        permissions: state.userStore.permissions
+        permissions: state.userStore.permissions.department
     }
 }
 

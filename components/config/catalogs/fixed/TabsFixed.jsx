@@ -27,6 +27,7 @@ import ListItems from '../../../../common/ListItems';
 
 const TabsFixed = ({
     currentNode,
+    permissions,
     getFixedConcept,
     getGroupFixedConcept,
     fixed_concept,
@@ -270,9 +271,11 @@ const TabsFixed = ({
             >
                 Regresar
             </Button>
-            <Button onClick={() => showModal()}>
-                Agregar
-            </Button>
+            {permissions?.create && (
+                <Button onClick={() => showModal()}>
+                    Agregar
+                </Button>
+            )}
         </Space>
     )
 
@@ -284,17 +287,17 @@ const TabsFixed = ({
         },
         {
             title: 'Detalle',
-            render: (item) => (
+            render: (item) => permissions?.edit ? (
                 <EyeOutlined onClick={() => showDetail(item)} />
-            )
+            ) : <></>
         },
         {
             title: 'Acciones',
             width: 80,
             render: (item) => (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             )
         }
@@ -380,7 +383,7 @@ const mapState = (state) => {
         group_fixed_concept: state.payrollStore.group_fixed_concept,
         load_group_fixed_concept: state.payrollStore.load_group_fixed_concept,
         currentNode: state.userStore.current_node,
-        permissions: state.userStore.permissions
+        permissions: state.userStore.permissions.document_type
     }
 }
 

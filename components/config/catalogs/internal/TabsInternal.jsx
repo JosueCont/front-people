@@ -29,6 +29,7 @@ import { valueToFilter } from '../../../../utils/functions';
 
 const TabsInternal = ({
     currentNode,
+    permissions,
     version_cfdi,
     doFiscalCatalogs,
     perceptions_int,
@@ -195,8 +196,8 @@ const TabsInternal = ({
             width: 80,
             render: (item) => item.node != null ? (
                 <Space>
-                    <EditOutlined onClick={() => showEdit(item)} />
-                    <DeleteOutlined onClick={() => showDelete(item)} />
+                    {permissions?.edit && <EditOutlined onClick={() => showEdit(item)} />}
+                    {permissions?.delete && <DeleteOutlined onClick={() => showDelete(item)} />}
                 </Space>
             ) : <></>
         }
@@ -305,9 +306,11 @@ const TabsInternal = ({
                             Ver conceptos del sistema
                         </Checkbox>
                     </Space>
-                    <Button onClick={() => setOpenModal(true)}>
-                        Agregar
-                    </Button>
+                    {permissions?.create && (
+                        <Button onClick={() => setOpenModal(true)}>
+                            Agregar
+                        </Button>
+                    )}
                 </div>
                 <Table
                     rowKey='id'
@@ -358,7 +361,8 @@ const mapState = (state) => {
         cat_deductions: state.fiscalStore.cat_deductions,
         cat_other_payments: state.fiscalStore.cat_other_payments,
         currentNode: state.userStore.current_node,
-        version_cfdi: state.fiscalStore.version_cfdi
+        version_cfdi: state.fiscalStore.version_cfdi,
+        permissions: state.userStore.permissions.document_type
     };
 };
 

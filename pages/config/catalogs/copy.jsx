@@ -15,6 +15,7 @@ const index = () =>{
             <SearchCatalogs
                 showBack={false}
                 showOptions={true}
+                showAdd={false}
             />
             <TableCatalogs/>
         </MainConfig>
