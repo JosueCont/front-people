@@ -39,12 +39,12 @@ const WidgetPatronalRegistration = ({
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
 
-    useEffect(()=>{
-        if(!current_node) return;
+    useEffect(() => {
+        if (!current_node) return;
         getPatronalRegistration()
-    },[current_node])
+    }, [current_node])
 
-    const getPatronalRegistration = async () =>{
+    const getPatronalRegistration = async () => {
         try {
             setLoading(true)
             let response = await WebApiPeople.getPatronalRegistrationData(current_node?.id)
@@ -66,9 +66,10 @@ const WidgetPatronalRegistration = ({
             <CardItem pd='16px 0px'
                 ai={items?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
-                    <p> <AuditOutlined  style={{fontWeight:'bold'}} /> <FormattedMessage id={'dashboard.patronalreg'} /></p>
+                    <AuditOutlined/>
+                    <p><FormattedMessage id={'dashboard.patronalreg'} /></p>
                 </>}
-                extra={<a onClick={()=> router.push('/business/patronalRegistrationNode')}>{items ? items.length : 0}</a>}
+                extra={<a onClick={() => router.push('/business/patronalRegistrationNode')}>{items ? items.length : 0}</a>}
             >
                 {!loading ?
                     <CardScroll className="scroll-bar">
@@ -83,7 +84,7 @@ const WidgetPatronalRegistration = ({
                                         //avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
                                         title={<a onClick={() => router.push(`/business/patronalRegistrationNode`)}>{item.code}</a>}
                                         description={`Razón social: 
-                                            ${item?.social_reason }
+                                            ${item?.social_reason}
                                         `}
                                     />
                                 </List.Item>

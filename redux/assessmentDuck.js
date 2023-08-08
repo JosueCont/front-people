@@ -9,7 +9,7 @@ let tenant = "demo";
 
 if (process.browser) {
   let splitDomain = window.location.hostname.split(".");
-  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost') ) {
+  if (splitDomain.length > 0 && !splitDomain[0].includes('localhost')) {
     tenant = splitDomain[0];
   }
 }
@@ -154,30 +154,34 @@ const assessmentReducer = (state = initialData, action) => {
         pagination: { ...state.pagination, current: action.payload },
       };
     case types.GET_COMPETENCES:
-      return {...state,
+      return {
+        ...state,
         load_competences: action.fetching,
         competences: action.payload
       }
     case types.GET_PROFILES:
-      return {...state,
+      return {
+        ...state,
         load_profiles: action.fetching,
         profiles: action.payload
       }
     case types.SET_PAGE:
-      return {...state, pagination_profiles: action.payload}
+      return { ...state, pagination_profiles: action.payload }
     case types.SET_ERROR_FORM_ADD:
       return { ...state, error_form_add: action.payload }
     case types.SET_MODAL_GROUP:
-      return { ...state, open_modal_create_group: action.payload}
+      return { ...state, open_modal_create_group: action.payload }
     case types.SET_MODAL_GROUP_EDIT:
-      return { ...state, open_modal_edit_group: action.payload}
+      return { ...state, open_modal_edit_group: action.payload }
     case types.LIST_ASSETS:
-      return {...state,
+      return {
+        ...state,
         list_assessments: action.payload,
         load_assessments: action.fetching
       }
     case types.GET_GROUPS_ASSESSMENTS:
-      return {...state,
+      return {
+        ...state,
         list_group_assessments: action.payload,
         load_group_assessments: action.fetching
       }
@@ -654,7 +658,7 @@ export const getCategories = () => {
           payload: response.data,
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 };
 
@@ -683,37 +687,24 @@ export const getCompetences = (node) => {
   };
 };
 
-export const getProfiles = (node, query) => {
-  return async (dispatch) => {
-    dispatch({
-      type: types.GET_PROFILES,
-      fetching: true,
-      payload: []
-    });
-    try {
-      let response = await WebApiAssessment.getProfiles(node, query);
-      dispatch({
-        type: types.GET_PROFILES,
-        fetching: false,
-        payload: response.data
-      });
-      dispatch(setCurrentPage(1));
-    } catch (e) {
-      dispatch({
-        type: types.GET_PROFILES,
-        fetching: false,
-        payload: []
-      });
-      console.error(e.name + ": " + e.message);
-    }
-  };
+export const getProfiles = (node, query = '') => async (dispatch) => {
+  const action = { type: types.GET_PROFILES, payload: [], fetching: false }
+  dispatch({ ...action, fetching: true })
+  try {
+    let response = await WebApiAssessment.getProfiles(node, query);
+    dispatch({ ...action, payload: response.data })
+    dispatch(setCurrentPage(1));
+  } catch (e) {
+    console.log(e)
+    dispatch(action)
+  }
 };
 
 export const addProfile = (data) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.addProfile(data);
-      dispatch(getProfiles(data.node_id,""));
+      dispatch(getProfiles(data.node_id, ""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -726,7 +717,7 @@ export const editProfile = (id, data) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.editProfile(id, data);
-      dispatch(getProfiles(data.node_id,""));
+      dispatch(getProfiles(data.node_id, ""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -739,7 +730,7 @@ export const deleteProfile = (id, node) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.deleteProfile(id);
-      dispatch(getProfiles(node,""));
+      dispatch(getProfiles(node, ""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -748,24 +739,24 @@ export const deleteProfile = (id, node) => {
   };
 };
 
-export const getListAssets = (node, query = '') => async (dispatch) =>{
-  const action = {type: types.LIST_ASSETS, payload: [], fetching: false};
+export const getListAssets = (node, query = '') => async (dispatch) => {
+  const action = { type: types.LIST_ASSETS, payload: [], fetching: false };
   try {
-    dispatch({...action, fetching: true})
+    dispatch({ ...action, fetching: true })
     let response = await WebApiAssessment.getListSurveys(node, query);
-    dispatch({...action, payload: response.data})
+    dispatch({ ...action, payload: response.data })
   } catch (e) {
     console.log(e)
     dispatch(action)
   }
 }
 
-export const getGroupsAssessments = (node, query = '') => async (dispatch) =>{
-  const action = {type: types.GET_GROUPS_ASSESSMENTS, payload: [], fetching: false};
+export const getGroupsAssessments = (node, query = '') => async (dispatch) => {
+  const action = { type: types.GET_GROUPS_ASSESSMENTS, payload: [], fetching: false };
   try {
-    dispatch({...action, fetching: true})
+    dispatch({ ...action, fetching: true })
     let response = await WebApiAssessment.getGroupsAssessments(node, query);
-    dispatch({...action, payload: response.data})
+    dispatch({ ...action, payload: response.data })
   } catch (e) {
     console.log(e)
     dispatch(action)
