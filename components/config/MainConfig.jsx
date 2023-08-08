@@ -10,7 +10,7 @@ import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
 import { verifyMenuNewForTenant } from '../../utils/functions';
 
-const MainIndexConfig = ({
+const MainConfig = ({
     children,
     newFilters = {},
     pageKey = '',
@@ -60,4 +60,4 @@ const MainIndexConfig = ({
     )
 }
   
-export default MainIndexConfig;
+export default MainConfig;

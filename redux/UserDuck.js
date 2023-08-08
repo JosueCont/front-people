@@ -161,7 +161,6 @@ export const setNullCompany = () => async (dispatch, getState) => {
 
 export const companySelected = (data, config, hideCompany = false) => async (dispatch, getState) => {
   try {
-
     if (!data && !hideCompany) data = userCompanyId();
     if (data && config) {
       let response = await WebApiPeople.getCompany(data);

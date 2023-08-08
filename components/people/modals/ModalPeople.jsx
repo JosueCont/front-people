@@ -72,10 +72,11 @@ const ModalPeople = ({
     const [loading, setLoading] = useState(false);
     const [txtError, setTxtError] = useState(null);
     const [payrollActive, setPayrollActive] = useState(true);
-    const [searchValue, setSearchValue] = useState(null)
-    const [workTitleFocus, setWorkTitleFocus] = useState(false)
-    const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
-    
+
+    // No se usan los states
+    // const [searchValue, setSearchValue] = useState(null)
+    // const [workTitleFocus, setWorkTitleFocus] = useState(false)
+    // const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
 
     const idSuperivor = Form.useWatch('immediate_supervisor', formPeople);
     const idSubstitute = Form.useWatch('substitute_immediate_supervisor', formPeople);
@@ -87,7 +88,7 @@ const ModalPeople = ({
     const actionCreate = async (values) => {
         try {
             setLoading(true)
-            
+
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
@@ -114,7 +115,7 @@ const ModalPeople = ({
             formPeople.setFields([{ name: 'passwordTwo', errors }]);
             return;
         }
-        if(values.groups) values.groups = [values.groups];
+        if (values.groups) values.groups = [values.groups];
         values.birth_date = values.birth_date ? values.birth_date?.format(format) : null;
         actionCreate(values)
     }
@@ -154,110 +155,49 @@ const ModalPeople = ({
         }
     })
 
-    const reloadOptionsWorkPlaces = () => {
-        if (!idDepartment || !idJob) return [];
-        let places = cat_work_title.filter(item => !item?.person);
-        const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
-        let list = places.filter(filter_)
-        setOptionsWorkPlace(list)
-    }
+    // const reloadOptionsWorkPlaces = () => {
+    //     if (!idDepartment || !idJob) return [];
+    //     let places = cat_work_title.filter(item => !item?.person);
+    //     const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
+    //     let list = places.filter(filter_)
+    //     setOptionsWorkPlace(list)
+    // }
+
+    // Se sustiye por el onChange del select
+    // useEffect(() => {
+    //     reloadOptionsWorkPlaces()
+    //     formPeople.setFieldsValue({ 'work_title_id': null })
+    // }, [idDepartment, idJob])
+
+    // Las opciones no se usan aqui
+    // useEffect(() => {
+    //     reloadOptionsWorkPlaces()
+    // }, [cat_work_title])
 
     useEffect(() => {
-        reloadOptionsWorkPlaces()
-        formPeople.setFieldsValue({'work_title_id': null})
-    }, [idDepartment, idJob])
-
-    useEffect(() => {
-        reloadOptionsWorkPlaces()
-    }, [cat_work_title])
-
-    useEffect(() => {
-        console.log('cat_groups',cat_groups)
-      if(cat_groups.length === 1){
-        formPeople.setFieldsValue({'groups': cat_groups[0].id})
-      }
+        if (cat_groups.length === 1) {
+            formPeople.setFieldsValue({ 'groups': cat_groups[0].id })
+        }
     }, [cat_groups])
-    
-    
-    
 
-    /* const optionsWorkPlace = useMemo(() => {
-        
-    }, [idDepartment, idJob]) */
-
-    const optionsSupervisor = (options) =>{
-        if(!idSubstitute) return options;
+    const optionsSupervisor = (options) => {
+        if (!idSubstitute) return options;
         const filter_ = item => item.id !== idSubstitute;
         return options.filter(filter_);
     }
 
-    const optionsSubstitute = (options) =>{
+    const optionsSubstitute = (options) => {
         if (!idSuperivor) return options;
         const filter_ = item => item.id !== idSuperivor;
         return options.filter(filter_);
     }
-    
 
-    const validateWorkTitle = () => {
-        let department = formPeople.getFieldValue('person_department')
-        let job = formPeople.getFieldValue('job')
-        if(department && job){
-            return false
-        }else{
-            formPeople.setFieldsValue({'work_title_id': null})
-            return true
-        }
+    const onChangeDepartment = () =>{
+        formPeople.setFieldsValue({work_title_id: null})
     }
 
-    const addWorkTitle = async () => {
-        try {
-            setLoading(true)
-            let data_form = formPeople.getFieldsValue()
-            let data = {
-                "name": searchValue,
-                "department": data_form?.person_department,
-                "job": data_form?.job,
-                "node": current_node?.id
-            }
-            const res = await WebApiPeople.createRegisterCatalogs(
-                "/business/work-title/",
-                data
-            );
-            if(res.status === 201){
-                dispatch(getWorkTitle(current_node?.id))
-                setLoading(false)
-            }
-            /* message.success(messageSaveSuccess); */
-            /* setLoading(false); */
-          } catch (error) {
-            console.log('error===>', error)
-            setLoading(false)
-            /* setLoading(false);
-            console.log(error);
-            message.error(messageError); */
-          }   
-    }
-    
-
-
-    const ButtonAddWorkTitle = () => {
-
-        return (<div style={{ width:'100%', textAlign:'end' }} >
-                    <Popconfirm
-                        title="¿Agregar nueva plaza laboral?"
-                        onConfirm={addWorkTitle}
-                        okText="Si"
-                        cancelText="No"
-                        disabled={!searchValue}
-                    >   
-                        
-                        <Spin spinning={loading}>
-                            <a href='#' style={{ cursor: 'pointer' }} >
-                                <Typography.Text ><PlusOutlined/> Agregar</Typography.Text> 
-                            </a>
-                        </Spin>
-                    </Popconfirm>
-                </div>)
+    const onChangeJob = () =>{
+        formPeople.setFieldsValue({work_title_id: null})
     }
 
     return (
@@ -392,7 +332,7 @@ const ModalPeople = ({
                             </Form.Item>
                         </Col>
                     }
-                    
+
                     <Col span={8}>
                         <Form.Item
                             name='person_department'
@@ -404,6 +344,7 @@ const ModalPeople = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeDepartment}
                             >
                                 {cat_departments?.length > 0 && cat_departments.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -424,6 +365,7 @@ const ModalPeople = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeJob}
                             >
                                 {cat_job.length > 0 && cat_job.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -441,43 +383,10 @@ const ModalPeople = ({
                             job={idJob}
                             labelText='Plaza laboral'
                             dependencies={['person_department', 'job']}
-                            rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
+                            rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
                             placeholder='Seleccionar una opción'
                             disabled={!idDepartment || !idJob}
                         />
-
-                        {/* <Form.Item
-                            name='work_title_id'
-                            label='Plaza laboral'
-                            dependencies={['person_department', 'job']}
-                            rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
-                            
-                        >
-                            <Select
-                                disabled={validateWorkTitle()}
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent={ searchValue ? <ButtonAddWorkTitle /> : "No se encontraron resultados"}
-                                optionFilterProp='children'
-                                onSearch={(val) => setSearchValue(val)}
-                                open={ searchValue || workTitleFocus}
-                                onFocus={() => setWorkTitleFocus(true)}
-                                onBlur={() => setWorkTitleFocus(false)}
-                                onSelect={(val) => {
-                                        setSearchValue(null), 
-                                        setWorkTitleFocus(false)
-                                        
-                                    } 
-                                }
-                            >
-                                {optionsWorkPlace.length > 0 && optionsWorkPlace.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
                     </Col>
                     <Col span={8}>
                         <Form.Item

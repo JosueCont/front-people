@@ -36,6 +36,7 @@ export const CardItem = styled(Card)`
     & .ant-card-head-title{
         display: flex;
         align-items: center;
+        gap: 8px;
         padding: 8px 0px;
         & p {
             margin-bottom: 0px;
@@ -46,7 +47,10 @@ export const CardItem = styled(Card)`
         & img{
             width: auto;
             height: 32px;
-            margin-inline-end: 8px;
+        }
+        & .anticon{
+            font-size: 24px;
+            font-weight: bold;
         }
     }
     & .ant-card-body{
