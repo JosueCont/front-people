@@ -296,7 +296,7 @@ export const getTreatment = (idCompany) => async (dispatch, getState) => {
 
 export const getDocumentType = (idCompany) => async (dispatch, getState) => {
     const type = { type: DOCUMENT_TYPE, payload: [], fetching: false };
-    dispatch({ ...type, fetching: false })
+    dispatch({ ...type, fetching: true })
     try {
         let response = await WebApiPeople.getCatalogs("document-type", idCompany)
         dispatch({ ...type, payload: response.data });

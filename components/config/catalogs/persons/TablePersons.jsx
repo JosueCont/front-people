@@ -30,10 +30,10 @@ const TablePersons = ({
     const [itemsSelected, setItemsSelected] = useState([]);
     const [openDelete, setOpenDelete] = useState(false);
 
-    // useEffect(()=>{
-    //     if(!currentNode) return;
-    //     getPersonType(currentNode?.id)
-    // },[currentNode])
+    useEffect(()=>{
+        if(!currentNode) return;
+        getPersonType(currentNode?.id)
+    },[currentNode])
 
     const actionCreate = async (values) => {
         try {

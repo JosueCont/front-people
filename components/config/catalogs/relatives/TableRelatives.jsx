@@ -29,12 +29,7 @@ const TableRelatives = ({
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsSelected, setItemsSelected] = useState([]);
     const [openDelete, setOpenDelete] = useState(false);
-
-    // useEffect(()=>{
-    //     if(!currentNode) return;
-    //     getRelationship(currentNode?.id)
-    // },[currentNode])
-
+    
     const actionCreate = async (values) => {
         try {
             let body = { ...values, node: currentNode?.id };
