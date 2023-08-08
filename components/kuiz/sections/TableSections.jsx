@@ -96,10 +96,9 @@ const TableSections = ({
             columns={columns}
             className='ant-table-colla'
             dataSource={list_sections?.results}
-            // rowSelection={rowSelection}
             loading={load_sections}
             pagination={{
-                hideOnSinglePage: false,
+                hideOnSinglePage: true,
                 showSizeChanger: true,
             }}
         />

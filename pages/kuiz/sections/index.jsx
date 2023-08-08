@@ -34,7 +34,6 @@ const index = ({
     }
 
     const ExtraBread = [
-        { name: 'Evaluaciones', URL: '/kuiz/assessments' },
         { name: 'Secciones' }
     ]
 

@@ -4,13 +4,13 @@ import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import MainKuiz from '../../../components/kuiz/MainKuiz';
 import SearchQuestions from '../../../components/kuiz/questions/SearchQuestions';
-import TableSections from '../../../components/kuiz/sections/TableSections';
-import { getSections } from '../../../redux/kuizDuck';
+import TableQuestions from '../../../components/kuiz/questions/TableQuestions';
+import { getQuestions } from '../../../redux/kuizDuck';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const index = ({
     currentNode,
-    getSections
+    getQuestions
 }) => {
 
     const router = useRouter();
@@ -19,7 +19,6 @@ const index = ({
 
     useEffect(() => {
         if (router.query?.assessment){
-            // getSections(router.query?.assessment)
             getAssessment(router.query?.assessment);
         }
     }, [router.query?.assessment])
@@ -27,6 +26,7 @@ const index = ({
     useEffect(()=>{
         if(router.query?.section){
             getInfoSection(router.query?.section)
+            getQuestions(router.query?.section)
         }
     },[router.query?.section])
 
@@ -63,7 +63,7 @@ const index = ({
                 evaluation={evaluation}
                 section={section}
             />
-            {/* <TableSections /> */}
+            <TableQuestions/>
         </MainKuiz>
     )
 }
@@ -76,6 +76,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getSections
+        getQuestions
 }
 )(withAuthSync(index));
