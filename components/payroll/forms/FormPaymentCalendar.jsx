@@ -621,7 +621,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             <Col lg={8} xs={22}>
               <Form.Item
                 name="period"
-                label="Período"
+                label="Año"
                 rules={[ruleRequired]}
                 extra={
                   <>
