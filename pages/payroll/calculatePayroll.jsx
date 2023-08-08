@@ -1477,6 +1477,21 @@ const CalculatePayroll = ({ ...props }) => {
         "No se encontraron resultados",
         setDownloading
       )
+    }else if(key === 'accounting_policy_simple'){
+      downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/accounting-policy-report`,
+        `Poliza contable_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        "POST",
+        {
+          "node__id": props?.currentNode?.id,
+          "payment_periods": [periodSelected.id],
+          "type": "ACCOUNTING_POLICY_SIMPLE" 
+        },
+        "No se encontraron resultados",
+        setDownloading
+      )
     }
   }
 
@@ -1500,6 +1515,11 @@ const CalculatePayroll = ({ ...props }) => {
             <Menu.Item key={'raya'}>
               <a>
                 Hoja de raya
+              </a>
+            </Menu.Item>
+            <Menu.Item key={'accounting_policy_simple'}>
+              <a>
+                Poliza contable
               </a>
             </Menu.Item>
           </>
