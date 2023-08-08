@@ -8,6 +8,7 @@ import {
     Typography,
     message
 } from 'antd';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import {
@@ -89,7 +90,7 @@ const TabsFixed = ({
         try {
             /** Inicializamos el saldo al crear el concepto programado de forma diferida */
             if (values.num_of_periods > 0 &&
-                values.discount_type == 2) values.balance = values.datum;
+                values?.discount_type == 2) values.balance = values.datum;
             let body = { ...values, node: currentNode?.id };
             await WebApiPayroll.fixedConcept('post', body);
             message.success('Concepto registrado')
@@ -102,7 +103,8 @@ const TabsFixed = ({
 
     const updateFixed = async (values) => {
         try {
-            await WebApiPayroll.fixedConcept(`put`, values, `${itemToEdit?.id}/`);
+            let body = { ...values, node: currentNode?.id };
+            await WebApiPayroll.fixedConcept(`put`, body, `${itemToEdit?.id}/`);
             message.success('Concepto actualizado')
             getFixedConcept(currentNode?.id)
         } catch (e) {
@@ -119,7 +121,9 @@ const TabsFixed = ({
             getFixedConcept(currentNode?.id)
         } catch (e) {
             console.log(e)
-            message.error('Conceptp no eliminado')
+            let txt = e.response?.data?.message;
+            let msg = txt ? txt : 'Concepto no eliminado';
+            message.error(msg)
         }
     }
 
@@ -154,7 +158,9 @@ const TabsFixed = ({
             getGroupFixedConcept(currentNode?.id)
         } catch (e) {
             console.log(e)
-            message.error('Grupo no eliminado')
+            let txt = e.response?.data?.message;
+            let msg = txt ? txt : 'Grupo no eliminado';
+            message.error(msg)
         }
     }
 
@@ -167,6 +173,7 @@ const TabsFixed = ({
         return {
             ...item,
             ...checksValues,
+            datum: item.datum ? parseInt(item.datum) : null,
             concept_type: item.perception_type ? 1 : item.deduction_type ? 2 : 3,
             application_date: item.application_date ? moment(item.application_date, 'YYYY-MM-DD') : null
         }
@@ -175,6 +182,7 @@ const TabsFixed = ({
     const dataGroup = (item) => {
         let ids = item.fixed_concept?.map(item => item.id);
         return {
+            id: item?.id,
             name: item.name,
             fixed_concept: ids
         }
@@ -349,7 +357,7 @@ const TabsFixed = ({
                 tab={tab}
                 visible={openFixed}
                 close={closeFixed}
-                itemToEdit={itemToEdit}
+                itemToEdit={tab == 'tab1' ? itemToEdit : {}}
                 conditions={conditions}
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
                 actionForm={isEdit ? updateFixed : createFixed}
@@ -358,7 +366,7 @@ const TabsFixed = ({
             <ModalGroup
                 visible={openGroup}
                 close={closeGroup}
-                itemToEdit={itemToEdit}
+                itemToEdit={tab== 'tab2' ? itemToEdit : {}}
                 actionForm={isEdit ? updateGroup : createGroup}
                 textSave={isEdit ? 'Actualizar' : 'Guardar'}
                 title={isEdit ? 'Editar grupo' : 'Agregar grupo'}

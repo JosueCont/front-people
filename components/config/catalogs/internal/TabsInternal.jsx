@@ -75,7 +75,8 @@ const TabsInternal = ({
 
     const actionCreate = async (values) => {
         try {
-            await WebApiFiscal.crudInternalConcept(urlBase, 'post', values);
+            let body = {...values, node: currentNode?.id};
+            await WebApiFiscal.crudInternalConcept(urlBase, 'post', body);
             doFiscalCatalogs(currentNode?.id, version_cfdi)
             message.success('Información registrada')
         } catch (e) {
@@ -88,8 +89,9 @@ const TabsInternal = ({
 
     const actionUpdate = async (values) => {
         try {
-            const url = `${urlBase}/${itemToEdit?.id}/`;
-            await WebApiFiscal.crudInternalConcept(url, 'put', values);
+            let body = {...values, node: currentNode?.id};
+            const url = `${urlBase}${itemToEdit?.id}/`;
+            await WebApiFiscal.crudInternalConcept(url, 'put', body);
             doFiscalCatalogs(currentNode?.id, version_cfdi)
             message.success('Información actualizada')
         } catch (e) {
@@ -103,7 +105,7 @@ const TabsInternal = ({
     const actionDelete = async () => {
         try {
             let id = itemsSelected?.at(-1).id;
-            await WebApiFiscal.crudInternalConcept(`${urlBase}/${id}/`, 'delete');
+            await WebApiFiscal.crudInternalConcept(`${urlBase}${id}/`, 'delete');
             doFiscalCatalogs(currentNode?.id, version_cfdi)
             message.success('Registro eliminado')
         } catch (e) {
