@@ -4,12 +4,18 @@ import React, { useState } from 'react'
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
 import WebApiPayroll from '../../api/webApi'
+
+/* Redux */
+import { getDepartmets, getJobs, getPersonType, getRelationship, getDocumentType, getWorkTitle, getAccountantAccount, getCostCenter, getTags, getBranches } from '../../redux/catalogCompany'
+import { connect } from 'react-redux';
+
 const ModalUploadCatalog = ({isVisible=false, setIsVisible=null, node, ...props}) => {
     const [fileName, setFileName] = useState(null)
     const [currentFile, setCurrentFile] = useState(null)
     const [loading, setLoading] = useState(false)
     const [messagesSuccess, setMessagesSuccess] = useState([])
     const [uploadFinally, setUploadFinally] = useState(false)
+
     const uploadFileCatalogs = async () => {
         if(!currentFile){
             message.error("No se ha cargado ninguna arvhivo")
@@ -26,6 +32,16 @@ const ModalUploadCatalog = ({isVisible=false, setIsVisible=null, node, ...props}
                 message.info("Catalogos Cargados")
                 setMessagesSuccess(resp.data)
                 setUploadFinally(true)
+                props.getDepartmets(node?.id)
+                props.getJobs(node?.id)
+                props.getPersonType(node?.id)
+                props.getRelationship(node?.id)
+                props.getDocumentType(node?.id)
+                props.getWorkTitle(node?.id)
+                props.getAccountantAccount(node?.id)
+                props.getCostCenter(node?.id)
+                props.getTags(node?.id)
+                props.getBranches(node?.id)
             }
         } catch (error) {
             setLoading(false)
@@ -141,4 +157,11 @@ const ModalUploadCatalog = ({isVisible=false, setIsVisible=null, node, ...props}
     </Modal>
   )
 }
-export default ModalUploadCatalog
+
+const mapState = (state) => {
+    return {
+        cat_departments: state.catalogStore.cat_departments,
+};
+};
+  
+export default connect(mapState , { getDepartmets, getJobs, getPersonType, getRelationship, getDocumentType, getAccountantAccount, getWorkTitle, getCostCenter, getTags, getBranches })(ModalUploadCatalog);
