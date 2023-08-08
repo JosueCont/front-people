@@ -43,12 +43,12 @@ const WidgetPayRollCalendar = ({
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
 
-    useEffect(()=>{
-        if(!current_node) return;
+    useEffect(() => {
+        if (!current_node) return;
         getPayrollCalendar()
-    },[current_node])
+    }, [current_node])
 
-    const getPayrollCalendar = async () =>{
+    const getPayrollCalendar = async () => {
         try {
             setLoading(true)
             let response = await WebApiPayroll.getPaymentCalendar(current_node?.id)
@@ -73,9 +73,10 @@ const WidgetPayRollCalendar = ({
             <CardItem pd='16px 0px'
                 ai={calendars?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
-                    <p> <ContactsOutlined  style={{fontWeight:'bold'}} /> <FormattedMessage id={'dashboard.payrollcalendar'} /></p>
+                    <ContactsOutlined/>
+                    <p><FormattedMessage id={'dashboard.payrollcalendar'} /></p>
                 </>}
-                extra={<a onClick={()=> router.push('/payroll/paymentCalendar')}>{totalCalendars ?? 0}</a>}
+                extra={<a onClick={() => router.push('/payroll/paymentCalendar')}>{totalCalendars ?? 0}</a>}
             >
                 {!loading ?
                     <CardScroll className="scroll-bar">
@@ -90,15 +91,15 @@ const WidgetPayRollCalendar = ({
                                         //avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
                                         title={<a onClick={() => router.push(`/payroll/paymentCalendar/${item.id}/edit?calendar_id=${item.id}&id=${current_node?.id}`)}>{item.name}</a>}
                                         description={`Periodicidad: 
-                                            ${item?.periodicity?.description }
+                                            ${item?.periodicity?.description}
                                         `}
                                     />
                                 </List.Item>
                             )}
                         />
-                        <p style={{textAlign:'center'}}>
+                        <p style={{ textAlign: 'center' }}>
                             {
-                                hasNext &&  <a  onClick={()=> router.push('/payroll/paymentCalendar') }> <LinkOutlined /> Ver todos</a>
+                                hasNext && <a onClick={() => router.push('/payroll/paymentCalendar')}> <LinkOutlined /> Ver todos</a>
                             }
                         </p>
 
