@@ -18,13 +18,16 @@ import WidgetGender from "../../components/dashboard/WidgetGender";
 import WidgetBirthday from "../../components/dashboard/WidgetBirthday";
 import WidgetGeneration from "../../components/dashboard/WidgetGeneration";
 import WidgetAnniversary from "../../components/dashboard/WidgetAnniversary";
+import WidgetPayRollCalendar from "../../components/dashboard/WidgetPayRollCalendar";
 import { useRouter } from "next/router";
 import { SettingOutlined } from "@ant-design/icons";
+import WidgetPatronalRegistration from "../../components/dashboard/WidgetPatronalRegistration";
 
 moment.locale("es-Mx");
 
 const Dashboard = ({
-    currentNode
+    currentNode,
+    config
 }) => {
 
     const router = useRouter()
@@ -52,6 +55,18 @@ const Dashboard = ({
                         <WidgetAnniversary/>
                         <WidgetGeneration/>
                         <WidgetBirthday/>
+                        {
+                           config &&  config.applications.find(
+                                (item) => item.app === "PAYROLL" && item.is_active
+                            ) && <WidgetPayRollCalendar/>
+                        }
+
+                        {
+                            config &&  config.applications.find(
+                                (item) => item.app === "PAYROLL" && item.is_active
+                            ) && <WidgetPatronalRegistration/>
+                        }
+
                     </ContentCards>
                 </ContentVertical>
             </MainLayout>
@@ -61,7 +76,8 @@ const Dashboard = ({
 
 const mapState = (state) => {
     return {
-        currentNode: state.userStore?.current_node
+        currentNode: state.userStore?.current_node,
+        config: state.userStore?.general_config
     }
 }
 

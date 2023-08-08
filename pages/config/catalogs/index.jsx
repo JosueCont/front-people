@@ -202,20 +202,21 @@ const configBusiness = ({ ...props }) => {
                   key="tab_6"
                 >
                   <Tabs defaultActiveKey="1" type="card" size={"small"}>
-                    <TabPane tab="Plazas" key={"1"}>
+                    <TabPane tab="Niveles" key={"1"}>
+                      <Levels
+                          style={{ marginTop: "10px" }}
+                          currentNode={props.currentNode}
+                          doCompanySelectedCatalog={doCompanySelectedCatalog}
+                      />
+                    </TabPane>
+                    <TabPane tab="Plazas" key={"2"}>
                       <WorkTitle
                         style={{ marginTop: "10px" }}
                         currentNode={props.currentNode}
                         doCompanySelectedCatalog={doCompanySelectedCatalog}
                       />
                     </TabPane>
-                    <TabPane tab="Niveles" key={"2"}>
-                      <Levels
-                        style={{ marginTop: "10px" }}
-                        currentNode={props.currentNode}
-                        doCompanySelectedCatalog={doCompanySelectedCatalog}
-                      />
-                    </TabPane>
+
                   </Tabs>
                 </TabPane>
                 <TabPane
