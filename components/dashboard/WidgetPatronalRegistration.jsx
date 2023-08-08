@@ -68,7 +68,7 @@ const WidgetPatronalRegistration = ({
                 title={<>
                     <p> <AuditOutlined  style={{fontWeight:'bold'}} /> <FormattedMessage id={'dashboard.patronalreg'} /></p>
                 </>}
-                extra={<a onClick={()=> router.push('/payroll/paymentCalendar')}>{items ? items.length : 0}</a>}
+                extra={<a onClick={()=> router.push('/business/patronalRegistrationNode')}>{items ? items.length : 0}</a>}
             >
                 {!loading ?
                     <CardScroll className="scroll-bar">
@@ -81,7 +81,7 @@ const WidgetPatronalRegistration = ({
                                 <List.Item key={idx}>
                                     <List.Item.Meta
                                         //avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
-                                        title={<a onClick={() => router.push(`/payroll/paymentCalendar/${item.id}/edit?calendar_id=${item.id}&id=${current_node?.id}`)}>{item.code}</a>}
+                                        title={<a onClick={() => router.push(`/business/patronalRegistrationNode`)}>{item.code}</a>}
                                         description={`Razón social: 
                                             ${item?.social_reason }
                                         `}
