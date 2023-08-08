@@ -10,6 +10,7 @@ import TableCenters from './centers/TableCenters';
 import TableTags from './tags/TableTags';
 import TableOffices from './offices/TableOffices';
 import TabsInternal from './internal/TabsInternal';
+import TabsFixed from './fixed/TabsFixed';
 
 const GetCatalog = ({...props}) => {
 
@@ -27,6 +28,7 @@ const GetCatalog = ({...props}) => {
         tags: TableTags,
         offices: TableOffices,
         internal: TabsInternal,
+        fixed: TabsFixed,
         __default__: ()=><></>
     }
 

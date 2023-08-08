@@ -10,7 +10,9 @@ import OptionsCatalogs from './OptionsCatalogs';
 const SearchCatalogs = ({
     title = '',
     currentNode,
-    actionAdd
+    actionAdd,
+    showOptions = false,
+    showBack = true
 }) => {
 
     const router = useRouter();
@@ -25,20 +27,19 @@ const SearchCatalogs = ({
                                 {title ? title : `Catálogos de ${currentNode?.name}`}
                             </p>
                             <div className='content-end' style={{ gap: 8 }}>
-                                {actionAdd ? (
-                                    <>
-                                        <Button
-                                            icon={<ArrowLeftOutlined />}
-                                            onClick={()=> router.push('/config/catalogs/copy')}
-                                        >
-                                            Regresar
-                                        </Button>
-                                        <Button onClick={() => actionAdd()}>
-                                            Agregar
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <OptionsCatalogs />
+                                {showBack && (
+                                    <Button
+                                        icon={<ArrowLeftOutlined />}
+                                        onClick={() => router.push('/config/catalogs/copy')}
+                                    >
+                                        Regresar
+                                    </Button>
+                                )}
+                                {showOptions && <OptionsCatalogs />}
+                                {actionAdd && (
+                                    <Button onClick={() => actionAdd()}>
+                                        Agregar
+                                    </Button>
                                 )}
                             </div>
                         </div>

@@ -14,12 +14,12 @@ const OptionsCatalogs = () => {
 
     const Options = () => (
         <Menu>
-            <Menu.Item
+            {/* <Menu.Item
                 key='3'
                 icon={<DownloadOutlined />}
             >
                 Ver versión anterior
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
                 key='1'
                 icon={<DownloadOutlined />}

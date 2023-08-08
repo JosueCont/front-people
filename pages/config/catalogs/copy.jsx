@@ -12,7 +12,10 @@ const index = () =>{
             pageKey='catalogs'
             extraBread={[{name: 'Catálogos'}]}
         >
-            <SearchCatalogs/>
+            <SearchCatalogs
+                showBack={false}
+                showOptions={true}
+            />
             <TableCatalogs/>
         </MainConfig>
     )

@@ -47,3 +47,12 @@
 .tabs-internal > .ant-tabs-nav .ant-tabs-tab{
   padding: 0px 8px;
 }
+
+.tabs-internal > .ant-tabs-nav::before{
+  border-bottom: none;
+}
+
+.tabs-internal.fixed .ant-tabs-content-holder{
+  background-color: transparent;
+  margin-top: 24px;
+}
