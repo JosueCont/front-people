@@ -320,6 +320,7 @@ const CfdiVaucher = ({
       if (department) filter = filter + `&department=${department}`;
       if (job) filter = filter + `&job=${job}`;
       if (movementType) filter = filter + `&movement_type=${movementType}`;
+      
       getVoucher(filter);
     }
   }, [router.query]);
@@ -380,6 +381,7 @@ const CfdiVaucher = ({
   };
 
   const getVoucher = (data, new_page) => {
+    
     data = data + generate_url(new_page);
 
     setLoading(true);
@@ -396,7 +398,7 @@ const CfdiVaucher = ({
       })
       .catch((error) => {
         message.error(messageError);
-        console.log(error);
+        
         setLoading(false);
       });
   };
@@ -580,13 +582,18 @@ const CfdiVaucher = ({
                 marginTop: 10,
               }}
             >
-              <Pagination
-                current={currentPage}
-                total={lenData}
-                onChange={pagination}
-                showSizeChanger={false}
-                // defaultPageSize={10}
-              />
+              {
+                props.pageSize < 100 &&
+                  <Pagination
+                  pageSize={props.pageSize? props.pageSize : 10}
+                  current={currentPage}
+                  total={lenData}
+                  onChange={pagination}
+                  showSizeChanger={false}
+                  // defaultPageSize={10}
+                />
+              }
+              
             </Col>
           )}
         </Row>

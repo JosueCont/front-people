@@ -329,6 +329,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     console.log("descriptionImport", descriptionImport);
   }, [descriptionImport]);
 
+  const selectCompany=(company_index, regPatronal_index)=>{
+      setCompanySelect(company_index)
+      if(regPatronal_index){
+        setPatronalSelect(regPatronal_index)
+      }
+      setVisibleMessageModal(false);
+  }
+
   const processResponseSave = (response) => {
     let company_list = _.get(response, "data.companies.company_list", []);
     let notSaved = []; // empresas no guardadas
@@ -418,14 +426,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
             }}
           >
             <Col span={24} style={{ fontWeight: "bold" }}>
-              RFC: {e.rfc}
+             <a onClick={()=> selectCompany(e.company_index)}>Empresa: {e.company} | RFC: {e.rfc}  </a>
             </Col>
             {e.calendars &&
-              e.calendars.map((c) => (
+              e.calendars.map((c, idx) => (
                 <Row>
                   {c.patronal_registration && (
                     <Col span={24} style={{ fontWeight: "bold" }}>
-                      Registro patronal: {c.patronal_registration}{" "}
+                      <a onClick={()=> selectCompany(e.company_index, c.regP_index)}>Registro patronal: {c.patronal_registration}{" "}</a>
                     </Col>
                   )}
                   <Col span={24} style={{}}>
@@ -466,17 +474,20 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const validateBeforeSubmit = () => {
     let companies_errors = [];
     console.log("Errors->", companies_errors);
-    xmlImport.companies.map((company) => {
+    xmlImport.companies.map((company,index) => {
       let company_error = {
-        rfc: company.company.rfc,
+        rfc: company?.company?.rfc,
+        company: company?.company?.reason,
+        company_index: index,
         calendars: [],
       };
       if (company.patronal_registrations) {
-        company.patronal_registrations.map((reg_pat) => {
+        company.patronal_registrations.map((reg_pat,regP_index) => {
           if (reg_pat.periodicities && reg_pat.periodicities.length > 0) {
             reg_pat.periodicities.map((periodicity) => {
               let calendar = {
                 patronal_registration: reg_pat.patronal_registration,
+                regP_index: regP_index,
                 errors: [],
               };
               calendar.periodicity_type = periodicity.periodicity_code;
@@ -579,7 +590,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         setDescriptionImport("Complete los campos del calendario");
         setVisibleMessageModal(true);
       } else {
-
         xmlImport.companies.forEach((c)=>{
            if(!c.company.hasOwnProperty("use_internal_concepts")){
              c.company.use_internal_concepts = false;
