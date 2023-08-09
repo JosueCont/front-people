@@ -24,6 +24,10 @@ class WebApiPeople {
     return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, {responseType: 'blob'});
   }
 
+  static downloadCatalogs(node){
+    return axiosApi.get(`/business/all-catalogs/?node_id=${node}`, {responseType: 'blob'});
+  }
+
   // Termina
 
   static getCompany(data) {

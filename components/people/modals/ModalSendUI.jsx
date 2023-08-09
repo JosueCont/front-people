@@ -49,7 +49,7 @@ const ModalSendUI = ({
             let msg = txt ? txt : persons_id.length > 1
                 ? 'Personas enviadas'
                 : 'Persona enviada';
-            message.success(msg)
+            // message.success(msg)
             setTimeout(() => {
                 onClose()
                 setLoading(false)
