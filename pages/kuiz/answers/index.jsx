@@ -3,30 +3,30 @@ import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import MainKuiz from '../../../components/kuiz/MainKuiz';
-import SearchSections from '../../../components/kuiz/sections/SearchSections';
-import TableSections from '../../../components/kuiz/sections/TableSections';
-import { getSections } from '../../../redux/kuizDuck';
+import { getAnswers } from '../../../redux/kuizDuck';
+import SearchAnswers from '../../../components/kuiz/answers/SearchAnswers';
+import TableAnswers from '../../../components/kuiz/answers/TableAnswers';
 
 const index = ({
     currentNode,
-    getSections
+    getAnswers
 }) => {
 
     const router = useRouter();
 
     useEffect(() => {
-        if (router.query?.assessment){
-            getSections(router.query?.assessment)
+        if (router.query?.question) {
+            getAnswers(router.query?.question)
         }
-    }, [router.query?.assessment])
+    }, [router.query?.question])
 
     return (
         <MainKuiz
             pageKey='surveys'
-            extraBread={[{ name: 'Secciones' }]}
+            extraBread={[{ name: 'Respuestas' }]}
         >
-            <SearchSections/>
-            <TableSections />
+            <SearchAnswers/>
+            <TableAnswers/>
         </MainKuiz>
     )
 }
@@ -39,6 +39,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getSections
-    }
+    getAnswers
+}
 )(withAuthSync(index));

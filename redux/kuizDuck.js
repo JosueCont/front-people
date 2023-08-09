@@ -12,6 +12,8 @@ const initialState = {
     load_sections: false,
     list_questions: {},
     load_questions: false,
+    list_answers: {},
+    load_answers: false,
     kuiz_page: 1,
     kuiz_filters: "",
     kuiz_page_size: 10
@@ -22,6 +24,7 @@ const GET_ASSESSMENTS_OPTIONS = "GET_ASSESSMENTS_OPTIONS";
 const GET_CATEGORIES = "GET_CATEGORIES";
 const GET_SECTIONS = "GET_SECTIONS";
 const GET_QUESTIONS = "GET_QUESTIONS";
+const GET_ANSWERS = "GET_GET_ANSWERS";
 
 const kuizReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -55,6 +58,12 @@ const kuizReducer = (state = initialState, action) => {
                 ...state,
                 list_questions: action.payload,
                 load_questions: action.fetching
+            }
+        case GET_ANSWERS:
+            return {
+                ...state,
+                list_answers: action.payload,
+                load_answers: action.fetching
             }
         default:
             return state
@@ -104,9 +113,21 @@ export const getQuestions = (id) => async (dispatch) => {
     dispatch({ ...type, fetching: true })
     try {
         let response = await WebApiAssessment.assessmentQuestions(id);
-        let records = orderBy(response?.data?.results || [], ['order'], ['asc']);
-        const map_ = item => ({ ...item, answer_set: orderBy(item.answer_set, ['order'], ['asc']) });
-        dispatch({ ...type, payload: { results: records?.map(map_) } })
+        let results = orderBy(response?.data?.results || [], ['order'], ['asc']);
+        dispatch({ ...type, payload: { results } })
+    } catch (e) {
+        console.log(e)
+        dispatch(type)
+    }
+}
+
+export const getAnswers = (id) => async (dispatch) =>{
+    const type = {type: GET_ANSWERS, payload: {}, fetching: false};
+    dispatch({...type, fetching: true})
+    try {
+        let response = await WebApiAssessment.assessmentAnswers(id);
+        let results = orderBy(response?.data?.results || [], ['order'], ['asc']);
+        dispatch({...type, payload: {...response.data, results}});
     } catch (e) {
         console.log(e)
         dispatch(type)

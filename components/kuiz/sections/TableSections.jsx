@@ -48,7 +48,7 @@ const TableSections = ({
                     query: {...router.query, section: item.id}
                 })}
             >
-                Agregar pregunta
+                Ver preguntas
             </Menu.Item>
             <Menu.Item
                 key='3'
@@ -75,6 +75,11 @@ const TableSections = ({
             title: 'No. preguntas',
             dataIndex: 'num_questions',
             key: 'num_questions'
+        },
+        {
+            title: 'Orden',
+            dataIndex: 'order',
+            render: (item) => item + 1
         },
         {
             title: 'Acciones',

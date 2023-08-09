@@ -156,6 +156,9 @@ class WebApiAssessment {
   static assessmentQuestions(id) {
     return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/question/?section=${id}`);
   }
+  static assessmentAnswers(id) {
+    return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/answer/?question=${id}`);
+  }
   static assessmentDelete(id) {
     return Axios.delete(`${urlKuizBaseApiWithTenant}/assessments/assessment/${id}`);
   }
@@ -189,7 +192,7 @@ class WebApiAssessment {
   static updateAnswer(id, data) {
     return Axios.patch(`${urlKuizBaseApiWithTenant}/assessments/answer/${id}/`, data);
   }
-  static getAnswer(id) {
+  static getInfoQuestion(id) {
     return Axios.get(`${urlKuizBaseApiWithTenant}/assessments/question/${id}/`);
   }
   static deleteAnswer(id) {

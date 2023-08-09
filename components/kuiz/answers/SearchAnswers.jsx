@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
 import { useDefaultFilters } from '../useDefaultFilters';
 
-const SearchQuestions = ({
+const SearchAnswers = ({
     currentNode
 }) => {
 
@@ -22,14 +22,14 @@ const SearchQuestions = ({
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
-                                Preguntas
+                                Respuestas
                             </p>
                             <div className='content-end' style={{ gap: 8 }}>
                                 <Button icon={<ArrowLeftOutlined/>}>
                                     Regresar
                                 </Button>
                                 <Button onClick={() => router.push({
-                                    pathname: '/kuiz/assessments/add',
+                                    pathname: '/kuiz/question/add',
                                     query: router.query
                                 })}>
                                     Agregar
@@ -39,7 +39,7 @@ const SearchQuestions = ({
                     </Col>
                     <Col span={24}>
                         <TagFilters
-                            discardKeys={['assessment','section']}
+                            discardKeys={['assessment','section','question']}
                             defaultFilters={filters}
                         />
                     </Col>
@@ -55,4 +55,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState)(SearchQuestions)
+export default connect(mapState)(SearchAnswers)

@@ -588,7 +588,7 @@ export const answerCreateAction = (values) => {
       //   values
       // );
 
-      let { data } = await WebApiAssessment.getAnswer(response.data.question);
+      let { data } = await WebApiAssessment.getInfoQuestion(response.data.question);
       // let { data } = await Axios.get(
       //   `${API_ASSESSMENT}/assessments/question/${response.data.question}/`
       // );
@@ -612,7 +612,7 @@ export const answerUpdateAction = (id, values) => {
       //   `${API_ASSESSMENT}/assessments/answer/${id}/`,
       //   values
       // );
-      let { data } = await WebApiAssessment.getAnswer(response.data.question);
+      let { data } = await WebApiAssessment.getInfoQuestion(response.data.question);
       // let { data } = await Axios.get(
       //   `${API_ASSESSMENT}/assessments/question/${response.data.question}/`
       // );
@@ -633,7 +633,7 @@ export const answerDeleteAction = (item) => {
     try {
       await WebApiAssessment.deleteAnswer(item.id);
       // await Axios.delete(`${API_ASSESSMENT}/assessments/answer/${item.id}/`);
-      let { data } = await WebApiAssessment.getAnswer(item.question);
+      let { data } = await WebApiAssessment.getInfoQuestion(item.question);
       // let { data } = await Axios.get(
       //   `${API_ASSESSMENT}/assessments/question/${item.question}/`
       // );

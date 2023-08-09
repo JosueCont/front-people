@@ -6,18 +6,14 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
+import { useDefaultFilters } from '../useDefaultFilters';
 
 const SearchSections = ({
-    currentNode,
-    evaluation = {}
+    currentNode
 }) => {
 
     const router = useRouter();
-
-    const defaultFilters = useMemo(() => {
-        let name = evaluation?.name;
-        return { 'Evaluación': name }
-    }, [evaluation])
+    const filters = useDefaultFilters();
 
     return (
         <>
@@ -44,7 +40,7 @@ const SearchSections = ({
                     <Col span={24}>
                         <TagFilters
                             discardKeys={['assessment']}
-                            defaultFilters={defaultFilters}
+                            defaultFilters={filters}
                         />
                     </Col>
                 </Row>

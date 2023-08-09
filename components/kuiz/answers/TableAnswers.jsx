@@ -16,28 +16,28 @@ import {
     EllipsisOutlined
 } from '@ant-design/icons';
 
-const TableQuestions = ({
-    list_questions,
-    load_questions
+const TableAnswers = ({
+    list_answers,
+    load_answers
 }) => {
 
     const router = useRouter();
 
-    const MenuItem = ({item}) => (
+    const MenuItem = ({ item }) => (
         <Menu>
             <Menu.Item
                 key='1'
-                icon={<EditOutlined/>}
+                icon={<EditOutlined />}
             >
                 Editar
             </Menu.Item>
             <Menu.Item
                 key='2'
-                icon={<DeleteOutlined/>}
+                icon={<DeleteOutlined />}
             >
                 Eliminar
             </Menu.Item>
-            <Menu.Item
+            {/* <Menu.Item
                 key='5'
                 icon={<PlusOutlined/>}
                 onClick={()=> router.push({
@@ -46,16 +46,16 @@ const TableQuestions = ({
                 })}
             >
                 Ver respuestas
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
                 key='3'
-                icon={<DownOutlined/>}
+                icon={<DownOutlined />}
             >
                 Mover hacia abajo
             </Menu.Item>
             <Menu.Item
                 key='4'
-                icon={<UpOutlined/>}
+                icon={<UpOutlined />}
             >
                 Mover hacia arriba
             </Menu.Item>
@@ -69,27 +69,17 @@ const TableQuestions = ({
             key: 'title'
         },
         {
-            title: 'Tipo',
-            dataIndex: 'type',
-            key: 'type'
-        },
-        {
             title: 'Orden',
             dataIndex: 'order',
             render: (item) => item + 1
         },
         {
-            title: 'No. respuestas',
-            dataIndex: 'answer_set',
-            render: (item) => item?.length || '0'
-        },
-        {
             title: 'Acciones',
             width: 80,
             render: (item) => (
-                <Dropdown placement='bottomLeft' overlay={<MenuItem item={item}/>}>
+                <Dropdown placement='bottomLeft' overlay={<MenuItem item={item} />}>
                     <Button size='small'>
-                        <EllipsisOutlined/>
+                        <EllipsisOutlined />
                     </Button>
                 </Dropdown>
             )
@@ -102,8 +92,8 @@ const TableQuestions = ({
             size='small'
             columns={columns}
             className='ant-table-colla'
-            dataSource={list_questions?.results}
-            loading={load_questions}
+            dataSource={list_answers?.results}
+            loading={load_answers}
             pagination={{
                 hideOnSinglePage: true,
                 showSizeChanger: true,
@@ -115,8 +105,8 @@ const TableQuestions = ({
 const mapState = (state) => {
     return {
         currentNode: state.userStore.current_node,
-        list_questions: state.kuizStore.list_questions,
-        load_questions: state.kuizStore.load_questions,
+        list_answers: state.kuizStore.list_answers,
+        load_answers: state.kuizStore.load_answers,
         kuiz_filters: state.kuizStore.kuiz_filters
     }
 }
@@ -124,4 +114,4 @@ const mapState = (state) => {
 export default connect(
     mapState, {
 }
-)(TableQuestions);
+)(TableAnswers);

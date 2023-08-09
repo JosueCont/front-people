@@ -149,7 +149,7 @@ const TableAssessments = ({
                     query: {assessment: item.id, ...router.query }
                 })}
             >
-                Agregar sección
+                Ver secciones
             </Menu.Item>
         </Menu>
     )
@@ -215,7 +215,7 @@ const TableAssessments = ({
                 // rowSelection={rowSelection}
                 loading={load_assessments}
                 pagination={{
-                    hideOnSinglePage: false,
+                    hideOnSinglePage: true,
                     showSizeChanger: true,
                 }}
             />
