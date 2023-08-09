@@ -104,7 +104,7 @@ const FormPatronalRegistration = ({
             <Input />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22}>
+        {/* <Col lg={6} xs={22}>
           <Form.Item
             name="subsidy_reimbursement_agreement"
             label="Convenio de reembolso de subsidio"
@@ -112,7 +112,7 @@ const FormPatronalRegistration = ({
           >
             <Input />
           </Form.Item>
-        </Col>
+        </Col> */}
         <Col lg={6} xs={22}>
           <Form.Item
             name="phone"
@@ -122,11 +122,11 @@ const FormPatronalRegistration = ({
             <Input maxLength={10} />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22}>
+        {/* <Col lg={6} xs={22}>
           <Form.Item name="type_contribution" label="Tipo de contribución">
             <Input />
           </Form.Item>
-        </Col>
+        </Col> */}
         <Col lg={6} xs={22}>
           <Form.Item  name='setup_period' label="Periodo">
             <DatePicker

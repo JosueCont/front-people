@@ -1,20 +1,17 @@
+import { useState } from "react";
 import { optionsStatusVacation } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { setUserFiltersData } from "../../../redux/UserDuck";
 
 export const useFiltersRequests = () => {
     
     const dispatch = useDispatch();
-
-    const listKeys = {
-        person__id: 'Colaborador',
-        immediate_supervisor: 'Jefe inmediato',
-        status__in: 'Estatus',
-        period: 'Periodo',
-        range: 'Fechas'
-    }
+    const [loading, setLoading] = useState({
+        person__id: true,
+        immediate_supervisor: true
+    });
 
     const getDate = (value) => {
         let dates = value.split(',');
@@ -37,12 +34,15 @@ export const useFiltersRequests = () => {
 
     const getPerson = async (id, key) => {
         try {
+            setLoading(prev =>({...prev, [key]: true}))
             let response = await WebApiPeople.getPerson(id);
             let value = {[key]: response.data};
             dispatch(setUserFiltersData(value))
+            setLoading(prev =>({...prev, [key]: false}))
             return getFullName(response.data);
         } catch (e) {
             console.log(e)
+            setLoading(prev =>({...prev, [key]: false}))
             return id;
         }
     }
@@ -61,21 +61,33 @@ export const useFiltersRequests = () => {
         immediate_supervisor: getPerson,
     }
 
-    const listGets = {
-        range: getDate,
-        status__in: getStatusList,
-        period: getPeriod
-    }
-
-    const listDelete = {
-        person__id: deleteState,
-        immediate_supervisor: deleteState
+    const listKeys = {
+        person__id: {
+            name: 'Colaborador',
+            delete: deleteState,
+            loading: loading['person__id']
+        },
+        immediate_supervisor: {
+            name: 'Jefe inmediato',
+            delete: deleteState,
+            loading: loading['immediate_supervisor']
+        },
+        status__in: {
+            name: 'Estatus',
+            get: getStatusList
+        },
+        period: {
+            name: 'Periodo',
+            get: getPeriod
+        },
+        range: {
+            name: 'Fechas',
+            get: getDate
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     }
 }

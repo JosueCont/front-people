@@ -7,6 +7,8 @@ export const enus = {
     'dashboard.anniversary':'Anniversaries',
     'dashboard.predominant':'Predominant',
     'dashboard.birthdaymonth':'Birthday of the month',
+    'dashboard.payrollcalendar':'Payroll calendar',
+    'dashboard.patronalreg':'Patrional Reg.',
     'dashboard.totalpeople':'Total people',
     ...errorMessage,
     ...generalTex

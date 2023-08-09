@@ -21,7 +21,7 @@ const SearchCenters = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFiltersCenters();
+    const { listKeys } = useFiltersCenters();
 
     const setFilters = (filters = {}) => router.replace({
         pathname: '/timeclock/centers',
@@ -55,7 +55,7 @@ const SearchCenters = ({
         let node = router.query?.node;
         if (!node) return { 'Empresa': currentNode?.name };
         if (node == 'all') return { 'Empresa': 'Todas' };
-        return { 'Empresa': listGets['node'](node) };
+        return { 'Empresa': listKeys['node'].get(node) };
     }, [currentNode, router.query?.node, list_companies])
 
     return (
@@ -90,7 +90,6 @@ const SearchCenters = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             discardKeys={['node']}
                             defaultFilters={defaultFilters}
                         />

@@ -22,7 +22,7 @@ const SearchAssign = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listGets } = useFitersAssign();
+    const { listKeys } = useFitersAssign();
     //Keys para las estadísticas
     const toAnswerKey = 'Por contestar';
     const answeredKey = 'Contestados';
@@ -147,7 +147,6 @@ const SearchAssign = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             discardKeys={discardKeys}
                             defaultFilters={statistics}
                         />

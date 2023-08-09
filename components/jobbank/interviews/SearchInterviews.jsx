@@ -33,7 +33,7 @@ const SearchInterviews = ({
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
-    const { listKeys, listGets, listAwait, listDelete } = useFiltersInterviews();
+    const { listKeys, listAwait } = useFiltersInterviews();
     const { fetchAction, googleCalendar, createData, token } = useContext(InterviewContext);
 
     const actionCreate = async (values) =>{
@@ -135,9 +135,7 @@ const SearchInterviews = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listGets={listGets}
                             listAwait={listAwait}
-                            listDelete={listDelete}
                             discardKeys={discardKeys}
                         />
                     </Col>  

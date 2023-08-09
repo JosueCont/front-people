@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MainLayout from "../../layout/MainInter";
 import {
   Row,
@@ -43,6 +43,7 @@ import {
   ClearOutlined,
   SearchOutlined,
   DeleteOutlined,
+  FilePdfOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -72,6 +73,10 @@ import NumericInput from "../../components/inputNumeric";
 import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
 import SelectCollaboratorItemForm from '../../components/selects/SelectCollaboratorItemForm'
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { useReactToPrint } from 'react-to-print';
+
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -107,6 +112,19 @@ const CalculatePayroll = ({ ...props }) => {
   const [totalPerceptions, setTotalPerceptions] = useState(null);
   const [downloading, setDownloading] = useState(false)
   const [totalDeductions, setTotalDeductions] = useState(null);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([])
+  const [defaultSize, setDefaultSize] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [exportTable, setExportTable] = useState(false)
+  const [isPrinting, setIsPrinting] = useState(false);
+
+
+  const componentRef = useRef();
+  const promiseResolveRef = useRef(null);
+
+
+
+
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -1292,6 +1310,74 @@ const CalculatePayroll = ({ ...props }) => {
     </Menu>
   )
 
+  useEffect(() => {
+    if (isPrinting && promiseResolveRef.current) {
+      // Resolves the Promise, letting `react-to-print` know that the DOM updates are completed
+      promiseResolveRef.current();
+    }
+  }, [isPrinting]);
+  
+  const exportPdf = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setDefaultSize(10000)
+        let keys = payroll.map((item) => {
+          return item.key;
+        })
+        setExpandedRowKeys(keys)  
+        promiseResolveRef.current = resolve;
+        setIsPrinting(true);
+      });
+    },
+    onAfterPrint: () => {
+      // Reset the Promise resolve so we can print again
+      promiseResolveRef.current = null;
+      setIsPrinting(false);
+      setDefaultSize(10)
+      setExpandedRowKeys([])  
+    }
+  });
+
+  const _exportPdf = () => {
+    
+
+    /* setDefaultSize(5)
+
+    let nPages = payroll.length / 5
+
+    let keys = payroll.map((item) => {
+      return item.key;
+    })
+    let prevPage = {...currentPage}
+    
+    const pdf = new jsPDF({ format : 'legal' });
+    setExpandedRowKeys(keys)  
+    for (let index = 0; index < nPages; index++) {
+      setExportTable(true)
+      setTimeout(() => {
+        setCurrentPage(index+1)  
+      }, 1000);
+      
+      
+      let input = document.querySelector(".ant-table-content")
+      html2canvas(input)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', 2, 0, 210, 350);
+        
+      });
+    }
+
+    
+
+    setTimeout(() => {
+      pdf.save("download.pdf");  
+      setDefaultSize(10)
+      setExpandedRowKeys([])
+    }, 5000) */
+    
+  }
 
   
 
@@ -1391,6 +1477,21 @@ const CalculatePayroll = ({ ...props }) => {
         "No se encontraron resultados",
         setDownloading
       )
+    }else if(key === 'accounting_policy_simple'){
+      downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/accounting-policy-report`,
+        `Poliza contable_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        "POST",
+        {
+          "node__id": props?.currentNode?.id,
+          "payment_periods": [periodSelected.id],
+          "type": "ACCOUNTING_POLICY_SIMPLE" 
+        },
+        "No se encontraron resultados",
+        setDownloading
+      )
     }
   }
 
@@ -1414,6 +1515,11 @@ const CalculatePayroll = ({ ...props }) => {
             <Menu.Item key={'raya'}>
               <a>
                 Hoja de raya
+              </a>
+            </Menu.Item>
+            <Menu.Item key={'accounting_policy_simple'}>
+              <a>
+                Poliza contable
               </a>
             </Menu.Item>
           </>
@@ -1577,11 +1683,12 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={5}>
                           {
                             step < 2 && <Button
+                                  loading={downloading}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
                                   onClick={() => {
-                                    downLoadFileBlob(
+                                    downLoadFileBlobAwait(
                                         `${getDomain(
                                             API_URL_TENANT
                                         )}/payroll/payroll-calculus`,
@@ -1595,7 +1702,9 @@ const CalculatePayroll = ({ ...props }) => {
                                             item.person_id = item.person.id;
                                             return item;
                                           }),
-                                        }
+                                        },
+                                        "",
+                                        setDownloading
                                     );
                                   }}
                               >
@@ -1683,204 +1792,220 @@ const CalculatePayroll = ({ ...props }) => {
                   }}
                 >
                   <Row
-                    justify="start"
+                    justify="space-between"
                     gutter={20}
                     style={{
                       textAlign: "center",
                       padding: "20px",
                     }}
                   >
-                    <Col>
-                    <Dropdown overlay={downloads_options} placement="bottomLeft">
-                      <Button size="large"
-                        block
-                        htmlType="button"
-                        icon={<FileExcelOutlined />}
-                        loading={downloading}
-                        >
-                        Descargar
-                      </Button>
-                    </Dropdown>
-                    </Col>
-                    {payroll.length > 0 && !genericModal && (
-                      <>
+                    <Col flex="auto">
+                      <Row gutter={10}>
+                        <Col>
+                          <Dropdown overlay={downloads_options} placement="bottomLeft">
+                            <Button size="large"
+                              block
+                              htmlType="button"
+                              icon={<FileExcelOutlined />}
+                              loading={downloading}
+                              >
+                              Descargar
+                            </Button>
+                          </Dropdown>
+                        </Col>
+                        {payroll.length > 0 && !genericModal && (
+                          <>
 
-                        {step == 0 && calculate && (
-                          <Col md={4}  style={{ minWidth: "200px" }}>
+                            {step == 0 && calculate && (
+                              <Col md={4}  style={{ minWidth: "200px" }}>
+                                <Button
+                                  size="large"
+                                  block
+                                  htmlType="button"
+                                  onClick={() => reCalculatePayroll([...payroll])}
+                                >
+                                  Calcular
+                                </Button>
+                              </Col>
+                            )}
+                            {step == 2 &&
+                              consolidated &&
+                              consolidated.status <= 2 && (
+                                <Col
+                                  md={4}
+                                >
+                                  <Button
+                                    size="large"
+                                    block
+                                    icon={<UnlockOutlined />}
+                                    htmlType="button"
+                                    onClick={() =>
+                                      setMessageModal(5, {
+                                        title: "Abrir nómina",
+                                        description:
+                                          "Al abrir la nómina tendrás acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el cual se abrirá.",
+                                        type_alert: "warning",
+                                        action: () => openPayroll(1),
+                                        title_action_button: "Abrir nómina",
+                                        components: (
+                                          <>
+                                            <Row
+                                              gutter={20}
+                                              style={{
+                                                width: "100%",
+                                                marginTop: "5px",
+                                              }}
+                                            >
+                                              <Input.TextArea
+                                                maxLength={290}
+                                                id="motive"
+                                                placeholder="Capture el motivo de reapertura."
+                                              />
+                                            </Row>
+                                          </>
+                                        ),
+                                      })
+                                    }
+                                  >
+                                    Abrir
+                                  </Button>
+                                </Col>
+                              )}
+                            {step >= 1 && (
+                              <>
+                                {((isOpen &&
+                                  consolidated &&
+                                  (consolidated.status <= 2 ||
+                                    consolidated.status == 6)) ||
+                                  (isOpen && !consolidated)) && (
+                                  <Col  >
+                                    <Button
+                                      size="large"
+                                      block
+                                      icon={<LockOutlined />}
+                                      htmlType="button"
+                                      onClick={() => setMessageModal(2)}
+                                    >
+                                      Cerrar nómina
+                                    </Button>
+                                  </Col>
+                                )}
+                                {/*  Reiniciar Nomina consolidada no timbrada */}
+                                {(step == 1 || step == 2) &&
+                                  consolidated &&
+                                  consolidated.status == 1 && (
+                                  <Col >
+                                    <Button
+                                      size="large"
+                                      block
+                                      icon={<ClearOutlined />}
+                                      htmlType="button"
+                                      onClick={() =>
+                                        setMessageModal(6, {
+                                          title: "Reiniciar Nómina",
+                                          description:
+                                            "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
+                                          type_alert: "warning",
+                                          action: () => deletePayroll(consolidated.id),
+                                          title_action_button: "Reiniciar nómina",                                     
+                                        })
+                                      }
+                                    >
+                                      Reiniciar Nomina
+                                    </Button>
+                                  </Col>
+                                )}
+
+                                {step == 2 &&
+                                  consolidated &&
+                                  consolidated.status < 3 && (
+                                    <Col >
+                                      <Button
+                                        size="large"
+                                        block
+                                        icon={<FileDoneOutlined />}
+                                        htmlType="button"
+                                        onClick={() => setMessageModal(3)}
+                                      >
+                                        Timbrar nómina
+                                      </Button>
+                                    </Col>
+                                  )}
+                                {step == 3 && (
+                                  <Col
+                                  >
+                                    <Button
+                                      size="large"
+                                      block
+                                      icon={<StopOutlined />}
+                                      htmlType="button"
+                                      onClick={() =>
+                                        setMessageModal(5, {
+                                          title: "Cancelar nómina",
+                                          description:
+                                            "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                          type_alert: "warning",
+                                          action: () => cancelStamp(),
+                                          title_action_button: "Cancelar nómina",
+                                          components: (
+                                            <>
+                                              <Row
+                                                style={{
+                                                  width: "100%",
+                                                  marginTop: "5px",
+                                                }}
+                                              >
+                                                <Input.TextArea
+                                                  maxLength={290}
+                                                  id="motive"
+                                                  placeholder="Capture el motivo de cancelacion."
+                                                />
+                                              </Row>
+                                            </>
+                                          ),
+                                        })
+                                      }
+                                    >
+                                      Cancelar todos los cfdis
+                                    </Button>
+                                  </Col>
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+                        {
+                          consolidated &&
+                          (consolidated.status <= 3 || consolidated.status >= 6 ) &&
+                          step >= 2 && calendarSelect.bank_dispersion &&
+                          <Col>
                             <Button
                               size="large"
                               block
                               htmlType="button"
-                              onClick={() => reCalculatePayroll([...payroll])}
+                              onClick={() => generateDispersion()}
+                              loading={downloading}
                             >
-                              Calcular
+                              Generar dispersión
                             </Button>
                           </Col>
-                        )}
-                        {step == 2 &&
-                          consolidated &&
-                          consolidated.status <= 2 && (
-                            <Col
-                              md={4}
-                            >
-                              <Button
-                                size="large"
-                                block
-                                icon={<UnlockOutlined />}
-                                htmlType="button"
-                                onClick={() =>
-                                  setMessageModal(5, {
-                                    title: "Abrir nómina",
-                                    description:
-                                      "Al abrir la nómina tendrás acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el cual se abrirá.",
-                                    type_alert: "warning",
-                                    action: () => openPayroll(1),
-                                    title_action_button: "Abrir nómina",
-                                    components: (
-                                      <>
-                                        <Row
-                                          gutter={20}
-                                          style={{
-                                            width: "100%",
-                                            marginTop: "5px",
-                                          }}
-                                        >
-                                          <Input.TextArea
-                                            maxLength={290}
-                                            id="motive"
-                                            placeholder="Capture el motivo de reapertura."
-                                          />
-                                        </Row>
-                                      </>
-                                    ),
-                                  })
-                                }
-                              >
-                                Abrir
-                              </Button>
-                            </Col>
-                          )}
-                        {step >= 1 && (
-                          <>
-                            {((isOpen &&
-                              consolidated &&
-                              (consolidated.status <= 2 ||
-                                consolidated.status == 6)) ||
-                              (isOpen && !consolidated)) && (
-                              <Col md={4} >
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<LockOutlined />}
-                                  htmlType="button"
-                                  onClick={() => setMessageModal(2)}
-                                >
-                                  Cerrar nómina
-                                </Button>
-                              </Col>
-                            )}
-                            {/*  Reiniciar Nomina consolidada no timbrada */}
-                            {(step == 1 || step == 2) &&
-                              consolidated &&
-                              consolidated.status == 1 && (
-                              <Col md={4} >
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<ClearOutlined />}
-                                  htmlType="button"
-                                  onClick={() =>
-                                    setMessageModal(6, {
-                                      title: "Reiniciar Nómina",
-                                      description:
-                                        "Al reiniciar la nómina se perderá la información del cálculo de éste periodo pero podrás calcularlo nuevamente ",
-                                      type_alert: "warning",
-                                      action: () => deletePayroll(consolidated.id),
-                                      title_action_button: "Reiniciar nómina",                                     
-                                    })
-                                  }
-                                >
-                                  Reiniciar Nomina
-                                </Button>
-                              </Col>
-                            )}
-
-                            {step == 2 &&
-                              consolidated &&
-                              consolidated.status < 3 && (
-                                <Col >
-                                  <Button
-                                    size="large"
-                                    block
-                                    icon={<FileDoneOutlined />}
-                                    htmlType="button"
-                                    onClick={() => setMessageModal(3)}
-                                  >
-                                    Timbrar nómina
-                                  </Button>
-                                </Col>
-                              )}
-                            {step == 3 && (
-                              <Col
-                              >
-                                <Button
-                                  size="large"
-                                  block
-                                  icon={<StopOutlined />}
-                                  htmlType="button"
-                                  onClick={() =>
-                                    setMessageModal(5, {
-                                      title: "Cancelar nómina",
-                                      description:
-                                        "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
-                                      type_alert: "warning",
-                                      action: () => cancelStamp(),
-                                      title_action_button: "Cancelar nómina",
-                                      components: (
-                                        <>
-                                          <Row
-                                            style={{
-                                              width: "100%",
-                                              marginTop: "5px",
-                                            }}
-                                          >
-                                            <Input.TextArea
-                                              maxLength={290}
-                                              id="motive"
-                                              placeholder="Capture el motivo de cancelacion."
-                                            />
-                                          </Row>
-                                        </>
-                                      ),
-                                    })
-                                  }
-                                >
-                                  Cancelar todos los cfdis
-                                </Button>
-                              </Col>
-                            )}
-                          </>
-                        )}
-                      </>
-                    )}
-                    {
-                      consolidated &&
-                      (consolidated.status <= 3 || consolidated.status >= 6 ) &&
-                      step >= 2 && calendarSelect.bank_dispersion &&
-                      <Col>
-                        <Button
-                          size="large"
-                          block
-                          htmlType="button"
-                          onClick={() => generateDispersion()}
-                          loading={downloading}
+                        }
+                      </Row>
+                    </Col>
+                    <Col>
+                      <Button size="large"
+                        htmlType="button"
+                        icon={<FilePdfOutlined />}
+                        loading={downloading}
+                        onClick={() => exportPdf()}
                         >
-                          Generar dispersión
-                        </Button>
+                        Exportar
+                      </Button>
+                          
                       </Col>
-                    }
                   </Row>
                 </div>
+                
                 {previousStep && (
                   <Button
                     style={{ margin: "8px" }}
@@ -1900,6 +2025,7 @@ const CalculatePayroll = ({ ...props }) => {
               </div>
 
               <Col span={24}>
+              <div ref={componentRef}>
                 <Card className="card_table">
                   {step == 3 ? (
                     <CfdiVaucher
@@ -1910,6 +2036,8 @@ const CalculatePayroll = ({ ...props }) => {
                       department={department}
                       job={job}
                       clickCancelStamp={cancelOneStamp}
+                      movementType={'0'}
+                      pageSize={defaultSize}
                     />
                   ) : (
                     <>
@@ -1921,18 +2049,21 @@ const CalculatePayroll = ({ ...props }) => {
                         })}
                         columns={persons}
                         expandable={{
+                          expandedRowKeys: expandedRowKeys,
+                          onExpandedRowsChange: (rows) => setExpandedRowKeys(rows),
                           expandedRowRender: (item) =>
                             renderConceptsTable(item),
-                          expandIcon: ({ expanded, onExpand, record }) =>
-                            expanded ? (
-                              <DownOutlined
-                                onClick={(e) => onExpand(record, e)}
-                              />
-                            ) : (
-                              <RightOutlined
-                                onClick={(e) => onExpand(record, e)}
-                              />
-                            ),
+                            expandIcon: ({ expanded, onExpand, record }) =>
+                              expanded ? (
+                                <DownOutlined
+                                  onClick={(e) => onExpand(record, e)}
+                                />
+                              ) : (
+                                <RightOutlined
+                                  onClick={(e) => onExpand(record, e)}
+                                />
+                              ),
+                          
                         }}
                         hideExpandIcon
                         loading={loading}
@@ -1945,6 +2076,12 @@ const CalculatePayroll = ({ ...props }) => {
                           consolidated && step > 1 && (consolidated.status <= 3 || consolidated.status == 6)
                             ? rowSelectionPerson
                             : null
+                        }
+                        pagination={
+                          {
+                            pageSize: defaultSize,
+                            hideOnSinglePage: defaultSize > 100 ? true: false,
+                          }
                         }
                       />
                       {totalPerceptions != null && totalDeductions != null ? (
@@ -2020,6 +2157,7 @@ const CalculatePayroll = ({ ...props }) => {
                     </>
                   )}
                 </Card>
+              </div>
               </Col>
             </>
           )}

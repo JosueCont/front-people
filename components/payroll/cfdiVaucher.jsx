@@ -320,6 +320,7 @@ const CfdiVaucher = ({
       if (department) filter = filter + `&department=${department}`;
       if (job) filter = filter + `&job=${job}`;
       if (movementType) filter = filter + `&movement_type=${movementType}`;
+      
       getVoucher(filter);
     }
   }, [router.query]);
@@ -380,6 +381,7 @@ const CfdiVaucher = ({
   };
 
   const getVoucher = (data, new_page) => {
+    
     data = data + generate_url(new_page);
 
     setLoading(true);
@@ -396,7 +398,7 @@ const CfdiVaucher = ({
       })
       .catch((error) => {
         message.error(messageError);
-        console.log(error);
+        
         setLoading(false);
       });
   };
@@ -414,9 +416,9 @@ const CfdiVaucher = ({
     getVoucher(`&node=${props.currentNode.id}`, 1);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     getVoucher(`&node=${props.currentNode.id}`, 1);
-  }, [props.currentNode])
+  }, [props.currentNode]) */
   
 
   useEffect(() => {
@@ -479,7 +481,7 @@ const CfdiVaucher = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col md={3} xs={12}>
+                <Col md={4} xs={12}>
                   <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendarSelect(value)}
                     name="calendar"
@@ -487,18 +489,17 @@ const CfdiVaucher = ({
                   />
                 </Col>
                 {calendarSelect && (
-                  <Col md={3} xs={12}>
+                  <Col md={4} xs={12}>
                     <Form.Item name="period" label="Periodo">
                       <Select
                         options={periods}
-                        style={{ width: 250 }}
                         placeholder="Periodo"
                         allowClear
                       />
                     </Form.Item>
                   </Col>
                 )}
-                <Col md={3} xs={12}>
+                <Col md={4} xs={12}>
                   <SelectCollaborator  showSearch={true} name="person" style={{width:'100%'}}  />
                 </Col>
                 {!calendarSelect && (
@@ -581,13 +582,18 @@ const CfdiVaucher = ({
                 marginTop: 10,
               }}
             >
-              <Pagination
-                current={currentPage}
-                total={lenData}
-                onChange={pagination}
-                showSizeChanger={false}
-                // defaultPageSize={10}
-              />
+              {
+                props.pageSize < 100 &&
+                  <Pagination
+                  pageSize={props.pageSize? props.pageSize : 10}
+                  current={currentPage}
+                  total={lenData}
+                  onChange={pagination}
+                  showSizeChanger={false}
+                  // defaultPageSize={10}
+                />
+              }
+              
             </Col>
           )}
         </Row>

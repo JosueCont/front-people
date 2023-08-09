@@ -36,7 +36,7 @@ import {FormattedMessage} from "react-intl";
 import React, { useState } from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
-import MainIndexConfig from "../../../components/config/MainConfig";
+import MainConfig from "../../../components/config/MainConfig";
 import ModalUploadCatalog from '../../../components/catalogs/ModalUploadCatalog'
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { API_URL_TENANT } from "../../../config/config";
@@ -76,7 +76,7 @@ const configBusiness = ({ ...props }) => {
 
   return (
     <>
-      <MainIndexConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
+      <MainConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
         <div
           className="site-layout-background"
           style={{ minHeight: 380, height: "100%" }}
@@ -100,7 +100,7 @@ const configBusiness = ({ ...props }) => {
                   </Space>
                 </Col>
               </Row>
-              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"}>
+              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
@@ -202,20 +202,21 @@ const configBusiness = ({ ...props }) => {
                   key="tab_6"
                 >
                   <Tabs defaultActiveKey="1" type="card" size={"small"}>
-                    <TabPane tab="Plazas" key={"1"}>
+                    <TabPane tab="Niveles" key={"1"}>
+                      <Levels
+                          style={{ marginTop: "10px" }}
+                          currentNode={props.currentNode}
+                          doCompanySelectedCatalog={doCompanySelectedCatalog}
+                      />
+                    </TabPane>
+                    <TabPane tab="Plazas" key={"2"}>
                       <WorkTitle
                         style={{ marginTop: "10px" }}
                         currentNode={props.currentNode}
                         doCompanySelectedCatalog={doCompanySelectedCatalog}
                       />
                     </TabPane>
-                    <TabPane tab="Niveles" key={"2"}>
-                      <Levels
-                        style={{ marginTop: "10px" }}
-                        currentNode={props.currentNode}
-                        doCompanySelectedCatalog={doCompanySelectedCatalog}
-                      />
-                    </TabPane>
+
                   </Tabs>
                 </TabPane>
                 <TabPane
@@ -302,13 +303,12 @@ const configBusiness = ({ ...props }) => {
                   
                   />
                 </TabPane>
-                )
               </Tabs>
             </>
           </Card>
         </div>
         <ModalUploadCatalog isVisible={showModal} setIsVisible={setShowModal} node={props.currentNode && props.currentNode} />
-      </MainIndexConfig>
+      </MainConfig>
     </>
   );
 };

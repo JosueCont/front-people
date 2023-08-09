@@ -5,6 +5,7 @@ import React, {
     useCallback
 } from 'react';
 import MyModal from '../../../common/MyModal';
+import { getWorkTitle } from '../../../redux/catalogCompany';
 import {
     Button,
     Form,
@@ -17,10 +18,12 @@ import {
     DatePicker,
     Drawer,
     Switch,
-    message
+    message,
+    Popconfirm,
+    Spin
 } from 'antd';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     ruleRequired,
     nameLastname,
@@ -37,6 +40,9 @@ import {
 } from '../../../utils/constant';
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../utils/SelectPeople';
+import { PlusOneOutlined } from '@material-ui/icons';
+import { PlusOutlined } from '@ant-design/icons';
+import SelectWorkTitle from '../../selects/SelectWorkTitle';
 
 const ModalPeople = ({
     visible = false,
@@ -50,6 +56,10 @@ const ModalPeople = ({
         general_config,
         applications
     } = useSelector(state => state.userStore);
+
+
+    const dispatch = useDispatch();
+
     const {
         cat_job,
         cat_groups,
@@ -63,6 +73,11 @@ const ModalPeople = ({
     const [txtError, setTxtError] = useState(null);
     const [payrollActive, setPayrollActive] = useState(true);
 
+    // No se usan los states
+    // const [searchValue, setSearchValue] = useState(null)
+    // const [workTitleFocus, setWorkTitleFocus] = useState(false)
+    // const [optionsWorkPlace, setOptionsWorkPlace] = useState([])
+
     const idSuperivor = Form.useWatch('immediate_supervisor', formPeople);
     const idSubstitute = Form.useWatch('substitute_immediate_supervisor', formPeople);
     const idDepartment = Form.useWatch('person_department', formPeople);
@@ -73,6 +88,7 @@ const ModalPeople = ({
     const actionCreate = async (values) => {
         try {
             setLoading(true)
+
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
@@ -99,7 +115,7 @@ const ModalPeople = ({
             formPeople.setFields([{ name: 'passwordTwo', errors }]);
             return;
         }
-        if(values.groups) values.groups = [values.groups];
+        if (values.groups) values.groups = [values.groups];
         values.birth_date = values.birth_date ? values.birth_date?.format(format) : null;
         actionCreate(values)
     }
@@ -139,23 +155,49 @@ const ModalPeople = ({
         }
     })
 
-    const optionsWorkPlace = useMemo(() => {
-        if (!idDepartment || !idJob) return [];
-        let places = cat_work_title.filter(item => !item?.person);
-        const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
-        return places.filter(filter_);
-    }, [idDepartment, idJob])
+    // const reloadOptionsWorkPlaces = () => {
+    //     if (!idDepartment || !idJob) return [];
+    //     let places = cat_work_title.filter(item => !item?.person);
+    //     const filter_ = (item) => item.department?.id === idDepartment && item.job.id === idJob;
+    //     let list = places.filter(filter_)
+    //     setOptionsWorkPlace(list)
+    // }
 
-    const optionsSupervisor = (options) =>{
-        if(!idSubstitute) return options;
+    // Se sustiye por el onChange del select
+    // useEffect(() => {
+    //     reloadOptionsWorkPlaces()
+    //     formPeople.setFieldsValue({ 'work_title_id': null })
+    // }, [idDepartment, idJob])
+
+    // Las opciones no se usan aqui
+    // useEffect(() => {
+    //     reloadOptionsWorkPlaces()
+    // }, [cat_work_title])
+
+    useEffect(() => {
+        if (cat_groups.length === 1) {
+            formPeople.setFieldsValue({ 'groups': cat_groups[0].id })
+        }
+    }, [cat_groups])
+
+    const optionsSupervisor = (options) => {
+        if (!idSubstitute) return options;
         const filter_ = item => item.id !== idSubstitute;
         return options.filter(filter_);
     }
 
-    const optionsSubstitute = (options) =>{
+    const optionsSubstitute = (options) => {
         if (!idSuperivor) return options;
         const filter_ = item => item.id !== idSuperivor;
         return options.filter(filter_);
+    }
+
+    const onChangeDepartment = () =>{
+        formPeople.setFieldsValue({work_title_id: null})
+    }
+
+    const onChangeJob = () =>{
+        formPeople.setFieldsValue({work_title_id: null})
     }
 
     return (
@@ -187,7 +229,7 @@ const ModalPeople = ({
                     </Button>
                     <Button
                         htmlType='submit'
-                        loading={loading}
+                        loading={loading === true}
                         form='form_people'
                     >
                         Guardar
@@ -267,26 +309,30 @@ const ModalPeople = ({
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={8}>
-                        <Form.Item
-                            name='person_type'
-                            label='Tipo de persona'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
+                    {
+                        cat_person_type?.length > 0 &&
+                        <Col span={8}>
+                            <Form.Item
+                                name='person_type'
+                                label='Tipo de persona'
                             >
-                                {cat_person_type?.length > 0 && cat_person_type.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder='Seleccionar una opción'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                >
+                                    {cat_person_type?.length > 0 && cat_person_type.map(item => (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    }
+
                     <Col span={8}>
                         <Form.Item
                             name='person_department'
@@ -298,6 +344,7 @@ const ModalPeople = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeDepartment}
                             >
                                 {cat_departments?.length > 0 && cat_departments.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -318,6 +365,7 @@ const ModalPeople = ({
                                 placeholder='Seleccionar una opción'
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
+                                onChange={onChangeJob}
                             >
                                 {cat_job.length > 0 && cat_job.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
@@ -328,27 +376,17 @@ const ModalPeople = ({
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item
+                        <SelectWorkTitle
                             name='work_title_id'
-                            label='Plaza laboral'
+                            viewLabel={true}
+                            department={idDepartment}
+                            job={idJob}
+                            labelText='Plaza laboral'
                             dependencies={['person_department', 'job']}
-                            rules={[optionsWorkPlace?.length > 0 ? ruleRequired : {}]}
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={optionsWorkPlace?.length <= 0}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {optionsWorkPlace.length > 0 && optionsWorkPlace.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
+                            placeholder='Seleccionar una opción'
+                            disabled={!idDepartment || !idJob}
+                        />
                     </Col>
                     <Col span={8}>
                         <Form.Item

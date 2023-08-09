@@ -3,23 +3,26 @@ import { getValueFilter } from "../../../utils/functions"
 
 export const useFitersAssign = () =>{
 
-    const listKeys = {
-        name_assessment: 'Nombre',
-        status_apply: 'Estatus',
-        date_finish: 'Fecha fin'
-    }
-
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusApply,
         keyEquals: 'value',
         keyShow: 'label'
     })
-
-    const listGets = {
-        status_apply: getStatus
+    
+    const listKeys = {
+        name_assessment: {
+            name: 'Nombre'
+        },
+        status_apply: {
+            name: 'Estatus',
+            get: getStatus
+        },
+        date_finish: {
+            name: 'Fecha fin'
+        }
     }
 
-    return { listKeys, listGets }
+    return { listKeys }
 
 }

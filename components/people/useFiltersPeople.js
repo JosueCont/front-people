@@ -4,6 +4,7 @@ import { getValueFilter } from "../../utils/functions";
 import { getFullName } from "../../utils/functions";
 import { setUserFiltersData } from "../../redux/UserDuck";
 import WebApiPeople from "../../api/WebApiPeople";
+import { useState } from "react";
 
 export const useFiltersPeople = () => {
 
@@ -13,18 +14,7 @@ export const useFiltersPeople = () => {
     } = useSelector(state => state.catalogStore)
 
     const dispatch = useDispatch();
-
-    const listKeys = {
-        first_name__icontains: 'Nombre',
-        flast_name__icontains: 'Apellido paterno',
-        mlast_name__icontains: 'Apellido materno',
-        code__icontains: 'No. empleado',
-        gender: 'Género',
-        department: 'Departamento',
-        job: 'Puesto',
-        immediate_supervisor: 'Jefe inmediato',
-        is_active: 'Estatus'
-    }
+    const [loading, setLoading] = useState(true);
 
     const getGender = (value) => getValueFilter({
         value,
@@ -45,12 +35,15 @@ export const useFiltersPeople = () => {
 
     const getSupervisor = async (id, key) => {
         try {
+            setLoading(true)
             let response = await WebApiPeople.getPerson(id);
             let value = { [key]: response.data };
             dispatch(setUserFiltersData(value));
+            setLoading(false)
             return getFullName(response.data);
         } catch (e) {
             console.log(e)
+            setLoading(false)
             return id;
         }
     }
@@ -66,21 +59,44 @@ export const useFiltersPeople = () => {
         immediate_supervisor: getSupervisor,
     }
 
-    const listGets = {
-        gender: getGender,
-        department: getDepartment,
-        job: getJob,
-        is_active: getStatus
-    }
-
-    const listDelete = {
-        immediate_supervisor: deleteState
+    const listKeys = {
+        first_name__icontains: {
+            name: 'Nombre'
+        },
+        flast_name__icontains: {
+            name: 'Apellido paterno'
+        },
+        mlast_name__icontains: {
+            name: 'Apellido materno'
+        },
+        code__icontains: {
+            name: 'No. empleado'
+        },
+        gender: {
+            name: 'Género',
+            get: getGender
+        },
+        department: {
+            name: 'Departamento',
+            get: getDepartment
+        },
+        job: {
+            name: 'Puesto',
+            get: getJob
+        },
+        immediate_supervisor: {
+            name: 'Jefe inmediato',
+            loading: loading,
+            delete: deleteState
+        },
+        is_active: {
+            name: 'Estatus',
+            get: getStatus
+        }
     }
 
     return {
         listKeys,
-        listGets,
-        listAwait,
-        listDelete
+        listAwait
     }
 }
