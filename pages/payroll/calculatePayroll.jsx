@@ -2038,6 +2038,7 @@ const CalculatePayroll = ({ ...props }) => {
                       clickCancelStamp={cancelOneStamp}
                       movementType={'0'}
                       pageSize={defaultSize}
+                      showAll={defaultSize > 100 ? true : false}
                     />
                   ) : (
                     <>
