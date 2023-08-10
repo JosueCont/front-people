@@ -44,6 +44,7 @@ const CfdiVaucher = ({
   department = null,
   job = null,
   movementType = null,
+  showAll=false,
   ...props
 }) => {
   const router = useRouter();
@@ -583,7 +584,7 @@ const CfdiVaucher = ({
               }}
             >
               {
-                props.pageSize < 100 &&
+                !showAll &&
                   <Pagination
                   pageSize={props.pageSize? props.pageSize : 10}
                   current={currentPage}
