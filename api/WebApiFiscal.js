@@ -109,6 +109,10 @@ class WebApiFiscal {
     );
   }
 
+  static addPostalCode(data) {
+    return WebApi.ApisType(`/fiscal/postal-code`, "post", data );
+  }
+
   static getCfdiVersion() {
     return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
