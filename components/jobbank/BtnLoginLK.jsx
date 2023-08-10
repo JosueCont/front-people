@@ -20,7 +20,7 @@ const BtnLoginLK = ({
             onSuccess(code);
             setCode(code);
         },
-        scope: 'r_emailaddress,openid,profile,w_member_social,email',
+        scope: 'openid,profile,w_member_social,email',
         onError: (error) => {
             console.log(error);
             setErrorMessage(error.errorMessage);

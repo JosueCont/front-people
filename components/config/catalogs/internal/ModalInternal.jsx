@@ -97,7 +97,6 @@ const ModalInternal = ({
                     is_holiday: false,
                     is_rest_day: false,
                     is_seventh_day: false,
-
                 }}
             >
                 <Row gutter={[24, 0]}>

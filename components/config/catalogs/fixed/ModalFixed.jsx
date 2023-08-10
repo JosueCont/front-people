@@ -70,6 +70,7 @@ const ModalFixed = ({
             info.perception_type = null;
             info.deduction_type = null;
         }
+        return info;
     }
 
     const onFinish = (values) => {
@@ -346,7 +347,7 @@ const ModalFixed = ({
                             label='Número de periodos'
                             dependencies={['application_mode']}
                             rules={[
-                                ruleRequired,
+                                applicationMode > 1 ?ruleRequired : {},
                                 {
                                     type: 'number',
                                     min: 1,

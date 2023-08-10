@@ -577,7 +577,7 @@ class WebApiPeople {
   }
 
   static sendFilesToAddPerson(data) {
-    return WebApi.ApisType("/business/add-person-from-cif/", "post", data);
+    return WebApi.ApisType("/business/add-massive-person-from-cif/", "post", data);
   }
 
   static validateKhor(data) {
