@@ -106,6 +106,7 @@ const SearchLevels = ({
             <Menu.Item
                 key='3'
                 icon={<SettingOutlined />}
+                disabled={isTree}
                 onClick={() => showModal()}
             >
                 Configurar filtros
@@ -113,6 +114,7 @@ const SearchLevels = ({
             <Menu.Item
                 key='4'
                 icon={<SyncOutlined />}
+                disabled={isTree}
                 onClick={() => deleteFilter()}
             >
                 Limpiar filtros
@@ -130,31 +132,33 @@ const SearchLevels = ({
                                 <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                     {title}
                                 </p>
-                                <Input.Group style={{ width: 200 }} compact>
-                                    <Input
-                                        allowClear
-                                        className='input-jb-clear'
-                                        placeholder='Búsqueda general'
-                                        value={valueSearch}
-                                        onChange={onChangeSearch}
-                                        onPressEnter={onGeneralSearch}
-                                        style={{
-                                            width: 'calc(100% - 32px)',
-                                            borderTopLeftRadius: '10px',
-                                            borderBottomLeftRadius: '10px'
-                                        }}
-                                    />
-                                    <button
-                                        className='ant-btn-simple'
-                                        onClick={() => onGeneralSearch()}
-                                        style={{
-                                            borderTopRightRadius: '10px',
-                                            borderBottomRightRadius: '10px'
-                                        }}
-                                    >
-                                        <SearchOutlined />
-                                    </button>
-                                </Input.Group>
+                                {!isTree && (
+                                    <Input.Group style={{ width: 200 }} compact>
+                                        <Input
+                                            allowClear
+                                            className='input-jb-clear'
+                                            placeholder='Búsqueda general'
+                                            value={valueSearch}
+                                            onChange={onChangeSearch}
+                                            onPressEnter={onGeneralSearch}
+                                            style={{
+                                                width: 'calc(100% - 32px)',
+                                                borderTopLeftRadius: '10px',
+                                                borderBottomLeftRadius: '10px'
+                                            }}
+                                        />
+                                        <button
+                                            className='ant-btn-simple'
+                                            onClick={() => onGeneralSearch()}
+                                            style={{
+                                                borderTopRightRadius: '10px',
+                                                borderBottomRightRadius: '10px'
+                                            }}
+                                        >
+                                            <SearchOutlined />
+                                        </button>
+                                    </Input.Group>
+                                )}
                             </div>
                             <div className='content-end' style={{ gap: 8 }}>
                                 {/* <Button
@@ -196,7 +200,7 @@ const SearchLevels = ({
                             discardKeys={['catalog', 'is_active', 'search', 'tree']}
                             deleteKeys={['catalog']}
                             listKeys={listKeys}
-                            defaultFilters={defaultFilters}
+                            defaultFilters={!isTree ? defaultFilters : {}}
                         />
                     </Col>
                 </Row>

@@ -13,7 +13,7 @@ import backdoorReducer from "./backdoorDuck";
 import jobBankReducer from "./jobBankDuck";
 import NotificationReducer from "./NotificationDuck";
 import timeclockReducer from "./timeclockDuck";
-import orgReducer from "./orgStructureDuck";
+import orgReducer from "./OrgStructureDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,

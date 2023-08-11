@@ -123,7 +123,7 @@ const ModalLevels = ({
 
         return {
             value: item?.id,
-            title: item?.name,
+            title: <GetName item={item}/>,
             children: results
         }
     }
@@ -158,7 +158,7 @@ const ModalLevels = ({
             ? item?.children?.map(map_) : [];
         return {
             value: item?.id,
-            title: item?.name,
+            title: <GetName item={item}/>,
             children
         }
     }

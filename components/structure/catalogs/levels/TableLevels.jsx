@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import {
     getOrgLevels,
     getOrgLevelsOptions
-} from '../../../../redux/orgStructureDuck';
+} from '../../../../redux/OrgStructureDuck';
 import {
     Table,
     Dropdown,
