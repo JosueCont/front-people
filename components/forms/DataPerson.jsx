@@ -672,7 +672,7 @@ const DataPerson = ({
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="immediate_supervisor"
-                  label="Jefe inmediato"
+                  label="Jefe inmediato / Autorizador concierge"
                 // rules={[validateImmediateSupervisor(person.id)]}
                 >
                   <Select
@@ -694,7 +694,7 @@ const DataPerson = ({
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato">
+                <Form.Item name="substitute_immediate_supervisor" label="Suplente de jefe inmediato / Autorizador concierge">
                   <Select showSearch optionFilterProp="children"
                     allowClear={true}
                     disabled={!id_supervisor}

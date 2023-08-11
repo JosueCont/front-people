@@ -116,7 +116,7 @@ const OptionsPeople = () => {
                 : cat_patronal_registration?.at(-1)?.id;
             let body = { node_id: current_node?.id, patronal_registration_id: id };
             let response = await WebApiPayroll.downloadConfronts(body);
-            downloadBLOB({ data: response.data, name: 'Confronta.xlsx' })
+            downloadBLOB({ data: response.data, name: `validacion_datos_imss_${current_node.name}.xlsx` })
         } catch (e) {
             console.log(e)
             message.error('No se encontró el documento de emisión')
@@ -185,7 +185,7 @@ const OptionsPeople = () => {
                             icon={<DownloadOutlined />}
                             onClick={() => handleConfronts()}
                         >
-                            Generar confronta
+                            Validación de datos IMSS
                         </Menu.Item>
                         <Menu.Item
                             key='8'

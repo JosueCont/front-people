@@ -198,7 +198,7 @@ const PreviewBulkUpload = ({ ...props }) => {
         if (dataUpload && dataUpload.length > 0) {
           const user_session = JSON.parse(jsCookie.get("token"));
           setLoading(true);
-          setDisabledButton(true);
+
           const data = {
             persons: dataUpload,
             type: templateType,
@@ -213,13 +213,18 @@ const PreviewBulkUpload = ({ ...props }) => {
               setMessageSave(response.data.message);
               message.info(response.data.message);
               setLoading(false);
+              setDisabledButton(true);
             })
             .catch((response) => {
               setLoading(false);
-              
               /* setDataUpload(response.data.persons);
               setMessageSave(response.data.message); */
-              message.error("Error al agregar, intente de nuevo");
+              if(response?.response?.data?.message){
+                message.error(response?.response?.data?.message)
+              }else{
+                message.error("Error al agregar, intente de nuevo");
+              }
+
             });
         } else {
           message.error("No se encontraron datos.");
@@ -242,7 +247,7 @@ const PreviewBulkUpload = ({ ...props }) => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify={"end"} style={{ padding: "1% 0" }}>
-          {!disabledButton && (
+          {!disabledButton  && (
             <Button
               onClick={savePersons}
               className={"ml-20"}
