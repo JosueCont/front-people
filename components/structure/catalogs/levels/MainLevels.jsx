@@ -10,7 +10,7 @@ import TableLevels from './TableLevels';
 import {
     getOrgLevels,
     getOrgLevelsOptions
-} from '../../../../redux/orgStructureDuck';
+} from '../../../../redux/OrgStructureDuck';
 import { getFiltersJB } from '../../../../utils/functions';
 import ModalLevels from './ModalLevels';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
