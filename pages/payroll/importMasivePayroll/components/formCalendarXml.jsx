@@ -1,4 +1,4 @@
-import { Row, Col, Form, Input,Collapse, Radio, Switch, Select, DatePicker } from "antd";
+import {Row, Col, Form, Input, Collapse, Radio, Switch, Select, DatePicker, Alert} from "antd";
 import { useEffect } from "react";
 import SelectTypeTax from "../../../../components/selects/SelectTypeTax";
 import { salaryDays } from "../../../../utils/constant";
@@ -23,6 +23,7 @@ const FormCaledanrXml = ({
   const [periodicityCode, setPeriodicityCode] = useState("");
   const [lastPeriodDate, setlastPeriodDate] = useState(null);
   const [perception, setPerception] = useState("");
+  const [showAlertDaysPeriod, setShowAlertDaysPeriod] = useState(false)
 
   useEffect(() => {
     calendar.calendar.perception_type = calendar.perception;
@@ -40,6 +41,17 @@ const FormCaledanrXml = ({
   const onChangePeriod = (item) => {
     calendar.calendar.start_date = item.target.value;
   };
+
+  useEffect(()=>{
+    if(calendar?.calendar?.start_date){
+      let month = calendar?.calendar?.start_date.split('-')
+      if(month[1]==='12' || month[1]==='01'){
+        setShowAlertDaysPeriod(false)
+      }else{
+        setShowAlertDaysPeriod(true)
+      }
+    }
+  },[calendar?.calendar?.start_date])
 
   const PrintPeriods = ({ periods = [] }) => {
     return (
@@ -196,7 +208,7 @@ const FormCaledanrXml = ({
               </Col>
             </Row>
             <Row gutter={[16, 6]}>
-              <Col>
+              <Col span={10}>
                 <Form.Item
                   name="start_date"
                   label="Inicio de calendario"
@@ -209,13 +221,26 @@ const FormCaledanrXml = ({
                     disabled={isAddXMLS}
                     locale={locale}
                     onChange={(value, dateString) => {
+                      if(dateString){
+                        let month = dateString.split('-')
+                        if(month[1]==='12' || month[1]==='01'){
+                          setShowAlertDaysPeriod(false)
+                        }else{
+                          setShowAlertDaysPeriod(true)
+                        }
+                      }
                       calendar.calendar.start_date = dateString;
                     }}
                     disabledDate={disablePeriod}
                   />
                 </Form.Item>
+
+                {
+                  showAlertDaysPeriod ?  <Alert showIcon message="Has elegido una fecha de inicio fuera de Enero o Diciembre." type="warning" /> : null
+                }
+
               </Col>
-              <Col>
+              <Col span={10}>
                 <Form.Item
                   name="activation_date"
                   label="Inicio de uso de calendario"
