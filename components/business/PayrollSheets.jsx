@@ -368,7 +368,7 @@ const PayrollSheets = ({ node_id, ...props }) => {
             </Spin>
         </Modal>
         <Modal visible={showModalDelete} title={`Eliminar folio`} onCancel={cancelDelete} onOk={deleteFolio}>
-            ¿Desea eliminar el folio con para el tipo de factura 
+            ¿Desea eliminar el folio del tipo de factura 
             "{forDelete?.invoice_type  === "CE" ? "Pago extraordinario" : forDelete?.invoice_type  === "CN" ? "Comprobante de nómina" :  forDelete?.invoice_type  === "CA" && "Comprobante de nómina asimilado"}"
             con serie "{forDelete?.serie}"?
         </Modal>

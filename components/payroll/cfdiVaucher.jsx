@@ -44,6 +44,7 @@ const CfdiVaucher = ({
   department = null,
   job = null,
   movementType = null,
+  showAll=false,
   ...props
 }) => {
   const router = useRouter();
@@ -57,8 +58,9 @@ const CfdiVaucher = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [valuesFilter, setValuesFilter] = useState(null);
   const [lenData, setLenData] = useState(0);
-  const [page, setPage] = useState(1);
+  //const [page, setPage] = useState(1);
   const [dataTypesLog, setDataTypesLog] = useState([]);
+  const [currentPageSize, setCurrentPageSize] = useState(10)
 
 
   useEffect(() => {
@@ -117,14 +119,17 @@ const CfdiVaucher = ({
     }
   };
 
-  const pagination = async (page, pageSize) => {
-    setPage(page);
+  const pagination = async (page, pageSize) => {    
+    console.log('page', page)
+    console.log('pageSize',pageSize)
+    //setPage(page);
     if (calendar) {
-      getVoucher(`calendar=${calendar}&period=${period}`, page);
+      getVoucher(`calendar=${calendar}&period=${period}&page_size=${pageSize}`, page);
     } else {
-      onFinish(valuesFilter, page);
+      onFinish(valuesFilter, page, pageSize);
     }
     setCurrentPage(page);
+    setCurrentPageSize(pageSize)
   };
 
   const columns = [
@@ -356,19 +361,21 @@ const CfdiVaucher = ({
     if (new_page) {
       return `&page=${new_page}`;
     }
-    return `&page=${page}`;
+    return `&page=${currentPage}`;
   };
 
-  const onFinish = (value, new_page) => {
+  const onFinish = (value, page, pageSize=10) => {
+    console.log('finis', page)
+    console.log('finish', pageSize)
     setValuesFilter(value);
     setLoading(true);
-    let url = `&node=${props.currentNode.id}`;
+    let url = `&node=${props.currentNode.id}&page_size=${pageSize}`;
     if (value.calendar && value.calendar !== "")
       url = url + `&calendar=${value.calendar}`;
     if (value.period && value.period !== "")
       url = url + `&period=${value.period}`;
     if (value.person && value.person !== "")
-      url = url + `&person=${value.person}`;
+      url = url + `&person_id=${value.person}`;
     let type = value.movement_type;
     if (type && type !== "")
       url = url + `&movement_type=${value.movement_type}`;
@@ -376,8 +383,8 @@ const CfdiVaucher = ({
       url = url + `&uuid=${value.uuid}`;
 
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
-    if(!new_page) setCurrentPage(1)
-    getVoucher(url, new_page?new_page:1);
+    if(!page) setCurrentPage(1)
+    getVoucher(url, page?page:1);
   };
 
   const getVoucher = (data, new_page) => {
@@ -583,13 +590,14 @@ const CfdiVaucher = ({
               }}
             >
               {
-                props.pageSize < 100 &&
+                !showAll &&
                   <Pagination
-                  pageSize={props.pageSize? props.pageSize : 10}
+                  pageSize={props.pageSize? props.pageSize : currentPageSize}
                   current={currentPage}
                   total={lenData}
                   onChange={pagination}
-                  showSizeChanger={false}
+                  showSizeChanger={props.pageSize ? false : true}
+                  pageSizeOptions={[10, 20, 50, 100]}
                   // defaultPageSize={10}
                 />
               }

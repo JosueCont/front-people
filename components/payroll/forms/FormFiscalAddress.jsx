@@ -1,4 +1,4 @@
-import { Form, Input, Row, Col, Select } from "antd";
+import { Form, Input, Row, Col, Select, Typography } from "antd";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import WebApiFiscal from "../../../api/WebApiFiscal";
@@ -6,14 +6,20 @@ import { ruleRequired, ruleWhiteSpace } from "../../../utils/rules";
 import SelectCountry from "../../selects/SelectCountry";
 import SelectMunicipality from "../../selects/SelectMunicipality";
 import SelectState from "../../selects/SelectState";
+import AddPostalCodeModal from '../../../components/modal/AddPostalCodeModal'
 import SelectSuburb from "../../selects/SelectSuburb";
+import { PlusOneOutlined } from "@material-ui/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const { Option } = Select;
+  const { Text } = Typography
+
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const [state, setState] = useState(null);
   const [suburb, setSuburb] = useState(null);
+  const [openModalCP, setOpenModalCP] = useState(false)
 
   useEffect(() => {
     if (fiscalAddress) setForm(fiscalAddress);
@@ -47,6 +53,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
     });
   };
 
+
   const setPostalCodeSelected = (data) => {
     
     setState(data.state.id);
@@ -69,6 +76,9 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
               rules={[ruleRequired, ruleWhiteSpace]}
               name="postal_code"
               label="Código postal"
+              extra={
+              <Text onClick={() => setOpenModalCP(true)} style={{ cursor:'pointer', textDecoration:'underline' }} >Agregar nuevo <PlusOutlined /> </Text>
+            }
             >
               <Select
                 showSearch
@@ -137,6 +147,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           </Col>
         </Row>
       </Form>
+      <AddPostalCodeModal isVisible={openModalCP} setIsVisible={setOpenModalCP}  getPostalCode={getPostalCode} onSuccess={setPostalCodeSelected} />
     </>
   );
 };

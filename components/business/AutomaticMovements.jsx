@@ -33,7 +33,8 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
   const [ service, setService ] = useState(null)
   const [ imssModalVisible, setImssModalVisible ] = useState(false)
   const [ infonavitModalVisible, setInfonavitModalVisible ] = useState(false)
-  const [ loading, setLoading ] = useState(false)
+  const [ loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [ loadingTable, setLoadingTable ] = useState(false)
   const [ cerOrPfxFile, setCerOrPfxFile ] = useState(null)
   const [ keyFile, setKeyFile ] = useState(null)
@@ -105,7 +106,7 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
       key: 'configuration',
       render: (record) => (
         <>
-          <Button loading= { loading }  onClick={ () => setService(record.service) }>
+          <Button disabled={loading || deleting} loading={loading === record.service && record.service}  onClick={ () => setService(record.service) }>
             Configurar
           </Button>
           
@@ -113,14 +114,18 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
             record.service && record.service === 'IMSS' && hasCredentialIMSS && 
 
             <Popconfirm 
+              disabled={deleting === 'IMSS'}
               title = "¿Desea eliminar las credenciales IMSS?"
               // icon = {<QuestionCircleOutlined />}
               style={{ color: 'red' }}
               onConfirm = { () => onDeleteCredentials(record.service) }
               okText = "Sí"
               cancelText = "No"
+              cancelButtonProps={{ 
+                disabled: deleting === 'IMSS'
+              }}
             >
-              <Button style={{ marginLeft: 10 }} loading = { loading } >
+              <Button style={{ marginLeft: 10 }} disabled={deleting || loading} loading = { deleting === 'IMSS' } >
                 Eliminar
               </Button>
             </Popconfirm>
@@ -137,8 +142,11 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
             onConfirm = { () => onDeleteCredentials(record.service) }
             okText = "Sí"
             cancelText = "No"
+            cancelButtonProps={{ 
+              disabled: deleting === 'INFONAVIT'
+            }}
           >
-            <Button style={{ marginLeft: 10 }} loading= { loading } >
+            <Button style={{ marginLeft: 10 }} disabled={deleting} loading= { deleting === 'INFONAVIT' } >
               Eliminar
             </Button>
           </Popconfirm>
@@ -217,7 +225,7 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
     formData.append('password', values.password)
     formData.append('user', values.user)
 
-    setLoading(true)
+    setLoading('IMSS')
     // values.endpoint = 'imss'
     // values.patronal_registration = patronalData.id
     // values.cer = cerOrPfxFile
@@ -244,7 +252,7 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
 
   const onFinishInfonavit = async (values) => {
 
-    setLoading(true)
+    setLoading('INFONAVIT')
     values.endpoint = 'infonavit'
     values.patronal_registration = patronalData.id
 
@@ -267,14 +275,15 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
   }
 
   const onDeleteCredentials = async (endpoint) => {
-    setLoading(true)
 
     let newSite = ""
 
     if(endpoint === 'IMSS'){
       newSite = 'imss'
+      setDeleting('IMSS')
     } else {
       newSite = 'infonavit'
+      setDeleting('INFONAVIT')
     }
 
     try {
@@ -292,7 +301,8 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
         console.log('error', error)
         message.error('Error al eliminar credenciales')
     } finally {
-      setLoading(false)
+      
+      setDeleting(false)
     }
   }
 
@@ -325,143 +335,152 @@ const AutomaticMovements = ({patronalData,hasImss, hasInfonavit}) => {
         visible = { infonavitModalVisible }
         onCancel={ onCancelInfonavit }
         footer = {[]}
+        closable={false}
+        maskClosable={false}
       >
-        <Form
-          form={ modalInfonavitForm }
-          layout = "vertical"
-          onFinish={ onFinishInfonavit }
-        >
-          <Row>
-            <Col span={24}>
-              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del INFONAVIT, " +
-                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal " + patronalData.code} type="warning" />
-              <br/>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="user"
-                label = "Usuario"
-                labelCol={ 24 }
-                rules = {[ruleRequired]}
-              >
-                <Input />
+        <Spin spinning={loading}>
+          <Form
+            form={ modalInfonavitForm }
+            layout = "vertical"
+            onFinish={ onFinishInfonavit }
+          >
+            <Row>
+              <Col span={24}>
+                <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del INFONAVIT, " +
+                    "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal " + patronalData.code} type="warning" />
+                <br/>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="user"
+                  label = "Usuario"
+                  labelCol={ 24 }
+                  rules = {[ruleRequired]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="password"
+                  label = "Contraseña"
+                  labelCol={ 24 }
+                  rules = {[ruleRequired]}
+                >
+                  <Input.Password />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row justify='end' style={{ marginTop: 10 }}>
+              <Col style={{ marginRight: 10 }}>
+                <Button
+                  type='primary'
+                  onClick={ onCancelInfonavit }
+                  loading={ loading }
+                >
+                  Cerrar
+                </Button>
+              </Col>
+              <Form.Item>
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  loading={ loading }
+                >
+                  Guardar
+                </Button>
               </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="password"
-                label = "Contraseña"
-                labelCol={ 24 }
-                rules = {[ruleRequired]}
-              >
-                <Input.Password />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row justify='end' style={{ marginTop: 10 }}>
-            <Col style={{ marginRight: 10 }}>
-              <Button
-                type='primary'
-                onClick={ onCancelInfonavit }
-                loading={ loading }
-              >
-                Cerrar
-              </Button>
-            </Col>
-            <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                loading={ loading }
-              >
-                Guardar
-              </Button>
-            </Form.Item>
-          </Row>
-        </Form>
+            </Row>
+          </Form>
+        </Spin>
       </Modal>
       <Modal
         title="Configuración IMSS"
         visible = { imssModalVisible }
         onCancel={ onCancelIMSS }
         footer = {[]}
+        closable={false}
+        maskClosable={false}
       >
-        <Form
-          form={ modalImssForm }
-          layout='vertical'
-          onFinish={ onFinishImss }
-        >
-          <Row>
-            <Col span={24}>
-              <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del IMSS, " +
-                  "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal "+ patronalData.code} type="warning" />
-              <br/>
-            </Col>
+        <Spin spinning={loading}>
+          <Form
+            form={ modalImssForm }
+            layout='vertical'
+            onFinish={ onFinishImss }
+          >
+            <Row>
+              <Col span={24}>
+                <Alert showIcon message={"El uso de este formulario depende de la conexión del servicio del IMSS, " +
+                    "por lo que pudiera demorar varios segundos al guardar las credenciales. Verifique que las credenciales correspondan al Registro Patronal "+ patronalData.code} type="warning" />
+                <br/>
+              </Col>
 
-            <Col span={24}>
-              <Form.Item
-                name="user"
-                label = "Usuario"
-                labelCol={ 24 }
-                rules = {[ruleRequired]}
-              >
-                <Input />
+              <Col span={24}>
+                <Form.Item
+                  name="user"
+                  label = "Usuario"
+                  labelCol={ 24 }
+                  rules = {[ruleRequired]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="password"
+                  label = "Contraseña"
+                  labelCol={ 24 }
+                  rules = {[ruleRequired]}
+                >
+                  <Input.Password />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Text> Certificados </Text>
+              </Col>
+              <Col span={24} style = {{ marginTop: 10 }}>
+                  <UploadCerOrPfxFile 
+                    textButton="Subir certificado .cer o .pfx"
+                    validateExtension=".cer,.pfx"
+                    showList = { cerOrPfxFile? true : false }
+                    setFile = { setCerOrPfxFile }
+                    size = 'middle'
+                    set_disabled={ loading !== false && true}
+                  />
+              </Col>
+              <Col span={24}>
+                  <UploadCerOrPfxFile 
+                    textButton="Subir certificado .key"
+                    validateExtension=".key"
+                    showList = { keyFile? true : false }
+                    setFile = { setKeyFile }
+                    size = 'middle'
+                    set_disabled = { !required || loading}
+                  />
+              </Col>
+            </Row>
+            <Row justify='end' style={{ marginTop: 10 }}>
+              <Col style={{ marginRight: 10 }}>
+                <Button
+                  type='primary'
+                  onClick={ onCancelIMSS }
+                  loading={ loading }
+                >
+                  Cerrar
+                </Button>
+              </Col>
+              <Form.Item>
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  loading={ loading }
+                >
+                  Guardar
+                </Button>
               </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="password"
-                label = "Contraseña"
-                labelCol={ 24 }
-                rules = {[ruleRequired]}
-              >
-                <Input.Password />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Text> Certificados </Text>
-            </Col>
-            <Col span={24} style = {{ marginTop: 10 }}>
-                <UploadCerOrPfxFile 
-                  textButton="Subir certificado .cer o .pfx"
-                  validateExtension=".cer,.pfx"
-                  showList = { cerOrPfxFile? true : false }
-                  setFile = { setCerOrPfxFile }
-                  size = 'middle'
-                />
-            </Col>
-            <Col span={24}>
-                <UploadCerOrPfxFile 
-                  textButton="Subir certificado .key"
-                  validateExtension=".key"
-                  showList = { keyFile? true : false }
-                  setFile = { setKeyFile }
-                  size = 'middle'
-                  set_disabled = { !required }
-                />
-            </Col>
-          </Row>
-          <Row justify='end' style={{ marginTop: 10 }}>
-            <Col style={{ marginRight: 10 }}>
-              <Button
-                type='primary'
-                onClick={ onCancelIMSS }
-                loading={ loading }
-              >
-                Cerrar
-              </Button>
-            </Col>
-            <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                loading={ loading }
-              >
-                Guardar
-              </Button>
-            </Form.Item>
-          </Row>
-        </Form>
+            </Row>
+          </Form>
+        </Spin>
       </Modal>
     </>
   )
