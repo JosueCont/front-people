@@ -72,13 +72,19 @@ export const getOrgLevels = (query = '', page = 1, size = 10) => async (dispatch
 }
 
 export const getOrgLevelsOptions = (query = '') => async (dispatch, getState) => {
-    const action = { type: GET_ORG_LEVELS_OPTIONS, options: [], tree: [], fetching: false};
+    const { orgStore: { list_org_levels_tree, list_org_levels_options } } = getState();
+    const action = {
+        type: GET_ORG_LEVELS_OPTIONS,
+        options: list_org_levels_options,
+        tree: list_org_levels_tree,
+        fetching: false
+    };
     dispatch({ ...action, fetching: true })
     try {
         let params = `?paginate=0&is_deleted=false&showTree=true${query}`;
         let response = await WebApiOrgStructure.getOrgLevels(params);
         const { results, tree_view_data } = response?.data;
-        dispatch({...action, options: results, tree: tree_view_data})
+        dispatch({ ...action, options: results, tree: tree_view_data })
     } catch (e) {
         console.log(e)
         dispatch(action)

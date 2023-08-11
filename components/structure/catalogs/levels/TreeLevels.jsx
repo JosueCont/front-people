@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Tree } from 'antd'
+import { Tree, Skeleton } from 'antd'
 import { connect } from 'react-redux'
 import {
     DeleteOutlined,
@@ -14,35 +14,50 @@ import {
     TableOutlined,
     PlusCircleOutlined
 } from '@ant-design/icons';
+import styled from '@emotion/styled';
+
+const LoadItem = styled(Skeleton.Input)`
+    border-radius: 12px;
+    height: 27px;
+    & .ant-skeleton-input-sm {
+        vertical-align: middle;
+        height: 1.25rem;
+        line-height: 1.25rem;
+    }
+`;
 
 const TreeLevels = ({
     list_org_levels_tree,
-    load_org_levels_options
+    load_org_levels_options,
+    showEditTree = () => { },
+    showDeleteTree = () => { }
 }) => {
 
-    const formatData = (item) => {
-        let parent = item?.children;
-        const map_ = record => (formatData(record));
-        let children = parent?.length > 0 ? parent.map(map_) : [];
-        return {
-            value: item?.id,
-            title: item?.name,
-            // disabled: !item?.is_active,
-            children
-        }
+    const titleRender = (item) => {
+        return !load_org_levels_options ? (
+            <><span role='title'>
+                {item.name}
+            </span> <EditOutlined
+                onClick={()=> showEditTree(item)}
+            /> {item?.children?.length <= 0 && (
+                <DeleteOutlined
+                    style={{marginInlineStart: 4}}
+                    onClick={()=> showDeleteTree(item)}
+                />
+            )}</>
+        ) : <LoadItem size='small' active />
     }
-
-    const treeData = useMemo(() => {
-        if (list_org_levels_tree.length <= 0) return [];
-        const reduce_ = (acc, item) => ([...acc, formatData(item)])
-        return list_org_levels_tree.reduce(reduce_, []);
-    }, [list_org_levels_tree])
+    
 
     return (
-        <Tree
+        <Tree   
+            selectable={false}
+            defaultExpandAll={true}
+            titleRender={titleRender}
             className='ant-tree-org'
             showLine={{ showLeafIcon: false }}
-            treeData={treeData}
+            treeData={list_org_levels_tree}
+            fieldNames={{ title: 'name', key: 'id', children: 'children' }}
         />
     )
 }

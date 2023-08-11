@@ -16,6 +16,7 @@ import ModalLevels from './ModalLevels';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
 import { message } from 'antd';
 import TreeLevels from './TreeLevels';
+import ListItems from '../../../../common/ListItems';
 
 const MainLevels = ({
     nameCatalog,
@@ -24,12 +25,17 @@ const MainLevels = ({
     currentUser,
     org_filters,
     org_page,
-    org_page_size
+    org_page_size,
+    list_org_levels_options
 }) => {
 
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [itemToEdit, setItemToEdit] = useState({});
+
+    const [openDelete, setOpenDelete] = useState(false);
+    const [itemsSelected, setItemsSelected] = useState([]);
+    const [useWithAction, setUseWithAction] = useState(true);
 
     const watchQuerys = [
         router.query?.name__unaccent__icontains,
@@ -83,6 +89,19 @@ const MainLevels = ({
         }
     }
 
+    const actionDelete = async () => {
+        try {
+            let id = itemsSelected?.at(-1)?.id;
+            await WebApiOrgStructure.updateOrgLevel(id, { is_deleted: true }, 'patch');
+            message.success('Nivel organizacional eliminado')
+            getOrgLevels(org_filters, org_page, org_page_size)
+            getOrgLevelsOptions()
+        } catch (e) {
+            console.log(e)
+            message.error('Nivel organizacional no eliminado')
+        }
+    }
+
     const showEdit = (item) => {
         setItemToEdit(item)
         setOpenModal(true)
@@ -91,6 +110,30 @@ const MainLevels = ({
     const closeEdit = () => {
         setItemToEdit({})
         setOpenModal(false)
+    }
+
+    const showDelete = (item) => {
+        setUseWithAction(item?.num_childs <= 0)
+        setItemsSelected([item])
+        setOpenDelete(true)
+    }
+
+    const closeDelete = () => {
+        setOpenDelete(false)
+        setItemsSelected([])
+        setUseWithAction(true)
+    }
+
+    const showEditTree = (item) =>{
+        const find_ = record => record.id == item?.id;
+        let result = list_org_levels_options.find(find_);
+        showEdit(result)
+    }
+
+    const showDeleteTree = (item) =>{
+        const find_ = record => record.id == item?.id;
+        let result = list_org_levels_options.find(find_);
+        showDelete(result)
     }
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
@@ -102,9 +145,15 @@ const MainLevels = ({
                 actionAdd={() => setOpenModal(true)}
             />
             {router.query?.tree == 'true' ? (
-                <TreeLevels/>
+                <TreeLevels
+                    showEditTree={showEditTree}
+                    showDeleteTree={showDeleteTree}
+                />
             ):(
-                <TableLevels showEdit={showEdit} />
+                <TableLevels
+                    showEdit={showEdit}
+                    showDelete={showDelete}
+                />
             )}
             <ModalLevels
                 visible={openModal}
@@ -117,6 +166,20 @@ const MainLevels = ({
                 itemToEdit={itemToEdit}
                 close={closeEdit}
             />
+            <ListItems
+                title={useWithAction
+                    ? '¿Estás seguro de eliminar este nivel organizacional?'
+                    : 'Este nivel organizacional no se puede eliminar ya que otros preceden de el.'
+                }
+                visible={openDelete}
+                keyTitle='name'
+                keyDescription='description'
+                close={closeDelete}
+                itemsToList={itemsSelected}
+                actionConfirm={actionDelete}
+                useWithAction={useWithAction}
+                textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
+            />
         </>
     )
 }
@@ -128,6 +191,7 @@ const mapState = (state) => {
         org_page: state.orgStore.org_page,
         org_filters: state.orgStore.org_filters,
         org_page_size: state.orgStore.org_page_size,
+        list_org_levels_options: state.orgStore.list_org_levels_options,
     }
 }
 

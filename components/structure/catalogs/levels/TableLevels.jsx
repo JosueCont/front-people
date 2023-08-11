@@ -35,7 +35,8 @@ const TableLevels = ({
     org_page,
     org_page_size,
     org_filters,
-    showEdit = () => { }
+    showEdit = () => { },
+    showDelete = () => { }
 }) => {
 
     const router = useRouter();
@@ -55,30 +56,30 @@ const TableLevels = ({
         }
     }
 
-    const actionDelete = async () => {
-        try {
-            let id = itemsSelected?.at(-1)?.id;
-            await WebApiOrgStructure.updateOrgLevel(id, { is_deleted: true }, 'patch');
-            message.success('Nivel organizacional eliminado')
-            getOrgLevels(org_filters, org_page, org_page_size)
-            getOrgLevelsOptions()
-        } catch (e) {
-            console.log(e)
-            message.error('Nivel organizacional no eliminado')
-        }
-    }
+    // const actionDelete = async () => {
+    //     try {
+    //         let id = itemsSelected?.at(-1)?.id;
+    //         await WebApiOrgStructure.updateOrgLevel(id, { is_deleted: true }, 'patch');
+    //         message.success('Nivel organizacional eliminado')
+    //         getOrgLevels(org_filters, org_page, org_page_size)
+    //         getOrgLevelsOptions()
+    //     } catch (e) {
+    //         console.log(e)
+    //         message.error('Nivel organizacional no eliminado')
+    //     }
+    // }
 
-    const showDelete = (item) => {
-        setUseWithAction(item?.num_childs <= 0)
-        setItemsSelected([item])
-        setOpenDelete(true)
-    }
+    // const showDelete = (item) => {
+    //     setUseWithAction(item?.num_childs <= 0)
+    //     setItemsSelected([item])
+    //     setOpenDelete(true)
+    // }
 
-    const closeDelete = () => {
-        setOpenDelete(false)
-        setItemsSelected([])
-        setUseWithAction(true)
-    }
+    // const closeDelete = () => {
+    //     setOpenDelete(false)
+    //     setItemsSelected([])
+    //     setUseWithAction(true)
+    // }
 
     const onChangePage = ({ current, pageSize }) => {
         let params = { ...router.query, page: current, size: pageSize };
@@ -168,7 +169,7 @@ const TableLevels = ({
                     showSizeChanger: false
                 }}
             />
-            <ListItems
+            {/* <ListItems
                 title={useWithAction
                     ? '¿Estás seguro de eliminar este nivel organizacional?'
                     : 'Este nivel organizacional no se puede eliminar ya que otros preceden de el.'
@@ -181,7 +182,7 @@ const TableLevels = ({
                 actionConfirm={actionDelete}
                 useWithAction={useWithAction}
                 textCancel={useWithAction ? 'Cancelar' : 'Cerrar'}
-            />
+            /> */}
         </>
     )
 }

@@ -70,19 +70,33 @@ const ModalLevels = ({
         )
     }
 
-    const formatOptions = (item) => {
-        const filter_ = record => record?.id != itemToEdit?.id;
-        const map_ = record => (formatOptions(record));
-        let children = item?.children?.length > 0
-            ? item?.children?.filter(filter_).map(map_) : [];
-        return {
-            value: item?.id,
-            title: <GetName item={item}/>,
-            children
-        }
-    }
-
     // const formatOptions = (item) => {
+    //     const some_ = record => record.id == itemToEdit?.id;
+    //     const format = record => (formatOptions(record));
+
+    //     const reduce_ = (acc, record) => {
+    //         if (record?.id == itemToEdit?.id) return acc;
+    //         return [...acc, {
+    //             value: record?.id,
+    //             title: record?.name,
+    //             children: []
+    //         }]
+    //     }
+
+    //     let exist = item?.children?.some(some_);
+
+    //     let results = exist
+    //         ? item?.children?.reduce(reduce_, [])
+    //         : item?.children?.map(format);
+
+    //     return {
+    //         value: item?.id,
+    //         title: item?.name,
+    //         children: results
+    //     }
+    // }
+
+     // const formatOptions = (item) => {
     //     let equals = itemToEdit?.id == item.id;
     //     const filter_ = record => record?.id != itemToEdit?.id;
     //     let parent = !equals ? item?.children?.filter(filter_) : [];
@@ -98,22 +112,73 @@ const ModalLevels = ({
     //     }
     // }
 
-    const optionsParent = useMemo(() => {
-        if (list_org_levels_tree.length <= 0) return [];
-        const reduce_ = (acc, item) => {
-            if (itemToEdit?.id == item.id) return acc;
-            let option = formatOptions(item);
-            return [...acc, option]
+    const formatEdit = (item, depth, pos) => {
+        const some_ = record => record.id == itemToEdit?.id;
+        const filter_ = record => record?.id != itemToEdit?.id;
+        const format = record => (formatEdit(record, depth, pos + 1));
+
+        let exist = item?.children?.some(some_);
+        let parent = exist ? item?.children?.filter(filter_) : item?.children;
+        let results = depth == pos ? [] : parent?.map(format);
+
+        return {
+            value: item?.id,
+            title: item?.name,
+            children: results
         }
-        return list_org_levels_tree.reduce(reduce_, []);
-    }, [list_org_levels_tree, itemToEdit])
+    }
+
+    const getOptionsEdit = () => {
+        let depth = null;
+
+        // Obtenemos la profundidad del nivel a editar
+        const getDepth = (item, idx = []) => {
+            let valid = item?.id == itemToEdit?.id;
+            if (valid) return depth = idx;
+            return item?.children?.forEach((record, index) => {
+                return getDepth(record, [...idx, index]);
+            })
+        }
+
+        list_org_levels_tree.forEach((item, idx) => {
+            let valid = item?.id == itemToEdit?.id;
+            if (!valid) return getDepth(item, [idx]);
+            return depth = [idx];
+        })
+
+        return list_org_levels_tree.reduce((acc, item) => {
+            if (item?.id == itemToEdit?.id) return acc;
+            return [...acc, formatEdit(item, depth?.length, 1)]
+        }, [])
+    }
+
+    const formatAdd = (item) => {
+        const map_ = record => (formatAdd(record));
+        let children = item?.children?.length > 0
+            ? item?.children?.map(map_) : [];
+        return {
+            value: item?.id,
+            title: item?.name,
+            children
+        }
+    }
+
+    const optionsParent = useMemo(() => {
+        if (list_org_levels_tree.length <= 0 || !visible) return [];
+        let exist = Object.keys(itemToEdit).length > 0;
+        if (exist) return getOptionsEdit();
+        return list_org_levels_tree.reduce((acc, item) => {
+            let option = formatAdd(item);
+            return [...acc, option]
+        }, [])
+    }, [list_org_levels_tree, itemToEdit, visible])
 
     return (
         <MyModal
             title={title}
             visible={visible}
             close={onClose}
-            widthModal={700}
+            // widthModal={700}
             closable={!loading}
         >
             <Form
@@ -141,23 +206,6 @@ const ModalLevels = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='parent'
-                            label='Precede'
-                        >
-                            <TreeSelect
-                                allowClear
-                                showSearch
-                                treeLine={{ showLeafIcon: false }}
-                                treeData={optionsParent}
-                                loading={load_org_levels_options}
-                                disabled={load_org_levels_options}
-                                placeholder='Seleccionar una opción'
-                                treeNodeFilterProp='title'
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
                             name='enable_assign_worktitle'
                             label='¿Permite asignar plazas?'
                         >
@@ -177,6 +225,23 @@ const ModalLevels = ({
                                 allowClear
                                 placeholder='Seleccionar una opción'
                                 options={optionsBoolean}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item
+                            name='parent'
+                            label='Precede'
+                        >
+                            <TreeSelect
+                                allowClear
+                                showSearch
+                                treeLine={{ showLeafIcon: false }}
+                                treeData={optionsParent}
+                                loading={load_org_levels_options}
+                                disabled={load_org_levels_options}
+                                placeholder='Seleccionar una opción'
+                                treeNodeFilterProp='title'
                             />
                         </Form.Item>
                     </Col>

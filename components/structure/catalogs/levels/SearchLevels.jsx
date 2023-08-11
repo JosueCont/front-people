@@ -1,10 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import { Button, Row, Col, Form, Card, Tooltip, Input } from 'antd';
+import { Button, Row, Col, Form, Card, Tooltip, Input, Menu, Dropdown } from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
     SettingOutlined,
-    ArrowLeftOutlined
+    ArrowLeftOutlined,
+    EllipsisOutlined,
+    PartitionOutlined,
+    TableOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -63,7 +66,7 @@ const SearchLevels = ({
         let status = router.query?.is_active;
         let params = { search: valueSearch };
         if (status == 'all') params.is_active = status;
-        if(view) params.tree = view;
+        if (view) params.tree = view;
         let filters = createFiltersJB(params);
         setFilters(filters)
     }
@@ -78,6 +81,45 @@ const SearchLevels = ({
         return { 'Estatus': value }
     }, [router.query?.is_active])
 
+    const isTree = useMemo(() => {
+        return view && view == 'true';
+    }, [view])
+
+    const MenuOptions = (
+        <Menu>
+            <Menu.Item
+                key='1'
+                icon={<ArrowLeftOutlined />}
+                onClick={() => router.push('/structure/catalogs')}
+            >
+                Regresar
+            </Menu.Item>
+            <Menu.Item
+                key='2'
+                icon={isTree ? <TableOutlined /> : <PartitionOutlined />}
+                onClick={() => setFilters({
+                    tree: !isTree
+                })}
+            >
+                {isTree ? 'Vista tabla' : 'Vista árbol'}
+            </Menu.Item>
+            <Menu.Item
+                key='3'
+                icon={<SettingOutlined />}
+                onClick={() => showModal()}
+            >
+                Configurar filtros
+            </Menu.Item>
+            <Menu.Item
+                key='4'
+                icon={<SyncOutlined />}
+                onClick={() => deleteFilter()}
+            >
+                Limpiar filtros
+            </Menu.Item>
+        </Menu>
+    )
+
     return (
         <>
             <Card bodyStyle={{ padding: 12 }}>
@@ -88,7 +130,7 @@ const SearchLevels = ({
                                 <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                     {title}
                                 </p>
-                                <Input.Group style={{ width: 300 }} compact>
+                                <Input.Group style={{ width: 200 }} compact>
                                     <Input
                                         allowClear
                                         className='input-jb-clear'
@@ -115,7 +157,7 @@ const SearchLevels = ({
                                 </Input.Group>
                             </div>
                             <div className='content-end' style={{ gap: 8 }}>
-                                <Button
+                                {/* <Button
                                     icon={<ArrowLeftOutlined />}
                                     onClick={() => router.push('/structure/catalogs')}>
                                     Regresar
@@ -134,7 +176,15 @@ const SearchLevels = ({
                                     <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
-                                </Tooltip>
+                                </Tooltip> */}
+                                <Dropdown
+                                    placement='bottomRight'
+                                    overlay={MenuOptions}
+                                >
+                                    <Button>
+                                        <EllipsisOutlined />
+                                    </Button>
+                                </Dropdown>
                                 <Button onClick={() => actionAdd()}>
                                     Agregar
                                 </Button>
@@ -143,7 +193,7 @@ const SearchLevels = ({
                     </Col>
                     <Col span={24}>
                         <TagFilters
-                            discardKeys={['catalog', 'is_active', 'search','tree']}
+                            discardKeys={['catalog', 'is_active', 'search', 'tree']}
                             deleteKeys={['catalog']}
                             listKeys={listKeys}
                             defaultFilters={defaultFilters}
