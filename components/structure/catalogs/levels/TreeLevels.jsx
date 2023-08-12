@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Tree, Skeleton } from 'antd'
+import { Tree, Skeleton, Empty, Card } from 'antd'
 import { connect } from 'react-redux'
 import {
     DeleteOutlined,
@@ -38,27 +38,34 @@ const TreeLevels = ({
             <><span role='title'>
                 {item.name}
             </span> <EditOutlined
-                onClick={()=> showEditTree(item)}
-            /> {item?.children?.length <= 0 && (
-                <DeleteOutlined
-                    style={{marginInlineStart: 4}}
-                    onClick={()=> showDeleteTree(item)}
-                />
-            )}</>
+                    onClick={() => showEditTree(item)}
+                /> {item?.children?.length <= 0 && (
+                    <DeleteOutlined
+                        style={{ marginInlineStart: 4 }}
+                        onClick={() => showDeleteTree(item)}
+                    />
+                )}</>
         ) : <LoadItem size='small' active />
     }
-    
+
 
     return (
-        <Tree   
-            selectable={false}
-            defaultExpandAll={true}
-            titleRender={titleRender}
-            className='ant-tree-org'
-            showLine={{ showLeafIcon: false }}
-            treeData={list_org_levels_tree}
-            fieldNames={{ title: 'name', key: 'id', children: 'children' }}
-        />
+        <>{list_org_levels_tree.length > 0 ? (
+            <Tree
+                selectable={false}
+                defaultExpandAll={true}
+                titleRender={titleRender}
+                className='ant-tree-org'
+                showLine={{ showLeafIcon: false }}
+                treeData={list_org_levels_tree}
+                fieldNames={{ title: 'name', key: 'id', children: 'children' }}
+            />
+        ) : (
+            <Card>
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Card>
+        )}
+        </>
     )
 }
 
