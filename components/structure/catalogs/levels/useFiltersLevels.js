@@ -29,6 +29,14 @@ export const useFiltersLevels = () => {
             name: 'Precede',
             loading: load_org_levels_options,
             get: getParent
+        },
+        enable_custom_catalogs: {
+            name: 'Permite catálogos personalizados',
+            get: e => e == 'true' ? 'Sí' : 'No'
+        },
+        enable_assign_worktitle: {
+            name: 'Permite asignar plazas',
+            get: e => e == 'true' ? 'Sí' : 'No'
         }
     }
 
