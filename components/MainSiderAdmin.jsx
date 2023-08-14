@@ -241,7 +241,11 @@ const MainSider = ({
         getItem("Catálogos","org_catalogs")
       ]
 
-      items.push(getItem("Estructura organizacional", "org_structure", <PartitionOutlined />, subStructure))
+
+      if(process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL && process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL==='true'){
+        items.push(getItem("Estructura organizacional", "org_structure", <PartitionOutlined />, subStructure))
+      }
+
       
       let subTimeClock = [
         getItem("Centros de trabajo", "tm_centers"),
