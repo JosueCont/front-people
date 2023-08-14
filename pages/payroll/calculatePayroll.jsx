@@ -1482,7 +1482,7 @@ const CalculatePayroll = ({ ...props }) => {
         `${getDomain(
           API_URL_TENANT
         )}/payroll/accounting-policy-report`,
-        `Poliza contable_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
         "POST",
         {
           "node__id": props?.currentNode?.id,
@@ -1519,7 +1519,7 @@ const CalculatePayroll = ({ ...props }) => {
             </Menu.Item>
             <Menu.Item key={'accounting_policy_simple'}>
               <a>
-                Poliza contable
+                Resumen
               </a>
             </Menu.Item>
           </>

@@ -1,8 +1,9 @@
 import {React, useEffect, useState} from 'react'
-import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col, ConfigProvider} from 'antd'
+import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col, ConfigProvider, Tooltip} from 'antd'
 import {SyncOutlined} from "@material-ui/icons";
 import moment from 'moment/moment';
 import { format } from 'path';
+import {ClearOutlined, FilterOutlined} from '@ant-design/icons';
 import { connect } from "react-redux";
 import WebApiYnl from '../../api/WebApiYnl';
 import { getDailyEmotions } from '../../redux/ynlDuck';
@@ -181,6 +182,7 @@ const FilterDashboard = ({currentNode,
             <Form.Item name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
                 <RangePicker
                     locale={locale}
+                    style={{width: '100%',}}
                     disabledDate={disabledDate}
                     format={'DD/MM/YYYY'} />
             </Form.Item>
@@ -209,10 +211,11 @@ const FilterDashboard = ({currentNode,
             
             <Row>
                 <Col span={12}>
-                    <Button htmlType='submit'>Filtrar</Button>
-                </Col>
-                 <Col span={12}>
-                    <Button onClick={resetFilter}>Limpiar filtro</Button>
+                    <Space>
+                        <Button htmlType='submit' style={{marginRight:10}}> <FilterOutlined /> Filtrar</Button>
+                        <Button onClick={resetFilter}><ClearOutlined /> Limpiar</Button>
+                    </Space>
+
                 </Col>
             </Row>
         </Form>
