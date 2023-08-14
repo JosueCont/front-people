@@ -383,7 +383,7 @@ const ModalPeople = ({
                             job={idJob}
                             labelText='Plaza laboral'
                             dependencies={['person_department', 'job']}
-                            rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
+                            //rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
                             placeholder='Seleccionar una opción'
                             disabled={!idDepartment || !idJob}
                         />
