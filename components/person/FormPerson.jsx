@@ -190,7 +190,6 @@ const FormPerson = ({
                       forPerson={true}
                       department={departmentSelected}
                       job={jobSelected}
-                      rules={[ruleRequired]}
                     />
                   </Col>
                 )}
