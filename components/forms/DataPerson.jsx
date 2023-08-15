@@ -638,7 +638,7 @@ const DataPerson = ({
                     job={jobSelected}
                     person={personWT}
                     name={"work_title_id"}
-                    rules={[ruleRequired]}
+                   // rules={[ruleRequired]}
                     dependencies={['person_department', 'job']}
                     placeholder='Seleccionar una opción'
                   />
