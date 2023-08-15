@@ -89,6 +89,10 @@ const ModalPeople = ({
         try {
             setLoading(true)
 
+            if(!values?.work_title_id){
+                delete values['work_title_id']
+            }
+
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
