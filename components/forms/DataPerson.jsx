@@ -11,8 +11,9 @@ import {
   Upload,
   Form,
   message,
+  Space,
 } from "antd";
-import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
+import { PlusOutlined, LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState, useMemo } from "react";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
@@ -100,7 +101,7 @@ const DataPerson = ({
       filters.node = currentNode.id
       filterPersonName(filters)
     }
-  }, [currentNode]); 
+  }, [currentNode]);
 
   const filterPersonName = async (node_id) => {
     try {
@@ -261,17 +262,21 @@ const DataPerson = ({
       });
   };
 
-  let numberPhoto = 0;
-  const upImage = (info) => {
-    numberPhoto = numberPhoto + 1;
-    getBase64(info.file.originFileObj, (imageUrl) => setPhoto(imageUrl));
+  // let numberPhoto = 0;
+  const upImage = (info, isAdd = true) => {
+    // numberPhoto = numberPhoto + 1;
     let data = new FormData();
+    let photo = info ? info?.file?.originFileObj : "";
     data.append("id", person.id);
-    data.append("photo", info.file.originFileObj);
-    if (!loadImge) {
-      upImageProfile(data, info, numberPhoto);
+
+    if (info){
+      //Si se envía este campo se actualiza la foto, en caso contrario se elimina.
+      data.append("photo", photo);
+      getBase64(info?.file?.originFileObj, (imageUrl) => setPhoto(imageUrl))
     }
-  };
+
+    if (!loadImge) upImageProfile(data, isAdd);
+  }
 
   function getBase64(img, callback) {
     const reader = new FileReader();
@@ -279,25 +284,26 @@ const DataPerson = ({
     reader.readAsDataURL(img);
   }
 
-  const upImageProfile = async (data, img, numaux) => {
-    if (numaux === 1) {
-      try {
-        setLoadImage(true);
-        let response = await WebApiPeople.updatePhotoPerson(data);
-        formPerson.setFieldsValue({
-          photo: response.data.photo,
-        });
-        message.success({
-          content: "Foto cargada correctamente.",
-          className: "custom-class",
-        });
-        numberPhoto = 0;
-        setLoadImage(false);
-      } catch (error) {
-        console.log(error);
-        setLoadImage(false);
-        setPhoto(null);
-      }
+  const upImageProfile = async (data, isAdd) => {
+    try {
+      setLoadImage(true);
+      let response = await WebApiPeople.updatePhotoPerson(data);
+      formPerson.setFieldsValue({
+        photo: response?.data?.photo,
+      });
+      message.success({
+        content: isAdd ? "Foto agregada" : "Foto eliminada",
+        className: "custom-class",
+      });
+      setPhoto(response?.data?.photo)
+      // numberPhoto = 0;
+      setLoadImage(false);
+    } catch (error) {
+      let msg = isAdd ? 'Foto no agregada' : 'Foto no eliminada';
+      message.success(msg)
+      console.log(error);
+      setLoadImage(false);
+      // setPhoto(null);
     }
   };
 
@@ -389,6 +395,108 @@ const DataPerson = ({
     return listPersons.filter(item => item.id !== id_supervisor);
   }, [listPersons, id_supervisor])
 
+  const photoProfile = (
+    <div className="ant-profile-img">
+      <Spin
+        indicator={<LoadingOutlined style={{color: 'black'}}/>}
+        spinning={loadImge}
+      >
+        <Upload
+          name="avatar"
+          listType="picture-card"
+          className="frontImage"
+          showUploadList={false}
+          accept={'.jpg,.png'}
+          onChange={e => upImage(e, true)}
+          maxCount={1}
+        >
+          {photo ? (
+            <img
+              src={photo}
+              alt="avatar"
+              style={{
+                height: '100%',
+                width: 'auto'
+              }}
+            />
+          ) : uploadButton}
+        </Upload>
+      </Spin>
+      {photo && (
+        <div className="ant-profile-actions">
+          {/* <button type="button" className="ant-btn-simple small">
+          <PlusOutlined />
+        </button> */}
+          <button
+            disabled={loadImge}
+            type="button"
+            className="ant-btn-simple small"
+            onClick={() => upImage(null, false)}
+          >
+            <DeleteOutlined />
+          </button>
+        </div>
+      )}
+    </div>
+    // <Spin tip="Cargando..." spinning={loadImge}>
+    //   <div
+    //     style={
+    //       photo
+    //         ? {
+    //           width: "120px",
+    //           height: "120px",
+    //           display: "flex",
+    //           flexWrap: "wrap",
+    //           alignContent: "center",
+    //           textAlign: "center",
+    //         }
+    //         : {}
+    //     }
+    //   >
+    //     <Upload
+    //       name="avatar"
+    //       listType="picture-card"
+    //       showUploadList={false}
+    //       accept={'.jpg,.png'}
+    //       onChange={upImage}
+    //     >
+    //       {photo ? (
+    //         <div
+    //           className="frontImage"
+    //           style={
+    //             photo
+    //               ? {
+    //                 width: "120px",
+    //                 height: "120px",
+    //                 display: "flex",
+    //                 flexWrap: "wrap",
+    //                 borderRadius: "10px",
+    //                 textAlign: "center",
+    //                 alignContent: "center",
+    //               }
+    //               : {}
+    //           }
+    //         >
+    //           <img
+    //             className="img"
+    //             src={photo}
+    //             alt="avatar"
+    //             preview={false}
+    //             style={{
+    //               width: "120px",
+    //               height: "120px",
+    //               borderRadius: "11px",
+    //             }}
+    //           />
+    //         </div>
+    //       ) : (
+    //         uploadButton
+    //       )}
+    //     </Upload>
+    //   </div>
+    // </Spin>
+  )
+
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Form
@@ -401,63 +509,7 @@ const DataPerson = ({
           <Col lg={22}>
             <Row gutter={20}>
               <Col lg={0} md={12} xs={24} xl={12}>
-                <Spin tip="Cargando..." spinning={loadImge}>
-                  <div
-                    style={
-                      photo
-                        ? {
-                          width: "120px",
-                          height: "120px",
-                          display: "flex",
-                          flexWrap: "wrap",
-                          alignContent: "center",
-                          textAlign: "center",
-                        }
-                        : {}
-                    }
-                  >
-                    <Upload
-                      name="avatar"
-                      listType="picture-card"
-                      showUploadList={false}
-                      accept={'.jpg,.png'}
-                      onChange={upImage}
-                    >
-                      {photo ? (
-                        <div
-                          className="frontImage"
-                          style={
-                            photo
-                              ? {
-                                width: "120px",
-                                height: "120px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                borderRadius: "10px",
-                                textAlign: "center",
-                                alignContent: "center",
-                              }
-                              : {}
-                          }
-                        >
-                          <img
-                            className="img"
-                            src={photo}
-                            alt="avatar"
-                            preview={false}
-                            style={{
-                              width: "120px",
-                              height: "120px",
-                              borderRadius: "11px",
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        uploadButton
-                      )}
-                    </Upload>
-                  </div>
-                </Spin>
+                {photoProfile}
               </Col>
             </Row>
             <Row gutter={20}>
@@ -479,12 +531,12 @@ const DataPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-                {
-                  props.cat_person_type.length > 0 && 
-                  <Col lg={8} xs={12}>
+              {
+                props.cat_person_type.length > 0 &&
+                <Col lg={8} xs={12}>
                   <SelectPersonType label="Tipo de persona" />
                 </Col>
-                }
+              }
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="date_of_admission"
@@ -500,62 +552,7 @@ const DataPerson = ({
                 </Form.Item>
               </Col>
               <Col lg={6} md={0} xs={0} xl={0}>
-                <Spin tip="Cargando..." spinning={loadImge}>
-                  <div
-                    style={
-                      photo
-                        ? {
-                          width: "120px",
-                          height: "120px",
-                          display: "flex",
-                          flexWrap: "wrap",
-                          alignContent: "center",
-                          textAlign: "center",
-                        }
-                        : {}
-                    }
-                  >
-                    <Upload
-                      name="avatar"
-                      listType="picture-card"
-                      showUploadList={false}
-                      onChange={upImage}
-                    >
-                      {photo ? (
-                        <div
-                          className="frontImage"
-                          style={
-                            photo
-                              ? {
-                                width: "120px",
-                                height: "120px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                borderRadius: "10px",
-                                textAlign: "center",
-                                alignContent: "center",
-                              }
-                              : {}
-                          }
-                        >
-                          <img
-                            className="img"
-                            src={photo}
-                            alt="avatar"
-                            preview={false}
-                            style={{
-                              width: "120px",
-                              height: "120px",
-                              borderRadius: "11px",
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        uploadButton
-                      )}
-                    </Upload>
-                  </div>
-                </Spin>
+                {photoProfile}
               </Col>
             </Row>
             <Row gutter={20}>
@@ -632,16 +629,16 @@ const DataPerson = ({
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
-                  <SelectWorkTitle
-                    viewLabel={true}
-                    department={departmentSelected}
-                    job={jobSelected}
-                    person={personWT}
-                    name={"work_title_id"}
-                   // rules={[ruleRequired]}
-                    dependencies={['person_department', 'job']}
-                    placeholder='Seleccionar una opción'
-                  />
+                <SelectWorkTitle
+                  viewLabel={true}
+                  department={departmentSelected}
+                  job={jobSelected}
+                  person={personWT}
+                  name={"work_title_id"}
+                  // rules={[ruleRequired]}
+                  dependencies={['person_department', 'job']}
+                  placeholder='Seleccionar una opción'
+                />
               </Col>
               {props.config &&
                 props.config.enabled_nomina(
@@ -701,7 +698,7 @@ const DataPerson = ({
                     // onClear={onClearSubstituteSupervisor}
                     placeholder='Seleccionar una opción'
                     notFoundContent='No se encontraron resultados'
-                    
+
                   >
                     {listSubstituteSupevisor.length > 0 &&
                       listSubstituteSupevisor.map((item) => (
@@ -893,27 +890,27 @@ const DataPerson = ({
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
-              {assimilated_pay == false && 
-              <>
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item
-                    name="imss"
-                    label="IMSS"
-                    rules={[onlyNumeric, minLengthNumber]}
-                  >
-                    <Input maxLength={11} />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24} md={12}>
-                  <SelectPatronalRegistration
-                    name={"patronal_registration"}
-                    value_form={"patronal_registration"}
-                    textLabel={"Registro Patronal"}
-                    currentNode={currentNode}
-                  />
-                </Col>
-              </>}
-              
+              {assimilated_pay == false &&
+                <>
+                  <Col lg={8} xs={24} md={12}>
+                    <Form.Item
+                      name="imss"
+                      label="IMSS"
+                      rules={[onlyNumeric, minLengthNumber]}
+                    >
+                      <Input maxLength={11} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24} md={12}>
+                    <SelectPatronalRegistration
+                      name={"patronal_registration"}
+                      value_form={"patronal_registration"}
+                      textLabel={"Registro Patronal"}
+                      currentNode={currentNode}
+                    />
+                  </Col>
+                </>}
+
               {/* {person?.khonnect_id && <Col lg={8} xs={24} md={12}>
               <Form.Item
                   name="is_admin"

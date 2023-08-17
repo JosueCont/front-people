@@ -155,7 +155,7 @@ const SearchLevels = ({
                                                 borderBottomRightRadius: '10px'
                                             }}
                                         >
-                                            <SearchOutlined />
+                                            <SearchOutlined className='gray'/>
                                         </button>
                                     </Input.Group>
                                 )}
