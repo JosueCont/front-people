@@ -415,8 +415,8 @@ const DataPerson = ({
               src={photo}
               alt="avatar"
               style={{
-                height: '100%',
-                width: 'auto'
+                height: 'auto',
+                width: '100%'
               }}
             />
           ) : uploadButton}
