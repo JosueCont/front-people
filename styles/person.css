@@ -1,8 +1,23 @@
 .frontImage :hover {
   text-align: center;
-  opacity: 0.7;
-  background: black;
+  opacity: 0.90;
+  background: white;
   content: "hola";
+}
+
+.ant-profile-img{
+  display: flex;
+  max-width: min-content;
+}
+
+.ant-profile-img .avatar-uploader.edit .ant-upload-select-picture-card{
+  cursor: default;
+}
+
+.ant-profile-actions{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .form-details-person .ant-form-item .ant-form-item-label {
