@@ -3,6 +3,7 @@ import MyModal from '../../../common/MyModal';
 import {
     Button,
     Form,
+    Alert,
     Checkbox,
     Row,
     Col
@@ -86,6 +87,11 @@ const ModalImport = ({
                         </>
                     )}
                     <Col span={24}>
+                            <Alert
+                                description="Para actujalizar personas el sistema hace uso del RFC o CURP, si no se encuentra ninguno de éstos entonces el sistema generará una nuevo persona."
+                                type="info"
+                            />
+                        <br/>
                         <FileUpload
                             label='Seleccionar archivo'
                             keyName='file_name'
@@ -100,16 +106,19 @@ const ModalImport = ({
                         />
                     </Col>
                     <Col span={24} className='content-end' style={{ gap: 8 }}>
+
                         <Button disabled={loading} onClick={() => onClose()}>
                             Cancelar
                         </Button>
-                        <Button 
+                        <Button
                             htmlType='submit'
                             loading={loading}
                         >
                             Cargar
                         </Button>
                     </Col>
+
+
                 </Row>
             </Form>
         </MyModal>

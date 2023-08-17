@@ -942,7 +942,7 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
 
-          closeButton: "Cerrar",
+          closeButton: "Cancelar",
           title_action_button: "Ver comprobantes",
           viewActionButton: false,
         });
@@ -2191,7 +2191,7 @@ const CalculatePayroll = ({ ...props }) => {
           closeButton={
             infoGenericModal.closeButton
               ? infoGenericModal.closeButton
-              : "Cerrar"
+              : "Cancelar"
           }
         >
           <Row>

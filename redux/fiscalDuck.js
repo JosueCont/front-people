@@ -136,9 +136,16 @@ export const setVersionCfdi = (use_cfdi) => async (dispatch, getState) => {
 };
 
 export const doFiscalCatalogs =
-    (node_id, use_cfdi) => async (dispatch, getState) => {
+    (node_id, use_cfdi, updateconceptsOnly=false) => async (dispatch, getState) => {
         try {
-            if (use_cfdi && use_cfdi != undefined) {
+            if(updateconceptsOnly){
+                if (node_id) {
+                    dispatch(getInternalPerceptions(node_id, use_cfdi));
+                    dispatch(getInternalDeductions(node_id, use_cfdi));
+                    dispatch(getInternalOtherPayments(node_id, use_cfdi));
+                }
+            }
+            else if (use_cfdi && use_cfdi != undefined) {
                 dispatch(getFiscalBanks(use_cfdi));
                 dispatch(getFiscalTaxRegime(use_cfdi));
                 dispatch(getPerceptions(use_cfdi));
@@ -291,7 +298,7 @@ export const getInternalPerceptions = (data, versionCfdi) => async (dispatch, ge
     dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiFiscal.getInternalPerceptions(data);
-        dispatch({ ...action, payload: response.data })
+        dispatch({ ...action, payload: _.orderBy(response.data, ['code'], ['asc']) })
         // .filter(
         //   (item) =>
         //     // item.perception_type.code != "001" &&
@@ -318,7 +325,7 @@ export const getInternalDeductions = (data, versionCfdi) => async (dispatch, get
     dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiFiscal.getInternalDeductions(data);
-        dispatch({ ...action, payload: response.data })
+        dispatch({ ...action, payload: _.orderBy(response.data, ['code'], ['asc']) })
     } catch (e) {
         console.log(e)
         dispatch(action)
@@ -330,7 +337,7 @@ export const getInternalOtherPayments = (data) => async (dispatch, getState) => 
     dispatch({...action, fetching: true})
     try {
         let response = await WebApiFiscal.getInternalOtherPayments(data);
-        dispatch({...action, payload: response.data})
+        dispatch({...action, payload: _.orderBy(response.data, ['code'], ['asc'])})
     } catch (e) {
         console.log(e)
         dispatch(action)
