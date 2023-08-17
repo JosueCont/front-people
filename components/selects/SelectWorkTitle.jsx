@@ -35,7 +35,7 @@ const SelectWorkTitle = ({
     if (props.cat_work_title) {
       let data = []
       if(!props.foReport){
-        //data = props.cat_work_title.filter((item) => item.person === null);
+        data = props.cat_work_title;
 
         if (department && job) {
           data = data.filter(

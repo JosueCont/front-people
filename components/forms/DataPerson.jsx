@@ -531,12 +531,12 @@ const DataPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-              {
-                props.cat_person_type.length > 0 &&
+              {/*{*/}
+              {/*  props.cat_person_type.length > 0 &&*/}
                 <Col lg={8} xs={12}>
                   <SelectPersonType label="Tipo de persona" />
                 </Col>
-              }
+              {/*}*/}
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="date_of_admission"
