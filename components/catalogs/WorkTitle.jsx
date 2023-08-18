@@ -46,10 +46,6 @@ const WorkTitle = ({ currentNode = null, ...props }) => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "key",
-    }, {
       title: "Nombre",
       dataIndex: "name",
       key: "key",

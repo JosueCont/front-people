@@ -634,6 +634,7 @@ const DataPerson = ({
                   department={departmentSelected}
                   job={jobSelected}
                   person={personWT}
+                  personId={person.id}
                   name={"work_title_id"}
                   // rules={[ruleRequired]}
                   dependencies={['person_department', 'job']}
