@@ -76,6 +76,8 @@ import SelectCollaboratorItemForm from '../../components/selects/SelectCollabora
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useReactToPrint } from 'react-to-print';
+import SelectPeople from "../../components/people/utils/SelectPeople";
+import {ruleRequired} from "../../utils/rules";
 
 
 const CalculatePayroll = ({ ...props }) => {
@@ -942,7 +944,7 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
 
-          closeButton: "Cerrar",
+          closeButton: "Cancelar",
           title_action_button: "Ver comprobantes",
           viewActionButton: false,
         });
@@ -2191,7 +2193,7 @@ const CalculatePayroll = ({ ...props }) => {
           closeButton={
             infoGenericModal.closeButton
               ? infoGenericModal.closeButton
-              : "Cerrar"
+              : "Cancelar"
           }
         >
           <Row>

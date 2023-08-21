@@ -79,9 +79,22 @@ const InternalConcepts = ({
       },
     },
     {
-      title: "¿Es activo?",
+      title: "Mostrar para calcular",
       render: (item) => {
-        return <div>{item.is_active ? <>Activo</> : <>Inactivo</>}</div>;
+        return <div>
+          {item.node != null &&
+              <Switch
+                  size='small'
+                  defaultChecked={item.show}
+                  checked={item.show}
+                  onClick={()=>{
+                    item.show = !item.show
+                    updateShowConcept(item, item.id);
+                  }
+                  }
+              />
+          }
+         </div>;
       },
     },
 
@@ -190,7 +203,7 @@ const InternalConcepts = ({
     try {
       await WebApiFiscal.crudInternalConcept(url, "post", data);
       props
-        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi, true)
         .then((response) => {
           resetForm();
           message.success(messageSaveSuccess);
@@ -250,13 +263,45 @@ const InternalConcepts = ({
     }
   };
 
-  const updateRegister = async (value) => {
+
+
+  const updateShowConcept= async (value, id)=>{
+    setLoading(true);
+    let data = {...value}
+    delete data["id"];
+    delete data[""];
+    if(data.perception_type){
+      data.perception_type =  data.perception_type.id;
+    }
+
+    if(data.deduction_type){
+      data.deduction_type =  data.deduction_type.id;
+    }
+
+    if(data.other_type_payment){
+      data.other_type_payment =  data.other_type_payment.id;
+    }
+
+    try{
+      await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", data);
+      message.success('Actualizado correctamente')
+    }catch (e){
+      console.log(e)
+      value.show = !value.show
+      message.error('Hubo un error al actualizar, intenta nuevamente')
+    }finally {
+      setLoading(false);
+    }
+
+  }
+
+  const updateRegister = async (value, _id=null) => {
     try {
       delete value["id"];
       delete value[""];
       await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", value);
       props
-        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi,true)
         .then((response) => {
           setId("");
           resetForm();

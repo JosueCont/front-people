@@ -531,12 +531,12 @@ const DataPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-              {
-                props.cat_person_type.length > 0 &&
+              {/*{*/}
+              {/*  props.cat_person_type.length > 0 &&*/}
                 <Col lg={8} xs={12}>
                   <SelectPersonType label="Tipo de persona" />
                 </Col>
-              }
+              {/*}*/}
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="date_of_admission"
@@ -634,6 +634,7 @@ const DataPerson = ({
                   department={departmentSelected}
                   job={jobSelected}
                   person={personWT}
+                  personId={person.id}
                   name={"work_title_id"}
                   // rules={[ruleRequired]}
                   dependencies={['person_department', 'job']}

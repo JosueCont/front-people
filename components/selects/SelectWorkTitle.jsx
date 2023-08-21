@@ -2,6 +2,7 @@ import { connect, useDispatch } from "react-redux";
 import { Form, Popconfirm, Select, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { deprecate } from "util";
+import _ from 'lodash'
 import WebApiPeople from "../../api/WebApiPeople";
 import { getWorkTitle } from "../../redux/catalogCompany";
 import { PlusOutlined } from "@ant-design/icons";
@@ -35,7 +36,11 @@ const SelectWorkTitle = ({
     if (props.cat_work_title) {
       let data = []
       if(!props.foReport){
-        //data = props.cat_work_title.filter((item) => item.person === null);
+          data = props.cat_work_title.filter(
+              (item) =>  {
+                  return item.person===null || item?.person?.id===props.personId
+              }
+          );
 
         if (department && job) {
           data = data.filter(

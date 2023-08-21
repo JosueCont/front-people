@@ -187,7 +187,7 @@ const ModalConceptsPayroll = ({
             <Col span={12}>
               <Checkbox key={item.code} className="CheckGroup" value={item}>
                 <span style={{ textTransform: "uppercase" }}>
-                  {item.description}
+                  {item.description} {`(${item.data_type===1?'M':'D'})`}
                 </span>
               </Checkbox>
             </Col>
@@ -904,7 +904,6 @@ const ModalConceptsPayroll = ({
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}
-                        multiple={true}
                       />
                     ) : (
                       "No aplica"
