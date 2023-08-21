@@ -3,7 +3,7 @@ import MyModal from '../../../../common/MyModal';
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { useSelector } from 'react-redux';
 
-const FiltersLevels = ({
+const FiltersNodes = ({
     visible,
     close = () => { },
     onFinish = () => { },
@@ -12,7 +12,9 @@ const FiltersLevels = ({
 
     const {
         list_org_levels_options,
-        load_org_levels_options
+        load_org_levels_options,
+        list_org_nodes_options,
+        load_org_nodes_options
     } = useSelector(state => state.orgStore);
     const [loading, setLoading] = useState(false);
 
@@ -70,23 +72,30 @@ const FiltersLevels = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='is_active'
-                            label='Estatus'
+                            name='parent'
+                            label='Precede'
                         >
                             <Select
+                                allowClear
+                                showSearch
                                 placeholder='Seleccionar una opción'
-                                options={[
-                                    { label: 'Todos', value: 'all', key: '3' },
-                                    { label: 'Activo', value: 'true', key: '2' },
-                                    { label: 'Inactivo', value: 'false', key: '1' }
-                                ]}
-                            />
+                                notFoundContent='No se encontraron resultados'
+                                disabled={load_org_nodes_options}
+                                loading={load_org_nodes_options}
+                                optionFilterProp='children'
+                            >
+                                {list_org_nodes_options?.length > 0 && list_org_nodes_options.map(item => (
+                                    <Select.Option value={`${item.id}`} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='parent'
-                            label='Precede'
+                            name='organizational_level'
+                            label='Nivel organizacional'
                         >
                             <Select
                                 allowClear
@@ -107,25 +116,16 @@ const FiltersLevels = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name='enable_assign_worktitle'
-                            label='¿Permite asignar plazas?'
+                            name='is_active'
+                            label='Estatus'
                         >
                             <Select
-                                allowClear
                                 placeholder='Seleccionar una opción'
-                                options={optionsBoolean}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='enable_custom_catalogs'
-                            label='¿Permite catálogos personalizados?'
-                        >
-                            <Select
-                                allowClear
-                                placeholder='Seleccionar una opción'
-                                options={optionsBoolean}
+                                options={[
+                                    { label: 'Todos', value: 'all', key: '3' },
+                                    { label: 'Activo', value: 'true', key: '1' },
+                                    { label: 'Inactivo', value: 'false', key: '2' }
+                                ]}
                             />
                         </Form.Item>
                     </Col>
@@ -146,4 +146,4 @@ const FiltersLevels = ({
     )
 }
 
-export default FiltersLevels
+export default FiltersNodes

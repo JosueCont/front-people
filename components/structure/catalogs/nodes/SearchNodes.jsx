@@ -13,10 +13,10 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../../utils/functions';
 import TagFilters from '../../../jobbank/TagFilters';
-import FiltersLevels from './FiltersLeves';
-import { useFiltersLevels } from './useFiltersLevels';
+import FiltersNodes from './FiltersNodes';
+import { useFiltersNodes } from './useFiltersNodes';
 
-const SearchLevels = ({
+const SearcNodes = ({
     title = '',
     actionAdd = () => { }
 }) => {
@@ -25,7 +25,7 @@ const SearchLevels = ({
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
-    const { listKeys } = useFiltersLevels();
+    const { listKeys } = useFiltersNodes();
 
     const view = router.query?.tree;
 
@@ -35,7 +35,7 @@ const SearchLevels = ({
     }, [router.query?.search])
 
     const setFilters = (filters = {}) => router.replace({
-        pathname: '/structure/catalogs/levels',
+        pathname: '/structure/catalogs/nodes',
         query: filters
     }, undefined, { shallow: true });
 
@@ -56,7 +56,6 @@ const SearchLevels = ({
 
     const showModal = () => {
         let values = { ...router.query };
-        // values.parent = values?.parent ? parseInt(values?.parent) : null;
         values.is_active = values.is_active ? values.is_active : 'true';
         formSearch.setFieldsValue(values);
         setOpenModal(true)
@@ -184,7 +183,7 @@ const SearchLevels = ({
                     </Col>
                 </Row>
             </Card>
-            <FiltersLevels
+            <FiltersNodes
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -194,4 +193,4 @@ const SearchLevels = ({
     )
 }
 
-export default SearchLevels;
+export default SearcNodes;

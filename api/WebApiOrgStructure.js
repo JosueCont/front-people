@@ -23,8 +23,8 @@ class WebApiOrgStructure {
 
     // NODOS ORGANIZACIONALES
 
-    static getOrgNodes(node, query = ''){
-        return WebApi.ApisType(`/organizationalstructure/organizational-node/?node=${node}${query}`, 'get');
+    static getOrgNodes(query = ''){
+        return WebApi.ApisType(`/organizationalstructure/organizational-node/${query}`, 'get');
     }
     
     static createOrgNode(data){
