@@ -23,7 +23,7 @@ import {
   salaryDays,
   VacationPayment,
 } from "../../../utils/constant";
-import { onlyNumeric, ruleRequired, numCommaAndDot } from "../../../utils/rules";
+import { onlyNumeric, ruleRequired, TwoDigitsAndDecimal } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
@@ -825,7 +825,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             </Col>
             { typeTaxSelected?.code === 4 &&
               <Col span={4}>
-                <Form.Item rules={[numCommaAndDot]} name={'tax_percent'} label="Porcentaje de ISR" >
+                <Form.Item rules={[TwoDigitsAndDecimal]} name={'tax_percent'} label="Porcentaje de ISR" >
                   <Input placeholder="7" suffix={<PercentageOutlined /> } />
                 </Form.Item>
               </Col>
