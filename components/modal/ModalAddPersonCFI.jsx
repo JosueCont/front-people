@@ -169,6 +169,9 @@ const ModalAddPersonCFI = ({
                             Soporte para una carga única o masiva. Prohibir estrictamente la carga de datos de la empresa u otros
                             archivos sensibles.
                         </p>
+                        <p className="ant-upload-hint">
+                            <b>Importante:</b> no cargar archivos escaneados
+                        </p>
                     </Dragger>
                 }
             </Spin>
