@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import MainLevels from './levels/MainLevels';
+import MainNodes from './nodes/MainNodes';
 
 const GetCatalog = ({...props}) => {
 
@@ -9,6 +10,7 @@ const GetCatalog = ({...props}) => {
 
     const Catalogs = {
         levels: MainLevels,
+        nodes: MainNodes,
         __default__: ()=><></>
     }
 

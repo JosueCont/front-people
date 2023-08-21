@@ -115,6 +115,11 @@ export const twoDecimal = {
   message: "El campo no puede tener más de dos decimales",
 };
 
+export const TwoDigitsAndDecimal = {
+  pattern: /^[0-9]{1,2}(?:\.\d{1,1})?$/,
+  message: "El campo no puede tener más digitos y un un decimal",
+};
+
 // export const numCommaAndDot = {
 //   pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
 //   message: 'Ingrese un valor y/o formato válido'
