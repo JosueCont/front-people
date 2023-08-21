@@ -50,6 +50,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
 
+  static getListPersons(filters) {
+    return WebApi.ApisType(`/person/person/get_list_persons/`, "post", filters);
+  }
+
   // Nuevas apis
 
   static getCollaborators(node, query){
