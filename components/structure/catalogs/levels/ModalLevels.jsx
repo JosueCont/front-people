@@ -1,9 +1,9 @@
 import React, {
     useState,
     useMemo,
-    useEffect
+    useEffect,
+    useRef
 } from 'react';
-import MyModal from '../../../../common/MyModal';
 import {
     Form,
     Row,
@@ -11,18 +11,27 @@ import {
     Select,
     Button,
     Input,
-    TreeSelect
+    TreeSelect,
+    Drawer,
+    Space,
+    message,
+    Spin
 } from 'antd';
-import { useSelector } from 'react-redux';
+import {
+    useSelector,
+    useDispatch
+} from 'react-redux';
+import { getOrgLevelsOptions } from '../../../../redux/OrgStructureDuck';
 import { ruleRequired } from '../../../../utils/rules';
+import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
+import { useTreeOptions } from '../../useTreeOptions';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const ModalLevels = ({
     visible = false,
-    textSave = 'Guardar',
-    title = '',
     itemToEdit = {},
     close = () => { },
-    actionForm = () => { },
+    onReady = () => { },
 }) => {
 
     const {
@@ -30,8 +39,14 @@ const ModalLevels = ({
         list_org_levels_tree,
         load_org_levels_options
     } = useSelector(state => state.orgStore);
+    const dispatch = useDispatch();
     const [formLevel] = Form.useForm();
-    const [loading, setLoading] = useState(false);
+    const refSubmit = useRef(null);
+    const [fetching, setFetching] = useState(false);
+    const [type, setType] = useState('create');
+    const { getOptionsEdit, formatAdd } = useTreeOptions();
+
+    const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
 
     useEffect(() => {
         if (Object.keys(itemToEdit).length <= 0) return;
@@ -40,18 +55,66 @@ const ModalLevels = ({
         formLevel.setFieldsValue(values)
     }, [itemToEdit])
 
+    const actionCreate = async (values) => {
+        try {
+            await WebApiOrgStructure.createOrgLevel(values);
+            setTimeout(() => {
+                dispatch(getOrgLevelsOptions())
+                message.success('Nivel organizacional registrado')
+                submitAction()
+                onReady()
+            }, 1000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(() => {
+                message.error('Nivel organizacional no registrado')
+                setFetching(false)
+            }, 1000)
+        }
+    }
+
+    const actionUpdate = async (values) => {
+        try {
+            await WebApiOrgStructure.updateOrgLevel(itemToEdit?.id, values)
+            setTimeout(() => {
+                message.success('Nivel organizacional actualizado')
+                dispatch(getOrgLevelsOptions())
+                onClose()
+                onReady()
+            }, 1000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(() => {
+                message.error('Nivel organizacional no actualizado')
+                setFetching(false)
+            }, 1000)
+        }
+    }
+
     const onFinish = (values) => {
-        setLoading(true)
-        setTimeout(() => {
-            actionForm(values)
-            onClose()
-            setLoading(false)
-        }, 2000)
+        setFetching(true)
+        if (isEdit) actionUpdate(values);
+        else actionCreate(values);
+    }
+
+    const reset = () => {
+        setFetching(false)
+        formLevel.resetFields()
     }
 
     const onClose = () => {
         close()
-        formLevel.resetFields()
+        reset()
+    }
+
+    const submitType = (type) => {
+        setType(type)
+        refSubmit.current?.click();
+    }
+
+    const submitAction = () => {
+        if (type == 'create') reset();
+        else onClose();
     }
 
     const optionsBoolean = [
@@ -59,206 +122,171 @@ const ModalLevels = ({
         { value: false, key: '2', label: 'No' }
     ]
 
-    const GetName = ({ item }) => {
-        let color = 'rgba(0, 0, 0, 0.25)';
-        return (
-            <>{item.name} {!item?.is_active &&
-                <span style={{ color }}>
-                    (Inactivo)
-                </span>
-            }</>
-        )
-    }
+    const optionsStatus = [
+        { value: true, key: '1', label: 'Activo' },
+        { value: false, key: '2', label: 'Inactivo' }
+    ]
 
-    // const formatOptions = (item) => {
-    //     const some_ = record => record.id == itemToEdit?.id;
-    //     const format = record => (formatOptions(record));
-
-    //     const reduce_ = (acc, record) => {
-    //         if (record?.id == itemToEdit?.id) return acc;
-    //         return [...acc, {
-    //             value: record?.id,
-    //             title: record?.name,
-    //             children: []
-    //         }]
-    //     }
-
-    //     let exist = item?.children?.some(some_);
-
-    //     let results = exist
-    //         ? item?.children?.reduce(reduce_, [])
-    //         : item?.children?.map(format);
-
-    //     return {
-    //         value: item?.id,
-    //         title: item?.name,
-    //         children: results
-    //     }
-    // }
-
-     // const formatOptions = (item) => {
-    //     let equals = itemToEdit?.id == item.id;
-    //     const filter_ = record => record?.id != itemToEdit?.id;
-    //     let parent = !equals ? item?.children?.filter(filter_) : [];
-    //     // let disabled = equals || !item?.is_active;
-    //     const map_ = record => (formatOptions(record));
-    //     let children = parent?.length > 0 ? parent.map(map_) : [];
-
-    //     return {
-    //         value: item?.id,
-    //         title: item?.name,
-    //         // disabled,
-    //         children
-    //     }
-    // }
-
-    const formatEdit = (item, depth, pos) => {
-        const some_ = record => record.id == itemToEdit?.id;
-        const filter_ = record => record?.id != itemToEdit?.id;
-        const format = record => (formatEdit(record, depth, pos + 1));
-
-        let exist = item?.children?.some(some_);
-        let parent = exist ? item?.children?.filter(filter_) : item?.children;
-        let results = depth == pos ? [] : parent?.map(format);
-
-        return {
-            value: item?.id,
-            title: <GetName item={item}/>,
-            children: results
-        }
-    }
-
-    const getOptionsEdit = () => {
-        let depth = null;
-
-        // Obtenemos la profundidad del nivel a editar
-        const getDepth = (item, idx = []) => {
-            let valid = item?.id == itemToEdit?.id;
-            if (valid) return depth = idx;
-            return item?.children?.forEach((record, index) => {
-                return getDepth(record, [...idx, index]);
-            })
-        }
-
-        list_org_levels_tree.forEach((item, idx) => {
-            let valid = item?.id == itemToEdit?.id;
-            if (!valid) return getDepth(item, [idx]);
-            return depth = [idx];
-        })
-
-        return list_org_levels_tree.reduce((acc, item) => {
-            if (item?.id == itemToEdit?.id) return acc;
-            return [...acc, formatEdit(item, depth?.length, 1)]
-        }, [])
-    }
-
-    const formatAdd = (item) => {
-        const map_ = record => (formatAdd(record));
-        let children = item?.children?.length > 0
-            ? item?.children?.map(map_) : [];
-        return {
-            value: item?.id,
-            title: <GetName item={item}/>,
-            children
-        }
-    }
-
-    const optionsParent = useMemo(() => {
+    const optionsLevels = useMemo(() => {
         if (list_org_levels_tree.length <= 0 || !visible) return [];
-        let exist = Object.keys(itemToEdit).length > 0;
-        if (exist) return getOptionsEdit();
+        if (isEdit) return getOptionsEdit({
+            value: itemToEdit?.id,
+            list_tree: list_org_levels_tree
+        })
         return list_org_levels_tree.reduce((acc, item) => {
             let option = formatAdd(item);
             return [...acc, option]
         }, [])
-    }, [list_org_levels_tree, itemToEdit, visible])
+    }, [list_org_levels_tree, isEdit, visible])
 
     return (
-        <MyModal
-            title={title}
+        <Drawer
+            title={isEdit
+                ? 'Editar nivel organizacional'
+                : 'Agregar nivel organizacional'
+            }
+            width={500}
             visible={visible}
-            close={onClose}
-            // widthModal={700}
-            closable={!loading}
+            placement='right'
+            maskClosable={false}
+            closable={!fetching}
+            keyboard={false}
+            onClose={() => onClose()}
+            className='ant-table-colla'
+            footer={
+                <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+                    {isEdit ? (
+                        <>
+                            <Button
+                                disabled={fetching}
+                                onClick={() => onClose()}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                htmlType='submit'
+                                disabled={fetching}
+                                form='form-org-levels'
+                            >
+                                Actualizar
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                style={{ display: 'none' }}
+                                form='form-org-levels'
+                                type='submit'
+                                ref={refSubmit}
+                            />
+                            <Button
+                                disabled={fetching}
+                                htmlType='button'
+                                onClick={() => submitType('create')}
+                            >
+                                Guardar y agregar otro
+                            </Button>
+                            <Button
+                                disabled={fetching}
+                                htmlType='button'
+                                onClick={() => submitType('close')}
+                            >
+                                Guardar y cerrar
+                            </Button>
+                        </>
+                    )}
+                </Space>
+            }
         >
-            <Form
-                form={formLevel}
-                onFinish={onFinish}
-                layout='vertical'
+            <Spin
+                spinning={fetching}
+                indicator={<LoadingOutlined style={{ color: 'rgba(0,0,0,0.5)' }} />}
             >
-                <Row gutter={[24, 0]}>
-                    <Col span={12}>
-                        <Form.Item
-                            name='name'
-                            label='Nombre'
-                            rules={[ruleRequired]}
-                        >
-                            <Input maxLength={400} placeholder='Nombre' />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='description'
-                            label='Descripción'
-                        >
-                            <Input placeholder='Descripción' />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='enable_assign_worktitle'
-                            label='¿Permite asignar plazas?'
-                        >
-                            <Select
-                                allowClear
-                                placeholder='Seleccionar una opción'
-                                options={optionsBoolean}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='enable_custom_catalogs'
-                            label='¿Permite catálogos personalizados?'
-                        >
-                            <Select
-                                allowClear
-                                placeholder='Seleccionar una opción'
-                                options={optionsBoolean}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                        <Form.Item
-                            name='parent'
-                            label='Precede'
-                        >
-                            <TreeSelect
-                                allowClear
-                                showSearch
-                                treeLine={{ showLeafIcon: false }}
-                                treeData={optionsParent}
-                                loading={load_org_levels_options}
-                                disabled={load_org_levels_options}
-                                placeholder='Seleccionar una opción'
-                                treeNodeFilterProp='title'
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={24} className='content-end' style={{ gap: 8 }}>
-                        <Button disabled={loading} onClick={() => onClose()}>
-                            Cancelar
-                        </Button>
-                        <Button
-                            loading={loading}
-                            htmlType='submit'
-                        >
-                            {textSave}
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
-        </MyModal>
+                <Form
+                    form={formLevel}
+                    onFinish={onFinish}
+                    layout='vertical'
+                    id='form-org-levels'
+                    initialValues={{
+                        is_active: true
+                    }}
+                >
+                    <Row gutter={[24, 0]}>
+                        <Col span={24}>
+                            <Form.Item
+                                name='name'
+                                label='Nombre'
+                                rules={[ruleRequired]}
+                            >
+                                <Input maxLength={400} placeholder='Nombre' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name='description'
+                                label='Descripción'
+                            >
+                                <Input placeholder='Descripción' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name='enable_assign_worktitle'
+                                label='¿Permite asignar plazas?'
+                            >
+                                <Select
+                                    allowClear
+                                    placeholder='Seleccionar una opción'
+                                    options={optionsBoolean}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name='enable_custom_catalogs'
+                                label='¿Permite catálogos personalizados?'
+                            >
+                                <Select
+                                    allowClear
+                                    placeholder='Seleccionar una opción'
+                                    options={optionsBoolean}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name='parent'
+                                label='Precede'
+                            >
+                                <TreeSelect
+                                    allowClear
+                                    showSearch
+                                    treeLine={{ showLeafIcon: false }}
+                                    treeData={optionsLevels}
+                                    treeDefaultExpandedKeys={itemToEdit?.parent 
+                                        ? [itemToEdit?.parent?.id] : []}
+                                    loading={load_org_levels_options}
+                                    disabled={load_org_levels_options}
+                                    placeholder='Seleccionar una opción'
+                                    treeNodeFilterProp='name'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name='is_active'
+                                label='Estatus'
+                            >
+                                <Select
+                                    placeholder='Seleccionar una opción'
+                                    options={optionsStatus}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </Spin>
+        </Drawer>
     )
 }
 

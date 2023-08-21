@@ -5,30 +5,31 @@ import React, {
 } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import SearchLevels from './SearchLevels';
-import TableLevels from './TableLevels';
+import SearchNodes from './SearchNodes';
+import TableNodes from './TableNodes';
 import {
-    getOrgLevels,
+    getOrgNodes,
+    getOrgNodesOptions,
     getOrgLevelsOptions
 } from '../../../../redux/OrgStructureDuck';
 import { getFiltersJB } from '../../../../utils/functions';
-import ModalLevels from './ModalLevels';
+import ModalNodes from './ModalNodes';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
 import { message } from 'antd';
 import ListItems from '../../../../common/ListItems';
 import TreeList from '../TreeList';
 
-const MainLevels = ({
+const MainNodes = ({
     nameCatalog,
-    getOrgLevels,
+    getOrgNodes,
+    getOrgNodesOptions,
     getOrgLevelsOptions,
-    currentUser,
     org_filters,
     org_page,
     org_page_size,
-    list_org_levels_options,
-    load_org_levels_options,
-    list_org_levels_tree
+    list_org_nodes_tree,
+    load_org_nodes_options,
+    list_org_nodes_options
 }) => {
 
     const router = useRouter();
@@ -40,6 +41,7 @@ const MainLevels = ({
     const [useWithAction, setUseWithAction] = useState(true);
 
     useEffect(() => {
+        getOrgNodesOptions()
         getOrgLevelsOptions()
     }, [])
 
@@ -48,7 +50,7 @@ const MainLevels = ({
         let page = router.query.page ? parseInt(router.query.page) : 1;
         let size = router.query.size ? parseInt(router.query.size) : 10;
         let filters = getFiltersJB(validFilters(), ['catalog']);
-        getOrgLevels(filters, page, size)
+        getOrgNodes(filters, page, size)
     }, [router.query])
 
     const validFilters = () => {
@@ -62,13 +64,13 @@ const MainLevels = ({
     const actionDelete = async () => {
         try {
             let id = itemsSelected?.at(-1)?.id;
-            await WebApiOrgStructure.updateOrgLevel(id, { is_deleted: true }, 'patch');
-            message.success('Nivel organizacional eliminado')
-            getOrgLevels(org_filters, org_page, org_page_size)
-            getOrgLevelsOptions()
+            await WebApiOrgStructure.updateOrgNode(id, { is_deleted: true }, 'patch');
+            message.success('Nodo organizacional eliminado')
+            getOrgNodes(org_filters, org_page, org_page_size)
+            getOrgNodesOptions()
         } catch (e) {
             console.log(e)
-            message.error('Nivel organizacional no eliminado')
+            message.error('Nodo organizacional no eliminado')
         }
     }
 
@@ -96,47 +98,48 @@ const MainLevels = ({
 
     const showEditTree = (item) => {
         const find_ = record => record.id == item?.id;
-        let result = list_org_levels_options.find(find_);
+        let result = list_org_nodes_options.find(find_);
         showEdit(result)
     }
 
     const showDeleteTree = (item) => {
         const find_ = record => record.id == item?.id;
-        let result = list_org_levels_options.find(find_);
+        let result = list_org_nodes_options.find(find_);
         showDelete(result)
     }
 
     return (
         <>
-            <SearchLevels
+            <SearchNodes
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
             />
+
             {router.query?.tree == 'true' ? (
                 <TreeList
-                    list_tree={list_org_levels_tree}
-                    load_tree={load_org_levels_options}
+                    list_tree={list_org_nodes_tree}
+                    load_tree={load_org_nodes_options}
                     showEditTree={showEditTree}
                     showDeleteTree={showDeleteTree}
                 />
             ) : (
-                <TableLevels
+                <TableNodes
                     showEdit={showEdit}
                     showDelete={showDelete}
                 />
             )}
-            <ModalLevels
+            <ModalNodes
                 visible={openModal}
                 itemToEdit={itemToEdit}
                 close={closeEdit}
                 onReady={() => {
-                    getOrgLevels(org_filters, org_page, org_page_size)
+                    getOrgNodes(org_filters, org_page, org_page_size)
                 }}
             />
             <ListItems
                 title={useWithAction
-                    ? '¿Estás seguro de eliminar este nivel organizacional?'
-                    : 'Este nivel organizacional no se puede eliminar ya que otros preceden de el.'
+                    ? '¿Estás seguro de eliminar este nodo organizacional?'
+                    : 'Este nodo organizacional no se puede eliminar ya que otros preceden de el.'
                 }
                 visible={openDelete}
                 keyTitle='name'
@@ -158,15 +161,16 @@ const mapState = (state) => {
         org_page: state.orgStore.org_page,
         org_filters: state.orgStore.org_filters,
         org_page_size: state.orgStore.org_page_size,
-        list_org_levels_options: state.orgStore.list_org_levels_options,
-        list_org_levels_tree: state.orgStore.list_org_levels_tree,
-        load_org_levels_options: state.orgStore.load_org_levels_options
+        list_org_nodes_options: state.orgStore.list_org_nodes_options,
+        list_org_nodes_tree: state.orgStore.list_org_nodes_tree,
+        load_org_nodes_options: state.orgStore.load_org_nodes_options
     }
 }
 
 export default connect(
     mapState, {
-    getOrgLevels,
+    getOrgNodes,
+    getOrgNodesOptions,
     getOrgLevelsOptions
 }
-)(MainLevels);
+)(MainNodes);
