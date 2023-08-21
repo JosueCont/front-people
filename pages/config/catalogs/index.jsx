@@ -18,7 +18,7 @@ import Title from "antd/lib/typography/Title";
 import Router from "next/router";
 import { connect } from "react-redux";
 import { doCompanySelectedCatalog } from "../../../redux/catalogCompany";
-
+import { doFiscalCatalogs } from "../../../redux/fiscalDuck";
 import Levels from "../../../components/catalogs/Levels";
 import WorkTitle from "../../../components/catalogs/WorkTitle";
 import Departaments from "../../../components/catalogs/Departaments";
@@ -74,6 +74,18 @@ const configBusiness = ({ ...props }) => {
     }
   }
 
+  const onChangeTab=async (tab)=>{
+    if(tab==='tab_7'){
+      try{
+        const res = await props.doFiscalCatalogs(props.currentNode.id, props.version_cfdi, true)
+      }catch (e){
+
+      }finally {
+
+      }
+    }
+  }
+
   return (
     <>
       <MainConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
@@ -100,7 +112,7 @@ const configBusiness = ({ ...props }) => {
                   </Space>
                 </Col>
               </Row>
-              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
+              <Tabs onChange={(tab) => onChangeTab(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
@@ -317,9 +329,10 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     permissions: state.userStore.permissions,
+    version_cfdi: state.fiscalStore.version_cfdi,
   };
 };
 
-export default connect(mapState, { doCompanySelectedCatalog })(
+export default connect(mapState, { doCompanySelectedCatalog, doFiscalCatalogs })(
   withAuthSync(configBusiness)
 );

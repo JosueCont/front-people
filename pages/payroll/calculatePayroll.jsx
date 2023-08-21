@@ -942,7 +942,7 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
 
-          closeButton: "Cerrar",
+          closeButton: "Cancelar",
           title_action_button: "Ver comprobantes",
           viewActionButton: false,
         });
@@ -1482,7 +1482,7 @@ const CalculatePayroll = ({ ...props }) => {
         `${getDomain(
           API_URL_TENANT
         )}/payroll/accounting-policy-report`,
-        `Poliza contable_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
         "POST",
         {
           "node__id": props?.currentNode?.id,
@@ -1519,7 +1519,7 @@ const CalculatePayroll = ({ ...props }) => {
             </Menu.Item>
             <Menu.Item key={'accounting_policy_simple'}>
               <a>
-                Poliza contable
+                Resumen
               </a>
             </Menu.Item>
           </>
@@ -2191,7 +2191,7 @@ const CalculatePayroll = ({ ...props }) => {
           closeButton={
             infoGenericModal.closeButton
               ? infoGenericModal.closeButton
-              : "Cerrar"
+              : "Cancelar"
           }
         >
           <Row>

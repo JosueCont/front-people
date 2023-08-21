@@ -17,7 +17,8 @@ import Icon, {
   SolutionOutlined,
   PieChartFilled,
   SafetyCertificateOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  PartitionOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -122,7 +123,8 @@ const MainSider = ({
       jb_interviews: "/jobbank/interviews",
       jb_applications: "/jobbank/applications",
       tm_centers: "/timeclock/centers",
-      tm_logs: "/timeclock/logs"
+      tm_logs: "/timeclock/logs",
+      org_catalogs: "/structure/catalogs"
     };
     switch (key){
       case "sukha":
@@ -234,6 +236,16 @@ const MainSider = ({
       if(children01.length>0){
         items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
       }
+
+      let subStructure = [
+        getItem("Catálogos","org_catalogs")
+      ]
+
+
+      if(process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL && process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL==='true'){
+        items.push(getItem("Estructura organizacional", "org_structure", <PartitionOutlined />, subStructure))
+      }
+
       
       let subTimeClock = [
         getItem("Centros de trabajo", "tm_centers"),

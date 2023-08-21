@@ -1113,7 +1113,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
 
-          closeButton: "Cerrar",
+          closeButton: "Cancelar",
           title_action_button: "Ver comprobantes",
           viewActionButton: false,
         });
@@ -1644,7 +1644,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           closeButton={
             infoGenericModal.closeButton
               ? infoGenericModal.closeButton
-              : "Cerrar"
+              : "Cancelar"
           }
         >
           <Row>

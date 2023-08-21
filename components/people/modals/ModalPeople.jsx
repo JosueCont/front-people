@@ -89,6 +89,10 @@ const ModalPeople = ({
         try {
             setLoading(true)
 
+            if(!values?.work_title_id){
+                delete values['work_title_id']
+            }
+
             let body = { ...values, node: current_node?.id };
             let response = await WebApiPeople.createPerson(body);
             setTimeout(() => {
@@ -383,7 +387,7 @@ const ModalPeople = ({
                             job={idJob}
                             labelText='Plaza laboral'
                             dependencies={['person_department', 'job']}
-                            rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
+                            //rules={[ruleRequired]} //Se omite la validación aqui, ya que se realiza en el componente
                             placeholder='Seleccionar una opción'
                             disabled={!idDepartment || !idJob}
                         />
