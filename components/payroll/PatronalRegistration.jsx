@@ -634,50 +634,7 @@ const ImssInformationNode = ({
                 </Row>
 
                 {hasCredentialInfonavit && (
-                  <>
-                    <Divider>
-                      {" "}
-                      <img src={"/images/logoinfonavit.png"} width={40} />{" "}
-                      Movimientos de Infonavit
-                    </Divider>
-                    <Row justify="space-between">
-                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
-                        Movimientos afiliatorios
-                      </Title>
-                      <Button
-                        onClick={() => setModal(true)}
-                        form="formGeneric"
-                        htmlType="submit"
-                        style={{ marginBottom: "20px" }}
-                      >
-                        Sincronizar / Solicitar
-                      </Button>
-                    </Row>
-                    <Divider style={{ marginTop: "2px" }} />
-                    <AfilliateMovements
-                      id={patronalData.id}
-                      node={dataPatronalRegistration[0].node}
-                    />
-
-                    <Row justify="space-between">
-                      <Title style={{ fontSize: "15px", paddingTop: "10px" }}>
-                        Avisos de retenciones
-                      </Title>
-                      <Button
-                        onClick={syncUpData}
-                        form="formGeneric"
-                        htmlType="submit"
-                        style={{ marginBottom: "20px" }}
-                      >
-                        Sincronizar / Solicitar
-                      </Button>
-                    </Row>
-
-                    <Divider style={{ marginTop: "2px" }} />
-                    <WithHoldingNotice
-                      patronalData={dataPatronalRegistration[0]}
-                    />
-                  </>
+                  <a href={`/payroll/imssMovements?regPatronal=${patronalData.id}`} style={{fontStyle:'underline'}}>Ir a la sección de IMSS e Infonavit</a>
                 )}
 
                 <GenericModal

@@ -221,7 +221,7 @@ export const doCompanySelectedCatalog =
                 dispatch(getWorkTitle(idCompany));
                 dispatch(getCostCenter(idCompany));
                 dispatch(getTags(idCompany));
-                dispatch(getAccountantAccount(idCompany));
+                //dispatch(getAccountantAccount(idCompany));
                 dispatch(getBranches(idCompany));
                 dispatch(getPatronalRegistration(idCompany));
                 return true;
@@ -415,6 +415,7 @@ export const getTags = (idCompany) => async (dispatch, getState) => {
 };
 
 export const getAccountantAccount = (idCompany) => async (dispatch, getState) => {
+    if (!idCompany) idCompany = userCompanyId();
     const type = { type: ACCOUNT, payload: [], fetching: false, error: null };
     dispatch({ ...type, fetching: true })
     try {

@@ -12,7 +12,7 @@ import {
   Switch,
   Checkbox,
 } from "antd";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { CloseOutlined, CheckOutlined, PercentageOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -23,7 +23,7 @@ import {
   salaryDays,
   VacationPayment,
 } from "../../../utils/constant";
-import { onlyNumeric, ruleRequired } from "../../../utils/rules";
+import { onlyNumeric, ruleRequired, TwoDigitsAndDecimal } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
@@ -50,6 +50,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
   const [selectPeriodicityCode, setSelectPeriodicityCode] = useState(null);
   const currentYear = moment().year();
   const [bankDispersionList, setBankDispersionList] = useState([])
+  const [typeTaxSelected, setTypeTaxSelected] = useState(null)
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -192,6 +193,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
       if (response.data) {
         setPaymentCalendar(response.data);
         let item = response.data;
+
+        if(item?.type_tax?.code === 4){
+          setTypeTaxSelected(item?.type_tax)
+        }
+
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
@@ -215,6 +221,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           vacation_bonus_payment: item.vacation_bonus_payment,
           benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
+          tax_percent: item?.tax_percent
         });
 
 
@@ -494,6 +501,18 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
     });
   };
 
+  const changeTypeTax = (val) => {
+    let type = props?.type_tax?.filter(item => item.id === val)
+    if(type.length > 0){
+      setTypeTaxSelected(type[0])
+        formPaymentCalendar.setFieldsValue({
+          'tax_percent': paymentCalendar?.tax_percent ? paymentCalendar?.tax_percent : type[0]?.percent
+        })
+    }else{
+      setTypeTaxSelected(null)
+    }
+  }
+
   // const getFiscalInformation = async (node_id) => {
   //   try {
   //     let response = await WebApiPeople.getfiscalInformationNode(node_id)
@@ -600,6 +619,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             </Col>
             <Col lg={8} xs={22}>
               <SelectTypeTax
+                onChange={(val) => changeTypeTax(val)}
                 rules={[ruleRequired]}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
@@ -803,6 +823,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
                 // disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
+            { typeTaxSelected?.code === 4 &&
+              <Col span={4}>
+                <Form.Item rules={[TwoDigitsAndDecimal]} name={'tax_percent'} label="Porcentaje de ISR" >
+                  <Input placeholder="7" suffix={<PercentageOutlined /> } />
+                </Form.Item>
+              </Col>
+            }
             <Col lg={8} xs={22}>
               <Form.Item label={idPaymentCalendar ? "Ver Políticas" : "Políticas"}>
                 <Switch
@@ -921,7 +948,8 @@ const mapState = (state) => {
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     currentNode: state.userStore.current_node,
     periodicities: state.fiscalStore.payment_periodicity,
-    companyFiscalInformation: state.fiscalStore.company_fiscal_information
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information,
+    type_tax: state.fiscalStore.type_tax,
   };
 };
 
