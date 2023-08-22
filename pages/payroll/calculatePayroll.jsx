@@ -78,6 +78,7 @@ import jsPDF from "jspdf";
 import { useReactToPrint } from 'react-to-print';
 import SelectPeople from "../../components/people/utils/SelectPeople";
 import {ruleRequired} from "../../utils/rules";
+import LinkToPerson from "../../components/person/LinkToPerson";
 
 
 const CalculatePayroll = ({ ...props }) => {
@@ -180,7 +181,7 @@ const CalculatePayroll = ({ ...props }) => {
                   : defaulPhoto
               }
             />
-            {item.person && item.person.full_name}
+            {item.person && item.person.full_name} <LinkToPerson personId={item.person.id}/>
           </Space>
         </div>
       ),
@@ -2003,7 +2004,7 @@ const CalculatePayroll = ({ ...props }) => {
                         loading={downloading}
                         onClick={() => exportPdf()}
                         >
-                        Exportar
+                        Reporte de Nómina
                       </Button>
                           
                       </Col>

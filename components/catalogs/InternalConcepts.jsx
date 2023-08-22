@@ -33,6 +33,7 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import { showHideMessage } from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
+import SelectAccountantAccount from "../selects/SelectAccountantAccount";
 
 const InternalConcepts = ({
   permissions,
@@ -241,6 +242,7 @@ const InternalConcepts = ({
         is_rest_day: item.is_rest_day,
         is_seventh_day: item.is_seventh_day,
         apply_assimilated: item.apply_assimilated,
+        accountant_account: item.accountant_account
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -250,6 +252,7 @@ const InternalConcepts = ({
         deduction_type: item.deduction_type.id,
         apply_assimilated: item.apply_assimilated,
         show: item.show,
+        accountant_account: item.accountant_account
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -259,6 +262,7 @@ const InternalConcepts = ({
         apply_assimilated: item.apply_assimilated,
         other_type_payment: item.other_type_payment.id,
         show: item.show,
+        accountant_account: item.accountant_account
       });
     }
   };
@@ -466,6 +470,9 @@ const InternalConcepts = ({
                     props.cat_other_payments
               }
             />
+          </Col>
+          <Col lg={6} xs={22} md={12}>
+            <SelectAccountantAccount allowClear={true}/>
           </Col>
           <Col lg={6} xs={22} md={12}>
             <Form.Item
