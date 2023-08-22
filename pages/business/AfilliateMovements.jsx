@@ -6,7 +6,7 @@ import { FileExcelOutlined, SyncOutlined } from "@ant-design/icons";
 import { DeleteOutlined } from "@material-ui/icons";
 import { messageDeleteSuccess, messageError } from "../../utils/constant";
 
-const AfilliateMovements = ({ node, id }) => {
+const AfilliateMovements = ({ node, id, refreshTable, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const columns = [
@@ -61,19 +61,25 @@ const AfilliateMovements = ({ node, id }) => {
     id && getAfilliateMovements();
   }, [id]);
 
+  useEffect(()=>{
+    if(refreshTable && !loading){
+      getAfilliateMovements()
+    }
+  },[refreshTable])
+
   const getAfilliateMovements = async () => {
     try {
       setLoading(true);
       let url = `?node_id=${node}&origin__type=4&patronal_registration_id=${id}&offset=0&limit=1000`;
       const movements = await WebApiPeople.afilliateMovements(url);
       setLoading(false);
-      console.log('pasa')
       processData(movements?.data?.results);
     } catch (e) {
       setData([]);
       console.log("error", e);
     } finally {
       setLoading(false);
+      props.onFinishRefreshTable()
     }
   };
 

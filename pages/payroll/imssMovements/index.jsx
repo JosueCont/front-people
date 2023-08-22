@@ -347,15 +347,17 @@ const disabledMaxDate  = (current) => {
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
-          <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
+          <Breadcrumb.Item>Movimientos IMSS e INFONAVIT</Breadcrumb.Item>
         </Breadcrumb>
         <Spin tip="Cargando..." spinning={false}>
           <div
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Divider> <img src={'/images/logo_imss.png'} width={40}/> Movimientos de IMSS</Divider>
-            <Collapse defaultActiveKey={["1"]}>
+            <Divider> Movimientos de IMSS e INFONAVIT</Divider>
+            <Collapse
+                //defaultActiveKey={["1"]}
+            >
               <Panel header="Movimientos IMSS" key="1">
                 <MovementsSection regPatronalProps={router?.query?.regPatronal} />
 

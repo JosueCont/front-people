@@ -19,18 +19,23 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
     const [disabledBimester, setDisabledBimester] = useState(true);
     const [bimester, setBimester] = useState(null);
     const [year, setYear] = useState("");
+    const [refreshTable,setRefreshTable] = useState(false)
 
     const validateScraper = async () => {
-        let valid = await WebApiPeople.getCredentials('infonavit', patronalSelected)
-        const results = valid?.data?.results
-        console.log('result', results)
-        setScraperActive(results?.credentials)
+        try{
+            let valid = await WebApiPeople.getCredentials('infonavit', patronalSelected)
+            const results = valid?.data?.results
+            setScraperActive(results?.credentials)
+        }catch (e){
+
+        }
+
         //credentials
     }
 
     useEffect(() => {
       if(patronalSelected){
-        validateScraper()
+          validateScraper()
       }
     }, [patronalSelected])
 
@@ -74,6 +79,7 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
           }
         } finally {
           setLoading(false);
+          setRefreshTable(true);
         }
     };
 
@@ -127,6 +133,8 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
                         <>
                             <Spin spinning={loading}>
                                 <AfilliateMovements
+                                    refreshTable={refreshTable}
+                                    onFinishRefreshTable={()=>setRefreshTable(false)}
                                     id={patronalSelected}
                                     node={currentNodeId}
                                 />
