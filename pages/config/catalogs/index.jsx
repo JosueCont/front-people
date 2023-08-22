@@ -17,7 +17,7 @@ import {
 import Title from "antd/lib/typography/Title";
 import Router from "next/router";
 import { connect } from "react-redux";
-import { doCompanySelectedCatalog } from "../../../redux/catalogCompany";
+import { doCompanySelectedCatalog, getAccountantAccount } from "../../../redux/catalogCompany";
 import { doFiscalCatalogs } from "../../../redux/fiscalDuck";
 import Levels from "../../../components/catalogs/Levels";
 import WorkTitle from "../../../components/catalogs/WorkTitle";
@@ -33,7 +33,7 @@ import TagCatalog from "../../../components/catalogs/TagCatalog";
 import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
 import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 import {FormattedMessage} from "react-intl";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
 import MainConfig from "../../../components/config/MainConfig";
@@ -43,7 +43,7 @@ import { API_URL_TENANT } from "../../../config/config";
 import axios from "axios";
 import { typeHttp } from "../../../config/config";
 
-const configBusiness = ({ ...props }) => {
+const configBusiness = ({ getAccountantAccount, ...props }) => {
   const { TabPane } = Tabs;
   const [showModal, setShowModal] = useState(false)
   const [downloading, setDownloading] = useState(false)
@@ -85,6 +85,10 @@ const configBusiness = ({ ...props }) => {
       }
     }
   }
+
+  useEffect(()=>{
+    getAccountantAccount()
+  },[])
 
   return (
     <>
@@ -333,6 +337,6 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { doCompanySelectedCatalog, doFiscalCatalogs })(
+export default connect(mapState, { doCompanySelectedCatalog, doFiscalCatalogs, getAccountantAccount })(
   withAuthSync(configBusiness)
 );
