@@ -39,9 +39,13 @@ const Dashboard = ({
                 <ContentVertical>
                     <div>
                         <Typography.Title style={{marginBottom:0}} level={1}>
-                            <Space size={10}>
-                                <>{currentNode && currentNode.name}</>
-                                <SettingOutlined style={{ cursor:'pointer' }} onClick={()=> router.push(`/business/companies/${currentNode.id}`) } />
+                            <Space direction={'vertical'} size={10}>
+                                {
+                                    currentNode && currentNode.image &&
+                                    <img alt={'logo'} width={150} src={currentNode.image}/>
+                                }
+
+                                <span style={{fontSize:20,color:'#1890ff',cursor:'pointer'}} onClick={()=> router.push(`/business/companies/${currentNode.id}`)}> {currentNode && currentNode.name}</span>
                             </Space>
                         </Typography.Title>
                         <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>

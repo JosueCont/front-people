@@ -529,6 +529,12 @@ const FormPayrollPerson = ({
               className="inputs_form_responsive form-details-person"
               onValuesChange={handleValuesChange}
             >
+              {!bankDisabled && (
+                    <Alert
+                        banner
+                        style={{marginBottom:20}}
+                        message="Los datos bancarios de la personas se puede confgurar en la sección: Cuentas bancarias" type="info" />
+              )}
               <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
@@ -622,7 +628,7 @@ const FormPayrollPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item
                     name="payment_type"
                     label="Forma de pago"
@@ -642,24 +648,7 @@ const FormPayrollPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                {!bankDisabled && (
-                  <Col lg={12} xs={22} md={12}>
-                    <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
-                      <Select
-                        options={banks}
-                        showSearch
-                        filterOption={(input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                        notFoundContent={"No se encontraron resultados."}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                )}
-                <Col lg={4} xs={22} md={12}>
+                <Col lg={12} xs={22} md={12}>
                   <Form.Item
                     name="apply_monthly_adjustment"
                     label="¿Aplicar ajuste mensual?"
