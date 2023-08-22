@@ -1,18 +1,8 @@
-import React, { useMemo } from 'react'
-import { Tree, Skeleton, Empty, Card } from 'antd'
-import { connect } from 'react-redux'
+import React, { useMemo } from 'react';
+import { Tree, Skeleton, Empty, Card } from 'antd';
 import {
     DeleteOutlined,
     EditOutlined,
-    LoadingOutlined,
-    NodeExpandOutlined,
-    PlusOutlined,
-    SearchOutlined,
-    SyncOutlined,
-    SettingOutlined,
-    StopOutlined,
-    TableOutlined,
-    PlusCircleOutlined
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 
@@ -26,15 +16,15 @@ const LoadItem = styled(Skeleton.Input)`
     }
 `;
 
-const TreeLevels = ({
-    list_org_levels_tree,
-    load_org_levels_options,
+const TreeList = ({
+    list_tree = [],
+    load_tree = false,
     showEditTree = () => { },
     showDeleteTree = () => { }
 }) => {
 
     const titleRender = (item) => {
-        return !load_org_levels_options ? (
+        return !load_tree ? (
             <><span role='title'>
                 {item.name}
             </span> <EditOutlined
@@ -50,14 +40,14 @@ const TreeLevels = ({
 
 
     return (
-        <>{list_org_levels_tree.length > 0 ? (
+        <>{list_tree.length > 0 ? (
             <Tree
                 selectable={false}
                 defaultExpandAll={true}
                 titleRender={titleRender}
                 className='ant-tree-org'
                 showLine={{ showLeafIcon: false }}
-                treeData={list_org_levels_tree}
+                treeData={list_tree}
                 fieldNames={{ title: 'name', key: 'id', children: 'children' }}
             />
         ) : (
@@ -69,14 +59,4 @@ const TreeLevels = ({
     )
 }
 
-const mapState = (state) => {
-    return {
-        list_org_levels_tree: state.orgStore.list_org_levels_tree,
-        load_org_levels_options: state.orgStore.load_org_levels_options,
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(
-    mapState
-)(TreeLevels);
+export default TreeList;

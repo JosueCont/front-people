@@ -5,8 +5,8 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 import {
-    getOrgLevels,
-    getOrgLevelsOptions
+    getOrgNodes,
+    getOrgNodesOptions
 } from '../../../../redux/OrgStructureDuck';
 import {
     Table,
@@ -25,12 +25,12 @@ import { useRouter } from 'next/router';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
 import { deleteFiltersJb } from '../../../../utils/functions';
 
-const TableLevels = ({
+const TableNodes = ({
     currentNode,
-    getOrgLevels,
-    getOrgLevelsOptions,
-    list_org_levels,
-    load_org_levels,
+    getOrgNodes,
+    getOrgNodesOptions,
+    list_org_nodes,
+    load_org_nodes,
     org_page,
     org_page_size,
     org_filters,
@@ -42,10 +42,10 @@ const TableLevels = ({
 
     const actionStatus = async (is_active, item) => {
         try {
-            await WebApiOrgStructure.updateOrgLevel(item.id, { is_active }, 'patch')
+            await WebApiOrgStructure.updateOrgNode(item.id, { is_active }, 'patch')
             message.success('Estatus actualizado')
-            getOrgLevels(org_filters, org_page, org_page_size)
-            getOrgLevelsOptions()
+            getOrgNodes(org_filters, org_page, org_page_size)
+            getOrgNodesOptions()
         } catch (e) {
             console.log(e)
             message.error('Estatus no actualizado')
@@ -56,7 +56,7 @@ const TableLevels = ({
         let params = { ...router.query, page: current, size: pageSize };
         let filters = deleteFiltersJb(params, ['catalog']);
         router.replace({
-            pathname: '/structure/catalogs/levels',
+            pathname: '/structure/catalogs/nodes',
             query: filters
         }, undefined, { shallow: true })
     }
@@ -97,6 +97,11 @@ const TableLevels = ({
             key: ['parent', 'name']
         },
         {
+            title: 'Nivel',
+            dataIndex: ['organizational_level', 'name'],
+            key: ['organizational_level', 'name']
+        },
+        {
             title: 'Estatus',
             render: (item) => (
                 <Switch
@@ -127,13 +132,13 @@ const TableLevels = ({
             <Table
                 rowKey='id'
                 size='small'
-                dataSource={list_org_levels?.results}
+                dataSource={list_org_nodes?.results}
                 columns={columns}
-                loading={load_org_levels}
+                loading={load_org_nodes}
                 onChange={onChangePage}
                 className='ant-table-colla'
                 pagination={{
-                    total: list_org_levels?.count,
+                    total: list_org_nodes?.count,
                     pageSize: org_page_size,
                     current: org_page,
                     hideOnSinglePage: true,
@@ -146,8 +151,8 @@ const TableLevels = ({
 
 const mapState = (state) => {
     return {
-        list_org_levels: state.orgStore.list_org_levels,
-        load_org_levels: state.orgStore.load_org_levels,
+        list_org_nodes: state.orgStore.list_org_nodes,
+        load_org_nodes: state.orgStore.load_org_nodes,
         org_page: state.orgStore.org_page,
         org_filters: state.orgStore.org_filters,
         org_page_size: state.orgStore.org_page_size,
@@ -157,7 +162,7 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getOrgLevels,
-    getOrgLevelsOptions
+    getOrgNodes,
+    getOrgNodesOptions
 }
-)(TableLevels);
+)(TableNodes);
