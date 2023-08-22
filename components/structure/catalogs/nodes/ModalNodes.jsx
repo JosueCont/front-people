@@ -17,7 +17,8 @@ import {
     Space,
     Spin,
     message,
-    Typography
+    Typography,
+    Tooltip
 } from 'antd';
 import {
     useSelector,
@@ -135,10 +136,10 @@ const ModalNodes = ({
     const onPreviewImg = async (reload) => {
         let preview_ = itemToEdit?.image ? itemToEdit?.image : null;
         if (!preview_) return;
-        const img = new Image();
         setLoadFile(true)
+        const img = new Image();
         img.src = preview_;
-        img.onload = (e) => {
+        img.onload = () => {
             setDeleteImg(false)
             setLoadFile(false)
             setErrorFile(false)
@@ -152,6 +153,7 @@ const ModalNodes = ({
         setFetching(false)
         setErrorFile(false)
         setDeleteImg(false)
+        setLoadFile(false)
         formNode.resetFields()
     }
 
@@ -387,8 +389,10 @@ const ModalNodes = ({
                             <Form.Item>
                                 <div className='custom-label-form'>
                                     <label>Nivel organizacional</label>
-                                    <div className={`label-options default`}>
-                                        <PlusOutlined onClick={() => setOpenModal(true)} />
+                                    <div className='label-options default'>
+                                        <Tooltip title='Agregar' placement='left'>
+                                            <PlusOutlined onClick={() => setOpenModal(true)} />
+                                        </Tooltip>
                                     </div>
                                 </div>
                                 <Form.Item
@@ -420,7 +424,7 @@ const ModalNodes = ({
                                     showSearch
                                     treeLine={{ showLeafIcon: false }}
                                     treeData={optionsNodes}
-                                    treeDefaultExpandedKeys={itemToEdit?.parent 
+                                    treeDefaultExpandedKeys={itemToEdit?.parent
                                         ? [itemToEdit?.parent?.id] : []}
                                     loading={load_org_nodes_options}
                                     disabled={load_org_nodes_options}
