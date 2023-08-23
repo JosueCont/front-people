@@ -42,7 +42,7 @@ const ConfigCompany = ({ ...props }) => {
         });
   }, [router.query]);
 
-  console.log('Props config', applications)
+  // console.log('Props config', applications)
 
   return (
     <MainLayout currentKey={["business"]} defaultOpenKeys={["strategyPlaning","company"]}>

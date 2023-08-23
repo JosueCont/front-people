@@ -60,6 +60,15 @@ const orgReducer = (state = initialState, action) => {
                 list_org_nodes_tree: action.tree,
                 load_org_nodes_options: action.fetching
             }
+        case GET_RANKS:
+            return {
+                ...state,
+                list_ranks: action.payload,
+                load_ranks: action.fetching,
+                org_page: action.page,
+                org_filters: action.query,
+                org_page_size: action.size
+            }
         case SET_FILTERS_DATA:
             return {
                 ...state,
@@ -111,7 +120,7 @@ export const getOrgLevelsOptions = (query = '') => async (dispatch, getState) =>
     }
 }
 
-export const getOrgNodes = (query = '', page = 1, size = 10) => async (dispatch, getState) =>{
+export const getOrgNodes = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
     const { orgStore: { list_org_nodes } } = getState();
     const action = { type: GET_ORG_NODES, payload: list_org_nodes, fetching: false, query, page, size };
     dispatch({ ...action, fetching: true })
@@ -139,6 +148,20 @@ export const getOrgNodesOptions = (query = '') => async (dispatch, getState) => 
         let response = await WebApiOrgStructure.getOrgNodes(params);
         const { results, tree_view_data } = response?.data;
         dispatch({ ...action, options: results, tree: tree_view_data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getRanks = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
+    const { orgStore: { list_ranks } } = getState();
+    const action = { type: GET_RANKS, payload: list_ranks, fetching: false, query, page, size };
+    dispatch({ ...action, fetching: true })
+    try {
+        let params = `?is_deleted=false${query}`;
+        let response = await WebApiOrgStructure.getRanks(params);
+        dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
         dispatch(action)
