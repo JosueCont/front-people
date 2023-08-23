@@ -92,6 +92,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
+  const [workingDays, setWorkingDays] = useState(0)
   const [payrollType, setPayrollType] = useState(null);
   const [consolidated, setConsolidated] = useState(null);
   const [genericModal, setGenericModal] = useState(false);
@@ -294,6 +295,7 @@ const CalculatePayroll = ({ ...props }) => {
               <Button
                 size="small"
                 onClick={() => {
+                  setWorkingDays(item?.working_days)
                   setPersonId(item.person && item.person.id),
                     setModalVisible(true);
                 }}
@@ -2169,6 +2171,7 @@ const CalculatePayroll = ({ ...props }) => {
       </Spin>
       {personId && (
         <ModalConceptsPayroll
+          workingDays={workingDays}
           visible={modalVisible}
           setVisible={setModalVisible}
           payment_period={periodSelected}
