@@ -9,10 +9,6 @@ class WebApiOrgStructure {
         return WebApi.ApisType(`/organizationalstructure/organizational-level/${query}`, 'get');
     }
 
-    static getInfoOrgLevel(id){
-        return WebApi.ApisType(`/organizationalstructure/organizational-level/${id}/`, 'get');
-    }
-
     static createOrgLevel(data){
         return WebApi.ApisType('/organizationalstructure/organizational-level/', 'post', data);
     }
@@ -34,27 +30,19 @@ class WebApiOrgStructure {
     static updateOrgNode(id, data, method = 'put'){
         return WebApi.ApisType(`/organizationalstructure/organizational-node/${id}/`, method, data);
     }
-    
-    static deleteOrgNode(id){
-        return WebApi.ApisType(`/organizationalstructure/organizational-node/${id}/`, 'delete');
-    }
 
     // NIVELES JERÁRQUICOS
 
-    static getRanks(node, query = ''){
-        return WebApi.ApisType(`/organizationalstructure/hierarchical-level/?node=${node}${query}`, 'get');
+    static getRanks(query = ''){
+        return WebApi.ApisType(`/organizationalstructure/hierarchical-level/${query}`, 'get');
     }
     
     static createRank(data){
         return WebApi.ApisType('/organizationalstructure/hierarchical-level/', 'post', data);
     }
 
-    static updateaRank(id, data, method = 'put'){
+    static updateRank(id, data, method = 'put'){
         return WebApi.ApisType(`/organizationalstructure/hierarchical-level/${id}/`, method, data);
-    }
-    
-    static deleteRank(id){
-        return WebApi.ApisType(`/organizationalstructure/hierarchical-level/${id}/`, 'delete');
     }
 }
 
