@@ -77,7 +77,7 @@ const SearchRanks = ({
         let global = router.query?.includeGlobal;
         let status = active ? listKeys.is_active.get(active) : 'Activo';
         let show = global ? listKeys.includeGlobal.get(global) : 'No';
-        return { 'Estatus': status, 'Ver niveles gloabales': show };
+        return { 'Estatus': status, 'Ver niveles globales': show };
     }, [router.query])
 
     const MenuOptions = (
