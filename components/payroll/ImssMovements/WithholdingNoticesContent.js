@@ -1,9 +1,9 @@
-import { Alert, Button, Col, DatePicker, Row, Select, Spin, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import SelectPatronalRegistration from '../../selects/SelectPatronalRegistration'
 import WithHoldingNotice from '../../../pages/business/WithHoldingNotice'
 import GenericModal from '../../modal/genericModal'
 import { useRouter } from 'next/router'
+import { Alert, Button, Col, DatePicker, Row, Select, Spin, message } from 'antd'
 import WebApiPeople from '../../../api/WebApiPeople'
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from 'moment'
@@ -64,6 +64,27 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
     return options;
   };
 
+  const syncUpData = async () => {
+    try {
+      setLoading(true);
+      let dataSend = {
+        patronal_registration_id: patronalSelected,
+        node_id: currentNodeId,
+      };
+      const syncData = await WebApiPeople.withHoldingNotice(dataSend);
+      if (syncData?.data?.message) message.success(syncData?.data?.message);
+    } catch (error) {
+      let msg = "Ocurrio un error intente de nuevos.";
+      if (error?.response?.data?.message) {
+        msg = error?.response?.data?.message;
+      }
+      message.error(msg);
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const verifyPeriod = async () => {
     try {
       setShowModal(false);
@@ -101,15 +122,22 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
             </Col>
             <Col>
               {
-                patronalSelected &&     
-                <Button
-                    onClick={() => setShowModal(true)}
-                    form="formGeneric"
-                    htmlType="submit"
-                    style={{ marginBottom: "20px" }}
-                >
+                patronalSelected &&
+                  <Button
+                      onClick={syncUpData}
+                      form="formGeneric"
+                      htmlType="submit"
+                      style={{marginBottom:'20px'}}>
                     Sincronizar / Solicitar
-                </Button>
+                  </Button>
+                // <Button
+                //     onClick={() => setShowModal(true)}
+                //     form="formGeneric"
+                //     htmlType="submit"
+                //     style={{ marginBottom: "20px" }}
+                // >
+                //     Sincronizar / Solicitar
+                // </Button>
               }
             </Col>
             <Col span={24}>
