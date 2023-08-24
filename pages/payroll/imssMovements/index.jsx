@@ -512,7 +512,10 @@ const disabledMaxDate  = (current) => {
               </Panel>
               <Panel header="Avisos de retenciones" key="7">
                 <Col span={24} >
-                  <WithholdingNoticesContent currentNodeId={props?.currentNode?.id} />
+                  <WithholdingNoticesContent onSuccess={(mensaje)=> {
+                    console.log(mensaje)
+                    message.success(mensaje)
+                  }} currentNodeId={props?.currentNode?.id} />
                 </Col>
               </Panel>
             </Collapse>

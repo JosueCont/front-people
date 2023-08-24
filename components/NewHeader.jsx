@@ -87,7 +87,7 @@ const NewHeader = ({
       let codes_apps = await WebApiPeople.getCodesApps(user_id)
       if (codes_apps['status'] == 200) {
         let verify_codes_apps = {}
-        console.log(props.userInfo)
+        // console.log(props.userInfo)
         if (codes_apps?.data?.sukhatv_code && (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && props.userInfo?.is_sukhatv_admin) {
           verify_codes_apps['sukhatv_code'] = codes_apps?.data?.sukhatv_code || null
         }
