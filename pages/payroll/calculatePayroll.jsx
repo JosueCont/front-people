@@ -1678,7 +1678,7 @@ const CalculatePayroll = ({ ...props }) => {
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
-                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
+                        <SelectCollaboratorItemForm multiple name="person_id" size={"large"} department_id={department} job_id={job} />
                         </Col>
                         <Col>
                         <Tooltip title="Buscar">
