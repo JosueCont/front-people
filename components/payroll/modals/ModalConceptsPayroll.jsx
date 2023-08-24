@@ -938,9 +938,9 @@ const ModalConceptsPayroll = ({
                         daysActives={daysActive}
                         disabledDays={nonWorkingDays}
                         withData={
-                          record.perception_type.description.toUpperCase().toLowerCase().includes('dobles') ||
-                          record.perception_type.description.toUpperCase().toLowerCase().includes('triples') ||
-                          record.perception_type.description.toUpperCase().toLowerCase().includes('horas') ||
+                          record.perception_type.description.toLowerCase().includes('dobles') ||
+                          record.perception_type.description.toLowerCase().includes('triples') ||
+                          record.perception_type.description.toLowerCase().includes('horas') ||
                           record.perception_type.code === '019'
                         }
                         concept={record}
