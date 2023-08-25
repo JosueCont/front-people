@@ -932,13 +932,16 @@ const ModalConceptsPayroll = ({
                   title={"Fechas"}
                   align={"center"}
                   key={"date"}
-                  render={(record) =>
+                  render={(record) =>                    
                     record.data_type == 2 ? (
                       <DatePickerHoliDays
                         daysActives={daysActive}
                         disabledDays={nonWorkingDays}
                         withData={
-                          record.code === "P118" || record.code === "P119"
+                          record.perception_type.description.toLowerCase().includes('dobles') ||
+                          record.perception_type.description.toLowerCase().includes('triples') ||
+                          record.perception_type.description.toLowerCase().includes('horas') ||
+                          record.perception_type.code === '019'
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}

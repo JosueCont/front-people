@@ -108,10 +108,10 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                 <Col>
                 <Space>
                   <Button loading={downloading} icon={<DownloadOutlined />} onClick={() => downloadAllCatalogs()} >
-                    Descargar todos los catalogos
+                    Descargar todos los catálogos
                   </Button>
                   <Button disabled={downloading} icon={<UploadOutlined />} onClick={() => setShowModal(true)} >
-                    Carga masiva de catalogos
+                    Carga masiva de catálogos
                   </Button>
                   </Space>
                 </Col>
