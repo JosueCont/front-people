@@ -361,8 +361,11 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     },
     {
       title: "Valor de descuento",
-      dataIndex: "discount_value",
       key: "discount_value",
+      render: (item) => 
+        item?.discount_type === 2 ?
+        Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(item?.discount_value)
+        : item.discount_value
     },
     {
       title: "Movimiento",
