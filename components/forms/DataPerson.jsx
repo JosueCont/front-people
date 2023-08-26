@@ -11,9 +11,10 @@ import {
   Upload,
   Form,
   message,
+  Tooltip,
   Space,
 } from "antd";
-import { PlusOutlined, LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusOutlined, LoadingOutlined, DeleteOutlined, AuditOutlined, CopyOutlined } from "@ant-design/icons";
 import { useState, useMemo } from "react";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
@@ -46,7 +47,7 @@ import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import { getFullName } from "../../utils/functions";
+import {getFullName} from "../../utils/functions";
 
 const DataPerson = ({
   currentNode,
@@ -58,7 +59,7 @@ const DataPerson = ({
   assimilated_pay = null,
   ...props
 }) => {
-  const { Title } = Typography;
+  const { Title, Paragraph } = Typography;
   let filters = { node: "" };
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -340,6 +341,22 @@ const DataPerson = ({
     })
   }
 
+  const copyContent = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log('Content copied to clipboard');
+      message.success('Contenido copiado correctamente')
+    } catch (err) {
+      message.error('No se pudo copiar')
+      console.log(err)
+    }
+  }
+
+  const copyClipboard=(fieldName='')=>{
+    let val = formPerson.getFieldValue(fieldName);
+    copyContent(val)
+  }
+
   // const changeStatusAdmin = async (value) => {
   //   setIsActiveAdmin(value)
   // };
@@ -364,6 +381,12 @@ const DataPerson = ({
     })
     // let _substitutes = listPersons.filter(e => e.id !== value)
     // setSubstituteSupervisorList(_substitutes )
+  }
+
+  const CopyClipboard=({nameField = ''})=>{
+    return <Tooltip placement="top" title={'Copiar'}>
+    <Typography.Link onClick={()=>copyClipboard(nameField)}><CopyOutlined /></Typography.Link>
+    </Tooltip>
   }
 
   const onClearSupervisor = () => {
@@ -828,9 +851,9 @@ const DataPerson = ({
             </Row>
             <Row gutter={20}>
               <hr />
-              <Col span={23}>
+              <Col span={24}>
                 <Title level={5} style={{ marginBottom: 15 }}>
-                  Información adicional
+                  <AuditOutlined /> Información adicional
                 </Title>
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -872,7 +895,9 @@ const DataPerson = ({
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="curp"
-                  label="CURP"
+                  label={<span>CURP {' '}<Typography.Link><a href="https://www.gob.mx/curp/" target={'_blank'}><small>[Consultar curp]</small></a></Typography.Link>
+                    <CopyClipboard nameField={'curp'}/>
+</span> }
                   rules={[config.applications.find(
                     (item) => item.app === "PAYROLL" && item.is_active
                   ) ? ruleRequired : {}, curpFormat]}
@@ -883,7 +908,10 @@ const DataPerson = ({
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="rfc"
-                  label="RFC"
+                  label={<span>RFC {' '}
+                    <Typography.Link><a href="https://www.sat.gob.mx/aplicacion/operacion/29073/verifica-si-estas-registrado-en-el-rfc" target={'_blank'}><small>[Verificar rfc]</small></a></Typography.Link>
+                    <CopyClipboard nameField={'rfc'}/>
+                </span>}
                   rules={[config.applications.find(
                     (item) => item.app === "PAYROLL" && item.is_active
                   ) ? ruleRequired : {}, rfcFormat]}
@@ -896,7 +924,9 @@ const DataPerson = ({
                   <Col lg={8} xs={24} md={12}>
                     <Form.Item
                       name="imss"
-                      label="IMSS"
+                      label={<span>IMSS {' '}
+                        <CopyClipboard nameField={'imss'}/>
+                  </span>}
                       rules={[onlyNumeric, minLengthNumber]}
                     >
                       <Input maxLength={11} />
