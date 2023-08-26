@@ -65,6 +65,14 @@ const NonWorkingDays = ({ node_id = null, ...props }) =>{
             key: 'description',
         },
         {
+            title: 'Tipo',
+            dataIndex: 'type',
+            key: 'type',
+            render: (type) => {
+                return type === 1 ? 'Festivo' : type === 2 ? 'Empresa' : type === 3 && 'Inhábil bancario'
+            }
+        },
+        {
             title: "Acciones",
             align: "center",
             key: "actions",

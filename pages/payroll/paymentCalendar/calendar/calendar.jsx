@@ -21,6 +21,7 @@ const Calendars = () => {
   const [roundRangeLimits, setRoundRangeLimits] = useState(false);
   const [alwaysHalfDay, setAlwaysHalfDay] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [bankDays, setBankDays] = useState([])
   const [isChecked, setIsChecked] = useState(false);
   const route = useRouter();
 
@@ -39,11 +40,16 @@ const Calendars = () => {
     setIsChecked(!isChecked);
   };
 
+  const vaidateBankDay = (payment_date, ) => {
+
+  }
+
   const getPaymentCalendars = async () => {
     await WebApiPayroll.getDetailPaymentCalendar(route.query.id)
       .then((response) => {
         let data = response.data;
         let dataSource = [];
+        let bank_days = data.bank_days
         data.periods.map((a) => {
           dataSource.push({
             startDate: new Date(moment(a.start_date).format("MM/DD/YYYY")),
@@ -62,12 +68,55 @@ const Calendars = () => {
             });
           }
 
-          dataSource.push({
-            startDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
-            endDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
+          let payment_date = moment(a.payment_date)
+          
+          /* Si existen dias inhábiles bancarios */
+          if(bank_days){
+            for (let i = 0; i < bank_days?.length; i++) {
+              if (moment(bank_days[i].date).format("DD/MM/YYYY") === payment_date.format("DD/MM/YYYY")){
+                payment_date = payment_date.subtract(1,'days')
+              }
+            }
+          }
+
+          /* Realizamos la validaciones de pago en domingo */
+          let numberDay = payment_date.day()
+
+          /* Validamos si es domingo y si se puede pagar domingo */
+          if(numberDay === 0 && data.payment_sunday === false){
+            /* Si no se puede, regresamos un dia */
+            payment_date = payment_date.subtract(1,'days')
+          }
+
+          /* Validamos si podemos pagar sabados */
+          numberDay = payment_date.day()
+          if(numberDay === 6 && data.payment_saturday === false){
+            /* Si no se puede, regresamos un dia */
+            payment_date = payment_date.subtract(1,'days')
+          }
+
+          /* Volvemos a validar dias inhábiles bancarios */
+          if(bank_days){
+            for (let i = 0; i < bank_days?.length; i++) {
+              if (moment(bank_days[i].date).format("DD/MM/YYYY") === payment_date.format("DD/MM/YYYY")){
+                payment_date = payment_date.subtract(1,'days')
+              }
+            }
+          }
+
+
+          /* Periodo de pago */
+          let paymentPeriod = {
+            startDate: new Date(payment_date.format("MM/DD/YYYY")),
+            endDate: new Date(payment_date.format("MM/DD/YYYY")),
             color: "red",
-          });
+          }
+
+          console.log('paymentPeriod',paymentPeriod)
+
+          dataSource.push(paymentPeriod);
         });
+        console.log('dataSource=========',dataSource)
         setDataSource(dataSource);
       })
       .catch((error) => {
