@@ -67,6 +67,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         size={props.size}
         optionFilterProp="children"
         placeholder="Todos"
+        mode={props?.multiple ? 'multiple' : null}
         notFoundContent={"No se encontraron resultado."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

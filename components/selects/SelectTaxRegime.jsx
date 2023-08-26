@@ -13,8 +13,17 @@ const SelectTaxRegime = ({ rules=[], taxRegimeSelected = null, ...props }) => {
           value: item.id,
           label: item.description,
           key: item.description + item.id,
+          code:item.code
         };
       });
+      if(data){
+        let index = _.findIndex(data, function(o) { return o.code === '601'; });
+        let obj601 = {...data[index]}
+        data.splice(index,1)
+        data.unshift(obj601)
+      }
+
+
       setOptions(data);
     }
   }, [props.tax_regime]);

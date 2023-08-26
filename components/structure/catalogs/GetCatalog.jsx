@@ -2,6 +2,8 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import MainLevels from './levels/MainLevels';
 import MainNodes from './nodes/MainNodes';
+import MainRanks from './ranks/MainRanks';
+import MainJobs from './jobs/MainJobs';
 
 const GetCatalog = ({...props}) => {
 
@@ -11,6 +13,8 @@ const GetCatalog = ({...props}) => {
     const Catalogs = {
         levels: MainLevels,
         nodes: MainNodes,
+        ranks: MainRanks,
+        jobs: MainJobs,
         __default__: ()=><></>
     }
 

@@ -313,6 +313,8 @@ const CalculatePayroll = ({ ...props }) => {
     let dataPerceptions = data.perceptions;
     let dataDeductions = data.deductions;
     let dataOtherPayments = data.other_payments;
+    dataPerceptions = dataPerceptions.sort((a, b) => b.is_salary - a.is_salary) // se ordena de tal forma que primero salgan los que son tipo sueldo
+    dataDeductions = _.orderBy(dataDeductions,['type'])
 
     const columnsPerceptions = [
       {
@@ -1678,7 +1680,7 @@ const CalculatePayroll = ({ ...props }) => {
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
-                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
+                        <SelectCollaboratorItemForm multiple name="person_id" size={"large"} department_id={department} job_id={job} />
                         </Col>
                         <Col>
                         <Tooltip title="Buscar">

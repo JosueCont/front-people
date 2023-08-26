@@ -37,6 +37,7 @@ const SelectFixedConcept = ({
             : "Grupo de conceptos fijos"
           : ""
       }
+      help={type === 1 && <small>Elige uno o varios</small>}
     >
       <Select
         // options={concept}
