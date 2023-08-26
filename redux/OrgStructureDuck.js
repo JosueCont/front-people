@@ -13,6 +13,8 @@ const initialState = {
     load_org_nodes_options: false,
     list_ranks: {},
     load_ranks: false,
+    list_jobs: {},
+    load_jobs: false,
     org_page: 1,
     org_filters: "",
     org_page_size: 10,
@@ -24,6 +26,7 @@ const GET_ORG_LEVELS_OPTIONS = "GET_ORG_LEVELS_OPTIONS";
 const GET_ORG_NODES = "GET_ORG_NODES";
 const GET_ORG_NODES_OPTIONS = "GET_ORG_NODES_OPTIONS";
 const GET_RANKS = "GET_RANKS";
+const GET_JOBS = "GET_JOBS";
 const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const orgReducer = (state = initialState, action) => {
@@ -65,6 +68,15 @@ const orgReducer = (state = initialState, action) => {
                 ...state,
                 list_ranks: action.payload,
                 load_ranks: action.fetching,
+                org_page: action.page,
+                org_filters: action.query,
+                org_page_size: action.size
+            }
+        case GET_JOBS:
+            return {
+                ...state,
+                list_jobs: action.payload,
+                load_jobs: action.fetching,
                 org_page: action.page,
                 org_filters: action.query,
                 org_page_size: action.size
@@ -161,6 +173,20 @@ export const getRanks = (query = '', page = 1, size = 10) => async (dispatch, ge
     try {
         let params = `?is_deleted=false${query}`;
         let response = await WebApiOrgStructure.getRanks(params);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getJobs = (query = '', page = 1, size = 10) => async (dispatch, getState) => {
+    const { orgStore: { list_jobs } } = getState();
+    const action = { type: GET_JOBS, payload: list_jobs, fetching: false, query, page, size };
+    dispatch({ ...action, fetching: true })
+    try {
+        let params = `?is_deleted=false${query}`;
+        let response = await WebApiOrgStructure.getJobs(params);
         dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
