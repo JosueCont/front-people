@@ -916,7 +916,7 @@ const ModalConceptsPayroll = ({
                   align="center"
                   key="amount"
                   render={(record) => (
-                    <div>{record.data_type == 2 ? record.value : 0}</div>
+                    <div>{record.data_type == 2 ? record.value : '--'}</div>
                   )}
                 />
                 <Column
@@ -927,7 +927,7 @@ const ModalConceptsPayroll = ({
                     <div>
                       {record.data_type == 1
                         ? `$ ${numberFormat(record.value)}`
-                        : `$ 0.00`}
+                        : `--`}
                     </div>
                   )}
                 />
