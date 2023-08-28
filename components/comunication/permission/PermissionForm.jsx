@@ -45,7 +45,7 @@ const PermissionForm = ({
 
     const getNonWorkingDays = async (node) => {
         try {
-            let params = { node, limit: 1000 };
+            let params = { node, limit: 1000, type:'1,2'  };
             let response = await WebApiPeople.getNonWorkingDays(params)
             let dates = response.data?.results?.map(e => e.date)
             setNonWorkingDays(dates)
@@ -120,6 +120,8 @@ const PermissionForm = ({
         let actually = current?.format('YYYY-MM-DD');
         let present = current?.locale('en').format('dddd').toLowerCase();
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
+        console.log('actually',actually)
+        console.log('nonWorkingDays',nonWorkingDays)
         return current && exist;
     }
 
