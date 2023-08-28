@@ -89,6 +89,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [payroll, setPayroll] = useState([]);
+  const [payrollOriginal, setPayrollOriginal] = useState([]);
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
@@ -646,6 +647,7 @@ const CalculatePayroll = ({ ...props }) => {
   const resetStates = () => {
     setStep(0);
     setPayroll([]);
+    setPayrollOriginal([])
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
@@ -672,6 +674,7 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
+        setPayrollOriginal(response.data.payroll)
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
         // setTotalIsr(response.data.total_isr);
@@ -690,6 +693,7 @@ const CalculatePayroll = ({ ...props }) => {
         setCalculate(false);
         console.log(error);
         setPayroll([]);
+        setPayrollOriginal([])
         form.resetFields();
         if (
           error.response &&
@@ -1204,6 +1208,7 @@ const CalculatePayroll = ({ ...props }) => {
   const importPayrollCaculate = (data) => {
     setLoading(true);
     setPayroll([]);
+    setPayrollOriginal([])
     setTotalPerceptions(null);
     setTotalDeductions(null);
     setNetPay(null);
@@ -1219,6 +1224,7 @@ const CalculatePayroll = ({ ...props }) => {
         setConsolidated(response.data.consolidated);
         /*  */
         setPayroll(response.data.payroll);
+        setPayrollOriginal(response.data.payroll)
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
         setTotalPerceptions(total_perceptions);
@@ -1258,9 +1264,39 @@ const CalculatePayroll = ({ ...props }) => {
     ])
   }
 
+  const clearFilter = () => {
+    form.setFieldsValue({
+      department: null,
+      job: null,
+      person_id: []
+    });
+    setPayroll([...payrollOriginal])
+  }
+
+  const localFilter = (values) => {
+    console.log(values)
+    console.log(payroll)
+    let newList = [...  payrollOriginal];
+
+    if(values.person_id && values.person_id.length >= 1){
+      newList = newList.filter(item => values.person_id.includes(item.person.id))
+    }
+
+    if(values.job){
+      newList = newList.filter(item => values.job === item.person.job.id)
+    }
+
+    if(values.department){
+      newList = newList.filter(item => values.department === item.person.department_id)
+    }
+    console.log('newList', newList)
+    setPayroll(newList)
+  }
+
   const sendForm = (values) => {
     values['payment_period'] = periodSelected.id,
-    sendCalculatePayroll(values)
+    localFilter(values)
+    /* sendCalculatePayroll(values) */
   }
 
   const deletePayroll = (consolidated_id) => {
@@ -1670,21 +1706,24 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            onChange={onchangeDeptop}
+                            /* onChange={onchangeDeptop} */
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            onChange={onChangeJob}
+                            /* onChange={onChangeJob} */
                           />
                         </Col>
-                        <Col xxs={24} xl={4}>
+                        <Col xxs={24} xl={3}>
                         <SelectCollaboratorItemForm multiple name="person_id" size={"large"} department_id={department} job_id={job} />
                         </Col>
                         <Col>
                         <Tooltip title="Buscar">
                             <Button htmlType="submit" icon={<SearchOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
+                        </Tooltip>
+                        <Tooltip title="Limpiar filtro">
+                            <Button onClick={() => clearFilter()} icon={<ClearOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
                         </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
