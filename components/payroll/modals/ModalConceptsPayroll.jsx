@@ -370,6 +370,8 @@ const ModalConceptsPayroll = ({
   };
 
   const onChangeCheckConcepts = (checkedValues, type) => {
+    console.log(checkedValues)
+
     if (type === 1) setPerceptions(checkedValues);
     if (type === 2) setDeductions(checkedValues);
     if (type === 3) setOtherPayments(checkedValues);
@@ -447,6 +449,7 @@ const ModalConceptsPayroll = ({
         data.push(item);
         if (item.value <= 0) is_cero = true;
       });
+      console.log('concepts', concepts)
     setConcepts(data);
 
     currentStep == 0
@@ -916,7 +919,7 @@ const ModalConceptsPayroll = ({
                   align="center"
                   key="amount"
                   render={(record) => (
-                    <div>{record.data_type == 2 ? record.value : 0}</div>
+                    <div>{record.data_type == 2 ? record.value : '--'}</div>
                   )}
                 />
                 <Column
@@ -927,7 +930,7 @@ const ModalConceptsPayroll = ({
                     <div>
                       {record.data_type == 1
                         ? `$ ${numberFormat(record.value)}`
-                        : `$ 0.00`}
+                        : `--`}
                     </div>
                   )}
                 />
@@ -935,16 +938,16 @@ const ModalConceptsPayroll = ({
                   title={"Fechas"}
                   align={"center"}
                   key={"date"}
-                  render={(record) =>                    
+                  render={(record) =>       
                     record.data_type == 2 ? (
                       <DatePickerHoliDays
                         daysActives={daysActive}
                         disabledDays={nonWorkingDays}
                         withData={
-                          record.perception_type.description.toLowerCase().includes('dobles') ||
-                          record.perception_type.description.toLowerCase().includes('triples') ||
-                          record.perception_type.description.toLowerCase().includes('horas') ||
-                          record.perception_type.code === '019'
+                          (record?.perception_type?.description.toLowerCase().includes('dobles') ||
+                          record?.perception_type?.description.toLowerCase().includes('triples') ||
+                          record?.perception_type?.description.toLowerCase().includes('horas')) &&
+                          record?.perception_type?.code === '019'
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}

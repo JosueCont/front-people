@@ -549,6 +549,7 @@ export const copyContent = async ({
   onError = () => { }
 }) => {
   try {
+    console.log(text)
     await navigator?.clipboard?.writeText(text);
     onSucces()
   } catch (e) {
