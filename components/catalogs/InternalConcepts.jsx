@@ -242,7 +242,8 @@ const InternalConcepts = ({
         is_rest_day: item.is_rest_day,
         is_seventh_day: item.is_seventh_day,
         apply_assimilated: item.apply_assimilated,
-        accountant_account: item.accountant_account
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -252,7 +253,8 @@ const InternalConcepts = ({
         deduction_type: item.deduction_type.id,
         apply_assimilated: item.apply_assimilated,
         show: item.show,
-        accountant_account: item.accountant_account
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -262,7 +264,8 @@ const InternalConcepts = ({
         apply_assimilated: item.apply_assimilated,
         other_type_payment: item.other_type_payment.id,
         show: item.show,
-        accountant_account: item.accountant_account
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     }
   };
@@ -303,6 +306,14 @@ const InternalConcepts = ({
     try {
       delete value["id"];
       delete value[""];
+      if(!value?.accountant_account){
+        value.accountant_account = null
+      }
+
+      if(!value?.counterpart){
+        value.counterpart = null
+      }
+
       await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", value);
       props
         .doFiscalCatalogs(currentNode.id, props.version_cfdi,true)
@@ -473,6 +484,9 @@ const InternalConcepts = ({
           </Col>
           <Col lg={6} xs={22} md={12}>
             <SelectAccountantAccount allowClear={true}/>
+          </Col>
+          <Col lg={6} xs={22} md={12}>
+            <SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>
           </Col>
           <Col lg={6} xs={22} md={12}>
             <Form.Item
