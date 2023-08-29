@@ -298,7 +298,7 @@ const CalculatePayroll = ({ ...props }) => {
                 onClick={() => {
                   setWorkingDays(item?.working_days)
                   setPersonId(item.person && item.person.id),
-                    setModalVisible(true);
+                  setModalVisible(true);
                 }}
               >
                 <PlusOutlined />
@@ -658,6 +658,8 @@ const CalculatePayroll = ({ ...props }) => {
     setNetPay(null);
     setConsolidated(null);
   };
+
+  
   const sendCalculatePayroll = async (dataToSend) => {
     resetStates();
     if (department) dataToSend.department = department;
@@ -706,6 +708,9 @@ const CalculatePayroll = ({ ...props }) => {
           setGenericModal(true);
         } else message.error(messageError);
         setLoading(false);
+      }).finally(() => {
+        console.log('finally')
+        form.submit()
       });
   };
 
@@ -2221,7 +2226,7 @@ const CalculatePayroll = ({ ...props }) => {
           }}
           periodicity={calendarSelect.periodicity}
           person_id={personId}
-          payroll={payroll}
+          payroll={payrollOriginal}
           setLoading={setLoading}
           sendCalculatePayroll={sendCalculatePayroll}
           payrollType={payrollType}

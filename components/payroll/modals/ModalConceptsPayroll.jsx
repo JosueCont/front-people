@@ -43,6 +43,7 @@ const ModalConceptsPayroll = ({
   movementType = null,
   payment_period = null,
   workingDays = null,
+  idx=0,
   ...props
 }) => {
   const { Text, Title } = Typography;
