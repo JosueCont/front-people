@@ -662,12 +662,14 @@ class WebApiPeople {
   }
 
   /*** WORKING/NON-WORKING DAYS ***/
-  static getNonWorkingDays({ node, offset = 0, limit = 10, year = "" }) {
+  static getNonWorkingDays({ node, offset = 0, limit = 10, year = "", type = null  }) {
     let _URL = `/business/non-working-day/?node=${node}`;
+
     _URL += offset && offset > 0 ? `&offset=${offset}` : "";
     // _URL += offset && offset >= 1 ? `&offset=${offset}` : '&offset=1'
     _URL += limit && limit >= 1 ? `&limit=${limit}` : "&limit=10";
     _URL += year && year !== "" ? `&date__year=${year}` : "";
+    _URL += type ? `&type__in=${type}` : "";
 
     return WebApi.ApisType(_URL, "get");
   }

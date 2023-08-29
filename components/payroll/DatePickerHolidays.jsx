@@ -175,6 +175,7 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
                     value={value}
                     render={<CustomInput />}
                     mapDays={( { date, today, selectedDate, currentMonth, isSameDate }) => {
+
                         let propsDate = {} 
                         let d = ("0"+date.day).slice(-2)
                         let m = ("0"+date.month.number).slice(-2)
