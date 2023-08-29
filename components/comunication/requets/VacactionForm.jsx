@@ -64,7 +64,7 @@ const VacactionForm = ({
 
     const getNonWorkingDays = async (node) => {
         try {
-            let params = { node, limit: 1000 };
+            let params = { node, limit: 1000, type: '1,2' };
             let response = await WebApiPeople.getNonWorkingDays(params)
             let dates = response.data?.results?.map(e => e.date)
             setNonWorkingDays(dates)

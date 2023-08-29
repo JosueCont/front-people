@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, ConfigProvider, DatePicker, Form, Input, message, Row, Space} from "antd";
+import {Button, Col, ConfigProvider, DatePicker, Form, Input, message, Row, Select, Space} from "antd";
 import MyModal from "../../common/MyModal";
 import {ruleRequired} from "../../utils/rules";
 import {CustomInput} from "../assessment/groups/Styled";
@@ -22,7 +22,8 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
         let data = {
             node: node_id,
             date: values.date.format('YYYY-MM-DD'),
-            description: trim(values.description) || ''
+            description: trim(values.description) || '',
+            type: values.type
         }
         if(nonWorkingDay){
             await updateItem(data)
@@ -63,7 +64,8 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
         if(nonWorkingDay){
             form.setFieldsValue({
                 date: moment(nonWorkingDay.date),
-                description: nonWorkingDay.description
+                description: nonWorkingDay.description,
+                type: nonWorkingDay?.type
             })
         }else{
             form.setFieldsValue({
@@ -109,6 +111,20 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
                                 label={"Descripción"}
                             >
                                 <TextArea rows={4} placeholder="Ingresa una descripción" maxLength={250} allowClear={true} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                name={"type"}
+                                label={"Tipo"}
+                            >
+                                <Select 
+                                    options={[
+                                        {label: 'Festivo', value: 1},
+                                        {label: 'Empresa', value: 2},
+                                        {label: 'Inhábil bancario', value: 3},
+                                    ]}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
