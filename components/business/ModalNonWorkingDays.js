@@ -64,7 +64,8 @@ const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, 
         if(nonWorkingDay){
             form.setFieldsValue({
                 date: moment(nonWorkingDay.date),
-                description: nonWorkingDay.description
+                description: nonWorkingDay.description,
+                type: nonWorkingDay?.type
             })
         }else{
             form.setFieldsValue({
