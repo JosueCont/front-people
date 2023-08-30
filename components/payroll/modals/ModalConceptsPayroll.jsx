@@ -43,6 +43,7 @@ const ModalConceptsPayroll = ({
   movementType = null,
   payment_period = null,
   workingDays = null,
+  idx=0,
   ...props
 }) => {
   const { Text, Title } = Typography;
@@ -214,8 +215,11 @@ const ModalConceptsPayroll = ({
       if (response.status === 200) {
         let disabledDays = [];
         response.data.results.map((day) => {
-          disabledDays.push(day.date);
+          if(day.type === 1 || day.type === 2){
+            disabledDays.push(day.date);
+          }
         });
+        console.log('disabledDays',disabledDays)
         setNonWorkingDays(disabledDays);
       }
     } catch (error) {

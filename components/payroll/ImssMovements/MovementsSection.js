@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {connect, useSelector} from "react-redux";
 import moment from "moment";
-import {Table, Typography, Row, Col, Tabs, Form, Button, Space, message} from "antd";
+import {Table, Typography, Row, Col, Tabs, Form, Button, Space, message, Select, DatePicker, Tooltip} from "antd";
 import {movementsTypes} from "../../../utils/constant";
 import TableMovements from "./TableMovements";
 import {getMovementsIMSS} from "../../../redux/payrollDuck";
@@ -9,6 +9,7 @@ import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration
 import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
 import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
 import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
+import { SearchOutlined } from "@material-ui/icons";
 
 const { Title } = Typography;
 
@@ -22,8 +23,15 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
     const [altaRowSelected, setAltaRowSelected] = useState([]) // registros seleccionados de movimientos de Alta
     const [updateRowSelected, setUpdateRowSelected] = useState([]) // registros seleccionados de movimientos de Altaç
     const [deleteRowSelected, setDeleteRowSelected] = useState([]) // registros seleccionados de movimientos de Baja
+    const [isFilter, setIsFilter] = useState(false)
 
-    useEffect(()=>{
+    const statusOptions = [
+        {label: "Por procesar", value: 1},
+        {label: "En proceso", value: 2},
+        {label: "Procesado", value: 3}
+    ]
+
+    /* useEffect(()=>{
         // if(node?.id){
         //     getMovementsIMSS(node)
         // }
@@ -31,7 +39,8 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
             getMovementsIMSS(node, regPatronal)
         }
 
-    },[node?.id, regPatronal])
+    },[node?.id, regPatronal]) */
+    
 
     useEffect(()=>{
         if(regPatronalProps){
@@ -73,6 +82,21 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
         }
     }
 
+    const sendFilter = (values) => {
+        if(!values.patronal_registration){
+            form.setFields([
+                { name: 'patronal_registration', errors: ["Este campo no puede estar vacío"] },
+              ]);
+        }else{
+            form.setFields([
+                { name: 'patronal_registration', errors: [] },
+              ]);
+        }
+
+        let d = values.date ? moment(values?.date).format("YYYY-MM-DD") : ''
+        let vd = values.validity_date ? moment(values?.validity_date).format("YYYY-MM-DD") : ''
+        getMovementsIMSS(node, values?.patronal_registration, values?.status, d, vd)
+    }
 
     const thereIsDataSelected=(type)=>{
         switch (type){
@@ -142,11 +166,47 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
                 <Form
                     layout={'vertical'}
                     form={form}
+                    onFinish={sendFilter}
                 >
-                    <Row>
+                    <Row gutter={15}>
                         <Col span={6}>
                             <SelectPatronalRegistration/>
                         </Col>
+                        <Col span={6}>
+                            <Form.Item label="Tipo" name={"status"}>
+                                <Select mode="multiple" placeholder="Todos" allowClear
+                                    options={statusOptions}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4} >
+                            <Form.Item label="Fecha" name={'date'}>
+                                <DatePicker style={{ width:'100%' }} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item label="Vigencia" name={'validity_date'}>
+                                <DatePicker />
+                            </Form.Item>
+                        </Col>
+                        <Col style={{ display:'flex' }}>
+                            <Form.Item label="" style={{ marginTop:'auto' }}>
+                                <Tooltip title="Buscar">
+                                    <Button htmlType="submit" type="primary" icon={<SearchOutlined/>} />
+                                </Tooltip>
+                            </Form.Item>
+                        </Col>
+                        {
+                            isFilter &&
+                            <Col style={{ display:'flex' }}>
+                                <Form.Item label="" style={{ marginTop:'auto' }}>
+                                    <Tooltip title="Buscar">
+                                        <Button type="primary" icon={<SearchOutlined/>} />
+                                    </Tooltip>
+                                </Form.Item>
+                            </Col>
+                        }
+                        
                     </Row>
                 </Form>
                 <Tabs defaultActiveKey="1">

@@ -45,7 +45,7 @@ const ConfigCompany = ({ ...props }) => {
   // console.log('Props config', applications)
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["strategyPlaning","company"]}>
+    <MainLayout currentKey={["business"]} defaultOpenKeys={["security"]}>
       {props.currentNode == null && (
         <Row align="end">
           <Button onClick={() => router.push("/select-company")}>

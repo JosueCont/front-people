@@ -54,6 +54,12 @@ const TableMovements=({movementType,title=null,...props})=>{
             render:data=><p>{movementsTypes[data]}</p>
         },
         {
+            title: 'Estatus',
+            dataIndex: 'status',
+            key:'status',
+            render: status => <p>{status === 1 ? "Por procesar" : status === 2 ? "En proceso" : status === 3 && "Procesado"}</p>
+        },
+        {
             title: 'Fecha',
             dataIndex: 'date',
             key:'date',

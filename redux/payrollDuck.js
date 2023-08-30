@@ -98,14 +98,15 @@ export const getGroupFixedConcept = (data) => async (dispatch, getState) => {
     }
 };
 
-export const getMovementsIMSS = (node, reg_patronal) => async (dispatch, getState) => {
+export const getMovementsIMSS = (node, reg_patronal, status = "", date = "", validity_date = "") => async (dispatch, getState) => {
     dispatch({
         type: MOVEMENTS_IMSS,
         payload: { data: [], loading: true },
     });
     try {
         if (reg_patronal) {
-            const res = await WebApiPayroll.getMovementsIMSSLog(node?.id, reg_patronal);
+            const res = await WebApiPayroll.getMovementsIMSSLog(node?.id, reg_patronal, status, date, validity_date);
+            console.log('res', res)
             dispatch({
                 type: MOVEMENTS_IMSS,
                 payload: { data: res.data, loading: false },
@@ -119,6 +120,7 @@ export const getMovementsIMSS = (node, reg_patronal) => async (dispatch, getStat
 
 
     } catch (e) {
+        console.log('e',e)
         dispatch({
             type: MOVEMENTS_IMSS,
             payload: { data: [], loading: false },
