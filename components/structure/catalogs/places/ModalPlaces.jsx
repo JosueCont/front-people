@@ -84,6 +84,7 @@ const ModalPlaces = ({
             ? parseFloat(itemToEdit?.salary).toLocaleString('es-Mx', { maximumFractionDigits: 4 }) : null;
         values.position_report = itemToEdit?.position_report
             ? itemToEdit?.position_report?.id : null;
+        values.job = itemToEdit?.job ? itemToEdit?.job?.id : null;
         formPlaces.setFieldsValue(values)
     }, [itemToEdit])
 
