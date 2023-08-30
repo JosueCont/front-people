@@ -89,6 +89,11 @@ const TablePlaces = ({
             key: 'description'
         },
         {
+            title: 'Reporta a',
+            dataIndex: ['position_report', 'name'],
+            key: ['position_report', 'name']
+        },
+        {
             title: 'Puesto de trabajo',
             dataIndex: ['job', 'name'],
             key: ['job', 'name']
