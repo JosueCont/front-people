@@ -1254,7 +1254,7 @@ const CalculatePayroll = ({ ...props }) => {
     form.setFields([
       {
         name:'person_id',
-        value: null
+        value: []
       }
     ])
   }
@@ -1264,7 +1264,7 @@ const CalculatePayroll = ({ ...props }) => {
     form.setFields([
       {
         name:'person_id',
-        value: null
+        value: []
       }
     ])
   }
@@ -1711,13 +1711,13 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={4}>
                           <SelectDepartment
                             size={"large"}
-                            /* onChange={onchangeDeptop} */
+                            onChange={onchangeDeptop}
                           />
                         </Col>
                         <Col xxs={24} xl={4}>
                           <SelectJob
                             size={"large"}
-                            /* onChange={onChangeJob} */
+                            onChange={onChangeJob}
                           />
                         </Col>
                         <Col xxs={24} xl={3}>

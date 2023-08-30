@@ -24,10 +24,10 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         let list = [];
         if (setAllPersons) {
           setAllPersons(response.data);
-        }
+        } 
         response.data.map((a, i) => {
           let item = {
-            label: a.first_name + " " + a.flast_name,
+            label: a?.first_name + " " + a?.flast_name + " " + a?.mlast_name,
             value: a.id,
             key: a.id + i,
           };
