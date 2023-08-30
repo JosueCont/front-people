@@ -16,11 +16,13 @@ import FileUpload from '../../jobbank/FileUpload';
 import { FileExcelOutlined } from '@ant-design/icons';
 import WebApiPayroll from '../../../api/WebApiPayroll';
 import { downloadBLOB } from '../../../utils/functions';
+import { connect } from "react-redux";
 
 const ModalSalary = ({
     visible = false,
     close = () => { },
-    itemsKeys = []
+    itemsKeys = [],
+    ...props
 }) => {
 
     const {
@@ -43,6 +45,7 @@ const ModalSalary = ({
             data.append("modified_by", user?.id);
             data.append("File", file[0]);
             data.append("generate_movement", values?.generate_movement);
+            data.append("node_id", props.currentNode?.id)
             let response = await WebApiPayroll.importSalaryModification(data);
             const filter_ = item => !item.status;
             let persons = response.data?.data?.length > 0
@@ -177,5 +180,12 @@ const ModalSalary = ({
         </MyModal>
     )
 }
+const mapState = (state) => {
+    return {      
+        currentNode: state.userStore.current_node
+    };
+  };
+  
+export default connect(mapState)(ModalSalary);
 
-export default ModalSalary
+// export default ModalSalary

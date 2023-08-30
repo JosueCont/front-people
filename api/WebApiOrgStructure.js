@@ -58,6 +58,20 @@ class WebApiOrgStructure {
     static updateJob(id, data, method = 'put') {
         return WebApi.ApisType(`/organizationalstructure/job/${id}/`, method, data);
     }
+
+    // PLAZAS LABORALES
+
+    static getPlaces(query = ''){
+        return WebApi.ApisType(`/organizationalstructure/position/${query}`, 'get');
+    }
+
+    static createPlace(data){
+        return WebApi.ApisType('/organizationalstructure/position/', 'post', data);
+    }
+
+    static updatePlace(id, data, method = 'put'){
+        return WebApi.ApisType(`/organizationalstructure/position/${id}/`, method, data);
+    }
 }
 
 export default WebApiOrgStructure
