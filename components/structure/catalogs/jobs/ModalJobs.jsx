@@ -31,10 +31,13 @@ import {
 } from '@ant-design/icons';
 import ModalNodes from '../nodes/ModalNodes';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
+import { getJobsOptions } from '../../../../redux/OrgStructureDuck';
 
 const ModalJobs = ({
     visible = false,
     itemToEdit = {},
+    showAddNode = true,
+    refreshList = true,
     close = () => { },
     onReady = () => { },
 }) => {
@@ -47,7 +50,9 @@ const ModalJobs = ({
         load_org_nodes_options
     } = useSelector(state => state.orgStore);
     const refSubmit = useRef(null);
+    const dispatch = useDispatch();
     const [formJobs] = Form.useForm();
+
     const [type, setType] = useState('create');
     const [fetching, setFetching] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -68,6 +73,7 @@ const ModalJobs = ({
             await WebApiOrgStructure.createJob(values);
             setTimeout(() => {
                 message.success('Puesto de trabajo registrado')
+                if (refreshList) dispatch(getJobsOptions());
                 submitAction()
                 onReady()
             }, 1000)
@@ -85,6 +91,7 @@ const ModalJobs = ({
             await WebApiOrgStructure.updateJob(itemToEdit?.id, values)
             setTimeout(() => {
                 message.success('Puesto de trabajo actualizado')
+                if (refreshList) dispatch(getJobsOptions());
                 onClose()
                 onReady()
             }, 1000)
@@ -241,11 +248,13 @@ const ModalJobs = ({
                             <Form.Item>
                                 <div className='custom-label-form'>
                                     <label>Nodo organizacional</label>
-                                    <div className='label-options default'>
-                                        <Tooltip title='Agregar' placement='left'>
-                                            <PlusOutlined onClick={() => setOpenModal(true)} />
-                                        </Tooltip>
-                                    </div>
+                                    {showAddNode && (
+                                        <div className='label-options default'>
+                                            <Tooltip title='Agregar' placement='left'>
+                                                <PlusOutlined onClick={() => setOpenModal(true)} />
+                                            </Tooltip>
+                                        </div>
+                                    )}
                                 </div>
                                 <Form.Item
                                     name='organizational_node'
