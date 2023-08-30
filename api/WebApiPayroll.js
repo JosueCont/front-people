@@ -281,9 +281,9 @@ class WebApiPayroll {
     );
   }
 
-  static getMovementsIMSSLog(node, reg_patronal = "") {
+  static getMovementsIMSSLog(node, reg_patronal = "", status = "", date = "", validity_date = "") {
     return WebApi.ApisType(
-      `/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}`,
+      `/payroll/imss-movement-log?node=${node}&patronal_registration=${reg_patronal}&status=${status}&date=${date}&validity_date=${validity_date}`,
       "get"
     );
   }
