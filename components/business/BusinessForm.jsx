@@ -428,8 +428,7 @@ const businessForm = ({ currentNode, ...props }) => {
 
     return (
         <MainLayout
-            currentKey={["business"]}
-            defaultOpenKeys={["strategyPlaning", "company"]}
+            currentKey={["business"]} defaultOpenKeys={["security"]}
         >
             <Breadcrumb>
                 <Breadcrumb.Item
