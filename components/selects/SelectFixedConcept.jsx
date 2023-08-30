@@ -8,6 +8,7 @@ const SelectFixedConcept = ({
   rules = [],
   type = 1,
   placeholder = false,
+  multiple=true,
   ...props
 }) => {
   const [concept, setConcept] = useState([]);
@@ -37,11 +38,11 @@ const SelectFixedConcept = ({
             : "Grupo de conceptos fijos"
           : ""
       }
-      help={type === 1 && <small>Elige uno o varios</small>}
+      help={type === 1 && multiple && <small>Elige uno o varios</small>}
     >
       <Select
         // options={concept}
-        mode={type === 1 && "multiple"}
+        mode={type === 1 && multiple && "multiple"}
         placeholder={placeholder && "Conceptos fijos"}
         showSearch
         optionFilterProp="children"
