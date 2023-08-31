@@ -23,6 +23,7 @@ import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import FormVacationRecord from "../payroll/forms/FormVacationRecord";
+import Payment from '../payroll/Payment'
 import TruoraCheck from '../TruoraCheck';
 import { useEffect, useState } from "react";
 import {
@@ -398,6 +399,20 @@ const DetailPerson = ({
 
             </TabPane>
           )}
+
+          {config?.nomina_enabled && (
+            <TabPane
+              tab={
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Pagos</div>
+                  </div>
+              }
+              key="tab_16"
+            >
+              <Payment />
+            </TabPane>
+          )}          
         </Tabs>
       </Card>
       <Modal

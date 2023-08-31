@@ -27,6 +27,15 @@ class WebApiPayroll {
     );
   }
 
+  static deletePayrollPerson(payrollPersonId) {
+    let url = `/payroll/payroll-person/${payrollPersonId}/`;
+    return WebApi.ApisType(
+        url,
+        "delete"
+    );
+  }
+
+
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
@@ -491,6 +500,11 @@ class WebApiPayroll {
   static delPayrollSheets(id){
     return WebApi.ApisType(`payroll/payroll-sheets/${id}/`, "delete")
   }
+
+  static deferredFixedConceptList(filters){
+    return WebApi.ApisType(`payroll/deferred-fixed-concept-list?${filters}`, "get")
+  }
+
 
 }
 
