@@ -202,6 +202,19 @@ const DetailPerson = ({
               />
             </TabPane>
           )}          
+          {config?.nomina_enabled && (
+            <TabPane
+              tab={
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Pagos diferidos</div>
+                  </div>
+              }
+              key="tab_16"
+            >
+              <Payment person_id={person.id} />
+            </TabPane>
+          )}          
           {companyFiscalInformation?.assimilated_pay == false && 
            <TabPane
             tab={
@@ -400,19 +413,7 @@ const DetailPerson = ({
             </TabPane>
           )}
 
-          {config?.nomina_enabled && (
-            <TabPane
-              tab={
-                  <div className="container-title-tab">
-                    <DollarOutlined />
-                    <div className="text-title-tab">Pagos</div>
-                  </div>
-              }
-              key="tab_16"
-            >
-              <Payment />
-            </TabPane>
-          )}          
+          
         </Tabs>
       </Card>
       <Modal
