@@ -2138,19 +2138,43 @@ const CalculatePayroll = ({ ...props }) => {
                       />
                       {totalPerceptions != null && totalDeductions != null ? (
                         <Col span={24}>
+                          <Row justify="space-between">
+                            <Col span={12}>
+                              <Row>
+                                <Col
+                                lg={12}
+                                md={16}
+                                sm={12}
+                                style={{ fontWeight: "bold" }}
+                              >
+                                <div>Total de personas:</div>
+                              </Col>
+                              <Col
+                                lg={8}
+                                md={10}
+                                sm={16}
+                                style={{ fontWeight: "bold" }}
+                              >
+                                <div>
+                                  {payrollOriginal.length}
+                                </div>
+                              </Col>
+                              </Row>  
+                            </Col>
+                            <Col span={12}>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total de Percepciones:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
@@ -2163,17 +2187,17 @@ const CalculatePayroll = ({ ...props }) => {
                           </Row>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total de Deducciones:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
@@ -2186,23 +2210,25 @@ const CalculatePayroll = ({ ...props }) => {
                           </Row>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total a pagar:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
                                 <NumberFormat prefix={"$"} number={netPay} />
                               </div>
                             </Col>
+                          </Row>
+                        </Col>
                           </Row>
                         </Col>
                       ) : null}
