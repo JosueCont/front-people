@@ -5,18 +5,18 @@ import WebApiPayroll from '../../api/WebApiPayroll'
 import moment from 'moment'
 import { EyeOutlined } from '@ant-design/icons'
 
-const Payment = () => {
+const Payment = ({person_id, ...props}) => {
     const [form] = Form.useForm()
-    const fixed_concept = Form.useWatch('fixed_concept', form);
+    /* const fixed_concept = Form.useWatch('fixed_concept', form); */
 
     const [conceptList, setConceptList] = useState([])
     const [openModal, setOpenModal] = useState(false)
     const [conceptSelected, setConceptSelected] = useState(null)
 
     const viewDetails = (data) => {
+        console.log('data',data)
         setOpenModal(true)
         setConceptSelected(data.fixed_concept)
-        
     }
 
     const columns = [
@@ -71,9 +71,10 @@ const Payment = () => {
         }
     ]
 
-    const get_deferred_fixed_concept = async (values) => {
-        let filters = "&remaining_payments__gte=1"
-        filters += values.fixed_concept ? `&fixed_concept=${fixed_concept}` : ''
+    const get_deferred_fixed_concept = async () => {
+        let filters = `&remaining_payments__gte=1&payroll_person__person=${person_id}`
+
+        /* filters += values.fixed_concept ? `&fixed_concept=${fixed_concept}` : '' */
         
         try {
             let resp = await WebApiPayroll.deferredFixedConceptList(filters)
@@ -86,8 +87,8 @@ const Payment = () => {
     }
 
     useEffect(() => {
-        get_deferred_fixed_concept({fixed_concept})
-    }, [fixed_concept])
+        get_deferred_fixed_concept()
+    }, [])
 
 
     const closeModal = () => {
@@ -97,17 +98,18 @@ const Payment = () => {
     
   return (
     <>
-        <Form layout='vertical' form={form}>
+        {/* <Form layout='vertical' form={form}>
             <Row>
                 <Col span={5}>
                     <SelectFixedConcept multiple={false} />
                 </Col>
             </Row>
             
-        </Form>
+        </Form> */}
         <Table 
             columns={columns}
             dataSource={conceptList}
+            scroll={{ x: 100 }}
         />
         <Modal 
             visible={openModal} 
@@ -119,7 +121,7 @@ const Payment = () => {
         >
             <Row gutter={[10,20]}>
                 <Col span={12}>
-                    <Statistic title="Codigo" value={conceptSelected?.code} />
+                    <Statistic title="Codigo" value={conceptSelected?.hasOwnProperty('perception') ? conceptSelected.perception.code : conceptSelected?.hasOwnProperty('deduction') ? conceptSelected.deduction.code : conceptSelected?.hasOwnProperty(other_payment) ? conceptSelected.other_payment.code : '' } />
                 </Col>
                 <Col span={12}>
                     <Statistic title="Nombre" value={conceptSelected?.name} />
@@ -128,7 +130,23 @@ const Payment = () => {
                     <Statistic title="Tipo de dato" value={conceptSelected?.data_type === 1 ? 'Monto' : conceptSelected?.data_type === 2 ? 'Porcentaje' : conceptSelected?.data_type === 3 && 'Veces salario'} />
                 </Col>
                 <Col span={12}>
-                    <Statistic title={conceptSelected?.perception ? "Percepción" : conceptSelected?.deduction ? 'Deducción' : conceptSelected?.other_payment && 'Otro pago'} value={conceptSelected?.perception ? conceptSelected?.perception?.description : conceptSelected?.deduction ? conceptSelected?.deduction?.description : conceptSelected?.other_payment && conceptSelected?.other_payment.description} />
+                    {
+                        (conceptSelected?.hasOwnProperty('perception') || conceptSelected?.hasOwnProperty('deduction')  || conceptSelected?.hasOwnProperty('other_payment')) && 
+                        <Statistic 
+                            title={conceptSelected?.hasOwnProperty('perception') ?
+                                "Percepción" : 
+                            conceptSelected?.hasOwnProperty('deduction') ? 
+                                'Deducción' : 
+                                conceptSelected?.hasOwnProperty('other_payment') && 
+                            'Otro pago'} 
+                        
+                            value={conceptSelected?.hasOwnProperty('perception') ? 
+                                    conceptSelected?.perception.description : 
+                                conceptSelected?.hasOwnProperty('deduction') ? 
+                                    conceptSelected?.deduction.description : 
+                                conceptSelected?.hasOwnProperty('other_payment') ? conceptSelected?.other_payment?.description : ''} />
+                    }
+                    
                 </Col>
             </Row>
         </Modal>

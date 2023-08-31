@@ -78,8 +78,9 @@ export const downLoadFileBlobAwait = async (
   params = null,
   Textmessage = null,
   setLoading=null,
+  loadingValue=1,
 ) => {
-  if(setLoading) setLoading(true)
+  if(setLoading) setLoading(loadingValue)
   let headers = {
     method: type,
     responseType: "blob",
