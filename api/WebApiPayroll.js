@@ -27,6 +27,15 @@ class WebApiPayroll {
     );
   }
 
+  static deletePayrollPerson(payrollPersonId) {
+    let url = `/payroll/payroll-person/${payrollPersonId}/`;
+    return WebApi.ApisType(
+        url,
+        "delete"
+    );
+  }
+
+
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
