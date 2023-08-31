@@ -108,6 +108,7 @@ const Payment = () => {
         <Table 
             columns={columns}
             dataSource={conceptList}
+            scroll={{ x: 100 }}
         />
         <Modal 
             visible={openModal} 
@@ -128,7 +129,23 @@ const Payment = () => {
                     <Statistic title="Tipo de dato" value={conceptSelected?.data_type === 1 ? 'Monto' : conceptSelected?.data_type === 2 ? 'Porcentaje' : conceptSelected?.data_type === 3 && 'Veces salario'} />
                 </Col>
                 <Col span={12}>
-                    <Statistic title={conceptSelected?.perception ? "Percepción" : conceptSelected?.deduction ? 'Deducción' : conceptSelected?.other_payment && 'Otro pago'} value={conceptSelected?.perception ? conceptSelected?.perception?.description : conceptSelected?.deduction ? conceptSelected?.deduction?.description : conceptSelected?.other_payment && conceptSelected?.other_payment.description} />
+                    {
+                        conceptSelected?.perception || conceptSelected?.deduction || conceptSelected?.other_payment && 
+                        <Statistic 
+                        title={conceptSelected?.perception ?
+                            "Percepción" : 
+                        conceptSelected?.deduction ? 
+                            'Deducción' : 
+                        conceptSelected?.other_payment && 
+                            'Otro pago'} 
+                        
+                        value={conceptSelected?.perception ? 
+                                conceptSelected?.perception.description : 
+                            conceptSelected?.deduction ? 
+                                conceptSelected?.deduction.description : 
+                            conceptSelected?.other_payment ? conceptSelected?.other_payment?.description : ''} />
+                    }
+                    
                 </Col>
             </Row>
         </Modal>
