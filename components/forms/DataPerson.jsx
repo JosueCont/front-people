@@ -594,6 +594,7 @@ const DataPerson = ({
                   label="Apellido Paterno"
                   rules={[
                     { message: "Ingresa un apellido paterno" }
+                    { message: "Ingresa un apellido paterno" }
                   ]}
                 >
                   <Input />
