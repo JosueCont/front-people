@@ -1474,7 +1474,8 @@ const CalculatePayroll = ({ ...props }) => {
           }),
         },
         "",
-        setDownloading
+        setDownloading,
+        2
       )
     : downLoadFileBlobAwait(
         `${getDomain(
@@ -1486,7 +1487,8 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "",
-        setDownloading
+        setDownloading,
+        2
       );
   }
 
@@ -1501,7 +1503,8 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "",
-        setDownloading
+        setDownloading,
+        2
       );
   }
 
@@ -1523,7 +1526,8 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "No se encontraron resultados",
-        setDownloading
+        setDownloading,
+        2
       )
     }else if(key === 'accounting_policy_simple'){
       downLoadFileBlobAwait(
@@ -1538,7 +1542,8 @@ const CalculatePayroll = ({ ...props }) => {
           "type": "ACCOUNTING_POLICY_SIMPLE" 
         },
         "No se encontraron resultados",
-        setDownloading
+        setDownloading,
+        2
       )
     }
   }
@@ -1734,7 +1739,7 @@ const CalculatePayroll = ({ ...props }) => {
                         <Col xxs={24} xl={5}>
                           {
                             step < 2 && <Button
-                                  loading={downloading}
+                                  loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
@@ -1755,7 +1760,8 @@ const CalculatePayroll = ({ ...props }) => {
                                           }),
                                         },
                                         "",
-                                        setDownloading
+                                        setDownloading,
+                                        1
                                     );
                                   }}
                               >
@@ -1858,7 +1864,7 @@ const CalculatePayroll = ({ ...props }) => {
                               block
                               htmlType="button"
                               icon={<FileExcelOutlined />}
-                              loading={downloading}
+                              loading={downloading === 2}
                               >
                               Descargar
                             </Button>
@@ -2047,7 +2053,7 @@ const CalculatePayroll = ({ ...props }) => {
                       <Button size="large"
                         htmlType="button"
                         icon={<FilePdfOutlined />}
-                        loading={downloading}
+                        loading={downloading === 3}
                         onClick={() => exportPdf()}
                         >
                         Reporte de Nómina
@@ -2089,11 +2095,13 @@ const CalculatePayroll = ({ ...props }) => {
                       clickCancelStamp={cancelOneStamp}
                       movementType={'0'}
                       pageSize={defaultSize}
+                      setPageSize={setDefaultSize}
                       showAll={defaultSize > 100 ? true : false}
                     />
                   ) : (
                     <>
                       <Table
+                        scroll={{ x: 1500 }}
                         className="headers_transparent"
                         dataSource={payroll.map((item) => {
                           item.key = item?.person?.id;
@@ -2131,8 +2139,11 @@ const CalculatePayroll = ({ ...props }) => {
                         }
                         pagination={
                           {
+                            showSizeChanger:true,
                             pageSize: defaultSize,
+                            pageSizeOptions: [5,10,20,50,100],
                             hideOnSinglePage: defaultSize > 100 ? true: false,
+                            onChange: (page, size) => setDefaultSize(size) 
                           }
                         }
                       />
