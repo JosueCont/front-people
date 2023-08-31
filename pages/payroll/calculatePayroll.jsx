@@ -2101,7 +2101,7 @@ const CalculatePayroll = ({ ...props }) => {
                   ) : (
                     <>
                       <Table
-                        scroll={{ x: 1500 }}
+                        scroll={{ x: 800 }}
                         className="headers_transparent"
                         dataSource={payroll.map((item) => {
                           item.key = item?.person?.id;
