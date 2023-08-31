@@ -583,7 +583,7 @@ const DataPerson = ({
                 <Form.Item
                   name="first_name"
                   label="Nombre(s)"
-                  rules={[{ message: "Ingresa un nombre" } ]}
+                  rules={[{ message: "Ingresa un nombre" }]}
                 >
                   <Input />
                 </Form.Item>
@@ -593,6 +593,7 @@ const DataPerson = ({
                   name="flast_name"
                   label="Apellido Paterno"
                   rules={[
+                    { message: "Ingresa un apellido paterno" }
                     { message: "Ingresa un apellido paterno" }
                   ]}
                 >
@@ -604,7 +605,8 @@ const DataPerson = ({
                   name="mlast_name"
                   label="Apellido Materno"
                   rules={[
-                    { message: "Ingresa un apellido paterno" }
+                    { message: "Ingresa un apellido paterno" },
+                    
                   ]}
                 >
                   <Input />
