@@ -120,8 +120,9 @@ const CfdiVaucher = ({
   };
 
   const pagination = async (page, pageSize) => {    
-    console.log('page', page)
-    console.log('pageSize',pageSize)
+    if(props?.setPageSize){
+      props.setPageSize(pageSize)
+    }
     //setPage(page);
     if (calendar) {
       getVoucher(`calendar=${calendar}&period=${period}&page_size=${pageSize}`, page);
@@ -578,6 +579,7 @@ const CfdiVaucher = ({
               }}
               rowSelection={rowSelectionPerson}
               pagination={false}
+              scroll={{ x: 1500 }}
             />
           </Col>
           {lenData > 0 && (
@@ -596,8 +598,8 @@ const CfdiVaucher = ({
                   current={currentPage}
                   total={lenData}
                   onChange={pagination}
-                  showSizeChanger={props.pageSize ? false : true}
-                  pageSizeOptions={[10, 20, 50, 100]}
+                  showSizeChanger={true}
+                  pageSizeOptions={[5,10, 20, 50, 100]}
                   // defaultPageSize={10}
                 />
               }
