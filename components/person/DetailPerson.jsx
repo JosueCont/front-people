@@ -212,7 +212,7 @@ const DetailPerson = ({
               }
               key="tab_16"
             >
-              <Payment />
+              <Payment person_id={person.id} />
             </TabPane>
           )}          
           {companyFiscalInformation?.assimilated_pay == false && 
