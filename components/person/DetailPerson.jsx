@@ -207,7 +207,7 @@ const DetailPerson = ({
               tab={
                   <div className="container-title-tab">
                     <DollarOutlined />
-                    <div className="text-title-tab">Pagos</div>
+                    <div className="text-title-tab">Pagos diferidos</div>
                   </div>
               }
               key="tab_16"
