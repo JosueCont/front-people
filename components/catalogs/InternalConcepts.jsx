@@ -33,6 +33,7 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import { showHideMessage } from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
+import SelectAccountantAccount from "../selects/SelectAccountantAccount";
 
 const InternalConcepts = ({
   permissions,
@@ -79,9 +80,22 @@ const InternalConcepts = ({
       },
     },
     {
-      title: "¿Es activo?",
+      title: "Mostrar para calcular",
       render: (item) => {
-        return <div>{item.is_active ? <>Activo</> : <>Inactivo</>}</div>;
+        return <div>
+          {item.node != null &&
+              <Switch
+                  size='small'
+                  defaultChecked={item.show}
+                  checked={item.show}
+                  onClick={()=>{
+                    item.show = !item.show
+                    updateShowConcept(item, item.id);
+                  }
+                  }
+              />
+          }
+         </div>;
       },
     },
 
@@ -190,7 +204,7 @@ const InternalConcepts = ({
     try {
       await WebApiFiscal.crudInternalConcept(url, "post", data);
       props
-        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi, true)
         .then((response) => {
           resetForm();
           message.success(messageSaveSuccess);
@@ -228,6 +242,8 @@ const InternalConcepts = ({
         is_rest_day: item.is_rest_day,
         is_seventh_day: item.is_seventh_day,
         apply_assimilated: item.apply_assimilated,
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -237,6 +253,8 @@ const InternalConcepts = ({
         deduction_type: item.deduction_type.id,
         apply_assimilated: item.apply_assimilated,
         show: item.show,
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -246,17 +264,59 @@ const InternalConcepts = ({
         apply_assimilated: item.apply_assimilated,
         other_type_payment: item.other_type_payment.id,
         show: item.show,
+        accountant_account: item.accountant_account,
+        counterpart: item.counterpart
       });
     }
   };
 
-  const updateRegister = async (value) => {
+
+
+  const updateShowConcept= async (value, id)=>{
+    setLoading(true);
+    let data = {...value}
+    delete data["id"];
+    delete data[""];
+    if(data.perception_type){
+      data.perception_type =  data.perception_type.id;
+    }
+
+    if(data.deduction_type){
+      data.deduction_type =  data.deduction_type.id;
+    }
+
+    if(data.other_type_payment){
+      data.other_type_payment =  data.other_type_payment.id;
+    }
+
+    try{
+      await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", data);
+      message.success('Actualizado correctamente')
+    }catch (e){
+      console.log(e)
+      value.show = !value.show
+      message.error('Hubo un error al actualizar, intenta nuevamente')
+    }finally {
+      setLoading(false);
+    }
+
+  }
+
+  const updateRegister = async (value, _id=null) => {
     try {
       delete value["id"];
       delete value[""];
+      if(!value?.accountant_account){
+        value.accountant_account = null
+      }
+
+      if(!value?.counterpart){
+        value.counterpart = null
+      }
+
       await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", value);
       props
-        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi,true)
         .then((response) => {
           setId("");
           resetForm();
@@ -421,6 +481,12 @@ const InternalConcepts = ({
                     props.cat_other_payments
               }
             />
+          </Col>
+          <Col lg={6} xs={22} md={12}>
+            <SelectAccountantAccount allowClear={true}/>
+          </Col>
+          <Col lg={6} xs={22} md={12}>
+            <SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>
           </Col>
           <Col lg={6} xs={22} md={12}>
             <Form.Item

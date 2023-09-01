@@ -17,7 +17,8 @@ import Icon, {
   SolutionOutlined,
   PieChartFilled,
   SafetyCertificateOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  PartitionOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
@@ -95,6 +96,7 @@ const MainSider = ({
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
+      myBussiness: `/business/companies/${props?.currentNode?.id}`,
       integrationFactors: "/business/integrationFactors",
       importMassivePayroll: "/payroll/importMasivePayroll/?action=addxmls",
       imssMovements: "/payroll/imssMovements",
@@ -122,7 +124,8 @@ const MainSider = ({
       jb_interviews: "/jobbank/interviews",
       jb_applications: "/jobbank/applications",
       tm_centers: "/timeclock/centers",
-      tm_logs: "/timeclock/logs"
+      tm_logs: "/timeclock/logs",
+      org_catalogs: "/structure/catalogs"
     };
     switch (key){
       case "sukha":
@@ -176,7 +179,7 @@ const MainSider = ({
       items.push(getItem("Dashboard", "dashboard", <PieChartFilled />));
       // Estrategia y planeación
       let children0 = [
-        getItem("Empresas", "business"),
+        getItem("Mi empresa", "myBussiness"),
         getItem("Prestaciones", "integrationFactors"),
         // getItem("Registros patronales", "patronal"),
 
@@ -234,6 +237,16 @@ const MainSider = ({
       if(children01.length>0){
         items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
       }
+
+      let subStructure = [
+        getItem("Catálogos","org_catalogs")
+      ]
+
+
+      if(process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL && process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL==='true'){
+        items.push(getItem("Estructura organizacional", "org_structure", <PartitionOutlined />, subStructure))
+      }
+
       
       let subTimeClock = [
         getItem("Centros de trabajo", "tm_centers"),
@@ -346,6 +359,7 @@ const MainSider = ({
       items.push(getItem("Utilidades/Configuración", "utilities", <SettingOutlined />, children4))
 
       let subSecurity = [
+        getItem("Empresas", "business"),
         getItem("Roles de administrador", "security_roles"),
         getItem("Asignar empresa", "security_assign")
       ];

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
+import WebApiPeople from '../../api/WebApiPeople'
 
 export default function SelectCollaborator({ setAllPersons, ...props }) {
   const { Option } = Select;
@@ -17,15 +18,16 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
     let filters = { node: nodeId }
     if(props.department_id)filters['department'] = props.department_id
     if(props.job_id)filters['job'] = props.job_id
-    Axios.post(API_URL + `/person/person/get_list_persons/`, filters )
+    //Axios.post(API_URL + `/person/person/get_list_persons/`, filters )
+        WebApiPeople.getListPersons(filters)
       .then((response) => {
         let list = [];
         if (setAllPersons) {
           setAllPersons(response.data);
-        }
+        } 
         response.data.map((a, i) => {
           let item = {
-            label: a.first_name + " " + a.flast_name,
+            label: a?.first_name + " " + a?.flast_name + " " + a?.mlast_name,
             value: a.id,
             key: a.id + i,
           };
@@ -65,6 +67,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         size={props.size}
         optionFilterProp="children"
         placeholder="Todos"
+        mode={props?.multiple ? 'multiple' : null}
         notFoundContent={"No se encontraron resultado."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

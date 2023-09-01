@@ -33,9 +33,12 @@ const { Text } = Typography;
 import { ruleEmail, ruleRequired } from "../../../utils/rules";
 import dayjs from 'dayjs';
 import Variability from "../../../components/payroll/ImssMovements/Variability";
+import AffiliatedMovementsContent from '../../../components/payroll/ImssMovements/AffiliatedMovementsContent'
+import WithholdingNoticesContent from '../../../components/payroll/ImssMovements/WithholdingNoticesContent'
 import locale from "antd/lib/date-picker/locale/es_ES";
 import AfilliateMovements from "../../business/AfilliateMovements";
 import WithHoldingNotice from "../../business/WithHoldingNotice";
+
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -344,15 +347,17 @@ const disabledMaxDate  = (current) => {
             <Breadcrumb.Item>Administración de RH</Breadcrumb.Item>
           )}
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
-          <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
+          <Breadcrumb.Item>Movimientos IMSS e INFONAVIT</Breadcrumb.Item>
         </Breadcrumb>
         <Spin tip="Cargando..." spinning={false}>
           <div
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Divider> <img src={'/images/logo_imss.png'} width={40}/> Movimientos de IMSS</Divider>
-            <Collapse defaultActiveKey={["1"]}>
+            <Divider> Movimientos de IMSS e INFONAVIT</Divider>
+            <Collapse
+                //defaultActiveKey={["1"]}
+            >
               <Panel header="Movimientos IMSS" key="1">
                 <MovementsSection regPatronalProps={router?.query?.regPatronal} />
 
@@ -500,9 +505,22 @@ const disabledMaxDate  = (current) => {
                   <Variability currentNodeId={currentNodeId} />
                 </Col>
               </Panel>
+              <Panel header="Movimientos afiliatorios" key="6">
+                <Col span={24} >
+                  <AffiliatedMovementsContent currentNodeId={props?.currentNode?.id} />
+                </Col>
+              </Panel>
+              <Panel header="Avisos de retenciones" key="7">
+                <Col span={24} >
+                  <WithholdingNoticesContent onSuccess={(mensaje)=> {
+                    console.log(mensaje)
+                    message.success(mensaje)
+                  }} currentNodeId={props?.currentNode?.id} />
+                </Col>
+              </Panel>
             </Collapse>
 
-            <Divider>
+            {/* <Divider>
               {" "}
               <img src={"/images/logoinfonavit.png"} width={40} />{" "}
               Movimientos de Infonavit
@@ -573,7 +591,7 @@ const disabledMaxDate  = (current) => {
                   </>
                 }
               </>
-            }
+            } */}
           </div>
         </Spin>
       </MainLayout>
@@ -637,7 +655,7 @@ const disabledMaxDate  = (current) => {
           </Col>
         </Row>
       </Modal>
-      <GenericModal
+      {/* <GenericModal
         visible={modal}
         setVisible={() => setModal(false)}
         title="Solicitar movimientos"
@@ -685,7 +703,7 @@ const disabledMaxDate  = (current) => {
             </div>
           </Col>
         </Row>
-      </GenericModal>
+      </GenericModal> */}
     </>
   );
 };

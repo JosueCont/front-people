@@ -56,7 +56,7 @@ const TagFilters = ({
     }
 
     const removeFilter = (record, key) => {
-        if (record.delete) record.delete(key);
+        if (record?.delete) record?.delete(key);
 
         let ignore = [...deleteKeys, key];
         let filters = deleteFiltersJb(router.query, ignore);

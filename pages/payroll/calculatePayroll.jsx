@@ -76,6 +76,9 @@ import SelectCollaboratorItemForm from '../../components/selects/SelectCollabora
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useReactToPrint } from 'react-to-print';
+import SelectPeople from "../../components/people/utils/SelectPeople";
+import {ruleRequired} from "../../utils/rules";
+import LinkToPerson from "../../components/person/LinkToPerson";
 
 
 const CalculatePayroll = ({ ...props }) => {
@@ -86,9 +89,11 @@ const CalculatePayroll = ({ ...props }) => {
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [payroll, setPayroll] = useState([]);
+  const [payrollOriginal, setPayrollOriginal] = useState([]);
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
+  const [workingDays, setWorkingDays] = useState(0)
   const [payrollType, setPayrollType] = useState(null);
   const [consolidated, setConsolidated] = useState(null);
   const [genericModal, setGenericModal] = useState(false);
@@ -177,7 +182,7 @@ const CalculatePayroll = ({ ...props }) => {
                   : defaulPhoto
               }
             />
-            {item.person && item.person.full_name}
+            {item.person && item.person.full_name} <LinkToPerson personId={item.person.id}/>
           </Space>
         </div>
       ),
@@ -291,8 +296,9 @@ const CalculatePayroll = ({ ...props }) => {
               <Button
                 size="small"
                 onClick={() => {
+                  setWorkingDays(item?.working_days)
                   setPersonId(item.person && item.person.id),
-                    setModalVisible(true);
+                  setModalVisible(true);
                 }}
               >
                 <PlusOutlined />
@@ -308,6 +314,8 @@ const CalculatePayroll = ({ ...props }) => {
     let dataPerceptions = data.perceptions;
     let dataDeductions = data.deductions;
     let dataOtherPayments = data.other_payments;
+    dataPerceptions = dataPerceptions.sort((a, b) => b.is_salary - a.is_salary) // se ordena de tal forma que primero salgan los que son tipo sueldo
+    dataDeductions = _.orderBy(dataDeductions,['type'])
 
     const columnsPerceptions = [
       {
@@ -639,6 +647,7 @@ const CalculatePayroll = ({ ...props }) => {
   const resetStates = () => {
     setStep(0);
     setPayroll([]);
+    setPayrollOriginal([])
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
@@ -649,6 +658,8 @@ const CalculatePayroll = ({ ...props }) => {
     setNetPay(null);
     setConsolidated(null);
   };
+
+  
   const sendCalculatePayroll = async (dataToSend) => {
     resetStates();
     if (department) dataToSend.department = department;
@@ -665,6 +676,7 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
+        setPayrollOriginal(response.data.payroll)
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
         // setTotalIsr(response.data.total_isr);
@@ -683,6 +695,7 @@ const CalculatePayroll = ({ ...props }) => {
         setCalculate(false);
         console.log(error);
         setPayroll([]);
+        setPayrollOriginal([])
         form.resetFields();
         if (
           error.response &&
@@ -695,6 +708,9 @@ const CalculatePayroll = ({ ...props }) => {
           setGenericModal(true);
         } else message.error(messageError);
         setLoading(false);
+      }).finally(() => {
+        console.log('finally')
+        form.submit()
       });
   };
 
@@ -942,7 +958,7 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
 
-          closeButton: "Cerrar",
+          closeButton: "Cancelar",
           title_action_button: "Ver comprobantes",
           viewActionButton: false,
         });
@@ -1197,6 +1213,7 @@ const CalculatePayroll = ({ ...props }) => {
   const importPayrollCaculate = (data) => {
     setLoading(true);
     setPayroll([]);
+    setPayrollOriginal([])
     setTotalPerceptions(null);
     setTotalDeductions(null);
     setNetPay(null);
@@ -1212,6 +1229,7 @@ const CalculatePayroll = ({ ...props }) => {
         setConsolidated(response.data.consolidated);
         /*  */
         setPayroll(response.data.payroll);
+        setPayrollOriginal(response.data.payroll)
         setCalculate(false);
         // setTotalSalary(response.data.total_salary);
         setTotalPerceptions(total_perceptions);
@@ -1236,7 +1254,7 @@ const CalculatePayroll = ({ ...props }) => {
     form.setFields([
       {
         name:'person_id',
-        value: null
+        value: []
       }
     ])
   }
@@ -1246,14 +1264,44 @@ const CalculatePayroll = ({ ...props }) => {
     form.setFields([
       {
         name:'person_id',
-        value: null
+        value: []
       }
     ])
   }
 
+  const clearFilter = () => {
+    form.setFieldsValue({
+      department: null,
+      job: null,
+      person_id: []
+    });
+    setPayroll([...payrollOriginal])
+  }
+
+  const localFilter = (values) => {
+    console.log(values)
+    console.log(payroll)
+    let newList = [...  payrollOriginal];
+
+    if(values.person_id && values.person_id.length >= 1){
+      newList = newList.filter(item => values.person_id.includes(item.person.id))
+    }
+
+    if(values.job){
+      newList = newList.filter(item => values.job === item.person.job.id)
+    }
+
+    if(values.department){
+      newList = newList.filter(item => values.department === item.person.department_id)
+    }
+    console.log('newList', newList)
+    setPayroll(newList)
+  }
+
   const sendForm = (values) => {
     values['payment_period'] = periodSelected.id,
-    sendCalculatePayroll(values)
+    localFilter(values)
+    /* sendCalculatePayroll(values) */
   }
 
   const deletePayroll = (consolidated_id) => {
@@ -1426,7 +1474,8 @@ const CalculatePayroll = ({ ...props }) => {
           }),
         },
         "",
-        setDownloading
+        setDownloading,
+        2
       )
     : downLoadFileBlobAwait(
         `${getDomain(
@@ -1438,7 +1487,8 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "",
-        setDownloading
+        setDownloading,
+        2
       );
   }
 
@@ -1453,7 +1503,8 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "",
-        setDownloading
+        setDownloading,
+        2
       );
   }
 
@@ -1475,14 +1526,15 @@ const CalculatePayroll = ({ ...props }) => {
         "GET",
         "",
         "No se encontraron resultados",
-        setDownloading
+        setDownloading,
+        2
       )
     }else if(key === 'accounting_policy_simple'){
       downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
         )}/payroll/accounting-policy-report`,
-        `Poliza contable_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
         "POST",
         {
           "node__id": props?.currentNode?.id,
@@ -1490,7 +1542,8 @@ const CalculatePayroll = ({ ...props }) => {
           "type": "ACCOUNTING_POLICY_SIMPLE" 
         },
         "No se encontraron resultados",
-        setDownloading
+        setDownloading,
+        2
       )
     }
   }
@@ -1519,7 +1572,7 @@ const CalculatePayroll = ({ ...props }) => {
             </Menu.Item>
             <Menu.Item key={'accounting_policy_simple'}>
               <a>
-                Poliza contable
+                Resumen
               </a>
             </Menu.Item>
           </>
@@ -1672,18 +1725,21 @@ const CalculatePayroll = ({ ...props }) => {
                             onChange={onChangeJob}
                           />
                         </Col>
-                        <Col xxs={24} xl={4}>
-                        <SelectCollaboratorItemForm name="person_id" size={"large"} department_id={department} job_id={job} />
+                        <Col xxs={24} xl={3}>
+                        <SelectCollaboratorItemForm multiple name="person_id" size={"large"} department_id={department} job_id={job} />
                         </Col>
                         <Col>
                         <Tooltip title="Buscar">
                             <Button htmlType="submit" icon={<SearchOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
                         </Tooltip>
+                        <Tooltip title="Limpiar filtro">
+                            <Button onClick={() => clearFilter()} icon={<ClearOutlined/>} style={{ marginTop: "30px", marginRight: 20 }} />
+                        </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
                           {
                             step < 2 && <Button
-                                  loading={downloading}
+                                  loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
@@ -1704,7 +1760,8 @@ const CalculatePayroll = ({ ...props }) => {
                                           }),
                                         },
                                         "",
-                                        setDownloading
+                                        setDownloading,
+                                        1
                                     );
                                   }}
                               >
@@ -1807,7 +1864,7 @@ const CalculatePayroll = ({ ...props }) => {
                               block
                               htmlType="button"
                               icon={<FileExcelOutlined />}
-                              loading={downloading}
+                              loading={downloading === 2}
                               >
                               Descargar
                             </Button>
@@ -1996,10 +2053,10 @@ const CalculatePayroll = ({ ...props }) => {
                       <Button size="large"
                         htmlType="button"
                         icon={<FilePdfOutlined />}
-                        loading={downloading}
+                        loading={downloading === 3}
                         onClick={() => exportPdf()}
                         >
-                        Exportar
+                        Reporte de Nómina
                       </Button>
                           
                       </Col>
@@ -2038,10 +2095,13 @@ const CalculatePayroll = ({ ...props }) => {
                       clickCancelStamp={cancelOneStamp}
                       movementType={'0'}
                       pageSize={defaultSize}
+                      setPageSize={setDefaultSize}
+                      showAll={defaultSize > 100 ? true : false}
                     />
                   ) : (
                     <>
                       <Table
+                        scroll={{ x: 800 }}
                         className="headers_transparent"
                         dataSource={payroll.map((item) => {
                           item.key = item?.person?.id;
@@ -2079,26 +2139,53 @@ const CalculatePayroll = ({ ...props }) => {
                         }
                         pagination={
                           {
+                            showSizeChanger:true,
                             pageSize: defaultSize,
+                            pageSizeOptions: [5,10,20,50,100],
                             hideOnSinglePage: defaultSize > 100 ? true: false,
+                            onChange: (page, size) => setDefaultSize(size) 
                           }
                         }
                       />
                       {totalPerceptions != null && totalDeductions != null ? (
                         <Col span={24}>
+                          <Row justify="space-between">
+                            <Col span={12}>
+                              <Row>
+                                <Col
+                                lg={12}
+                                md={16}
+                                sm={12}
+                                style={{ fontWeight: "bold" }}
+                              >
+                                <div>Total de personas:</div>
+                              </Col>
+                              <Col
+                                lg={8}
+                                md={10}
+                                sm={16}
+                                style={{ fontWeight: "bold" }}
+                              >
+                                <div>
+                                  {payrollOriginal.length}
+                                </div>
+                              </Col>
+                              </Row>  
+                            </Col>
+                            <Col span={12}>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total de Percepciones:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
@@ -2111,17 +2198,17 @@ const CalculatePayroll = ({ ...props }) => {
                           </Row>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total de Deducciones:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
@@ -2134,23 +2221,25 @@ const CalculatePayroll = ({ ...props }) => {
                           </Row>
                           <Row justify="end">
                             <Col
-                              lg={6}
-                              md={8}
+                              lg={12}
+                              md={16}
                               sm={12}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>Total a pagar:</div>
                             </Col>
                             <Col
-                              lg={4}
-                              md={5}
-                              sm={8}
+                              lg={8}
+                              md={10}
+                              sm={16}
                               style={{ fontWeight: "bold" }}
                             >
                               <div>
                                 <NumberFormat prefix={"$"} number={netPay} />
                               </div>
                             </Col>
+                          </Row>
+                        </Col>
                           </Row>
                         </Col>
                       ) : null}
@@ -2165,6 +2254,7 @@ const CalculatePayroll = ({ ...props }) => {
       </Spin>
       {personId && (
         <ModalConceptsPayroll
+          workingDays={workingDays}
           visible={modalVisible}
           setVisible={setModalVisible}
           payment_period={periodSelected}
@@ -2173,7 +2263,7 @@ const CalculatePayroll = ({ ...props }) => {
           }}
           periodicity={calendarSelect.periodicity}
           person_id={personId}
-          payroll={payroll}
+          payroll={payrollOriginal}
           setLoading={setLoading}
           sendCalculatePayroll={sendCalculatePayroll}
           payrollType={payrollType}
@@ -2190,7 +2280,7 @@ const CalculatePayroll = ({ ...props }) => {
           closeButton={
             infoGenericModal.closeButton
               ? infoGenericModal.closeButton
-              : "Cerrar"
+              : "Cancelar"
           }
         >
           <Row>

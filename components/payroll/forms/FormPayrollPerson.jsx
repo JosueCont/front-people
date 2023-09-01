@@ -11,9 +11,10 @@ import {
   Select,
   Switch,
   Table,
+  Popconfirm,
   Alert,
 } from "antd";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { CloseOutlined, CheckOutlined, CheckCircleOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -64,6 +65,7 @@ const FormPayrollPerson = ({
   const [calendar, setCalendar] = useState(null);
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
+  const [deletingPayroll, setDeletingPayroll] = useState(false);
 
   useEffect(() => {
     if (props.catPerception) {
@@ -161,6 +163,27 @@ const FormPayrollPerson = ({
     getPaymentCalendar();
     PayrollList();
   }, []);
+
+  const deletePayrollPerson=async(payrollPersonId)=>{
+    try {
+      setDeletingPayroll(true)
+      let response = await WebApiPayroll.deletePayrollPerson(payrollPersonId);
+      console.log(response)
+      message.success('Eliminado correctamente')
+      PayrollList()
+      getPayrollPerson()
+    }catch (e){
+      let msg = e.response?.data?.message;
+      if(msg){
+        message.error(msg)
+      }else{
+        message.error('no se pudo eliminar, intenta nuevamente')
+      }
+
+    }finally {
+      setDeletingPayroll(false)
+    }
+  }
 
   useEffect(() => {
     if (node) {
@@ -424,21 +447,58 @@ const FormPayrollPerson = ({
 
   const columns = [
     {
-      title: "Colaborador",
-      key: "name",
+      title: "¿Activo?",
+      width:50,
       render: (item) => {
-        return <>{item.person.first_name}</>;
+        return (
+            <>
+              {item?.active
+                  ? <p style={{textAlign:'center'}}><CheckCircleOutlined style={{color:'green',fontSize:20}} /></p>
+                  : <p style={{textAlign:'center'}}><StopOutlined style={{color:'orange',fontSize:20}} /></p>}
+            </>
+        );
       },
+      key: "active",
     },
     {
-      title: "Salario diario",
+      title: "Fecha modificación",
+      width:100,
+      render: (item) => {
+        return (
+            <>
+              {item?.timestamp
+                  ? moment(item.timestamp).format("DD/MM/YYYY hh:mm:ss a")
+                  : "--"}
+            </>
+        );
+      },
+      key: "modificacion",
+    },
+    {
+      title: "Fecha actualización",
+      width:150,
+      render: (item) => {
+        return (
+            <>
+              {item?.update_date
+                  ? moment(item.update_date).format("DD/MM/YYYY")
+                  : "--"}
+            </>
+        );
+      },
+      key: "update",
+    },
+    {
+      title: "SD",
+      width:100,
       render: (item) => {
         return <>{item.daily_salary ? ` $ ${item.daily_salary}` : "$ 0.00"}</>;
       },
-      key: "name",
+      key: "sd",
     },
     {
-      title: "Salario diario integrado",
+      title: "SDI",
+      width:100,
       hidden: false,
       render: (item) => {
         return (
@@ -449,11 +509,12 @@ const FormPayrollPerson = ({
           </>
         );
       },
-      key: "name",
+      key: "sdi",
     },
     {
       title: "Movimiento",
       key: "id",
+      width:150,
       render: (item) => {
         return (
           <>
@@ -465,24 +526,29 @@ const FormPayrollPerson = ({
       },
     },
     {
-      title: "Fecha modificación",
-      render: (item) => {
-        return (
-          <>
-            {item?.timestamp
-              ? moment(item.timestamp).format("DD/MM/YYYY hh:mm:ss a")
-              : "--"}
-          </>
-        );
-      },
-      key: "name",
-    },
-    {
       title: "Modificado por",
+      width:150,
       render: (item) => {
         return <>{item?.modified ? item?.modified : "Por sistema"}</>;
       },
       key: "name",
+    },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return item.movement !== 2 ? <Popconfirm
+            title="¿Estás seguro de eliminar este registro? Esta acción también eliminará los registros
+            de imss pendientes generados por esta actualización de salario."
+            onConfirm={() => deletePayrollPerson(item.id)}
+            okText="Si"
+            okButtonProps={{ loading: deletingPayroll }}
+            cancelText="No"
+        >
+          <Button size={'small'}><DeleteOutlined/></Button>
+        </Popconfirm> : <></>
+
+      },
+      key: "actions",
     },
   ].filter((item) => !item.hidden);
 
@@ -529,6 +595,12 @@ const FormPayrollPerson = ({
               className="inputs_form_responsive form-details-person"
               onValuesChange={handleValuesChange}
             >
+              {!bankDisabled && (
+                    <Alert
+                        banner
+                        style={{marginBottom:20}}
+                        message="Los datos bancarios de la personas se puede confgurar en la sección: Cuentas bancarias" type="info" />
+              )}
               <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
@@ -622,7 +694,7 @@ const FormPayrollPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item
                     name="payment_type"
                     label="Forma de pago"
@@ -642,24 +714,7 @@ const FormPayrollPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                {!bankDisabled && (
-                  <Col lg={12} xs={22} md={12}>
-                    <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
-                      <Select
-                        options={banks}
-                        showSearch
-                        filterOption={(input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                        notFoundContent={"No se encontraron resultados."}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                )}
-                <Col lg={4} xs={22} md={12}>
+                <Col lg={12} xs={22} md={12}>
                   <Form.Item
                     name="apply_monthly_adjustment"
                     label="¿Aplicar ajuste mensual?"
@@ -785,7 +840,7 @@ const FormPayrollPerson = ({
               </Row>
             </Form>
             <Row>
-              <Table dataSource={payrollPersonList} columns={columns} />
+              <Table dataSource={payrollPersonList} scroll={{ x: 1500 }} columns={columns} size={'small'} />
             </Row>
           </>
         ) : (

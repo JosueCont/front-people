@@ -50,10 +50,14 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
     const [disability, setDisability] = useState(false)
     const [count, setCount] = useState(0)
     const [showError, setShowError] = useState(false)
+    const [openCalendar, setOpenCalendar] = useState(false) // para abrir todo el calendario
+    const [typeRange, setTypeRange] = useState(false)
+    const [typeMultiple, setMultiple] = useState(true)
 
     const { Text } = Typography
 
     useEffect(() => {
+
         if(concept?.deduction_typ?.code === "006"){
             setDisability(true)
         }
@@ -69,6 +73,11 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
             || (concept?.perception_type?.code === "019" && concept?.perception_type?.description?.toLowerCase().includes("descanso") )
             ){ 
             setIsRest(true)
+        }
+
+        if(concept?.perception_type?.code === "006" || concept?.description?.toLowerCase().includes("incapacidad")){
+            console.log('concepto', concept)
+            setOpenCalendar(true)
         }
     }, [concept])
 
@@ -161,11 +170,13 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
                     onFocusedDateChange={dateSelected}
                     locale={locale==='es'?gregorian_es_lowercase:null}
                     {...props}
+                    range={typeRange}
+                    multiple={typeMultiple}
                     value={value}
                     render={<CustomInput />}
                     mapDays={( { date, today, selectedDate, currentMonth, isSameDate }) => {
+
                         let propsDate = {} 
-                        console.log('date',date)
                         let d = ("0"+date.day).slice(-2)
                         let m = ("0"+date.month.number).slice(-2)
                         let y = date.year
@@ -173,7 +184,10 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
                         let format_date = y+"-"+m+"-"+d
                         let current = date?.format?.()
 
-                        if(isSunday){
+                        if(openCalendar){
+                            //calendario abierto
+                        }
+                        else if(isSunday){
                             if(date?.weekDay?.number != '1'){
                                 propsDate.disabled = true
                                 return propsDate
@@ -197,12 +211,12 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
 
                         
                         /* Validamos si esta seleccionado para agregarle la clase para marcarlo */
-                        let exist = value.includes(current) 
-                        if (exist){ 
+                        let exist = value.includes(current)
+                        if (exist){
                             propsDate.className = "marker"
                         }else{
                             propsDate.className = "no_marker"
-                        } 
+                        }
                         return propsDate
                     }}
                 /><br/>

@@ -279,8 +279,8 @@ export const setUserFiltersData = (data = {}, keep = true) => async (dispatch) =
 }
 
 export const getCollaborators = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {
-  const { userStore: { list_collaborators } } = getState();
-  const action = { type: GET_COLLABORATORS, payload: list_collaborators, fetching: false, query, page, size };
+  // const { userStore: { list_collaborators } } = getState();
+  const action = { type: GET_COLLABORATORS, payload: {}, fetching: false, query, page, size };
   dispatch({ ...action, fetching: true })
   try {
     let response = await WebApiPeople.getCollaborators(node, query)

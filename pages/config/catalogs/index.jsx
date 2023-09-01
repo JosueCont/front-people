@@ -17,8 +17,8 @@ import {
 import Title from "antd/lib/typography/Title";
 import Router from "next/router";
 import { connect } from "react-redux";
-import { doCompanySelectedCatalog } from "../../../redux/catalogCompany";
-
+import { doCompanySelectedCatalog, getAccountantAccount } from "../../../redux/catalogCompany";
+import { doFiscalCatalogs } from "../../../redux/fiscalDuck";
 import Levels from "../../../components/catalogs/Levels";
 import WorkTitle from "../../../components/catalogs/WorkTitle";
 import Departaments from "../../../components/catalogs/Departaments";
@@ -33,7 +33,7 @@ import TagCatalog from "../../../components/catalogs/TagCatalog";
 import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
 import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 import {FormattedMessage} from "react-intl";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { verifyMenuNewForTenant } from "../../../utils/functions";
 import ButtonWizardLight from "../../../components/payroll/ButtonWizardLight";
 import MainConfig from "../../../components/config/MainConfig";
@@ -43,7 +43,7 @@ import { API_URL_TENANT } from "../../../config/config";
 import axios from "axios";
 import { typeHttp } from "../../../config/config";
 
-const configBusiness = ({ ...props }) => {
+const configBusiness = ({ getAccountantAccount, ...props }) => {
   const { TabPane } = Tabs;
   const [showModal, setShowModal] = useState(false)
   const [downloading, setDownloading] = useState(false)
@@ -74,6 +74,22 @@ const configBusiness = ({ ...props }) => {
     }
   }
 
+  const onChangeTab=async (tab)=>{
+    if(tab==='tab_7'){
+      try{
+        const res = await props.doFiscalCatalogs(props.currentNode.id, props.version_cfdi, true)
+      }catch (e){
+
+      }finally {
+
+      }
+    }
+  }
+
+  useEffect(()=>{
+    getAccountantAccount()
+  },[])
+
   return (
     <>
       <MainConfig pageKey="catalogs" extraBread={[{name: 'Catálogos'}]}>
@@ -92,15 +108,15 @@ const configBusiness = ({ ...props }) => {
                 <Col>
                 <Space>
                   <Button loading={downloading} icon={<DownloadOutlined />} onClick={() => downloadAllCatalogs()} >
-                    Descargar todos los catalogos
+                    Descargar todos los catálogos
                   </Button>
                   <Button disabled={downloading} icon={<UploadOutlined />} onClick={() => setShowModal(true)} >
-                    Carga masiva de catalogos
+                    Carga masiva de catálogos
                   </Button>
                   </Space>
                 </Col>
               </Row>
-              <Tabs onChange={(tab) => console.log(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
+              <Tabs onChange={(tab) => onChangeTab(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
@@ -317,9 +333,10 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     permissions: state.userStore.permissions,
+    version_cfdi: state.fiscalStore.version_cfdi,
   };
 };
 
-export default connect(mapState, { doCompanySelectedCatalog })(
+export default connect(mapState, { doCompanySelectedCatalog, doFiscalCatalogs, getAccountantAccount })(
   withAuthSync(configBusiness)
 );

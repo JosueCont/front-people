@@ -5,7 +5,7 @@ import {
     Typography
 } from "antd";
 import { connect } from "react-redux";
-import {withAuthSync} from "../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import moment from 'moment'
 import {
     ContentVertical,
@@ -22,6 +22,7 @@ import WidgetPayRollCalendar from "../../components/dashboard/WidgetPayRollCalen
 import { useRouter } from "next/router";
 import { SettingOutlined } from "@ant-design/icons";
 import WidgetPatronalRegistration from "../../components/dashboard/WidgetPatronalRegistration";
+import { css } from '@emotion/core';
 
 moment.locale("es-Mx");
 
@@ -37,34 +38,57 @@ const Dashboard = ({
 
             <MainLayout currentKey={["dashboard"]}>
                 <ContentVertical>
-                    <div>
-                        <Typography.Title style={{marginBottom:0}} level={1}>
-                            <Space size={10}>
-                                <>{currentNode && currentNode.name}</>
-                                <SettingOutlined style={{ cursor:'pointer' }} onClick={()=> router.push(`/business/companies/${currentNode.id}`) } />
+                    <Space size={[8, 0]}>
+                        {currentNode?.image && (
+                            <img alt='logo' width={80} src={currentNode.image} />
+                        )}
+                        {/* <Typography.Title style={{ marginBottom: 0 }} level={1}>
+                            <Space direction={'vertical'} size={10}>
+                                {
+                                    currentNode && currentNode.image &&
+                                    <img alt={'logo'} width={150} src={currentNode.image} />
+                                }
+
+                                <span style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }} onClick={() => router.push(`/business/companies/${currentNode.id}`)}> {currentNode && currentNode.name}</span>
                             </Space>
-                        </Typography.Title>
-                        <p style={{marginBottom: 0}}>{moment().format('LLL')}</p>
+                        </Typography.Title> */}
+
                         {/*<ButtonChangeLang/>*/}
-                    </div>
+                        {/* <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p> */}
+                        <Space direction='vertical' size={0}>
+                            <Typography.Title
+                                level={3}
+                                style={{
+                                    marginBottom: 0,
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => router.push(`/business/companies/${currentNode.id}`)}
+                            >
+                                {currentNode && currentNode.name}
+                            </Typography.Title>
+                            <Typography.Text>
+                                {moment().format('LLL')}
+                            </Typography.Text>
+                        </Space>
+                    </Space>
                     <ContentCards>
                         <CardInfo gap={24}>
-                            <WidgetTotal/>
-                            <WidgetGender/>
+                            <WidgetTotal />
+                            <WidgetGender />
                         </CardInfo>
-                        <WidgetAnniversary/>
-                        <WidgetGeneration/>
-                        <WidgetBirthday/>
+                        <WidgetAnniversary />
+                        <WidgetGeneration />
+                        <WidgetBirthday />
                         {
-                           config &&  config.applications.find(
+                            config && config.applications.find(
                                 (item) => item.app === "PAYROLL" && item.is_active
-                            ) && <WidgetPayRollCalendar/>
+                            ) && <WidgetPayRollCalendar />
                         }
 
                         {
-                            config &&  config.applications.find(
+                            config && config.applications.find(
                                 (item) => item.app === "PAYROLL" && item.is_active
-                            ) && <WidgetPatronalRegistration/>
+                            ) && <WidgetPatronalRegistration />
                         }
 
                     </ContentCards>

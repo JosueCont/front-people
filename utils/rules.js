@@ -115,6 +115,11 @@ export const twoDecimal = {
   message: "El campo no puede tener más de dos decimales",
 };
 
+export const TwoDigitsAndDecimal = {
+  pattern: /^[0-9]{1,2}(?:\.\d{1,1})?$/,
+  message: "El campo no puede tener más digitos y un un decimal",
+};
+
 // export const numCommaAndDot = {
 //   pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
 //   message: 'Ingrese un valor y/o formato válido'
@@ -126,8 +131,7 @@ export const numCommaAndDot = () => ({
     let num = parseFloat(value.replaceAll(",", ""));
     let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/;
     if (isNaN(num)) return Promise.reject("Ingrese un valor numérico");
-    if (!pattern.test(value))
-      return Promise.reject("Ingrese un formato válido");
+    if (!pattern.test(value)) return Promise.reject("Ingrese un formato válido");
     if (num < 1) return Promise.reject("Ingrese un valor mayor o igual a 1");
     return Promise.resolve();
   },

@@ -29,7 +29,7 @@ const TableCatalogs = ({
 
     const columns = [
         {
-            title: 'Catálogo',
+            title: 'Nombre',
             render: (item) => (
                 <a
                     style={{ color: '#1890ff' }}

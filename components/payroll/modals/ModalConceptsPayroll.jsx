@@ -42,6 +42,8 @@ const ModalConceptsPayroll = ({
   extraOrdinary = false,
   movementType = null,
   payment_period = null,
+  workingDays = null,
+  idx=0,
   ...props
 }) => {
   const { Text, Title } = Typography;
@@ -65,6 +67,7 @@ const ModalConceptsPayroll = ({
   const [errorExistExtraHours, setErrorExistExtraHours] = useState(false);
   const [daysActive, setDaysActive] = useState([]);
   const [nonWorkingDays, setNonWorkingDays] = useState([]);
+  const [showAlertDays, setShowAlertDays] = useState(false)
 
   useEffect(() => {
     if (
@@ -179,6 +182,11 @@ const ModalConceptsPayroll = ({
     console.log('payment_period',payment_period)
   }, []);
 
+  /* useEffect(() => {
+    setTotalWorkingDays(workingDays)
+  }, [workingDays]) */
+  
+
   const RenderCheckConcept = ({ data, type }) => {
     return (
       <>
@@ -187,7 +195,7 @@ const ModalConceptsPayroll = ({
             <Col span={12}>
               <Checkbox key={item.code} className="CheckGroup" value={item}>
                 <span style={{ textTransform: "uppercase" }}>
-                  {item.description}
+                  {item.description} {`(${item.data_type===1?'M':'D'})`}
                 </span>
               </Checkbox>
             </Col>
@@ -207,8 +215,11 @@ const ModalConceptsPayroll = ({
       if (response.status === 200) {
         let disabledDays = [];
         response.data.results.map((day) => {
-          disabledDays.push(day.date);
+          if(day.type === 1 || day.type === 2){
+            disabledDays.push(day.date);
+          }
         });
+        console.log('disabledDays',disabledDays)
         setNonWorkingDays(disabledDays);
       }
     } catch (error) {
@@ -335,6 +346,7 @@ const ModalConceptsPayroll = ({
                     </span>
                   )}
                   <InputNumber
+                  status={item.error ? 'error' : null}
                     key={item.id}
                     type="number"
                     name={item.id}
@@ -359,32 +371,53 @@ const ModalConceptsPayroll = ({
   };
 
   const onChangeCheckConcepts = (checkedValues, type) => {
+    console.log(checkedValues)
+
     if (type === 1) setPerceptions(checkedValues);
     if (type === 2) setDeductions(checkedValues);
     if (type === 3) setOtherPayments(checkedValues);
   };
 
+
+  const validateWorkingDays = (item_concept) => {
+    let days = 0;
+    perceptions.map((item) => {
+      if(
+        (item.perception_type.code === '001' && item.perception_type.description.toLowerCase().includes("sueldos"))
+        ||
+        (item.perception_type.code === '001' && item.perception_type.description.toLowerCase().includes("vacaciones"))
+      ){
+        days += item.value
+      }
+    });
+
+    deductions.map(item => {
+      if(item.deduction_type.code === '006' || item.deduction_type.code === '020'){
+        days += item.value
+      }
+    })
+
+
+    if((workingDays-days) < 0){
+      item_concept['error'] = 'Los dias no deben ser mayor a 14'
+      setShowAlertDays(true)
+    }else{
+      item_concept['error'] = false
+      setShowAlertDays(false)
+    }
+  }
+
   const changeHandler = (type, name) => (value, item_concept) => {
+    
+    
     /* setErrorExtraHours({...errorExtraHours,[name]: false }) */
     let _periodicity = props.periodicity;
     const { code, description } = item_concept; //P119 es doble , P118 triple
     //GDZUL --- validacion de conceptos
     //validar las horas extras dobles y triples
-    if (type === 1)
-      perceptions.map((item) => {
-        if (item.id === name)
-          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
-      });
-    if (type === 2)
-      deductions.map((item) => {
-        if (item.id === name)
-          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
-      });
-    if (type === 3)
-      otherPayments.map((item) => {
-        if (item.id === name)
-          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
-      });
+
+    item_concept.value = value != "" && Number(value) > 0 ? Number(value) : 0;
+    validateWorkingDays(item_concept)
   };
 
   const listConcepts = (value = null) => {
@@ -417,6 +450,7 @@ const ModalConceptsPayroll = ({
         data.push(item);
         if (item.value <= 0) is_cero = true;
       });
+      console.log('concepts', concepts)
     setConcepts(data);
 
     currentStep == 0
@@ -846,6 +880,17 @@ const ModalConceptsPayroll = ({
                   style={{ marginBottom: 10 }}
                 />
               )}
+              {
+                showAlertDays && (
+                  <Alert
+                    message="Importante"
+                    description={`Los dias capturados no deben ser mayor a ${workingDays}`}
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: 10 }}
+                  /> 
+                )
+              }
               <Row>
                 {perceptions.length > 0 && (
                   <RenderConcept data={perceptions} type={1} />
@@ -875,7 +920,7 @@ const ModalConceptsPayroll = ({
                   align="center"
                   key="amount"
                   render={(record) => (
-                    <div>{record.data_type == 2 ? record.value : 0}</div>
+                    <div>{record.data_type == 2 ? record.value : '--'}</div>
                   )}
                 />
                 <Column
@@ -886,7 +931,7 @@ const ModalConceptsPayroll = ({
                     <div>
                       {record.data_type == 1
                         ? `$ ${numberFormat(record.value)}`
-                        : `$ 0.00`}
+                        : `--`}
                     </div>
                   )}
                 />
@@ -894,17 +939,19 @@ const ModalConceptsPayroll = ({
                   title={"Fechas"}
                   align={"center"}
                   key={"date"}
-                  render={(record) =>
+                  render={(record) =>       
                     record.data_type == 2 ? (
                       <DatePickerHoliDays
                         daysActives={daysActive}
                         disabledDays={nonWorkingDays}
                         withData={
-                          record.code === "P118" || record.code === "P119"
+                          (record?.perception_type?.description.toLowerCase().includes('dobles') ||
+                          record?.perception_type?.description.toLowerCase().includes('triples') ||
+                          record?.perception_type?.description.toLowerCase().includes('horas')) &&
+                          record?.perception_type?.code === '019'
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}
-                        multiple={true}
                       />
                     ) : (
                       "No aplica"

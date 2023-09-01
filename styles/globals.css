@@ -759,7 +759,7 @@ textarea {
     background: rgba(0,0,0,0.5);
   }
   .ant-layout-content.main_container{
-    /* margin-left: 80px; */
+    margin-left: 80px;
     /* max-height: calc(100vh - 64px); */
     overflow: auto;
   }

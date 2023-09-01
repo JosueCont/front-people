@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Typography,
+  Checkbox,
   Table,
   Modal,
 } from "antd";
@@ -196,6 +197,7 @@ const FormBanckAccount = ({ person_id = null }) => {
       card_number: item.card_number,
       expiration_month: item.expiration_month,
       expiration_year: item.expiration_year,
+      status:item.status
     });
     setIdBankAcc(item.id);
     setUpBankAcc(true);
@@ -396,9 +398,18 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLengyh={2} maxLength={2} />
             </Form.Item>
           </Col>
+          <Col lg={11} xs={22} md={12}>
+            <Form.Item
+                name="status"
+                valuePropName="checked"
+                label=""
+            >
+              <Checkbox>Activo</Checkbox>
+            </Form.Item>
+          </Col>
         </Row>
         <Row justify={"end"}>
-          <Form.Item>
+          <Form.Item style={{marginRight:20}}>
             <Button type="primary" onClick={() => formBank.resetFields()}>
               Cancelar
             </Button>
