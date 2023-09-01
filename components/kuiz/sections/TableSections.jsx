@@ -21,44 +21,46 @@ import {
 const TableSections = ({
     list_sections,
     load_sections,
-    getSections
+    getSections,
+    showEdit = () =>{}
 }) => {
 
     const router = useRouter();
 
-    const MenuItem = ({item}) => (
+    const MenuItem = ({ item }) => (
         <Menu>
             <Menu.Item
                 key='1'
-                icon={<EditOutlined/>}
+                icon={<EditOutlined />}
+                onClick={() => showEdit(item)}
             >
                 Editar
             </Menu.Item>
             <Menu.Item
                 key='2'
-                icon={<DeleteOutlined/>}
+                icon={<DeleteOutlined />}
             >
                 Eliminar
             </Menu.Item>
             <Menu.Item
                 key='5'
-                icon={<PlusOutlined/>}
-                onClick={()=> router.push({
+                icon={<PlusOutlined />}
+                onClick={() => router.push({
                     pathname: '/kuiz/questions',
-                    query: {...router.query, section: item.id}
+                    query: { ...router.query, section: item.id }
                 })}
             >
                 Ver preguntas
             </Menu.Item>
             <Menu.Item
                 key='3'
-                icon={<DownOutlined/>}
+                icon={<DownOutlined />}
             >
                 Mover hacia abajo
             </Menu.Item>
             <Menu.Item
                 key='4'
-                icon={<UpOutlined/>}
+                icon={<UpOutlined />}
             >
                 Mover hacia arriba
             </Menu.Item>
@@ -85,9 +87,9 @@ const TableSections = ({
             title: 'Acciones',
             width: 80,
             render: (item) => (
-                <Dropdown placement='bottomLeft' overlay={<MenuItem item={item}/>}>
+                <Dropdown placement='bottomLeft' overlay={<MenuItem item={item} />}>
                     <Button size='small'>
-                        <EllipsisOutlined/>
+                        <EllipsisOutlined />
                     </Button>
                 </Dropdown>
             )

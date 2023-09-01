@@ -29,7 +29,8 @@ const TableAssessments = ({
     getAssessments,
     list_assessments,
     load_assessments,
-    kuiz_filters
+    kuiz_filters,
+    showEdit = () =>{}
 }) => {
 
     const router = useRouter();
@@ -127,10 +128,7 @@ const TableAssessments = ({
             <Menu.Item
                 key='1'
                 icon={<EditOutlined />}
-                onClick={() => router.push({
-                    pathname: '/kuiz/assessments/edit',
-                    query: { ...router.query, id: item.id }
-                })}
+                onClick={()=> showEdit(item)}
             >
                 Editar
             </Menu.Item>
@@ -194,7 +192,7 @@ const TableAssessments = ({
             //     </Dropdown>
             // ),
             title: 'Acciones',
-            render: (item) => item.category == 'K' ? (
+            render: (item) => item.category != 'K' ? (
                 <Dropdown placement='bottomLeft' overlay={<MenuItem item={item} />}>
                     <Button size='small'>
                         <EllipsisOutlined />

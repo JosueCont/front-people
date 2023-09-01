@@ -5,16 +5,13 @@ import {
     SettingOutlined,
     TableOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
 import TagFilters from '../../jobbank/TagFilters';
 import FiltersAssessments from './FiltersAssessments';
 
 const SearchAssessments = ({
-    list_vacancies,
-    load_vacancies,
-    currentNode,
+    actionAdd = () => { }
 }) => {
 
     const router = useRouter();
@@ -67,10 +64,7 @@ const SearchAssessments = ({
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={() => router.push({
-                                    pathname: '/kuiz/assessments/add',
-                                    query: router.query
-                                })}>
+                                <Button onClick={() => actionAdd()}>
                                     Agregar
                                 </Button>
                             </div>
@@ -102,12 +96,4 @@ const SearchAssessments = ({
     )
 }
 
-const mapState = (state) => {
-    return {
-        currentNode: state.userStore.current_node,
-        list_vacancies: state.jobBankStore.list_vacancies,
-        load_vacancies: state.jobBankStore.load_vacancies,
-    }
-}
-
-export default connect(mapState)(SearchAssessments)
+export default SearchAssessments;

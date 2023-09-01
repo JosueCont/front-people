@@ -6,6 +6,7 @@ import MainKuiz from '../../../components/kuiz/MainKuiz';
 import SearchSections from '../../../components/kuiz/sections/SearchSections';
 import TableSections from '../../../components/kuiz/sections/TableSections';
 import { getSections } from '../../../redux/kuizDuck';
+import DrawerSection from '../../../components/kuiz/sections/DrawerSection';
 
 const index = ({
     currentNode,
@@ -13,20 +14,38 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState({});
 
     useEffect(() => {
-        if (router.query?.assessment){
+        if (router.query?.assessment) {
             getSections(router.query?.assessment)
         }
     }, [router.query?.assessment])
+
+    const showEdit = (item) => {
+        setItemToEdit(item)
+        setOpenDrawer(true)
+    }
+
+    const closeEdit = () => {
+        setItemToEdit({})
+        setOpenDrawer(false)
+    }
 
     return (
         <MainKuiz
             pageKey='surveys'
             extraBread={[{ name: 'Secciones' }]}
         >
-            <SearchSections/>
-            <TableSections />
+            <SearchSections actionAdd={() => setOpenDrawer(true)} />
+            <TableSections showEdit={showEdit}/>
+            <DrawerSection
+                visible={openDrawer}
+                close={closeEdit}
+                itemToEdit={itemToEdit}
+                onReady={() => getSections(router.query?.assessment)}
+            />
         </MainKuiz>
     )
 }
@@ -39,6 +58,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getSections
-    }
+    getSections
+}
 )(withAuthSync(index));

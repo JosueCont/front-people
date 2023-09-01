@@ -9,7 +9,8 @@ import TagFilters from '../../jobbank/TagFilters';
 import { useDefaultFilters } from '../useDefaultFilters';
 
 const SearchSections = ({
-    currentNode
+    currentNode,
+    actionAdd = () =>{}
 }) => {
 
     const router = useRouter();
@@ -25,13 +26,13 @@ const SearchSections = ({
                                 Secciones
                             </p>
                             <div className='content-end' style={{ gap: 8 }}>
-                                <Button icon={<ArrowLeftOutlined/>}>
+                                <Button
+                                    icon={<ArrowLeftOutlined/>}
+                                    onClick={()=> router.push('/kuiz/assessments')}
+                                >
                                     Regresar
                                 </Button>
-                                <Button onClick={() => router.push({
-                                    pathname: '/kuiz/assessments/add',
-                                    query: router.query
-                                })}>
+                                <Button onClick={() => actionAdd()}>
                                     Agregar
                                 </Button>
                             </div>
