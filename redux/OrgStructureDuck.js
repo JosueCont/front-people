@@ -23,6 +23,10 @@ const initialState = {
     load_places: false,
     list_places_options: [],
     load_places_options: false,
+    list_types_persons: {},
+    load_types_persons: false,
+    list_types_persons_options: [],
+    load_types_persons_options: false,
     org_page: 1,
     org_filters: "",
     org_page_size: 10,
@@ -39,6 +43,8 @@ const GET_JOBS = "GET_JOBS";
 const GET_JOBS_OPTIONS = "GET_JOBS_OPTIONS";
 const GET_PLACES = "GET_PLACES";
 const GET_PLACES_OPTIONS = "GET_PLACES_OPTIONS";
+const GET_TYPES_PERSONS = "GET_TYPES_PERSONS";
+const GET_TYPES_PERSONS_OPTIONS = "GET_TYPES_PERSONS_OPTIONS";
 const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const orgReducer = (state = initialState, action) => {
@@ -127,6 +133,21 @@ const orgReducer = (state = initialState, action) => {
                     ...state.org_filters_data,
                     ...action.payload
                 } : action.payload
+            }
+        case GET_TYPES_PERSONS:
+            return {
+                ...state,
+                list_types_persons: action.payload,
+                load_types_persons: action.fetching,
+                org_page: action.page,
+                org_filters: action.query,
+                org_page_size: action.size
+            }
+        case GET_TYPES_PERSONS_OPTIONS:
+            return {
+                ...state,
+                list_types_persons_options: action.payload,
+                load_types_persons_options: action.fetching
             }
         default:
             return state
@@ -228,6 +249,7 @@ export const getRanksOptions = (query = '') => async (dispatch) => {
         dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
+        dispatch(action)
     }
 }
 
@@ -254,6 +276,7 @@ export const getJobsOptions = (query = '') => async (dispatch) => {
         dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
+        dispatch(action)
     }
 }
 
@@ -277,10 +300,36 @@ export const getPlacesOptions = (query = '') => async (dispatch) => {
     try {
         let params = `?paginate=0&is_deleted=false${query}`;
         let response = await WebApiOrgStructure.getPlaces(params);
-        console.log("🚀 ~ file: OrgStructureDuck.js:280 ~ getPlacesOptions ~ response:", response)
         dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getTypesPersons = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {
+    const action = { type: GET_TYPES_PERSONS, payload: {}, fetching: false, query, page, size };
+    dispatch({ ...action, fetching: true })
+    try {
+        let params = `&is_deleted=false${query}`;
+        let response = await WebApiOrgStructure.getTypesPersons(node, params);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getTypesPersonsOptions = (node, query = '') => async (dispatch) => {
+    const action = { type: GET_TYPES_PERSONS_OPTIONS, payload: [], fetching: false };
+    dispatch({ ...action, fetching: true })
+    try {
+        let params = `&paginate=0&is_deleted=false${query}`
+        let response = await WebApiOrgStructure.getTypesPersons(node, params);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
     }
 }
 
