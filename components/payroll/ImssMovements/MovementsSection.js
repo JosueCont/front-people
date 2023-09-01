@@ -10,6 +10,7 @@ import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
 import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
 import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
 import { SearchOutlined } from "@material-ui/icons";
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const { Title } = Typography;
 
@@ -181,12 +182,12 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
                         </Col>
                         <Col span={4} >
                             <Form.Item label="Fecha" name={'date'}>
-                                <DatePicker style={{ width:'100%' }} />
+                                <DatePicker locale={locale} style={{ width:'100%' }} />
                             </Form.Item>
                         </Col>
                         <Col span={4}>
                             <Form.Item label="Vigencia" name={'validity_date'}>
-                                <DatePicker />
+                                <DatePicker locale={locale} />
                             </Form.Item>
                         </Col>
                         <Col style={{ display:'flex' }}>
