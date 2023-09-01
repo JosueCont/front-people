@@ -332,7 +332,7 @@ const ModalPersons = ({
                         <Col span={24}>
                             <Form.Item
                                 name='is_assignable'
-                                label='¿Asignable a personas?'
+                                label='¿Asignable?'
                             >
                                 {selectBoolean}
                             </Form.Item>
