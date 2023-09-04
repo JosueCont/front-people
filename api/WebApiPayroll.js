@@ -505,6 +505,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/deferred-fixed-concept-list?${filters}`, "get")
   }
 
+  static getContractsInfo(filters=""){
+    return WebApi.ApisType(`payroll/payroll-person/get_contracts_for_expired/?${filters}`, "get")
+  }
+
 
 }
 
