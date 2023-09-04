@@ -50,8 +50,8 @@ const DetailsPermission = ({
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoPermit(id);
-            setInfoPermit(response.data)
-            setCurrentPerson(response.data?.collaborator)
+            setInfoPermit(response?.data)
+            setCurrentPerson(response?.data?.collaborator)
             setLoading(false)
         } catch (e) {
             console.log(e)
@@ -61,8 +61,9 @@ const DetailsPermission = ({
 
     const onFinishCreate = async (values) =>{
         try {
-            let body = {...values, node: current_node?.id}
-            await WebApiPeople.savePermitsRequest(body);
+            values.append('node', current_node?.id)
+            /* let body = {...values, node: current_node?.id} */
+            await WebApiPeople.savePermitsRequest(values);
             message.success('Solicitud registrada')
             actionBack()
         } catch (e) {
@@ -88,6 +89,7 @@ const DetailsPermission = ({
     const setValuesForm = () =>{
         let values = {...infoPermit};
         values.person = infoPermit?.collaborator ? infoPermit.collaborator?.id : null;
+        values.reason_type = infoPermit?.reason_type;
         values.departure_date = infoPermit?.departure_date
             ? moment(infoPermit.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoPermit?.return_date
@@ -96,16 +98,39 @@ const DetailsPermission = ({
     }
 
     const onFinish = (values) =>{
+        let formData = new FormData()
+        if(values.person){
+            formData.append('person', values.person)
+        }
+        if(values.departure_date){
+            formData.append('departure_date', values.departure_date ? values.departure_date?.format('YYYY-MM-DD') : null)
+        }
+        if(values.reason_type){
+            formData.append('reason_type', values.reason_type)
+        }
+        if(values.reason){
+            formData.append('reason', values.reason)
+        }
+        if(values.requested_days){
+            formData.append('requested_days', values.requested_days)
+        }
+        if(values.return_date){
+            formData.append('return_date', values.return_date ? values.return_date?.format('YYYY-MM-DD') : null)
+        }
+
+        if(values.evidence && Array.isArray(values.evidence) ){
+            formData.append('evidence', values.evidence ? values.evidence.file : null)
+        }
         setLoading(true)
-        values.departure_date = values.departure_date
+        /* values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
-            ? values.return_date?.format('YYYY-MM-DD') : null;
+            ? values.return_date?.format('YYYY-MM-DD') : null; */
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate
         }
-        actions[action](values)
+        actions[action](formData)
     }
 
     const actionBack = () =>{
@@ -146,6 +171,7 @@ const DetailsPermission = ({
                             onFinish={onFinish}
                         >
                             <PermissionForm
+                                infoPermit={infoPermit}
                                 currentPerson={currentPerson}
                                 setCurrentPerson={setCurrentPerson}
                                 formPermit={formPermit}

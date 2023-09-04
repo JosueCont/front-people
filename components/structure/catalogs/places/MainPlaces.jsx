@@ -1,31 +1,37 @@
 import React, {
-    useEffect,
-    useState
+    useState,
+    useEffect
 } from 'react';
-import { useRouter } from 'next/router';
-import SearchRanks from './SearchRanks';
-import TableRanks from './TableRanks';
-import { connect } from 'react-redux';
+import SearchPlaces from './SearchPlaces';
+import TablePlaces from './TablePlaces';
+import { connect } from 'react-redux'
 import {
-    getRanks,
+    getPlaces,
+    getJobsOptions,
+    getRanksOptions,
     getOrgNodesOptions,
+    getPlacesOptions,
     getOrgLevelsOptions
 } from '../../../../redux/OrgStructureDuck';
-import ModalRanks from './ModalRanks';
+import ModalPlaces from './ModalPlaces';
+import ListItems from '../../../../common/ListItems';
+import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../../utils/functions';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
-import ListItems from '../../../../common/ListItems';
 import { message } from 'antd';
 
-const MainRanks = ({
+const MainPlaces = ({
     nameCatalog,
     currentNode,
-    getRanks,
+    getPlaces,
+    getJobsOptions,
+    getRanksOptions,
     getOrgNodesOptions,
+    getPlacesOptions,
     getOrgLevelsOptions,
     org_filters,
-    org_page_size,
-    org_page
+    org_page,
+    org_page_size
 }) => {
 
     const router = useRouter();
@@ -36,7 +42,10 @@ const MainRanks = ({
     const [itemsSelected, setItemsSelected] = useState([]);
 
     useEffect(() => {
+        getJobsOptions()
+        getRanksOptions()
         getOrgNodesOptions()
+        getPlacesOptions()
         getOrgLevelsOptions()
     }, [])
 
@@ -44,7 +53,7 @@ const MainRanks = ({
         let page = router.query.page ? parseInt(router.query.page) : 1;
         let size = router.query.size ? parseInt(router.query.size) : 10;
         let filters = getFiltersJB(validFilters(), ['catalog']);
-        getRanks(filters, page, size)
+        getPlaces(filters, page, size)
     }, [router.query])
 
     const validFilters = () => {
@@ -58,12 +67,12 @@ const MainRanks = ({
     const actionDelete = async () => {
         try {
             let id = itemsSelected?.at(-1)?.id;
-            await WebApiOrgStructure.updateRank(id, { is_deleted: true }, 'patch');
-            message.success('Nivel jerárquico eliminado')
-            getRanks(org_filters, org_page, org_page_size)
+            await WebApiOrgStructure.updatePlace(id, { is_deleted: true }, 'patch');
+            message.success('Plaza eliminada')
+            getPlaces(org_filters, org_page, org_page_size)
         } catch (e) {
             console.log(e)
-            message.error('Nivel jerárquico no eliminado')
+            message.error('Plaza no eliminada')
         }
     }
 
@@ -89,25 +98,24 @@ const MainRanks = ({
 
     return (
         <>
-            <SearchRanks
+            <SearchPlaces
                 title={nameCatalog}
                 actionAdd={() => setOpenModal(true)}
             />
-            <TableRanks
+            <TablePlaces
                 showEdit={showEdit}
                 showDelete={showDelete}
             />
-            <ModalRanks
+            <ModalPlaces
                 visible={openModal}
                 itemToEdit={itemToEdit}
-                refreshList={false}
                 close={closeEdit}
                 onReady={() => {
-                    getRanks(org_filters, org_page, org_page_size)
+                    getPlaces(org_filters, org_page, org_page_size)
                 }}
             />
             <ListItems
-                title='¿Estás seguro de eliminar este nivel jerárquico?'
+                title='¿Estás seguro de eliminar esta plaza?'
                 visible={openDelete}
                 keyTitle='name'
                 keyDescription='description'
@@ -131,8 +139,10 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-    getRanks,
+    getPlaces,
+    getJobsOptions,
+    getRanksOptions,
     getOrgNodesOptions,
+    getPlacesOptions,
     getOrgLevelsOptions
-}
-)(MainRanks);
+})(MainPlaces);

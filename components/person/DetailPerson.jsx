@@ -23,6 +23,7 @@ import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import FormVacationRecord from "../payroll/forms/FormVacationRecord";
+import Payment from '../payroll/Payment'
 import TruoraCheck from '../TruoraCheck';
 import { useEffect, useState } from "react";
 import {
@@ -199,6 +200,19 @@ const DetailPerson = ({
                 person={person} node={person.node}
                 assimilated_pay={companyFiscalInformation?.assimilated_pay}
               />
+            </TabPane>
+          )}          
+          {config?.nomina_enabled && (
+            <TabPane
+              tab={
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Pagos diferidos</div>
+                  </div>
+              }
+              key="tab_16"
+            >
+              <Payment person_id={person.id} />
             </TabPane>
           )}          
           {companyFiscalInformation?.assimilated_pay == false && 
@@ -398,6 +412,8 @@ const DetailPerson = ({
 
             </TabPane>
           )}
+
+          
         </Tabs>
       </Card>
       <Modal

@@ -277,8 +277,11 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       value.perception_type = null
       value.deduction_type = null
     }
-    value.application_date = applicationDate
+    value.application_date = moment (value.application_date).format("YYYY-MM-DD")
     
+    
+    
+
     if (edit) {
       updateRegister(value);
     } else {

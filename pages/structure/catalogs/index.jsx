@@ -1,8 +1,7 @@
 import React from 'react';
 import { withAuthSync } from '../../../libs/auth';
 import MainORG from '../../../components/structure/MainOrg';
-import SearchCatalogs from '../../../components/structure/catalogs/SearchCatalogs';
-import TableCatalogs from '../../../components/structure/catalogs/TableCatalogs';
+import ListCatalogs from '../../../components/structure/catalogs/ListCatalogs';
 
 const index = () => {
     return (
@@ -10,11 +9,7 @@ const index = () => {
             pageKey='org_catalogs'
             extraBread={[{name: 'Catálogos'}]}
         >
-            <SearchCatalogs
-                showBack={false}
-                showAdd={false}
-            />
-            <TableCatalogs/>
+            <ListCatalogs/>
         </MainORG>
     )
 }

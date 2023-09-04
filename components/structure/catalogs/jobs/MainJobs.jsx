@@ -101,6 +101,7 @@ const MainJobs = ({
             <ModalJobs
                 visible={openModal}
                 itemToEdit={itemToEdit}
+                refreshList={false}
                 close={closeEdit}
                 onReady={() => {
                     getJobs(org_filters, org_page, org_page_size)
