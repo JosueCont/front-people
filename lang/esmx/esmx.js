@@ -12,6 +12,7 @@ export const esmx = {
     'dashboard.patronalreg':'Reg. patronal',
     'dashboard.totalpeople':'Total de personas',
     'dashboard.imssPending':'Pendientes por procesar',
+    'dashboard.contracts': "Contratos próximos a finalizar",
     ...generalTex,
     ...errorMessage
 }
