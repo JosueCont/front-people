@@ -23,7 +23,7 @@ export const ContentCards = styled.div(({
 
 export const CardInfo = styled(ContentVertical)`
     border-radius: 10px;
-    grid-row: span 2;
+    grid-row: span 3;
 `;
 
 export const CardItem = styled(Card)`
