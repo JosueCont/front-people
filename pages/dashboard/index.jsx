@@ -14,6 +14,7 @@ import {
 } from '../../components/dashboard/Styled';
 import ButtonChangeLang from "../../components/ButtonChangeLang/ButtonChangeLang";
 import WidgetTotal from "../../components/dashboard/WidgetTotal";
+import WidgetImss from '../../components/dashboard/WidgetImss'
 import WidgetGender from "../../components/dashboard/WidgetGender";
 import WidgetBirthday from "../../components/dashboard/WidgetBirthday";
 import WidgetGeneration from "../../components/dashboard/WidgetGeneration";
@@ -75,6 +76,7 @@ const Dashboard = ({
                         <CardInfo gap={24}>
                             <WidgetTotal />
                             <WidgetGender />
+                            <WidgetImss />
                         </CardInfo>
                         <WidgetAnniversary />
                         <WidgetGeneration />

@@ -11,6 +11,7 @@ const SelectPatronalRegistration = ({
   currentNode = null,
   cat_patronal_registration,
   placeHolder = true,
+  showLabel = true,
   ...props
 }) => {
   const { Option } = Select;
@@ -31,7 +32,12 @@ const SelectPatronalRegistration = ({
     <>
       <Form.Item
         name={name ? name : "patronal_registration"}
-        label={textLabel ? textLabel : "Registro patronal"}
+        label={
+            showLabel == true ?
+              textLabel ? textLabel : "Registro patronal"
+              : ''
+            }
+        style={props.style && props.style}
       >
         <Select
           key="SelectPatronalRegistration"

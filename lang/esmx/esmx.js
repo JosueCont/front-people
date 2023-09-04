@@ -11,6 +11,7 @@ export const esmx = {
     'dashboard.payrollcalendar':'Calendarios de pago',
     'dashboard.patronalreg':'Reg. patronal',
     'dashboard.totalpeople':'Total de personas',
+    'dashboard.imssPending':'Pendientes por procesar',
     ...generalTex,
     ...errorMessage
 }

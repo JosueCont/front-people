@@ -11,15 +11,19 @@ import {
     DatePicker,
     InputNumber,
     Button,
-    Input
+    Input,
+    Upload,
+    Space
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
+import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
 
 const PermissionForm = ({
     formPermit,
     setCurrentPerson,
     action,
-    actionBack = () => { }
+    actionBack = () => { },
+    infoPermit=null
 }) => {
 
     const {
@@ -33,8 +37,15 @@ const PermissionForm = ({
 
     const [nonWorkingDays, setNonWorkingDays] = useState([]);
     const [nonWorkingWeekDays, setNonWorkingWeekDays] = useState([]);
+    const [fileList, setFileList] = useState([]);
 
     const departureDate = Form.useWatch('departure_date', formPermit);
+
+    const reasonOptions = [
+        { label: "Permiso sin goce de sueldo", value: 1},
+            {label: "Retardo", value: 2},
+            {label: "Falta justificada", value: 3}
+    ]
 
     useEffect(() => {
         if (current_node) {
@@ -120,8 +131,6 @@ const PermissionForm = ({
         let actually = current?.format('YYYY-MM-DD');
         let present = current?.locale('en').format('dddd').toLowerCase();
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
-        console.log('actually',actually)
-        console.log('nonWorkingDays',nonWorkingDays)
         return current && exist;
     }
 
@@ -131,6 +140,18 @@ const PermissionForm = ({
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
         let valid_start = current < departureDate?.startOf("day");
         return current && (valid_start || exist);
+    }
+
+
+    const propsUpload = {
+        onRemove: (file) => {
+            setFileList([]);
+          },
+          beforeUpload: (file) => {
+            setFileList([file]);
+            return false;
+          },
+          fileList,
     }
 
     return (
@@ -218,10 +239,44 @@ const PermissionForm = ({
                     />
                 </Form.Item>
             </Col>
+            <Col span={8}>
+                <Form.Item
+                    name='reason_type'
+                    label='tipo de motivo'
+                    rules={[ruleRequired]}
+                >
+                    <Select options={reasonOptions} size='large' />
+                    {/* <Input.TextArea
+                        showCount
+                        maxLength={200}
+                        placeholder='Especificar motivo'
+                        autoSize={{ minRows: 4, maxRows: 4 }}
+                    /> */}
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item
+                    name={'evidence'}
+                    label="Evidencia"
+                >
+                    <Space>
+                    <Upload {...propsUpload}>
+                            <Button icon={<UploadOutlined />}>Selecciona un archivo</Button>
+                    </Upload>
+                    {
+                        infoPermit?.evidence &&
+                        <a href={infoPermit?.evidence} target='_blank' >
+                            <EyeOutlined  /> Ver actual
+                        </a>
+                    }
+                    </Space>
+                     
+                </Form.Item>
+            </Col>
             <Col span={24}>
                 <Form.Item
                     name='reason'
-                    label='Motivo'
+                    label='Motivo del colaborador'
                     rules={[ruleRequired]}
                 >
                     <Input.TextArea
