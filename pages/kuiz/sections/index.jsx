@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import MainKuiz from '../../../components/kuiz/MainKuiz';
-import SearchSections from '../../../components/kuiz/sections/SearchSections';
+import SearchSurveys from '../../../components/kuiz/SearchSurveys';
 import TableSections from '../../../components/kuiz/sections/TableSections';
 import { getSections } from '../../../redux/kuizDuck';
 import DrawerSection from '../../../components/kuiz/sections/DrawerSection';
@@ -35,10 +35,13 @@ const index = ({
 
     return (
         <MainKuiz
-            pageKey='surveys'
+            pageKey='kuiz_assessments'
             extraBread={[{ name: 'Secciones' }]}
         >
-            <SearchSections actionAdd={() => setOpenDrawer(true)} />
+            <SearchSurveys
+                title='Secciones'
+                actionAdd={() => setOpenDrawer(true)}
+            />
             <TableSections showEdit={showEdit}/>
             <DrawerSection
                 visible={openDrawer}

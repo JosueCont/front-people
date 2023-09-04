@@ -49,7 +49,7 @@ const index = ({
 
     return (
         <MainKuiz
-            pageKey='surveys'
+            pageKey='kuiz_assessments'
             extraBread={[{ name: 'Evaluaciones' }]}
         >
             <SearchAssessments actionAdd={()=> setOpenDrawer(true)}/>

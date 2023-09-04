@@ -772,31 +772,4 @@ export const setCurrentPage = (num) => {
   };
 };
 
-export const setErrorFormAdd = (flag) => {
-  return async (dispatch) => {
-    dispatch({
-      type: types.SET_ERROR_FORM_ADD,
-      payload: flag
-    })
-  }
-}
-
-export const setModalGroup = (flag) => {
-  return async (dispatch) => {
-    dispatch({
-      type: types.SET_MODAL_GROUP,
-      payload: flag
-    })
-  }
-}
-
-export const setModalGroupEdit = (flag) => {
-  return async (dispatch) => {
-    dispatch({
-      type: types.SET_MODAL_GROUP_EDIT,
-      payload: flag
-    })
-  }
-}
-
 export default assessmentReducer;

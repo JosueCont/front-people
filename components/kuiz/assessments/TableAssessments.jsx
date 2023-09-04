@@ -158,11 +158,11 @@ const TableAssessments = ({
             dataIndex: 'name',
             key: 'name'
         },
-        // {
-        //     title: 'Código',
-        //     dataIndex: 'code',
-        //     key: 'code'
-        // },
+        {
+            title: 'Código',
+            dataIndex: 'code',
+            key: 'code'
+        },
         {
             title: 'Tipo',
             dataIndex: 'category',
@@ -192,7 +192,7 @@ const TableAssessments = ({
             //     </Dropdown>
             // ),
             title: 'Acciones',
-            render: (item) => item.category != 'K' ? (
+            render: (item) => item.category == 'K' ? (
                 <Dropdown placement='bottomLeft' overlay={<MenuItem item={item} />}>
                     <Button size='small'>
                         <EllipsisOutlined />
@@ -213,7 +213,6 @@ const TableAssessments = ({
                 // rowSelection={rowSelection}
                 loading={load_assessments}
                 pagination={{
-                    hideOnSinglePage: true,
                     showSizeChanger: true,
                 }}
             />

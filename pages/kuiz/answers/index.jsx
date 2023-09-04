@@ -4,8 +4,9 @@ import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import MainKuiz from '../../../components/kuiz/MainKuiz';
 import { getAnswers } from '../../../redux/kuizDuck';
-import SearchAnswers from '../../../components/kuiz/answers/SearchAnswers';
+import SearchSurveys from '../../../components/kuiz/SearchSurveys';
 import TableAnswers from '../../../components/kuiz/answers/TableAnswers';
+import DrawerAnswer from '../../../components/kuiz/answers/DrawerAnswer';
 
 const index = ({
     currentNode,
@@ -13,6 +14,8 @@ const index = ({
 }) => {
 
     const router = useRouter();
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState({});
 
     useEffect(() => {
         if (router.query?.question) {
@@ -20,13 +23,39 @@ const index = ({
         }
     }, [router.query?.question])
 
+    const showEdit = (item) => {
+        setItemToEdit(item)
+        setOpenDrawer(true)
+    }
+
+    const closeEdit = () => {
+        setItemToEdit({})
+        setOpenDrawer(false)
+    }
+
     return (
         <MainKuiz
-            pageKey='surveys'
+            pageKey='kuiz_assessments'
             extraBread={[{ name: 'Respuestas' }]}
         >
-            <SearchAnswers/>
-            <TableAnswers/>
+            <SearchSurveys
+                title='Respuestas'
+                urlBack='/kuiz/questions'
+                actionAdd={()=> setOpenDrawer(true)}
+                params={{
+                    assessment: router.query?.assessment,
+                    section: router.query?.section
+                }}
+            />
+            <TableAnswers showEdit={showEdit}/>
+            <DrawerAnswer
+                visible={openDrawer}
+                itemToEdit={itemToEdit}
+                close={closeEdit}
+                onReady={()=>{
+                    getAnswers(router.query?.question)
+                }}
+            />
         </MainKuiz>
     )
 }

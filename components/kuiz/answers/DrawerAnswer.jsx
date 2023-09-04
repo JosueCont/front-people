@@ -12,7 +12,8 @@ import {
     Spin,
     message,
     Drawer,
-    Space
+    Space,
+    Select
 } from 'antd';
 import {
     LoadingOutlined
@@ -24,7 +25,7 @@ import { EditorState } from 'draft-js';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 const EditorHTML = dynamic(() => import('../../jobbank/EditorHTML'), { ssr: false });
 
-const DrawerSection = ({
+const DrawerAnswer = ({
     visible = false,
     itemToEdit = {},
     close = () => { },
@@ -32,88 +33,71 @@ const DrawerSection = ({
 }) => {
 
     const router = useRouter();
-    const [formSection] = Form.useForm();
+    const [formAnswer] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [valueHTML, setValueHTML] = useState({});
-
-    const options = ['inline', 'list', 'textAlign', 'image'];
-    const emptyHTML = EditorState.createEmpty();
-    const initialHTML = {
-        instructions_es: emptyHTML,
-        short_instructions_es: emptyHTML
-    }
-    const [editorState, setEditorState] = useState(initialHTML);
-    const propsEditor = {
-        wrapperStyle: {
-            marginBottom: '24px'
-        },
-        editorStyle: {
-            minHeight: '200px',
-            maxHeight: '200px',
-            backgroundColor: '#f5f5f5'
-        }
-    }
+    const [valueHTML, setValueHTML] = useState('');
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     const isEdit = useMemo(() => Object.keys(itemToEdit).length > 0, [itemToEdit])
 
     useEffect(() => {
         if (Object.keys(itemToEdit).length <= 0) return;
         let values = {};
-        values.code = itemToEdit?.code ? itemToEdit?.code : null;
-        values.name = itemToEdit?.name ? itemToEdit?.name : null;
-        formSection.setFieldsValue(values)
+        values.title = itemToEdit?.title ? itemToEdit?.title : null;
+        values.value = itemToEdit?.value ? itemToEdit?.value : null;
+        formAnswer.setFieldsValue(values)
     }, [itemToEdit])
 
     const actionCreate = async (values) => {
         try {
-            let body = { ...values, assessment: router.query?.assessment };
-            await WebApiAssessment.createSection(body);
+            let body = { ...values, question: router.query?.question };
+            await WebApiAssessment.createAnswer(body);
             setTimeout(() => {
-                message.success('Sección registrada')
+                message.success('Repuesta registrada')
                 onClose()
                 onReady()
             }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Sección no registrada')
+            message.error('Respuesta no registrada')
         }
     }
 
     const actionUpdate = async (values) => {
         try {
-            await WebApiAssessment.updateSection(itemToEdit?.id, values);
+            await WebApiAssessment.updateAnswer(itemToEdit?.id, values);
             setTimeout(() => {
-                message.success('Sección actualizada')
+                message.success('Respuesta actualizada')
                 onClose()
                 onReady()
             }, 1000)
         } catch (e) {
             console.log(e)
             setLoading(false)
-            message.error('Sección no actualizada')
+            message.error('Respuesta no actualizada')
         }
     }
 
     const onFinish = (values) => {
         setLoading(true)
-        let body = { ...values, ...valueHTML };
-        if (isEdit) actionUpdate(body);
-        else actionCreate(body);
+        if (valueHTML) values.description_es = valueHTML;
+        if (isEdit) actionUpdate(values);
+        else actionCreate(values);
     }
 
     const onClose = () => {
         close()
-        setValueHTML({})
+        setValueHTML('')
         setLoading(false)
-        setEditorState(initialHTML)
-        formSection.resetFields()
+        setEditorState(EditorState.createEmpty())
+        formAnswer.resetFields()
     }
 
     return (
         <Drawer
-            title={isEdit ? 'Editar sección' : 'Agregar sección'}
-            width={600}
+            title={isEdit ? 'Editar respuesta' : 'Agregar respuesta'}
+            width={500}
             visible={visible}
             placement='right'
             maskClosable={false}
@@ -131,7 +115,7 @@ const DrawerSection = ({
                     <Button
                         htmlType='submit'
                         disabled={loading}
-                        form='form-section'
+                        form='form-answer'
                     >
                         {isEdit ? 'Actualizar' : 'Guardar'}
                     </Button>
@@ -143,62 +127,54 @@ const DrawerSection = ({
                 indicator={<LoadingOutlined style={{ color: 'rgba(0,0,0,0.5)' }} />}
             >
                 <Form
-                    id='form-section'
+                    id='form-answer'
                     layout='vertical'
-                    form={formSection}
+                    form={formAnswer}
                     onFinish={onFinish}
                 >
                     <Row gutter={[24, 0]}>
-                        <Col xs={24} md={12}>
+                        <Col span={24}>
                             <Form.Item
-                                name='name'
-                                label='Nombre'
+                                name='title'
+                                label='Título'
                                 rules={[ruleRequired, ruleWhiteSpace]}
                             >
                                 <Input
                                     allowClear
                                     className='input-with-clear'
-                                    placeholder='Nombre'
+                                    placeholder='Título'
                                     maxLength={200}
                                 />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} md={12}>
+                        <Col span={24}>
                             <Form.Item
-                                name='code'
-                                label='Código'
+                                name='value'
+                                label='Valor'
                                 rules={[ruleRequired, ruleWhiteSpace]}
                             >
                                 <Input
                                     allowClear
                                     className='input-with-clear'
-                                    placeholder='Código'
+                                    placeholder='Valor'
                                     maxLength={200}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={24}>
                             <EditorHTML
-                                label='Instrucciones'
-                                placeholder='Instrucciones'
-                                options={options}
-                                textHTML={itemToEdit?.instructions_es}
-                                setValueHTML={e => setValueHTML(prev => ({ ...prev, instructions_es: e }))}
-                                editorState={editorState?.instructions_es}
-                                setEditorState={e => setEditorState(prev => ({ ...prev, instructions_es: e }))}
-                                {...propsEditor}
-                            />
-                        </Col>
-                        <Col span={24}>
-                            <EditorHTML
-                                label='Instrucciones corta'
-                                placeholder='Instrucciones corta'
-                                options={options}
-                                textHTML={itemToEdit?.short_instructions_es}
-                                setValueHTML={e => setValueHTML(prev => ({ ...prev, short_instructions_es: e }))}
-                                editorState={editorState?.short_instructions_es}
-                                setEditorState={e => setEditorState(prev => ({ ...prev, short_instructions_es: e }))}
-                                {...propsEditor}
+                                label='Descripción'
+                                placeholder='Descripción'
+                                options={['inline', 'list', 'textAlign', 'image']}
+                                textHTML={itemToEdit?.description_es}
+                                setValueHTML={setValueHTML}
+                                editorState={editorState}
+                                setEditorState={setEditorState}
+                                editorStyle={{
+                                    minHeight: '300px',
+                                    maxHeight: '300px',
+                                    backgroundColor: '#f5f5f5'
+                                }}
                             />
                         </Col>
                     </Row>
@@ -208,4 +184,4 @@ const DrawerSection = ({
     )
 }
 
-export default DrawerSection
+export default DrawerAnswer

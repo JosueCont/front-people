@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import MainKuiz from '../../../components/kuiz/MainKuiz';
-import SearchQuestions from '../../../components/kuiz/questions/SearchQuestions';
+import SearchSurveys from '../../../components/kuiz/SearchSurveys';
 import TableQuestions from '../../../components/kuiz/questions/TableQuestions';
 import { getQuestions } from '../../../redux/kuizDuck';
-import WebApiAssessment from '../../../api/WebApiAssessment';
+import DrawerQuestion from '../../../components/kuiz/questions/DrawerQuestion';
 
 const index = ({
     currentNode,
@@ -14,56 +14,47 @@ const index = ({
 }) => {
 
     const router = useRouter();
-    const [evaluation, setEvaluation] = useState({});
-    const [section, setSection] = useState({});
-
-    useEffect(() => {
-        if (router.query?.assessment){
-            getAssessment(router.query?.assessment);
-        }
-    }, [router.query?.assessment])
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState({});
 
     useEffect(()=>{
         if(router.query?.section){
-            getInfoSection(router.query?.section)
             getQuestions(router.query?.section)
         }
     },[router.query?.section])
 
-    const getAssessment = async (id) =>{
-        try {
-            let response = await WebApiAssessment.getDetailsAssessment(id);
-            setEvaluation(response.data);
-        } catch (e) {
-            console.log(e)
-            setEvaluation({})
-        }
+    const showEdit = (item) => {
+        setItemToEdit(item)
+        setOpenDrawer(true)
     }
 
-    const getInfoSection = async (id) =>{
-        try {
-            let response = await WebApiAssessment.getInfoSection(id);
-            setSection(response.data)
-        } catch (e) {
-            console.log(e)
-            setSection({})
-        }
+    const closeEdit = () => {
+        setItemToEdit({})
+        setOpenDrawer(false)
     }
-
-    const ExtraBread = [
-        { name: 'Preguntas' }
-    ]
 
     return (
         <MainKuiz
-            pageKey='surveys'
-            extraBread={ExtraBread}
+            pageKey='kuiz_assessments'
+            extraBread={[{name: 'Preguntas'}]}
         >
-            <SearchQuestions
-                evaluation={evaluation}
-                section={section}
+            <SearchSurveys
+                title='Preguntas'
+                urlBack='/kuiz/sections'
+                actionAdd={()=> setOpenDrawer(true)}
+                params={{
+                    assessment: router.query?.assessment
+                }}
             />
-            <TableQuestions/>
+            <TableQuestions showEdit={showEdit}/>
+            <DrawerQuestion
+                visible={openDrawer}
+                itemToEdit={itemToEdit}
+                close={closeEdit}
+                onReady={()=>{
+                    getQuestions(router.query?.section)
+                }}
+            />
         </MainKuiz>
     )
 }

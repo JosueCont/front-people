@@ -3,14 +3,15 @@ import { Button, Row, Col, Form, Tooltip, Card } from 'antd';
 import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import TagFilters from '../../jobbank/TagFilters';
-import { useDefaultFilters } from '../useDefaultFilters';
+import TagFilters from '../jobbank/TagFilters';
+import { useDefaultFilters } from './useDefaultFilters';
 
-const SearchSections = ({
-    currentNode,
-    actionAdd = () =>{}
+const SearchSurveys = ({
+    title = '',
+    urlBack = '/kuiz/assessments',
+    params = {},
+    actionAdd = () => { }
 }) => {
 
     const router = useRouter();
@@ -23,12 +24,15 @@ const SearchSections = ({
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
                             <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
-                                Secciones
+                                {title}
                             </p>
                             <div className='content-end' style={{ gap: 8 }}>
                                 <Button
-                                    icon={<ArrowLeftOutlined/>}
-                                    onClick={()=> router.push('/kuiz/assessments')}
+                                    icon={<ArrowLeftOutlined />}
+                                    onClick={() => router.push(({
+                                        pathname: urlBack,
+                                        query: params
+                                    }))}
                                 >
                                     Regresar
                                 </Button>
@@ -40,7 +44,7 @@ const SearchSections = ({
                     </Col>
                     <Col span={24}>
                         <TagFilters
-                            discardKeys={['assessment']}
+                            discardKeys={['assessment', 'section', 'question']}
                             defaultFilters={filters}
                         />
                     </Col>
@@ -50,10 +54,4 @@ const SearchSections = ({
     )
 }
 
-const mapState = (state) => {
-    return {
-        currentNode: state.userStore.current_node
-    }
-}
-
-export default connect(mapState)(SearchSections)
+export default SearchSurveys
