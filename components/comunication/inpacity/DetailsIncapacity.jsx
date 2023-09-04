@@ -46,6 +46,7 @@ const DetailsIncapacity = ({
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoInability(id);
+            console.log("🚀 ~ file: DetailsIncapacity.jsx:49 ~ getInfoIncapacity ~ response:", response)
             setInfoIncapacity(response.data)
             setCurrentPerson(response.data?.person)
             setLoading(false)

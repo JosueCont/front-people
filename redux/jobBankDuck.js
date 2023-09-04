@@ -72,8 +72,7 @@ const initialState = {
     jobbank_page: 1,
     jobbank_filters: "",
     jobbank_load: false,
-    jobbank_page_size: 10,
-    jobbank_filters_data: {}
+    jobbank_page_size: 10
 }
 
 const GET_CLIENTS = "GET_CLIENTS";
@@ -126,7 +125,6 @@ const FETCH_SETUP_CONFIG = "FETCH_SETUP_CONFIG";
 
 const SET_PAGE = "SET_PAGE";
 const SET_FILTERS = "SET_FILTERS";
-const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const jobBankReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -365,14 +363,6 @@ const jobBankReducer = (state = initialState, action) => {
             return { ...state, jobbank_page: action.payload }
         case SET_FILTERS:
             return { ...state, jobbank_filters: action.payload }
-        case SET_FILTERS_DATA:
-            return {
-                ...state,
-                jobbank_filters_data: action.keep ? {
-                    ...state.jobbank_filters_data,
-                    ...action.payload
-                } : action.payload
-            }
         default:
             return state;
     }
@@ -384,10 +374,6 @@ export const setJobbankPage = (num = 1) => (dispatch) => {
 
 export const setJobbankFilters = (data) => (dispatch) => {
     dispatch({ type: SET_FILTERS, payload: data })
-}
-
-export const setJobbankFiltersData = (data = {}, keep = true) => (dispatch) => {
-    dispatch({ type: SET_FILTERS_DATA, payload: data, keep })
 }
 
 export const getClients = (node, query = '', page = 1, size = 10) => async (dispatch) => {

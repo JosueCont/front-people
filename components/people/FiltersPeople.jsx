@@ -8,14 +8,12 @@ import SelectPeople from './utils/SelectPeople';
 
 const FiltersPeople = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
 }) => {
-
-    const {
-        user_filters_data
-    } = useSelector(state => state.userStore);
+    
     const {
         cat_departments,
         cat_job
@@ -34,10 +32,10 @@ const FiltersPeople = ({
 
     const itemSupervisor = useMemo(() => {
         if (!visible) return [];
-        let supervisor = user_filters_data?.immediate_supervisor || {};
+        let supervisor = listData?.supervisor || {};
         if (Object.keys(supervisor).length <= 0) return [];
         return [supervisor];
-    }, [user_filters_data?.immediate_supervisor, visible])
+    }, [listData?.supervisor, visible])
 
     return (
         <MyModal

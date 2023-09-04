@@ -40,7 +40,7 @@ const SearchAssessments = ({
     }
 
     const deleteFilter = () => {
-        formSearch.resetFields();
+        formSearch.resetFields()
         setFilters()
     }
 

@@ -62,6 +62,7 @@ const DetailsRequets = ({
         try {
             setLoading(true)
             let response = await WebApiPeople.getInfoVacation(id);
+            console.log("🚀 ~ file: DetailsRequets.jsx:65 ~ getInfoRequest ~ response:", response)
             setInfoRequest(response.data)
             setCurrentPerson(response.data?.collaborator)
             setLoading(false)
