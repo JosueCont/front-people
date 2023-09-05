@@ -143,7 +143,7 @@ const SelectWorkTitle = ({
       name={name ? name : "cat_work_title"}
       label={viewLabel ? labelText : ""}
       rules={options.length >0 ? rules : []}
-      dependencies={props.dependencies ? props.dependencies : null}
+      dependencies={props.dependencies ? props.dependencies : false}
       
     >
       <Select

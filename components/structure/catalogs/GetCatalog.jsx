@@ -5,6 +5,7 @@ import MainNodes from './nodes/MainNodes';
 import MainRanks from './ranks/MainRanks';
 import MainJobs from './jobs/MainJobs';
 import MainPlaces from './places/MainPlaces';
+import MainPersons from './persons/MainPersons';
 
 const GetCatalog = ({...props}) => {
 
@@ -17,6 +18,7 @@ const GetCatalog = ({...props}) => {
         ranks: MainRanks,
         jobs: MainJobs,
         places: MainPlaces,
+        persons: MainPersons,
         __default__: ()=><></>
     }
 

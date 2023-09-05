@@ -66,6 +66,8 @@ const FormPayrollPerson = ({
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
   const [deletingPayroll, setDeletingPayroll] = useState(false);
+  const [contractTypeSelected, setContractTypeSelected] = useState(null)
+  
 
   useEffect(() => {
     if (props.catPerception) {
@@ -419,6 +421,10 @@ const FormPayrollPerson = ({
 
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
+      if(value.contract_start && value.contract_end){
+        value.contract_start = moment(value.contract_start).format("YYYY-MM-DD")
+        value.contract_end = moment(value.contract_end).format("YYYY-MM-DD")
+      }
       updatePayrollPerson(value);
     } else {
       value.person = person.id;
@@ -428,6 +434,10 @@ const FormPayrollPerson = ({
         value.last_day_paid = moment().format("YYYY-MM-DD");
       }
       value.daily_salary = parseFloat(value.daily_salary);
+      if(value.contract_start && value.contract_end){
+        value.contract_start = moment(value.contract_start).format("YYYY-MM-DD")
+        value.contract_end = moment(value.contract_end).format("YYYY-MM-DD")
+      }
       savePayrollPerson(value);
     }
   };
@@ -573,6 +583,18 @@ const FormPayrollPerson = ({
     }
   };
 
+  const changeContractType = (val) => {
+    if(!val){
+      setContractTypeSelected(null)
+    }else{
+      let filterTypes = props.catContracType?.filter(item => item.id === val)
+      if(filterTypes.length > 0){
+        console.log(filterTypes[0])
+        setContractTypeSelected(filterTypes[0])
+      }
+    }
+  }
+
 
   useEffect(() => {
     console.log('person', person)
@@ -639,9 +661,31 @@ const FormPayrollPerson = ({
                           .includes(input.toLowerCase())
                       }
                       allowClear
+                      onChange={changeContractType}
                     />
                   </Form.Item>
                 </Col>
+                {
+                  contractTypeSelected?.code === '03' &&
+                  <>
+                    <Col lg={10} xs={22} md={12}>
+                      <Form.Item
+                        name="contract_start"
+                        label="Inicio del contrato"
+                      >
+                        <DatePicker style={{ width:'100%' }} />
+                      </Form.Item>
+                  </Col>
+                  <Col lg={10} xs={22} md={12}>
+                      <Form.Item
+                        name="contract_end"
+                        label="Inicio del contrato"
+                      >
+                        <DatePicker style={{ width:'100%' }} />
+                      </Form.Item>
+                  </Col>
+                  </>
+                }
                 <Col lg={8} xs={22} md={12}>
                   <Form.Item
                     name="hiring_regime_type"
