@@ -1738,7 +1738,7 @@ const CalculatePayroll = ({ ...props }) => {
                         </Col>
                         <Col xxs={24} xl={5}>
                           {
-                            step < 2 && <Button
+                            step < 3 && <Button
                                   loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
@@ -1770,11 +1770,11 @@ const CalculatePayroll = ({ ...props }) => {
                           }
 
                         </Col>
-                        {(step === 0 ||
+                        {(step === 0 || 
                           isOpen ||
                           (consolidated &&
                             !isOpen &&
-                            consolidated.status != 3)) && step < 2 && (
+                            consolidated.status != 3)) && step < 3 && (
                           <Col xxs={24} xl={5} style={{ paddingTop: "30px" }}>
                             <Upload
                               {...{
