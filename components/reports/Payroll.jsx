@@ -221,7 +221,8 @@ const PayrollReport = ({ permissions, ...props }) => {
     urlQuery += values?.tags?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
     urlQuery +=  values?.start_date ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")}`:''
     urlQuery +=  values?.end_date ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
-    setUrlFilter(urlQuery)
+    urlQuery +=  "&consolidated_type=1&consolidated_movement=0&cfdi_movement=0"
+    setUrlFilter(urlQuery)  
 
     //setValuesFilter(values);
     if (exporter === "False") {

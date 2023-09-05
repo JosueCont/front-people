@@ -7,8 +7,10 @@ import {
   Card,
   Col,
   DatePicker,
+  Dropdown,
   Form,
   Input,
+  Menu,
   message,
   Row,
   Select,
@@ -57,7 +59,11 @@ import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
 import moment, { locale } from "moment";
 import CfdiVaucher from "../../../components/payroll/cfdiVaucher";
-import { verifyMenuNewForTenant } from "../../../utils/functions";
+import { downLoadFileBlobAwait,
+  getDomain,
+  verifyMenuNewForTenant, } from "../../../utils/functions";
+  import { API_URL_TENANT } from "../../../config/config";
+
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -89,6 +95,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [genericModal, setGenericModal] = useState(false);
   const [objectSend, setObjectSend] = useState(null);
   const [consolidatedObj, setConsolidatedObj] = useState(null);
+  const [downloading, setDownloading] = useState(false)
 
   const date = new Date();
 
@@ -1226,6 +1233,123 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  const downloadNomina = () => {
+    isOpen
+    ? downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-calculus`,
+        `nomina_abierta_periodo${periodSelected.name}.xlsx`,
+        "POST",
+        {
+          payment_period: periodSelected.id,
+          extended_report: "True",
+          department: department,
+          job: job,
+          payroll: payroll.map((item) => {
+            item.person_id = item.person.id;
+            return item;
+          }),
+        },
+        "",
+        setDownloading,
+        2
+      )
+    : downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
+          periodSelected.id
+        }&consolidated_type=1&consolidated_movement=0&cfdi_movement=0`,
+        `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
+        "GET",
+        "",
+        "",
+        setDownloading,
+        2
+      );
+  }
+
+  const downloadNominaProv = () => {
+    downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
+          periodSelected.id
+        }&consolidated_type=1&consolidated_movement=0&cfdi_movement=0`,
+        `nomina_proviciones_${periodSelected.name}.xlsx`,
+        "GET",
+        "",
+        "",
+        setDownloading,
+        2
+      );
+  }
+
+  const downloadActions = ({ key }) => {
+    if(key === 'nom'){
+      downloadNomina()
+    }else if(key === 'nomprov'){
+      downloadNominaProv()
+    }else if(key === 'raya'){
+      downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/consolidated-payroll-report?period=${
+          periodSelected.id
+        }`,
+        "hoja_rayas.xlsx",
+        "GET",
+        "",
+        "No se encontraron resultados",
+        setDownloading,
+        2
+      )
+    }else if(key === 'accounting_policy_simple'){
+      downLoadFileBlobAwait(
+        `${getDomain(
+          API_URL_TENANT
+        )}/payroll/accounting-policy-report`,
+        `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
+        "POST",
+        {
+          "node__id": props?.currentNode?.id,
+          "payment_periods": [periodSelected.id],
+          "type": "ACCOUNTING_POLICY_SIMPLE" 
+        },
+        "No se encontraron resultados",
+        setDownloading,
+        2
+      )
+    }
+  }
+
+  const downloads_options = (
+    <Menu onClick={downloadActions} >
+      <Menu.Item  key={'nom'} >
+        <a >
+          Nómina
+        </a>
+      </Menu.Item>
+      {
+        extraOrdinaryPayroll?.length > 0 && !genericModal && consolidated && (
+          <>
+            <Menu.Item key={'nomprov'}>
+              <a>
+                Nómina + provisiones
+              </a>
+            </Menu.Item>
+            {/* <Menu.Item key={'raya'}>
+              <a>
+                Hoja de raya
+              </a>
+            </Menu.Item> */}
+          </>
+        )
+      }
+    </Menu>
+  );
+
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Global
@@ -1398,6 +1522,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         padding: "20px",
                       }}
                     >
+                      {/*  */}
+                      <Col>
+                          <Dropdown overlay={downloads_options} placement="bottomLeft">
+                            <Button size="large"
+                              block
+                              htmlType="button"
+                              icon={<FileExcelOutlined />}
+                              loading={downloading === 2}
+                              >
+                              Descargar
+                            </Button>
+                          </Dropdown>
+                        </Col>
+                      {/*  */}
                       {personKeys &&
                         personKeys.length > 0 &&
                         objectSend &&
