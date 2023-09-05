@@ -2,6 +2,8 @@ import React from "react";
 import MainLayoutAdmin from "./MainLayout_admin";
 import MainLayout from "./MainLayout";
 import { verifyMenuNewForTenant } from "../utils/functions"
+import useLocalStorageListener from "../utils/useLocalStorageListener";
+import { useRouter } from "next/router";
 
 const MainLayoutInter = ({
   currentKey,
@@ -18,6 +20,19 @@ const MainLayoutInter = ({
   secondaryLogo,
   ...props
 }) => {
+
+  const router = useRouter();
+
+  const handleLocalStorageChange = (newValue) => {
+    console.log(`El nuevo valor: ${newValue}`)
+    if (newValue == null){
+      router.push({ pathname: "/select-company" })
+    }else{
+      router.push({ pathname: "/dashboard" })
+    }
+  };
+
+  useLocalStorageListener('data', handleLocalStorageChange);
 
   return (
     <>
