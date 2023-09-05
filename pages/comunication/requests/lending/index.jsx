@@ -8,6 +8,7 @@ import {
   Button,
   Form,
   Select,
+  Alert,
   Tooltip,
   ConfigProvider
 } from "antd";
@@ -26,6 +27,7 @@ import { connect } from "react-redux";
 import WebApiPayroll from "../../../../api/WebApiPayroll";
 import { verifyMenuNewForTenant } from "../../../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
+import WidgetPayRollCalendar from "../../../../components/dashboard/WidgetPayRollCalendar";
 
 const Lending = ({ ...props }) => {
   const { Column } = Table;
@@ -92,6 +94,13 @@ const Lending = ({ ...props }) => {
           currentKey={["lending"]}
           defaultOpenKeys={["managementRH","concierge","requests"]}
         >
+          {
+              props.config && props.config.applications.find(
+                  (item) => item.app === "PAYROLL" && item.is_active
+              ) && <Alert message="Esta sección no se encuentra conectada con el módulo de nómina. Se puede hacer uso de ella de manera administrativa. " type="info" banner/>
+          }
+
+
           <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
             <Breadcrumb.Item
               className={"pointer"}
@@ -109,9 +118,11 @@ const Lending = ({ ...props }) => {
             <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%" }}>
+
             {props.permissions.view ? (
               <>
                 <div className="top-container-border-radius">
+
                   <Row
                     justify="space-between"
                     key="row1"
@@ -352,6 +363,7 @@ const mapState = (state) => {
     permissions: state.userStore.permissions.loan,
     configPermissions: state.userStore.permissions.loanconfigure,
     currentNode: state.userStore.current_node,
+    config: state.userStore?.general_config
   };
 };
 

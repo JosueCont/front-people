@@ -66,6 +66,16 @@ const TablePermission = ({
             })
         },
         {
+            title: 'Evidencia',
+            dataIndex: 'evidence',
+            render: (evidence) => <>{
+                evidence &&
+                    <a href={evidence} target='_blank' >
+                        <EyeOutlined  /> Ver 
+                    </a>
+            }</>
+        },
+        {
             title: 'Acciones',
             render: (item) => (
                 <Space>
