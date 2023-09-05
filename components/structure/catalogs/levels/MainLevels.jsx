@@ -19,7 +19,7 @@ import ListItems from '../../../../common/ListItems';
 import TreeList from '../TreeList';
 
 const MainLevels = ({
-    nameCatalog,
+    catalog,
     getOrgLevels,
     getOrgLevelsOptions,
     currentUser,
@@ -109,7 +109,7 @@ const MainLevels = ({
     return (
         <>
             <SearchLevels
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
             {router.query?.tree == 'true' ? (

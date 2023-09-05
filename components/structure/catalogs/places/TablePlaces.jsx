@@ -18,13 +18,15 @@ import {
 import {
     EditOutlined,
     DeleteOutlined,
-    EllipsisOutlined
+    EllipsisOutlined,
+    NotificationOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
 import { deleteFiltersJb } from '../../../../utils/functions';
 
 const TablePlaces = ({
+    newFilters,
     currentNode,
     getPlaces,
     list_places,
@@ -73,6 +75,16 @@ const TablePlaces = ({
                 onClick={() => showDelete(item)}
             >
                 Eliminar
+            </Menu.Item>
+            <Menu.Item
+                key='3'
+                icon={<NotificationOutlined />}
+                onClick={() => router.push({
+                    pathname: '/structure/catalogs/history',
+                    query: { ...newFilters, position: item.id }
+                })}
+            >
+                Ver historial
             </Menu.Item>
         </Menu>
     )
