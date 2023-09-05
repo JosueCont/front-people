@@ -54,7 +54,7 @@ const WidgetImss = ({node, imss_movements, getMovementsIMSS, loading, ...props})
     >
         {
             !selectPR && <Typography.Title style={{ cursor: 'pointer', marginBottom: 0 }} level={4}>
-                    Seleccióna un registro  patronal
+                    Selecciona un registro  patronal
                 </Typography.Title>
         }
         {
