@@ -24,6 +24,7 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import FormFiscalInformation from "./forms/FormFiscalInformation";
 import LegalRepresentative from "./forms/LegalRepresentative";
 import FormFiscalAddress from "./forms/FormFiscalAddress";
+import moment from 'moment'
 
 const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const { Title } = Typography;
@@ -40,6 +41,8 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
   const [password, setPassword] = useState("");
+  const [dateExpirationCertificate, setDateExpirationCertificate] = useState(null)
+  const [validateExpirationCertificate, setValidateExpirationCertificate] = useState(false)
 
   useLayoutEffect(() => {
     if (node_id) {
@@ -86,6 +89,12 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       const response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id)
       if(typeof response?.data?.message === 'boolean' && response?.data?.message===true){
         setExistsCSD(true)
+        let dateExp = moment(response.data.data.CsdExpirationDate)
+        let diffDate = dateExp.diff(moment())
+        if (diffDate > 0){
+          setValidateExpirationCertificate(true)
+        }
+        setDateExpirationCertificate(moment(response.data.data.CsdExpirationDate).format('L'))
       }
     }catch (e){
       console.log('error',e)
@@ -276,11 +285,19 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
             {
                 existsCSD && <Alert
                     message="Archivos detectados"
-                    description="Se detectaron los CSD para esta empresa, la opción de subir nuevos Certificados
-                    y Sellos Digitales estará siempre disponible."
-                    type="success"
+                    description={`Se detectaron los CSD para esta empresa, ${validateExpirationCertificate?'':'sin embargo se encuentran vencidos, recuerda que '}la opción de subir nuevos Certificados
+                    y Sellos Digitales estará siempre disponible.`}
+                    type={validateExpirationCertificate?'success':'warning'}
                     showIcon
                 />
+            }
+            {
+              dateExpirationCertificate && <div><br /><Alert
+              message={validateExpirationCertificate?'Certificado vigente':'Certificado vencido'}
+              description={`La vigencia de tu certificado es ${dateExpirationCertificate}`}
+              type={validateExpirationCertificate?'success':'error'}
+              showIcon
+          /></div>
             }
           </div>
           </Spin>
