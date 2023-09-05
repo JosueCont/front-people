@@ -11,7 +11,7 @@ import {
 import {getMovementsIMSS} from '../../redux/payrollDuck'
 import { connect } from 'react-redux';
 import SelectPatronalRegistration from '../../components/selects/SelectPatronalRegistration'
-import { Typography } from 'antd';
+import { Col, Row, Typography } from 'antd';
 import {
     ReloadOutlined,
     LoadingOutlined
@@ -46,20 +46,25 @@ const WidgetImss = ({node, imss_movements, getMovementsIMSS, loading, ...props})
 
   return (
     <CardItem hg='50%'
-        title={<>
-            <img src={'/images/logo_imss.png'} width={20}/>
-            <p><FormattedMessage id={'dashboard.imssPending'} /></p>
-        </>}
+        title={<img src={'/images/logo_imss.png'} width={20}/>}
         extra={<SelectPatronalRegistration showLabel={false} style={{ margin:'auto' }} onChange={getImssInfo} />}
     >
-        {
-            !selectPR && <Typography.Title style={{ cursor: 'pointer', marginBottom: 0 }} level={4}>
+        <Row>
+            <Col span={24}>
+                <p><FormattedMessage id={'dashboard.imssPending'} />:</p>
+            </Col>
+            {
+            !selectPR && 
+            <Col span={24}>
+                <Typography.Title style={{ cursor: 'pointer', marginBottom: 0 }} level={4}>
                     Selecciona un registro  patronal
                 </Typography.Title>
+            </Col>
         }
         {
             selectPR ?
                 !loading ?
+                <Col span={24}>
                     <Typography.Title
                         style={{ cursor: 'pointer', marginBottom: 0 }}
                         /* onClick={() => router.push(`/home/persons/`)} */
@@ -67,10 +72,12 @@ const WidgetImss = ({node, imss_movements, getMovementsIMSS, loading, ...props})
                     >
                         {nPeding.length}
                     </Typography.Title>
+                </Col>
                     : <LoadingOutlined className="card-load" spin />
                 :
             ""
         }
+        </Row>
     </CardItem>
   )
 }

@@ -257,16 +257,14 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const changeCalendar = (value) => {
-    if(!value){
-      setPeriods([])
-      form.setFields([
-        {
-          name: 'payment_periods',
-          value:[]
-        }
-      ])
-      return
-    }
+    console.log('first')
+    setPeriods([])
+    form.setFields([
+      {
+        name: 'payment_periods',
+        value:[]
+      }
+    ])
       
     // setTotalSalary(null);
     // setTotalIsr(null);

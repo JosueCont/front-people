@@ -78,10 +78,18 @@ const Dashboard = ({
                             <WidgetTotal />
                             <WidgetGender />
                         </CardInfo>
-                        <CardInfo gap={24}>
+                        {
+                            config && config.applications.find(
+                                (item) => item.app === "PAYROLL" && item.is_active
+                            ) && <CardInfo gap={24}>
                             <WidgetImss />
-                        </CardInfo>
-                        <WidgetContracts />
+                            </CardInfo>
+                        }
+                        {
+                            config && config.applications.find(
+                                (item) => item.app === "PAYROLL" && item.is_active
+                            ) && <WidgetContracts />
+                        }
                         <WidgetAnniversary />
                         <WidgetGeneration />
                         <WidgetBirthday />
