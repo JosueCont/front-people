@@ -1737,28 +1737,34 @@ const CalculatePayroll = ({ ...props }) => {
                         </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
+                          
                           {
-                            step < 3 && <Button
+                            step < 3 && 
+                             <Button
                                   loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
                                   onClick={() => {
+                                    let data = {
+                                      payment_period: periodSelected.id,
+                                      department: department,
+                                      job: job
+                                    }
+                                    if(step < 2) {
+                                      data.payroll = payroll.map((item) => {
+                                        item.person_id = item.person.id;
+                                        return item;
+                                      })
+                                    }
+
                                     downLoadFileBlobAwait(
                                         `${getDomain(
                                             API_URL_TENANT
                                         )}/payroll/payroll-calculus`,
                                         "Nomina.xlsx",
                                         "POST",
-                                        {
-                                          payment_period: periodSelected.id,
-                                          department: department,
-                                          job: job,
-                                          payroll: payroll.map((item) => {
-                                            item.person_id = item.person.id;
-                                            return item;
-                                          }),
-                                        },
+                                        data,
                                         "",
                                         setDownloading,
                                         1
