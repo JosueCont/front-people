@@ -40,6 +40,7 @@ const calculatorSalary = ({ ...props }) => {
   const [personSalary, setPersonSalary] = useState(null);
   const [periodicity, setPeriodicity] = useState(null);
   const [textPeriodicity, setTextPeriodicity] = useState("");
+  const [antiquity, setAntiquity] = useState(null)
 
   const { Text, Title } = Typography;
 
@@ -48,6 +49,7 @@ const calculatorSalary = ({ ...props }) => {
       value.allowance = allowance;
       value.salary = parseFloat(value.salary);
       value.daily_salary = parseFloat(value.daily_salary);
+      value.antiquity = antiquity
       setSalary(null);
       setLoading(true);
       if (value.person_id) delete value["person_id"];
@@ -93,6 +95,7 @@ const calculatorSalary = ({ ...props }) => {
       WebApiPayroll.getPayrollPerson(value)
         .then((response) => {
           setPersonSalary(response.data.daily_salary);
+          setAntiquity(response.data.person.antiquity)
           form.setFieldsValue({
             daily_salary: response.data.daily_salary,
           });
@@ -310,10 +313,11 @@ const calculatorSalary = ({ ...props }) => {
                         >
                           <Select
                             size="large"
-                            options={changeType?[{
-                              label: "Bruto-Neto",
-                              value: 1,
-                            },]:typeCalculate}
+                            // options={changeType?[{
+                            //   label: "Bruto-Neto",
+                            //   value: 1,
+                            // },]:typeCalculate}
+                            options={typeCalculate}
                             placeholder="Tipo de calculo"
                             onChange={(value) => {
                               setType(value), setSalary(null);

@@ -14,7 +14,7 @@ import ListItems from '../../../../common/ListItems';
 import { getTypesPersonsOptions } from '../../../../redux/OrgStructureDuck';
 
 const MainPersons = ({
-    nameCatalog,
+    catalog,
     currentNode,
     getTypesPersons,
     org_page,
@@ -88,7 +88,7 @@ const MainPersons = ({
     return (
         <>
             <SearchPersons
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
             <TablePersons

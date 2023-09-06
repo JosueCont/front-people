@@ -77,10 +77,10 @@ export const downLoadFileBlobAwait = async (
   type = "POST",
   params = null,
   Textmessage = null,
-  setLoading=null,
-  loadingValue=1,
+  setLoading = null,
+  loadingValue = 1,
 ) => {
-  if(setLoading) setLoading(loadingValue)
+  if (setLoading) setLoading(loadingValue)
   let headers = {
     method: type,
     responseType: "blob",
@@ -96,19 +96,19 @@ export const downLoadFileBlobAwait = async (
       link.href = window.URL.createObjectURL(blob);
       link.download = name;
       link.click();
-      if(setLoading) setLoading(false)
+      if (setLoading) setLoading(false)
     })
     .catch((e) => {
       console.log('Error xd', e.response)
       let errorMessage = e.response?.data?.message || ""
-       if (errorMessage !== ""){
+      if (errorMessage !== "") {
         message.error(errorMessage)
-      } else if(Textmessage){
+      } else if (Textmessage) {
         message.error(Textmessage)
-      }else if(e?.response?.status===404){
+      } else if (e?.response?.status === 404) {
         message.error('No se encontraron datos de la nómina de las personas seleccionadas.')
-      } 
-      if(setLoading) setLoading(false)
+      }
+      if (setLoading) setLoading(false)
     });
 };
 
@@ -515,9 +515,11 @@ export const createFiltersJB = (obj = {}, discard = []) => {
 export const getFiltersJB = (obj = {}, discard = [], isFirst = false) => {
   if (Object.keys(obj).length <= 0) return '';
 
-  const getQuery = (param, query, idx) => isFirst && idx == 0
-    ? `?${query}${param}`
-    : `${query}&${param}`;
+  const getQuery = (param, query, idx) => {
+    return isFirst && (idx == 0 || query == '')
+      ? `?${query}${param}`
+      : `${query}&${param}`;
+  }
 
   return Object.entries(obj).reduce((query, [key, val], idx) => {
     if (["size", ...discard].includes(key)) return query;
