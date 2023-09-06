@@ -66,7 +66,7 @@ const WidgetPatronalRegistration = ({
             <CardItem pd='16px 0px'
                 ai={items?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
-                    <AuditOutlined/>
+                    <AuditOutlined />
                     <p><FormattedMessage id={'dashboard.patronalreg'} /></p>
                 </>}
                 extra={<a onClick={() => router.push('/business/patronalRegistrationNode')}>{items ? items.length : 0}</a>}

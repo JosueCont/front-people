@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Typography } from 'antd';
 import {
-    CardInfo,
     CardItem,
     CardScroll
 } from './Styled';
@@ -48,7 +47,7 @@ const WidgetTotal = () => {
     }
 
     return (
-        <CardItem hg='50%'
+        <CardItem
             title={<>
                 <img src='/images/people.png' />
                 <p><FormattedMessage id={'dashboard.totalpeople'} /></p>

@@ -114,7 +114,7 @@ const NewHeader = ({
     }
   }
 
-  const linkToSocial = () =>{
+  const linkToSocial = () => {
     const token = person.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
     redirectTo(url);
@@ -138,7 +138,7 @@ const NewHeader = ({
               <br />
               <Text>{person.email}</Text>
               <br />
-              <small style={{ display:'block', width: 170, overflow: 'hidden', textOverflow:'ellipsis', whiteSpace: 'nowrap' }}>
+              <small style={{ display: 'block', width: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <b>{props.currentNode ? props.currentNode.name : ""}</b>
               </small>
             </Col>
@@ -173,7 +173,7 @@ const NewHeader = ({
                   <p
                     className="text-menu"
                     // onClick={() => router.push("/user")}
-                    onClick={()=> linkToSocial()}
+                    onClick={() => linkToSocial()}
 
                   >
                     <Text>Ir al portal de colaborador</Text>
@@ -316,31 +316,32 @@ const NewHeader = ({
             </Col>
             <Col>
               <Space size={"middle"}>
-                {hideProfile && logoAlign == 'right' && <LogoImg/>}
+                {hideProfile && logoAlign == 'right' && <LogoImg />}
                 {!hideProfile && person && (
                   <>
                     {screens.sm && screens.md &&
-                    <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
-                      <span style={{ color: 'white', maxWidth:500, cursor:'pointer',  textOverflow: 'ellipsis', overflow: 'hidden', display:'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
-                        {props.currentNode ? props.currentNode.name : ""}
-                      </span>
+                      <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
+                        <span style={{ color: 'white', maxWidth: 500, cursor: 'pointer', textOverflow: 'ellipsis', overflow: 'hidden', display: 'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/${props.currentNode.id}`)}>
+                          {props.currentNode ? props.currentNode.name : ""}
+                        </span>
                       </Tooltip>
                     }
-                    
-                    <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
-                      <div key="menu_apps_content">
-                        <BsFillGrid3X3GapFill
-                          className={'header__dropdown_apps'}
-                          style={{
-                            color: "white",
-                            fontSize: 30,
-                            display: "flex",
-                            margin: "auto",
-                            cursor: 'pointer'
-                          }}
-                        />
-                      </div>
-                    </Dropdown>
+                    {props.config?.applications?.some(app => app?.is_active) && (
+                      <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
+                        <div key="menu_apps_content">
+                          <BsFillGrid3X3GapFill
+                            className={'header__dropdown_apps'}
+                            style={{
+                              color: "white",
+                              fontSize: 30,
+                              display: "flex",
+                              margin: "auto",
+                              cursor: 'pointer'
+                            }}
+                          />
+                        </div>
+                      </Dropdown>
+                    )}
                     <Dropdown overlay={userCardDisplay} key="dropdown_user">
                       <div key="menu_user_content">
                         <Avatar
