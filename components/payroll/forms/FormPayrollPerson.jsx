@@ -30,11 +30,11 @@ import {
 import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
-import locale from "antd/lib/date-picker/locale/es_ES";
 import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
 import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const FormPayrollPerson = ({
   person = null,
@@ -229,8 +229,19 @@ const FormPayrollPerson = ({
             cost_center: item?.cost_center,
             fixed_concept: item.fixed_concept,
           });
+
+          
+
           setCalendar(item.payment_calendar ? item.payment_calendar.id : null);
           changePaymentType(item.payment_type);
+          if(item.contract_type){
+            changeContractType(item.contract_type.id)
+            formPayrollPerson.setFieldsValue({
+              contract_start: item.contract_start ? moment(item.contract_start) : null,
+              contract_end: item.contract_end ? moment(item.contract_end) : null
+            })
+          }
+          
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
@@ -673,15 +684,15 @@ const FormPayrollPerson = ({
                         name="contract_start"
                         label="Inicio del contrato"
                       >
-                        <DatePicker style={{ width:'100%' }} />
+                        <DatePicker locale={locale} style={{ width:'100%' }} />
                       </Form.Item>
                   </Col>
                   <Col lg={10} xs={22} md={12}>
                       <Form.Item
                         name="contract_end"
-                        label="Inicio del contrato"
+                        label="Fin del contrato"
                       >
-                        <DatePicker style={{ width:'100%' }} />
+                        <DatePicker locale={locale} style={{ width:'100%' }} />
                       </Form.Item>
                   </Col>
                   </>

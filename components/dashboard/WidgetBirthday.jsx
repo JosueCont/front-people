@@ -38,12 +38,12 @@ const WidgetBirthday = ({
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
 
-    useEffect(()=>{
-        if(!current_node) return;
+    useEffect(() => {
+        if (!current_node) return;
         getBirthdays()
-    },[current_node])
+    }, [current_node])
 
-    const getBirthdays = async () =>{
+    const getBirthdays = async () => {
         try {
             setLoading(true)
             let params = '&widget_code=BIRTHDAY_CURRENT_MONTH';
@@ -66,7 +66,7 @@ const WidgetBirthday = ({
             <CardItem pd='16px 0px'
                 ai={birthdays?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
-                    <img src='/images/ballon.png'/>
+                    <img src='/images/ballon.png' />
                     <p><FormattedMessage id={'dashboard.birthdaymonth'} /></p>
                 </>}
                 extra={<>{birthdays?.length ?? 0}</>}

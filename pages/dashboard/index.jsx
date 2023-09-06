@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import MainLayout from "../../layout/MainInter";
 import {
     Space,
@@ -9,8 +9,7 @@ import { withAuthSync } from "../../libs/auth";
 import moment from 'moment'
 import {
     ContentVertical,
-    ContentCards,
-    CardInfo
+    ContentCards
 } from '../../components/dashboard/Styled';
 import ButtonChangeLang from "../../components/ButtonChangeLang/ButtonChangeLang";
 import WidgetTotal from "../../components/dashboard/WidgetTotal";
@@ -22,9 +21,7 @@ import WidgetGeneration from "../../components/dashboard/WidgetGeneration";
 import WidgetAnniversary from "../../components/dashboard/WidgetAnniversary";
 import WidgetPayRollCalendar from "../../components/dashboard/WidgetPayRollCalendar";
 import { useRouter } from "next/router";
-import { SettingOutlined } from "@ant-design/icons";
 import WidgetPatronalRegistration from "../../components/dashboard/WidgetPatronalRegistration";
-import { css } from '@emotion/core';
 
 moment.locale("es-Mx");
 
@@ -33,7 +30,12 @@ const Dashboard = ({
     config
 }) => {
 
-    const router = useRouter()
+    const router = useRouter();
+
+    const activePayroll = useMemo(() => {
+        const some_ = item => item.app === 'PAYROLL' && item.is_active;
+        return config?.applications?.some(some_);
+    }, [config?.applications])
 
     return (
         <>
@@ -44,19 +46,6 @@ const Dashboard = ({
                         {currentNode?.image && (
                             <img alt='logo' width={80} src={currentNode.image} />
                         )}
-                        {/* <Typography.Title style={{ marginBottom: 0 }} level={1}>
-                            <Space direction={'vertical'} size={10}>
-                                {
-                                    currentNode && currentNode.image &&
-                                    <img alt={'logo'} width={150} src={currentNode.image} />
-                                }
-
-                                <span style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }} onClick={() => router.push(`/business/companies/${currentNode.id}`)}> {currentNode && currentNode.name}</span>
-                            </Space>
-                        </Typography.Title> */}
-
-                        {/*<ButtonChangeLang/>*/}
-                        {/* <p style={{ marginBottom: 0 }}>{moment().format('LLL')}</p> */}
                         <Space direction='vertical' size={0}>
                             <Typography.Title
                                 level={3}
@@ -74,29 +63,19 @@ const Dashboard = ({
                         </Space>
                     </Space>
                     <ContentCards>
-                        <CardInfo gap={24}>
-                            <WidgetTotal />
-                            <WidgetGender />
-                        </CardInfo>
-                        <CardInfo gap={24}>
-                            <WidgetImss />
-                        </CardInfo>
-                        <WidgetContracts />
+                        <WidgetTotal />
+                        <WidgetGender />
+                        {activePayroll && <WidgetImss />}
                         <WidgetAnniversary />
                         <WidgetGeneration />
                         <WidgetBirthday />
-                        {
-                            config && config.applications.find(
-                                (item) => item.app === "PAYROLL" && item.is_active
-                            ) && <WidgetPayRollCalendar />
-                        }
-
-                        {
-                            config && config.applications.find(
-                                (item) => item.app === "PAYROLL" && item.is_active
-                            ) && <WidgetPatronalRegistration />
-                        }
-
+                        {activePayroll && (
+                            <>
+                                <WidgetContracts />
+                                <WidgetPayRollCalendar />
+                                <WidgetPatronalRegistration />
+                            </>
+                        )}
                     </ContentCards>
                 </ContentVertical>
             </MainLayout>

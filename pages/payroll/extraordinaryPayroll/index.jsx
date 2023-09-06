@@ -1246,7 +1246,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           extended_report: "True",
           department: department,
           job: job,
-          payroll: payroll.map((item) => {
+          payroll: extraOrdinaryPayroll.map((item) => {
             item.person_id = item.person.id;
             return item;
           }),
@@ -1260,7 +1260,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           API_URL_TENANT
         )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
-        }&consolidated_type=1&consolidated_movement=0&cfdi_movement=0`,
+        }&consolidated_type=2&consolidated_movement=${form.getFieldValue('movement_type')}&cfdi_movement=${form.getFieldValue('movement_type')}`,
         `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
         "GET",
         "",
@@ -1276,7 +1276,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           API_URL_TENANT
         )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
-        }&consolidated_type=1&consolidated_movement=0&cfdi_movement=0`,
+        }&consolidated_type=2&consolidated_movement=${form.getFieldValue('movement_type')}&cfdi_movement=${form.getFieldValue('movement_type')}`,
         `nomina_proviciones_${periodSelected.name}.xlsx`,
         "GET",
         "",
@@ -1327,7 +1327,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const downloads_options = (
     <Menu onClick={downloadActions} >
       <Menu.Item  key={'nom'} >
-        <a >
+        <a>
           Nómina
         </a>
       </Menu.Item>
@@ -1339,11 +1339,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 Nómina + provisiones
               </a>
             </Menu.Item>
-            {/* <Menu.Item key={'raya'}>
-              <a>
-                Hoja de raya
-              </a>
-            </Menu.Item> */}
+            {/*<Menu.Item key={'accounting_policy_simple'}>*/}
+            {/*  <a>*/}
+            {/*    Resumen*/}
+            {/*  </a>*/}
+            {/*</Menu.Item>*/}
           </>
         )
       }
@@ -1523,17 +1523,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       }}
                     >
                       {/*  */}
+
+
                       <Col>
-                          <Dropdown overlay={downloads_options} placement="bottomLeft">
-                            <Button size="large"
-                              block
-                              htmlType="button"
-                              icon={<FileExcelOutlined />}
-                              loading={downloading === 2}
+                        {
+                            extraOrdinaryPayroll?.length > 0 && !genericModal && consolidated && (
+                                <Dropdown overlay={downloads_options} placement="bottomLeft">
+                              <Button size="large"
+                                      block
+                                      htmlType="button"
+                                      icon={<FileExcelOutlined />}
+                                      loading={downloading === 2}
                               >
-                              Descargar
-                            </Button>
-                          </Dropdown>
+                                Descargar
+                              </Button>
+                            </Dropdown>)
+                        }
+
+
                         </Col>
                       {/*  */}
                       {personKeys &&

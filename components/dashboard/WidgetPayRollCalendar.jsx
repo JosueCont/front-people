@@ -73,7 +73,7 @@ const WidgetPayRollCalendar = ({
             <CardItem pd='16px 0px'
                 ai={calendars?.length > 0 ? 'flex-start' : 'center'}
                 title={<>
-                    <ContactsOutlined/>
+                    <ContactsOutlined />
                     <p><FormattedMessage id={'dashboard.payrollcalendar'} /></p>
                 </>}
                 extra={<a onClick={() => router.push('/payroll/paymentCalendar')}>{totalCalendars ?? 0}</a>}

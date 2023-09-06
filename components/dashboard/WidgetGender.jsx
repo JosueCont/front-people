@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Statistic } from 'antd';
 import {
-    CardInfo,
     CardItem,
     CardScroll
 } from './Styled';
@@ -48,7 +47,7 @@ const WidgetGender = () => {
     }
 
     return (
-        <CardItem hg='50%' title={<>
+        <CardItem title={<>
             <img src='/images/bygender.png'/>
             <p><FormattedMessage id={'gender'}/></p>
         </>}>

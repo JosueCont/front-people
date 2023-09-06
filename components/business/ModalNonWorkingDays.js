@@ -8,6 +8,7 @@ import webApiPeople from "../../api/WebApiPeople";
 import esES from "antd/lib/locale/es_ES";
 import {trim} from "lodash/string";
 
+
 const { TextArea } = Input;
 
 const ModalNonWorkingDays = ({node_id, nonWorkingDay, title, visible, onCancel, onSave}) =>{

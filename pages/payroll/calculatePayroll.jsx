@@ -1480,7 +1480,7 @@ const CalculatePayroll = ({ ...props }) => {
     : downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&consolidated_type=1&cfdi_movement=0&consolidated_movement=0&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
@@ -1496,7 +1496,7 @@ const CalculatePayroll = ({ ...props }) => {
     downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&consolidated_type=1&consolidated_movement=0&cfdi_movement=0&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_proviciones_${periodSelected.name}.xlsx`,
@@ -1737,7 +1737,9 @@ const CalculatePayroll = ({ ...props }) => {
                         </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
+                          
                           {
+                            step < 3 && 
                              <Button
                                   loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
@@ -1774,11 +1776,11 @@ const CalculatePayroll = ({ ...props }) => {
                           }
 
                         </Col>
-                        {(step === 0 ||
+                        {(step === 0 || 
                           isOpen ||
                           (consolidated &&
                             !isOpen &&
-                            consolidated.status != 3)) && step < 2 && (
+                            consolidated.status != 3)) && step < 3 && (
                           <Col xxs={24} xl={5} style={{ paddingTop: "30px" }}>
                             <Upload
                               {...{

@@ -18,12 +18,14 @@ import {
   Checkbox,
   Switch,
 } from "antd";
+import locale from 'antd/lib/date-picker/locale/es_ES';
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
 import { ClearOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectYear from "../selects/SelectYear";
 import moment from "moment";
+
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
@@ -257,16 +259,14 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const changeCalendar = (value) => {
-    if(!value){
-      setPeriods([])
-      form.setFields([
-        {
-          name: 'payment_periods',
-          value:[]
-        }
-      ])
-      return
-    }
+    console.log('first')
+    setPeriods([])
+    form.setFields([
+      {
+        name: 'payment_periods',
+        value:[]
+      }
+    ])
       
     // setTotalSalary(null);
     // setTotalIsr(null);
@@ -411,12 +411,12 @@ const PayrollReport = ({ permissions, ...props }) => {
             <Col  span={12}/>
             <Col span={8} >
               <Form.Item name={'start_date'} label="Fecha inicio">
-                <DatePicker style={{ width:'100%' }} />
+                <DatePicker locale={locale} style={{ width:'100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name={'end_date'} label="Fecha fin">
-                <DatePicker style={{ width:'100%' }} />
+                <DatePicker locale={locale} style={{ width:'100%' }} />
               </Form.Item>
             </Col>
             
