@@ -45,12 +45,12 @@ const WidgetAnniversary = ({
     const formatStart = 'YYYY-MM-DD';
     const formatEnd = 'DD/MM/YYYY';
 
-    useEffect(()=>{
-        if(!current_node) return;
+    useEffect(() => {
+        if (!current_node) return;
         getAnniversaries()
-    },[current_node])
+    }, [current_node])
 
-    const getAnniversaries = async () =>{
+    const getAnniversaries = async () => {
         try {
             setLoading(true)
             let params = '&widget_code=ANNIVERSARY_CURRENT_MONTH';
@@ -90,7 +90,7 @@ const WidgetAnniversary = ({
                                     <List.Item.Meta
                                         avatar={<Avatar size='large' src={getPhoto(item, '/images/profile-sq.jpg')} />}
                                         title={<a onClick={() => router.push(`/home/persons/${item.id}`)}>{getFullName(item)}</a>}
-                                        description={`${intl.formatMessage({id:'aniversary'})}: 
+                                        description={`${intl.formatMessage({ id: 'aniversary' })}: 
                                             ${item.date_of_admission
                                                 ? moment(item.date_of_admission, formatStart).format(formatEnd)
                                                 : 'No disponible'
