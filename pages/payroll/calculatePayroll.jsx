@@ -1480,7 +1480,7 @@ const CalculatePayroll = ({ ...props }) => {
     : downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&consolidated_type=1&cfdi_movement=0&consolidated_movement=0&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
@@ -1496,7 +1496,7 @@ const CalculatePayroll = ({ ...props }) => {
     downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&consolidated_type=1&consolidated_movement=0&cfdi_movement=0&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_proviciones_${periodSelected.name}.xlsx`,
