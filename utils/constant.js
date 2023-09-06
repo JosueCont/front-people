@@ -824,5 +824,6 @@ export const catalogsOrgStructure = [
     {name: 'Niveles jerárquicos', catalog: 'ranks'},
     {name: 'Puestos de trabajo', catalog: 'jobs'},
     {name: 'Plazas', catalog: 'places'},
-    {name: 'Tipos de personas', catalog: 'persons'}
+    {name: 'Tipos de personas', catalog: 'persons'},
+    {name: 'Historial de plazas', catalog: 'history'}
 ]

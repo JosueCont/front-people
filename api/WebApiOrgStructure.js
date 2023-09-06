@@ -73,6 +73,10 @@ class WebApiOrgStructure {
         return WebApi.ApisType(`/organizationalstructure/position/${id}/`, method, data);
     }
 
+    static getPlacesHistory(query = '') {
+        return WebApi.ApisType(`/organizationalstructure/position-history/${query}`, 'get')
+    }
+
     // TIPOS DE PERSONAS
 
     static getTypesPersons(node, query = '') {
