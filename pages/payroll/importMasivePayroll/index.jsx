@@ -76,7 +76,17 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
   const columns = [
     {
+      title: "UUID",
+      render: (item) => {
+        return <span>{item.headers.uuid}</span>;
+      },
+      key: (item) => {
+        return item.headers.name;
+      },
+    },
+    {
       title: "Colaborador",
+      width:250,
       render: (item) => {
         return <span>{item.headers.name}</span>;
       },
@@ -444,6 +454,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       ? "Quincenal"
                       : c.periodicity_type == "05"
                       ? "Mensual"
+                      : c.periodicity_type == "02"
+                      ? "Mensual"
                       : "Otra periocidad"}
                     {""}
                   </Col>
@@ -471,6 +483,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   //   });
   //   return false;
   // };
+
+  const validateDateCalendarStart=(calend)=>{
+    let dt = moment(calend);
+    let month = dt.month();
+    console.log(typeof month)
+    //validamos si la fecha elegida está entre enero o diciembree
+    return (month===11 || month===0)
+  }
+
   const validateBeforeSubmit = () => {
     let companies_errors = [];
     console.log("Errors->", companies_errors);
@@ -501,6 +522,11 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                   periodicity.calendar.activation_date = periodicity.activation_date ? periodicity.activation_date  : "";
                   periodicity.calendar.id = periodicity.id ? periodicity.id  : "";
                 }
+
+                if(!validateDateCalendarStart(periodicity?.calendar?.start_date)){
+                  calendar.errors.push(`Error en la fecha de inicio de calendario: ${periodicity?.calendar?.start_date}`);
+                }
+
                 if (periodicity.calendar.name == "") {
                   calendar.errors.push("Nombre es requerido");
                 }
@@ -787,7 +813,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
 
       <Spin spinning={loading}>
         {xmlImport && companySelect != null && patronalSelect != null && (
-          <Row justify="end">
+          <Row justify="end" style={{marginBottom:20}}>
             <Space>
               <Button onClick={() => onCancel()}>Cancelar</Button>
               <Button onClick={() => saveImportPayrroll()}>Guardar</Button>
