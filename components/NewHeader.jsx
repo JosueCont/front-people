@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Layout,
   Row,
@@ -62,6 +62,13 @@ const NewHeader = ({
   useEffect(() => {
     getPerson();
   }, []);
+
+  const appsCard = ['KHOR'];
+
+  const showMenuApps = useMemo(() => {
+    const some_ = item => appsCard.includes(item.app) && item.is_active;
+    return props.config?.applications?.some(some_);
+  }, [props?.config?.applications])
 
   const getPerson = async () => {
     let user = Cookie.get();
@@ -326,7 +333,7 @@ const NewHeader = ({
                         </span>
                       </Tooltip>
                     }
-                    {props.config?.applications?.some(app => app?.is_active) && (
+                    {showMenuApps && props.userInfo?.is_admin && (
                       <Dropdown overlay={<CardApps is_admin={true} />} key="dropdown_apps">
                         <div key="menu_apps_content">
                           <BsFillGrid3X3GapFill
