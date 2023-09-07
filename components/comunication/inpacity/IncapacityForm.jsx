@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
 import moment from 'moment';
 import { ruleRequired } from '../../../utils/rules';
 import {
@@ -20,20 +19,18 @@ import {
     optionsCategoryIMSS,
     optionsClasifIMSS
 } from '../../../utils/constant';
+import SelectPeople from '../../people/utils/SelectPeople';
 
 const IncapacityForm = ({
     action,
     formIncapacity,
     infoIncapacity = {},
+    currentPerson = {},
     setCurrentPerson,
     setFileDocument,
     actionBack = () => { }
 }) => {
 
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
     const {
         current_node,
     } = useSelector(state => state.userStore);
@@ -111,24 +108,24 @@ const IncapacityForm = ({
     // Recupera el número de días laborables entre un rango de fecha especificado
     const getWorkingDaysFromRange = async (start, end) => {
         try {
-           /* let params = {
-                node_id: current_node.id,
-                start_date: start?.format('YYYY-MM-DD'),
-                end_date: end?.format('YYYY-MM-DD')
-            }
-            let response = await WebApiPeople.getWorkingDaysFromRange(params)
-            */
+            /* let params = {
+                 node_id: current_node.id,
+                 start_date: start?.format('YYYY-MM-DD'),
+                 end_date: end?.format('YYYY-MM-DD')
+             }
+             let response = await WebApiPeople.getWorkingDaysFromRange(params)
+             */
             // para incapacidades no se necesita contemplar dias inhabiles
-            formIncapacity.setFieldsValue({ requested_days: Math.abs(start.diff(end,'days'))+1 });
+            formIncapacity.setFieldsValue({ requested_days: Math.abs(start.diff(end, 'days')) + 1 });
         } catch (e) {
             console.log(e)
         }
     }
 
-    const getPerson = (id) => {
+    const getPerson = (id, list) => {
         if (!id) return {};
         const find_ = item => item.id == id;
-        let result = persons_company.find(find_);
+        let result = list.find(find_);
         if (!result) return {};
         return result;
     }
@@ -144,8 +141,8 @@ const IncapacityForm = ({
         return getDisability(idDisability);
     }, [idDisability, listDisability])
 
-    const onChangePerson = (value) => {
-        let person = getPerson(value);
+    const onChangePerson = (value, list) => {
+        let person = getPerson(value, list);
         setCurrentPerson(person)
     }
 
@@ -229,11 +226,11 @@ const IncapacityForm = ({
             if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
             return [optionsCategoryIMSS.find(find1)];
         }
-        if(code == '02' &&
+        if (code == '02' &&
             idClasif == 0
         ) return optionsCategoryIMSS.filter(diff2);
-        if(code == '03' &&
-            [4,5,6,7].includes(idClasif)
+        if (code == '03' &&
+            [4, 5, 6, 7].includes(idClasif)
         ) return [optionsCategoryIMSS.find(find0)];
         // 04
         return [optionsCategoryIMSS.find(find0)];
@@ -245,14 +242,14 @@ const IncapacityForm = ({
             if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
             return optionsCategoryIMSS.filter(diff0);
         }
-        if(code == '02' &&
+        if (code == '02' &&
             idCategory == 0
         ) return [optionsCategoryIMSS.find(find2)];
-        if(code == '02' &&
+        if (code == '02' &&
             idCategory == 1
         ) return optionsCategoryIMSS.filter(diff0);
-        if(code == '03' &&
-            [4,5,6,7].includes(idClasif)
+        if (code == '03' &&
+            [4, 5, 6, 7].includes(idClasif)
         ) return [optionsCategoryIMSS.find(find2)];
         // 04
         return [optionsCategoryIMSS.find(find2)];
@@ -270,32 +267,24 @@ const IncapacityForm = ({
         return getOptionsSubcategory();
     }, [idCategory])
 
+    const itemPerson = useMemo(() => {
+        let person = infoIncapacity?.person || {};
+        if (Object.keys(person).length > 0) return [person];
+        return [];
+    }, [infoIncapacity?.person])
+
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} lg={12} xl={8}>
-                <Form.Item
+                <SelectPeople
                     name='person'
                     label='Colaborador'
+                    size='large'
                     rules={[ruleRequired]}
-                >
-                    <Select
-                        allowClear
-                        showSearch
-                        disabled={load_persons || action == 'edit'}
-                        loading={load_persons}
-                        placeholder='Seleccionar una opción'
-                        notFoundContent='No se encontraron resultados'
-                        optionFilterProp='children'
-                        onChange={onChangePerson}
-                        size='large'
-                    >
-                        {persons_company.length > 0 && persons_company.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {getFullName(item)}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                    onChangeSelect={onChangePerson}
+                    disabled={action == 'edit'}
+                    itemSelected={itemPerson}
+                />
             </Col>
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item

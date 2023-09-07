@@ -24,7 +24,7 @@ const EditorHTML = ({
     editorStyle = {},
     toolbarStyle = {},
     wrapperStyle = {},
-    isReadOnly = false,
+    isReadOnly = false
 }) => {
 
     const noValid = [undefined, null, "", " "];
@@ -62,7 +62,7 @@ const EditorHTML = ({
                 editorState={editorState}
                 onEditorStateChange={onChangeEditor}
                 toolbar={{
-                    options,
+                    options: options,
                     inline: { options: ['bold', 'italic', 'underline', 'strikethrough', 'monospace'] },
                     list: { options: ['unordered', 'ordered'] }
                 }}
@@ -73,6 +73,7 @@ const EditorHTML = ({
                 }}
                 wrapperStyle={{
                     backgroundColor: isReadOnly ? '#f5f5f5' : '#ffff',
+                    borderRadius: 10,
                     ...wrapperStyle
                 }}
                 editorStyle={{

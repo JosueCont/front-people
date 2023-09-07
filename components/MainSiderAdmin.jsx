@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import {Grid, Layout, Menu} from "antd";
+import { Grid, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import Icon, {
@@ -27,9 +27,9 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 import { IntranetIcon } from "./CustomIcons";
 import _ from "lodash"
-import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab} from "../config/config";
+import { urlSocial, urlSukha, urlMyAccount, urlKhorflx, urlCareerlab } from "../config/config";
 import { getCurrentURL } from "../utils/constant";
-import {getCompanyFiscalInformation} from "./../redux/fiscalDuck"
+import { getCompanyFiscalInformation } from "./../redux/fiscalDuck"
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -127,17 +127,17 @@ const MainSider = ({
       tm_logs: "/timeclock/logs",
       org_catalogs: "/structure/catalogs"
     };
-    switch (key){
+    switch (key) {
       case "sukha":
         const token1 = user.jwt_data.metadata.at(-1).token;
         const link1 = document.createElement('a');
-        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
-          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
+        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA) {
+          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))) {
             link1.href = `https://admin.demo.${urlSukha}/validation?token=${token1}`;
-          }else{
+          } else {
             link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
           }
-        }else{
+        } else {
           link1.href = `https://admin.${getCurrentURL(true, true)}.${urlSukha}/validation?token=${token1}`;
         }
         // link1.href = "https://admin.demo.sukhatv.com/";
@@ -151,11 +151,11 @@ const MainSider = ({
         link2.click();
         break;
 
-        // const link2 = document.createElement('a');
-        // link2.href = "https://admin.iu.khorflix.com/";
-        // link2.target = '_blank';
-        // link2.click();
-        // break;
+      // const link2 = document.createElement('a');
+      // link2.href = "https://admin.iu.khorflix.com/";
+      // link2.target = '_blank';
+      // link2.click();
+      // break;
       case "careerlab":
         const token3 = user.jwt_data.metadata.at(-1).token;
         const link3 = document.createElement('a');
@@ -184,7 +184,7 @@ const MainSider = ({
         // getItem("Registros patronales", "patronal"),
 
       ]
-      if(companyFiscalInformation?.assimilated_pay == false){
+      if (companyFiscalInformation?.assimilated_pay == false) {
         children0.push(getItem("Registros patronales", "patronal"))
       }
       let children0101 = [
@@ -212,12 +212,12 @@ const MainSider = ({
           getItem("Importar nómina con XML", "importMassivePayroll"),
           // getItem("Movimientos IMSS", "imssMovements"),
         ];
-        if(companyFiscalInformation?.assimilated_pay == false){
+        if (companyFiscalInformation?.assimilated_pay == false) {
           children001.push(getItem("Movimientos IMSS", "imssMovements"))
         }
-        children01.push(getItem("Nómina", "payroll",<></>, children001))
+        children01.push(getItem("Nómina", "payroll", <></>, children001))
       }
-      let children0001 =[
+      let children0001 = [
         getItem("Préstamos", "lending"),
         getItem("Vacaciones", "holidays"),
         getItem("Permisos", "permission"),
@@ -231,29 +231,29 @@ const MainSider = ({
       ]
 
       if (props?.applications && (_.has(props.applications, "concierge") && props.applications["concierge"].active)) {
-        children01.push(getItem("Concierge", "concierge",<></>, children002))
+        children01.push(getItem("Concierge", "concierge", <></>, children002))
       }
 
-      if(children01.length>0){
+      if (children01.length > 0) {
         items.push(getItem("Administración de RH", "managementRH", <GroupOutlined />, children01))
       }
 
       let subStructure = [
-        getItem("Catálogos","org_catalogs")
+        getItem("Catálogos", "org_catalogs")
       ]
 
 
-      if(process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL && process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL==='true'){
+      if (process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL && process.env.NEXT_PUBLIC_TENANT_SHOW_ORGANIZATIONAL === 'true') {
         items.push(getItem("Estructura organizacional", "org_structure", <PartitionOutlined />, subStructure))
       }
 
-      
+
       let subTimeClock = [
         getItem("Centros de trabajo", "tm_centers"),
         getItem("Logs de eventos", "tm_logs")
       ];
 
-      if(props?.applications && (_.has(props.applications, "timeclock") && props.applications["timeclock"].active)){
+      if (props?.applications && (_.has(props.applications, "timeclock") && props.applications["timeclock"].active)) {
         items.push(getItem("Rejol checador", "timeclock", <ClockCircleOutlined />, subTimeClock))
       }
 
@@ -269,7 +269,7 @@ const MainSider = ({
           getItem("Publicaciones", "jb_publications"),
           getItem("Preselección", "jb_preselection"),
           getItem("Proceso de selección", "jb_selection"),
-          getItem("Calendario","jb_interviews"),
+          getItem("Calendario", "jb_interviews"),
           getItem("Configuraciones", "jb_settings")
         ]
         let children02 = [
@@ -317,7 +317,7 @@ const MainSider = ({
           getItem("Moderación", "publications_statistics"),
         ];
         children3.push(
-          getItem("KHOR Connect", "intranet",  <></>, children32 ),
+          getItem("KHOR Connect", "intranet", <></>, children32),
         )
       }
       if (props?.applications && (_.has(props.applications, "ynl") && props.applications["ynl"].active)) {
@@ -350,8 +350,8 @@ const MainSider = ({
         getItem("Log de sistema", "systemLog"),
       ];
       let children4 = [
-        getItem("Registro de log", "uploads",  <></>, children8 ),
-        getItem("Configuración", "config",  <></>, children7),
+        getItem("Registro de log", "uploads", <></>, children8),
+        getItem("Configuración", "config", <></>, children7),
         getItem("Reportes", "reports")
       ]
 
@@ -364,14 +364,14 @@ const MainSider = ({
         getItem("Asignar empresa", "security_assign")
       ];
 
-      items.push(getItem("Seguridad","security", <SafetyCertificateOutlined />, subSecurity))
+      items.push(getItem("Seguridad", "security", <SafetyCertificateOutlined />, subSecurity))
     }
 
     return items;
   }
 
   return (<>
-    {!collapsed && (screens.xs || screens.sm  || screens.md) && <div className={'sider-overlay'}/> }
+    {!collapsed && (screens.xs || screens.sm || screens.md) && <div className={'sider-overlay'} />}
     <Sider
       collapsible
       collapsed={collapsed}
@@ -779,4 +779,4 @@ const mapState = (state) => {
     companyFiscalInformation: state.fiscalStore.company_fiscal_information,
   };
 };
-export default connect(mapState, {getCompanyFiscalInformation})(MainSider);
+export default connect(mapState, { getCompanyFiscalInformation })(MainSider);

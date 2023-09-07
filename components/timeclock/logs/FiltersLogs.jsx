@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Input, Row, Col, Form, Select, DatePicker } from 'antd';
-import { ruleWhiteSpace } from '../../../utils/rules';
+import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
 import SelectPeople from '../../people/utils/SelectPeople';
 import { optionsTypeEvents } from '../../../utils/constant';
 
 const FiltersLogs = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
@@ -17,8 +17,7 @@ const FiltersLogs = ({
         list_companies,
         load_companies,
         list_work_centers_options,
-        load_work_centers_options,
-        timeclock_filters_data
+        load_work_centers_options
     } = useSelector(state => state.timeclockStore);
     const [loading, setLoading] = useState(false);
 
@@ -33,10 +32,10 @@ const FiltersLogs = ({
 
     const itemPerson = useMemo(()=>{
         if(!visible) return [];
-        let person = timeclock_filters_data?.person || {};
+        let person = listData?.person || {};
         if(Object.keys(person).length <= 0) return [];
         return [person];
-    },[timeclock_filters_data?.person, visible])
+    },[listData?.person, visible])
 
     return (
         <MyModal

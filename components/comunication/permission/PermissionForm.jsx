@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import moment from 'moment';
@@ -16,6 +16,7 @@ import {
     Space
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
+import SelectPeople from '../../people/utils/SelectPeople';
 import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
 
 const PermissionForm = ({
@@ -23,13 +24,9 @@ const PermissionForm = ({
     setCurrentPerson,
     action,
     actionBack = () => { },
-    infoPermit=null
+    infoPermit = {}
 }) => {
 
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
     const {
         current_node,
         general_config
@@ -42,9 +39,9 @@ const PermissionForm = ({
     const departureDate = Form.useWatch('departure_date', formPermit);
 
     const reasonOptions = [
-        { label: "Permiso sin goce de sueldo", value: 1},
-            {label: "Retardo", value: 2},
-            {label: "Falta justificada", value: 3}
+        { label: "Permiso sin goce de sueldo", value: 1 },
+        { label: "Retardo", value: 2 },
+        { label: "Falta justificada", value: 3 }
     ]
 
     useEffect(() => {
@@ -56,7 +53,7 @@ const PermissionForm = ({
 
     const getNonWorkingDays = async (node) => {
         try {
-            let params = { node, limit: 1000, type:'1,2'  };
+            let params = { node, limit: 1000, type: '1,2' };
             let response = await WebApiPeople.getNonWorkingDays(params)
             let dates = response.data?.results?.map(e => e.date)
             setNonWorkingDays(dates)
@@ -94,16 +91,16 @@ const PermissionForm = ({
         }
     }
 
-    const getPerson = (id) => {
+    const getPerson = (id, list) => {
         if (!id) return {};
         const find_ = item => item.id == id;
-        let result = persons_company.find(find_);
+        let result = list.find(find_);
         if (!result) return {};
         return result;
     }
 
-    const onChangePerson = (value) => {
-        let person = getPerson(value);
+    const onChangePerson = (value, list) => {
+        let person = getPerson(value, list);
         setCurrentPerson(person)
     }
 
@@ -127,7 +124,7 @@ const PermissionForm = ({
         return departureDate ? departureDate : moment();
     }
 
-    const disabledStart = (current) =>{
+    const disabledStart = (current) => {
         let actually = current?.format('YYYY-MM-DD');
         let present = current?.locale('en').format('dddd').toLowerCase();
         let exist = nonWorkingDays.includes(actually) || nonWorkingWeekDays.includes(present);
@@ -142,44 +139,35 @@ const PermissionForm = ({
         return current && (valid_start || exist);
     }
 
+    const itemPerson = useMemo(() => {
+        let person = infoPermit?.collaborator || {};
+        if (Object.keys(person).length > 0) return [person];
+        return [];
+    }, [infoPermit?.collaborator])
 
     const propsUpload = {
         onRemove: (file) => {
             setFileList([]);
-          },
-          beforeUpload: (file) => {
+        },
+        beforeUpload: (file) => {
             setFileList([file]);
             return false;
-          },
-          fileList,
+        },
+        fileList,
     }
 
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} lg={12} xl={8}>
-                <Form.Item
+                <SelectPeople
                     name='person'
                     label='Colaborador'
+                    size='large'
                     rules={[ruleRequired]}
-                >
-                    <Select
-                        allowClear
-                        showSearch
-                        disabled={load_persons || action == 'edit'}
-                        loading={load_persons}
-                        placeholder='Seleccionar una opción'
-                        notFoundContent='No se encontraron resultados'
-                        optionFilterProp='children'
-                        onChange={onChangePerson}
-                        size='large'
-                    >
-                        {persons_company.length > 0 && persons_company.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {getFullName(item)}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                    onChangeSelect={onChangePerson}
+                    disabled={action == 'edit'}
+                    itemSelected={itemPerson}
+                />
             </Col>
             <Col xs={24} md={12} lg={12} xl={8}>
                 <Form.Item
@@ -260,17 +248,17 @@ const PermissionForm = ({
                     label="Evidencia"
                 >
                     <Space>
-                    <Upload {...propsUpload}>
+                        <Upload {...propsUpload}>
                             <Button icon={<UploadOutlined />}>Selecciona un archivo</Button>
-                    </Upload>
-                    {
-                        infoPermit?.evidence &&
-                        <a href={infoPermit?.evidence} target='_blank' >
-                            <EyeOutlined  /> Ver actual
-                        </a>
-                    }
+                        </Upload>
+                        {
+                            infoPermit?.evidence &&
+                            <a href={infoPermit?.evidence} target='_blank' >
+                                <EyeOutlined /> Ver actual
+                            </a>
+                        }
                     </Space>
-                     
+
                 </Form.Item>
             </Col>
             <Col span={24}>

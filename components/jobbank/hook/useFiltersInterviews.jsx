@@ -1,10 +1,10 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { getValueFilter } from "../../../utils/functions";
-import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
 import { getFullName } from "../../../utils/functions";
 import WebApiJobBank from "../../../api/WebApiJobBank";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { useState } from "react";
+import { useRouter } from "next/router";
 
 export const useFiltersInterviews = () => {
 
@@ -15,10 +15,49 @@ export const useFiltersInterviews = () => {
         load_clients_options
     } = useSelector(state => state.jobBankStore);
 
+    const router = useRouter();
+    const { recruiter, candidate } = router.query;
+
     const [loading, setLoading] = useState(true);
+    const [infoCandidate, setInfoCandate] = useState({});
+    const [infoRecruiter, setInfoRecruiter] = useState({});
     const [loadRecruiter, setLoadRecruiter] = useState(true);
-    
-    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!recruiter) setInfoRecruiter({});
+        else getRecruiter();
+    }, [recruiter])
+
+    useEffect(() => {
+        if (!candidate) setInfoCandate({});
+        else getCandidate();
+    }, [candidate])
+
+    const getRecruiter = async () => {
+        try {
+            setLoadRecruiter(true)
+            let response = await WebApiPeople.getPerson(recruiter);
+            setInfoRecruiter(response.data)
+            setLoadRecruiter(false)
+        } catch (e) {
+            console.log(e)
+            setInfoRecruiter({})
+            setLoadRecruiter(false)
+        }
+    }
+
+    const getCandidate = async () => {
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getInfoCandidate(candidate);
+            setInfoCandate(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            setInfoCandate({})
+        }
+    }
 
     const getVacant = (id) => getValueFilter({
         value: id,
@@ -31,55 +70,18 @@ export const useFiltersInterviews = () => {
         list: list_clients_options
     })
 
-    const getRecruiter = async (id, key) => {
-        try {
-            setLoadRecruiter(true)
-            let response = await WebApiPeople.getPerson(id);
-            let value = { [key]: response.data };
-            dispatch(setJobbankFiltersData(value))
-            setLoadRecruiter(false)
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            setLoadRecruiter(false)
-            return id;
-        }
-    }
-
-    const getCandidate = async (id, key) => {
-        try {
-            setLoading(true)
-            let response = await WebApiJobBank.getInfoCandidate(id);
-            let value = { [key]: response.data };
-            dispatch(setJobbankFiltersData(value));
-            setLoading(false)
-            return `${response.data?.first_name} ${response.data?.last_name}`;
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            return id;
-        }
-    }
-
-    const deleteState = (key) => {
-        dispatch(setJobbankFiltersData({ [key]: null }))
-    }
-
-    const listAwait = {
-        recruiter: getRecruiter,
-        candidate: getCandidate
-    }
+    const getName = () => `${infoCandidate?.first_name} ${infoCandidate?.last_name}`;
 
     const listKeys = {
         recruiter: {
             name: 'Reclutador',
             loading: loadRecruiter,
-            delete: deleteState
+            get: (e) => Object.keys(infoRecruiter).length > 0 ? getFullName(infoRecruiter) : e
         },
         candidate: {
             name: 'Candidato',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(infoCandidate).length > 0 ? getName() : e
         },
         vacant: {
             name: 'Vacante',
@@ -93,8 +95,13 @@ export const useFiltersInterviews = () => {
         }
     }
 
+    const listData = {
+        recruiter: infoRecruiter,
+        candidate: infoCandidate
+    }
+
     return {
         listKeys,
-        listAwait
+        listData
     };
 }
