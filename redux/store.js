@@ -14,7 +14,6 @@ import jobBankReducer from "./jobBankDuck";
 import NotificationReducer from "./NotificationDuck";
 import timeclockReducer from "./timeclockDuck";
 import orgReducer from "./OrgStructureDuck";
-import kuizReducer from "./kuizDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
@@ -30,8 +29,7 @@ const rootReducer = combineReducers({
   jobBankStore: jobBankReducer,
   NotificationStore:NotificationReducer,
   timeclockStore: timeclockReducer,
-  orgStore: orgReducer,
-  kuizStore: kuizReducer
+  orgStore: orgReducer
 });
 const composeEnhancers =
     typeof window === 'object' &&

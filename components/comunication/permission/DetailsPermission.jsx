@@ -173,7 +173,6 @@ const DetailsPermission = ({
                             <PermissionForm
                                 infoPermit={infoPermit}
                                 currentPerson={currentPerson}
-                                infoPermit={infoPermit}
                                 setCurrentPerson={setCurrentPerson}
                                 formPermit={formPermit}
                                 action={action}

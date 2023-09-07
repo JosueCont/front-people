@@ -12,7 +12,7 @@ import {
     message
 } from 'antd';
 import { ruleRequired } from '../../../utils/rules';
-import { getAssessmentsOptions } from '../../../redux/kuizDuck';
+import { getListAssets } from '../../../redux/assessmentDuck';
 import { valueToFilter } from '../../../utils/functions';
 import {
     PlusCircleOutlined,
@@ -24,18 +24,17 @@ const AssessmentsGroup = ({
     itemGroup = {},
     visible = false,
     close = () => { },
-    actionForm = async () => { },
-    showOptions = true
+    actionForm = async () => { }
 }) => {
 
     const dispatch = useDispatch();
 
     const {
-        list_categories,
-        load_categories,
-        list_assessments_options,
-        load_assessments_options,
-    } = useSelector(state => state.kuizStore);
+        categories_assessment,
+        fetching,
+        list_assessments,
+        load_assessments,
+    } = useSelector(state => state.assessmentStore);
     const { current_node } = useSelector(state => state.userStore);
 
     const [formGroup] = Form.useForm();
@@ -52,8 +51,8 @@ const AssessmentsGroup = ({
 
     useEffect(() => {
         if (!visible) return;
-        setListCurrent(list_assessments_options)
-    }, [list_assessments_options, visible])
+        setListCurrent(list_assessments)
+    }, [list_assessments, visible])
 
     const listSurvey = useMemo(() => {
         if (listSelected?.length <= 0) return listCurrent;
@@ -72,7 +71,7 @@ const AssessmentsGroup = ({
             let resp = await actionForm({ ...values, assessments });
             // Se valida si se cierra el modal para mostrar el error
             if (resp && resp != 'ERROR') formGroup.setFields([{ name: 'name', errors: [resp] }]);
-            else if (!resp) closeModal();
+            else if(!resp) closeModal();
             setLoading(false)
         }, 2000)
     }
@@ -85,8 +84,9 @@ const AssessmentsGroup = ({
     }
 
     const onChangeCategory = (value) => {
-        let query = value ? `&categories=${value}` : '';
-        dispatch(getAssessmentsOptions(current_node?.id, query))
+        let query = value
+            ? `&is_active=true&categories=${value}` : '&is_active=true';
+        dispatch(getListAssets(current_node?.id, query))
     }
 
     const addAssessment = (item) => {
@@ -102,7 +102,7 @@ const AssessmentsGroup = ({
     const onFilter = ({ target }) => {
         setNameSearch(target?.value)
         const filter_ = item => valueToFilter(item.name).includes(valueToFilter(target.value));
-        let results = target.value?.trim() ? list_assessments_options.filter(filter_) : list_assessments_options;
+        let results = target.value?.trim() ? list_assessments.filter(filter_) : list_assessments;
         setListCurrent(results)
     }
 
@@ -166,8 +166,8 @@ const AssessmentsGroup = ({
                         <Form.Item label="Categoría">
                             <Select
                                 showSearch
-                                disabled={load_categories || load_assessments_options}
-                                loading={load_categories || load_assessments_options}
+                                disabled={fetching || load_assessments}
+                                loading={fetching || load_assessments}
                                 placeholder="Seleccionar una opción"
                                 onChange={onChangeCategory}
                                 notFoundContent="No se encontraron resultados"
@@ -175,7 +175,7 @@ const AssessmentsGroup = ({
                                 defaultValue=""
                             >
                                 <Select.Option value="">Todas</Select.Option>
-                                {list_categories?.length > 0 && list_categories?.map((item) => (
+                                {categories_assessment?.length > 0 && categories_assessment?.map((item) => (
                                     <Select.Option key={item.id} value={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -194,7 +194,7 @@ const AssessmentsGroup = ({
                                 value={nameSearch}
                                 onChange={onFilter}
                                 placeholder='Buscar'
-                                style={{ border: '1px solid black' }}
+                                style={{border: '1px solid black'}}
                             />
                         </div>
                         <Table
@@ -203,12 +203,12 @@ const AssessmentsGroup = ({
                             bordered
                             columns={columnsAssessment}
                             dataSource={listSurvey}
-                            loading={load_assessments_options}
+                            loading={load_assessments}
                             pagination={false}
                             showHeader={false}
                             scroll={{ y: 200 }}
                             locale={{
-                                emptyText: load_assessments_options
+                                emptyText: load_assessments
                                     ? "Cargando..."
                                     : "No se encontraron resultados.",
                             }}

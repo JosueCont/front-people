@@ -24,7 +24,7 @@ const PermissionForm = ({
     setCurrentPerson,
     action,
     actionBack = () => { },
-    infoPermit = null
+    infoPermit = {}
 }) => {
 
     const {
