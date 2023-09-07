@@ -10,6 +10,8 @@ export const enus = {
     'dashboard.payrollcalendar':'Payroll calendar',
     'dashboard.patronalreg':'Patrional Reg.',
     'dashboard.totalpeople':'Total people',
+    'dashboard.imssPending':'Pending processing',
+    'dashboard.contracts': "Contracts nearing completion",
     ...errorMessage,
     ...generalTex
 }

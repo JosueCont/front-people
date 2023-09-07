@@ -18,12 +18,14 @@ import {
   Checkbox,
   Switch,
 } from "antd";
+import locale from 'antd/lib/date-picker/locale/es_ES';
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
 import { ClearOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectYear from "../selects/SelectYear";
 import moment from "moment";
+
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
@@ -221,7 +223,8 @@ const PayrollReport = ({ permissions, ...props }) => {
     urlQuery += values?.tags?.length > 0 ? `&tags=${values['tags'].toString()}` : ''
     urlQuery +=  values?.start_date ? `&start_date=${moment(values['start_date']).format("YYYY-MM-DD")}`:''
     urlQuery +=  values?.end_date ? `&end_date=${ moment(values['end_date']).format("YYYY-MM-DD")}`:'' 
-    setUrlFilter(urlQuery)
+    urlQuery +=  "&consolidated_type=1&consolidated_movement=0&cfdi_movement=0"
+    setUrlFilter(urlQuery)  
 
     //setValuesFilter(values);
     if (exporter === "False") {
@@ -256,16 +259,14 @@ const PayrollReport = ({ permissions, ...props }) => {
   };
 
   const changeCalendar = (value) => {
-    if(!value){
-      setPeriods([])
-      form.setFields([
-        {
-          name: 'payment_periods',
-          value:[]
-        }
-      ])
-      return
-    }
+    console.log('first')
+    setPeriods([])
+    form.setFields([
+      {
+        name: 'payment_periods',
+        value:[]
+      }
+    ])
       
     // setTotalSalary(null);
     // setTotalIsr(null);
@@ -410,12 +411,12 @@ const PayrollReport = ({ permissions, ...props }) => {
             <Col  span={12}/>
             <Col span={8} >
               <Form.Item name={'start_date'} label="Fecha inicio">
-                <DatePicker style={{ width:'100%' }} />
+                <DatePicker locale={locale} style={{ width:'100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name={'end_date'} label="Fecha fin">
-                <DatePicker style={{ width:'100%' }} />
+                <DatePicker locale={locale} style={{ width:'100%' }} />
               </Form.Item>
             </Col>
             

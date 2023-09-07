@@ -71,7 +71,7 @@ const SelectCompany = ({ ...props }) => {
 
   useEffect(() => {
     props.resetCurrentnode();
-    sessionStorage.removeItem("data");
+    localStorage.removeItem("data");
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
@@ -164,8 +164,8 @@ const SelectCompany = ({ ...props }) => {
 
   const setCompanySelect = async (item, info_user) => {
     // let have_role = Object.keys(info_user?.administrator_profile ?? {}).length > 0;
-    if (admin) sessionStorage.setItem("data", item.id);
-    else sessionStorage.setItem("data", item.id);
+    // if (admin) sessionStorage.setItem("data", item.id);
+    // else sessionStorage.setItem("data", item.id);
     localStorage.setItem("data", item.id);
     await props
       .companySelected(item.id, props.config)

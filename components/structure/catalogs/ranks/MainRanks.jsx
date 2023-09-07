@@ -18,7 +18,7 @@ import ListItems from '../../../../common/ListItems';
 import { message } from 'antd';
 
 const MainRanks = ({
-    nameCatalog,
+    catalog,
     currentNode,
     getRanks,
     getOrgNodesOptions,
@@ -90,7 +90,7 @@ const MainRanks = ({
     return (
         <>
             <SearchRanks
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
             <TableRanks

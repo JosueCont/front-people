@@ -1,18 +1,19 @@
 import {useEffect, useState} from "react";
 import {connect, useSelector} from "react-redux";
 import moment from "moment";
-import {Table, Typography, Row, Col, Tabs, Form, Button, Space, message, Select, DatePicker, Tooltip} from "antd";
+import {Table, Typography, Row, Col, Tabs, Form, Button, Space, message, Select, DatePicker, Tooltip, Modal} from "antd";
 import {movementsTypes} from "../../../utils/constant";
 import TableMovements from "./TableMovements";
 import {getMovementsIMSS} from "../../../redux/payrollDuck";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
-import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
+import {FileZipOutlined, SendOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
 import webApiPayroll, {WebApiPayroll} from '../../../api/WebApiPayroll'
 import { SearchOutlined } from "@material-ui/icons";
 import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const { Title } = Typography;
+const { confirm } = Modal;
 
 
 const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
@@ -220,7 +221,23 @@ const MovementsSection=({getMovementsIMSS,regPatronalProps=null,...props})=>{
                                             <Button loading={loading} type="primary" icon={<FileZipOutlined />} onClick={()=>generateFileSend(t.key, 1)} disabled={thereIsDataSelected(t.key)} >
                                                 Generar archivo
                                             </Button>
-                                            <Button loading={loading} type="primary" disabled={thereIsDataSelected(t.key)} onClick={()=>generateFileSend(t.key, 2)} icon={<SendOutlined />} >
+                                            <Button loading={loading} type="primary" disabled={thereIsDataSelected(t.key)} onClick={()=> {
+                                                confirm({
+                                                    title: 'Envío de movimientos',
+                                                    okText:'Sí, enviar',
+                                                    cancelText: 'Cancelar',
+                                                    icon: <ExclamationCircleOutlined />,
+                                                    content: 'Estas a punto de enviar los elementos seleccionados al servicio del IMSS. ¿Continuar? ',
+                                                    onOk() {
+                                                        generateFileSend(t.key, 2)
+                                                    },
+                                                    onCancel() {
+                                                        console.log('Cancelar');
+                                                    },
+                                                });
+
+
+                                            }} icon={<SendOutlined />} >
                                                 Enviar movimientos seleccionados
                                             </Button>
                                             {

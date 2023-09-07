@@ -6,12 +6,13 @@ import MainRanks from './ranks/MainRanks';
 import MainJobs from './jobs/MainJobs';
 import MainPlaces from './places/MainPlaces';
 import MainPersons from './persons/MainPersons';
+import MainHistory from './places/MainHistory';
 
-const GetCatalog = ({...props}) => {
+const GetCatalog = ({ ...props }) => {
 
     const router = useRouter();
     const catalog = router.query?.catalog;
-
+    
     const Catalogs = {
         levels: MainLevels,
         nodes: MainNodes,
@@ -19,12 +20,13 @@ const GetCatalog = ({...props}) => {
         jobs: MainJobs,
         places: MainPlaces,
         persons: MainPersons,
-        __default__: ()=><></>
+        history: MainHistory,
+        __default__: () => <></>
     }
 
     const Selected = Catalogs[catalog] ?? Catalogs['__default__'];
-    
-    return <Selected {...props}/>
+
+    return <Selected {...props} />
 }
 
 export default GetCatalog

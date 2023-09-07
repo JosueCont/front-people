@@ -30,11 +30,11 @@ import {
 import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
-import locale from "antd/lib/date-picker/locale/es_ES";
 import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
 import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const FormPayrollPerson = ({
   person = null,
@@ -66,6 +66,8 @@ const FormPayrollPerson = ({
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
   const [deletingPayroll, setDeletingPayroll] = useState(false);
+  const [contractTypeSelected, setContractTypeSelected] = useState(null)
+  
 
   useEffect(() => {
     if (props.catPerception) {
@@ -227,8 +229,19 @@ const FormPayrollPerson = ({
             cost_center: item?.cost_center,
             fixed_concept: item.fixed_concept,
           });
+
+          
+
           setCalendar(item.payment_calendar ? item.payment_calendar.id : null);
           changePaymentType(item.payment_type);
+          if(item.contract_type){
+            changeContractType(item.contract_type.id)
+            formPayrollPerson.setFieldsValue({
+              contract_start: item.contract_start ? moment(item.contract_start) : null,
+              contract_end: item.contract_end ? moment(item.contract_end) : null
+            })
+          }
+          
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
@@ -419,6 +432,10 @@ const FormPayrollPerson = ({
 
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
+      if(value.contract_start && value.contract_end){
+        value.contract_start = moment(value.contract_start).format("YYYY-MM-DD")
+        value.contract_end = moment(value.contract_end).format("YYYY-MM-DD")
+      }
       updatePayrollPerson(value);
     } else {
       value.person = person.id;
@@ -428,6 +445,10 @@ const FormPayrollPerson = ({
         value.last_day_paid = moment().format("YYYY-MM-DD");
       }
       value.daily_salary = parseFloat(value.daily_salary);
+      if(value.contract_start && value.contract_end){
+        value.contract_start = moment(value.contract_start).format("YYYY-MM-DD")
+        value.contract_end = moment(value.contract_end).format("YYYY-MM-DD")
+      }
       savePayrollPerson(value);
     }
   };
@@ -573,6 +594,18 @@ const FormPayrollPerson = ({
     }
   };
 
+  const changeContractType = (val) => {
+    if(!val){
+      setContractTypeSelected(null)
+    }else{
+      let filterTypes = props.catContracType?.filter(item => item.id === val)
+      if(filterTypes.length > 0){
+        console.log(filterTypes[0])
+        setContractTypeSelected(filterTypes[0])
+      }
+    }
+  }
+
 
   useEffect(() => {
     console.log('person', person)
@@ -639,9 +672,31 @@ const FormPayrollPerson = ({
                           .includes(input.toLowerCase())
                       }
                       allowClear
+                      onChange={changeContractType}
                     />
                   </Form.Item>
                 </Col>
+                {
+                  contractTypeSelected?.code === '03' &&
+                  <>
+                    <Col lg={10} xs={22} md={12}>
+                      <Form.Item
+                        name="contract_start"
+                        label="Inicio del contrato"
+                      >
+                        <DatePicker locale={locale} style={{ width:'100%' }} />
+                      </Form.Item>
+                  </Col>
+                  <Col lg={10} xs={22} md={12}>
+                      <Form.Item
+                        name="contract_end"
+                        label="Fin del contrato"
+                      >
+                        <DatePicker locale={locale} style={{ width:'100%' }} />
+                      </Form.Item>
+                  </Col>
+                  </>
+                }
                 <Col lg={8} xs={22} md={12}>
                   <Form.Item
                     name="hiring_regime_type"

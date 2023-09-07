@@ -142,7 +142,7 @@ export const showLoading = (data) => async (dispatch, getState) => {
 export const setNullCompany = () => async (dispatch, getState) => {
   try {
     sessionStorage.removeItem("image");
-    sessionStorage.removeItem("data");
+    localStorage.removeItem("data");
     dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {
     console.log('error', error)
