@@ -1480,7 +1480,7 @@ const CalculatePayroll = ({ ...props }) => {
     : downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED&consolidated_type=1&cfdi_movement=0&consolidated_movement=0&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_cerrada_periodo${periodSelected.name}.xlsx`,
@@ -1496,7 +1496,7 @@ const CalculatePayroll = ({ ...props }) => {
     downLoadFileBlobAwait(
         `${getDomain(
           API_URL_TENANT
-        )}/payroll/payroll-report?export=True&&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
+        )}/payroll/payroll-report?export=True&consolidated_type=1&consolidated_movement=0&cfdi_movement=0&report_type=PAYROLL_DETAILED_PROVISIONS&node__id=${props.currentNode.id}&payment_periods=${
           periodSelected.id
         }`,
         `nomina_proviciones_${periodSelected.name}.xlsx`,
@@ -1737,28 +1737,34 @@ const CalculatePayroll = ({ ...props }) => {
                         </Tooltip>
                         </Col>
                         <Col xxs={24} xl={5}>
+                          
                           {
-                            step < 2 && <Button
+                            step < 3 && 
+                             <Button
                                   loading={downloading === 1}
                                   style={{ marginTop: "30px", marginRight: 20 }}
                                   size="sm"
                                   icon={<DownloadOutlined />}
                                   onClick={() => {
+                                    let data = {
+                                      payment_period: periodSelected.id,
+                                      department: department,
+                                      job: job
+                                    }
+                                    if(step < 2) {
+                                      data.payroll = payroll.map((item) => {
+                                        item.person_id = item.person.id;
+                                        return item;
+                                      })
+                                    }
+
                                     downLoadFileBlobAwait(
                                         `${getDomain(
                                             API_URL_TENANT
                                         )}/payroll/payroll-calculus`,
                                         "Nomina.xlsx",
                                         "POST",
-                                        {
-                                          payment_period: periodSelected.id,
-                                          department: department,
-                                          job: job,
-                                          payroll: payroll.map((item) => {
-                                            item.person_id = item.person.id;
-                                            return item;
-                                          }),
-                                        },
+                                        data,
                                         "",
                                         setDownloading,
                                         1
@@ -1770,11 +1776,11 @@ const CalculatePayroll = ({ ...props }) => {
                           }
 
                         </Col>
-                        {(step === 0 ||
+                        {(step === 0 || 
                           isOpen ||
                           (consolidated &&
                             !isOpen &&
-                            consolidated.status != 3)) && step < 2 && (
+                            consolidated.status != 3)) && step < 3 && (
                           <Col xxs={24} xl={5} style={{ paddingTop: "30px" }}>
                             <Upload
                               {...{

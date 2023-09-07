@@ -18,7 +18,7 @@ import ListItems from '../../../../common/ListItems';
 import { message } from 'antd';
 
 const MainJobs = ({
-    nameCatalog,
+    catalog,
     currentNode,
     getJobs,
     getOrgNodesOptions,
@@ -91,7 +91,7 @@ const MainJobs = ({
     return (
         <>
             <SearchJobs
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
             <TableJobs

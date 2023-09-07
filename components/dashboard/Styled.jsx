@@ -16,8 +16,8 @@ export const ContentCards = styled.div(({
         display: grid;
         gap: 24px;
         grid-template-columns: repeat(auto-fit, minmax(400px, ${max}));
-        grid-auto-rows: 165px;
-        grid-auto-flow: dense;
+        grid-auto-rows: 165px;;
+        grid-auto-flow: row dense;
     `;
 });
 

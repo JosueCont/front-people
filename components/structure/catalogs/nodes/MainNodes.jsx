@@ -20,7 +20,7 @@ import ListItems from '../../../../common/ListItems';
 import TreeList from '../TreeList';
 
 const MainNodes = ({
-    nameCatalog,
+    catalog,
     getOrgNodes,
     getOrgNodesOptions,
     getOrgLevelsOptions,
@@ -111,7 +111,7 @@ const MainNodes = ({
     return (
         <>
             <SearchNodes
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
 

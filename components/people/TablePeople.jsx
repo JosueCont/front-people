@@ -131,7 +131,7 @@ const TablePeople = ({
             message.error(msg)
         }
     }
-
+    
     const actionSupervisor = async (values) => {
         try {
             let persons_id = itemsSelected?.map(item => item.id).join(',');
@@ -560,6 +560,8 @@ const TablePeople = ({
                     Descargar carta de renuncia
                 </Menu.Item>
             )}
+                
+
             {(currentNode?.contract_for_work
                 || currentNode?.fixed_term_contract
                 || currentNode?.indefinite_term_contract
@@ -569,7 +571,7 @@ const TablePeople = ({
                         title='Descargar contrato'
                         icon={<DownloadOutlined />}
                     >
-                        {currentNode?.contract_for_work && (
+                        {currentNode?.contract_for_work && item?.contract_type?.code === '02' && (
                             <Menu.Item
                                 key="16"
                                 icon={<DownloadOutlined />}
@@ -578,7 +580,7 @@ const TablePeople = ({
                                 Por obra
                             </Menu.Item>
                         )}
-                        {currentNode?.fixed_term_contract && (
+                        {currentNode?.fixed_term_contract && item?.contract_type?.code === '03' && (
                             <Menu.Item
                                 key="14"
                                 onClick={() => actionTermContract(item)}
@@ -586,7 +588,7 @@ const TablePeople = ({
                                 Tiempo determinado
                             </Menu.Item>
                         )}
-                        {currentNode?.indefinite_term_contract && (
+                        {currentNode?.indefinite_term_contract && item?.contract_type?.code === '01' && (
                             <Menu.Item
                                 key="15"
                                 onClick={() => actionIndeterminateContract(item)}

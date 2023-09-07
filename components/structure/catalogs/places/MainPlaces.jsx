@@ -21,7 +21,8 @@ import WebApiOrgStructure from '../../../../api/WebApiOrgStructure';
 import { message } from 'antd';
 
 const MainPlaces = ({
-    nameCatalog,
+    newFilters,
+    catalog,
     currentNode,
     getPlaces,
     getJobsOptions,
@@ -99,12 +100,13 @@ const MainPlaces = ({
     return (
         <>
             <SearchPlaces
-                title={nameCatalog}
+                title={catalog?.name}
                 actionAdd={() => setOpenModal(true)}
             />
             <TablePlaces
                 showEdit={showEdit}
                 showDelete={showDelete}
+                newFilters={newFilters}
             />
             <ModalPlaces
                 visible={openModal}

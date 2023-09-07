@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import MainRequets from '../MainRequets';
 import DetailsIncapacity from './DetailsIncapacity';
 
 const AddOrEditIncapacity = ({
     action = 'add',
-    currentNode,
-    getPersonsCompany
+    currentNode
 }) => {
-
-    useEffect(()=>{
-        if(!currentNode) return;
-        getPersonsCompany(currentNode?.id)
-    },[currentNode])
-
+    
     const ExtraBread = [
         {name: 'Incapacidad', URL: '/comunication/requests/incapacity'},
         {name: action == 'add' ? 'Registrar' : 'Actualizar'}
@@ -36,8 +29,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(
-    mapState, {
-        getPersonsCompany
-    }
-)(AddOrEditIncapacity)
+export default connect(mapState)(AddOrEditIncapacity)

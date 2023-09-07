@@ -6,7 +6,7 @@ import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
 import { urlMyAccount, urlPeople, urlSocial, urlSukha, urlCareerlab, urlKhorflx } from "../../config/config";
-import {FaGooglePlay, FaApple} from "react-icons/fa";
+import { FaGooglePlay, FaApple } from "react-icons/fa";
 import _ from "lodash"
 
 const ContentApps = styled.div`
@@ -116,7 +116,7 @@ const CardApps = ({ user, config, ...props }) => {
     redirectTo(url);
   };
 
-  const linkToKhor = () =>{
+  const linkToKhor = () => {
     const url = props.is_admin ? `${getCurrentURL(true)}.${urlPeople}/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.${urlPeople}/validationKhor`;
     // const url = props.is_admin ? `${getCurrentURL(true)}.localhost:3000/validationKhor?is_admin=${props.is_admin}` : `${getCurrentURL(true)}.localhost:3000/validationKhor`;
     redirectTo(url);
@@ -124,18 +124,18 @@ const CardApps = ({ user, config, ...props }) => {
 
   const linkToExternalApp = (app_name) => {
     // const url = props.applications[app_name].front;
-    switch (app_name){
+    switch (app_name) {
       case "sukhatv":
         const token1 = user.jwt_data.metadata.at(-1).token;
         // const url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
         let url1;
-        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA){
-          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))){
+        if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA) {
+          if (process.env.NEXT_PUBLIC_TENANT_USE_DEMO_SUKHA.includes(getCurrentURL(true, true))) {
             url1 = `https://demo.${urlSukha}/validation?token=${token1}`;
-          }else{
+          } else {
             url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
           }
-        }else{
+        } else {
           url1 = `${getCurrentURL(true)}.${urlSukha}/validation?token=${token1}`;
         }
         redirectTo(url1);
@@ -165,7 +165,7 @@ const CardApps = ({ user, config, ...props }) => {
     <ContentApps>
       <Card bordered={false}>
         <Row gutter={[8, 16]}>
-          {config && config.kuiz_enabled && !props.is_admin? (
+          {config && config.kuiz_enabled && !props.is_admin ? (
             <Col span={8}>
               <Space
                 direction="vertical"
@@ -177,18 +177,21 @@ const CardApps = ({ user, config, ...props }) => {
               </Space>
             </Col>
           ) : null}
-          <Col span={8}>
-              <Space
-                direction="vertical"
-                align="center"
-                onClick={() => linkToKhor()}
-              >
-                <img src={"/images/logoKhor15.svg"} />
-                <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
-              </Space>
-            </Col>
+          {props?.applications &&
+            (_.has(props.applications, "khor") && props.applications["khor"].active) && (
+              <Col span={8}>
+                <Space
+                  direction="vertical"
+                  align="center"
+                  onClick={() => linkToKhor()}
+                >
+                  <img src={"/images/logoKhor15.svg"} />
+                  <p style={{ marginBottom: "0px" }}>KHOR 1.5</p>
+                </Space>
+              </Col>
+            )}
           {user &&
-          (user.intranet_access === 2 || user.intranet_access === 3) && !props.is_admin? (
+            (user.intranet_access === 2 || user.intranet_access === 3) && !props.is_admin ? (
             <Col span={8}>
               <Space
                 direction="vertical"
@@ -211,46 +214,46 @@ const CardApps = ({ user, config, ...props }) => {
             </Space>
           </Col> */}
           {props?.applications &&
-          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && !props.is_admin && user.khorflix_access?
-              <Col span={8}>
-                <Space
-                    direction="vertical"
-                    align="center"
-                    onClick={() => linkToExternalApp("khorflix")}
-                >
-                  <img src={imgKhorflix} />
-                  <p style={{ marginBottom: "0px" }}>Khorflix</p>
-                </Space>
-              </Col>
-              : null
+            (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) && !props.is_admin && user.khorflix_access ?
+            <Col span={8}>
+              <Space
+                direction="vertical"
+                align="center"
+                onClick={() => linkToExternalApp("khorflix")}
+              >
+                <img src={imgKhorflix} />
+                <p style={{ marginBottom: "0px" }}>Khorflix</p>
+              </Space>
+            </Col>
+            : null
           }
           {props?.applications &&
-          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && !props.is_admin && user.sukhatv_access?
-              <Col span={8}>
-                <Space
-                    direction="vertical"
-                    align="center"
-                    onClick={() => linkToExternalApp("sukhatv")}
-                >
-                  <img src={imgSukhaTv} />
-                  <p style={{ marginBottom: "0px" }}>Sukha TV</p>
-                </Space>
-              </Col>
-              : null
+            (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) && !props.is_admin && user.sukhatv_access ?
+            <Col span={8}>
+              <Space
+                direction="vertical"
+                align="center"
+                onClick={() => linkToExternalApp("sukhatv")}
+              >
+                <img src={imgSukhaTv} />
+                <p style={{ marginBottom: "0px" }}>Sukha TV</p>
+              </Space>
+            </Col>
+            : null
           }
           {props?.applications &&
-          (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && !props.is_admin && user.careerlab?
-              <Col span={8}>
-                <Space
-                    direction="vertical"
-                    align="center"
-                    onClick={() => linkToExternalApp("careerlab")}
-                >
-                  <img src={imgCareerlab} />
-                  <p style={{ marginBottom: "0px" }}>Careerlab</p>
-                </Space>
-              </Col>
-              : null
+            (_.has(props.applications, "careerlab") && props.applications["careerlab"].active) && !props.is_admin && user.careerlab ?
+            <Col span={8}>
+              <Space
+                direction="vertical"
+                align="center"
+                onClick={() => linkToExternalApp("careerlab")}
+              >
+                <img src={imgCareerlab} />
+                <p style={{ marginBottom: "0px" }}>Careerlab</p>
+              </Space>
+            </Col>
+            : null
           }
           {/* {props?.applications &&
           (_.has(props.applications, "ynl") && props.applications["ynl"].active) ?
@@ -282,8 +285,8 @@ const CardApps = ({ user, config, ...props }) => {
         title="Descarga la aplicación de YNL"
         centered
         visible={showYnlDownloadApp}
-        onOk={()=> setShowYnlDownloadApp(false)}
-        onCancel={()=> setShowYnlDownloadApp(false)}
+        onOk={() => setShowYnlDownloadApp(false)}
+        onCancel={() => setShowYnlDownloadApp(false)}
         destroyOnClose={true}
         footer={
           <Col>
@@ -301,35 +304,35 @@ const CardApps = ({ user, config, ...props }) => {
       >
         <Row>
           <Col md={12} lg={12} xs={24}>
-            <div className='flex-item' style={{marginRight: "4px"}}>
-                <a href="https://play.google.com/store/apps/details?id=com.hiumanlab.ynl&hl=es_MX" target={"_blank"}>
-                    <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
-                        <Row className="aligned-to-center">
-                            <Col span={10}>
-                                <FaGooglePlay style={{color:"white", fontSize:"35px", marginLeft:"25px", marginTop: "5px"}} />
-                            </Col>
-                            <Col span={14}>
-                                <span style={{color:"white"}}>Disponible en <br /> Google Play</span>
-                            </Col>
-                        </Row>
-                    </div>
-                </a>
+            <div className='flex-item' style={{ marginRight: "4px" }}>
+              <a href="https://play.google.com/store/apps/details?id=com.hiumanlab.ynl&hl=es_MX" target={"_blank"}>
+                <div style={{ backgroundColor: "#1C1B2B", padding: "10px", borderRadius: "15px", cursor: "pointer", height: "70px" }} >
+                  <Row className="aligned-to-center">
+                    <Col span={10}>
+                      <FaGooglePlay style={{ color: "white", fontSize: "35px", marginLeft: "25px", marginTop: "5px" }} />
+                    </Col>
+                    <Col span={14}>
+                      <span style={{ color: "white" }}>Disponible en <br /> Google Play</span>
+                    </Col>
+                  </Row>
+                </div>
+              </a>
             </div>
           </Col>
           <Col md={12} lg={12} xs={24}>
             <div className='flex-item'>
-                <a href="https://apps.apple.com/mx/app/your-next-level/id1623871887" target={"_blank"}>
-                    <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
-                        <Row className="aligned-to-center">
-                            <Col span={10}>
-                                <FaApple style={{color:"white", fontSize:"45px", marginLeft:"20px"}} />
-                            </Col>
-                            <Col span={14}>
-                                <span style={{color:"white"}}>Disponible en <br /> App Store</span>
-                            </Col>
-                        </Row>
-                    </div>
-                </a> 
+              <a href="https://apps.apple.com/mx/app/your-next-level/id1623871887" target={"_blank"}>
+                <div style={{ backgroundColor: "#1C1B2B", padding: "10px", borderRadius: "15px", cursor: "pointer", height: "70px" }} >
+                  <Row className="aligned-to-center">
+                    <Col span={10}>
+                      <FaApple style={{ color: "white", fontSize: "45px", marginLeft: "20px" }} />
+                    </Col>
+                    <Col span={14}>
+                      <span style={{ color: "white" }}>Disponible en <br /> App Store</span>
+                    </Col>
+                  </Row>
+                </div>
+              </a>
             </div>
           </Col>
         </Row>

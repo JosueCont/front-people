@@ -38,19 +38,16 @@ const WidgetPayroll = () => {
 
     const {
         user,
-        current_node,
-        applications
+        current_node
     } = useSelector(state => state.userStore);
 
     const [loading, setLoading] = useState(false);
     const [payrolls, setPayrolls] = useState([]);
 
-    useEffect(()=>{
-        if(!current_node) return;
-        let exist = applications?.payroll?.active;
-        if(!exist) return;
+    useEffect(() => {
+        if (!current_node) return;
         getCfdiPayrrol()
-    },[current_node])
+    }, [current_node])
 
     const getCfdiPayrrol = async () => {
         try {
@@ -87,7 +84,7 @@ const WidgetPayroll = () => {
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<FormattedMessage id={'nodata'} />} />
     )
 
-    return applications?.payroll?.active ? (
+    return (
         <CardInfo>
             <CardItem pd='16px 0px'
                 ai={payrolls?.length > 0 ? 'flex-start' : 'center'}
@@ -156,7 +153,7 @@ const WidgetPayroll = () => {
                 }
             </CardItem>
         </CardInfo>
-    ) : <></>;
+    )
 }
 
 export default WidgetPayroll

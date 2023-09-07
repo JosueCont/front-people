@@ -27,6 +27,8 @@ const initialState = {
     load_types_persons: false,
     list_types_persons_options: [],
     load_types_persons_options: false,
+    list_places_history: {},
+    load_places_history: false,
     org_page: 1,
     org_filters: "",
     org_page_size: 10,
@@ -43,6 +45,7 @@ const GET_JOBS = "GET_JOBS";
 const GET_JOBS_OPTIONS = "GET_JOBS_OPTIONS";
 const GET_PLACES = "GET_PLACES";
 const GET_PLACES_OPTIONS = "GET_PLACES_OPTIONS";
+const GET_PLACES_HISTORY = "GET_PLACES_HISTORY";
 const GET_TYPES_PERSONS = "GET_TYPES_PERSONS";
 const GET_TYPES_PERSONS_OPTIONS = "GET_TYPES_PERSONS_OPTIONS";
 const SET_FILTERS_DATA = "SET_FILTERS_DATA";
@@ -148,6 +151,15 @@ const orgReducer = (state = initialState, action) => {
                 ...state,
                 list_types_persons_options: action.payload,
                 load_types_persons_options: action.fetching
+            }
+        case GET_PLACES_HISTORY:
+            return {
+                ...state,
+                list_places_history: action.payload,
+                load_places_history: action.fetching,
+                org_page: action.page,
+                org_filters: action.query,
+                org_page_size: action.size
             }
         default:
             return state
@@ -300,6 +312,18 @@ export const getPlacesOptions = (query = '') => async (dispatch) => {
     try {
         let params = `?paginate=0&is_deleted=false${query}`;
         let response = await WebApiOrgStructure.getPlaces(params);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getPlacesHistory = (query = '', page = 1, size = 10) => async (dispatch) => {
+    const action = { type: GET_PLACES_HISTORY, payload: {}, fetching: false, query, page, size };
+    dispatch({ ...action, fetching: true })
+    try {
+        let response = await WebApiOrgStructure.getPlacesHistory(query);
         dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)

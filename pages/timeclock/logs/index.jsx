@@ -8,8 +8,7 @@ import TableLogs from '../../../components/timeclock/logs/TableLogs';
 import {
     getLogsEvents,
     getCompanies,
-    getWorkCentersOptions,
-    setTimeclockFiltersData
+    getWorkCentersOptions
 } from '../../../redux/timeclockDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import moment from 'moment';
@@ -19,8 +18,7 @@ const index = ({
     currentUser,
     getLogsEvents,
     getCompanies,
-    getWorkCentersOptions,
-    setTimeclockFiltersData
+    getWorkCentersOptions
 }) => {
 
     const router = useRouter();
@@ -44,11 +42,6 @@ const index = ({
             getLogsEvents(filters, page, size)
         }
     }, [currentNode, router.query])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setTimeclockFiltersData({}, false);
-    }, [router.query])
 
     const validFilters = () =>{
         let node = router.query?.node;
@@ -85,7 +78,6 @@ export default connect(
     mapState, {
     getLogsEvents,
     getCompanies,
-    getWorkCentersOptions,
-    setTimeclockFiltersData
+    getWorkCentersOptions
 }
 )(withAuthSync(index));

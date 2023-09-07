@@ -18,7 +18,7 @@ export const useFiltersPersons = () => {
             get: getField
         },
         is_assignable: {
-            name: '¿Asignable a personas?',
+            name: '¿Asignable?',
             get: getField
         },
         is_active: {

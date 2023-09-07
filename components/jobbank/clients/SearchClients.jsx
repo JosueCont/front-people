@@ -26,7 +26,7 @@ const SearchClients = () => {
     }
 
     const deleteFilter = () => {
-        formSearch.resetFields();
+        formSearch.resetFields()
         setFilters()
     }
 

@@ -108,7 +108,6 @@ const Variability = ({ currentNode, user }) => {
    
     return (
         <>
-            <h4>Variabilidad</h4>
             <Form
                 layout="vertical"
                 form={formFilters}

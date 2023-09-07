@@ -7,16 +7,14 @@ import SearchSelection from '../../../components/jobbank/selection/SearchSelecti
 import TableSelection from '../../../components/jobbank/selection/TableSelection';
 import {
     getListSelection,
-    getVacanciesOptions,
-    setJobbankFiltersData
+    getVacanciesOptions
 } from '../../../redux/jobBankDuck';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 
 const index = ({
     currentNode,
     getVacanciesOptions,
-    getListSelection,
-    setJobbankFiltersData
+    getListSelection
 }) => {
 
     const router = useRouter();
@@ -35,11 +33,6 @@ const index = ({
             getListSelection(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setJobbankFiltersData({}, false);
-    }, [router.query])
 
     return (
         <MainIndexJB
@@ -61,7 +54,6 @@ const mapState = (state) => {
 export default connect(
     mapState, {
         getVacanciesOptions,
-        getListSelection,
-        setJobbankFiltersData
+        getListSelection
     }
 )(withAuthSync(index));
