@@ -105,8 +105,8 @@ const DetailsPermission = ({
         if(values.departure_date){
             formData.append('departure_date', values.departure_date ? values.departure_date?.format('YYYY-MM-DD') : null)
         }
-        if(values.reason_type){
-            formData.append('reason_type', values.reason_type)
+        if(values.permit_reason){
+            formData.append('permit_reason', values.permit_reason)
         }
         if(values.reason){
             formData.append('reason', values.reason)

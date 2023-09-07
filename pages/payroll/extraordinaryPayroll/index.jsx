@@ -1246,7 +1246,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           extended_report: "True",
           department: department,
           job: job,
-          payroll: payroll.map((item) => {
+          payroll: extraOrdinaryPayroll.map((item) => {
             item.person_id = item.person.id;
             return item;
           }),

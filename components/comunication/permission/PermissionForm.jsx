@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
+import WebApiFiscal from '../../../api/WebApiFiscal';
 
 const PermissionForm = ({
     formPermit,
@@ -38,21 +39,47 @@ const PermissionForm = ({
     const [nonWorkingDays, setNonWorkingDays] = useState([]);
     const [nonWorkingWeekDays, setNonWorkingWeekDays] = useState([]);
     const [fileList, setFileList] = useState([]);
+    const [reasonOptions, setReasonOptions] = useState([])
+    const [ladingConcepts, setlLadingConcepts] = useState(false)
 
     const departureDate = Form.useWatch('departure_date', formPermit);
 
-    const reasonOptions = [
+    /* const reasonOptions = [
         { label: "Permiso sin goce de sueldo", value: 1},
             {label: "Retardo", value: 2},
             {label: "Falta justificada", value: 3}
-    ]
+    ] */
 
     useEffect(() => {
         if (current_node) {
             getNonWorkingDays(current_node?.id)
             getWorkingWeekDays(current_node?.id)
+            getInternalConceptDeductions(current_node?.id)
         }
     }, [current_node])
+
+
+    useEffect(() => {
+      console.log('reasons', reasonOptions)
+    }, [reasonOptions])
+    
+
+    const getInternalConceptDeductions = async (node_id) => {
+        try {
+            let res = await WebApiFiscal.getInternalDeductions(node_id)
+            if(res.status === 200){
+                let newList = []
+                for (let index = 0; index < res?.data.length; index++) {
+                    if(res?.data[index].available_for_permits === true){
+                        newList.push({'label': res?.data[index].description, 'value': res?.data[index].id})
+                    }
+                }
+                setReasonOptions(newList)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const getNonWorkingDays = async (node) => {
         try {
@@ -241,8 +268,8 @@ const PermissionForm = ({
             </Col>
             <Col span={8}>
                 <Form.Item
-                    name='reason_type'
-                    label='tipo de motivo'
+                    name='permit_reason'
+                    label={ladingConcepts ? 'cardando...' : 'tipo de motivo'}
                     rules={[ruleRequired]}
                 >
                     <Select options={reasonOptions} size='large' />
