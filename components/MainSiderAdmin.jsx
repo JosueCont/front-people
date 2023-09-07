@@ -106,16 +106,10 @@ const MainSider = ({
       intranet_groups: "/intranet/groups",
       intranet_configuration: "/intranet/config",
       publications_statistics: "/intranet/publications_statistics",
-      // surveys: "/assessment/surveys",
-      // assessment_groups: "/assessment/groups",
-      // assessment_profiles: "/assessment/profiles",
-      // assessment_reports: "/assessment/reports",
-
-      kuiz_assessments: '/kuiz/assessments',
-      kuiz_groups: '/kuiz/groups',
-      kuiz_profiles: '/kuiz/profiles',
-      kuiz_reporst: '/kuiz/reports',
-
+      surveys: "/assessment/surveys",
+      assessment_groups: "/assessment/groups",
+      assessment_profiles: "/assessment/profiles",
+      assessment_reports: "/assessment/reports",
       ynl_general_dashboard: "/ynl/general-dashboard",
       ynl_personal_dashboard: "/ynl/personal-dashboard",
       jb_clients: "/jobbank/clients",
@@ -287,10 +281,10 @@ const MainSider = ({
       // Evaluación y diagnóstico
       if (props?.applications && (_.has(props.applications, "kuiz") && props.applications["kuiz"].active)) {
         let children11 = [
-          getItem("Evaluaciones", "kuiz_assessments"),
-          getItem("Grupos de evaluaciones", "kuiz_groups"),
-          getItem("Perfiles de competencias", "kuiz_profiles"),
-          getItem("Reportes de competencias", "kuiz_reports"),
+          getItem("Evaluaciones", "surveys"),
+          getItem("Grupos de evaluaciones", "assessment_groups"),
+          getItem("Perfiles de competencias", "assessment_profiles"),
+          getItem("Reportes de competencias", "assessment_reports"),
         ]
         let children1 = [getItem("Psicometría", "kuiz", <></>, children11)]
         items.push(getItem("Evaluación y diagnóstico", "evaluationDiagnosis", <SolutionOutlined />, children1))
