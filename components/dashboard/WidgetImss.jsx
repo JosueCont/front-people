@@ -1,94 +1,92 @@
 import React, { useState, useEffect } from 'react'
 import {
-    CardInfo,
-    CardItem,
-    CardScroll
+    CardItem
 } from './Styled';
 import {
     injectIntl,
     FormattedMessage
 } from 'react-intl';
-import {getMovementsIMSS} from '../../redux/payrollDuck'
+import { getMovementsIMSS } from '../../redux/payrollDuck'
 import { connect } from 'react-redux';
-import SelectPatronalRegistration from '../../components/selects/SelectPatronalRegistration'
-import { Col, Row, Typography } from 'antd';
-import {
-    ReloadOutlined,
-    LoadingOutlined
-} from '@ant-design/icons';
+import { Select } from 'antd';
 
-const WidgetImss = ({node, imss_movements, getMovementsIMSS, loading, ...props}) => {
+const WidgetImss = ({
+    node,
+    imss_movements,
+    getMovementsIMSS,
+    loading,
+    cat_patronal_registration,
+    load_patronal_registration,
+}) => {
+
     const [selectPR, setSelectPR] = useState(null)
     const [nPeding, setNPeding] = useState(0)
-    
     
     const getImssInfo = (val) => {
         setSelectPR(val)
     }
 
-    const getMovsInfo =  async (node, selectPR) => {
+    const getMovsInfo = async (node, selectPR) => {
         getMovementsIMSS(node, selectPR)
     }
 
     useEffect(() => {
-      if(selectPR){
-        getMovsInfo(node, selectPR)
-      }
+        if (selectPR) {
+            getMovsInfo(node, selectPR)
+        }
     }, [selectPR])
-    
-    useEffect(()=>{
-        if(imss_movements){
+
+    useEffect(() => {
+        if (imss_movements) {
             let nProcessingPending = imss_movements.filter(item => item.status === 1)
             setNPeding(nProcessingPending)
-            
         }
-    },[imss_movements])
+    }, [imss_movements])
 
-  return (
-    <CardItem hg='50%'
-        title={<img src={'/images/logo_imss.png'} width={20}/>}
-        extra={<SelectPatronalRegistration showLabel={false} style={{ margin:'auto' }} onChange={getImssInfo} />}
-    >
-        <Row>
-            <Col span={24}>
-                <p><FormattedMessage id={'dashboard.imssPending'} />:</p>
-            </Col>
-            {
-            !selectPR && 
-            <Col span={24}>
-                <Typography.Title style={{ cursor: 'pointer', marginBottom: 0 }} level={4}>
-                    Selecciona un registro  patronal
-                </Typography.Title>
-            </Col>
-        }
-        {
-            selectPR ?
-                !loading ?
-                <Col span={24}>
-                    <Typography.Title
-                        style={{ cursor: 'pointer', marginBottom: 0 }}
-                        /* onClick={() => router.push(`/home/persons/`)} */
-                        level={1}
-                    >
-                        {nPeding.length}
-                    </Typography.Title>
-                </Col>
-                    : <LoadingOutlined className="card-load" spin />
-                :
-            ""
-        }
-        </Row>
-    </CardItem>
-  )
+    const SelectPatronal = (
+        <Select
+            allowClear
+            showSearch
+            className='select-jb'
+            style={{ width: '100%' }}
+            disabled={load_patronal_registration || loading}
+            loading={load_patronal_registration || loading}
+            placeholder='Regristro patronal'
+            notFoundContent='No se encontraron resultados'
+            optionFilterProp='children'
+            onChange={getImssInfo}
+        >
+            {cat_patronal_registration.length > 0
+                && cat_patronal_registration.map(item => (
+                    <Select.Option value={item.id} key={item.id}>
+                        {item.code}
+                    </Select.Option>
+                ))}
+        </Select>
+    )
+
+    return (
+        <CardItem
+            title={<>
+                <img src={'/images/logo_imss.png'} width={20} />
+                <p><FormattedMessage id={'dashboard.imssPending'} /></p>
+            </>}
+            extra={selectPR ? nPeding?.length : null}
+        >
+            {SelectPatronal}
+        </CardItem>
+    )
 }
 
 const mapState = (state) => {
     return {
-        node: state.userStore.current_node,
-        imss_movements : state.payrollStore.imss_movements,
+        current_node: state.userStore.current_node,
+        imss_movements: state.payrollStore.imss_movements,
         loading: state.payrollStore.loading,
+        cat_patronal_registration: state.catalogStore.cat_patronal_registration,
+        load_patronal_registration: state.catalogStore.load_patronal_registration
     };
 };
 
 
-export default connect(mapState, {getMovementsIMSS})(WidgetImss)
+export default connect(mapState, { getMovementsIMSS })(WidgetImss)

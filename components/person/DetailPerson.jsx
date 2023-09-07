@@ -171,24 +171,11 @@ const DetailPerson = ({
         />
         <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
         <Tabs onTabClick={(tabcode) => processTabs(tabcode)} tabPosition="left">
-          <TabPane
-            tab={
-              <Tooltip title="Datos generales">
-                <div className="container-title-tab">
-                  <FormOutlined />
-                  <div className="text-title-tab">Datos generales</div>
-                </div>
-              </Tooltip>
-            }
-            key="tab_1"
-          >
-            <FormGeneralData person_id={person.id} />
-          </TabPane>
           {config?.nomina_enabled && (
             <TabPane
               tab={
                   <div className="container-title-tab">
-                    <DollarOutlined />
+                    <BookOutlined />
                     <div className="text-title-tab">Nómina</div>
                   </div>
               }
@@ -202,19 +189,7 @@ const DetailPerson = ({
               />
             </TabPane>
           )}          
-          {config?.nomina_enabled && (
-            <TabPane
-              tab={
-                  <div className="container-title-tab">
-                    <DollarOutlined />
-                    <div className="text-title-tab">Pagos diferidos</div>
-                  </div>
-              }
-              key="tab_16"
-            >
-              <Payment person_id={person.id} />
-            </TabPane>
-          )}          
+
           {companyFiscalInformation?.assimilated_pay == false && 
            <TabPane
             tab={
@@ -233,7 +208,33 @@ const DetailPerson = ({
               node={person.node}
             />
           </TabPane>}
-         
+          {config?.nomina_enabled && (
+              <TabPane
+                  tab={
+                    <div className="container-title-tab">
+                      <DollarOutlined />
+                      <div className="text-title-tab">Pagos diferidos</div>
+                    </div>
+                  }
+                  key="tab_16"
+              >
+                <Payment person_id={person.id} />
+              </TabPane>
+          )}
+
+          <TabPane
+              tab={
+                <Tooltip title="Datos generales">
+                  <div className="container-title-tab">
+                    <FormOutlined />
+                    <div className="text-title-tab">Datos generales</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_1"
+          >
+            <FormGeneralData person_id={person.id} />
+          </TabPane>
           <TabPane
             tab={
                 <div className="container-title-tab">
