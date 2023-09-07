@@ -89,7 +89,11 @@ const DetailsPermission = ({
     const setValuesForm = () =>{
         let values = {...infoPermit};
         values.person = infoPermit?.collaborator ? infoPermit.collaborator?.id : null;
-        values.reason_type = infoPermit?.reason_type;
+        if(infoPermit?.permit_reason_perception){
+            values.permit_reason = infoPermit.permit_reason_perception
+        }else if(infoPermit?.permit_reason_deduction){
+            values.permit_reason = infoPermit.permit_reason_deduction
+        }
         values.departure_date = infoPermit?.departure_date
             ? moment(infoPermit.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoPermit?.return_date
@@ -97,7 +101,7 @@ const DetailsPermission = ({
         formPermit.setFieldsValue(values)
     }
 
-    const onFinish = (values) =>{
+    const onFinish = (values) =>{ 
         let formData = new FormData()
         if(values.person){
             formData.append('person', values.person)
@@ -105,8 +109,12 @@ const DetailsPermission = ({
         if(values.departure_date){
             formData.append('departure_date', values.departure_date ? values.departure_date?.format('YYYY-MM-DD') : null)
         }
-        if(values.permit_reason){
-            formData.append('permit_reason', values.permit_reason)
+        if(values.permit_reason && values.reason_key){
+            if(values.reason_key === 'p'){
+                formData.append('permit_reason_perception', values.permit_reason)
+            }else if(values.reason_key === 'p'){
+                formData.append('permit_reason_deduction', values.permit_reason)
+            }   
         }
         if(values.reason){
             formData.append('reason', values.reason)

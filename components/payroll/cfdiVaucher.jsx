@@ -5,7 +5,13 @@ import {
   SearchOutlined,
   StopOutlined,
   EllipsisOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  SendOutlined,
+  DownloadOutlined,
+  MailOutlined,
+  FilePdfOutlined,
+  FileZipFilled,
+  FileZipOutlined
 } from "@ant-design/icons";
 import {
   Alert,
@@ -22,6 +28,7 @@ import {
   Table,
   Tooltip,
   Pagination,
+  Spin,
 } from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -35,6 +42,8 @@ import { API_URL_TENANT } from "../../config/config";
 import SelectYear from "../../components/selects/SelectYear";
 import GenericModal from "../modal/genericModal";
 import { set } from "lodash";
+import { EmailOutlined } from "@material-ui/icons";
+import { BsFileCode } from "react-icons/bs";
 
 const CfdiVaucher = ({
   calendar = null,
@@ -190,17 +199,24 @@ const CfdiVaucher = ({
         return (
           <>
             {!viewFilter && (
-              <Dropdown overlay={menuGeneric}>
-                <Button
-                  style={{
-                    background: "#434343",
-                    color: "#ffff",
-                  }}
-                  size="small"
-                >
-                  <EllipsisOutlined />
-                </Button>
-              </Dropdown>
+              <>
+                {
+                  props.sharingPayroll ? 
+                  <Spin spinning={true} /> :
+                  <Dropdown overlay={menuGeneric} >
+                  <Button
+                    style={{
+                      background: "#434343",
+                      color: "#ffff",
+                    }}
+                    size="small"
+                  >
+                    <EllipsisOutlined />
+                  </Button>
+                </Dropdown>
+                }
+                
+              </>
             )}
           </>
         );
@@ -310,6 +326,39 @@ const CfdiVaucher = ({
             Cancelar cfdis seleccionados
           </Menu.Item>
         )}
+        <Menu.Item
+            key="3"
+            onClick={() => props.sharePayload(rowSelectionPerson, 'SEND-CFDIS-BY-MAIL') }
+            icon={<MailOutlined />}
+          >
+            Enviar por correo
+          </Menu.Item>
+          <Menu.SubMenu
+            title='Descargar'
+            icon={<DownloadOutlined />}
+          >
+            <Menu.Item
+              key="4"
+              icon={<FilePdfOutlined />}
+              onClick={() => props.sharePayload(rowSelectionPerson, 'DOWNLOAD-CFDIS-PDF')}
+            >
+              Solo pdf
+            </Menu.Item>
+            <Menu.Item
+              key="5"
+              icon={<BsFileCode />}
+              onClick={() => props.sharePayload(rowSelectionPerson, 'DOWNLOAD-CFDIS-XML')}
+            >
+              Solo xml
+            </Menu.Item>
+            <Menu.Item
+              key="6"
+              icon={<FileZipOutlined />}
+              onClick={() => props.sharePayload(rowSelectionPerson, 'DOWNLOAD-CFDIS-XML-PDF')}
+            >
+              Ambos
+            </Menu.Item>
+          </Menu.SubMenu>
       </Menu>
     );
   };

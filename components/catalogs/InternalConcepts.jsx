@@ -231,6 +231,7 @@ const InternalConcepts = ({
   const editRegister = (item, param) => {
     setEdit(true);
     setId(item.id);
+    console.log('item', item)
 
     if (key == 1) {
       form.setFieldsValue({
@@ -245,7 +246,8 @@ const InternalConcepts = ({
         is_seventh_day: item.is_seventh_day,
         apply_assimilated: item.apply_assimilated,
         accountant_account: item.accountant_account,
-        counterpart: item.counterpart
+        counterpart: item.counterpart,
+        available_for_permits: item.available_for_permits
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -521,7 +523,7 @@ const InternalConcepts = ({
             </Col>
           )}
           {
-            isDeduction &&
+            (isDeduction || isPerception) &&
             <Col lg={6} xs={22} md={12}>
               <Form.Item
                 name="available_for_permits"
@@ -653,7 +655,7 @@ const InternalConcepts = ({
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm percepciones />
+              <RenderForm percepciones isPerception />
             </Form>
           )}
         </TabPane>
