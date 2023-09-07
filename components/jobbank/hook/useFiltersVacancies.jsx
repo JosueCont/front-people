@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { optionsStatusVacant } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
 import { getFullName } from "../../../utils/functions";
+import { useRouter } from "next/router";
 
 export const useFiltersVacancies = () => {
 
@@ -12,9 +12,30 @@ export const useFiltersVacancies = () => {
         list_clients_options,
         load_clients_options,
     } = useSelector(state => state.jobBankStore);
-    const dispatch = useDispatch();
+
+    const router = useRouter();
+    const { strategy__recruiter_id } = router.query;
 
     const [loading, setLoading] = useState(true);
+    const [recruiter, setRecruiter] = useState({});
+
+    useEffect(() => {
+        if (!strategy__recruiter_id) setRecruiter({});
+        else getRecruiter();
+    }, [strategy__recruiter_id])
+
+    const getRecruiter = async () => {
+        try {
+            setLoading(true)
+            let response = await WebApiPeople.getPerson(strategy__recruiter_id);
+            setRecruiter(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            setRecruiter({})
+        }
+    }
 
     const getStatus = (value) => getValueFilter({
         value,
@@ -28,33 +49,8 @@ export const useFiltersVacancies = () => {
         list: list_clients_options
     })
 
-    const getRecruiter = async (id, key) => {
-        try {
-            setLoading(true)
-            let response = await WebApiPeople.getPerson(id);
-            let value = { [key]: response.data };
-            dispatch(setJobbankFiltersData(value))
-            setTimeout(() => {
-                setLoading(false)
-            }, 500)
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            return id;
-        }
-    }
-
-    const deleteState = (key) => {
-        dispatch(setJobbankFiltersData({ [key]: null }))
-    }
-
-    const listAwait = {
-        strategy__recruiter_id: getRecruiter
-    }
-
     const listKeys = {
-        job_position__unaccent__icontains:{
+        job_position__unaccent__icontains: {
             name: 'Nombre'
         },
         status: {
@@ -69,12 +65,16 @@ export const useFiltersVacancies = () => {
         strategy__recruiter_id: {
             name: 'Reclutador',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(recruiter).length > 0 ? getFullName(recruiter) : e
         }
     }
 
+    const listData = {
+        recruiter
+    }
+
     return {
-        listAwait,
-        listKeys
+        listKeys,
+        listData
     }
 }

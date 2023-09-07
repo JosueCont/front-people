@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
-  SyncOutlined,
-  SettingOutlined,
+    SyncOutlined,
+    SettingOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -19,16 +19,16 @@ const SearchApplications = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listAwait } = useFiltersApplications();
+    const { listKeys, listData } = useFiltersApplications();
     const format = 'YYYY-MM-DD';
 
-    const formatRange = () =>{
+    const formatRange = () => {
         let dates = router.query?.date?.split(',');
         return [moment(dates[0], format), moment(dates[1], format)];
     }
 
-    const showModal = () =>{
-        let filters = {...router.query};
+    const showModal = () => {
+        let filters = { ...router.query };
         filters.status = router.query?.status ? parseInt(router.query.status) : null;
         filters.date = router.query?.date ? formatRange() : null;
         filters.candidate = router.query?.candidate ? parseInt(router.query?.candidate) : null;
@@ -36,7 +36,7 @@ const SearchApplications = ({
         setOpenModal(true)
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
@@ -44,9 +44,9 @@ const SearchApplications = ({
     const setFilters = (filters = {}) => router.replace({
         pathname: '/jobbank/applications/',
         query: filters
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         values.date = values.date
             ? `${values.date[0].format(format)},${values.date[1].format(format)}`
             : null;
@@ -54,28 +54,28 @@ const SearchApplications = ({
         setFilters(filters)
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
         setFilters()
     }
 
     return (
         <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Postulaciones
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
@@ -83,14 +83,12 @@ const SearchApplications = ({
                         </div>
                     </Col>
                     <Col span={24}>
-                        <TagFilters
-                            listKeys={listKeys}
-                            listAwait={listAwait}
-                        />
-                    </Col>  
+                        <TagFilters listKeys={listKeys} />
+                    </Col>
                 </Row>
             </Card>
             <FiltersApplications
+                listData={listData}
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
@@ -100,8 +98,8 @@ const SearchApplications = ({
     )
 }
 
-const mapState = (state) =>{
-    return{
+const mapState = (state) => {
+    return {
         currentNode: state.userStore.current_node
     }
 }

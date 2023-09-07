@@ -1,9 +1,9 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { optionsStatusSelection } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
 import WebApiJobBank from "../../../api/WebApiJobBank";
-import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
-import { useState } from "react";
+import { useRouter } from "next/router";
 
 export const useFiltersSelection = () => {
 
@@ -11,8 +11,30 @@ export const useFiltersSelection = () => {
         list_vacancies_options,
         load_vacancies_options,
     } = useSelector(state => state.jobBankStore);
-    const dispatch = useDispatch();
+
+    const router = useRouter();
+    const { candidate } = router.query;
+
     const [loading, setLoading] = useState(false);
+    const [infoCandidate, setInfoCandidate] = useState({});
+
+    useEffect(() => {
+        if (!candidate) setInfoCandidate({});
+        else getCandidate();
+    }, [candidate])
+
+    const getCandidate = async () => {
+        try {
+            setLoading(true)
+            let response = await WebApiJobBank.getInfoCandidate(candidate);
+            setInfoCandidate(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+            setInfoCandidate({})
+        }
+    }
 
     const getStatus = (value) => getValueFilter({
         value,
@@ -27,28 +49,7 @@ export const useFiltersSelection = () => {
         keyShow: 'job_position'
     })
 
-    const getCandidate = async (id, key) =>{
-        try {
-            setLoading(true)
-            let response = await WebApiJobBank.getInfoCandidate(id);
-            let value = {[key]: response.data};
-            dispatch(setJobbankFiltersData(value));
-            setLoading(false)
-            return `${response.data?.first_name} ${response.data?.last_name}`;
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            return id;
-        }
-    }
-
-    const deleteState = (key) =>{
-        dispatch(setJobbankFiltersData({[key] : null}))
-    }
-
-    const listAwait = {
-        candidate: getCandidate
-    }
+    const getName = () => `${infoCandidate?.first_name} ${infoCandidate?.last_name}`;
 
     const listKeys = {
         status_process: {
@@ -63,12 +64,16 @@ export const useFiltersSelection = () => {
         candidate: {
             name: 'Candidato',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(infoCandidate).length > 0 ? getName() : e
         }
+    }
+
+    const listData = {
+        candidate: infoCandidate
     }
 
     return {
         listKeys,
-        listAwait
+        listData
     };
 }

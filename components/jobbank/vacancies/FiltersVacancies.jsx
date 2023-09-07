@@ -8,33 +8,33 @@ import SelectPeople from '../../people/utils/SelectPeople';
 
 const FiltersVacancies = ({
     visible,
-    close = () =>{},
-    onFinish = ()=>{},
+    listData = {},
+    close = () => { },
+    onFinish = () => { },
     formSearch
 }) => {
 
     const {
         list_clients_options,
-        load_clients_options,
-        jobbank_filters_data
+        load_clients_options
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             close()
             setLoading(false)
             onFinish(values);
-        },1000)
+        }, 1000)
     }
 
-    const itemRecruiter = useMemo(()=>{
-        if(!visible) return [];
-        let recruiter = jobbank_filters_data?.strategy__recruiter_id || {};
-        if(Object.keys(recruiter).length <= 0) return [];
+    const itemRecruiter = useMemo(() => {
+        if (!visible) return [];
+        let recruiter = listData?.recruiter || {};
+        if (Object.keys(recruiter).length <= 0) return [];
         return [recruiter];
-    },[jobbank_filters_data?.strategy__recruiter_id, visible])
+    }, [listData?.recruiter, visible])
 
     return (
         <MyModal
@@ -49,7 +49,7 @@ const FiltersVacancies = ({
                 form={formSearch}
                 layout='vertical'
             >
-                <Row gutter={[16,0]}>
+                <Row gutter={[16, 0]}>
                     <Col span={12}>
                         <Form.Item
                             name='job_position__unaccent__icontains'
@@ -89,7 +89,7 @@ const FiltersVacancies = ({
                                 notFoundContent='No se encontraron resultados'
                                 optionFilterProp='children'
                             >
-                                {list_clients_options.length > 0 && list_clients_options.map(item=> (
+                                {list_clients_options.length > 0 && list_clients_options.map(item => (
                                     <Select.Option value={item.id} key={item.id}>
                                         {item.name}
                                     </Select.Option>
@@ -104,12 +104,12 @@ const FiltersVacancies = ({
                             itemSelected={itemRecruiter}
                         />
                     </Col>
-                    <Col span={24} className='content-end' style={{gap: 8}}>
-                        <Button onClick={()=> close()}>
+                    <Col span={24} className='content-end' style={{ gap: 8 }}>
+                        <Button onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
-                            loading={loading} 
+                            loading={loading}
                             htmlType='submit'
                         >
                             Aplicar

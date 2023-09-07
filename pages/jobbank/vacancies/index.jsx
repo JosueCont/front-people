@@ -6,8 +6,7 @@ import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 import {
     getVacancies,
-    getClientsOptions,
-    setJobbankFiltersData
+    getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { getFiltersJB } from '../../../utils/functions';
 import MainIndexJB from '../../../components/jobbank/MainIndexJB';
@@ -15,8 +14,7 @@ import MainIndexJB from '../../../components/jobbank/MainIndexJB';
 const index = ({
     getVacancies,
     currentNode,
-    getClientsOptions,
-    setJobbankFiltersData
+    getClientsOptions
 }) => {
 
     const router = useRouter();
@@ -35,11 +33,6 @@ const index = ({
             getVacancies(currentNode.id, filters, page, size);
         }
     },[currentNode, router.query])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setJobbankFiltersData({}, false);
-    }, [router.query])
 
     return (
         <MainIndexJB
@@ -61,7 +54,6 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getVacancies,
-        getClientsOptions,
-        setJobbankFiltersData
+        getClientsOptions
     }
 )(withAuthSync(index));

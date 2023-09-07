@@ -6,7 +6,7 @@ import {
 } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
 
-export const useFiltersPreselection = () =>{
+export const useFiltersPreselection = () => {
 
     const {
         load_main_categories,
@@ -17,7 +17,7 @@ export const useFiltersPreselection = () =>{
         list_scholarship
     } = useSelector(state => state.jobBankStore);
     const paramsOptions = { keyEquals: 'value', keyShow: 'label' };
-    
+
     const getCategory = (id) => getValueFilter({
         value: id,
         list: list_main_categories
