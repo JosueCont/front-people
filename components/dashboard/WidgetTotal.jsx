@@ -52,12 +52,12 @@ const WidgetTotal = () => {
                 <img src='/images/people.png' />
                 <p><FormattedMessage id={'dashboard.totalpeople'} /></p>
             </>}
-            extra={<a onClick={() => router.push(`/home/persons/`)}><FormattedMessage id={'view'} /></a>}
+            extra={<a onClick={() => router.push(`/home/persons/?is_active=true`)}><FormattedMessage id={'view'} /></a>}
         >
             {!loading ?
                 <Typography.Title
                     style={{ cursor: 'pointer', marginBottom: 0 }}
-                    onClick={() => router.push(`/home/persons/`)}
+                    onClick={() => router.push(`/home/persons/?is_active=true`)}
                     level={1}
                 >
                     {total}
