@@ -38,6 +38,7 @@ import WithholdingNoticesContent from '../../../components/payroll/ImssMovements
 import locale from "antd/lib/date-picker/locale/es_ES";
 import AfilliateMovements from "../../business/AfilliateMovements";
 import WithHoldingNotice from "../../business/WithHoldingNotice";
+import VariabilitySalary from "../../../components/payroll/ImssMovements/VariabilitySalary";
 
 
 const ImssMovements = ({ ...props }) => {
@@ -503,6 +504,11 @@ const disabledMaxDate  = (current) => {
               <Panel header="Variabilidad" key="5">
                 <Col span={24}>
                   <Variability currentNodeId={currentNodeId} />
+                </Col>
+              </Panel>
+              <Panel header="Variabilidad" key="8">
+                <Col span={24}>
+                  <VariabilitySalary currentNodeId={currentNodeId} />
                 </Col>
               </Panel>
               <Panel header="Movimientos afiliatorios" key="6">

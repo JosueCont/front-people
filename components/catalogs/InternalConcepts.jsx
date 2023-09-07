@@ -485,12 +485,13 @@ const InternalConcepts = ({
           <Col lg={6} xs={22} md={12}>
             <SelectAccountantAccount allowClear={true}/>
           </Col>
-          <Col lg={6} xs={22} md={12}>
-            <SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>
-          </Col>
+           <Col lg={6} xs={22} md={12}>
+            {/*<SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>*/}
+          </Col> 
           <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="show"
+              tooltip="Al activar esta opción te permitirá elegir este concepto para usarlo al calcular una nómina."
               label="Mostrar para calcular"
               valuePropName="checked"
             >

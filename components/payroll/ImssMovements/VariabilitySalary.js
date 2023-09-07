@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import moment, { locale } from 'moment'
 import { ruleRequired } from "../../../utils/rules";
 
-const Variability = ({ currentNode, user }) => {
+const VariabilitySalary = ({ currentNode, user }) => {
     const [formFilters] = Form.useForm()
     const [ loading, setLoading ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
@@ -60,20 +60,6 @@ const Variability = ({ currentNode, user }) => {
             return
         }
 
-        if (year){
-            values.year = year
-        }
-        else {
-            message.error("Selecciona un registro patronal") 
-            return
-        }
-
-        if(values.bimester){
-            let months = getMonths(values.bimester)
-            values.start_month = parseInt(months[0])
-            values.end_month = parseInt(months[1])   
-        }
-
         values.modified_by = user?.id;
         setFilters(values)        
 
@@ -108,13 +94,14 @@ const Variability = ({ currentNode, user }) => {
    
     return (
         <>
+        
             <Form
                 layout="vertical"
                 form={formFilters}
                 onFinish={generateVariability}
                 >
                   <Row gutter={[10,0]}>                     
-                    <Col span={6}>
+                    {/* <Col span={6}>
                       <Form.Item rules={[ruleRequired]} name="year" label="Año">
                       <DatePicker 
                         style={{ width:'100%' }} 
@@ -130,14 +117,14 @@ const Variability = ({ currentNode, user }) => {
                       <Form.Item  name='bimester' label="Bimestre" rules={[ruleRequired]}>
                         <Select placeholder={"Bimestre"} options={bimesters}/>
                       </Form.Item>
-                    </Col>                   
+                    </Col>                    */}
                     <Col span={6}>
                       <SelectPatronalRegistration onChange={(value) => setPatronalSelected(value)}/>
                     </Col>                    
                 </Row>
                 <Row gutter={[10,0]}>
                     <Col span={6}>
-                      <Form.Item  name='change_sdi' label="¿Modificar Salario diario integrado?" initialValue={false} valuePropName="checked">
+                      <Form.Item  name='change_sdi' label="¿Modificar salario diario por anivesario?" initialValue={false} valuePropName="checked">
                         <Switch
                          checkedChildren={<CheckOutlined />}
                          unCheckedChildren={<CloseOutlined />}                        
@@ -199,4 +186,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState)(Variability); 
+export default connect(mapState)(VariabilitySalary); 
