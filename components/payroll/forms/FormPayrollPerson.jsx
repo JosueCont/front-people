@@ -201,6 +201,7 @@ const FormPayrollPerson = ({
           let item = response.data;
           setPerceptionCode(item.payment_calendar?.perception_type?.code)
           setPayrollPerson(item);
+          setContractTypeSelected(item.contract_type)
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type ? item.contract_type.id : null,
@@ -583,6 +584,21 @@ const FormPayrollPerson = ({
       });
   };
 
+  const endContract = (current) => {
+    let dateEnd = formPayrollPerson.getFieldValue('contract_end')
+      /* let valid_start = current < dateStart?.startOf('day'); */
+      let valid_end = current > dateEnd?.endOf('day');
+      return valid_end
+  }
+
+  const startContract = (current) =>{
+    let dateStart = formPayrollPerson.getFieldValue('contract_start')
+    console.log('dateStard', dateStart)
+      let valid_start = current < dateStart?.startOf('day');
+      /* let valid_end = current > dateEnd?.endOf('day'); */
+      return valid_start
+  }
+
   const handleValuesChange = (changedValues) => {
     if (changedValues.hiring_regime_type) {
       const type = props.catHiringRegime.filter(
@@ -684,7 +700,7 @@ const FormPayrollPerson = ({
                         name="contract_start"
                         label="Inicio del contrato"
                       >
-                        <DatePicker locale={locale} style={{ width:'100%' }} />
+                        <DatePicker disabledDate={endContract} locale={locale} style={{ width:'100%' }} />
                       </Form.Item>
                   </Col>
                   <Col lg={10} xs={22} md={12}>
@@ -692,7 +708,7 @@ const FormPayrollPerson = ({
                         name="contract_end"
                         label="Fin del contrato"
                       >
-                        <DatePicker locale={locale} style={{ width:'100%' }} />
+                        <DatePicker disabledDate={startContract} locale={locale} style={{ width:'100%' }} />
                       </Form.Item>
                   </Col>
                   </>
