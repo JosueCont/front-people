@@ -11,13 +11,12 @@ import { connect } from "react-redux";
 import moment, { locale } from 'moment'
 import { ruleRequired } from "../../../utils/rules";
 
-const VariabilitySalary = ({ currentNode, user }) => {
+const SalaryByAnniversary = ({ currentNode, user }) => {
     const [formFilters] = Form.useForm()
     const [ loading, setLoading ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ filters, setFilters ] = useState(null)
-    const [year, setYear] = useState(null)
-    const [loadingVariabilidad, setLoadingVariabilidad] = useState(false)
+    const [year, setYear] = useState(null)    
 
 
 
@@ -53,43 +52,41 @@ const VariabilitySalary = ({ currentNode, user }) => {
         setYear(parseInt(dateString));      
     }
 
-    const generateVariability = async (values) => {
-        setLoadingVariabilidad(true)
-        if(!values.patronal_registration){
-            message.error("Selecciona un registro patronal")
-            return
-        }
+    const UpdateSalary = async (values) => {
+      setLoading(true)        
+      if(!values.patronal_registration){
+          message.error("Selecciona un registro patronal")
+          return
+      }
 
-        values.modified_by = user?.id;
-        setFilters(values)        
+      values.modified_by = user?.id;
+      setFilters(values)        
 
-        setLoading(true)
-        try {
-            if(values.download){
-                downLoadFileBlob(
-                    `${getDomain(API_URL_TENANT)}/payroll/variability/create_variability/`,
-                    "Reporte_de_variabiliadad.xlsx",
-                    "POST",
-                    values,
-                    "Intente nuevamente"
-                )
-            }else{
-                let response = await WebApiPayroll.generateVariability(values);
-                if (response){
-                    message.success(response?.data?.message)
-                }
-            }
+      try {
+          if(values.download){
+              downLoadFileBlob(
+                  `${getDomain(API_URL_TENANT)}/payroll/update-salary-by-anniversary`,
+                  "Actualizar_salarios_aniversario.xlsx",
+                  "POST",
+                  values,
+                  "Intente nuevamente"
+              )
+          }else{
+              let response = await WebApiPayroll.updateSalaryByAnniversary(values);
+              if (response){
+                  message.success(response?.data?.message)
+              }
+          }
 
-        } catch (error) {
-            if (error?.response?.data?.message){
-                message.error(error?.response?.data?.message)
-            }else{
-                message.error("Hubo un error al descargar, intenta nuevamente.")
-            }
-        }finally{
-            setLoading(false);
-            setLoadingVariabilidad(false)
-        }
+      } catch (error) {
+          if (error?.response?.data?.message){
+              message.error(error?.response?.data?.message)
+          }else{
+              message.error("Hubo un error al descargar, intenta nuevamente.")
+          }
+      }finally{
+          setLoading(false);            
+      }
     }
    
     return (
@@ -98,7 +95,7 @@ const VariabilitySalary = ({ currentNode, user }) => {
             <Form
                 layout="vertical"
                 form={formFilters}
-                onFinish={generateVariability}
+                onFinish={UpdateSalary}
                 >
                   <Row gutter={[10,0]}>                     
                     {/* <Col span={6}>
@@ -150,8 +147,8 @@ const VariabilitySalary = ({ currentNode, user }) => {
                 </Row>
                 <Row gutter={[10,0]}>
                     <Col span={24}>   
-                      <Button htmlType="submit" loading={loadingVariabilidad}  disabled = { patronalSelected?  false : true }>
-                        Generar variabilidad    
+                      <Button htmlType="submit" loading={loading}  disabled = { patronalSelected?  false : true }>
+                        Enviar    
                       </Button>
                     </Col>
                 </Row>
@@ -186,4 +183,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState)(VariabilitySalary); 
+export default connect(mapState)(SalaryByAnniversary); 
