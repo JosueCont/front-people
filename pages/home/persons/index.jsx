@@ -11,8 +11,7 @@ import SearchPeople from '../../../components/people/SearchPeople';
 import TablePeople from '../../../components/people/TablePeople';
 import { connect } from 'react-redux';
 import {
-    getCollaborators,
-    setUserFiltersData
+    getCollaborators
 } from '../../../redux/UserDuck';
 import {
     getListAssets,
@@ -31,8 +30,7 @@ const index = ({
     getCategories,
     getListAssets,
     getGroupsAssessments,
-    getPersonType,
-    setUserFiltersData
+    getPersonType
 }) => {
 
     const router = useRouter();
@@ -44,11 +42,6 @@ const index = ({
         let filters = getFiltersJB({...router.query});
         getCollaborators(currentNode.id, filters, page, size)
     }, [currentNode, router?.query])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setUserFiltersData({}, false);
-    }, [router.query])
 
     useEffect(() => {
         if (!currentNode) return;
@@ -100,7 +93,6 @@ export default connect(
         getCategories,
         getListAssets,
         getGroupsAssessments,
-        getPersonType,
-        setUserFiltersData
+        getPersonType
     }
 )(withAuthSync(index))

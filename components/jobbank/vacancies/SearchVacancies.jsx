@@ -20,16 +20,16 @@ const SearchVacancies = ({
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const {listAwait, listKeys } = useFiltersVacancies();
+    const { listKeys, listData } = useFiltersVacancies();
 
-    const showModal = () =>{
-        let filters = {...router.query};
+    const showModal = () => {
+        let filters = { ...router.query };
         filters.status = router.query?.status ? parseInt(router.query.status) : null;
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
@@ -37,39 +37,39 @@ const SearchVacancies = ({
     const setFilters = (filters = {}) => router.replace({
         pathname: '/jobbank/vacancies/',
         query: filters
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let filters = createFiltersJB(values);
         setFilters(filters)
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
         setFilters()
     }
 
     return (
-       <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+        <>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Vacantes
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push({
+                                <Button onClick={() => router.push({
                                     pathname: '/jobbank/vacancies/add',
                                     query: router.query
                                 })}>
@@ -79,25 +79,23 @@ const SearchVacancies = ({
                         </div>
                     </Col>
                     <Col span={24}>
-                        <TagFilters
-                            listKeys={listKeys}
-                            listAwait={listAwait}
-                        />
-                    </Col>  
+                        <TagFilters listKeys={listKeys}/>
+                    </Col>
                 </Row>
             </Card>
             <FiltersVacancies
+                listData={listData}
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
-       </>
+        </>
     )
 }
 
-const mapState = (state) =>{
-    return{
+const mapState = (state) => {
+    return {
         currentNode: state.userStore.current_node,
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,

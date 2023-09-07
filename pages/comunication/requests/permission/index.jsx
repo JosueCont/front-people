@@ -6,30 +6,23 @@ import MainRequets from '../../../../components/comunication/MainRequets';
 import SearchPermission from '../../../../components/comunication/permission/SearchPermission';
 import TablePermission from '../../../../components/comunication/permission/TablePermission';
 import WebApiPeople from '../../../../api/WebApiPeople';
-import { setUserFiltersData } from '../../../../redux/UserDuck';
 import { getFiltersJB } from '../../../../utils/functions';
 
 const index = ({
-    currentNode,
-    setUserFiltersData
+    currentNode
 }) => {
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [permits, setPermits] = useState([]);
 
-    useEffect(()=>{
-        if(!currentNode) return;
-        let filters = getFiltersJB({...router.query});
-        getListPermissions(currentNode?.id, filters);
-    },[currentNode, router.query])
-
     useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setUserFiltersData({}, false);
-    }, [router.query])
+        if (!currentNode) return;
+        let filters = getFiltersJB({ ...router.query });
+        getListPermissions(currentNode?.id, filters);
+    }, [currentNode, router.query])
 
-    const getListPermissions = async (node, query = '') =>{
+    const getListPermissions = async (node, query = '') => {
         try {
             setLoading(true)
             let response = await WebApiPeople.getPermitsRequest(node, query);
@@ -63,8 +56,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(
-    mapState, {
-        setUserFiltersData
-    }
-)(withAuthSync(index))
+export default connect(mapState)(withAuthSync(index))

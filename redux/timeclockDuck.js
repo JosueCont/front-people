@@ -11,8 +11,7 @@ const initialState = {
     load_work_centers_options: false,
     timeclock_page: 1,
     timeclock_filters: "",
-    timeclock_page_size: 10,
-    timeclock_filters_data: {}
+    timeclock_page_size: 10
 }
 
 const GET_WORK_CENTERS = "GET_WORK_CENTERS";
@@ -20,8 +19,6 @@ const GET_WORK_CENTERS_OPTIONS = "GET_WORK_CENTERS_OPTIONS";
 
 const GET_LOGS_EVENTS = "GET_LOGS_EVENTS";
 const GET_COMPANIES = "GET_COMPANIES";
-
-const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const timeclockReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -55,21 +52,9 @@ const timeclockReducer = (state = initialState, action) => {
                 list_companies: action.payload,
                 load_companies: action.fetching
             }
-        case SET_FILTERS_DATA:
-            return {
-                ...state,
-                timeclock_filters_data: action.keep ? {
-                    ...state.timeclock_filters_data,
-                    ...action.payload
-                } : action.payload
-            }
         default:
             return state;
     }
-}
-
-export const setTimeclockFiltersData = (data = {}, keep = true) => (dispatch) => {
-    dispatch({ type: SET_FILTERS_DATA, payload: data, keep })
 }
 
 export const getWorkCenters = (query = '', page = 1, size = 10) => async (dispatch) => {

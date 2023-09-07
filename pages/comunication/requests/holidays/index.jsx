@@ -7,11 +7,9 @@ import WebApiPeople from '../../../../api/WebApiPeople';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { getFiltersJB } from '../../../../utils/functions';
-import { setUserFiltersData } from '../../../../redux/UserDuck';
 
 const index = ({
-    currentNode,
-    setUserFiltersData
+    currentNode
 }) => {
 
     const router = useRouter();
@@ -26,11 +24,6 @@ const index = ({
             setLastFilters(filters)
         }
     }, [currentNode, router.query])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setUserFiltersData({}, false);
-    }, [router.query])
 
     const validFilters = () => {
         let params = { ...router.query};
@@ -78,8 +71,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(
-    mapState, {
-        setUserFiltersData
-    }
-)(withAuthSync(index));
+export default connect(mapState)(withAuthSync(index));

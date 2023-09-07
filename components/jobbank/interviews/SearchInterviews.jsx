@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { Button, Row, Col, Form, Card, Tooltip, message } from 'antd';
 import {
-  SyncOutlined,
-  SettingOutlined,
-  CalendarOutlined,
-  ArrowLeftOutlined
+    SyncOutlined,
+    SettingOutlined,
+    CalendarOutlined,
+    ArrowLeftOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -27,23 +27,29 @@ const SearchInterviews = ({
     jobbank_page
 }) => {
 
+    const discardKeys = ['year', 'type', 'view', 'mth'];
     const urlDefault = '/jobbank/interviews';
+    const {
+        fetchAction,
+        googleCalendar,
+        createData,
+        token
+    } = useContext(InterviewContext);
+
     const router = useRouter();
-    const discardKeys = ['year','type','view','mth'];
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     const [openModalForm, setOpenModalForm] = useState(false);
-    const { listKeys, listAwait } = useFiltersInterviews();
-    const { fetchAction, googleCalendar, createData, token } = useContext(InterviewContext);
+    const { listKeys, listData } = useFiltersInterviews();
 
-    const actionCreate = async (values) =>{
-        try{
-            let body = {...createData(values), node: currentNode.id};
-            let headers = {'access-token': token.access_token};
+    const actionCreate = async (values) => {
+        try {
+            let body = { ...createData(values), node: currentNode.id };
+            let headers = { 'access-token': token.access_token };
             await WebApiJobBank.createInterview(body, headers);
             getInterviews(currentNode.id, jobbank_filters);
             message.success('Evento registrado')
-        }catch(e){
+        } catch (e) {
             console.log(e)
             let error = e.response?.data?.message;
             let msg = error ? error : 'Evento no registrado';
@@ -51,8 +57,8 @@ const SearchInterviews = ({
         }
     }
 
-    const showModal = () =>{
-        let filters = {...router.query};
+    const showModal = () => {
+        let filters = { ...router.query };
         filters.candidate = router.query?.candidate ? parseInt(router.query?.candidate) : null;
         filters.date = router.query?.date ? moment(router.query?.date, 'DD-MM-YYYY') : null;
         filters.status = router.query?.status ? parseInt(router.query?.status) : null;
@@ -60,7 +66,7 @@ const SearchInterviews = ({
         setOpenModal(true)
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
@@ -68,36 +74,36 @@ const SearchInterviews = ({
     const setFilters = (filters = {}) => router.replace({
         pathname: isCalendar ? `${urlDefault}/calendar` : urlDefault,
         query: filters
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let filters = createFiltersJB(values);
-        if(router.query?.view) filters.view = router.query?.view;
+        if (router.query?.view) filters.view = router.query?.view;
         setFilters(filters);
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
         setFilters()
     }
 
     return (
         <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Eventos
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
@@ -120,11 +126,11 @@ const SearchInterviews = ({
                                         </Button>
                                     </Tooltip>
                                 )} */}
-                                <BtnLoginGC/>
+                                <BtnLoginGC />
                                 <Tooltip title={googleCalendar.msg}>
                                     <Button
                                         disabled={!googleCalendar.valid}
-                                        onClick={()=> fetchAction(()=> setOpenModalForm(true))}
+                                        onClick={() => fetchAction(() => setOpenModalForm(true))}
                                     >
                                         Agregar
                                     </Button>
@@ -135,29 +141,29 @@ const SearchInterviews = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listAwait={listAwait}
                             discardKeys={discardKeys}
                         />
-                    </Col>  
+                    </Col>
                 </Row>
             </Card>
             <FiltersInterviews
                 visible={openModal}
+                listData={listData}
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
             />
             <EventForm
                 visible={openModalForm}
-                close={()=> setOpenModalForm(false)}
+                close={() => setOpenModalForm(false)}
                 actionForm={actionCreate}
             />
         </>
     )
 }
 
-const mapState = (state) =>{
-    return{
+const mapState = (state) => {
+    return {
         currentNode: state.userStore.current_node,
         jobbank_page: state.jobBankStore.jobbank_page,
         jobbank_filters: state.jobBankStore.jobbank_filters

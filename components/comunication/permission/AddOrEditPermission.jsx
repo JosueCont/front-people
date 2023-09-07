@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import MainRequets from '../MainRequets';
 import DetailsPermission from './DetailsPermission';
 
 const AddOrEditPermission = ({
     action = 'add',
     currentNode,
-    getPersonsCompany
 }) => {
-
-    useEffect(()=>{
-        if(!currentNode) return;
-        getPersonsCompany(currentNode?.id)
-    },[currentNode])
 
     const ExtraBread = [
         {name: 'Permisos', URL: '/comunication/requests/permission'},
@@ -36,8 +29,4 @@ const mapState = (state) => {
     }
 }
 
-export default connect(
-    mapState, {
-        getPersonsCompany
-    }
-)(AddOrEditPermission)
+export default connect(mapState)(AddOrEditPermission)

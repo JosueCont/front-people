@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { getValueFilter } from "../../../utils/functions";
 import { optionsStatusVacant } from "../../../utils/constant";
 
-export const useFiltersStrategies = () =>{
+export const useFiltersStrategies = () => {
 
     const {
         list_vacancies_options,

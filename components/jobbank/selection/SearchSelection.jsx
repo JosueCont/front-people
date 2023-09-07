@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
-  SyncOutlined,
-  SettingOutlined,
+    SyncOutlined,
+    SettingOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { createFiltersJB } from '../../../utils/functions';
@@ -15,50 +15,50 @@ const SearchSelection = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listAwait } = useFiltersSelection();
+    const { listKeys, listData } = useFiltersSelection();
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let filters = createFiltersJB(values);
         router.replace({
             pathname: '/jobbank/selection',
             query: filters
-        }, undefined, {shallow: true});
+        }, undefined, { shallow: true });
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
-        router.replace('/jobbank/selection', undefined, {shallow: true});
+        router.replace('/jobbank/selection', undefined, { shallow: true });
     }
 
-    const showModal = () =>{
+    const showModal = () => {
         let status_process = router.query?.status_process ? parseInt(router.query.status_process) : null;
         let candidate = router.query?.candidate ? parseInt(router.query.candidate) : null;
-        formSearch.setFieldsValue({...router.query, status_process, candidate});
+        formSearch.setFieldsValue({ ...router.query, status_process, candidate });
         setOpenModal(true)
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
 
     return (
         <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Proceso de selección
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
@@ -66,14 +66,12 @@ const SearchSelection = () => {
                         </div>
                     </Col>
                     <Col span={24}>
-                        <TagFilters
-                            listKeys={listKeys}
-                            listAwait={listAwait}
-                        />
-                    </Col>  
+                        <TagFilters listKeys={listKeys}/>
+                    </Col>
                 </Row>
             </Card>
             <FiltersSelection
+                listData={listData}
                 visible={openModal}
                 close={closeModal}
                 formSearch={formSearch}

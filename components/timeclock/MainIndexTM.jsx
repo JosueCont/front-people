@@ -10,7 +10,7 @@ import { Breadcrumb, ConfigProvider } from 'antd';
 import { useRouter } from 'next/router';
 import { verifyMenuNewForTenant } from '../../utils/functions';
 
-const MainBusiness = ({
+const MainIndexTM = ({
     children,
     newFilters = {},
     pageKey = '',
@@ -57,4 +57,4 @@ const MainBusiness = ({
     )
 }
   
-export default MainBusiness;
+export default MainIndexTM;

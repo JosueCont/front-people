@@ -7,8 +7,7 @@ import {
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
-    getConnectionsOptions,
-    setJobbankFiltersData
+    getConnectionsOptions
 } from '../../../redux/jobBankDuck';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
@@ -23,8 +22,7 @@ const calendar = ({
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
-    getConnectionsOptions,
-    setJobbankFiltersData
+    getConnectionsOptions
 }) => {
 
     const router = useRouter();
@@ -45,11 +43,6 @@ const calendar = ({
             getClientsOptions(currentNode.id)
         }
     }, [currentNode])
-
-    useEffect(() => {
-        let valid = Object.keys(router.query).length <= 0;
-        if(valid) setJobbankFiltersData({}, false);
-    }, [router.query])
 
     useEffect(() => {
         if (currentNode) {
@@ -84,7 +77,6 @@ export default connect(
     getInterviews,
     getSelectionOpions,
     getClientsOptions,
-    getConnectionsOptions,
-    setJobbankFiltersData
+    getConnectionsOptions
 }
 )(withAuthSync(calendar));

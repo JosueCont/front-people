@@ -1,17 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { optionsStatusVacation } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useDispatch } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { setUserFiltersData } from "../../../redux/UserDuck";
+import { useRouter } from "next/router";
 
 export const useFiltersRequests = () => {
-    
-    const dispatch = useDispatch();
-    const [loading, setLoading] = useState({
-        person__id: true,
-        immediate_supervisor: true
-    });
+
+    const router = useRouter();
+    const {
+        person__id,
+        immediate_supervisor
+    } = router.query;
+
+    const inital = { person: {}, supervisor: {} };
+    const load = { person: true, supervisor: true };
+    const [person, setPerson] = useState(inital);
+    const [loading, setLoading] = useState(load)
+
+    const set_ = (prev, key, value) => ({ ...prev, [key]: value });
+    const setInfo = (key, value = {}) => setPerson(e => set_(e, key, value));
+    const setLoad = (key, value = false) => setLoading(e => set_(e, key, value));
+
+    useEffect(() => {
+        if (!person__id) setInfo('person')
+        else getPerson(person__id, 'person');
+    }, [person__id])
+
+    useEffect(() => {
+        if (!immediate_supervisor) setInfo('supervisor');
+        else getPerson(immediate_supervisor, 'supervisor');
+    }, [immediate_supervisor])
+
+    const getPerson = async (id, key) => {
+        try {
+            setLoad(key, true)
+            let response = await WebApiPeople.getPerson(id);
+            setInfo(key, response.data)
+            setLoad(key)
+        } catch (e) {
+            console.log(e)
+            setInfo(key)
+            setLoad(key)
+        }
+    }
 
     const getDate = (value) => {
         let dates = value.split(',');
@@ -32,45 +63,21 @@ export const useFiltersRequests = () => {
         return status?.join(', ');
     }
 
-    const getPerson = async (id, key) => {
-        try {
-            setLoading(prev =>({...prev, [key]: true}))
-            let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
-            dispatch(setUserFiltersData(value))
-            setLoading(prev =>({...prev, [key]: false}))
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            setLoading(prev =>({...prev, [key]: false}))
-            return id;
-        }
-    }
-
-    const deleteState = (key) =>{
-        dispatch(setUserFiltersData({[key] : null}))
-    }
-
     const getPeriod = (value) => {
         let year = parseInt(value);
         return `${year} - ${year + 1}`;
     }
 
-    const listAwait = {
-        person__id: getPerson,
-        immediate_supervisor: getPerson,
-    }
-
     const listKeys = {
         person__id: {
             name: 'Colaborador',
-            delete: deleteState,
-            loading: loading['person__id']
+            get: (e) => Object.keys(person?.person).length > 0 ? getFullName(person?.person) : e,
+            loading: loading['person']
         },
         immediate_supervisor: {
             name: 'Jefe inmediato',
-            delete: deleteState,
-            loading: loading['immediate_supervisor']
+            get: (e) => Object.keys(person?.supervisor).length > 0 ? getFullName(person?.supervisor) : e,
+            loading: loading['supervisor']
         },
         status__in: {
             name: 'Estatus',
@@ -86,8 +93,12 @@ export const useFiltersRequests = () => {
         }
     }
 
+    const listData = {
+        ...person
+    }
+
     return {
         listKeys,
-        listAwait
+        listData
     }
 }

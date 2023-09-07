@@ -1,12 +1,12 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { optionsStatusApplications } from "../../../utils/constant";
 import { getValueFilter } from "../../../utils/functions";
-import { setJobbankFiltersData } from "../../../redux/jobBankDuck";
 import WebApiJobBank from "../../../api/WebApiJobBank";
+import { useRouter } from "next/router";
 import moment from "moment";
-import { useState } from "react";
 
-export const useFiltersApplications = () =>{
+export const useFiltersApplications = () => {
 
     const {
         list_vacancies_options,
@@ -14,24 +14,30 @@ export const useFiltersApplications = () =>{
         list_clients_options,
         load_clients_options
     } = useSelector(state => state.jobBankStore);
-    const [loading, setLoading] = useState(false);
 
-    const dispatch = useDispatch();
+    const router = useRouter();
+    const { candidate } = router.query;
+
+    const [loading, setLoading] = useState(true);
+    const [infoCandidate, setInfoCandidate] = useState({});
 
     const format = 'DD-MM-YYYY';
 
-    const getCandidate = async (id, key) =>{
+    useEffect(()=>{
+        if(!candidate) setInfoCandidate({});
+        else getCandidate();
+    },[candidate])
+
+    const getCandidate = async () => {
         try {
             setLoading(true)
-            let response = await WebApiJobBank.getInfoCandidate(id);
-            let value = { [key]: response.data };
-            dispatch(setJobbankFiltersData(value));
+            let response = await WebApiJobBank.getInfoCandidate(candidate);
+            setInfoCandidate(response.data);
             setLoading(false)
-            return `${response.data?.first_name} ${response.data?.last_name}`;
         } catch (e) {
             console.log(e)
-            setLoading(true)
-            return id;
+            setLoading(false)
+            setInfoCandidate({})
         }
     }
 
@@ -53,26 +59,20 @@ export const useFiltersApplications = () =>{
         keyShow: 'label'
     })
 
-    const getDate = (value) =>{
+    const getDate = (value) => {
         let dates = value.split(',');
         let start = moment(dates[0], 'YYYY-MM-DD').format(format);
         let end = moment(dates[1], 'YYYY-MM-DD').format(format);
         return `${start} - ${end}`;
     }
-    
-    const deleteState = (key) => {
-        dispatch(setJobbankFiltersData({ [key]: null }))
-    }
 
-    const listAwait = {
-        candidate: getCandidate
-    }
+    const getName = () => `${infoCandidate?.first_name} ${infoCandidate?.last_name}`;
 
     const listKeys = {
         candidate: {
             name: 'Candidato',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(infoCandidate).length > 0 ? getName() : e
         },
         vacant__customer: {
             name: 'Cliente',
@@ -93,9 +93,13 @@ export const useFiltersApplications = () =>{
             get: getDate
         },
     }
-    
+
+    const listData = {
+        candidate: infoCandidate
+    }
+
     return {
         listKeys,
-        listAwait
+        listData
     }
 }

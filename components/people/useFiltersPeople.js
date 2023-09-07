@@ -1,10 +1,10 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { genders } from "../../utils/constant";
 import { getValueFilter } from "../../utils/functions";
 import { getFullName } from "../../utils/functions";
-import { setUserFiltersData } from "../../redux/UserDuck";
 import WebApiPeople from "../../api/WebApiPeople";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 export const useFiltersPeople = () => {
 
@@ -13,8 +13,29 @@ export const useFiltersPeople = () => {
         cat_job
     } = useSelector(state => state.catalogStore)
 
-    const dispatch = useDispatch();
+    const router = useRouter();
+    const { immediate_supervisor } = router.query;
+
+    const [supervisor, setSupervisor] = useState({});
     const [loading, setLoading] = useState(true);
+
+    useEffect(()=>{
+        if(!immediate_supervisor) setSupervisor({});
+        else getSupervisor();
+    },[immediate_supervisor])
+
+    const getSupervisor = async () => {
+        try {
+            setLoading(true)
+            let response = await WebApiPeople.getPerson(immediate_supervisor);
+            setSupervisor(response.data)
+            setLoading(false)
+        } catch (e) {
+            console.log(e)
+            setSupervisor({})
+            setLoading(false)
+        }
+    }
 
     const getGender = (value) => getValueFilter({
         value,
@@ -33,31 +54,8 @@ export const useFiltersPeople = () => {
         list: cat_job
     })
 
-    const getSupervisor = async (id, key) => {
-        try {
-            setLoading(true)
-            let response = await WebApiPeople.getPerson(id);
-            let value = { [key]: response.data };
-            dispatch(setUserFiltersData(value));
-            setLoading(false)
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            return id;
-        }
-    }
-
     const getStatus = (value) => value == 'true'
         ? 'Activos' : 'Inactivos';
-
-    const deleteState = (key) => {
-        dispatch(setUserFiltersData({ [key]: null }))
-    }
-
-    const listAwait = {
-        immediate_supervisor: getSupervisor,
-    }
 
     const listKeys = {
         first_name__icontains: {
@@ -87,7 +85,7 @@ export const useFiltersPeople = () => {
         immediate_supervisor: {
             name: 'Jefe inmediato',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(supervisor).length > 0 ? getFullName(supervisor) : e
         },
         is_active: {
             name: 'Estatus',
@@ -95,8 +93,12 @@ export const useFiltersPeople = () => {
         }
     }
 
+    const listData = {
+        supervisor
+    }
+
     return {
         listKeys,
-        listAwait
+        listData
     }
 }

@@ -71,7 +71,7 @@ const WidgetImss = ({
                 <img src={'/images/logo_imss.png'} width={20} />
                 <p><FormattedMessage id={'dashboard.imssPending'} /></p>
             </>}
-            extra={selectPR ? nPeding?.length : null}
+            extra={selectPR ? <a href={`/payroll/imssMovements?regPatronal=${selectPR}`}>{nPeding?.length}</a>  : null}
         >
             {SelectPatronal}
         </CardItem>

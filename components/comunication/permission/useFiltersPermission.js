@@ -1,18 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { optionsStatusPermits } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { setUserFiltersData } from "../../../redux/UserDuck";
+import { useRouter } from "next/router";
 
-export const useFiltersPermission = () =>{
-    
+export const useFiltersPermission = () => {
+
     const {
         cat_departments
     } = useSelector(state => state.catalogStore);
-    const [loading, setLoading] = useState(true);
-    const dispatch = useDispatch();
-    
+
+    const router = useRouter();
+    const { person__id } = router.query;
+
+    const [person, setPerson] = useState({});
+    const [loadPerson, setLoadPerson] = useState(true);
+
+    useEffect(() => {
+        if (!person__id) setPerson({});
+        else getPerson();
+    }, [person__id])
+
+    const getPerson = async () => {
+        try {
+            setLoadPerson(true)
+            let response = await WebApiPeople.getPerson(person__id);
+            setPerson(response.data);
+            setLoadPerson(false)
+        } catch (e) {
+            console.log(e)
+            setPerson({})
+            setLoadPerson(false)
+        }
+    }
+
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusPermits,
@@ -20,49 +42,33 @@ export const useFiltersPermission = () =>{
         keyShow: 'label'
     })
 
-    const getPerson = async (id, key) => {
-        try {
-            setLoading(true)
-            let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
-            dispatch(setUserFiltersData(value))
-            setLoading(false)
-            return getFullName(response.data);
-        } catch (e) {
-            console.log(e)
-            setLoading(false)
-            return id;
-        }
-    }
-
-    const deleteState = (key) =>{
-        dispatch(setUserFiltersData({[key] : null}))
-    }
-
     const getDeparment = (id) => getValueFilter({
         value: id,
         list: cat_departments
     })
-
-    const listAwait = {
-        person__id: getPerson
-    }
-
+    
     const listKeys = {
         person__id: {
             name: 'Colaborador',
-            loading: loading,
-            delete: deleteState
+            loading: loadPerson,
+            get: (e) => Object.keys(person).length > 0 ? getFullName(person) : e
         },
         status: {
             name: 'Estatus',
             get: getStatus
         },
-        department__id:{
+        department__id: {
             name: 'Departamento',
             get: getDeparment
         }
     }
 
-    return { listKeys, listAwait }
+    const listData = {
+        person
+    }
+
+    return {
+        listKeys,
+        listData
+    }
 }
