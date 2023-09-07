@@ -14,6 +14,10 @@ const initialState = {
     load_questions: false,
     list_answers: {},
     load_answers: false,
+    list_groups: [],
+    load_groups: false,
+    list_profiles: [],
+    load_profiles: false,
     kuiz_page: 1,
     kuiz_filters: "",
     kuiz_page_size: 10
@@ -25,6 +29,8 @@ const GET_CATEGORIES = "GET_CATEGORIES";
 const GET_SECTIONS = "GET_SECTIONS";
 const GET_QUESTIONS = "GET_QUESTIONS";
 const GET_ANSWERS = "GET_GET_ANSWERS";
+const GET_GROUPS = "GET_GROUPS";
+const GET_PROFILES = "GET_PROFILES";
 
 const kuizReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -65,18 +71,30 @@ const kuizReducer = (state = initialState, action) => {
                 list_answers: action.payload,
                 load_answers: action.fetching
             }
+        case GET_GROUPS:
+            return {
+                ...state,
+                list_groups: action.payload,
+                load_groups: action.fetching
+            }
+        case GET_PROFILES:
+            return {
+                ...state,
+                list_profiles: action.payload,
+                load_profiles: action.fetching
+            }
         default:
             return state
     }
 }
 
 export const getAssessments = (node, query = '') => async (dispatch, getState) => {
-    const { kuizStore: { list_assessments } } = getState();
-    const type = { type: GET_ASSESSMENTS, payload: list_assessments, fetching: false, query };
-    dispatch({ ...type, fetching: true })
+    // const { kuizStore: { list_assessments } } = getState();
+    const action = { type: GET_ASSESSMENTS, payload: {}, fetching: false, query };
+    dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiAssessment.getListSurveys(node, query);
-        dispatch({ ...type, payload: { results: response.data } });
+        dispatch({ ...action, payload: { results: response.data } });
     } catch (e) {
         console.log(e)
         dispatch(type)
@@ -84,12 +102,12 @@ export const getAssessments = (node, query = '') => async (dispatch, getState) =
 }
 
 export const getAssessmentsOptions = (node, query = '') => async (dispatch) => {
-    const type = { type: GET_ASSESSMENTS_OPTIONS, payload: [], fetching: false }
-    dispatch({ ...type, fetching: true })
+    const action = { type: GET_ASSESSMENTS_OPTIONS, payload: [], fetching: false }
+    dispatch({ ...action, fetching: true })
     try {
         let params = `&is_active=true${query}`
         let response = await WebApiAssessment.getListSurveys(node, params);
-        dispatch({ ...type, payload: response.data })
+        dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
         dispatch(type)
@@ -97,11 +115,11 @@ export const getAssessmentsOptions = (node, query = '') => async (dispatch) => {
 }
 
 export const getSections = (id) => async (dispatch) => {
-    const type = { type: GET_SECTIONS, payload: {}, fetching: false }
-    dispatch({ ...type, fetching: true })
+    const action = { type: GET_SECTIONS, payload: {}, fetching: false }
+    dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiAssessment.assessmentSections(id);
-        dispatch({ ...type, payload: response.data })
+        dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
         dispatch(type)
@@ -109,40 +127,64 @@ export const getSections = (id) => async (dispatch) => {
 }
 
 export const getQuestions = (id) => async (dispatch) => {
-    const type = { type: GET_QUESTIONS, payload: {}, fetching: false };
-    dispatch({ ...type, fetching: true })
+    const action = { type: GET_QUESTIONS, payload: {}, fetching: false };
+    dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiAssessment.assessmentQuestions(id);
         let results = orderBy(response?.data?.results || [], ['order'], ['asc']);
-        dispatch({ ...type, payload: { results } })
+        dispatch({ ...action, payload: { results } })
     } catch (e) {
         console.log(e)
         dispatch(type)
     }
 }
 
-export const getAnswers = (id) => async (dispatch) =>{
-    const type = {type: GET_ANSWERS, payload: {}, fetching: false};
-    dispatch({...type, fetching: true})
+export const getAnswers = (id) => async (dispatch) => {
+    const action = { type: GET_ANSWERS, payload: {}, fetching: false };
+    dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiAssessment.assessmentAnswers(id);
         let results = orderBy(response?.data?.results || [], ['order'], ['asc']);
-        dispatch({...type, payload: {...response.data, results}});
+        dispatch({ ...action, payload: { ...response.data, results } });
     } catch (e) {
         console.log(e)
         dispatch(type)
     }
 }
 
-export const getCategories = (node) => async (dispatch) => {
-    const type = { type: GET_CATEGORIES, payload: [], fetching: false }
-    dispatch({ ...type, fetching: true })
+export const getCategories = () => async (dispatch) => {
+    const action = { type: GET_CATEGORIES, payload: [], fetching: false }
+    dispatch({ ...action, fetching: true })
     try {
         let response = await WebApiAssessment.getCategoriesAssessment();
-        dispatch({ ...type, payload: response.data })
+        dispatch({ ...action, payload: response.data })
     } catch (e) {
         console.log(e)
         dispatch(type)
+    }
+}
+
+export const getGroups = (node, query = '') => async (dispatch) => {
+    const action = { type: GET_GROUPS, payload: [], fetching: false };
+    dispatch({ ...action, fetching: true })
+    try {
+        let response = await WebApiAssessment.getGroupsAssessments(node, query);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
+    }
+}
+
+export const getProfiles = (node, query = '') => async (dispatch) => {
+    const action = { type: GET_PROFILES, payload: [], fetching: false };
+    dispatch({ ...action, fetching: true })
+    try {
+        let response = await WebApiAssessment.getProfiles(node, query);
+        dispatch({ ...action, payload: response.data })
+    } catch (e) {
+        console.log(e)
+        dispatch(action)
     }
 }
 
