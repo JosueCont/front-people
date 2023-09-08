@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { getValueFilter } from "../../../utils/functions";
 import { optionsStatusVacant } from "../../../utils/constant";
 
-export const useFiltersPublications = () =>{
+export const useFiltersPublications = () => {
 
     const {
         list_connections_options,
@@ -27,7 +27,7 @@ export const useFiltersPublications = () =>{
     })
 
     const getTemplate = (id) => {
-        if(id == 'open_fields') return 'Personalizado';
+        if (id == 'open_fields') return 'Personalizado';
         return getValueFilter({
             value: id,
             list: list_profiles_options
@@ -36,10 +36,10 @@ export const useFiltersPublications = () =>{
 
     const getStatus = (value) => value == 'true' ? 'Publicado' : 'En borrador';
 
-    const getAccount = (value) =>{
+    const getAccount = (value) => {
         let codes = value ? JSON.parse(value) : [];
-        return codes.reduce((acc, current) =>{
-            return `${acc ? acc+', ' : ''}${getValueFilter({
+        return codes.reduce((acc, current) => {
+            return `${acc ? acc + ', ' : ''}${getValueFilter({
                 value: current,
                 list: list_connections_options,
                 keyEquals: 'code',

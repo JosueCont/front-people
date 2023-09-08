@@ -26,8 +26,7 @@ const initialData = {
   load_collaborators: false,
   user_page: 1,
   user_filters: "",
-  user_page_size: 10,
-  user_filters_data: {}
+  user_page_size: 10
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -45,7 +44,6 @@ const PERSONS_COMPANY = "PERSONS_COMPANY";
 const GET_CURRENT_ROL = "GET_CURRENT_ROL";
 const CHANGE_LANG = "CHANGE_LANG";
 const GET_COLLABORATORS = "GET_COLLABORATORS";
-const SET_FILTERS_DATA = "SET_FILTERS_DATA";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -93,14 +91,6 @@ const webReducer = (state = initialData, action) => {
         user_page: action.page,
         user_filters: action.query,
         user_page_size: action.size
-      }
-    case SET_FILTERS_DATA:
-      return {
-        ...state,
-        user_filters_data: action.keep ?{
-          ...state.user_filters_data,
-          ...action.payload
-        } : action.payload
       }
     default:
       return state;
@@ -273,10 +263,6 @@ export const getPersonsCompany = (data, query = {}) => async (dispatch, getState
     console.log(error);
   }
 };
-
-export const setUserFiltersData = (data = {}, keep = true) => async (dispatch) =>{
-  dispatch({type: SET_FILTERS_DATA, payload: data, keep})
-}
 
 export const getCollaborators = (node, query = '', page = 1, size = 10) => async (dispatch, getState) => {
   // const { userStore: { list_collaborators } } = getState();

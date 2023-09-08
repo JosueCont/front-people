@@ -1,14 +1,35 @@
+import { useState, useEffect } from "react";
 import { optionsStatusPermits } from "../../../utils/constant";
 import { getValueFilter, getFullName } from "../../../utils/functions";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import WebApiPeople from "../../../api/WebApiPeople";
 
-export const useFiltersIncapacity = () =>{
+export const useFiltersIncapacity = () => {
 
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
-    
+    const router = useRouter();
+    const { person__id } = router.query;
+
+    const [person, setPerson] = useState({});
+    const [loadPerson, setLoadPerson] = useState(true);
+
+    useEffect(() => {
+        if (!person__id) setPerson({});
+        else getPerson();
+    }, [person__id])
+
+    const getPerson = async () => {
+        try {
+            setLoadPerson(true)
+            let response = await WebApiPeople.getPerson(person__id);
+            setPerson(response.data);
+            setLoadPerson(false)
+        } catch (e) {
+            console.log(e)
+            setPerson({})
+            setLoadPerson(false)
+        }
+    }
+
     const getStatus = (value) => getValueFilter({
         value,
         list: optionsStatusPermits,
@@ -16,17 +37,11 @@ export const useFiltersIncapacity = () =>{
         keyShow: 'label'
     })
 
-    const getPerson = (id) => getValueFilter({
-        value: id,
-        list: persons_company,
-        keyShow: e => getFullName(e)
-    })
-
     const listKeys = {
         person__id: {
             name: 'Colaborador',
-            get: getPerson,
-            loading: load_persons
+            get: (e) => Object.keys(person).length > 0 ? getFullName(person) : e,
+            loading: loadPerson
         },
         status: {
             name: 'Estatus',
@@ -34,5 +49,12 @@ export const useFiltersIncapacity = () =>{
         }
     }
 
-    return { listKeys }
+    const listData = {
+        person
+    }
+
+    return {
+        listKeys,
+        listData
+    }
 }

@@ -1,21 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
-import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
-import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
+import { Button, Row, Col, Form, Select } from 'antd';
 import { optionsStatusPermits } from '../../../utils/constant';
+import SelectPeople from '../../people/utils/SelectPeople';
 
 const FiltersIncapacity = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
 }) => {
 
-    const {
-        persons_company,
-        load_persons
-    } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
 
     const onFinishSearch = (values) => {
@@ -26,7 +22,14 @@ const FiltersIncapacity = ({
             onFinish(values);
         }, 1000)
     }
-    
+
+    const itemPerson = useMemo(()=>{
+        if(!visible) return [];
+        let person = listData?.person || {};
+        if(Object.keys(person).length <=0) return [];
+        return [person];
+    },[listData?.person, visible])
+
     return (
         <MyModal
             title='Configurar filtros'
@@ -42,26 +45,11 @@ const FiltersIncapacity = ({
             >
                 <Row>
                     <Col span={24}>
-                        <Form.Item
+                        <SelectPeople
                             name='person__id'
                             label='Colaborador'
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                disabled={load_persons}
-                                loading={load_persons}
-                                placeholder='Seleccionar una opción'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                            >
-                                {persons_company.length > 0 && persons_company.map(item => (
-                                    <Select.Option value={item.id} key={item.id}>
-                                        {getFullName(item)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            itemSelected={itemPerson}
+                        />
                     </Col>
                     <Col span={24}>
                         <Form.Item

@@ -153,7 +153,7 @@ const SearcNodes = ({
                                                 borderBottomRightRadius: '10px'
                                             }}
                                         >
-                                            <SearchOutlined className='gray'/>
+                                            <SearchOutlined className='gray' />
                                         </button>
                                     </Input.Group>
                                 )}

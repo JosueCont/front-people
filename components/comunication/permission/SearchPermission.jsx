@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Row, Col, Form, Card, Tooltip } from 'antd';
 import {
-  SyncOutlined,
-  SettingOutlined,
+    SyncOutlined,
+    SettingOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import TagFilters from '../../jobbank/TagFilters';
@@ -15,16 +15,16 @@ const SearchPermission = () => {
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const { listKeys, listAwait} = useFiltersPermission();
+    const { listKeys, listData } = useFiltersPermission();
 
-    const showModal = () =>{
-        let filters = {...router.query};
+    const showModal = () => {
+        let filters = { ...router.query };
         filters.status = router.query?.status ? parseInt(router.query?.status) : null;
         formSearch.setFieldsValue(filters);
         setOpenModal(true)
     }
 
-    const closeModal = () =>{
+    const closeModal = () => {
         setOpenModal(false)
         formSearch.resetFields()
     }
@@ -32,50 +32,47 @@ const SearchPermission = () => {
     const setFilters = (filters = {}) => router.replace({
         pathname: '/comunication/requests/permission',
         query: filters
-    }, undefined, {shallow: true});
+    }, undefined, { shallow: true });
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         let filters = createFiltersJB(values);
         setFilters(filters)
     }
 
-    const deleteFilter = () =>{
+    const deleteFilter = () => {
         formSearch.resetFields();
         setFilters()
     }
 
     return (
         <>
-            <Card bodyStyle={{padding: 12}}>
-                <Row gutter={[8,8]}>
+            <Card bodyStyle={{ padding: 12 }}>
+                <Row gutter={[8, 8]}>
                     <Col span={24}>
                         <div span={24} className='title-action-content title-action-border'>
-                            <p style={{marginBottom: 0, fontSize: '1.25rem', fontWeight: 500}}>
+                            <p style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: 500 }}>
                                 Solicitudes
                             </p>
-                            <div className='content-end' style={{gap: 8}}>
+                            <div className='content-end' style={{ gap: 8 }}>
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={()=> showModal()}>
+                                    <Button onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={()=> deleteFilter()}>
+                                    <Button onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
-                                <Button onClick={()=> router.push('permission/new')}>
+                                <Button onClick={() => router.push('permission/new')}>
                                     Agregar
                                 </Button>
                             </div>
                         </div>
                     </Col>
                     <Col span={24}>
-                        <TagFilters
-                            listKeys={listKeys}
-                            listAwait={listAwait}
-                        />
-                    </Col>  
+                        <TagFilters listKeys={listKeys} />
+                    </Col>
                 </Row>
             </Card>
             <FiltersPermission
@@ -83,6 +80,7 @@ const SearchPermission = () => {
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}
+                listData={listData}
             />
         </>
     )

@@ -1,36 +1,43 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { getFullName, getValueFilter, getWork } from "../../../utils/functions";
 import { optionsTypeEvents } from "../../../utils/constant";
-import { setTimeclockFiltersData } from "../../../redux/timeclockDuck";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 export const useFiltersLogs = () => {
-    
+
     const {
         list_companies,
         load_companies,
         list_work_centers_options,
         load_work_centers_options,
     } = useSelector(state => state.timeclockStore);
-    const [loading, setLoading] = useState(true);
-    const dispatch = useDispatch();
 
-    const getPerson = async (id, key) =>{
+    const router = useRouter();
+    const { person } = router.query;
+
+    const [loading, setLoading] = useState(true);
+    const [infoPerson, setInfoPerson] = useState({});
+
+    useEffect(() => {
+        if (!person) setInfoPerson({});
+        else getPerson();
+    }, [person])
+
+    const getPerson = async () => {
         try {
             setLoading(true)
-            let response = await WebApiPeople.getPerson(id);
-            let value = {[key]: response.data};
-            dispatch(setTimeclockFiltersData(value))
+            let response = await WebApiPeople.getPerson(person);
+            setInfoPerson(response.data)
             setLoading(false)
-            return getFullName(response.data);
         } catch (e) {
             console.log(e)
+            setInfoPerson({})
             setLoading(false)
-            return id;
         }
     }
-    
+
     const getType = (value) => getValueFilter({
         value,
         list: optionsTypeEvents,
@@ -48,19 +55,11 @@ export const useFiltersLogs = () => {
         list: list_work_centers_options
     })
 
-    const deleteState = (key) => {
-        dispatch(setTimeclockFiltersData({ [key]: null }))
-    }
-
-    const listAwait = {
-        person: getPerson
-    }
-
     const listKeys = {
         person: {
             name: 'Colaborador',
             loading: loading,
-            delete: deleteState
+            get: (e) => Object.keys(infoPerson).length > 0 ? getFullName(infoPerson) : e
         },
         type: {
             name: 'Tipo',
@@ -81,9 +80,13 @@ export const useFiltersLogs = () => {
         }
     }
 
+    const listData = {
+        person: infoPerson
+    }
+
     return {
         listKeys,
-        listAwait
+        listData
     }
 
 }
