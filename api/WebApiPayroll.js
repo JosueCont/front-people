@@ -509,10 +509,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/payroll-person/get_contracts_for_expired/?${filters}`, "get")
   }
 
+
   static sharePayload(data){
     return WebApi.ApisType(`payroll/share/`, "post", data)
   }
-
 
 }
 
