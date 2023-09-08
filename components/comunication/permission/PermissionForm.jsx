@@ -18,6 +18,7 @@ import {
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../../people/utils/SelectPeople';
 import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
+import WebApiFiscal from '../../../api/WebApiFiscal';
 
 const PermissionForm = ({
     formPermit,
@@ -35,21 +36,93 @@ const PermissionForm = ({
     const [nonWorkingDays, setNonWorkingDays] = useState([]);
     const [nonWorkingWeekDays, setNonWorkingWeekDays] = useState([]);
     const [fileList, setFileList] = useState([]);
-
+    const [reasonOptions, setReasonOptions] = useState([])
+    const [ladingConcepts, setlLadingConcepts] = useState(false)
     const departureDate = Form.useWatch('departure_date', formPermit);
 
-    const reasonOptions = [
-        { label: "Permiso sin goce de sueldo", value: 1 },
-        { label: "Retardo", value: 2 },
-        { label: "Falta justificada", value: 3 }
-    ]
+    /* const reasonOptions = [
+        { label: "Permiso sin goce de sueldo", value: 1},
+            {label: "Retardo", value: 2},
+            {label: "Falta justificada", value: 3}
+    ] */
 
     useEffect(() => {
         if (current_node) {
             getNonWorkingDays(current_node?.id)
             getWorkingWeekDays(current_node?.id)
+            getInternalConceptDeductions(current_node?.id)
         }
     }, [current_node])
+
+
+    const changeReasonOption = (val, data) => {
+        if(data){
+            formPermit.setFieldsValue({
+                'reason_key': data?.tag
+            })
+        }else{
+            formPermit.setFieldsValue({
+                'reason_key': null
+            })
+        }
+    }
+    
+
+    const getInternalConceptDeductions = async (node_id) => {
+        try {
+            let res_ded = await WebApiFiscal.getInternalDeductions(node_id)
+            let res_per = await WebApiFiscal.getInternalPerceptions(node_id)
+            let per_list = []
+            let ded_list = []
+            if(res_ded.status === 200){
+                for (let index = 0; index < res_ded?.data.length; index++) {
+                    if(res_ded?.data[index].available_for_permits === true){
+                        ded_list.push(
+                            {'label':  res_ded?.data[index].description, 
+                            'value': res_ded?.data[index].id, 
+                            'key': res_ded?.data[index].id,
+                            'tag': 'd'
+                        })
+                    }
+                }
+                
+            }
+            if(res_per.status === 200){
+                for (let index = 0; index < res_per?.data.length; index++) {
+                    if(res_per?.data[index].available_for_permits === true){
+                        per_list.push(
+                            {
+                                'label': res_per?.data[index].description, 
+                                'value': res_per?.data[index].id, 
+                                'key': res_per?.data[index].id,
+                                'tag': 'p'
+                            })
+                    }
+                }
+                
+            }
+
+            let group_list = []
+
+            if (per_list.length > 0){
+                group_list.push({
+                    label:'Percepciones',
+                    options: per_list
+                })
+            }
+            if(ded_list.length > 0){
+                group_list.push({
+                    label: 'Deducciones',
+                    options: ded_list
+                })
+            }
+        
+            setReasonOptions(group_list)
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const getNonWorkingDays = async (node) => {
         try {
@@ -229,17 +302,11 @@ const PermissionForm = ({
             </Col>
             <Col span={8}>
                 <Form.Item
-                    name='reason_type'
-                    label='tipo de motivo'
+                    name='permit_reason'
+                    label={ladingConcepts ? 'cardando...' : 'tipo de motivo'}
                     rules={[ruleRequired]}
                 >
-                    <Select options={reasonOptions} size='large' />
-                    {/* <Input.TextArea
-                        showCount
-                        maxLength={200}
-                        placeholder='Especificar motivo'
-                        autoSize={{ minRows: 4, maxRows: 4 }}
-                    /> */}
+                    <Select onChange={changeReasonOption} options={reasonOptions} size='large' />
                 </Form.Item>
             </Col>
             <Col span={8}>
@@ -273,6 +340,8 @@ const PermissionForm = ({
                         placeholder='Especificar motivo'
                         autoSize={{ minRows: 4, maxRows: 4 }}
                     />
+                </Form.Item>
+                <Form.Item hidden name={'reason_key'} label="tipo"> 
                 </Form.Item>
             </Col>
             <Col span={24} className='content-end' style={{ gap: 8 }}>
