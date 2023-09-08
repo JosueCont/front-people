@@ -519,6 +519,10 @@ class WebApiPayroll {
 
 
 
+  static sharePayload(data){
+    return WebApi.ApisType(`payroll/share/`, "post", data)
+  }
+
 }
 
 export default WebApiPayroll;
