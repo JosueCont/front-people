@@ -571,13 +571,16 @@ const TablePeople = ({
                     Restablecer contraseña
                 </Menu.Item>
             )}
-            <Menu.Item
-                    key="12"
-                    icon={<UserDeleteOutlined />}
-                    onClick={() => personUnsubscribe(item)}
-                >
-                    Generar baja del colaborador
-                </Menu.Item>
+            {
+                !item.is_low && 
+                    (<Menu.Item
+                        key="12"
+                        icon={<UserDeleteOutlined />}
+                        onClick={() => personUnsubscribe(item)}
+                    >
+                        Generar baja del colaborador
+                    </Menu.Item>)
+            }
             <Menu.Divider />
             {currentNode?.resignation_letter && (
                 <Menu.Item
