@@ -184,8 +184,8 @@ const ModalConceptsPayroll = ({
 
   /* useEffect(() => {
     setTotalWorkingDays(workingDays)
-  }, [workingDays]) */
-  
+  }, [workingDays]) */  
+
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
@@ -194,7 +194,7 @@ const ModalConceptsPayroll = ({
           return (
             <Col span={12}>
               <Checkbox key={item.code} className="CheckGroup" value={item}>
-                <span style={{ textTransform: "uppercase" }}>
+                <span style={{ textTrapayrollnsform: "uppercase" }}>
                   {item.description} {`(${item.data_type===1?'M':'D'})`}
                 </span>
               </Checkbox>

@@ -168,7 +168,12 @@ const CalculatePayroll = ({ ...props }) => {
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Sin timbrar
                   </>
-                ) : (
+                ) : item.payroll_cfdi_person.status === 6 ? (
+                  <>
+                    <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Guardado
+                  </>
+                ):(
                   <>
                     <CheckCircleOutlined style={{ marginRight: "2px" }} />
                     Timbrado
@@ -291,7 +296,7 @@ const CalculatePayroll = ({ ...props }) => {
           </Tooltip>
         }
           {item.payroll_cfdi_person &&
-          item.payroll_cfdi_person.is_open &&
+          item.payroll_cfdi_person.status == 6 &&
           step == 0 ? (
             <Button
               size="small"
@@ -381,7 +386,7 @@ const CalculatePayroll = ({ ...props }) => {
         render: (item) => (
           <>
             {data.payroll_cfdi_person &&
-            data.payroll_cfdi_person.is_open &&
+            data.payroll_cfdi_person.status == 6 &&
             step === 0 &&
             item.type === "046" ? (
               <Space size="middle">

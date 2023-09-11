@@ -769,6 +769,10 @@ class WebApiPeople {
       data
     );
   }
+
+  static PersonUpDown(data){
+    return WebApi.ApisType(`/payroll/payroll-person/up_down/`, 'post', data);
+  }
   
 }
 
