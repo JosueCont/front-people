@@ -37,7 +37,7 @@ export const useFiltersNodes = () => {
             loading: load_org_nodes_options,
             get: getNode
         },
-        organizational_level:{
+        organizational_level: {
             name: 'Nivel organizacional',
             loading: load_org_levels_options,
             get: getLevel

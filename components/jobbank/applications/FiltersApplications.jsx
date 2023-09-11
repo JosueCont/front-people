@@ -7,6 +7,7 @@ import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersApplications = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
@@ -16,8 +17,7 @@ const FiltersApplications = ({
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
-        load_clients_options,
-        jobbank_filters_data
+        load_clients_options
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
     const client = Form.useWatch('vacant__customer', formSearch);
@@ -43,10 +43,10 @@ const FiltersApplications = ({
 
     const itemCandidate = useMemo(()=>{
         if(!visible) return [];
-        let candidate = jobbank_filters_data?.candidate || {};
+        let candidate = listData?.candidate || {};
         if(Object.keys(candidate).length <=0) return [];
         return [candidate];
-    },[jobbank_filters_data?.candidate, visible])
+    },[listData?.candidate, visible])
 
     return (
         <MyModal

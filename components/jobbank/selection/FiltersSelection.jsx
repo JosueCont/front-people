@@ -7,33 +7,33 @@ import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersSelection = ({
     visible,
-    close = () =>{},
-    onFinish = ()=>{},
+    listData = {},
+    close = () => { },
+    onFinish = () => { },
     formSearch
 }) => {
 
     const {
         list_vacancies_options,
         load_vacancies_options,
-        jobbank_filters_data
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
 
-    const onFinishSearch = (values) =>{
+    const onFinishSearch = (values) => {
         setLoading(true)
-        setTimeout(()=>{
+        setTimeout(() => {
             close()
             setLoading(false)
             onFinish(values);
-        },1000)
+        }, 1000)
     }
 
-    const itemCandidate = useMemo(()=>{
-        if(!visible) return [];
-        let candidate = jobbank_filters_data?.candidate || {};
-        if(Object.keys(candidate).length <=0) return [];
+    const itemCandidate = useMemo(() => {
+        if (!visible) return [];
+        let candidate = listData?.candidate || {};
+        if (Object.keys(candidate).length <= 0) return [];
         return [candidate];
-    },[jobbank_filters_data?.candidate, visible])
+    }, [listData?.candidate, visible])
 
     return (
         <MyModal
@@ -48,7 +48,7 @@ const FiltersSelection = ({
                 form={formSearch}
                 layout='vertical'
             >
-                <Row gutter={[16,0]}>
+                <Row gutter={[16, 0]}>
                     <Col span={24}>
                         <SelectCandidates
                             name='candidate'
@@ -92,12 +92,12 @@ const FiltersSelection = ({
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={24} className='content-end' style={{gap: 8}}>
-                        <Button onClick={()=> close()}>
+                    <Col span={24} className='content-end' style={{ gap: 8 }}>
+                        <Button onClick={() => close()}>
                             Cancelar
                         </Button>
                         <Button
-                            loading={loading} 
+                            loading={loading}
                             htmlType='submit'
                         >
                             Aplicar

@@ -7,6 +7,7 @@ import SelectCandidates from '../candidates/SelectCandidates';
 
 const FiltersInterviews = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
@@ -16,8 +17,7 @@ const FiltersInterviews = ({
         list_vacancies_options,
         load_vacancies_options,
         list_clients_options,
-        load_clients_options,
-        jobbank_filters_data
+        load_clients_options
     } = useSelector(state => state.jobBankStore);
     const [loading, setLoading] = useState(false);
     const customer = Form.useWatch('customer', formSearch);
@@ -43,17 +43,17 @@ const FiltersInterviews = ({
 
     const itemRecruiter = useMemo(()=>{
         if(!visible) return [];
-        let recruiter = jobbank_filters_data?.recruiter || {};
+        let recruiter = listData?.recruiter || {};
         if(Object.keys(recruiter).length <=0) return [];
         return [recruiter];
-    },[jobbank_filters_data?.recruiter, visible])
+    },[listData?.recruiter, visible])
 
     const itemCandidate = useMemo(()=>{
         if(!visible) return [];
-        let candidate = jobbank_filters_data?.candidate || {};
+        let candidate = listData?.candidate || {};
         if(Object.keys(candidate).length <=0) return [];
         return [candidate];
-    },[jobbank_filters_data?.candidate, visible])
+    },[listData?.candidate, visible])
 
     return (
         <MyModal

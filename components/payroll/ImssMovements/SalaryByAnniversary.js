@@ -11,13 +11,12 @@ import { connect } from "react-redux";
 import moment, { locale } from 'moment'
 import { ruleRequired } from "../../../utils/rules";
 
-const Variability = ({ currentNode, user }) => {
+const SalaryByAnniversary = ({ currentNode, user }) => {
     const [formFilters] = Form.useForm()
     const [ loading, setLoading ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ filters, setFilters ] = useState(null)
-    const [year, setYear] = useState(null)
-    const [loadingVariabilidad, setLoadingVariabilidad] = useState(false)
+    const [year, setYear] = useState(null)    
 
 
 
@@ -53,68 +52,53 @@ const Variability = ({ currentNode, user }) => {
         setYear(parseInt(dateString));      
     }
 
-    const generateVariability = async (values) => {
-        setLoadingVariabilidad(true)
-        if(!values.patronal_registration){
-            message.error("Selecciona un registro patronal")
-            return
-        }
+    const UpdateSalary = async (values) => {
+      setLoading(true)        
+      if(!values.patronal_registration){
+          message.error("Selecciona un registro patronal")
+          return
+      }
 
-        if (year){
-            values.year = year
-        }
-        else {
-            message.error("Selecciona un registro patronal") 
-            return
-        }
+      values.modified_by = user?.id;
+      setFilters(values)        
 
-        if(values.bimester){
-            let months = getMonths(values.bimester)
-            values.start_month = parseInt(months[0])
-            values.end_month = parseInt(months[1])   
-        }
+      try {
+          if(values.download){
+              downLoadFileBlob(
+                  `${getDomain(API_URL_TENANT)}/payroll/update-salary-by-anniversary`,
+                  "Actualizar_salarios_aniversario.xlsx",
+                  "POST",
+                  values,
+                  "Intente nuevamente"
+              )
+          }else{
+              let response = await WebApiPayroll.updateSalaryByAnniversary(values);
+              if (response){
+                  message.success(response?.data?.message)
+              }
+          }
 
-        values.modified_by = user?.id;
-        setFilters(values)        
-
-        setLoading(true)
-        try {
-            if(values.download){
-                downLoadFileBlob(
-                    `${getDomain(API_URL_TENANT)}/payroll/variability/create_variability/`,
-                    "Reporte_de_variabiliadad.xlsx",
-                    "POST",
-                    values,
-                    "Intente nuevamente"
-                )
-            }else{
-                let response = await WebApiPayroll.generateVariability(values);
-                if (response){
-                    message.success(response?.data?.message)
-                }
-            }
-
-        } catch (error) {
-            if (error?.response?.data?.message){
-                message.error(error?.response?.data?.message)
-            }else{
-                message.error("Hubo un error al descargar, intenta nuevamente.")
-            }
-        }finally{
-            setLoading(false);
-            setLoadingVariabilidad(false)
-        }
+      } catch (error) {
+          if (error?.response?.data?.message){
+              message.error(error?.response?.data?.message)
+          }else{
+              message.error("Hubo un error al descargar, intenta nuevamente.")
+          }
+      }finally{
+          setLoading(false);            
+      }
     }
    
     return (
         <>
+        
             <Form
                 layout="vertical"
                 form={formFilters}
-                onFinish={generateVariability}
+                onFinish={UpdateSalary}
                 >
                   <Row gutter={[10,0]}>                     
-                    <Col span={6}>
+                    {/* <Col span={6}>
                       <Form.Item rules={[ruleRequired]} name="year" label="Año">
                       <DatePicker 
                         style={{ width:'100%' }} 
@@ -130,14 +114,14 @@ const Variability = ({ currentNode, user }) => {
                       <Form.Item  name='bimester' label="Bimestre" rules={[ruleRequired]}>
                         <Select placeholder={"Bimestre"} options={bimesters}/>
                       </Form.Item>
-                    </Col>                   
+                    </Col>                    */}
                     <Col span={6}>
                       <SelectPatronalRegistration onChange={(value) => setPatronalSelected(value)}/>
                     </Col>                    
                 </Row>
                 <Row gutter={[10,0]}>
                     <Col span={6}>
-                      <Form.Item  name='change_sdi' label="¿Modificar Salario diario integrado?" initialValue={false} valuePropName="checked">
+                      <Form.Item  name='change_sdi' label="¿Modificar salario diario por anivesario?" initialValue={false} valuePropName="checked">
                         <Switch
                          checkedChildren={<CheckOutlined />}
                          unCheckedChildren={<CloseOutlined />}                        
@@ -163,8 +147,8 @@ const Variability = ({ currentNode, user }) => {
                 </Row>
                 <Row gutter={[10,0]}>
                     <Col span={24}>   
-                      <Button htmlType="submit" loading={loadingVariabilidad}  disabled = { patronalSelected?  false : true }>
-                        Generar variabilidad    
+                      <Button htmlType="submit" loading={loading}  disabled = { patronalSelected?  false : true }>
+                        Enviar    
                       </Button>
                     </Col>
                 </Row>
@@ -199,4 +183,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState)(Variability); 
+export default connect(mapState)(SalaryByAnniversary); 

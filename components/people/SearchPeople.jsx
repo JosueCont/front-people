@@ -44,7 +44,7 @@ const SearchPeople = ({
     const [openModal, setOpenModal] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
-    const { listKeys, listAwait } = useFiltersPeople();
+    const { listKeys, listData } = useFiltersPeople();
 
     useEffect(() => {
         let value = router.query?.search;
@@ -124,7 +124,7 @@ const SearchPeople = ({
                                             borderBottomRightRadius: '10px'
                                         }}
                                     >
-                                        <SearchOutlined className='gray'/>
+                                        <SearchOutlined className='gray' />
                                     </button>
                                 </Input.Group>
                             </div>
@@ -151,7 +151,6 @@ const SearchPeople = ({
                     <Col span={24}>
                         <TagFilters
                             listKeys={listKeys}
-                            listAwait={listAwait}
                             discardKeys={['search']}
                         />
                     </Col>
@@ -159,6 +158,7 @@ const SearchPeople = ({
             </Card>
             <FiltersPeople
                 visible={openModal}
+                listData={listData}
                 close={closeModal}
                 formSearch={formSearch}
                 onFinish={onFinishSearch}

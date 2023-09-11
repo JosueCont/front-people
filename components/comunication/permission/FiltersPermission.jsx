@@ -7,14 +7,12 @@ import SelectPeople from '../../people/utils/SelectPeople';
 
 const FiltersPermission = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch
 }) => {
-
-    const {
-        user_filters_data
-    } = useSelector(state => state.userStore);
+    
     const {
         cat_departments
     } = useSelector(state => state.catalogStore)
@@ -29,12 +27,12 @@ const FiltersPermission = ({
         }, 1000)
     }
 
-    const itemPerson = useMemo(()=>{
-        if(!visible) return [];
-        let person = user_filters_data?.person__id || {};
-        if(Object.keys(person).length <=0) return [];
+    const itemPerson = useMemo(() => {
+        if (!visible) return [];
+        let person = listData?.person || {};
+        if (Object.keys(person).length <= 0) return [];
         return [person];
-    },[user_filters_data?.person__id, visible])
+    }, [listData?.person, visible])
 
     return (
         <MyModal

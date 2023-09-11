@@ -65,8 +65,7 @@ const AssessmentsGroup = ({
             message.error('Selecciona al menos dos evaluaciones')
             return;
         }
-        const map_ = item => item.id;
-        let assessments = listSelected.map(map_);
+        let assessments = listSelected.map(item => item.id);
         setLoading(true)
         setTimeout(async () => {
             let resp = await actionForm({ ...values, assessments });

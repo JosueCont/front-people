@@ -193,7 +193,9 @@ const InternalConcepts = ({
       form.validateFields();
       return;
     }
+    
     value.node = currentNode.id;
+
     if (edit) {
       updateRegister(value);
     } else saveRegister(value);
@@ -229,6 +231,7 @@ const InternalConcepts = ({
   const editRegister = (item, param) => {
     setEdit(true);
     setId(item.id);
+    console.log('item', item)
 
     if (key == 1) {
       form.setFieldsValue({
@@ -243,7 +246,8 @@ const InternalConcepts = ({
         is_seventh_day: item.is_seventh_day,
         apply_assimilated: item.apply_assimilated,
         accountant_account: item.accountant_account,
-        counterpart: item.counterpart
+        counterpart: item.counterpart,
+        available_for_permits: item.available_for_permits
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -254,7 +258,8 @@ const InternalConcepts = ({
         apply_assimilated: item.apply_assimilated,
         show: item.show,
         accountant_account: item.accountant_account,
-        counterpart: item.counterpart
+        counterpart: item.counterpart,
+        available_for_permits: item.available_for_permits
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -442,7 +447,7 @@ const InternalConcepts = ({
     );
   };
 
-  const RenderForm = ({ percepciones }) => {
+  const RenderForm = ({ percepciones }, isDeduction = false) => {
     return (
       <>
         <Row gutter={20}>
@@ -485,12 +490,13 @@ const InternalConcepts = ({
           <Col lg={6} xs={22} md={12}>
             <SelectAccountantAccount allowClear={true}/>
           </Col>
-          <Col lg={6} xs={22} md={12}>
-            <SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>
-          </Col>
+           <Col lg={6} xs={22} md={12}>
+            {/*<SelectAccountantAccount name={'counterpart'} viewLabel={'Cuenta contraparte'} allowClear={true}/>*/}
+          </Col> 
           <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="show"
+              tooltip="Al activar esta opción te permitirá elegir este concepto para usarlo al calcular una nómina."
               label="Mostrar para calcular"
               valuePropName="checked"
             >
@@ -517,6 +523,18 @@ const InternalConcepts = ({
               </Form.Item>
             </Col>
           )}
+          {
+            (isDeduction || isPerception) &&
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item
+                name="available_for_permits"
+                label="Usar para permisos"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+          }
         </Row>
         {key === 1 && (
           <Row>
@@ -638,7 +656,7 @@ const InternalConcepts = ({
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm percepciones />
+              <RenderForm percepciones isPerception />
             </Form>
           )}
         </TabPane>
@@ -650,7 +668,7 @@ const InternalConcepts = ({
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm />
+              <RenderForm isDeduction />
             </Form>
           )}
         </TabPane>

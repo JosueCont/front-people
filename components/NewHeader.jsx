@@ -28,6 +28,8 @@ import CardApps from "./dashboards-cards/CardApp";
 import { connect } from "react-redux";
 import { setVersionCfdi } from "../redux/fiscalDuck";
 import { setNullCompany } from '../redux/UserDuck'
+import { clearMovementsIMSS } from "../redux/payrollDuck";
+
 import GenericModal from "./modal/genericModal";
 import { verifyMenuNewForTenant } from "../utils/functions"
 import { getCurrentURL, redirectTo } from "../utils/constant";
@@ -189,6 +191,7 @@ const NewHeader = ({
                   className="text-menu"
                   onClick={() => {
                     props.setNullCompany()
+                    props.clearMovementsIMSS()
                     router.push("/select-company")
                   }}
                 >
@@ -450,4 +453,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { setVersionCfdi, setNullCompany })(NewHeader);
+export default connect(mapState, { setVersionCfdi, setNullCompany, clearMovementsIMSS })(NewHeader);

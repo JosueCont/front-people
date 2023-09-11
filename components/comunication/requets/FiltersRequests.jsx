@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import MyModal from '../../../common/MyModal';
 import { Button, Row, Col, Form, Select, DatePicker } from 'antd';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { optionsStatusVacation } from '../../../utils/constant';
 import SelectPeople from '../../people/utils/SelectPeople';
-import { useRouter } from 'next/router';
 
 const FiltersRequests = ({
     visible,
+    listData = {},
     close = () => { },
     onFinish = () => { },
     formSearch,
@@ -17,9 +16,6 @@ const FiltersRequests = ({
     showSupervisor = true
 }) => {
 
-    const {
-        user_filters_data
-    } = useSelector(state => state.userStore);
     const [loading, setLoading] = useState(false);
     const period = Form.useWatch('period', formSearch);
     const statusIn = Form.useWatch('status__in', formSearch);
@@ -83,19 +79,19 @@ const FiltersRequests = ({
         return options;
     }, [statusIn])
 
-    const itemPerson = useMemo(()=>{
-        if(!visible) return [];
-        let person = user_filters_data?.person__id || {};
-        if(Object.keys(person).length <=0) return [];
+    const itemPerson = useMemo(() => {
+        if (!visible) return [];
+        let person = listData?.person || {};
+        if (Object.keys(person).length <= 0) return [];
         return [person];
-    },[user_filters_data?.person__id, visible])
+    }, [listData?.person, visible])
 
-    const itemSupervisor = useMemo(()=>{
-        if(!visible) return [];
-        let supervisor = user_filters_data?.immediate_supervisor || {};
-        if(Object.keys(supervisor).length <= 0) return [];
+    const itemSupervisor = useMemo(() => {
+        if (!visible) return [];
+        let supervisor = listData?.supervisor || {};
+        if (Object.keys(supervisor).length <= 0) return [];
         return [supervisor];
-    },[user_filters_data?.immediate_supervisor, visible])
+    }, [listData?.supervisor, visible])
 
     return (
         <MyModal

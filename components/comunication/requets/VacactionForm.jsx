@@ -118,7 +118,7 @@ const VacactionForm = ({
         values.period = person[period] ? person[period] : null;
         values.immediate_supervisor = person?.immediate_supervisor
             ? person?.immediate_supervisor?.id : null,
-        values.days_requested = null;
+            values.days_requested = null;
         values.departure_date = null;
         values.return_date = null;
         formRequest.setFieldsValue(values);
@@ -223,19 +223,19 @@ const VacactionForm = ({
         return current && (valid_start || valid_end || exist);
     }
 
-    const itemPerson = useMemo(()=>{
+    const itemPerson = useMemo(() => {
         let person = infoRequest?.collaborator || {};
-        if(Object.keys(person).length > 0) return [person];
+        if (Object.keys(person).length > 0) return [person];
         return [];
-    },[infoRequest?.collaborator])
+    }, [infoRequest?.collaborator])
 
-    const itemSupervisor = useMemo(()=>{
+    const itemSupervisor = useMemo(() => {
         let item = currentPerson?.immediate_supervisor;
         let record = infoRequest?.immediate_supervisor;
         let supervisor = item ? item : record || {};
-        if(Object.keys(supervisor).length > 0) return [supervisor];
+        if (Object.keys(supervisor).length > 0) return [supervisor];
         return [];
-    },[
+    }, [
         currentPerson?.immediate_supervisor,
         infoRequest?.immediate_supervisor
     ])
