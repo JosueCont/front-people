@@ -9,6 +9,8 @@ import {
     copyContent,
     downloadBLOB
 } from '../../utils/functions';
+import {ruleRequired} from '../../utils/rules'
+import { departureMotive } from "../../utils/constant";
 import {
     Table,
     Avatar,
@@ -17,7 +19,12 @@ import {
     Menu,
     Dropdown,
     Button,
-    message
+    message,
+    Form,
+    Col,
+    DatePicker,
+    Row,
+    Spin
 } from 'antd';
 import {
     SyncOutlined,
@@ -30,7 +37,8 @@ import {
     UserSwitchOutlined,
     KeyOutlined,
     SendOutlined,
-    UsergroupAddOutlined
+    UsergroupAddOutlined,
+    UserDeleteOutlined
 } from '@ant-design/icons';
 import {
     BsHandIndex
@@ -41,6 +49,7 @@ import WebApiPayroll from '../../api/WebApiPayroll';
 import WebApiYnl from '../../api/WebApiYnl';
 import WebApiAssessment from '../../api/WebApiAssessment';
 import { getCollaborators } from '../../redux/UserDuck';
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 import ModalSupervisor from './modals/ModalSupervisor';
 import ModalPassword from './modals/ModalPassword';
@@ -49,6 +58,8 @@ import ModalCompetences from '../person/ModalCompetences';
 import ModalSendUI from './modals/ModalSendUI';
 
 import AssignAssessments from '../person/assignments/AssignAssessmentsCopy';
+import GenericModal from '../modal/genericModal';
+import moment from 'moment';
 
 const TablePeople = ({
     currentNode,
@@ -64,6 +75,7 @@ const TablePeople = ({
     user_page_size
 }) => {
 
+    const [form] = Form.useForm()
     const router = useRouter();
     const [openList, setOpenList] = useState(false);
     const [actionList, setActionList] = useState('delete');
@@ -83,6 +95,10 @@ const TablePeople = ({
 
     const [itemReport, setItemReport] = useState([]);
     const [openReport, setOpenReport] = useState(false);
+
+    const [loading, setLoading] = useState(false)
+
+    const [openModalUnsubscribe, setOpenModalUnsubscribe] = useState(false)
 
     const actionError = (e) => {
         let error = e.response?.data?.message;
@@ -329,6 +345,11 @@ const TablePeople = ({
         setTypeAssign(1)
     }
 
+    const personUnsubscribe = (item) => {
+        setItemPerson(item)
+        setOpenModalUnsubscribe(true)
+    }
+
     const showPassword = (item) => {
         setItemPerson(item)
         setOpenPassword(true)
@@ -550,6 +571,13 @@ const TablePeople = ({
                     Restablecer contraseña
                 </Menu.Item>
             )}
+            <Menu.Item
+                    key="12"
+                    icon={<UserDeleteOutlined />}
+                    onClick={() => personUnsubscribe(item)}
+                >
+                    Generar baja del colaborador
+                </Menu.Item>
             <Menu.Divider />
             {currentNode?.resignation_letter && (
                 <Menu.Item
@@ -789,6 +817,27 @@ const TablePeople = ({
         sync_ynl: actionSendYNL
     }
 
+    const submitUnsubscribe = async (values) => {
+        console.log(values)
+        values['person_id'] = itemPerson.id
+        values['departure_date'] = moment(values.departure_date).format("YYYY-MM-DD")
+        try {
+            setLoading(true)
+            let resp = await WebApiPeople.UnsubscribePerson(values)
+            if(resp.status === 200){
+                message.success("Se ha solicitado la baja del colaborador")
+                form.resetFields()
+                setOpenModalUnsubscribe(false)
+                getCollaborators,
+                getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
+            }
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            console.log('error', error)
+        } 
+    }
+
     return (
         <>
             <Table
@@ -860,6 +909,36 @@ const TablePeople = ({
                 close={closeStore}
                 itemsSelected={itemsSelected}
             />
+            <GenericModal 
+                setVisible={setOpenModalUnsubscribe} 
+                visible={openModalUnsubscribe} 
+                title={"Generar baja del colaborador"}
+                actionButton={
+                    () => form.submit()
+                }
+                titleActionButton="Generar"
+            >
+                <Form form={form} onFinish={submitUnsubscribe} layout='vertical'>
+                    <Spin spinning={loading}>
+                    <Row>
+                        <Col span={12} >
+                            <Form.Item label="Fecha de baja" name={'departure_date'} rules={[ruleRequired]} >
+                                <DatePicker locale={locale} style={{width:'80%'}} format={'DD-MM-YYYY'} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12} >
+                            <Form.Item label="Motivo" name={'departure_motive'} rules={[ruleRequired]} >
+                            <Select
+                                placeholder="Motivo de baja"
+                                style={{ width: "80%" }}
+                                options={departureMotive}
+                            />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    </Spin>
+                </Form>
+            </GenericModal>
         </>
     )
 }
