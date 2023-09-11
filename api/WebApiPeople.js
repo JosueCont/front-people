@@ -770,8 +770,8 @@ class WebApiPeople {
     );
   }
 
-  static UnsubscribePerson(data){
-    return WebApi.ApisType(`/payroll/payroll-person/unsubscribePerson/`, 'post', data);
+  static PersonUpDown(data){
+    return WebApi.ApisType(`/payroll/payroll-person/up_down/`, 'post', data);
   }
   
 }
