@@ -769,6 +769,10 @@ class WebApiPeople {
       data
     );
   }
+
+  static UnsubscribePerson(data){
+    return WebApi.ApisType(`/payroll/payroll-person/unsubscribePerson/`, 'post', data);
+  }
   
 }
 
