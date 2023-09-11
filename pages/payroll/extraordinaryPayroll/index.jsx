@@ -734,7 +734,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         // setObjectSend(null);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error?.response);
+        if(error?.response?.data?.errors){
+          let errors = error?.response?.data?.errors;
+          setMessageModal(6,null,errors)
+        }
         setLoading(false);
       });
   };
@@ -1021,7 +1025,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
-  const setMessageModal = (type, data) => {
+  const setMessageModal = (type, data,errors=[]) => {
+
+
+    const process_errors = (errors=[]) => {
+        if(errors && errors.length>0){
+          return <span>{data} <ul>{errors.map((err)=> <li>{err}</li>)}</ul></span>;
+        }else{
+          return "Er";
+        }
+    };
+
     switch (type) {
       case 1:
         setInfoGenericModal({
@@ -1139,6 +1153,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         });
         setGenericModal(true);
         break;
+      case 6:
+        setInfoGenericModal({
+          title: "Error al calcular",
+          title_message: "Revise lo siguiente:",
+          description:process_errors(errors),
+          type_alert: "warning"
+        });
+        setGenericModal(true);
+
     }
 
     return;
