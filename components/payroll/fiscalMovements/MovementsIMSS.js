@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {UploadOutlined, DownloadOutlined, SyncOutlined} from '@ant-design/icons';
+import {UploadOutlined, DownloadOutlined, SyncOutlined, ThunderboltOutlined} from '@ant-design/icons';
 import { API_URL_TENANT, API_URL } from "../../../config/config";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import { Table, Button, Upload, Row, Col, message, Modal } from 'antd';
@@ -13,35 +13,40 @@ import moment from 'moment'
 const MovementsIMSS=({ currentNode })=>{
 
     const [file, setFile]=useState(null)
-    const [showList, setShowList]=useState(false)
     const [ loading, setLoading ] = useState(false)
+    const [ loadingSync, setLoadingSync ] = useState(false)
     const [patronalSelected, setPatronalSelected] = useState(null);
     const [ documents, setDocuments ] = useState(null)
-    const [ modalVisible, setModalVisible ] = useState(false)
 
-
-    useEffect(()=>{
-        if(file){
-            setShowList(true)
-        } else {
-            setShowList(false)
-        }
-    },[file])
 
     useEffect(() => {
         currentNode && patronalSelected && getMovements()
     },[patronalSelected])
 
-    const getMovements = async (sync = false) => {
+    const getMovements = async () => {
         setLoading(true)
         try {
             let response = await WebApiPayroll.getIMSSMovements(currentNode.id, patronalSelected)
             setDocuments(response.data.documents)
-            sync && message.success('Solicitud de movimientos realizada')
         } catch (error) {
             console.log('Error -->', error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    /**
+     * Vuelve a ejecutar el scrapper para consultartodos
+     */
+    const syncPending= async () =>{
+        setLoadingSync(true)
+        try {
+            let response = await WebApiPayroll.getIMSSMovements(currentNode.id, patronalSelected)
+            setDocuments(response.data.documents)
+        } catch (error) {
+            console.log('Error -->', error)
+        } finally {
+            setLoadingSync(false)
         }
     }
 
@@ -132,35 +137,6 @@ const MovementsIMSS=({ currentNode })=>{
         },
     ];
 
-
-    const data = [
-        {
-            "date": "16/11/2022",
-            "status": 3,
-            "receipt": "/media/node/documents/266/dc88cc0f9cb4405d8064f8c9179e9a07/1611202205652/recibo_d424803410_lote_2NYYtIC.pdf",
-            "result": "/media/node/documents/266/dc88cc0f9cb4405d8064f8c9179e9a07/1611202205811/idse_d424803410_lote_336463897.pdf",
-            "lot": "336463897"
-        },
-    ];
-
-
-    const settingsUplod={
-        name: 'file',
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
     
     const importAfiliateMovements = async () => {
 
@@ -200,23 +176,13 @@ const MovementsIMSS=({ currentNode })=>{
                     />
                 </Col>
                 <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
-                    {/* <Col span={13}>
-                        <UploadFile
-                            textButton={"Importar movimientos"}
-                            setFile={setFile}
-                            validateExtension={".txt"}
-                            size = {'middle'}
-                        />
-                    </Col> */}
-                    {/* <Col span={5} style={{ marginRight: 20 }}>
-                        <Button
-                            disabled = { patronalSelected? false : true }
-                            onClick={ () => setModalVisible(true)}
-                        >
-                          importar
-                        </Button>
-                    </Col> */}
-                     <Col span={7}>
+                    <Button
+                        style={{marginRight:20}}
+                        onClick={syncPending}
+                        disabled = { patronalSelected?  false : true }
+                    >
+                        {loadingSync ? <SyncOutlined spin={loading}/> : <ThunderboltOutlined/>} Sincronizar pendientes
+                    </Button>
                         <Button
                           onClick={ () => {
                             getMovements(false)
@@ -224,9 +190,9 @@ const MovementsIMSS=({ currentNode })=>{
                         }
                           disabled = { patronalSelected?  false : true }
                         >
-                            <SyncOutlined spin={loading} />
+
+                            <SyncOutlined spin={loading} /> Refrescar tabla
                         </Button>
-                    </Col>
                 </Col>
             </Row>
 
@@ -235,58 +201,13 @@ const MovementsIMSS=({ currentNode })=>{
               columns={columns} 
               dataSource={documents} 
               size="middle"
-              loading = { loading }
+              loading = { loading || loadingSync }
               scroll={{ x: true }}
               locale={{
-                emptyText: loading ? "Cargando..." : "No se encontraron Documentos.",
+                emptyText: (loading || loadingSync ) ? "Cargando..." : "No se encontraron Documentos.",
               }}
               
             />
-            <Modal
-                title="Importar movimientos"
-                centered
-                visible = { modalVisible }
-                onCancel = { () => {
-                    setModalVisible(false)
-                    setFile(null)
-                } 
-                }
-                footer={[
-                <Button
-                    key="back"
-                    onClick={ () => {
-                    setModalVisible(false)
-                    setFile(null)
-                    } 
-                }
-                    style={{ padding: "0 10px", marginLeft: 15 }}
-                >
-                    Cancelar
-                </Button>,
-                <Button
-                    key="submit_modal"
-                    type="primary"
-                    onClick={() => importAfiliateMovements()}
-                    style={{ padding: "0 10px", marginLeft: 15 }}
-                    loading = { loading }
-                    disabled = { file? false : true }
-                >
-                    Subir archivos
-                </Button>,
-                ]}
-            >
-                <Row>
-                    <Col span={24}>
-                    <UploadFile
-                            textButton={"Importar movimientos"}
-                            setFile={setFile}
-                            validateExtension={".txt"}
-                            size = {'middle'}
-                            showList = {showList}
-                        />
-                    </Col>
-                </Row>
-            </Modal>
         </>
     )
 }
