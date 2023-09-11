@@ -184,13 +184,8 @@ const ModalConceptsPayroll = ({
 
   /* useEffect(() => {
     setTotalWorkingDays(workingDays)
-  }, [workingDays]) */
-  
-  useEffect(()=>{
-    if (payroll){
-      console.log("Objeto -> ", payroll)
-    }
-  },[payroll])
+  }, [workingDays]) */  
+
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
