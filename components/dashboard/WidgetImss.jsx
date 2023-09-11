@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
-    CardItem
+    CardItem,
+    CardInfo
 } from './Styled';
 import {
     injectIntl,
@@ -66,6 +67,7 @@ const WidgetImss = ({
     )
 
     return (
+        <CardInfo>
         <CardItem
             title={<>
                 <img src={'/images/logo_imss.png'} width={20} />
@@ -75,6 +77,7 @@ const WidgetImss = ({
         >
             {SelectPatronal}
         </CardItem>
+        </CardInfo>
     )
 }
 
