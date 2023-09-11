@@ -9,6 +9,8 @@ import {
     copyContent,
     downloadBLOB
 } from '../../utils/functions';
+import {ruleRequired} from '../../utils/rules'
+import { departureMotive } from "../../utils/constant";
 import {
     Table,
     Avatar,
@@ -17,7 +19,12 @@ import {
     Menu,
     Dropdown,
     Button,
-    message
+    message,
+    Form,
+    Col,
+    DatePicker,
+    Row,
+    Spin
 } from 'antd';
 import {
     SyncOutlined,
@@ -30,7 +37,9 @@ import {
     UserSwitchOutlined,
     KeyOutlined,
     SendOutlined,
-    UsergroupAddOutlined
+    UsergroupAddOutlined,
+    UserDeleteOutlined,
+    UserAddOutlined
 } from '@ant-design/icons';
 import {
     BsHandIndex
@@ -41,6 +50,7 @@ import WebApiPayroll from '../../api/WebApiPayroll';
 import WebApiYnl from '../../api/WebApiYnl';
 import WebApiAssessment from '../../api/WebApiAssessment';
 import { getCollaborators } from '../../redux/UserDuck';
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 import ModalSupervisor from './modals/ModalSupervisor';
 import ModalPassword from './modals/ModalPassword';
@@ -49,6 +59,8 @@ import ModalCompetences from '../person/ModalCompetences';
 import ModalSendUI from './modals/ModalSendUI';
 
 import AssignAssessments from '../person/assignments/AssignAssessmentsCopy';
+import GenericModal from '../modal/genericModal';
+import moment from 'moment';
 
 const TablePeople = ({
     currentNode,
@@ -64,6 +76,7 @@ const TablePeople = ({
     user_page_size
 }) => {
 
+    const [form] = Form.useForm()
     const router = useRouter();
     const [openList, setOpenList] = useState(false);
     const [actionList, setActionList] = useState('delete');
@@ -83,6 +96,12 @@ const TablePeople = ({
 
     const [itemReport, setItemReport] = useState([]);
     const [openReport, setOpenReport] = useState(false);
+
+    const [loading, setLoading] = useState(false)
+
+    const [openModalMovImss, setOpenModalMovImss] = useState(false)
+    const [movType, setMovType] = useState(null)
+    const [minDataValid, setMinDataValid] = useState(null)
 
     const actionError = (e) => {
         let error = e.response?.data?.message;
@@ -329,6 +348,29 @@ const TablePeople = ({
         setTypeAssign(1)
     }
 
+    const personMovImms = (item, type) => {
+        /* Validamos si es alta */
+        if(type === 'up'){
+            /* Validamos si tiene movimientos de imss y si el ultimo movimiento fue baja */
+            if(item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 3){
+                setMinDataValid(item.imss_movements[0].date)
+            }
+        }else if(type === 'down'){
+            /* Validamos si es baja y si tiene movimientos del imss(El ultimo, debe ser alta o reingreso) */
+            if(item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 1){
+                setMinDataValid(item.imss_movements[0].date)
+            }else{
+                /* Si no tiene movimientos de alta/reingreso, entonces obtenemos el "date_of_admission" de la persona  */
+                setMinDataValid(item.date_of_admission)
+            }
+        }
+
+
+        setItemPerson(item)
+        setOpenModalMovImss(true)
+        setMovType(type)
+    }
+
     const showPassword = (item) => {
         setItemPerson(item)
         setOpenPassword(true)
@@ -550,6 +592,23 @@ const TablePeople = ({
                     Restablecer contraseña
                 </Menu.Item>
             )}
+            {
+                item.is_low ?
+                <Menu.Item
+                    key="12"
+                    icon={<UserAddOutlined />}
+                    onClick={() => personMovImms(item, 'up')}
+                >
+                    Generar reingreso
+                </Menu.Item>: 
+                <Menu.Item
+                    key="12"
+                    icon={<UserDeleteOutlined />}
+                    onClick={() => personMovImms(item, 'down')}
+                >
+                    Generar baja del colaborador
+                </Menu.Item>
+            }
             <Menu.Divider />
             {currentNode?.resignation_letter && (
                 <Menu.Item
@@ -789,6 +848,49 @@ const TablePeople = ({
         sync_ynl: actionSendYNL
     }
 
+    useEffect(() => {
+      console.log('minDataValid',minDataValid)
+    }, [minDataValid])
+
+    const disabledDates = (current) => {
+        let valid_start = true
+        if(minDataValid){
+            valid_start = current < moment(minDataValid)?.startOf("day");
+        }
+        return valid_start;
+    }
+    
+
+    const submitMovImss = async (values) => {
+        values['person_id'] = itemPerson.id
+        values['departure_date'] = moment(values.departure_date).format("YYYY-MM-DD")
+        values['mov_type'] = movType
+        if(movType === 'up'){
+            values['departure_motive'] = null
+        }
+
+        try {
+            setLoading(true)
+            let resp = await WebApiPeople.PersonUpDown(values)
+            if(resp.status === 200){
+                if(movType === 'up'){
+                    message.success("Se genero el reingreso de la persona")
+                }else{
+                    message.success("Se ha solicitado la baja del colaborador")
+                }
+                
+                form.resetFields()
+                setOpenModalMovImss(false)
+                getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
+                setMinDataValid(null)
+            }
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            console.log('error', error)
+        } 
+    }
+
     return (
         <>
             <Table
@@ -860,6 +962,39 @@ const TablePeople = ({
                 close={closeStore}
                 itemsSelected={itemsSelected}
             />
+            <GenericModal 
+                setVisible={setOpenModalMovImss} 
+                visible={openModalMovImss} 
+                title={ movType === "up" ? "Generar reingreso" : "Generar baja del colaborador"}
+                actionButton={
+                    () => form.submit()
+                }
+                titleActionButton="Generar"
+            >
+                <Form form={form} onFinish={submitMovImss} layout='vertical'>
+                    <Spin spinning={loading}>
+                    <Row justify='center' >
+                        <Col span={12} >
+                            <Form.Item label={movType === "up" ? "Fecha de reingreso" : "Fecha de baja"} name={'departure_date'} rules={[ruleRequired]} >
+                                <DatePicker locale={locale} style={{width:'80%'}} format={'DD-MM-YYYY'} disabledDate={disabledDates} />
+                            </Form.Item>
+                        </Col>
+                        {
+                            movType == "down" && 
+                            <Col span={12} >
+                                <Form.Item label="Motivo" name={'departure_motive'} rules={[ruleRequired]} >
+                                <Select
+                                    placeholder="Seleccione una opción"
+                                    style={{ width: "80%" }}
+                                    options={departureMotive}
+                                />
+                                </Form.Item>
+                            </Col>
+                        }
+                    </Row>
+                    </Spin>
+                </Form>
+            </GenericModal>
         </>
     )
 }

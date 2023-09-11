@@ -129,3 +129,10 @@ export const getMovementsIMSS = (node, reg_patronal, status = "", date = "", val
 
     }
 }
+
+export const clearMovementsIMSS = (node, reg_patronal, status = "", date = "", validity_date = "") => async (dispatch, getState) => {
+    dispatch({
+        type: MOVEMENTS_IMSS,
+        payload: { data: [], loading: false },
+    });
+}

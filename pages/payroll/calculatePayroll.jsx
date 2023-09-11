@@ -24,6 +24,7 @@ import {
   Tooltip,
   Dropdown,
   Menu,
+  Modal,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -44,6 +45,7 @@ import {
   SearchOutlined,
   DeleteOutlined,
   FilePdfOutlined,
+  FilePdfTwoTone,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -122,6 +124,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [exportTable, setExportTable] = useState(false)
   const [isPrinting, setIsPrinting] = useState(false);
+  const [sharingPayroll, setSharingPayroll] = useState(false)
 
 
   const componentRef = useRef();
@@ -282,6 +285,16 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cell-actions",
       render: (item) => (
         <>
+        {
+          step == 2 &&
+          <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
+              <FilePdfTwoTone
+                  twoToneColor="#34495E"
+                  onClick={() => downloadReceipt(item)}
+                  style={{ fontSize: "25px" }}
+              />
+          </Tooltip>
+        }
           {item.payroll_cfdi_person &&
           item.payroll_cfdi_person.status == 6 &&
           step == 0 ? (
@@ -1553,7 +1566,55 @@ const CalculatePayroll = ({ ...props }) => {
     }
   }
 
+  const sharePayload = async (selections_list, share_key) => {
+    try {
+      setSharingPayroll(true)
+      let data = {
+        'created_by_person_id': props?.userInfo?.id,
+        'share_key': share_key,
+        'period_id':  periodSelected?.id,
+        'cfdis_ids': selections_list?.selectedRowKeys
+      }
+      let resp = await WebApiPayroll.sharePayload(data)
+      if(resp.status === 200){
+        Modal.success({
+          title: resp?.data?.message,
+          onOk() {},
+        });
+      }
+      setSharingPayroll(false)
+    } catch (error) {
+      console.log('error', error)
+      setSharingPayroll(false)
+    }
+  }
   
+  const downloadReceipt = async (data) => {
+    
+    let req = {
+      cfdi_id: data?.payroll_cfdi_person?.id,
+      payroll_not_stamped: true
+    }
+
+    try {
+      let response = await WebApiPayroll.downLoadReceipt(req);
+      const type = response.headers["content-type"];
+      const blob = new Blob([response.data], {
+        type: type,
+        encoding: "UTF-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "comprobante_2.pdf";
+      link.click();
+    } catch (error) {
+      error &&
+      error.response &&
+      error.response.data &&
+      error.response.data.message &&
+      message.error(error.response.data.message);
+    }
+  };
 
   const downloads_options = (
     <Menu onClick={downloadActions} >
@@ -2108,6 +2169,8 @@ const CalculatePayroll = ({ ...props }) => {
                       pageSize={defaultSize}
                       setPageSize={setDefaultSize}
                       showAll={defaultSize > 100 ? true : false}
+                      sharePayload={sharePayload}
+                      sharingPayroll={sharingPayroll}
                     />
                   ) : (
                     <>
@@ -2311,7 +2374,10 @@ const CalculatePayroll = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return { currentNode: state.userStore.current_node };
+  return { 
+    currentNode: state.userStore.current_node,
+    userInfo: state.userStore.user
+  };
 };
 
 export default connect(mapState)(withAuthSync(CalculatePayroll));
