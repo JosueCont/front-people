@@ -600,10 +600,10 @@ const InternalConcepts = ({
     if (intConcept)
       setCat(
         key == 1
-          ? props.perceptions_int
+          ? props.perceptions_int.filter((item) => item.node == null)
           : key == 2
-          ? props.deductions_int
-          : props.other_payments_int
+          ? props.deductions_int.filter((item) => item.node == null)
+          : props.other_payments_int.filter((item) => item.node == null)
       );
     else
       setCat(
