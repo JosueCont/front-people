@@ -38,13 +38,13 @@ const MovementsIMSS=({ currentNode })=>{
     /**
      * Vuelve a ejecutar el scrapper para consultartodos
      */
-    const syncPending= async () =>{
+    const syncPending= async (movimientoId=null) =>{
         setLoadingSync(true)
         try {
-            let response = await WebApiPayroll.getIMSSMovements(currentNode.id, patronalSelected)
-            setDocuments(response.data.documents)
+            let response = await WebApiPayroll.syncMovementImssScapper(currentNode.id, patronalSelected,movimientoId)
+            message.success('Solicitado correctamente')
         } catch (error) {
-            console.log('Error -->', error)
+            message.error('Hubo un error al solicitar, porfavor intenta mas tarde')
         } finally {
             setLoadingSync(false)
         }
@@ -170,7 +170,7 @@ const MovementsIMSS=({ currentNode })=>{
 
             <Row justify={'space-between'} style={{ marginTop: '20px' }}>
                 <Col span={10}>
-                    <SelectPatronalRegistration 
+                    <SelectPatronalRegistration
                         currentNode={currentNode?.id}
                         onChange={(value) => setPatronalSelected(value)}
                     />
@@ -178,7 +178,7 @@ const MovementsIMSS=({ currentNode })=>{
                 <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
                     <Button
                         style={{marginRight:20}}
-                        onClick={syncPending}
+                        onClick={()=>syncPending()}
                         disabled = { patronalSelected?  false : true }
                     >
                         {loadingSync ? <SyncOutlined spin={loading}/> : <ThunderboltOutlined/>} Sincronizar pendientes

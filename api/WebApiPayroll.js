@@ -338,6 +338,21 @@ class WebApiPayroll {
     );
   }
 
+  static syncMovementImssScapper(node, patronal_registration,idMovement=null) {
+
+    let data = {
+        node_id: node,
+        patronal_registration_id: patronal_registration,
+        event_id: idMovement ? idMovement : null
+    }
+
+    return WebApi.ApisType(
+        `/business/check-dismag-status`,
+        "post",
+        data
+    );
+  }
+
   static generateDispmagORSendMovement(
     type,
     regPatronal,
