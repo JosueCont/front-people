@@ -125,6 +125,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            data_config: item.data_config,
             perception_type: item.perception_type,
             is_rest_day: item.is_rest_day,
           };
@@ -141,6 +142,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            data_config: item.data_config,
             deduction_type: item.deduction_type,
           };
         })
@@ -156,6 +158,7 @@ const ModalConceptsPayroll = ({
             datum: 0,
             amount: 0,
             data_type: item.data_type,
+            data_config: item.data_config,
             other_type_payment: item.other_type_payment,
           };
         })
@@ -939,16 +942,14 @@ const ModalConceptsPayroll = ({
                   title={"Fechas"}
                   align={"center"}
                   key={"date"}
-                  render={(record) =>       
+                  render={(record) =>
                     record.data_type == 2 ? (
                       <DatePickerHoliDays
                         daysActives={daysActive}
-                        disabledDays={nonWorkingDays}
+                        //disabledDays={nonWorkingDays}
+                        data_config={record?.data_config}
                         withData={
-                          (record?.perception_type?.description.toLowerCase().includes('dobles') ||
-                          record?.perception_type?.description.toLowerCase().includes('triples') ||
-                          record?.perception_type?.description.toLowerCase().includes('horas')) &&
-                          record?.perception_type?.code === '019'
+                          record.data_config === 2 
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}

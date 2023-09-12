@@ -41,7 +41,7 @@ const gregorian_es_lowercase = {
 
 
 
-const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=[], disabledDays=[], showCount=false, ...props})=>{
+const DatePickerHoliDays=({withData=false, data_config=null, locale='es',concept=null, daysActives=[], disabledDays=[], showCount=false, ...props})=>{
     const [value, setValue] = useState([]); 
     const [arrayDates, setArrayDates] = useState([])
     const [isFestive, setIsFestive] = useState(false)
@@ -57,7 +57,6 @@ const DatePickerHoliDays=({withData=false,locale='es',concept=null, daysActives=
     const { Text } = Typography
 
     useEffect(() => {
-
         if(concept?.deduction_typ?.code === "006"){
             setDisability(true)
         }
