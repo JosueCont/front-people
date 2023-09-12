@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import FileUpload from '../../jobbank/FileUpload';
 import WebApiPayroll from '../../../api/WebApiPayroll';
+import {useSelector} from "react-redux";
 
 const ModalVacation = ({
     visible = false,
@@ -19,6 +20,7 @@ const ModalVacation = ({
     const [formVacation] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState([]);
+    const node_company = useSelector((state) => state?.userStore?.current_node)
     const typeFile = ['xlsx'];
 
     const onFinish = async () => {
@@ -26,6 +28,7 @@ const ModalVacation = ({
             setLoading(true)
             let data = new FormData();
             data.append('File', file[0])
+            data.append('node_id',node_company?.id)
             let response = await WebApiPayroll.importVacationModification(data);
             setTimeout(() => {
                 onClose()
@@ -37,8 +40,9 @@ const ModalVacation = ({
         } catch (e) {
             console.log(e)
             setLoading(false)
-            let errors = ['Hubo un error al cargar la información, por favor intente nuevamente o verifique que el formato del archivo sea correcto.']
-            formSalary.setFields([{ name: 'file_name', errors }]);
+            let errors = 'Hubo un error al cargar la información, por favor intente nuevamente o verifique que el formato del archivo sea correcto.'
+            message.error(errors)
+
         }
     }
 
