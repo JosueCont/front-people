@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Input, Row, Col, Select,DatePicker } from "antd";
+import { Form, Input, Row, Col, Select,DatePicker, Checkbox } from "antd";
 import {
   onlyNumeric,
   rulePhone,
@@ -19,6 +19,7 @@ const FormPatronalRegistration = ({
   form,
   patronalRegistration = {},
   pushed,
+  hasImss,
   currentNodeId,
   imssDelegation = null,
   ...props
@@ -155,6 +156,26 @@ const FormPatronalRegistration = ({
             imssDelegationId={imssDelegationId}
           />
         </Col>
+        {
+          hasImss ? <>
+            <Col lg={6} xs={22}>
+              <Form.Item label={" "} name="save_automatic_emissions"
+                         tooltip={"Si activa esta opción, el sistema obtendrá mes a mes las Emisiones."}
+                         valuePropName="checked">
+                <Checkbox>Obtener automáticamente las EMA/EBA</Checkbox>
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22}>
+              <Form.Item label={' '} name="save_job_risk_premium"
+                         tooltip={"Si se activa esta opción se estará actualizando la prima de riesgo cada vez que se obtenga las emisiones."}
+                         valuePropName="checked">
+                <Checkbox>Actualizar prima de riesgo al obtener Ema y EBA</Checkbox>
+              </Form.Item>
+
+            </Col>
+          </>:null
+        }
+
       </Row>
     </Form>
   );

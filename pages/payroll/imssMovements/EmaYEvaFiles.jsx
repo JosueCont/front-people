@@ -25,7 +25,7 @@ const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
       title: "Descargar",
       key: "actions",
       render: (record) => (
-        <a href={record.file}>
+          record?.file && <a href={record.file}>
           <DownloadOutlined />
         </a>
       ),

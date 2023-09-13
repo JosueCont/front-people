@@ -67,6 +67,7 @@ const ImssInformationNode = ({
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
   const [password, setPassword] = useState("");
+  const [currentMeta, setCurrentMeta] = useState(null);
 
   const [visibleTable, setVisibleTable] = useState(true);
 
@@ -204,6 +205,8 @@ const ImssInformationNode = ({
         data.address.id = patronalData.fiscal_address.id;
     }
 
+    debugger;
+
     WebApiPeople.patronalRegistration(data)
       .then((response) => {
         resetForms();
@@ -240,10 +243,15 @@ const ImssInformationNode = ({
   const saveForms = () => {
     let jobRiskData = formJobRisk.getFieldValue();
     jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent);
+    let patronalData = formPatronal.getFieldsValue();
+    let meta = {...currentMeta}
+    meta.save_automatic_emissions = formPatronal.getFieldValue('save_automatic_emissions') ? formPatronal.getFieldValue('save_automatic_emissions') : false;
+    meta.save_job_risk_premium = formPatronal.getFieldValue('save_job_risk_premium') ? formPatronal.getFieldValue('save_job_risk_premium') : false;
+    patronalData.metadata= meta;
 
     const data = {
       node: currentNode.id,
-      patronal: formPatronal.getFieldsValue(),
+      patronal: patronalData,
       address: formAddress.getFieldsValue(),
       representative: formLegalRep.getFieldsValue(),
       jobRisk: jobRiskData,
@@ -325,6 +333,7 @@ const ImssInformationNode = ({
     setIsEdit(true);
     setIdRegister(item.id);
     setVisibleTable(false);
+    setCurrentMeta(item?.meta)
 
     formPatronal.setFieldsValue({
       node: currentNode?.id,
@@ -334,6 +343,8 @@ const ImssInformationNode = ({
       subsidy_reimbursement_agreement: item?.subsidy_reimbursement_agreement,
       phone: item?.phone,
       id: item?.id,
+      save_automatic_emissions: item?.metadata?.save_automatic_emissions,
+      save_job_risk_premium: item?.metadata?.save_job_risk_premium,
       setup_period: item?.setup_period
         ? moment().year(parseInt(item?.setup_period))
         : null,
@@ -503,6 +514,7 @@ const ImssInformationNode = ({
                 </Row>
                 <Divider style={{ marginTop: "2px" }} />
                 <FormPatronalRegistration
+                  hasImss={hasCredentialIMSS}
                   patronalRegistration={
                     patronalData && patronalData.patronal_registration
                   }
