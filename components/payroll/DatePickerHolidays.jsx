@@ -50,33 +50,17 @@ const DatePickerHoliDays=({withData=false, data_config=null, locale='es',concept
     const [disability, setDisability] = useState(false)
     const [count, setCount] = useState(0)
     const [showError, setShowError] = useState(false)
-    const [openCalendar, setOpenCalendar] = useState(false) // para abrir todo el calendario
+    const [openCalendar, setOpenCalendar] = useState(true) // para abrir todo el calendario
     const [typeRange, setTypeRange] = useState(false)
     const [typeMultiple, setMultiple] = useState(true)
 
     const { Text } = Typography
 
     useEffect(() => {
-        if(concept?.deduction_typ?.code === "006"){
-            setDisability(true)
-        }
-        if(concept?.perception_type?.code === "020"){
+        if(concept?.description?.toLowerCase().includes("dominical")){
             setIsSunday(true)
-        }
-        if(concept?.code === "P122" || (concept?.description?.toLowerCase().includes("festivo") && concept?.perception_type?.code === "019")){
-            setIsFestive(true)
-        }
-        if(concept.is_rest_day === true  
-            || concept.code === "P120" 
-            || concept?.description?.toLowerCase().includes("descanso")
-            || (concept?.perception_type?.code === "019" && concept?.perception_type?.description?.toLowerCase().includes("descanso") )
-            ){ 
-            setIsRest(true)
-        }
-
-        if(concept?.perception_type?.code === "006" || concept?.description?.toLowerCase().includes("incapacidad")){
             console.log('concepto', concept)
-            setOpenCalendar(true)
+            setOpenCalendar(false)
         }
     }, [concept])
 
@@ -188,20 +172,6 @@ const DatePickerHoliDays=({withData=false, data_config=null, locale='es',concept
                         }
                         else if(isSunday){
                             if(date?.weekDay?.number != '1'){
-                                propsDate.disabled = true
-                                return propsDate
-                            }
-                        }else if(isFestive || isRest){
-                            if(!disabledDays.includes(format_date) && daysActives.includes(date?.weekDay?.index)){
-                                propsDate.disabled = true
-                                return propsDate
-                            }
-                        }else{
-                            if(!daysActives.includes(date?.weekDay?.index)){
-                                propsDate.disabled = true
-                                return propsDate
-                            }
-                            if(disabledDays.includes(format_date)){
                                 propsDate.disabled = true
                                 return propsDate
                             }
