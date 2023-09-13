@@ -40,18 +40,22 @@ import { messageDeleteSuccess, messageError, messageSaveSuccess, messageUpdateSu
 import { verifyMenuNewForTenant } from "../../utils/functions";
 import esES from "antd/lib/locale/es_ES";
 import _, { debounce } from "lodash";
+import { setNullCompany } from '../../redux/UserDuck'
+import router from "next/router";
+import moment from "moment";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ currentNode, ...props }) => {
+const businessForm = ({ currentNode,setNullCompany, ...props }) => {
     let router = useRouter();
     const [business, setBusiness] = useState([]);
     const [allBusiness, setAllBusiness] = useState([]);
     const [imageUrl, setImageUrl] = useState(null);
-
+    const [modalSwitch, setModalSwitch] = useState(false);
     const [loading, setLoading] = useState(false);
     const [loadingLogo, setLoadingLogo] = useState(false);
+    const currentYear = moment().format("YYYY");
     const [logo, setLogo] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -77,6 +81,10 @@ const businessForm = ({ currentNode, ...props }) => {
                 updateBusiness(values);
             }
         }
+    };
+
+    const switchModal = () => {
+        modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
     };
 
     const deleteBusiness = async (id) => {
@@ -459,7 +467,7 @@ const businessForm = ({ currentNode, ...props }) => {
                                     fontWeight: "bold",
                                     color: "white",
                                 }}
-                                onClick={() => showModal("add")}
+                                onClick={switchModal}
                             >
                                 <PlusOutlined />
                                 Agregar empresa
@@ -510,6 +518,53 @@ const businessForm = ({ currentNode, ...props }) => {
                     </Col>
                 </Row>
             </div>
+
+            <Modal
+                visible={modalSwitch}
+                onCancel={switchModal}
+                title={<b>Agregar empresa</b>}
+                footer={[
+                    <Button
+                        key="back"
+                        onClick={async () => {
+                            await setNullCompany()
+                            router.push("/payroll/importMasivePayroll")
+                        }}
+                    >
+                        Importar xml
+                    </Button>,
+                    <Button
+                        key="submit"
+                        onClick={() => {
+                            setModalSwitch(false), showModal("add");
+                        }}
+                    >
+                        Crear manualmente
+                    </Button>,
+                ]}
+            >
+                <Alert
+                    message={
+                        <span>
+                    <b>Importar xml:</b> Se crea la empresa y el histórico de
+                    nómina a base de una carga masiva de xml (nóminas por
+                    persona). Por favor importa todo tu año {currentYear}
+                  </span>
+                    }
+                    type="warning"
+                />
+                <br />
+                <Alert
+                    message={
+                        <span>
+                    <b>Crear manualmente:</b> Se crea de manera manual una
+                    empresa con la información basica necesaria.
+                  </span>
+                    }
+                    type="warning"
+                />
+            </Modal>
+
 
             <Modal
                 title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
@@ -649,4 +704,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState)(businessForm);
+export default connect(mapState,{setNullCompany})(businessForm);

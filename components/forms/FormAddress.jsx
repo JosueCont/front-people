@@ -17,6 +17,9 @@ import WebApi from "../../api/webApi";
 import {ruleRequired, ruleWhiteSpace} from "../../utils/rules";
 import {connect} from "react-redux";
 const { Option } = Select;
+import {
+  EnvironmentOutlined
+} from "@ant-design/icons";
 
 const FormAddress = ({ person_id, ...props }) => {
   const { Title } = Typography;
@@ -88,6 +91,9 @@ const FormAddress = ({ person_id, ...props }) => {
 
   /* Events */
   const formAddressPerson = (value) => {
+    if(!value.location){
+      value.location = 'N/A'
+    }
     if (idAddress != "" && idAddress != undefined) {
       updateAddress(value);
     } else {
@@ -99,7 +105,11 @@ const FormAddress = ({ person_id, ...props }) => {
   return (
     <>
       <Row>
-        <Title style={{ fontSize: "20px" }}>Dirección</Title>
+        <Col lg={6} xs={22} offset={1}>
+          <Title style={{ fontSize: "20px" }}> 📍 Dirección de la persona</Title>
+          <hr/>
+        </Col>
+
       </Row>
       <Form 
         layout={"vertical"}
@@ -183,7 +193,7 @@ const FormAddress = ({ person_id, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="location" label="Ubicación" rules={[ruleRequired]}>
+            <Form.Item name="location" label="Ubicación">
               <Input placeholder={'Estado, Ciudad'}/>
             </Form.Item>
           </Col>
