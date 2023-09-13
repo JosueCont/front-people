@@ -498,7 +498,8 @@ const InternalConcepts = ({
                   placeholder="Selecciona una opción"
                   options={[
                     {label: 'Dia', value: 1},
-                    {label: 'Hora', value: 2}
+                    {label: 'Hora', value: 2},
+                    {label: 'N/A', value: 3}
                   ]}
                 />
               </Form.Item>
