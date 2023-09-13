@@ -55,6 +55,8 @@ const InternalConcepts = ({
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
+  const data_type = Form.useWatch('data_type', form)
+  
   const columns = [
     {
       title: "Código",
@@ -172,10 +174,20 @@ const InternalConcepts = ({
     setId("");
   };
 
+  useEffect(() => {
+    if(data_type === 1){
+      form.setFieldsValue({
+        'data_config': null
+      })
+    }
+  }, [data_type])
+  
+
   const onFinishForm = (value) => {
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
+
     if (!(value?.description && value.description.trim())) {
       form.setFieldsValue({ description: undefined });
       value.description = undefined;
@@ -192,6 +204,10 @@ const InternalConcepts = ({
     if (value.description === undefined || value.code === undefined) {
       form.validateFields();
       return;
+    }
+    
+    if(value.data_type === 1){
+      value['data_config'] = 3
     }
     
     value.node = currentNode.id;
@@ -229,6 +245,7 @@ const InternalConcepts = ({
   };
 
   const editRegister = (item, param) => {
+    console.log('item', item)
     setEdit(true);
     setId(item.id);
     console.log('item', item)
@@ -247,7 +264,8 @@ const InternalConcepts = ({
         apply_assimilated: item.apply_assimilated,
         accountant_account: item.accountant_account,
         counterpart: item.counterpart,
-        available_for_permits: item.available_for_permits
+        available_for_permits: item.available_for_permits,
+        data_config: item.data_config
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -259,7 +277,8 @@ const InternalConcepts = ({
         show: item.show,
         accountant_account: item.accountant_account,
         counterpart: item.counterpart,
-        available_for_permits: item.available_for_permits
+        available_for_permits: item.available_for_permits,
+        data_config: item.data_config
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -270,7 +289,8 @@ const InternalConcepts = ({
         other_type_payment: item.other_type_payment.id,
         show: item.show,
         accountant_account: item.accountant_account,
-        counterpart: item.counterpart
+        counterpart: item.counterpart,
+        data_config: item.data_config
       });
     }
   };
@@ -470,6 +490,21 @@ const InternalConcepts = ({
               <Select options={dataType} />
             </Form.Item>
           </Col>
+          {
+            data_type === 2 &&
+            <Col lg={6} xs={22} md={12}>
+              <Form.Item name={"data_config"} label="Configuración del dato">
+                <Select 
+                  placeholder="Selecciona una opción"
+                  options={[
+                    {label: 'Dia', value: 1},
+                    {label: 'Hora', value: 2},
+                    {label: 'N/A', value: 3}
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          }
           <Col lg={percepciones ? 12 : 6} xs={22} md={percepciones ? 24 : 12}>
             <RenderSelect
               data={
