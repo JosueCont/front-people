@@ -949,7 +949,7 @@ const ModalConceptsPayroll = ({
                         //disabledDays={nonWorkingDays}
                         data_config={record?.data_config}
                         withData={
-                          record.data_config === 2 
+                          record.data_config === 2 || record.description.toLowerCase().includes("hora")
                         }
                         concept={record}
                         onChangeData={(dates) => (record.dates = dates)}
