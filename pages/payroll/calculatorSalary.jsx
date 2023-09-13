@@ -50,6 +50,7 @@ const calculatorSalary = ({ ...props }) => {
       value.salary = parseFloat(value.salary);
       value.daily_salary = parseFloat(value.daily_salary);
       value.antiquity = antiquity
+      value.node_id = props.currentNode?.id
       setSalary(null);
       setLoading(true);
       if (value.person_id) delete value["person_id"];
