@@ -943,7 +943,7 @@ const ModalConceptsPayroll = ({
                   align={"center"}
                   key={"date"}
                   render={(record) =>
-                    record.data_type == 2 ? (
+                    record.data_type == 2 && record.data_config !== 3 ? (
                       <DatePickerHoliDays
                         daysActives={daysActive}
                         //disabledDays={nonWorkingDays}
