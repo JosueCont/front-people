@@ -595,7 +595,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
                   {/* <NumberFormat prefix={"$"} number={data.isr} /> */}
-                  <NumberFormat prefix={"$"} number={data.total_deductions} />
+                  <NumberFormat prefix={"$"} number={data.total_deduction} />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
