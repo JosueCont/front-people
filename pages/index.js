@@ -53,42 +53,41 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
       <Global
         styles={css`
           :root {
-            --primaryColor: ${props.config && props.config.theme_color 
-              ? props.config.theme_color.primary_color
-              : "#1890ff"};
+            --primaryColor: ${props.config && props.config.theme_color
+                ? props.config.theme_color.primary_color
+                : "#1890ff"};
             --primaryAlternativeColor: ${props.config && props.config.theme_color
-            ? props.config.theme_color.primary_alternative_color
-            : "#1890ff"};
+                ? props.config.theme_color.primary_alternative_color
+                : "#1890ff"};
             --secondaryColor: ${props.config
-              ? props.config.concierge_secondary_color
-              : "#1890ff"};
+                ? props.config.concierge_secondary_color
+                : "#1890ff"};
             --secondaryAlternativeColor: ${props.config && props.config.theme_color
-            ? props.config.theme_color.secondary_alternative_color
-            : "#1890ff"};
+                ? props.config.theme_color.secondary_alternative_color
+                : "#1890ff"};
             --background_image: ${props.config &&
             props.config.concierge_logo_login
-              ? "url(" + props.config.concierge_logo_login + ")"
-              : ''};
+                ? "url(" + props.config.concierge_logo_login + ")"
+                : ''};
             --logo_login: ${props.config && props.config.concierge_logo
-              ? "url(" + props.config.concierge_logo + ")"
-              : 'url("/images/Grupo Industrial Roche-Color.png")'};
+                ? "url(" + props.config.concierge_logo + ")"
+                : 'url("/images/Grupo Industrial Roche-Color.png")'};
             --fontFamily: ${flavor && flavor.font_family
-              ? flavor.font_family
-              : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
+                ? flavor.font_family
+                : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
             --fontStyle: ${flavor && flavor.font_family
-              ? flavor.font_style
-              : "normal"};
+                ? flavor.font_style
+                : "normal"};
             --fontFormColor: ${props.config
-              ? props.config.concierge_primary_color
-              : "#000"};
+                ? props.config.concierge_primary_color
+                : "#000"};
             --srcFontFamily: ${flavor && flavor.font_family
-              ? "url(/" + routeFlavor + "/fonts/" + flavor.font_family + ")"
-              : 'url("/fonts/sans-serif")'};
+                ? "url(/" + routeFlavor + "/fonts/" + flavor.font_family + ")"
+                : 'url("/fonts/sans-serif")'};
           }
 
           body {
-            background: transparent var(--background_image) 70% 5% no-repeat
-              padding-box;
+            background: transparent var(--background_image) 70% 5% no-repeat padding-box;
             background-size: cover;
             opacity: 1;
           }
@@ -158,6 +157,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
             position: relative;
             top: 50%;
           }
+
           .form-title {
             font-size: 30px !important;
             text-align: center;
@@ -204,8 +204,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
             }
 
             body {
-              background: transparent var(--background_image) 70% 5%
-                no-repeat padding-box;
+              background: transparent var(--background_image) 70% 5% no-repeat padding-box;
               background-size: 100% 100%;
             }
 
@@ -281,7 +280,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
       </Helmet>
 
       {props.config ? (
-        <div className="fullPage">
+        <Row className="fullPage">
           <Row
             style={{ marginTop: "auto", marginBottom: "auto", width: "100%" }}
           >
@@ -370,7 +369,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
               </div>
             </Col>
           </Row>
-        </div>
+        </Row>
       ) : (
         <div className="center-content">
           <Spin tip="Cargando..." spinning={loading} />

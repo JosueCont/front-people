@@ -56,7 +56,7 @@ const JobRiskPremium = ({
   useEffect(() => {
     if (jobRisk) {
       form.setFieldsValue({
-        job_risk_class: jobRisk.job_risk_class.id,
+        job_risk_class: jobRisk?.job_risk_class?.id,
         risk_percent:
           jobRisk.risk_percent == "0.00000"
             ? jobRisk.job_risk_class.percent
