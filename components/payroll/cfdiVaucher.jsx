@@ -60,6 +60,7 @@ const CfdiVaucher = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [cfdis, setCfdis] = useState([]);
+  const [cfdisOriginal, setCfdisOriginal] = useState([])
   const [periods, setPeriods] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [personsKeys, setPersonsKeys] = useState([]);
@@ -71,6 +72,39 @@ const CfdiVaucher = ({
   const [dataTypesLog, setDataTypesLog] = useState([]);
   const [currentPageSize, setCurrentPageSize] = useState(10)
 
+  useEffect(() => {
+    console.log('local', props.localFilters)
+
+    let newList = [...  cfdisOriginal];
+    console.log(newList)
+    if (props.localFilters){
+      if(props.localFilters.person_id && props.localFilters.person_id.length >= 1){
+        newList = newList.filter(item => props.localFilters.person_id.includes(item.payroll_person.person.id))
+      }
+
+      if(props.localFilters.job){
+        newList = newList.filter(item => props.localFilters.job === item.payroll_person.person.job.id)
+      }
+
+      if(props.localFilters.department){
+        newList = newList.filter(item => props.localFilters.department === item.payroll_person.person.department_id)
+      }
+
+    }
+    
+    /*
+
+    
+
+    if(values.department){
+      newList = newList.filter(item => values.department === item.person.department_id)
+    }
+    console.log('newList', newList)
+     */
+    setCfdis(newList)
+    
+  }, [props?.localFilters])
+  
 
   useEffect(() => {
     let _dataTypes = []
@@ -443,6 +477,7 @@ const CfdiVaucher = ({
 
     setLoading(true);
     setCfdis([]);
+    setCfdisOriginal([])
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setLenData(response.data.count);
@@ -451,6 +486,7 @@ const CfdiVaucher = ({
           return item;
         });
         setCfdis(cfdi_data);
+        setCfdisOriginal(cfdi_data)
         setLoading(false);
       })
       .catch((error) => {
@@ -467,6 +503,7 @@ const CfdiVaucher = ({
     setPage(1)
     setCalendarSelect(null);
     setCfdis([]);
+    setCfdisOriginal([])
     setLenData(0)
     setValuesFilter({})
     
