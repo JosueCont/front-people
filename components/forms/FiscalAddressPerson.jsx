@@ -4,6 +4,9 @@ import { typeStreet, personStreetType } from "../../utils/constant";
 import { connect } from 'react-redux';
 import WebApiFiscal from "../../api/WebApiFiscal";
 import WebApi from "../../api/webApi";
+import {
+    EnvironmentOutlined
+} from "@ant-design/icons";
 import {ruleRequired, ruleWhiteSpace} from "../../utils/rules";
 
 const FiscalAddressPerson = ({person_id, ...props}) => {
@@ -84,7 +87,11 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
   return (
     <>
         <Row>
-            <Title style={{ fontSize: "20px" }}>Dirección Fiscal</Title>
+            <Col lg={6} xs={22} offset={1}>
+                <Title style={{ fontSize: "20px" }}> 📍 Dirección Fiscal</Title>
+                <hr/>
+            </Col>
+
         </Row>
         <Spin spinning={loading}>
           <Form
