@@ -27,12 +27,12 @@ const WidgetTotal = () => {
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
 
-    useEffect(()=>{
-        if(!current_node) return;
+    useEffect(() => {
+        if (!current_node) return;
         getTotal()
-    },[current_node])
+    }, [current_node])
 
-    const getTotal = async () =>{
+    const getTotal = async () => {
         try {
             setLoading(true)
             let params = '&widget_code=TOTAL_PEOPLE_IN_NODE';
@@ -46,18 +46,25 @@ const WidgetTotal = () => {
         }
     }
 
+    const viewList = () => {
+        router.push({
+            pathname: '/home/persons',
+            query: { is_active: true }
+        })
+    }
+
     return (
         <CardItem
             title={<>
                 <img src='/images/people.png' />
                 <p><FormattedMessage id={'dashboard.totalpeople'} /></p>
             </>}
-            extra={<a onClick={() => router.push(`/home/persons/?is_active=true`)}><FormattedMessage id={'view'} /></a>}
+            extra={<a onClick={() => viewList()}><FormattedMessage id={'view'} /></a>}
         >
             {!loading ?
                 <Typography.Title
                     style={{ cursor: 'pointer', marginBottom: 0 }}
-                    onClick={() => router.push(`/home/persons/?is_active=true`)}
+                    onClick={() => viewList()}
                     level={1}
                 >
                     {total}
