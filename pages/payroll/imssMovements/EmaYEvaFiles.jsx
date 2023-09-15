@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Row, col, Table } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { Row, col, Table, Space, Button,Popconfirm } from "antd";
+import { DownloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 
 const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
+
+  const [deleting,setDeleting]=useState(false)
+
+  const confirmDelete=async()=>{
+
+  }
+
+  const text = '¿Seguro de eliminar este archivo?';
+
   const colums = [
     {
       title: "Nombre del archivo",
@@ -25,12 +34,25 @@ const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
       title: "Descargar",
       key: "actions",
       render: (record) => (
-          record?.file && <a href={record.file}>
+          record?.file && <Space><a href={record.file}>
           <DownloadOutlined />
         </a>
+            {/*<ConfirmDelete item={record}/>*/}
+
+          </Space>
       ),
     },
   ];
+
+  const ConfirmDelete=({item})=>{
+    return (<Popconfirm placement="topLeft"
+                        title={text}
+                        onConfirm={()=>confirmDelete(item)} okText="Si" cancelText="Cancelar">
+              <a>
+                <DeleteOutlined />
+              </a>
+    </Popconfirm>)
+  }
 
   return (
     <Table

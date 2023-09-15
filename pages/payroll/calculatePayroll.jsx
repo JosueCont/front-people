@@ -126,6 +126,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [sharingPayroll, setSharingPayroll] = useState(false)
 
+  const [localFilters, setLocalFilters] = useState(null)
 
   const componentRef = useRef();
   const promiseResolveRef = useRef(null);
@@ -150,6 +151,11 @@ const CalculatePayroll = ({ ...props }) => {
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
   }, [props.currentNode]);
+
+  useEffect(() => {
+    clearFilter()
+  }, [step])
+  
 
   const persons = [
     {
@@ -627,6 +633,7 @@ const CalculatePayroll = ({ ...props }) => {
   }, [optionspPaymentCalendars]);
 
   const changeCalendar = (value) => {
+    clearFilter()
     // setTotalSalary(null);
     // setTotalIsr(null);
     setTotalPerceptions(null);
@@ -1294,9 +1301,11 @@ const CalculatePayroll = ({ ...props }) => {
       person_id: []
     });
     setPayroll([...payrollOriginal])
+    setLocalFilters(null)
   }
 
   const localFilter = (values) => {
+    setLocalFilters(values)
     console.log(values)
     console.log(payroll)
     let newList = [...  payrollOriginal];
@@ -1346,6 +1355,7 @@ const CalculatePayroll = ({ ...props }) => {
 
 
   const changePeriod = (period_id) => {
+    clearFilter()
 
     let period = calendarSelect.periods.find((p) => p.id == period_id);
 
@@ -2158,6 +2168,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Card className="card_table">
                   {step == 3 ? (
                     <CfdiVaucher
+                      localFilters={localFilters}
                       calendar={calendarSelect.id}
                       period={periodSelected.id}
                       viewFilter={false}
