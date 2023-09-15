@@ -773,6 +773,10 @@ class WebApiPeople {
   static PersonUpDown(data){
     return WebApi.ApisType(`/payroll/payroll-person/up_down/`, 'post', data);
   }
+
+  static rfcsFileDownload(node_id){
+    return WebApi.ApisType(`/person/person/rfcs_txt_download/?node=${node_id}`, 'get');
+  }
   
 }
 
