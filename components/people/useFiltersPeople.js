@@ -55,7 +55,7 @@ export const useFiltersPeople = () => {
     })
 
     const getStatus = (value) => value == 'true'
-        ? 'Activos' : 'Inactivos';
+        ? 'Activo' : 'Inactivo';
 
     const listKeys = {
         first_name__icontains: {

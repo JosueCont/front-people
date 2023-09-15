@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, Modal, Steps, Row, Col, Alert, Timeline, Typography} from "antd";
+import {Button, Modal, Steps, Row, Col, Alert, Timeline, Typography, Badge} from "antd";
 const { Step } = Steps;
 import {
     ArrowRightOutlined,
@@ -65,6 +65,7 @@ const ButtonWizardLight=({data=null})=>{
               </Button>
               <Modal title=" Información requerida para el módulo de nómina" width={1000} visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                  <Row>
+                     <Badge.Ribbon text="V.15092023">
                      <Col span={24}>
 
 
@@ -92,6 +93,7 @@ const ButtonWizardLight=({data=null})=>{
 
 
                      </Col>
+                     </Badge.Ribbon>
                  </Row>
               </Modal>
               {data &&
