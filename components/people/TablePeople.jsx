@@ -9,7 +9,7 @@ import {
     copyContent,
     downloadBLOB
 } from '../../utils/functions';
-import {ruleRequired} from '../../utils/rules'
+import { ruleRequired } from '../../utils/rules'
 import { departureMotive } from "../../utils/constant";
 import {
     Table,
@@ -150,7 +150,7 @@ const TablePeople = ({
             message.error(msg)
         }
     }
-    
+
     const actionSupervisor = async (values) => {
         try {
             let persons_id = itemsSelected?.map(item => item.id).join(',');
@@ -350,16 +350,16 @@ const TablePeople = ({
 
     const personMovImms = (item, type) => {
         /* Validamos si es alta */
-        if(type === 'up'){
+        if (type === 'up') {
             /* Validamos si tiene movimientos de imss y si el ultimo movimiento fue baja */
-            if(item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 3){
+            if (item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 3) {
                 setMinDataValid(item.imss_movements[0].date)
             }
-        }else if(type === 'down'){
+        } else if (type === 'down') {
             /* Validamos si es baja y si tiene movimientos del imss(El ultimo, debe ser alta o reingreso) */
-            if(item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 1){
+            if (item.imss_movements.length > 0 && item.imss_movements[0].movement_type === 1) {
                 setMinDataValid(item.imss_movements[0].date)
-            }else{
+            } else {
                 /* Si no tiene movimientos de alta/reingreso, entonces obtenemos el "date_of_admission" de la persona  */
                 setMinDataValid(item.date_of_admission)
             }
@@ -594,20 +594,20 @@ const TablePeople = ({
             )}
             {
                 item.is_low ?
-                <Menu.Item
-                    key="12"
-                    icon={<UserAddOutlined />}
-                    onClick={() => personMovImms(item, 'up')}
-                >
-                    Generar reingreso
-                </Menu.Item>: 
-                <Menu.Item
-                    key="12"
-                    icon={<UserDeleteOutlined />}
-                    onClick={() => personMovImms(item, 'down')}
-                >
-                    Generar baja del colaborador
-                </Menu.Item>
+                    <Menu.Item
+                        key="12"
+                        icon={<UserAddOutlined />}
+                        onClick={() => personMovImms(item, 'up')}
+                    >
+                        Generar reingreso
+                    </Menu.Item> :
+                    <Menu.Item
+                        key="12"
+                        icon={<UserDeleteOutlined />}
+                        onClick={() => personMovImms(item, 'down')}
+                    >
+                        Generar baja del colaborador
+                    </Menu.Item>
             }
             <Menu.Divider />
             {currentNode?.resignation_letter && (
@@ -619,46 +619,46 @@ const TablePeople = ({
                     Descargar carta de renuncia
                 </Menu.Item>
             )}
-                
+
 
             {(currentNode?.contract_for_work
                 || currentNode?.fixed_term_contract
                 || currentNode?.indefinite_term_contract
             ) && (
-                <>
-                    <Menu.SubMenu
-                        title='Descargar contrato'
-                        icon={<DownloadOutlined />}
-                    >
-                        {currentNode?.contract_for_work && item?.contract_type?.code === '02' && (
-                            <Menu.Item
-                                key="16"
-                                icon={<DownloadOutlined />}
-                                onClick={() => actionContractForWork(item)}
-                            >
-                                Por obra
-                            </Menu.Item>
-                        )}
-                        {currentNode?.fixed_term_contract && item?.contract_type?.code === '03' && (
-                            <Menu.Item
-                                key="14"
-                                onClick={() => actionTermContract(item)}
-                            >
-                                Tiempo determinado
-                            </Menu.Item>
-                        )}
-                        {currentNode?.indefinite_term_contract && item?.contract_type?.code === '01' && (
-                            <Menu.Item
-                                key="15"
-                                onClick={() => actionIndeterminateContract(item)}
-                            >
-                                Tiempo indeterminado
-                            </Menu.Item>
-                        )}
-                    </Menu.SubMenu>
-                    <Menu.Divider />
-                </>
-            )}
+                    <>
+                        <Menu.SubMenu
+                            title='Descargar contrato'
+                            icon={<DownloadOutlined />}
+                        >
+                            {currentNode?.contract_for_work && item?.contract_type?.code === '02' && (
+                                <Menu.Item
+                                    key="16"
+                                    icon={<DownloadOutlined />}
+                                    onClick={() => actionContractForWork(item)}
+                                >
+                                    Por obra
+                                </Menu.Item>
+                            )}
+                            {currentNode?.fixed_term_contract && item?.contract_type?.code === '03' && (
+                                <Menu.Item
+                                    key="14"
+                                    onClick={() => actionTermContract(item)}
+                                >
+                                    Tiempo determinado
+                                </Menu.Item>
+                            )}
+                            {currentNode?.indefinite_term_contract && item?.contract_type?.code === '01' && (
+                                <Menu.Item
+                                    key="15"
+                                    onClick={() => actionIndeterminateContract(item)}
+                                >
+                                    Tiempo indeterminado
+                                </Menu.Item>
+                            )}
+                        </Menu.SubMenu>
+                        <Menu.Divider />
+                    </>
+                )}
             {applications?.kuiz?.active && (
                 <>
                     <Menu.Item
@@ -726,7 +726,7 @@ const TablePeople = ({
         }, undefined, { shallow: true })
     }
 
-    const PersonField = ({item, field}) => {
+    const PersonField = ({ item, field }) => {
         return (permissions.person?.edit || permissions.person?.delete) ? (
             <a onClick={() => router.push({
                 pathname: `/home/persons/${item.id}`,
@@ -747,22 +747,22 @@ const TablePeople = ({
         },
         {
             title: 'No. empleado',
-            render: item => <PersonField item={item} field='code'/>,
+            render: item => <PersonField item={item} field='code' />,
             show: true,
         },
         {
             title: 'Apellido paterno',
-            render: item => <PersonField item={item} field='flast_name'/>,
+            render: item => <PersonField item={item} field='flast_name' />,
             show: true
         },
         {
             title: 'Apellido materno',
-            render: item => <PersonField item={item} field='mlast_name'/>,
+            render: item => <PersonField item={item} field='mlast_name' />,
             show: true
         },
         {
             title: 'Nombres',
-            render: item => <PersonField item={item} field='first_name'/>,
+            render: item => <PersonField item={item} field='first_name' />,
             show: true,
         },
         {
@@ -849,36 +849,36 @@ const TablePeople = ({
     }
 
     useEffect(() => {
-      console.log('minDataValid',minDataValid)
+        console.log('minDataValid', minDataValid)
     }, [minDataValid])
 
     const disabledDates = (current) => {
         let valid_start = true
-        if(minDataValid){
+        if (minDataValid) {
             valid_start = current < moment(minDataValid)?.startOf("day");
         }
         return valid_start;
     }
-    
+
 
     const submitMovImss = async (values) => {
         values['person_id'] = itemPerson.id
         values['departure_date'] = moment(values.departure_date).format("YYYY-MM-DD")
         values['mov_type'] = movType
-        if(movType === 'up'){
+        if (movType === 'up') {
             values['departure_motive'] = null
         }
 
         try {
             setLoading(true)
             let resp = await WebApiPeople.PersonUpDown(values)
-            if(resp.status === 200){
-                if(movType === 'up'){
+            if (resp.status === 200) {
+                if (movType === 'up') {
                     message.success("Se genero el reingreso de la persona")
-                }else{
+                } else {
                     message.success("Se ha solicitado la baja del colaborador")
                 }
-                
+
                 form.resetFields()
                 setOpenModalMovImss(false)
                 getCollaborators(currentNode?.id, user_filters, user_page, user_page_size);
@@ -888,7 +888,7 @@ const TablePeople = ({
         } catch (error) {
             setLoading(false)
             console.log('error', error)
-        } 
+        }
     }
 
     return (
@@ -904,6 +904,7 @@ const TablePeople = ({
                 className='ant-table-colla'
                 pagination={{
                     total: list_collaborators?.count,
+                    pageSizeOptions: [20, 50, 100],
                     pageSize: user_page_size,
                     current: user_page,
                     showSizeChanger: true
@@ -962,10 +963,10 @@ const TablePeople = ({
                 close={closeStore}
                 itemsSelected={itemsSelected}
             />
-            <GenericModal 
-                setVisible={setOpenModalMovImss} 
-                visible={openModalMovImss} 
-                title={ movType === "up" ? "Generar reingreso" : "Generar baja del colaborador"}
+            <GenericModal
+                setVisible={setOpenModalMovImss}
+                visible={openModalMovImss}
+                title={movType === "up" ? "Generar reingreso" : "Generar baja del colaborador"}
                 actionButton={
                     () => form.submit()
                 }
@@ -973,25 +974,25 @@ const TablePeople = ({
             >
                 <Form form={form} onFinish={submitMovImss} layout='vertical'>
                     <Spin spinning={loading}>
-                    <Row justify='center' >
-                        <Col span={12} >
-                            <Form.Item label={movType === "up" ? "Fecha de reingreso" : "Fecha de baja"} name={'departure_date'} rules={[ruleRequired]} >
-                                <DatePicker locale={locale} style={{width:'80%'}} format={'DD-MM-YYYY'} disabledDate={disabledDates} />
-                            </Form.Item>
-                        </Col>
-                        {
-                            movType == "down" && 
+                        <Row justify='center' >
                             <Col span={12} >
-                                <Form.Item label="Motivo" name={'departure_motive'} rules={[ruleRequired]} >
-                                <Select
-                                    placeholder="Seleccione una opción"
-                                    style={{ width: "80%" }}
-                                    options={departureMotive}
-                                />
+                                <Form.Item label={movType === "up" ? "Fecha de reingreso" : "Fecha de baja"} name={'departure_date'} rules={[ruleRequired]} >
+                                    <DatePicker locale={locale} style={{ width: '80%' }} format={'DD-MM-YYYY'} disabledDate={disabledDates} />
                                 </Form.Item>
                             </Col>
-                        }
-                    </Row>
+                            {
+                                movType == "down" &&
+                                <Col span={12} >
+                                    <Form.Item label="Motivo" name={'departure_motive'} rules={[ruleRequired]} >
+                                        <Select
+                                            placeholder="Seleccione una opción"
+                                            style={{ width: "80%" }}
+                                            options={departureMotive}
+                                        />
+                                    </Form.Item>
+                                </Col>
+                            }
+                        </Row>
                     </Spin>
                 </Form>
             </GenericModal>
