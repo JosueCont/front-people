@@ -75,7 +75,7 @@ const MainSider = ({
       business: "/business/companies",
       // asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
-      persons: "/home/persons",
+      persons: "/home/persons?is_active=true&page=1&size=20",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
       securityGroups: "/config/groups",
