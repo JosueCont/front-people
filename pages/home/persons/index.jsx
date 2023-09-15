@@ -38,7 +38,7 @@ const index = ({
     useEffect(() => {
         if (!currentNode) return;
         let page = router.query.page ? parseInt(router.query.page) : 1;
-        let size = router.query.size ? parseInt(router.query.size) : 10;
+        let size = router.query.size ? parseInt(router.query.size) : 20;
         let filters = getFiltersJB({...router.query});
         getCollaborators(currentNode.id, filters, page, size)
     }, [currentNode, router?.query])

@@ -49,7 +49,7 @@ const WidgetTotal = () => {
     const viewList = () => {
         router.push({
             pathname: '/home/persons',
-            query: { is_active: true, page: 1, size: 20 }
+            query: { is_active: true }
         })
     }
 
