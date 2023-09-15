@@ -142,24 +142,6 @@ const OptionsPeople = () => {
         setOpenConfront(true)
     }
 
-    const rfcsFileDownload = async () => {
-        try {
-            let res = await WebApiPeople.rfcsFileDownload(current_node?.id)
-            if(res.status === 200){
-                const blob = new Blob([res.data]);
-                const link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = 'RFCS.txt';
-                link.click();
-                message.success("Archivo generado con éxito")
-            }else{
-                message.error("Ocurrio un error al intentar generar el archivo")
-            }
-        } catch (error) {
-            message.error("Ocurrio un error al intentar generar el archivo")
-        }
-    }
-
     const MenuOptions = () => {
         return (
             <Menu>
@@ -234,13 +216,6 @@ const OptionsPeople = () => {
                     onClick={() => setOpenVacation(true)}
                 >
                     Actualizar vacaciones
-                </Menu.Item>
-                <Menu.Item
-                    key='8'
-                    icon={<UploadOutlined />}
-                    onClick={() => rfcsFileDownload()}
-                >
-                    Descargar rfcs para validar
                 </Menu.Item>
             </Menu>
         )
