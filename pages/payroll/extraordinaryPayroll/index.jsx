@@ -96,6 +96,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [objectSend, setObjectSend] = useState(null);
   const [consolidatedObj, setConsolidatedObj] = useState(null);
   const [downloading, setDownloading] = useState(false)
+  const [typeSelected, settypeSelected] = useState(null)
 
   const date = new Date();
 
@@ -138,9 +139,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
-                    Sin timbrar
+                    Cerrado
                   </>
-                ) : (
+                ) : item.payroll_cfdi_person.status === 6 ? (<>
+                  <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Guardado
+                </>) : item.payroll_cfdi_person.status === 2 && (
                   <>
                     <CheckCircleOutlined style={{ marginRight: "2px" }} />
                     Timbrado
@@ -769,19 +773,41 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const rowSelectionPerson = {
+    hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      if(selectedRows.length === 1){
+        if('payroll_cfdi_person' in selectedRows[0]){
+          settypeSelected('closed')
+        }else{
+          settypeSelected('open')
+        }
+      }else if(selectedRows.length === 0){
+        settypeSelected(null)
+      }
       setPersonKeys(selectedRowKeys);
       setListPersons(selectedRows);
     },
 
     getCheckboxProps: (record) => ({
-      disabled:
-        (record.payroll_cfdi_person &&
-          record.payroll_cfdi_person.status == 2) ||
-        (!record.payroll_cfdi_person && !isOpen),
+      disabled: getChekDisable(record)
     }),
   };
+
+  const getChekDisable = (record) => {
+    if(typeSelected === 'open' && 'payroll_cfdi_person' in record){
+      return true
+    }
+    if(typeSelected === 'closed' && !record.payroll_cfdi_person){
+      return true
+    }
+    if(step === 2 && record?.payroll_cfdi_person?.status === 6){
+      return true
+    }
+    if(step == 1 && record?.payroll_cfdi_person?.status === 1){
+      return true
+    }
+  }
 
   useEffect(() => {
     if (movementType && calendarSelect) {
@@ -899,11 +925,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setIsOpen(data.is_open);
 
     if (data.status === 1 && data.is_open) {
-      setStep(1), setPreviuosStep(true), setNextStep(false);
+      setStep(1), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 1 && !data.is_open) {
-      setStep(2), setPreviuosStep(false), setNextStep(false);
+      setStep(2), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 2 && data.is_open) {
@@ -911,11 +937,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return;
     }
     if (data.status === 2) {
-      setStep(2), setPreviuosStep(false), setNextStep(true);
+      setStep(2), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 3 && !data.is_open) {
-      setStep(3), setPreviuosStep(true), setNextStep(false);
+      setStep(3), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 3 && data.is_open) {
@@ -925,6 +951,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changeStep = (next_prev) => {
+    console.log('movementType',movementType)
+    console.log('isOpen', isOpen)
+    console.log(step)
+    console.log('next_prev',next_prev)
     if (next_prev) {
       //next
       if (step == 0) {
@@ -932,7 +962,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         setPreviuosStep(true);
         if (isOpen)
           if (movementType > 1 && isOpen) setNextStep(true);
-          else setNextStep(false);
+          else setNextStep(true);
         return;
       }
       if (step == 1 && consolidated) {
@@ -1347,6 +1377,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   }
 
+  const validateNextBtn = () => {
+    if(isOpen && step === 1){
+      return true
+    }
+    if((step== 2 && consolidated && consolidated.status <= 2) ){
+      return true
+    }
+
+    return false
+  }
+
   const downloads_options = (
     <Menu onClick={downloadActions} >
       <Menu.Item  key={'nom'} >
@@ -1655,7 +1696,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-
+                      {
+                        step
+                      }
                       {step == 3 && (
                         <Col md={6} offset={1}>
                           <Button
@@ -1697,7 +1740,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       )}
                     </Row>
                   </div>
-                  {previousStep && step > 0 && (
+                  {step > 0 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(false)}
@@ -1705,10 +1748,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       Previo
                     </Button>
                   )}
-                  {nextStep && (
+                  {step < 3 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(true)}
+                      disabled={validateNextBtn()}
                     >
                       Siguiente
                     </Button>
