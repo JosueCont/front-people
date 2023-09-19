@@ -212,7 +212,7 @@ const PreviewBulkUpload = ({ ...props }) => {
     Modal.confirm({
       title: "¿Está seguro de guardar?",
       content:
-        "Los datos importados correctos se guardarán, los que contengan errores serán omitidos ",
+        "Los datos importados correctos se guardarán.",
       icon: <ExclamationCircleOutlined />,
       okText: "Sí,guardar",
       okButtonProps: {
