@@ -100,8 +100,7 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   const columnsGrid=[
     {
-      title: () => 'Clave empleado',
-      width:400,
+      title: () => 'Clave',
       value: (row, { focus }) => {
         return (
             <Input
@@ -531,14 +530,13 @@ const PreviewBulkUpload = ({ ...props }) => {
 
 
             {
-              !showImportDetail && <div style={{width:'1500px',overflowX:'scroll'}}>
+              !showImportDetail &&
                   <Grid
                       columns={columnsGrid}
-                      style={{width:'100%'}}
+                      isScrollable
                       rows={dataUpload && dataUpload.map((ele,index)=> ({...ele, rowIndex:index}))}
                       getRowKey={(row) => row.id}
                   />
-                </div>
             }
 
 

@@ -775,7 +775,7 @@ class WebApiPeople {
   }
 
   static rfcsFileDownload(data){
-    return WebApi.ApisType(`/person/person/rfcs_txt_download`, 'post', data);
+    return WebApi.ApisType(`/person/person/rfcs_txt_download/`, 'post', data);
   }
   
 }

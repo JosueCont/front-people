@@ -456,7 +456,7 @@ const TablePeople = ({
                 const blob = new Blob([res.data]);
                 const link = document.createElement("a");
                 link.href = window.URL.createObjectURL(blob);
-                link.download = 'RFCS.txt';
+                link.download = 'validador_RFCS.txt';
                 link.click();
                 message.success("Archivo generado con éxito")
             }else{
@@ -569,7 +569,7 @@ const TablePeople = ({
                     icon={<UploadOutlined />}
                     onClick={() => rfcsFileDownload()}
                 >
-                    Descargar rfcs para validar
+                    Descargar validador masivo RFC
                 </Menu.Item>
         </Menu>
     )
