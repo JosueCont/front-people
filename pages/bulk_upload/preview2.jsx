@@ -26,9 +26,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import WebApiPeople from "../../api/WebApiPeople";
-import {civilStatusSelectGrid} from '../../utils/constant'
-import { Grid, Input, Select } from 'react-spreadsheet-grid'
-import moment from 'moment'
 
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
@@ -41,7 +38,6 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [messageSave, setMessageSave] = useState(null);
   const [templateType, setTemplateType] = useState(null);
   const [errorImportar, setErrorImportar] = useState(null);
-  const [showImportDetail, setShowImportDetail] = useState(false);
 
   /* Columns */
   const columns = [
@@ -54,6 +50,28 @@ const PreviewBulkUpload = ({ ...props }) => {
         ) : (
           <span>
             {item.first_name + " " + item.flast_name + " " + item.mlast_name}
+          </span>
+        );
+      },
+    },
+    {
+      title: "Curp",
+      key: "curp",
+      render: (item) => {
+        return (
+            <span>
+            {item?.curp}
+          </span>
+        );
+      },
+    },
+    {
+      title: "RFC",
+      key: "rfc",
+      render: (item) => {
+        return (
+            <span>
+            {item?.curp}
           </span>
         );
       },
@@ -83,217 +101,8 @@ const PreviewBulkUpload = ({ ...props }) => {
           )
         );
       },
-    }
+    },
   ];
-
-  const onFieldChange = (rowId, field, rowIndex) => (value) => {
-    console.log(rowId, field, rowIndex, value)
-    let newData = [...dataUpload]
-    let obj = newData[rowIndex];
-    obj[field]=value;
-    setDataUpload(newData)
-    console.log(dataUpload)
-  }
-
-
-
-
-  const columnsGrid=[
-    {
-      title: () => 'Clave',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.code}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'code',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Nombre',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.first_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'first_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Apellido paterno',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.flast_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'flast_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Apellido materno',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.mlast_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'mlast_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Correo',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.email}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'email',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'CURP',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.curp}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'curp',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'RFC',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.rfc}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'rfc',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Estado civil',
-      value: (row, { focus }) => {
-        return (
-            <Select
-                selectedId={row?.civil_status}
-                isOpen={focus}
-                items={civilStatusSelectGrid}
-                onChange={onFieldChange(row.id, 'civil_status',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Fecha de nacimiento',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.birth_date}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'birth_date',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Puesto',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.job_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'job_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Departamento',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.department_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'job_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Plaza',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.work_title_name}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'work_title_name',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Fecha de ingreso',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.date_of_admission}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'date_of_admission',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Banco',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.bank}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'bank',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Cuenta bancaria',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.bank_account}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'bank_account',row.rowIndex)}
-            />
-        );
-      }
-    },
-    {
-      title: () => 'Cuenta interb.',
-      value: (row, { focus }) => {
-        return (
-            <Input
-                value={row?.interbank_account}
-                focus={focus}
-                onChange={onFieldChange(row.id, 'interbank_account',row.rowIndex)}
-            />
-        );
-      }
-    },
-
-  ]
 
   const viewDetails = (data, type) => {
     let errors_list = data.split(",")
@@ -307,13 +116,8 @@ const PreviewBulkUpload = ({ ...props }) => {
         .then((response) => {
           
           setArrColumns(columns);
-          if(response?.data?.data){
-            let dataU = response?.data?.data.map((data,idx)=>({...data,idx}))
-            setDataUpload(dataU);
-            setTemplateType(response.data.type);
-          }
-
-
+          setDataUpload(response.data.data);
+          setTemplateType(response.data.type);
           setLoading(false);
           //message.success("Excel importado correctamente.");
         })
@@ -425,8 +229,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
               if(response.status === 200){
-                setShowImportDetail(true)
-                addColumns(response.data.people)
+                addColumns(response.data.people) 
               }
               setDataUpload(response.data.people);
               setMessageSave(response.data.message);
@@ -446,7 +249,6 @@ const PreviewBulkUpload = ({ ...props }) => {
 
             });
         } else {
-          setShowImportDetail(false)
           message.error("No se encontraron datos.");
         }
       },
@@ -509,34 +311,18 @@ const PreviewBulkUpload = ({ ...props }) => {
                         Regresar
                       </Button>
                     }
-                /> : <>
-                  {
-                    showImportDetail && <Table
-                          dataSource={dataUpload}
-                          key="tableLog"
-                          loading={loading}
-                          columns={arrColumns}
-                          locale={{
-                            emptyText: loading
-                                ? "Cargando..."
-                                : "No se encontraron resultados.",
-                          }}
-                      ></Table>
-                  }
-
-                </>
-
-            }
-
-
-            {
-              !showImportDetail &&
-                  <Grid
-                      columns={columnsGrid}
-                      isScrollable
-                      rows={dataUpload && dataUpload.map((ele,index)=> ({...ele, rowIndex:index}))}
-                      getRowKey={(row) => row.id}
-                  />
+                /> :
+              <Table
+                dataSource={dataUpload}
+                key="tableLog"
+                loading={loading}
+                columns={arrColumns}
+                locale={{
+                emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+              }}
+                ></Table>
             }
 
 
