@@ -143,7 +143,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Cerrado
                   </>
-                ) : item.payroll_cfdi_person.status === 6 ? (<>
+                ) : item.payroll_cfdi_person.status === 0 ? (<>
                   <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Guardado
                 </>) : item.payroll_cfdi_person.status === 2 && (
@@ -816,7 +816,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
 
     if(step === 0 && record['payroll_cfdi_person']){
-      if(step == 0 && record?.payroll_cfdi_person?.status !== 6){
+      if(step == 0 && record?.payroll_cfdi_person?.status !== 0){
         return true
       }else{
         return false
@@ -828,7 +828,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return true
     }
     
-    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 6)){
+    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 0)){
       return true
     }
   }
@@ -869,8 +869,26 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  const getForCalculate = () =>{
+    let rows = []
+    console.log(rowSelectionPerson.selectedRowKeys)
+    console.log(extraOrdinaryPayroll)
+    
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      rowSelectionPerson.selectedRowKeys.map(key => {
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          rows.push(extraOrdinaryPayroll[idx])
+        }
+      })
+    }
+    return rows
+  }
+
+
+
   const calculateExtra = () => {
-    const objSend = objectSend.payroll.filter((item) => item.departure_date);
+    const objSend = getForCalculate()
     if (objSend.length == 0) {
       message.error(
         "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
@@ -890,6 +908,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [consolidatedObj])
   
   const getForClose = () => {
+    
     let rows = []
     console.log(rowSelectionPerson.selectedRowKeys)
     console.log(extraOrdinaryPayroll)
@@ -899,10 +918,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           rows.push(extraOrdinaryPayroll)
         }
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item.payroll_cfdi_person.status === 6)
+      rows = extraOrdinaryPayroll.filter(item => item.payroll_cfdi_person.status === 0)
     }
     return rows
   }
+
 
   const sendClosePayroll = () => {
     setLoading(true);
@@ -1253,6 +1273,25 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     });
   };
 
+  const showCalculate = () => {
+    let show = true;
+    console.log('rowSelectionPerson.selectedRowKeys',rowSelectionPerson.selectedRowKeys)
+    console.log(extraOrdinaryPayroll)
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      rowSelectionPerson.selectedRowKeys.map(key => {
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          if(!extraOrdinaryPayroll[idx]['departure_date']){
+            show = false
+          }
+        }
+      })
+    }else{
+      show = false
+    }
+    return show
+  }
+
   const cancelStamp = (type, id = null) => {
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
@@ -1297,10 +1336,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           cfdis.push(extraOrdinaryPayroll)
         }
       })
-
       data['cfdis'] = cfdis
     }
-    
+    console.log(cfdis)
+    return
     
     // if (listPersons.length > 0)
     //   data.cfdis = listPersons.map((item) => {
@@ -1433,7 +1472,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getOpenCount = () => {
     let opens = 0
     extraOrdinaryPayroll?.map(item => {
-      if(item?.payroll_cfdi_person?.status == 6){
+      if(item?.payroll_cfdi_person?.status == 0){
         opens++
       }
     })
@@ -1659,10 +1698,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
                         </Col>
                       {/*  */}
-                      {personKeys &&
-                        personKeys.length > 0 &&
-                        objectSend &&
-                        step == 0 && (
+                      { showCalculate() && (
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
