@@ -20,6 +20,7 @@ const GridComponentPreview = ({ data,onFieldChange, ...props }) => {
         },
         {
             title: () => 'Nombre',
+            width:200,
             value: (row, { focus }) => {
                 return (
                     <Input

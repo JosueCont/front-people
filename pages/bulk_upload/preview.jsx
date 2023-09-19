@@ -10,6 +10,7 @@ import {
   Modal,
   Alert,
   Result,
+  Spin,
   Space
 } from "antd";
 import router, { useRouter } from "next/router";
@@ -109,6 +110,7 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   useEffect(() => {
     if (props.formData) {
+      setLoading(true)
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
           
@@ -296,6 +298,12 @@ const PreviewBulkUpload = ({ ...props }) => {
           </Button>
         </Row>
         <Row justify="center">
+          <Col span={24}>
+            {
+                !messageSave && <Alert type={'info'} message="Esta tabla muestra los datos que están apunto de guardarse, si deseas editar alguno puedes hacer doble clic en las celdas." banner/>
+            }
+
+          </Col>
           <Col span={10}>
             {messageSave && <Alert message={messageSave} type="info" />}
 
@@ -337,10 +345,13 @@ const PreviewBulkUpload = ({ ...props }) => {
 
             {
               !showImportDetail &&
+                <Spin spinning={loading}>
                   <GridComponentPreview
                       onFieldChange={onFieldChange}
                       data={dataUpload && dataUpload.map((ele,index)=> ({...ele, rowIndex:index}))}
                   />
+                </Spin>
+
             }
 
 
