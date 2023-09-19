@@ -124,6 +124,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  
+
   const persons = [
     {
       title: "Nombre",
@@ -618,6 +620,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
+    settypeSelected(null)
+    setPersonKeys([]);
+      setListPersons([]);
+  }, [step])
+  
+
+  useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
   }, [props.currentNode]);
 
@@ -640,6 +649,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changeCalendar = (value) => {
+    settypeSelected(null)
     resetStateViews();
     if (!value) {
       resetState();
@@ -690,6 +700,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changePeriod = (period_id) => {
+    settypeSelected(null)
     const result = resetStateViews();
     if (result) {
       setPeriodSelcted(calendarSelect.periods.find((p) => p.id == period_id));
@@ -801,10 +812,21 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     if(typeSelected === 'closed' && !record.payroll_cfdi_person){
       return true
     }
-    if(step === 2 && record?.payroll_cfdi_person?.status === 6){
+
+    if(step === 0 && record['payroll_cfdi_person']){
+      if(step == 0 && record?.payroll_cfdi_person?.status !== 6){
+        return true
+      }else{
+        return false
+      }
+    }
+    if(step == 1 && !record['payroll_cfdi_person']){
+      return true
+    }else if(step == 1 && record?.payroll_cfdi_person?.status === 1){
       return true
     }
-    if(step == 1 && record?.payroll_cfdi_person?.status === 1){
+    
+    if(step === 2 && record?.payroll_cfdi_person?.status === 0){
       return true
     }
   }
@@ -1260,6 +1282,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       payment_period: periodSelected.id,
       movement_type: movementType,
     };
+    console.log(rowSelectionPerson.selectedRowKeys.length)
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      data['cfdis'] = rowSelectionPerson.selectedRowKeys
+    }
     // if (listPersons.length > 0)
     //   data.cfdis = listPersons.map((item) => {
     //     return item.payroll_cfdi_person.id;
