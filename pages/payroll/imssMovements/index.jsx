@@ -71,7 +71,8 @@ const ImssMovements = ({ ...props }) => {
   const movSuaTypes = [
     { label: 'Asegurados', value: 'ASEG' },
     { label: 'Movimientos afiliatorios', value: 'MOVT' },
-    { label: 'Créditos infonavit', value: 'CRED' }  
+    { label: 'Créditos infonavit', value: 'CRED' },
+    { label: 'Datos afiliatorios del trabajador', value: 'AFIL' }
   ]
 
   const subMovTypes = [
