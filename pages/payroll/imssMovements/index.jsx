@@ -215,6 +215,7 @@ const disabledMaxDate  = (current) => {
           return
         }
         const nameFile = values.type == 'ASEG' ? 'Asegurados' :
+                          values.type == 'AFIL' ? 'Datos Afiliatorios' :
                           values.type == 'MOVT' ? 'Movimientos afiliatorios' :
                           values.type == 'CRED' ? 'Créditos infonavit de personas' :
                           values.type == 'INCAP' ? 'Incapacidades' :
