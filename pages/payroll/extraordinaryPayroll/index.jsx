@@ -787,6 +787,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRowKeys)
+      console.log(selectedRows)
       if(selectedRows.length === 1){
         if('payroll_cfdi_person' in selectedRows[0]){
           settypeSelected('closed')
@@ -826,7 +828,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return true
     }
     
-    if(step === 2 && record?.payroll_cfdi_person?.status === 0){
+    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 6)){
       return true
     }
   }
@@ -883,26 +885,30 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     });
   };
 
-  const sendClosePayroll = () => {
-    if (movementType > 1) {
-      if (objectSend == null || objectSend.length == 0) {
-        message.error(
-          "Debe seleccionar almenos una persona y generar el calculo."
-        );
-        return;
-      }
-      const objSend = objectSend.payroll.filter((item) => item.departure_date);
-      if (objSend.length == 0) {
-        message.error(
-          "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
-        );
-        return;
-      }
+  useEffect(() => {
+    console.log('consolidatedObj',consolidatedObj)
+  }, [consolidatedObj])
+  
+  const getForClose = () => {
+    let rows = []
+    console.log(rowSelectionPerson.selectedRowKeys)
+    console.log(extraOrdinaryPayroll)
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          rows.push(extraOrdinaryPayroll)
+        }
+    }else{
+      rows = extraOrdinaryPayroll.filter(item => item.payroll_cfdi_person.status === 6)
     }
+    return rows
+  }
+
+  const sendClosePayroll = () => {
     setLoading(true);
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
-      payroll: consolidatedObj,
+      payroll: getForClose(),
       movement_type: movementType,
     })
       .then((response) => {
@@ -1282,10 +1288,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       payment_period: periodSelected.id,
       movement_type: movementType,
     };
-    console.log(rowSelectionPerson.selectedRowKeys.length)
+
     if(rowSelectionPerson.selectedRowKeys.length > 0){
-      data['cfdis'] = rowSelectionPerson.selectedRowKeys
+      let cfdis = []
+      rowSelectionPerson.selectedRowKeys.map(key =>{
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          cfdis.push(extraOrdinaryPayroll)
+        }
+      })
+
+      data['cfdis'] = cfdis
     }
+    
+    
     // if (listPersons.length > 0)
     //   data.cfdis = listPersons.map((item) => {
     //     return item.payroll_cfdi_person.id;
@@ -1412,6 +1428,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
 
     return false
+  }
+
+  const getOpenCount = () => {
+    let opens = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 6){
+        opens++
+      }
+    })
+    return opens
   }
 
   const downloads_options = (
@@ -1650,7 +1676,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         )}
 
-                      {step >= 1 && consolidatedObj && isOpen && (
+                      {(step == 1 && ((consolidatedObj && isOpen) || getOpenCount() > 0)) && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
