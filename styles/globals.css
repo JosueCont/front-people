@@ -25,6 +25,10 @@ a {
   background: var(--primaryColor);
 }
 
+.SpreadsheetGrid__headCell{
+  background-color: #1f2733 !important;
+}
+
 .loginContainer {
   height: 100vh;
   background: white;

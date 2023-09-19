@@ -37,8 +37,39 @@ export const civilStatus = [
         value: 2,
     },
     {
-        label: "Viudo(a)",
+        label: "Divorciado(a)",
         value: 3,
+    },
+    {
+        label: "Concubinato",
+        value: 4,
+    },
+    {
+        label: "Viudo",
+        value: 5,
+    },
+];
+
+export const civilStatusSelectGrid = [
+    {
+        name: "Soltero(a)",
+        id: 1,
+    },
+    {
+        name: "Casado(a)",
+        id: 2,
+    },
+    {
+        name: "Divorciado(a)",
+        id: 3,
+    },
+    {
+        name: "Concubinato(a)",
+        id: 4,
+    },
+    {
+        name: "Viudo(a)",
+        id: 5,
     },
 ];
 
