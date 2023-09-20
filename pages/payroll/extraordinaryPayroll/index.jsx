@@ -914,7 +914,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
     }
     if(step == 2){
       records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
@@ -937,17 +937,19 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           }
       })
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive))
+      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && item.person_id))
     }
     return rows
   }
 
 
   const sendClosePayroll = () => {
-    setLoading(true);
+    /* setLoading(true); */
+    console.log(getForClose())
+    const payroll = getForClose()
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
-      payroll: getForClose(),
+      payroll: payroll,
       movement_type: movementType,
     })
       .then((response) => {
@@ -1476,7 +1478,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }
 
   const validateNextBtn = () => {
-    if(isOpen && step === 1){
+    if(getCloseCount() < 1 && step === 1){
       return true
     }
     if((step== 2 && consolidated && consolidated.status <= 2) ){
@@ -1490,6 +1492,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     let opens = 0
     extraOrdinaryPayroll?.map(item => {
       if(item?.payroll_cfdi_person?.status == 0){
+        opens++
+      }
+    })
+    return opens
+  }
+
+  const getCloseCount = () => {
+    let opens = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 1){
         opens++
       }
     })
