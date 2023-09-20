@@ -10,7 +10,6 @@ import {
   Modal,
   Alert,
   Result,
-  Spin,
   Space
 } from "antd";
 import router, { useRouter } from "next/router";
@@ -27,13 +26,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import WebApiPeople from "../../api/WebApiPeople";
-//import {civilStatusSelectGrid} from '../../utils/constant'
-//import { Grid, Input, Select } from 'react-spreadsheet-grid'
-//const Spread = await import('react-spreadsheet-grid');
-import dynamic from 'next/dynamic'
-
-const GridComponentPreview = dynamic(()=> import('../../components/GridComponentPreview'), {ssr: false});
-
 
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
@@ -46,9 +38,6 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [messageSave, setMessageSave] = useState(null);
   const [templateType, setTemplateType] = useState(null);
   const [errorImportar, setErrorImportar] = useState(null);
-  const [showImportDetail, setShowImportDetail] = useState(false);
-
-
 
   /* Columns */
   const columns = [
@@ -61,6 +50,28 @@ const PreviewBulkUpload = ({ ...props }) => {
         ) : (
           <span>
             {item.first_name + " " + item.flast_name + " " + item.mlast_name}
+          </span>
+        );
+      },
+    },
+    {
+      title: "Curp",
+      key: "curp",
+      render: (item) => {
+        return (
+            <span>
+            {item?.curp}
+          </span>
+        );
+      },
+    },
+    {
+      title: "RFC",
+      key: "rfc",
+      render: (item) => {
+        return (
+            <span>
+            {item?.curp}
           </span>
         );
       },
@@ -90,17 +101,8 @@ const PreviewBulkUpload = ({ ...props }) => {
           )
         );
       },
-    }
+    },
   ];
-
-  const onFieldChange = (rowId, field, rowIndex) => (value) => {
-    console.log(rowId, field, rowIndex, value)
-    let newData = [...dataUpload]
-    let obj = newData[rowIndex];
-    obj[field]=value;
-    setDataUpload(newData)
-    console.log(dataUpload)
-  }
 
   const viewDetails = (data, type) => {
     let errors_list = data.split(",")
@@ -110,18 +112,12 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   useEffect(() => {
     if (props.formData) {
-      setLoading(true)
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
           
           setArrColumns(columns);
-          if(response?.data?.data){
-            let dataU = response?.data?.data.map((data,idx)=>({...data,idx}))
-            setDataUpload(dataU);
-            setTemplateType(response.data.type);
-          }
-
-
+          setDataUpload(response.data.data);
+          setTemplateType(response.data.type);
           setLoading(false);
           //message.success("Excel importado correctamente.");
         })
@@ -212,7 +208,7 @@ const PreviewBulkUpload = ({ ...props }) => {
     Modal.confirm({
       title: "¿Está seguro de guardar?",
       content:
-        "Los datos importados correctos se guardarán.",
+        "Los datos importados correctos se guardarán, los que contengan errores serán omitidos ",
       icon: <ExclamationCircleOutlined />,
       okText: "Sí,guardar",
       okButtonProps: {
@@ -233,8 +229,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
               if(response.status === 200){
-                setShowImportDetail(true)
-                addColumns(response.data.people)
+                addColumns(response.data.people) 
               }
               setDataUpload(response.data.people);
               setMessageSave(response.data.message);
@@ -254,7 +249,6 @@ const PreviewBulkUpload = ({ ...props }) => {
 
             });
         } else {
-          setShowImportDetail(false)
           message.error("No se encontraron datos.");
         }
       },
@@ -298,12 +292,6 @@ const PreviewBulkUpload = ({ ...props }) => {
           </Button>
         </Row>
         <Row justify="center">
-          <Col span={24}>
-            {
-                !messageSave && <Alert type={'info'} message="Esta tabla muestra los datos que están apunto de guardarse, si deseas editar alguno puedes hacer doble clic en las celdas." banner/>
-            }
-
-          </Col>
           <Col span={10}>
             {messageSave && <Alert message={messageSave} type="info" />}
 
@@ -323,35 +311,18 @@ const PreviewBulkUpload = ({ ...props }) => {
                         Regresar
                       </Button>
                     }
-                /> : <>
-                  {
-                    showImportDetail && <Table
-                          dataSource={dataUpload}
-                          key="tableLog"
-                          loading={loading}
-                          columns={arrColumns}
-                          locale={{
-                            emptyText: loading
-                                ? "Cargando..."
-                                : "No se encontraron resultados.",
-                          }}
-                      ></Table>
-                  }
-
-                </>
-
-            }
-
-
-            {
-              !showImportDetail &&
-                <Spin spinning={loading}>
-                  <GridComponentPreview
-                      onFieldChange={onFieldChange}
-                      data={dataUpload && dataUpload.map((ele,index)=> ({...ele, rowIndex:index}))}
-                  />
-                </Spin>
-
+                /> :
+              <Table
+                dataSource={dataUpload}
+                key="tableLog"
+                loading={loading}
+                columns={arrColumns}
+                locale={{
+                emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+              }}
+                ></Table>
             }
 
 

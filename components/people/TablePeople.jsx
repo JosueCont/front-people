@@ -39,7 +39,8 @@ import {
     SendOutlined,
     UsergroupAddOutlined,
     UserDeleteOutlined,
-    UserAddOutlined
+    UserAddOutlined,
+    UploadOutlined
 } from '@ant-design/icons';
 import {
     BsHandIndex
@@ -444,6 +445,28 @@ const TablePeople = ({
         message.error('Selecciona al menos un colaborador')
     }
 
+    const rfcsFileDownload = async () => {
+        try {
+            const data = {
+                node_id: currentNode?.id,
+                persons_id: itemsKeys
+            }
+            let res = await WebApiPeople.rfcsFileDownload(data)
+            if(res.status === 200){
+                const blob = new Blob([res.data]);
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'validador_RFCS.txt';
+                link.click();
+                message.success("Archivo generado con éxito")
+            }else{
+                message.error("Ocurrio un error al intentar generar el archivo")
+            }
+        } catch (error) {
+            message.error("Ocurrio un error al intentar generar el archivo")
+        }
+    }
+
     const showManyList = (type) => {
         if (itemsSelected?.length > 1) {
             setOpenList(true)
@@ -541,6 +564,13 @@ const TablePeople = ({
                     Sincronizar con YNL
                 </Menu.Item>
             )}
+            <Menu.Item
+                    key='8'
+                    icon={<UploadOutlined />}
+                    onClick={() => rfcsFileDownload()}
+                >
+                    Descargar validador masivo RFC
+                </Menu.Item>
         </Menu>
     )
 

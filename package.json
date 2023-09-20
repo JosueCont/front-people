@@ -63,6 +63,7 @@
     "react-pdf-html": "^1.1.18",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
+    "react-spreadsheet-grid": "^2.3.1",
     "react-spring": "^8.0.27",
     "react-to-print": "^2.14.13",
     "redraft": "^0.10.2",

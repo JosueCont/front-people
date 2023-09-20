@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, col, Table, Space, Button,Popconfirm } from "antd";
+import WebApiPeople from '../../../api/WebApiPeople'
 import { DownloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 
@@ -7,7 +8,21 @@ const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
 
   const [deleting,setDeleting]=useState(false)
 
-  const confirmDelete=async()=>{
+  const confirmDelete=async(fileEMA)=>{
+      console.log(fileEMA)
+    setDeleting(true)
+    let data = {
+      document_id: fileEMA.id
+    }
+    try{
+      const res = WebApiPeople.deleteEMAEBA(data);
+      console.log(res)
+    }catch (e){
+      console.log(e)
+    }finally {
+      setDeleting(false)
+    }
+
 
   }
 

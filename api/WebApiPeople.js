@@ -564,6 +564,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/document/${data}`, "get");
   }
 
+  static deleteEMAEBA(data) {
+    return WebApi.ApisType(`/business/document/`, "delete",data);
+  }
+
   static getWithHoldingNotice(data) {
     return WebApi.ApisType(`/payroll/retention-notice${data}`, "get");
   }
@@ -772,6 +776,10 @@ class WebApiPeople {
 
   static PersonUpDown(data){
     return WebApi.ApisType(`/payroll/payroll-person/up_down/`, 'post', data);
+  }
+
+  static rfcsFileDownload(data){
+    return WebApi.ApisType(`/person/person/rfcs_txt_download/`, 'post', data);
   }
   
 }
