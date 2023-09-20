@@ -1046,6 +1046,7 @@ const CalculatePayroll = ({ ...props }) => {
   const openPayroll = (type) => {
     let data = {
       payment_period: periodSelected.id,
+      consolidated_id: consolidated.id
     };
     if (personStamp.length > 0)
       data.cfdis = personStamp.map((item) => {
