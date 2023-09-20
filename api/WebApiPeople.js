@@ -564,6 +564,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/document/${data}`, "get");
   }
 
+  static deleteEMAEBA(data) {
+    return WebApi.ApisType(`/business/document/`, "delete",data);
+  }
+
   static getWithHoldingNotice(data) {
     return WebApi.ApisType(`/payroll/retention-notice${data}`, "get");
   }
