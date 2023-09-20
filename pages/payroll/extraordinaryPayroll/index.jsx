@@ -760,7 +760,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     if (extraOrdinaryPayroll == null) {
       console.log("Else");
       setExtraOrdinaryPayroll(
-        response.data.sort((a, b) => a.person.code.localeCompare(b.person.code))
+        response.data.sort((a, b) => a.person.id.localeCompare(b.person.id))
       );
     } else {
       let calculateExist = extraOrdinaryPayroll;
@@ -775,7 +775,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
       setExtraOrdinaryPayroll(
         calculateExist.sort((a, b) =>
-          a.person.code.localeCompare(b.person.code)
+          a.person.id.localeCompare(b.person.id)
         )
       );
     }
@@ -914,7 +914,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive) || item?.payroll_cfdi_person?.status === 0)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+    }
+    if(step == 2){
+      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
     }
     console.log(records)
     return records
