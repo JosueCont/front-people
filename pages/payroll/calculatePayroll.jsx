@@ -1885,8 +1885,8 @@ const CalculatePayroll = ({ ...props }) => {
                                             ].originFileObj
                                         // info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
                                       );
-                                      data.append("department", department);
-                                      data.append("job", job);
+                                      if (department) data.append("department", department);
+                                      if (job) data.append("job", job);
                                       data.append(
                                         "payment_period",
                                         periodSelected.id
