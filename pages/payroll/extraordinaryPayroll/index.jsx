@@ -136,7 +136,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           <Space>
             {item.payroll_cfdi_person && (
               <Tag
-                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : item.payroll_cfdi_person.status === 0 ? "blue" : "green"}
               >
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
@@ -853,7 +853,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [calendarSelect]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
-    if (movementType > 1 && record.working_days)
+    if (movementType > 1)
       return expanded ? (
         <DownOutlined onClick={(e) => onExpand(record, e)} />
       ) : (
