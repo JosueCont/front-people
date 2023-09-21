@@ -42,7 +42,7 @@ import {
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
-import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
+// import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -64,6 +64,7 @@ import { downLoadFileBlobAwait,
   getDomain,
   verifyMenuNewForTenant, } from "../../../utils/functions";
   import { API_URL_TENANT } from "../../../config/config";
+import ModalConceptsExtraordinaryPayroll from "../../../components/payroll/modals/ModalConceptsExtraordinaryPayroll";
 
 
 const ExtraordinaryPayroll = ({ ...props }) => {
@@ -1979,7 +1980,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         </div>
       </MainLayout>
       {personId && periodSelected && (
-        <ModalConceptsPayroll
+        <ModalConceptsExtraordinaryPayroll
           extraOrdinary={true}
           visible={modalVisible}
           setVisible={setModalVisible}
