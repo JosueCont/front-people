@@ -789,7 +789,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       console.log(selectedRowKeys)
       console.log(selectedRows)
       if(selectedRows.length === 1){
-        if('payroll_cfdi_person' in selectedRows[0]){
+        if(('payroll_cfdi_person' in selectedRows[0] && selectedRows[0]['payroll_cfdi_person']['status'] > 0)){
           settypeSelected('closed')
         }else{
           settypeSelected('open')
@@ -1370,7 +1370,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         }
       })
       data['cfdis'] = cfdis
-      console.log('first', cfdis)
     }
     
     // if (listPersons.length > 0)
@@ -1388,6 +1387,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             payment_period: periodSelected.id,
             movement_type: movementType,
           });
+          settypeSelected(null)
         })
         .catch((error) => {
           setLoading(false);
