@@ -176,10 +176,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       ),
     },
     {
-      title: "Antigüedad",
+      title: "Ingreso laboral",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.antiquity? item.antiquity : item.person.antiquity}</div>,
+      render: (item) => <div>{  item.person?.date_of_admission ? moment(item.person?.date_of_admission).format("DD-MM-YYYY") : "" }</div>,
     },
     {
       title: "Salario diario",
@@ -207,7 +207,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.isr} />
+          <NumberFormat prefix={"$"} number={item.total_deduction} />
         </div>
       ),
     },
@@ -786,8 +786,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(selectedRowKeys)
-      console.log(selectedRows)
       if(selectedRows.length === 1){
         if(('payroll_cfdi_person' in selectedRows[0] && selectedRows[0]['payroll_cfdi_person']['status'] > 0)){
           settypeSelected('closed')
@@ -1828,9 +1826,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {
-                        step
-                      }
                       {step == 3 && (
                         <Col md={6} offset={1}>
                           <Button
