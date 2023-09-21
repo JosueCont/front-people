@@ -532,40 +532,6 @@ const ModalConceptsPayroll = ({
           obj.key = item.key;
         }
         data.push(obj);
-      } else {
-        const obj = {
-          person_id: item.person.id,
-          perceptions: item.perceptions,
-          other_payments: item.otherPayments ? item.otherPayments : [],
-        };
-        // cuando la nomina está cerrada, devolvemos todas las deducciones
-        if (
-          item.payroll_cfdi_person &&
-          item.payroll_cfdi_person.is_open == false
-        ) {
-          obj.deductions = item.deductions;
-        } else {
-          obj.deductions = item.deductions?.filter(
-            (item) => item.type != "001" && item.type != "002"
-          );
-        }
-
-        if (extraOrdinary) {
-          if (item.three_months_compensantion)
-            obj.twenty_day_compensantion = item.three_months_compensantion;
-          if (item.antiquity_compensation)
-            obj.antiquity_compensation = item.antiquity_compensation;
-          if (item.twenty_day_compensantion)
-            obj.twenty_day_compensantion = item.twenty_day_compensantion;
-          obj.person = item.person;
-          obj.key = item.key;
-          if (item.departure_date) obj.departure_date = item.departure_date;
-          if (item.departure_motive)
-            obj.departure_motive = item.departure_motive;
-        }
-        if (item.payroll_cfdi_person)
-          obj.payroll_cfdi_person = item.payroll_cfdi_person;
-        data.push(obj);
       }
     });
 
@@ -579,6 +545,7 @@ const ModalConceptsPayroll = ({
       calendar.status = true;
       calendar.persona_edit = person_id;
     }
+    console.log('calendar==========>', calendar)
     sendCalculatePayroll(calendar);
   };
 

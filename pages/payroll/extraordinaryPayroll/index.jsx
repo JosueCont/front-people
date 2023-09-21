@@ -96,6 +96,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [objectSend, setObjectSend] = useState(null);
   const [consolidatedObj, setConsolidatedObj] = useState(null);
   const [downloading, setDownloading] = useState(false)
+  const [typeSelected, settypeSelected] = useState(null)
 
   const date = new Date();
 
@@ -123,6 +124,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  
+
   const persons = [
     {
       title: "Nombre",
@@ -133,14 +136,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           <Space>
             {item.payroll_cfdi_person && (
               <Tag
-                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : item.payroll_cfdi_person.status === 0 ? "blue" : "green"}
               >
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
-                    Sin timbrar
+                    Cerrado
                   </>
-                ) : (
+                ) : item.payroll_cfdi_person.status === 0 ? (<>
+                  <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Guardado
+                </>) : item.payroll_cfdi_person.status === 2 && (
                   <>
                     <CheckCircleOutlined style={{ marginRight: "2px" }} />
                     Timbrado
@@ -170,10 +176,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       ),
     },
     {
-      title: "Antigüedad",
+      title: "Ingreso laboral",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.antiquity? item.antiquity : item.person.antiquity}</div>,
+      render: (item) => <div>{  item.person?.date_of_admission ? moment(item.person?.date_of_admission).format("DD-MM-YYYY") : "" }</div>,
     },
     {
       title: "Salario diario",
@@ -201,7 +207,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.isr} />
+          <NumberFormat prefix={"$"} number={item.total_deduction} />
         </div>
       ),
     },
@@ -614,6 +620,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
+    settypeSelected(null)
+    setPersonKeys([]);
+      setListPersons([]);
+  }, [step])
+  
+
+  useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
   }, [props.currentNode]);
 
@@ -636,6 +649,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changeCalendar = (value) => {
+    settypeSelected(null)
     resetStateViews();
     if (!value) {
       resetState();
@@ -668,7 +682,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const resetStateViews = () => {
-    setExtraOrdinaryPayroll(null);
+    setExtraOrdinaryPayroll([]);
     setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
@@ -686,6 +700,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changePeriod = (period_id) => {
+    settypeSelected(null)
     const result = resetStateViews();
     if (result) {
       setPeriodSelcted(calendarSelect.periods.find((p) => p.id == period_id));
@@ -709,22 +724,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     // setExtraOrdinaryPayroll(null);
     await WebApiPayroll.getExtraordinaryPayroll(data)
       .then((response) => {
+        
         if (response.data.consolidated) {
           if (movementType >= 1) {
             let calculateExist = [];
             calculateExist = response.data.payroll.filter(
               (a) => a.payroll_cfdi_person && a.payroll_cfdi_person.status === 1
             );
-
+            
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           }
+
           setConsolidated(response.data.consolidated);
           // setExtraOrdinaryPayroll(response.data.payroll);
-          setExtraOrdinaryPayroll(
-            response.data.payroll.sort((a, b) =>
-              a.person.code.localeCompare(b.person.code)
-            )
-          );
+          setExtraOrdinaryPayroll(response.data.payroll);
         } else {
           setConsolidatedObj(response.data);
           recalculate(response);
@@ -744,10 +757,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const recalculate = (response) => {
+    
     if (extraOrdinaryPayroll == null) {
       console.log("Else");
       setExtraOrdinaryPayroll(
-        response.data.sort((a, b) => a.person.code.localeCompare(b.person.code))
+        response.data.sort((a, b) => a.person.id.localeCompare(b.person.id))
       );
     } else {
       let calculateExist = extraOrdinaryPayroll;
@@ -759,29 +773,62 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       response.data.map((item) => {
         calculateExist[calculateExist.length] = item;
       });
-
+      
       setExtraOrdinaryPayroll(
         calculateExist.sort((a, b) =>
-          a.person.code.localeCompare(b.person.code)
+          a.person.id.localeCompare(b.person.id)
         )
       );
     }
   };
 
   const rowSelectionPerson = {
+    hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      if(selectedRows.length === 1){
+        if(('payroll_cfdi_person' in selectedRows[0] && selectedRows[0]['payroll_cfdi_person']['status'] > 0)){
+          settypeSelected('closed')
+        }else{
+          settypeSelected('open')
+        }
+      }else if(selectedRows.length === 0){
+        settypeSelected(null)
+      }
       setPersonKeys(selectedRowKeys);
       setListPersons(selectedRows);
     },
 
     getCheckboxProps: (record) => ({
-      disabled:
-        (record.payroll_cfdi_person &&
-          record.payroll_cfdi_person.status == 2) ||
-        (!record.payroll_cfdi_person && !isOpen),
+      disabled: getChekDisable(record)
     }),
   };
+
+  const getChekDisable = (record) => {
+    if(typeSelected === 'open' && record?.payroll_cfdi_person?.status > 0 ){
+      return true
+    }
+    if(typeSelected === 'closed' && (!record.payroll_cfdi_person || record?.payroll_cfdi_person?.status < 1)){
+      return true
+    }
+
+    if(step === 0 && record['payroll_cfdi_person']){
+      if(step == 0 && record?.payroll_cfdi_person?.status !== 0){
+        return true
+      }else{
+        return false
+      }
+    }
+    if(step == 1 && !record['payroll_cfdi_person'] && !record.departure_motive && !record.departure_date ){
+      return true
+    }else if(step == 1 && record?.payroll_cfdi_person?.status > 1){
+      return true
+    }
+    
+    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 0)){
+      return true
+    }
+  }
 
   useEffect(() => {
     if (movementType && calendarSelect) {
@@ -804,7 +851,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [calendarSelect]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
-    if (movementType > 1 && record.working_days)
+    if (movementType > 1)
       return expanded ? (
         <DownOutlined onClick={(e) => onExpand(record, e)} />
       ) : (
@@ -819,8 +866,27 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  const getForCalculate = () =>{
+    let rows = []
+    console.log(rowSelectionPerson.selectedRowKeys)
+    console.log(extraOrdinaryPayroll)
+    
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      rowSelectionPerson.selectedRowKeys.map(key => {
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          extraOrdinaryPayroll[idx]['person_id'] = extraOrdinaryPayroll[idx]['person']['id'] 
+          rows.push(extraOrdinaryPayroll[idx])
+        }
+      })
+    }
+    return rows
+  }
+
+
+
   const calculateExtra = () => {
-    const objSend = objectSend.payroll.filter((item) => item.departure_date);
+    const objSend = getForCalculate()
     if (objSend.length == 0) {
       message.error(
         "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
@@ -835,33 +901,60 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     });
   };
 
-  const sendClosePayroll = () => {
-    if (movementType > 1) {
-      if (objectSend == null || objectSend.length == 0) {
-        message.error(
-          "Debe seleccionar almenos una persona y generar el calculo."
-        );
-        return;
-      }
-      const objSend = objectSend.payroll.filter((item) => item.departure_date);
-      if (objSend.length == 0) {
-        message.error(
-          "Debe seleccionar una fecha de salida y un motivo por cada persona a calcular."
-        );
-        return;
-      }
+  useEffect(() => {
+    console.log('consolidatedObj',consolidatedObj)
+  }, [consolidatedObj])
+
+  const getRecords = () => {
+    let records = extraOrdinaryPayroll
+    console.log('======================')
+    console.log(extraOrdinaryPayroll)
+    console.log('======================')
+    if(step === 0){
+      records = extraOrdinaryPayroll
     }
-    setLoading(true);
+    if(step == 1){
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+    }
+    if(step == 2){
+      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
+    }
+    console.log(records)
+    return records
+  }
+  
+  const getForClose = () => {
+    
+    let rows = []
+
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      rowSelectionPerson.selectedRowKeys.map(key => {
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+          if(idx > -1){
+            rows.push(extraOrdinaryPayroll[idx])
+          }
+      })
+    }else{
+      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
+    }
+    return rows
+  }
+
+
+  const sendClosePayroll = () => {
+    /* setLoading(true); */
+    const payroll = getForClose()
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
-      payroll: consolidatedObj,
+      payroll: payroll,
       movement_type: movementType,
     })
       .then((response) => {
+        setPersonKeys([]);
         // resetStateViews();
         if (movementType == 2 || movementType == 3) {
           setListPersons([]);
-          setPersonKeys([]);
+          
         }
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
@@ -887,9 +980,22 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    setExtraOrdinaryPayroll(data.payroll);
-    setObjectSend(data);
+    console.log('setPayrollCalculate===========>', data)
+    updPayroll(data.payroll[0])
+    /* setExtraOrdinaryPayroll(data.payroll); */
+    /* setObjectSend(data); */
   };
+
+  const updPayroll = (newItem) => {
+    console.log('extraOrdinaryPayroll',extraOrdinaryPayroll)
+    console.log('newItem',newItem)
+    let idx = extraOrdinaryPayroll.findIndex(item => item.key == newItem.key)
+    let extraCopy = [...extraOrdinaryPayroll]
+
+    extraCopy[idx] = newItem
+    setExtraOrdinaryPayroll(extraCopy)
+    
+  }
 
   const validatedStatusPayroll = (data) => {
     if (data === null || data === undefined) {
@@ -899,11 +1005,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setIsOpen(data.is_open);
 
     if (data.status === 1 && data.is_open) {
-      setStep(1), setPreviuosStep(true), setNextStep(false);
+      setStep(1), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 1 && !data.is_open) {
-      setStep(2), setPreviuosStep(false), setNextStep(false);
+      setStep(2), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 2 && data.is_open) {
@@ -911,11 +1017,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return;
     }
     if (data.status === 2) {
-      setStep(2), setPreviuosStep(false), setNextStep(true);
+      setStep(2), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 3 && !data.is_open) {
-      setStep(3), setPreviuosStep(true), setNextStep(false);
+      setStep(3), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 3 && data.is_open) {
@@ -925,6 +1031,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changeStep = (next_prev) => {
+    console.log('movementType',movementType)
+    console.log('isOpen', isOpen)
+    console.log(step)
+    console.log('next_prev',next_prev)
     if (next_prev) {
       //next
       if (step == 0) {
@@ -932,7 +1042,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         setPreviuosStep(true);
         if (isOpen)
           if (movementType > 1 && isOpen) setNextStep(true);
-          else setNextStep(false);
+          else setNextStep(true);
         return;
       }
       if (step == 1 && consolidated) {
@@ -1195,6 +1305,23 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     });
   };
 
+  const showCalculate = () => {
+    let show = true;
+    if(rowSelectionPerson.selectedRowKeys.length > 0 && step < 1){
+      rowSelectionPerson.selectedRowKeys.map(key => {
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          if(!extraOrdinaryPayroll[idx]['departure_date']){
+            show = false
+          }
+        }
+      })
+    }else{
+      show = false
+    }
+    return show
+  }
+
   const cancelStamp = (type, id = null) => {
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
@@ -1229,7 +1356,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     let data = {
       payment_period: periodSelected.id,
       movement_type: movementType,
+      consolidated_id: consolidated.id
     };
+
+    if(rowSelectionPerson.selectedRowKeys.length > 0){
+      let cfdis = []
+      rowSelectionPerson.selectedRowKeys.map(key =>{
+        let idx = extraOrdinaryPayroll.findIndex(item => item.key === key)
+        if(idx > -1){
+          cfdis.push(extraOrdinaryPayroll[idx].payroll_cfdi_person.id)
+        }
+      })
+      data['cfdis'] = cfdis
+    }
+    
     // if (listPersons.length > 0)
     //   data.cfdis = listPersons.map((item) => {
     //     return item.payroll_cfdi_person.id;
@@ -1245,6 +1385,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             payment_period: periodSelected.id,
             movement_type: movementType,
           });
+          settypeSelected(null)
         })
         .catch((error) => {
           setLoading(false);
@@ -1345,6 +1486,37 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         2
       )
     }
+  }
+
+  const validateNextBtn = () => {
+    if(getCloseCount() < 1 && step === 1){
+      return true
+    }
+    if((step== 2 && consolidated && consolidated.status <= 2) ){
+      return true
+    }
+
+    return false
+  }
+
+  const getOpenCount = () => {
+    let opens = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 0){
+        opens++
+      }
+    })
+    return opens
+  }
+
+  const getCloseCount = () => {
+    let opens = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 1){
+        opens++
+      }
+    })
+    return opens
   }
 
   const downloads_options = (
@@ -1566,10 +1738,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
                         </Col>
                       {/*  */}
-                      {personKeys &&
-                        personKeys.length > 0 &&
-                        objectSend &&
-                        step == 0 && (
+                      { showCalculate() && (
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
@@ -1583,13 +1752,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         )}
 
-                      {step >= 1 && consolidatedObj && isOpen && (
+                      {(step == 1 && ((consolidatedObj && isOpen) || getOpenCount() > 0)) && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
                               style={{ minWidth: "200px" }}
                               block
+                              disabled={typeSelected == 'closed'}
                               icon={<LockOutlined />}
                               htmlType="button"
                               onClick={() => sendClosePayroll()}
@@ -1599,7 +1769,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {((step == 2 &&
+                      {(((step == 2 || step == 1) &&
                         consolidated &&
                         consolidated.status <= 2) ||
                         (step == 2 && movementType >= 1 && !isOpen)) && (
@@ -1609,6 +1779,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             style={{ minWidth: "200px" }}
                             block
                             icon={<UnlockOutlined />}
+                            disabled={typeSelected === 'open'}
                             htmlType="button"
                             onClick={() =>
                               setMessageModal(5, {
@@ -1655,7 +1826,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-
                       {step == 3 && (
                         <Col md={6} offset={1}>
                           <Button
@@ -1697,7 +1867,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       )}
                     </Row>
                   </div>
-                  {previousStep && step > 0 && (
+                  {step > 0 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(false)}
@@ -1705,10 +1875,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       Previo
                     </Button>
                   )}
-                  {nextStep && (
+                  {step < 3 && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(true)}
+                      disabled={validateNextBtn()}
                     >
                       Siguiente
                     </Button>
@@ -1729,7 +1900,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                     <>
                       <Table
                         className="headers_transparent"
-                        dataSource={extraOrdinaryPayroll}
+                        dataSource={getRecords()}
                         columns={persons}
                         expandable={{
                           expandedRowRender: (item) =>
