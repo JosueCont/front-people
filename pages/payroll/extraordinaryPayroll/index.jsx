@@ -682,7 +682,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const resetStateViews = () => {
-    setExtraOrdinaryPayroll(null);
+    setExtraOrdinaryPayroll([]);
     setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
@@ -734,8 +734,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           }
+
           setConsolidated(response.data.consolidated);
-          console.log('R===>', response.data)
           // setExtraOrdinaryPayroll(response.data.payroll);
           setExtraOrdinaryPayroll(response.data.payroll);
         } else {
@@ -757,6 +757,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const recalculate = (response) => {
+    
     if (extraOrdinaryPayroll == null) {
       console.log("Else");
       setExtraOrdinaryPayroll(
@@ -772,7 +773,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       response.data.map((item) => {
         calculateExist[calculateExist.length] = item;
       });
-
+      
       setExtraOrdinaryPayroll(
         calculateExist.sort((a, b) =>
           a.person.id.localeCompare(b.person.id)
@@ -806,11 +807,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
-    console.log('record', record)
-    if(typeSelected === 'open' && 'payroll_cfdi_person' in record){
+    if(typeSelected === 'open' && record?.payroll_cfdi_person?.status > 0 ){
       return true
     }
-    if(typeSelected === 'closed' && !record.payroll_cfdi_person){
+    if(typeSelected === 'closed' && (!record.payroll_cfdi_person || record?.payroll_cfdi_person?.status < 1)){
       return true
     }
 
@@ -908,8 +908,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [consolidatedObj])
 
   const getRecords = () => {
-
     let records = extraOrdinaryPayroll
+    console.log('======================')
+    console.log(extraOrdinaryPayroll)
+    console.log('======================')
     if(step === 0){
       records = extraOrdinaryPayroll
     }
@@ -926,8 +928,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getForClose = () => {
     
     let rows = []
-    console.log(rowSelectionPerson.selectedRowKeys)
-    console.log(extraOrdinaryPayroll)
 
     if(rowSelectionPerson.selectedRowKeys.length > 0){
       rowSelectionPerson.selectedRowKeys.map(key => {
@@ -937,7 +937,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           }
       })
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && item.person_id))
+      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
     }
     return rows
   }
@@ -945,7 +945,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const sendClosePayroll = () => {
     /* setLoading(true); */
-    console.log(getForClose())
     const payroll = getForClose()
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
@@ -953,10 +952,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       movement_type: movementType,
     })
       .then((response) => {
+        setPersonKeys([]);
         // resetStateViews();
         if (movementType == 2 || movementType == 3) {
           setListPersons([]);
-          setPersonKeys([]);
+          
         }
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
@@ -982,9 +982,22 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    setExtraOrdinaryPayroll(data.payroll);
-    setObjectSend(data);
+    console.log('setPayrollCalculate===========>', data)
+    updPayroll(data.payroll[0])
+    /* setExtraOrdinaryPayroll(data.payroll); */
+    /* setObjectSend(data); */
   };
+
+  const updPayroll = (newItem) => {
+    console.log('extraOrdinaryPayroll',extraOrdinaryPayroll)
+    console.log('newItem',newItem)
+    let idx = extraOrdinaryPayroll.findIndex(item => item.key == newItem.key)
+    let extraCopy = [...extraOrdinaryPayroll]
+
+    extraCopy[idx] = newItem
+    setExtraOrdinaryPayroll(extraCopy)
+    
+  }
 
   const validatedStatusPayroll = (data) => {
     if (data === null || data === undefined) {
