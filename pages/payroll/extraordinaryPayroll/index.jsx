@@ -136,7 +136,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           <Space>
             {item.payroll_cfdi_person && (
               <Tag
-                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : item.payroll_cfdi_person.status === 0 ? "blue" : "green"}
               >
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
@@ -176,10 +176,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       ),
     },
     {
-      title: "Antigüedad",
+      title: "Ingreso laboral",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.antiquity? item.antiquity : item.person.antiquity}</div>,
+      render: (item) => <div>{  item.person?.date_of_admission ? moment(item.person?.date_of_admission).format("DD-MM-YYYY") : "" }</div>,
     },
     {
       title: "Salario diario",
@@ -207,7 +207,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.isr} />
+          <NumberFormat prefix={"$"} number={item.total_deduction} />
         </div>
       ),
     },
@@ -682,7 +682,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const resetStateViews = () => {
-    setExtraOrdinaryPayroll(null);
+    setExtraOrdinaryPayroll([]);
     setTotalPayment(null);
     setTotalIsr(null);
     setNetPay(null);
@@ -734,8 +734,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
           }
+
           setConsolidated(response.data.consolidated);
-          console.log('R===>', response.data)
           // setExtraOrdinaryPayroll(response.data.payroll);
           setExtraOrdinaryPayroll(response.data.payroll);
         } else {
@@ -757,10 +757,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const recalculate = (response) => {
+    
     if (extraOrdinaryPayroll == null) {
       console.log("Else");
       setExtraOrdinaryPayroll(
-        response.data.sort((a, b) => a.person.code.localeCompare(b.person.code))
+        response.data.sort((a, b) => a.person.id.localeCompare(b.person.id))
       );
     } else {
       let calculateExist = extraOrdinaryPayroll;
@@ -772,10 +773,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       response.data.map((item) => {
         calculateExist[calculateExist.length] = item;
       });
-
+      
       setExtraOrdinaryPayroll(
         calculateExist.sort((a, b) =>
-          a.person.code.localeCompare(b.person.code)
+          a.person.id.localeCompare(b.person.id)
         )
       );
     }
@@ -785,10 +786,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(selectedRowKeys)
-      console.log(selectedRows)
       if(selectedRows.length === 1){
-        if('payroll_cfdi_person' in selectedRows[0]){
+        if(('payroll_cfdi_person' in selectedRows[0] && selectedRows[0]['payroll_cfdi_person']['status'] > 0)){
           settypeSelected('closed')
         }else{
           settypeSelected('open')
@@ -806,11 +805,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
-    console.log('record', record)
-    if(typeSelected === 'open' && 'payroll_cfdi_person' in record){
+    if(typeSelected === 'open' && record?.payroll_cfdi_person?.status > 0 ){
       return true
     }
-    if(typeSelected === 'closed' && !record.payroll_cfdi_person){
+    if(typeSelected === 'closed' && (!record.payroll_cfdi_person || record?.payroll_cfdi_person?.status < 1)){
       return true
     }
 
@@ -853,7 +851,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [calendarSelect]);
 
   const ExpandedFunc = (expanded, onExpand, record) => {
-    if (movementType > 1 && record.working_days)
+    if (movementType > 1)
       return expanded ? (
         <DownOutlined onClick={(e) => onExpand(record, e)} />
       ) : (
@@ -908,13 +906,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }, [consolidatedObj])
 
   const getRecords = () => {
-
     let records = extraOrdinaryPayroll
+    console.log('======================')
+    console.log(extraOrdinaryPayroll)
+    console.log('======================')
     if(step === 0){
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive) || item?.payroll_cfdi_person?.status === 0)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+    }
+    if(step == 2){
+      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
     }
     console.log(records)
     return records
@@ -923,8 +926,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getForClose = () => {
     
     let rows = []
-    console.log(rowSelectionPerson.selectedRowKeys)
-    console.log(extraOrdinaryPayroll)
 
     if(rowSelectionPerson.selectedRowKeys.length > 0){
       rowSelectionPerson.selectedRowKeys.map(key => {
@@ -934,24 +935,26 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           }
       })
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive))
+      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
     }
     return rows
   }
 
 
   const sendClosePayroll = () => {
-    setLoading(true);
+    /* setLoading(true); */
+    const payroll = getForClose()
     WebApiPayroll.consolidatedExtraordinaryPayroll({
       payment_period: periodSelected.id,
-      payroll: getForClose(),
+      payroll: payroll,
       movement_type: movementType,
     })
       .then((response) => {
+        setPersonKeys([]);
         // resetStateViews();
         if (movementType == 2 || movementType == 3) {
           setListPersons([]);
-          setPersonKeys([]);
+          
         }
         sendCalculateExtraordinaryPayrroll({
           payment_period: periodSelected.id,
@@ -977,9 +980,22 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    setExtraOrdinaryPayroll(data.payroll);
-    setObjectSend(data);
+    console.log('setPayrollCalculate===========>', data)
+    updPayroll(data.payroll[0])
+    /* setExtraOrdinaryPayroll(data.payroll); */
+    /* setObjectSend(data); */
   };
+
+  const updPayroll = (newItem) => {
+    console.log('extraOrdinaryPayroll',extraOrdinaryPayroll)
+    console.log('newItem',newItem)
+    let idx = extraOrdinaryPayroll.findIndex(item => item.key == newItem.key)
+    let extraCopy = [...extraOrdinaryPayroll]
+
+    extraCopy[idx] = newItem
+    setExtraOrdinaryPayroll(extraCopy)
+    
+  }
 
   const validatedStatusPayroll = (data) => {
     if (data === null || data === undefined) {
@@ -1352,7 +1368,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         }
       })
       data['cfdis'] = cfdis
-      console.log('first', cfdis)
     }
     
     // if (listPersons.length > 0)
@@ -1370,6 +1385,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             payment_period: periodSelected.id,
             movement_type: movementType,
           });
+          settypeSelected(null)
         })
         .catch((error) => {
           setLoading(false);
@@ -1473,7 +1489,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }
 
   const validateNextBtn = () => {
-    if(isOpen && step === 1){
+    if(getCloseCount() < 1 && step === 1){
       return true
     }
     if((step== 2 && consolidated && consolidated.status <= 2) ){
@@ -1487,6 +1503,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     let opens = 0
     extraOrdinaryPayroll?.map(item => {
       if(item?.payroll_cfdi_person?.status == 0){
+        opens++
+      }
+    })
+    return opens
+  }
+
+  const getCloseCount = () => {
+    let opens = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 1){
         opens++
       }
     })
@@ -1800,9 +1826,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {
-                        step
-                      }
                       {step == 3 && (
                         <Col md={6} offset={1}>
                           <Button
