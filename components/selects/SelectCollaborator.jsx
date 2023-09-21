@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
 const { Option } = Select;
@@ -6,10 +6,22 @@ const SelectCollaborator = ({
   showLabel = true,
   setAllPersons,
   val = false,
+  onlyUsersKhonnect=null,
   isDisabled = false,
   ...props
 }) => {
   const { Option } = Select;
+  const [personList,setPersonList] = useState(null)
+
+  useEffect(()=>{
+    if(props.peopleCompany){
+      if(onlyUsersKhonnect){
+        setPersonList(props.peopleCompany.filter((ele)=> ele.khonnect_id))
+      }else{
+        setPersonList(props.peopleCompany)
+      }
+    }
+  },[props.peopleCompany])
 
   return (
     <Form.Item
@@ -41,8 +53,8 @@ const SelectCollaborator = ({
         defaultValue={props.value || undefined}
         disabled={isDisabled}
       >
-        {props.peopleCompany
-          ? props.peopleCompany.map((item) => {
+        {personList
+          ? personList.map((item) => {
               return (
                 <Option
                   key={item.key}
