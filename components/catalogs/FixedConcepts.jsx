@@ -207,15 +207,15 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       // Solo se muestran los conceptos internos por empresa
       let perceptions = [];
       props.perceptions_int.filter((item) => {
-        if (item.node == currentNode.id) {
-          perceptions.push({ value: item.id, label: item.description });
+        if (item.node == currentNode.id && item.is_active) {
+          perceptions.push({ value: item.id, label: item.description});
         }
       });
       setPerceptionsCat(perceptions);
 
       let deductions = [];
       props.deductions_int.filter((item) => {
-        if (item.node == currentNode.id) {
+        if (item.node == currentNode.id && item.is_active) {
           deductions.push({ value: item.id, label: item.description });
         }
       });
@@ -223,7 +223,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
 
       let other_paymets = [];
       props.other_payments_int.filter((item) => {
-        if (item.node == currentNode.id) {
+        if (item.node == currentNode.id && item.is_active) {
           other_paymets.push({ value: item.id, label: item.description });
         }
       });

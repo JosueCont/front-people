@@ -174,7 +174,7 @@ const CalculatePayroll = ({ ...props }) => {
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Sin timbrar
                   </>
-                ) : item.payroll_cfdi_person.status === 6 ? (
+                ) : (item.payroll_cfdi_person.status === 6 || item.payroll_cfdi_person.status === 0) ? (
                   <>
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Guardado
@@ -302,7 +302,7 @@ const CalculatePayroll = ({ ...props }) => {
           </Tooltip>
         }
           {item.payroll_cfdi_person &&
-          item.payroll_cfdi_person.status == 6 &&
+          (item.payroll_cfdi_person.status == 0 || item.payroll_cfdi_person.status == 6) &&
           step == 0 ? (
             <Button
               size="small"
@@ -392,7 +392,7 @@ const CalculatePayroll = ({ ...props }) => {
         render: (item) => (
           <>
             {data.payroll_cfdi_person &&
-            data.payroll_cfdi_person.status == 6 &&
+            (data.payroll_cfdi_person.status == 0 || data.payroll_cfdi_person.status == 6) &&
             step === 0 &&
             item.type === "046" ? (
               <Space size="middle">
@@ -1046,6 +1046,7 @@ const CalculatePayroll = ({ ...props }) => {
   const openPayroll = (type) => {
     let data = {
       payment_period: periodSelected.id,
+      consolidated_id: consolidated.id
     };
     if (personStamp.length > 0)
       data.cfdis = personStamp.map((item) => {
@@ -1884,8 +1885,8 @@ const CalculatePayroll = ({ ...props }) => {
                                             ].originFileObj
                                         // info.fileList.length === 1 ? info.fileList[0].originFileObj : info.fileList[info.fileList.length-1].originFileObj
                                       );
-                                      data.append("department", department);
-                                      data.append("job", job);
+                                      if (department) data.append("department", department);
+                                      if (job) data.append("job", job);
                                       data.append(
                                         "payment_period",
                                         periodSelected.id
@@ -2015,7 +2016,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 {((isOpen &&
                                   consolidated &&
                                   (consolidated.status <= 2 ||
-                                    consolidated.status == 6)) ||
+                                    consolidated.status == 0 || consolidated.status == 6)) ||
                                   (isOpen && !consolidated)) && (
                                   <Col  >
                                     <Button
@@ -2218,7 +2219,7 @@ const CalculatePayroll = ({ ...props }) => {
                             : "No se encontraron resultados.",
                         }}
                         rowSelection={
-                          consolidated && step > 1 && (consolidated.status <= 3 || consolidated.status == 6)
+                          consolidated && step > 1 && (consolidated.status <= 3 || consolidated.status == 0 || consolidated.status == 6)
                             ? rowSelectionPerson
                             : null
                         }
