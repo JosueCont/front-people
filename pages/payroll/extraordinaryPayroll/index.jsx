@@ -37,11 +37,12 @@ import {
   FilePdfOutlined,
   FileExcelOutlined,
   ClearOutlined,
+  FilePdfTwoTone,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
-import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
+// import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainInter";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -63,6 +64,7 @@ import { downLoadFileBlobAwait,
   getDomain,
   verifyMenuNewForTenant, } from "../../../utils/functions";
   import { API_URL_TENANT } from "../../../config/config";
+import ModalConceptsExtraordinaryPayroll from "../../../components/payroll/modals/ModalConceptsExtraordinaryPayroll";
 
 
 const ExtraordinaryPayroll = ({ ...props }) => {
@@ -297,6 +299,23 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     {
       title: "",
       className: "cursor_pointer",
+      render: (item) => (<>
+      {
+        item?.payroll_cfdi_person?.status === 1 &&
+        <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
+              <FilePdfTwoTone
+                  twoToneColor="#34495E"
+                  onClick={() => downloadReceipt(item)}
+                  style={{ fontSize: "25px" }}
+              />
+          </Tooltip>
+      }
+        </>
+      )
+    },
+    {
+      title: "",
+      className: "cursor_pointer",
       render: (item) => (
         <>
           {consolidated && item.payroll_cfdi_person && (
@@ -360,8 +379,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const downloadReceipt = async (data) => {
+    let req = {
+      cfdi_id: data?.payroll_cfdi_person?.id,
+      payroll_not_stamped: true
+    }
     try {
-      let response = await WebApiPayroll.downLoadReceipt(data);
+      let response = await WebApiPayroll.downLoadReceipt(req);
       const type = response.headers["content-type"];
       const blob = new Blob([response.data], {
         type: type,
@@ -1957,7 +1980,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         </div>
       </MainLayout>
       {personId && periodSelected && (
-        <ModalConceptsPayroll
+        <ModalConceptsExtraordinaryPayroll
           extraOrdinary={true}
           visible={modalVisible}
           setVisible={setModalVisible}
