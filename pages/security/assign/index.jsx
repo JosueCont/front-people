@@ -165,7 +165,7 @@ const SelectCompany = ({ getPeopleCompany,...props }) => {
             <Col span={23}>
               <Row justify={"space-between"}>
                 <Col xs={23} md={6} lg={6} xl={6}>
-                  <SelectCollaborator showSearch={true} onChange={setCollaborator} />
+                  <SelectCollaborator onlyUsersKhonnect={true} showSearch={true} onChange={setCollaborator} />
                 </Col>
                 <Col xs={23} md={6} lg={6} xl={6} style={{ textAlign: "end" }}>
                   {/* <Button
