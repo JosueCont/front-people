@@ -37,6 +37,7 @@ import {
   FilePdfOutlined,
   FileExcelOutlined,
   ClearOutlined,
+  FilePdfTwoTone,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -298,6 +299,23 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     {
       title: "",
       className: "cursor_pointer",
+      render: (item) => (<>
+      {
+        item?.payroll_cfdi_person?.status === 1 &&
+        <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
+              <FilePdfTwoTone
+                  twoToneColor="#34495E"
+                  onClick={() => downloadReceipt(item)}
+                  style={{ fontSize: "25px" }}
+              />
+          </Tooltip>
+      }
+        </>
+      )
+    },
+    {
+      title: "",
+      className: "cursor_pointer",
       render: (item) => (
         <>
           {consolidated && item.payroll_cfdi_person && (
@@ -361,8 +379,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const downloadReceipt = async (data) => {
+    let req = {
+      cfdi_id: data?.payroll_cfdi_person?.id,
+      payroll_not_stamped: true
+    }
     try {
-      let response = await WebApiPayroll.downLoadReceipt(data);
+      let response = await WebApiPayroll.downLoadReceipt(req);
       const type = response.headers["content-type"];
       const blob = new Blob([response.data], {
         type: type,
