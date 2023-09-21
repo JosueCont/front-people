@@ -143,15 +143,15 @@ const InternalConcepts = ({
     setIntConcept(false);
     if (key == 1) {
       setUrl("internal-perception-type/");
-      setCat(props.perceptions_int.filter((item) => item.node != null));
+      setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active));
     }
     if (key == 2) {
       setUrl("internal-deduction-type/");
-      setCat(props.deductions_int.filter((item) => item.node != null));
+      setCat(props.deductions_int.filter((item) => item.node != null && item.is_active));
     }
     if (key == 3) {
       setUrl("internal-other-payment-type/");
-      setCat(props.other_payments_int.filter((item) => item.node != null));
+      setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active));
     }
   }, [key]);
 
@@ -160,11 +160,11 @@ const InternalConcepts = ({
       (props.perceptions_int, props.deductions_int, props.other_payments_int)
     ) {
       if (key == 1)
-        setCat(props.perceptions_int.filter((item) => item.node != null));
+        setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active ));
       if (key == 2)
-        setCat(props.deductions_int.filter((item) => item.node != null));
+        setCat(props.deductions_int.filter((item) => item.node != null && item.is_active ));
       if (key == 3)
-        setCat(props.other_payments_int.filter((item) => item.node != null));
+        setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active));
     }
   }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
 
