@@ -15,6 +15,7 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
     const [postalCode, setPostalCode] = useState([]);
     const [idAddress, setIdAddress] = useState("");
     const [loading, setLoading] = useState(false)
+    const [txtCp, setTxtCp] = useState(null)
 
 
     useEffect(() => {
@@ -52,9 +53,11 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
       };
 
       const saveAddress = async (values) => {
-        setLoading(true)
+        /* setLoading(true) */
+        
         values['person'] = person_id
         let response;
+
         try {
           if (idAddress){
             response = await WebApi.updFiscalAddress(idAddress, values);
@@ -75,9 +78,19 @@ const FiscalAddressPerson = ({person_id, ...props}) => {
 
     const getPostalCode = (value) => {
         if (props.versionCfdi)
+        if(value){
+          setTxtCp(value)
+        }else{
+          setTxtCp(null)
+        }
           WebApiFiscal.getPostalCode(value, props.versionCfdi)
               .then((response) => {
-                setPostalCode(response.data.results);
+                console.log('===============>', response.data.results)
+                if(response.data.results.length > 0){
+                  setPostalCode(response.data.results);
+                }else{
+                  setPostalCode([{id: value, code: value}]);
+                }
               })
               .catch((e) => {
                 console.log(e);
