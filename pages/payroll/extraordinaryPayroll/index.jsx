@@ -138,14 +138,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           <Space>
             {item.payroll_cfdi_person && (
               <Tag
-                color={item.payroll_cfdi_person.status === 1 ? "gold" : item.payroll_cfdi_person.status === 0 ? "blue" : "green"}
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : (item.payroll_cfdi_person.status === 0 || item.payroll_cfdi_person.status === 6) ? "blue" : "green"}
               >
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Cerrado
                   </>
-                ) : item.payroll_cfdi_person.status === 0 ? (<>
+                ) : (item.payroll_cfdi_person.status === 0 || item.payroll_cfdi_person.status === 6) ? (<>
                   <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Guardado
                 </>) : item.payroll_cfdi_person.status === 2 && (
@@ -828,7 +828,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
-    if(typeSelected === 'open' && record?.payroll_cfdi_person?.status > 0 ){
+    if(typeSelected === 'open' && (record?.payroll_cfdi_person?.status > 0 && record?.payroll_cfdi_person?.status < 6 ) ){
       return true
     }
     if(typeSelected === 'closed' && (!record.payroll_cfdi_person || record?.payroll_cfdi_person?.status < 1)){
@@ -836,7 +836,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
 
     if(step === 0 && record['payroll_cfdi_person']){
-      if(step == 0 && record?.payroll_cfdi_person?.status !== 0){
+      if(step == 0 && record?.payroll_cfdi_person?.status !== 0 && record?.payroll_cfdi_person?.status !== 6){
         return true
       }else{
         return false
@@ -848,7 +848,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return true
     }
     
-    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 0)){
+    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || (record?.payroll_cfdi_person?.status == 0 || record?.payroll_cfdi_person?.status == 6))){
       return true
     }
   }
@@ -937,7 +937,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1)
     }
     if(step == 2){
       records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
@@ -958,7 +958,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           }
       })
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
+      rows = extraOrdinaryPayroll.filter(item => (item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6) || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
     }
     return rows
   }
@@ -1525,7 +1525,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getOpenCount = () => {
     let opens = 0
     extraOrdinaryPayroll?.map(item => {
-      if(item?.payroll_cfdi_person?.status == 0){
+      if(item?.payroll_cfdi_person?.status == 0 || item?.payroll_cfdi_person?.status == 6){
         opens++
       }
     })
