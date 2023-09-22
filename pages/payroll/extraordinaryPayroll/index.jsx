@@ -55,6 +55,7 @@ import {
   messageUpdateSuccess,
   optionMovement,
 } from "../../../utils/constant";
+import LinkToPerson from '../../../components/person/LinkToPerson'
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
@@ -173,6 +174,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   item.person.mlast_name
                 : item.personfirst_name + " " + item.person.flast_name
             }`}
+            <LinkToPerson  personId={item.person.id}/>
           </Space>
         </div>
       ),
