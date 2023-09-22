@@ -52,10 +52,12 @@ const InternalConcepts = ({
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
   const [search, setSearch] = useState("");
+  const [data_type, setData_type] = useState(null)
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
   const [url, setUrl] = useState("internal-perception-type/");
 
-  const data_type = Form.useWatch('data_type', form)
+  /* const data_type = Form.useWatch('data_type', form) */
+
   
   const columns = [
     {
@@ -172,6 +174,7 @@ const InternalConcepts = ({
     form.resetFields();
     setEdit(false);
     setId("");
+    setData_type(null)
   };
 
   useEffect(() => {
@@ -249,7 +252,7 @@ const InternalConcepts = ({
     setEdit(true);
     setId(item.id);
     console.log('item', item)
-
+    setData_type(item?.data_type)
     if (key == 1) {
       form.setFieldsValue({
         code: item.code,
@@ -347,12 +350,14 @@ const InternalConcepts = ({
           resetForm();
           message.success(messageUpdateSuccess);
           setLoading(false);
+          setData_type(null)
         })
         .catch((error) => {
           setLoading(false);
           console.log(error);
           message.error(messageError);
         });
+        setData_type(null)
     } catch (error) {
       setId("");
       setEdit(false);
@@ -487,7 +492,9 @@ const InternalConcepts = ({
               label="Tipo de dato"
               rules={[ruleRequired]}
             >
-              <Select options={dataType} />
+              <Select options={dataType} 
+              onChange={(val) => setData_type(val)}
+               />
             </Form.Item>
           </Col>
           {
