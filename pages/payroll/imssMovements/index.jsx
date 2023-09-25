@@ -451,6 +451,7 @@ const disabledMaxDate  = (current) => {
                   files={files?.length > 0 ? files : []}
                   loading={loading}
                   total={totalFiles}
+                  onRefresh={getFiles}
                   changePage={changePage}
                 />
               </Panel>
