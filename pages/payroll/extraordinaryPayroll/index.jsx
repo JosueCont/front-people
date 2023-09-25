@@ -279,8 +279,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     {
       key: "actions",
       className: "cell-actions",
-      render: (item) =>
-        listPersons &&
+      render: (item) => movementType >= 4 ? null : 
+      listPersons &&
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
@@ -303,7 +303,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (<>
       {
-        item?.payroll_cfdi_person?.status === 1 &&
+        item?.payroll_cfdi_person?.status === 1 && movementType < 4 &&
         <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
               <FilePdfTwoTone
                   twoToneColor="#34495E"
@@ -320,7 +320,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <>
-          {consolidated && item.payroll_cfdi_person && (
+          {consolidated && item.payroll_cfdi_person && movementType < 4 && (
             <div>
               <Tooltip placement="top" title="Limpiar cálculo">
                 <Button size="small" onClick={() => removeCfdiPerson(item)}>
@@ -893,8 +893,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const getForCalculate = () =>{
     let rows = []
-    console.log(rowSelectionPerson.selectedRowKeys)
-    console.log(extraOrdinaryPayroll)
+    
     
     if(rowSelectionPerson.selectedRowKeys.length > 0){
       rowSelectionPerson.selectedRowKeys.map(key => {
@@ -1969,7 +1968,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         className="headers_transparent"
                         dataSource={getRecords()}
                         columns={persons}
-                        expandable={{
+                        expandable={ movementType >= 4 ? null : {
                           expandedRowRender: (item) =>
                             renderConceptsTable(item),
                           expandIcon: ({ expanded, onExpand, record }) =>
@@ -1982,7 +1981,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             ? "Cargando..."
                             : "No se encontraron resultados.",
                         }}
-                        rowSelection={
+                        rowSelection={ movementType >= 4 ? null :
                           rowSelectionPerson
                         }
                       />
