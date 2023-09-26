@@ -3,11 +3,11 @@ import { Tooltip } from 'antd';
 import {  LinkOutlined } from "@ant-design/icons";
 
 const LinkToPerson = ({personId}) => {
-      return   <Link href={`/home/persons/${personId}`} passHref>
+      return   <a href={`/home/persons/${personId}`} passHref target="_blank" >
             <Tooltip placement="bottom" title={'Ver detalle de persona'}>
                 <a><LinkOutlined /></a>
             </Tooltip>
-        </Link>
+        </a>
 }
 
 export default LinkToPerson

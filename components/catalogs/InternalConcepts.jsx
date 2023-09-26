@@ -14,6 +14,7 @@ import {
   Tabs,
   Switch,
   ConfigProvider,
+  Tooltip
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -21,6 +22,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  CopyOutlined
 } from "@ant-design/icons";
 import {
   messageDeleteSuccess,
@@ -34,9 +36,9 @@ import { showHideMessage } from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
 import SelectAccountantAccount from "../selects/SelectAccountantAccount";
+import webApiPayroll from "../../api/WebApiPayroll";
 
 const InternalConcepts = ({
-  permissions,
   currentNode,
   showHideMessage,
   ...props
@@ -46,11 +48,13 @@ const InternalConcepts = ({
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [loadingCopy, setLoadingCopy] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [id, setId] = useState("");
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
+  const [viewActive, setviewActive] = useState(true);
   const [search, setSearch] = useState("");
   const [data_type, setData_type] = useState(null)
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
@@ -66,7 +70,7 @@ const InternalConcepts = ({
     },
     {
       title: "Nombre",
-      dataIndex: "description",
+      dataIndex: "description"
     },
     {
       title: "Código SAT",
@@ -102,32 +106,60 @@ const InternalConcepts = ({
          </div>;
       },
     },
+    {
+      title: "Activo",
+      render: (item) => {
+        return <div>
+          {item.node != null &&
+              <Switch
+                  size='small'
+                  defaultChecked={item.is_active}
+                  checked={item.is_active}
+                  onClick={()=>{
+                    item.is_active = !item.is_active
+                    updateShowConcept(item, item.id);
+                  }
+                  }
+              />
+          }
+        </div>;
+      },
+    },
 
     {
       title: "Acciones",
       render: (item) => {
         return (
           <div>
-            {item.node != null && (
+
               <Row gutter={16}>
-                {permissions.edit && (
+                {item.node != null && <>
                   <Col className="gutter-row" offset={1}>
                     <EditOutlined onClick={() => editRegister(item)} />
                   </Col>
-                )}
-                {permissions.delete && (
+
                   <Col className="gutter-row" offset={1}>
                     <DeleteOutlined
-                      onClick={() => {
-                        setDeleteRegister({
-                          id: item.id,
-                        });
-                      }}
+                        onClick={() => {
+                          setDeleteRegister({
+                            id: item.id,
+                          });
+                        }}
                     />
                   </Col>
+                </>
+                }
+                {item.node == null && (
+                    <Col className="gutter-row" offset={1}>
+                      <Tooltip placement="top" title={"Copiar concepto para usar"}>
+                        <CopyOutlined onClick={() => copyConcept(item)} />
+                      </Tooltip>
+
+                    </Col>
                 )}
+
               </Row>
-            )}
+
           </div>
         );
       },
@@ -145,15 +177,15 @@ const InternalConcepts = ({
     setIntConcept(false);
     if (key == 1) {
       setUrl("internal-perception-type/");
-      setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.perceptions_int.filter((item) => item.node != null));
     }
     if (key == 2) {
       setUrl("internal-deduction-type/");
-      setCat(props.deductions_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.deductions_int.filter((item) => item.node != null));
     }
     if (key == 3) {
       setUrl("internal-other-payment-type/");
-      setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.other_payments_int.filter((item) => item.node != null));
     }
   }, [key]);
 
@@ -176,6 +208,44 @@ const InternalConcepts = ({
     setId("");
     setData_type(null)
   };
+
+  // permite copiar un concepto del sistema para el uso del usuario
+  const copyConcept=async (concepto)=>{
+    setLoadingCopy(true)
+    try{
+      let data = {
+        concept_ids:[concepto.id],
+        node_id: currentNode.id,
+        concept_type: (key===1? 'perception' : key ===2 ? 'deduction': 'other_payment')
+      }
+      const res = await webApiPayroll.copyInternalConcept(data)
+      if(res?.data?.message){
+        message.success(res?.data?.message)
+        setLoading(true)
+        props
+            .doFiscalCatalogs(currentNode.id, props.version_cfdi,true)
+            .then((response) => {
+              //resetForm();
+              setIntConcept(false)
+            })
+            .catch((error) => {
+              setLoading(false);
+              console.log(error);
+              message.error(messageError);
+            }).finally(()=>setLoading(false));
+      }
+      console.log(res)
+    }catch (e){
+      if(e?.response?.data?.message){
+        message.error(e?.response?.data?.message);
+      }else{
+        message.error("Error al actualizar, intente de nuevo");
+      }
+    }finally {
+      setLoadingCopy(false)
+    }
+    console.log(concepto)
+  }
 
   useEffect(() => {
     if(data_type === 1){
@@ -633,29 +703,56 @@ const InternalConcepts = ({
               onChange={(value) => setIntConcept(value)}
             />
           </Col>
+          <Col>
+            <b>mostrar conceptos inactivos </b>
+            <Switch
+                title="Conceptos del sistema"
+                defaultChecked={!viewActive}
+                onChange={(value) => setviewActive(!value)}
+            />
+          </Col>
         </Row>
       </>
     );
   };
 
   useEffect(() => {
-    if (intConcept)
+    if(intConcept && viewActive){
       setCat(
-        key == 1
-          ? props.perceptions_int.filter((item) => item.node == null)
-          : key == 2
-          ? props.deductions_int.filter((item) => item.node == null)
-          : props.other_payments_int.filter((item) => item.node == null)
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node == null && item.is_active===viewActive)
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node == null && item.is_active===viewActive)
+                  : props.other_payments_int.filter((item) => item.node == null && item.is_active===viewActive)
       );
-    else
+    }else if(intConcept && !viewActive){
       setCat(
-        key == 1
-          ? props.perceptions_int.filter((item) => item.node != null)
-          : key == 2
-          ? props.deductions_int.filter((item) => item.node != null)
-          : props.other_payments_int.filter((item) => item.node != null)
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node == null )
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node == null)
+                  : props.other_payments_int.filter((item) => item.node == null)
       );
-  }, [intConcept]);
+    }else if(!intConcept && !viewActive){
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node != null )
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node != null)
+                  : props.other_payments_int.filter((item) => item.node != null)
+      );
+    }else if(!intConcept && viewActive){
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node != null && item.is_active===viewActive)
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node != null && item.is_active===viewActive)
+                  : props.other_payments_int.filter((item) => item.node != null && item.is_active===viewActive)
+      );
+    }
+
+  }, [intConcept,viewActive]);
+
 
   const debouncedResults = useMemo(() => {
     return _.debounce((e) => handleChange(e), 1000);
@@ -742,6 +839,7 @@ const InternalConcepts = ({
           <Table
             columns={columns}
             dataSource={newCatalog}
+            loading={loadingCopy}
             //dataSource={filterData()}
             pagination={{ showSizeChanger: true }}
             locale={{

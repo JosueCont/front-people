@@ -604,6 +604,8 @@ export const optionMovement = [
     { value: 1, label: "Aguinaldo" },
     { value: 2, label: "Finiquito" },
     { value: 3, label: "Liquidación" },
+    { value: 4, label: "PTU" },
+    { value: 5, label: "Otro" },
 ];
 export const optionsBusinessName = [
     { value: "1", key: "1", label: "Física" },
