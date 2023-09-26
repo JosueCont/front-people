@@ -33,7 +33,7 @@ import SelectTags from "../selects/SelectTags";
 import SelectProfile from "../selects/SelectProfile";
 import esES from "antd/lib/locale/es_ES";
 
-const TabJobs = ({ permissions, currentNode, ...props }) => {
+const TabJobs = ({  currentNode, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
@@ -86,12 +86,9 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "job")} />
                 </Col>
-              )}
-              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -102,7 +99,6 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -265,7 +261,6 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
 
-      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -307,7 +302,6 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
             </Col>
           </Row>
         </Form>
-      )}
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
         <Table

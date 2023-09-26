@@ -29,7 +29,7 @@ import {
 } from "../../utils/constant";
 import esES from "antd/lib/locale/es_ES";
 
-const Relationship = ({ permissions, currentNode, ...props }) => {
+const Relationship = ({  currentNode, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
@@ -54,12 +54,9 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "rs")} />
                 </Col>
-              )}
-              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -70,7 +67,6 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -224,7 +220,6 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -253,7 +248,6 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
             </Col>
           </Row>
         </Form>
-      )}
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
         <Table

@@ -30,7 +30,7 @@ import {
 } from "@ant-design/icons";
 import esES from "antd/lib/locale/es_ES";
 
-const PersonTypes = ({ permissions, currentNode, ...props }) => {
+const PersonTypes = ({  currentNode, ...props }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -56,12 +56,9 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "tp")} />
                 </Col>
-              )}
-              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -72,7 +69,6 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -228,7 +224,6 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
   return (
     <>
       {edit && <Title style={{ fontSize: "20px" }}>Editar</Title>}
-      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -257,7 +252,6 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
             </Col>
           </Row>
         </Form>
-      )}
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
         <Table

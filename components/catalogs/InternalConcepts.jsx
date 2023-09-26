@@ -36,7 +36,6 @@ import _ from "lodash";
 import SelectAccountantAccount from "../selects/SelectAccountantAccount";
 
 const InternalConcepts = ({
-  permissions,
   currentNode,
   showHideMessage,
   ...props
@@ -51,6 +50,7 @@ const InternalConcepts = ({
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
+  const [viewActive, setviewActive] = useState(true);
   const [search, setSearch] = useState("");
   const [data_type, setData_type] = useState(null)
   //const apply_assimilated = Form.useWatch('apply_assimilated', form);
@@ -66,7 +66,7 @@ const InternalConcepts = ({
     },
     {
       title: "Nombre",
-      dataIndex: "description",
+      dataIndex: "description"
     },
     {
       title: "Código SAT",
@@ -102,6 +102,25 @@ const InternalConcepts = ({
          </div>;
       },
     },
+    {
+      title: "Activo",
+      render: (item) => {
+        return <div>
+          {item.node != null &&
+              <Switch
+                  size='small'
+                  defaultChecked={item.is_active}
+                  checked={item.is_active}
+                  onClick={()=>{
+                    item.is_active = !item.is_active
+                    updateShowConcept(item, item.id);
+                  }
+                  }
+              />
+          }
+        </div>;
+      },
+    },
 
     {
       title: "Acciones",
@@ -110,12 +129,11 @@ const InternalConcepts = ({
           <div>
             {item.node != null && (
               <Row gutter={16}>
-                {permissions.edit && (
+
                   <Col className="gutter-row" offset={1}>
                     <EditOutlined onClick={() => editRegister(item)} />
                   </Col>
-                )}
-                {permissions.delete && (
+
                   <Col className="gutter-row" offset={1}>
                     <DeleteOutlined
                       onClick={() => {
@@ -125,7 +143,6 @@ const InternalConcepts = ({
                       }}
                     />
                   </Col>
-                )}
               </Row>
             )}
           </div>
@@ -145,15 +162,15 @@ const InternalConcepts = ({
     setIntConcept(false);
     if (key == 1) {
       setUrl("internal-perception-type/");
-      setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.perceptions_int.filter((item) => item.node != null));
     }
     if (key == 2) {
       setUrl("internal-deduction-type/");
-      setCat(props.deductions_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.deductions_int.filter((item) => item.node != null));
     }
     if (key == 3) {
       setUrl("internal-other-payment-type/");
-      setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active));
+      setCat(props.other_payments_int.filter((item) => item.node != null));
     }
   }, [key]);
 
@@ -633,29 +650,78 @@ const InternalConcepts = ({
               onChange={(value) => setIntConcept(value)}
             />
           </Col>
+          <Col>
+            <b>mostrar conceptos inactivos </b>
+            <Switch
+                title="Conceptos del sistema"
+                defaultChecked={!viewActive}
+                onChange={(value) => setviewActive(!value)}
+            />
+          </Col>
         </Row>
       </>
     );
   };
 
   useEffect(() => {
-    if (intConcept)
+    debugger;
+    if(intConcept && viewActive){
       setCat(
-        key == 1
-          ? props.perceptions_int.filter((item) => item.node == null)
-          : key == 2
-          ? props.deductions_int.filter((item) => item.node == null)
-          : props.other_payments_int.filter((item) => item.node == null)
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node == null && item.is_active===viewActive)
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node == null && item.is_active===viewActive)
+                  : props.other_payments_int.filter((item) => item.node == null && item.is_active===viewActive)
       );
-    else
+    }else if(intConcept && !viewActive){
       setCat(
-        key == 1
-          ? props.perceptions_int.filter((item) => item.node != null)
-          : key == 2
-          ? props.deductions_int.filter((item) => item.node != null)
-          : props.other_payments_int.filter((item) => item.node != null)
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node == null )
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node == null)
+                  : props.other_payments_int.filter((item) => item.node == null)
       );
-  }, [intConcept]);
+    }else if(!intConcept && !viewActive){
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node != null )
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node != null)
+                  : props.other_payments_int.filter((item) => item.node != null)
+      );
+    }else if(!intConcept && viewActive){
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node != null && item.is_active===viewActive)
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node != null && item.is_active===viewActive)
+                  : props.other_payments_int.filter((item) => item.node != null && item.is_active===viewActive)
+      );
+    }
+
+
+    
+/*
+    if(intConcept){
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node == null || item.is_active!==viewActive )
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node == null || item.is_active!==viewActive)
+                  : props.other_payments_int.filter((item) => item.node == null || item.is_active!==viewActive)
+      );
+    }else{
+      setCat(
+          key == 1
+              ? props.perceptions_int.filter((item) => item.node != null || item.is_active!==viewActive)
+              : key == 2
+                  ? props.deductions_int.filter((item) => item.node != null || item.is_active!==viewActive)
+                  : props.other_payments_int.filter((item) => item.node != null || item.is_active!==viewActive)
+      );
+    }*/
+
+  }, [intConcept,viewActive]);
+
 
   const debouncedResults = useMemo(() => {
     return _.debounce((e) => handleChange(e), 1000);

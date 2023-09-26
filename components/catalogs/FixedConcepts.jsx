@@ -35,7 +35,7 @@ import WebApiPayroll from "../../api/WebApiPayroll";
 import esES from "antd/lib/locale/es_ES";
 import moment from "moment";
 
-const FixedConcepts = ({ permissions, currentNode, ...props }) => {
+const FixedConcepts = ({ currentNode, ...props }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
   const [edit, setEdit] = useState(false);
@@ -104,7 +104,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EyeOutlined
                     onClick={() =>
@@ -159,7 +158,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     }
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -171,7 +169,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined
                     onClick={() =>
@@ -179,8 +176,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     }
                   />
                 </Col>
-              )}
-              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -190,7 +185,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
