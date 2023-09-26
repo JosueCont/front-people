@@ -868,3 +868,12 @@ textarea {
   white-space: normal;
   word-break: break-all;
 }
+
+.ant-radio-checked .ant-radio-inner {
+  border-color: var(--primaryColor);
+  
+}
+
+.ant-radio-inner::after {
+  background-color: var(--primaryColor);
+}

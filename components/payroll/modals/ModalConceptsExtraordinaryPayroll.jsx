@@ -16,6 +16,7 @@ import {
   message,
   Select,
   Typography,
+  Radio,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
@@ -68,8 +69,19 @@ const ModalConceptsExtraordinaryPayroll = ({
   const [daysActive, setDaysActive] = useState([]);
   const [nonWorkingDays, setNonWorkingDays] = useState([]);
   const [showAlertDays, setShowAlertDays] = useState(false)
+  const [salaryTewntyDays, setSalaryTewntyDays] = useState("SDI");
+  const [salaryThreeMonths, setSalaryThreeMonths] = useState("SDI");
+  const [salaryAntiquity, setSalaryAntiquity] = useState("SD");
 
   useEffect(() => {
+    if (visible){
+      /* Reiniciamos los checks de tipo de salario */
+      setSalaryTewntyDays("SDI")
+      setSalaryThreeMonths("SDI")
+      setSalaryAntiquity("SD")
+    }
+    
+    
     if (
       props.perceptions_int &&
       props.deductions_int &&
@@ -529,7 +541,10 @@ const ModalConceptsExtraordinaryPayroll = ({
           obj.departure_date = departureDate;
           obj.departure_motive = motiveDeparture;
           obj.person = item.person;
-          obj.key = item.key;
+          obj.key = item.key;  
+          if (twentyDays) obj.salary_twenty_days = salaryTewntyDays;  
+          if (threeMonths) obj.salary_three_months = salaryThreeMonths;
+          if (antiquity) obj.salary_antiquity = salaryAntiquity;    
         }
         data.push(obj);
       }
@@ -718,40 +733,91 @@ const ModalConceptsExtraordinaryPayroll = ({
             <>
               <Row>
                 <Col span={24} style={{ marginBottom: "8px" }}>
-                  <Checkbox
-                    key={"twenty_day_compensantion"}
-                    className="CheckGroup"
-                    checked={twentyDays}
-                    onChange={(value) => setTwentyDays(value.target.checked)}
-                  >
-                    <span style={{ textTransform: "uppercase" }}>
-                      20 dias por año trabajado
-                    </span>
-                  </Checkbox>
+                  {twentyDays || threeMonths || antiquity ? (
+                    <Row>
+                      <Col xl={6} lg={7} md={9} sm={10} xs={12}>                  
+                      </Col>
+                      <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                      Calcular basado en:
+                      </Col>
+                    </Row>
+                  ): (null) }
+                  <Row>
+                    <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                      <Checkbox
+                      key={"twenty_day_compensantion"}
+                      className="CheckGroup"
+                      checked={twentyDays}
+                      onChange={(value) => setTwentyDays(value.target.checked)}
+                      >
+                        <span style={{ textTransform: "uppercase" }}>
+                          20 dias por año trabajado
+                        </span>
+                      </Checkbox>
+                    </Col>                    
+                    {twentyDays && 
+                      <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                        <Radio.Group                          
+                          onChange={(value) => setSalaryTewntyDays(value.target.value)} 
+                          value={salaryTewntyDays}>
+                          <Radio value={"SD"}>SD</Radio>
+                          <Radio value={"SDI"}>SDI</Radio>
+                          
+                        </Radio.Group>
+                      </Col>}
+                    
+                  </Row>                  
+                </Col>  
+                <Col span={24} style={{ marginBottom: "8px" }}>
+                  <Row>
+                    <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                      <Checkbox
+                      key={"three_months_compensantion"}
+                      className="CheckGroup"
+                      checked={threeMonths}
+                      onChange={(value) => setThreeMonths(value.target.checked)}
+                      >
+                        <span style={{ textTransform: "uppercase" }}>
+                          90 dias de indemnizacion
+                        </span>
+                      </Checkbox>
+                    </Col>
+                    {threeMonths && 
+                       <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                        <Radio.Group
+                          onChange={(value) => setSalaryThreeMonths(value.target.value)} 
+                          value={salaryThreeMonths}>
+                          <Radio value={"SD"}>SD</Radio>
+                          <Radio value={"SDI"}>SDI</Radio>                          
+                        </Radio.Group>
+                      </Col>}
+                  </Row>                 
                 </Col>
                 <Col span={24} style={{ marginBottom: "8px" }}>
-                  <Checkbox
-                    key={"three_months_compensantion"}
-                    className="CheckGroup"
-                    checked={threeMonths}
-                    onChange={(value) => setThreeMonths(value.target.checked)}
-                  >
-                    <span style={{ textTransform: "uppercase" }}>
-                      90 dias de indemnizacion
-                    </span>
-                  </Checkbox>
-                </Col>
-                <Col span={24} style={{ marginBottom: "8px" }}>
-                  <Checkbox
-                    key={"antiquity_premium"}
-                    className="CheckGroup"
-                    checked={antiquity}
-                    onChange={(value) => setAntiquity(value.target.checked)}
-                  >
-                    <span style={{ textTransform: "uppercase" }}>
-                      Prima de antigüedad
-                    </span>
-                  </Checkbox>
+                  <Row>
+                    <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                      <Checkbox
+                      key={"antiquity_premium"}
+                      className="CheckGroup"
+                      checked={antiquity}
+                      onChange={(value) => setAntiquity(value.target.checked)}
+                      >
+                        <span style={{ textTransform: "uppercase" }}>
+                          Prima de antigüedad
+                        </span>
+                      </Checkbox>
+                    </Col>
+                    {antiquity && 
+                       <Col xl={6} lg={7} md={9} sm={10} xs={12}>
+                        <Radio.Group
+                          onChange={(value) => setSalaryAntiquity(value.target.value)} 
+                          value={salaryAntiquity}>
+                          <Radio value={"SD"}>SD</Radio>
+                          <Radio value={"SDI"}>SDI</Radio>                          
+                        </Radio.Group>
+                      </Col>}
+                  </Row>
+                 
                 </Col>
               </Row>
               <Row style={{ paddingTop: "20px" }}>
@@ -851,7 +917,7 @@ const ModalConceptsExtraordinaryPayroll = ({
                 />
               )}
               {
-                showAlertDays && (
+                showAlertDays && workingDays && (
                   <Alert
                     message="Importante"
                     description={`Los dias capturados no deben ser mayor a ${workingDays}`}
