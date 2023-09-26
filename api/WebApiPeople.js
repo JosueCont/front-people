@@ -564,8 +564,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/document/${data}`, "get");
   }
 
-  static deleteEMAEBA(data) {
-    return WebApi.ApisType(`/business/document/`, "delete",data);
+  static deleteEMAEBA(documentID) {
+    return WebApi.ApisType(`business/generic-documents/${documentID}`, "delete");
   }
 
   static getWithHoldingNotice(data) {

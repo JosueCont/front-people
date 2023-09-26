@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Row, col, Table, Space, Button,Popconfirm } from "antd";
+import { Row, col, Table, Space, Button,Popconfirm,message } from "antd";
 import WebApiPeople from '../../../api/WebApiPeople'
 import { DownloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 
-const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
+const EmaYEvaFiles = ({ files, loading, total=0, changePage, onRefresh }) => {
 
   const [deleting,setDeleting]=useState(false)
 
   const confirmDelete=async(fileEMA)=>{
-      console.log(fileEMA)
     setDeleting(true)
-    let data = {
-      document_id: fileEMA.id
-    }
     try{
-      const res = WebApiPeople.deleteEMAEBA(data);
-      console.log(res)
+      const res = await WebApiPeople.deleteEMAEBA(fileEMA.id);
+      console.log(res?.data?.message)
+      if(res && res?.data?.message){
+        message.success(res?.data?.message)
+      }
     }catch (e){
       console.log(e)
     }finally {
       setDeleting(false)
+      onRefresh()
     }
 
 
@@ -52,7 +52,7 @@ const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
           record?.file && <Space><a href={record.file}>
           <DownloadOutlined />
         </a>
-            {/*<ConfirmDelete item={record}/>*/}
+            <ConfirmDelete item={record}/>
 
           </Space>
       ),
@@ -75,7 +75,7 @@ const EmaYEvaFiles = ({ files, loading, total=0, changePage }) => {
       className={"mainTable table-persons"}
       rowKey={"id"}
       size="small"
-      loading={loading}
+      loading={loading || deleting}
       dataSource={files}
       locale={{
         emptyText: loading ? "Cargando..." : "No se encontraron resultados.",

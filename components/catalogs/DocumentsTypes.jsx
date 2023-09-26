@@ -30,7 +30,7 @@ import {
 } from "../../utils/constant";
 import esES from "antd/lib/locale/es_ES";
 
-const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
+const DocumentsTypes = ({  currentNode, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
@@ -70,12 +70,9 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "td")} />
                 </Col>
-              )}
-              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -86,7 +83,6 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -258,7 +254,6 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
   return (
     <>
       {edit && <Title style={{ fontSize: "20px" }}>Editar</Title>}
-      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -292,7 +287,6 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
             </Col>
           </Row>
         </Form>
-      )}
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
         <Table

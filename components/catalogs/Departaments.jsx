@@ -30,7 +30,7 @@ import {
 import WebApiPeople from "../../api/WebApiPeople";
 import esES from "antd/lib/locale/es_ES";
 
-const Departaments = ({ permissions, currentNode, ...props }) => {
+const Departaments = ({  currentNode, ...props }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -60,12 +60,12 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
+
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "dep")} />
                 </Col>
-              )}
-              {permissions.delete && (
+
+
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -76,7 +76,6 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
                     }}
                   />
                 </Col>
-              )}
             </Row>
           </div>
         );
@@ -234,7 +233,6 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -274,7 +272,6 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
             </Col>
           </Row>
         </Form>
-      )}
       <Spin tip="Cargando..." spinning={loading}>
         <ConfigProvider locale={esES}>
         <Table

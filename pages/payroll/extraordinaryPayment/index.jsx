@@ -67,7 +67,15 @@ const ExtraordinaryPayment = ({...props}) => {
     };
 
     const cancel = () => {
+        
         setEditingKey('');
+
+        let concept = null
+
+        formTable.setFieldsValue({ 
+            "concept": concept
+        })
+
       };
 
     const onSelectChange = (newSelectedRowKeys) => {
@@ -241,6 +249,7 @@ const ExtraordinaryPayment = ({...props}) => {
 
     const changePeriod = (period_id) => {
         let period = calendarSelect.periods.find((p) => p.id == period_id);
+        cancel()
         setPeriodSelcted(period);
         getCalculateCreditNote(period_id)
         setSelectedRowKeys([])
@@ -305,7 +314,7 @@ const ExtraordinaryPayment = ({...props}) => {
             type = "number"
             rules.push({
                 pattern: /^\d+(?:\.\d{1,2})?$/,
-                message: "Ingresa un valor numerivo válido, máximo de dos decimales",
+                message: "Ingresa un valor numerico válido, máximo de dos decimales",
             })
         }
 

@@ -56,6 +56,7 @@ import {
   messageUpdateSuccess,
   optionMovement,
 } from "../../../utils/constant";
+import LinkToPerson from '../../../components/person/LinkToPerson'
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
@@ -146,14 +147,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         <div>
            {item.payroll_cfdi_person && (
               <Tag
-                color={item.payroll_cfdi_person.status === 1 ? "gold" : item.payroll_cfdi_person.status === 0 ? "blue" : "green"}
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : (item.payroll_cfdi_person.status === 0 || item.payroll_cfdi_person.status === 6) ? "blue" : "green"}
               >
                 {item.payroll_cfdi_person.status === 1 ? (
                   <>
                     <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Cerrado
                   </>
-                ) : item.payroll_cfdi_person.status === 0 ? (<>
+                ) : (item.payroll_cfdi_person.status === 0 || item.payroll_cfdi_person.status === 6) ? (<>
                   <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
                     Guardado
                 </>) : item.payroll_cfdi_person.status === 2 && (
@@ -191,6 +192,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   item.person.mlast_name
                 : item.personfirst_name + " " + item.person.flast_name
             }`}
+            <LinkToPerson  personId={item.person.id}/>
           </Space>
           {item.departure_date && item.departure_motive &&
            <div style={{color: 'blue', marginLeft:40}}>
@@ -299,8 +301,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     {
       key: "actions",
       className: "cell-actions",
-      render: (item) =>
-        listPersons &&
+      render: (item) => movementType >= 4 ? null : 
+      listPersons &&
         listPersons.find((a) => a.key === item.key) && (
           <>
             {(movementType == 2 || movementType == 3) && step == 0 && (
@@ -323,7 +325,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (<>
       {
-        item?.payroll_cfdi_person?.status === 1 &&
+        item?.payroll_cfdi_person?.status === 1 && movementType < 4 &&
         <Tooltip title="Comprobante" key={item.id} color={"#3d78b9"}>
               <FilePdfTwoTone
                   twoToneColor="#34495E"
@@ -340,7 +342,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <>
-          {consolidated && item.payroll_cfdi_person && (
+          {consolidated && item.payroll_cfdi_person && movementType < 4 && (
             <div>
               <Tooltip placement="top" title="Limpiar cálculo">
                 <Button size="small" onClick={() => removeCfdiPerson(item)}>
@@ -850,7 +852,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
-    if(typeSelected === 'open' && record?.payroll_cfdi_person?.status > 0 ){
+    if(typeSelected === 'open' && (record?.payroll_cfdi_person?.status > 0 && record?.payroll_cfdi_person?.status < 6 ) ){
       return true
     }
     if(typeSelected === 'closed' && (!record.payroll_cfdi_person || record?.payroll_cfdi_person?.status < 1)){
@@ -858,7 +860,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
 
     if(step === 0 && record['payroll_cfdi_person']){
-      if(step == 0 && record?.payroll_cfdi_person?.status !== 0){
+      if(step == 0 && record?.payroll_cfdi_person?.status !== 0 && record?.payroll_cfdi_person?.status !== 6){
         return true
       }else{
         return false
@@ -870,7 +872,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       return true
     }
     
-    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || record?.payroll_cfdi_person?.status == 0)){
+    if(step === 2 && (record?.payroll_cfdi_person?.status < 1 || (record?.payroll_cfdi_person?.status == 0 || record?.payroll_cfdi_person?.status == 6))){
       return true
     }
   }
@@ -913,8 +915,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const getForCalculate = () =>{
     let rows = []
-    console.log(rowSelectionPerson.selectedRowKeys)
-    console.log(extraOrdinaryPayroll)
+    
     
     if(rowSelectionPerson.selectedRowKeys.length > 0){
       rowSelectionPerson.selectedRowKeys.map(key => {
@@ -959,7 +960,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 1)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1)
     }
     if(step == 2){
       records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
@@ -980,7 +981,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           }
       })
     }else{
-      rows = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status === 0 || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
+      rows = extraOrdinaryPayroll.filter(item => (item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6) || (item.departure_date && item.departure_motive && !item?.payroll_cfdi_person))
     }
     return rows
   }
@@ -1170,7 +1171,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             error.response.data &&
             error.response.data.message
           ) {
-            setMessageModal(1, error.response.data.message);
+            setMessageModal(1,error?.response?.data?.message,error?.response?.data?.errors);
             setGenericModal(true);
           } else message.error(messageError);
           setLoading(false);
@@ -1182,6 +1183,33 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const setMessageModal = (type, data,errors=[]) => {
 
+    const check_configuration = (data,errors=[]) => {
+      if (data.includes("concepto interno")) {
+        let words = data.split(" ");
+        let data_parts = words.map((x) => {
+          if (x === "configuración") {
+            return (
+              <a
+                style={{ color: "blue" }}
+                onClick={() => router.push("/config/catalogs/")}
+              >
+                configuración&nbsp;
+              </a>
+            );
+          } else {
+            return <span>{x}&nbsp;</span>;
+          }
+        });
+        return <span>{data_parts}</span>;
+      } else {
+        if(errors && errors.length>0){
+          return <span>{data} <ul>{errors.map((err)=> <li>{err}</li>)}</ul></span>;
+        }else{
+          return data;
+        }
+
+      }
+    }
 
     const process_errors = (errors=[]) => {
         if(errors && errors.length>0){
@@ -1200,6 +1228,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             ? "Dirección fiscal"
             : data.toLowerCase().includes("folios")
             ? "Folios"
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Registro patronal"
             : "Error",
 
           title_message: data.toLowerCase().includes("fiscal information")
@@ -1208,14 +1239,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             ? "Dirección fiscal faltante"
             : data.toLowerCase().includes("folios")
             ? "Folios insuficientes"
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Registro patronal faltante"
             : "Error",
           description: data.toLowerCase().includes("fiscal information")
-            ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
+            ? "Falta información relevante para poder generar los cfdi, verifique la información fiscal de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
-            ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
+            ? "Datos en la dirección fiscal faltantes, verifique la información fiscal he intente de nuevo"
             : data.toLowerCase().includes("folios")
             ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
-            : data,
+            : data.toLowerCase().includes("patronal") ||
+              data.toLowerCase().includes("riesgo")
+            ? "Falta información relevante para poder generar los cfdi, verifique la información del registro patronal he intente de nuevo."
+            : check_configuration(data, errors),
           type_alert: data.toLowerCase().includes("error")
             ? "error"
             : "warning",
@@ -1228,11 +1265,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                     tab: 2,
                   },
                 })
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
+              ? router.push({ pathname: "/business/patronalRegistrationNode" })
               : setGenericModal(false),
           title_action_button:
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
               ? "Ver información fiscal"
+              : data.toLowerCase().includes("patronal") ||
+                data.toLowerCase().includes("riesgo")
+              ? "Ver registro patronal"
               : "Continuar",
         });
         break;
@@ -1547,7 +1590,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const getOpenCount = () => {
     let opens = 0
     extraOrdinaryPayroll?.map(item => {
-      if(item?.payroll_cfdi_person?.status == 0){
+      if(item?.payroll_cfdi_person?.status == 0 || item?.payroll_cfdi_person?.status == 6){
         opens++
       }
     })
@@ -1947,7 +1990,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                         className="headers_transparent"
                         dataSource={getRecords()}
                         columns={persons}
-                        expandable={{
+                        expandable={ movementType >= 4 ? null : {
                           expandedRowRender: (item) =>
                             renderConceptsTable(item),
                           expandIcon: ({ expanded, onExpand, record }) =>
@@ -1960,12 +2003,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             ? "Cargando..."
                             : "No se encontraron resultados.",
                         }}
-                        rowSelection={
-                          movementType === 2 || movementType === 3
-                            ? rowSelectionPerson
-                            : movementType == 1 && step == 2
-                            ? rowSelectionPerson
-                            : null
+                        rowSelection={ movementType >= 4 ? null :
+                          rowSelectionPerson
                         }
                       />
                       {totalPayment != null && totalIsr != null ? (
@@ -2015,6 +2054,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           sendCalculatePayroll={setPayrollCalculate}
           movementType={movementType}
           payment_period={periodSelected}
+          periodicity={calendarSelect.periodicity}
         />
       )}
       {genericModal && (

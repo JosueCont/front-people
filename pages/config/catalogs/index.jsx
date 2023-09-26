@@ -117,7 +117,7 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                 </Col>
               </Row>
               <Tabs onChange={(tab) => onChangeTab(tab)} tabPosition={"left"} style={{ marginTop:20 }}>
-                {props.permissions.department.view && (
+
                   <TabPane
                     tab={
                         <div className="container-title-tab">
@@ -128,13 +128,12 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                     key="tab_1"
                   >
                     <Departaments
-                      permissions={props.permissions.department}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />
                   </TabPane>
-                )}
-                {props.permissions.job.view && (
+
+
                   <TabPane
                     tab={
                         <div className="container-title-tab">
@@ -147,13 +146,12 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                     key="tab_2"
                   >
                     <TabJobs
-                      permissions={props.permissions.job}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />
                   </TabPane>
-                )}
-                {props.permissions.person_type.view && (
+
+
                   <TabPane
                     tab={
                         <div className="container-title-tab">
@@ -166,13 +164,11 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                     key="tab_3"
                   >
                     <PersonTypes
-                      permissions={props.permissions.person_type}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />
                   </TabPane>
-                )}
-                {props.permissions.relationship.view && (
+
                   <TabPane
                     tab={
                         <div className="container-title-tab">
@@ -183,13 +179,12 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                     key="tab_4"
                   >
                     <Relationship
-                      permissions={props.permissions.relationship}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />
                   </TabPane>
-                )}
-                {props.permissions.document_type.view && (
+
+
                   <TabPane
                     tab={
                         <div className="container-title-tab">
@@ -202,12 +197,10 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                     key="tab_5"
                   >
                     <DocumentsTypes
-                      permissions={props.permissions.document_type}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />
                   </TabPane>
-                )}
                 <TabPane
                   tab={
                       <div className="container-title-tab">
@@ -245,7 +238,6 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                   key="tab_7"
                 >
                   <InternalConcepts
-                    permissions={props.permissions.document_type}
                     currentNode={props.currentNode}
                   />
                 </TabPane>
@@ -259,7 +251,6 @@ const configBusiness = ({ getAccountantAccount, ...props }) => {
                   key="tab_8"
                 >
                   <FixedConcepts
-                    permissions={props.permissions.document_type}
                     currentNode={props.currentNode}
                     doCompanySelectedCatalog={doCompanySelectedCatalog}
                   />
