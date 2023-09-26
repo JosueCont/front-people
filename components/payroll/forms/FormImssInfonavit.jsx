@@ -98,7 +98,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
           employee_type: updateCredit.employee_type,
           salary_type: updateCredit.salary_type,
           reduce_days: updateCredit.reduce_days,
-          movement_date: moment(updateCredit.movement_date),
+          movement_date: updateCredit.movement_date ?  moment(updateCredit.movement_date) : moment(person.date_of_admission),
           family_medical_unit: updateCredit.family_medical_unit.id,
           nss: updateCredit.nss,
           sdi: updateCredit.sdi,
@@ -108,9 +108,14 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
         formImssInfonavit.setFieldsValue({
           nss: person.imss,
           sdi: updateCredit.sdi,
+          movement_date: moment(person.date_of_admission)
         });
         setNSS(person.imss);
       }
+    }else{
+      formImssInfonavit.setFieldsValue({
+        movement_date: moment(person.date_of_admission),
+      })
     }
   }, [updateCredit]);
 

@@ -236,7 +236,6 @@ const DataPerson = ({
       : delete value["groups"];
     value.immediate_supervisor != undefined ? value.immediate_supervisor : null;
     // console.log(value)
-    // return
     updatePerson(value);
   };
 
@@ -395,6 +394,76 @@ const DataPerson = ({
       // immediate_supervisor: '',
       substitute_immediate_supervisor: null,
     })
+  }
+
+  const getIfoFromCurp = () => {
+    const curp = formPerson.getFieldValue('curp')
+    if(curp){
+      const birth_date = curp.slice(4,10)
+      let date = ""
+      const current_year = moment().format("YYYY")
+      const birth_year = birth_date.slice(0,2)
+
+      if (birth_year < 50 && birth_year < current_year){
+        date = "20" + birth_date.slice(0,2)
+      }else{
+        date = "19" + birth_date.slice(0,2)
+      }
+      const birth_date_str = date + "-" + birth_date.slice(2,4) + "-" + birth_date.slice(4,6)
+      
+      const birth = moment(birth_date_str)
+      
+      const gender = curp[10]
+      const state = curp.slice(11,13)
+      const birth_place = getState(state)
+      
+      formPerson.setFieldsValue({
+        gender: gender === "H" ? 1 : gender === "M" ? 2 : 3,
+        birth_date: birth
+      })
+       
+      
+    }
+    
+
+  } 
+
+  const getState = (state) => {
+    const states_born_places = {"AS": "Aguascalientes",
+                          "BC": "Baja California",
+                          "BS": "Baja California Sur",
+                          "CC": "Campeche",
+                          "CL": "Coahuila",
+                          "CM": "Colima",
+                          "CS": "Chiapas",
+                          "CH": "Chihuahua",
+                          "DF": "Distrito Federal",
+                          "DG": "Durango",
+                          "GT": "Guanajuato",
+                          "GR": "Guerrero",
+                          "HG": "Hidalgo",
+                          "JC": "Jalisco",
+                          "MC": "México",
+                          "MN": "Michoacán",
+                          "MS": "Morelos",
+                          "NT": "Nayarit",
+                          "NL": "Nuevo León",
+                          "OC": "Oaxaca",
+                          "PL": "Puebla",
+                          "QT": "Querétaro",
+                          "QR": "Quintana Roo",
+                          "SP": "San Luis Potosí",
+                          "SL": "Sinaloa",
+                          "SR": "Sonora",
+                          "TC": "Tabasco",
+                          "TS": "Tamaulipas",
+                          "TL": "Tlaxcala",
+                          "VZ": "Veracruz",
+                          "YN": "Yucatán",
+                          "ZS": "Zacatecas",
+                          "NE": "Nacido en el extranjero"}
+
+    return states_born_places[state]
   }
 
   const onClearSubstituteSupervisor = () => {
@@ -894,9 +963,14 @@ const DataPerson = ({
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="curp"
-                  label={<span>CURP {' '}<Typography.Link><a href="https://www.gob.mx/curp/" target={'_blank'}><small>[Consultar curp]</small></a></Typography.Link>
-                    <CopyClipboard nameField={'curp'}/>
-</span> }
+                  label={<span>CURP {' '}
+                  <Space size={20} >
+                    <>
+                      <Typography.Link><a href="https://www.gob.mx/curp/" target={'_blank'}><small>[Consultar curp] <CopyClipboard nameField={'curp'}/></small></a></Typography.Link>
+                    </>
+                    <Typography.Link onClick={() => getIfoFromCurp() } >*Obtener datos del curp*</Typography.Link>
+                  </Space>
+                  </span> } 
                   rules={[config.applications.find(
                     (item) => item.app === "PAYROLL" && item.is_active
                   ) ? ruleRequired : {}, curpFormat]}
@@ -926,7 +1000,7 @@ const DataPerson = ({
                       label={<span>IMSS {' '}
                         <CopyClipboard nameField={'imss'}/>
                   </span>}
-                      rules={[onlyNumeric, minLengthNumber]}
+                      rules={[ruleRequired, onlyNumeric, minLengthNumber]}
                     >
                       <Input maxLength={11} />
                     </Form.Item>
@@ -937,6 +1011,7 @@ const DataPerson = ({
                       value_form={"patronal_registration"}
                       textLabel={"Registro Patronal"}
                       currentNode={currentNode}
+                      rules={[ruleRequired]}
                     />
                   </Col>
                 </>}
