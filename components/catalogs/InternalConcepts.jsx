@@ -14,6 +14,7 @@ import {
   Tabs,
   Switch,
   ConfigProvider,
+  Tooltip
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -21,6 +22,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  CopyOutlined
 } from "@ant-design/icons";
 import {
   messageDeleteSuccess,
@@ -34,6 +36,7 @@ import { showHideMessage } from "../../redux/NotificationDuck";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
 import SelectAccountantAccount from "../selects/SelectAccountantAccount";
+import webApiPayroll from "../../api/WebApiPayroll";
 
 const InternalConcepts = ({
   currentNode,
@@ -45,6 +48,7 @@ const InternalConcepts = ({
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [loadingCopy, setLoadingCopy] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [id, setId] = useState("");
   const [catalog, setCat] = useState(null);
@@ -127,24 +131,35 @@ const InternalConcepts = ({
       render: (item) => {
         return (
           <div>
-            {item.node != null && (
-              <Row gutter={16}>
 
+              <Row gutter={16}>
+                {item.node != null && <>
                   <Col className="gutter-row" offset={1}>
                     <EditOutlined onClick={() => editRegister(item)} />
                   </Col>
 
                   <Col className="gutter-row" offset={1}>
                     <DeleteOutlined
-                      onClick={() => {
-                        setDeleteRegister({
-                          id: item.id,
-                        });
-                      }}
+                        onClick={() => {
+                          setDeleteRegister({
+                            id: item.id,
+                          });
+                        }}
                     />
                   </Col>
+                </>
+                }
+                {item.node == null && (
+                    <Col className="gutter-row" offset={1}>
+                      <Tooltip placement="top" title={"Copiar concepto para usar"}>
+                        <CopyOutlined onClick={() => copyConcept(item)} />
+                      </Tooltip>
+
+                    </Col>
+                )}
+
               </Row>
-            )}
+
           </div>
         );
       },
@@ -193,6 +208,44 @@ const InternalConcepts = ({
     setId("");
     setData_type(null)
   };
+
+  // permite copiar un concepto del sistema para el uso del usuario
+  const copyConcept=async (concepto)=>{
+    setLoadingCopy(true)
+    try{
+      let data = {
+        concept_ids:[concepto.id],
+        node_id: currentNode.id,
+        concept_type: (key===1? 'perception' : key ===2 ? 'deduction': 'other_payment')
+      }
+      const res = await webApiPayroll.copyInternalConcept(data)
+      if(res?.data?.message){
+        message.success(res?.data?.message)
+        setLoading(true)
+        props
+            .doFiscalCatalogs(currentNode.id, props.version_cfdi,true)
+            .then((response) => {
+              //resetForm();
+              setIntConcept(false)
+            })
+            .catch((error) => {
+              setLoading(false);
+              console.log(error);
+              message.error(messageError);
+            }).finally(()=>setLoading(false));
+      }
+      console.log(res)
+    }catch (e){
+      if(e?.response?.data?.message){
+        message.error(e?.response?.data?.message);
+      }else{
+        message.error("Error al actualizar, intente de nuevo");
+      }
+    }finally {
+      setLoadingCopy(false)
+    }
+    console.log(concepto)
+  }
 
   useEffect(() => {
     if(data_type === 1){
@@ -664,7 +717,6 @@ const InternalConcepts = ({
   };
 
   useEffect(() => {
-    debugger;
     if(intConcept && viewActive){
       setCat(
           key == 1
@@ -698,27 +750,6 @@ const InternalConcepts = ({
                   : props.other_payments_int.filter((item) => item.node != null && item.is_active===viewActive)
       );
     }
-
-
-    
-/*
-    if(intConcept){
-      setCat(
-          key == 1
-              ? props.perceptions_int.filter((item) => item.node == null || item.is_active!==viewActive )
-              : key == 2
-                  ? props.deductions_int.filter((item) => item.node == null || item.is_active!==viewActive)
-                  : props.other_payments_int.filter((item) => item.node == null || item.is_active!==viewActive)
-      );
-    }else{
-      setCat(
-          key == 1
-              ? props.perceptions_int.filter((item) => item.node != null || item.is_active!==viewActive)
-              : key == 2
-                  ? props.deductions_int.filter((item) => item.node != null || item.is_active!==viewActive)
-                  : props.other_payments_int.filter((item) => item.node != null || item.is_active!==viewActive)
-      );
-    }*/
 
   }, [intConcept,viewActive]);
 
@@ -808,6 +839,7 @@ const InternalConcepts = ({
           <Table
             columns={columns}
             dataSource={newCatalog}
+            loading={loadingCopy}
             //dataSource={filterData()}
             pagination={{ showSizeChanger: true }}
             locale={{

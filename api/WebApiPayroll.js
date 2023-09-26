@@ -107,6 +107,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/group-fixed-concept/${url}`, type, data);
   }
 
+  static copyInternalConcept(data = null) {
+    return WebApi.ApisType(`/payroll/assign-concept`, "post", data);
+  }
+
   // Loan
   static getLoanRequest(url = "") {
     return WebApi.ApisType(`/payroll/loan/${url}`, "get");
