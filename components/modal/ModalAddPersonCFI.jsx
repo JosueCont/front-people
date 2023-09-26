@@ -51,8 +51,6 @@ const ModalAddPersonCFI = ({
             return isValid || Upload.LIST_IGNORE;
         },
         onChange(info) {
-            console.log('=========')
-            console.log(info)
             const { status } = info.file;
             if (status === 'done') {
                 setFileList(info.fileList)

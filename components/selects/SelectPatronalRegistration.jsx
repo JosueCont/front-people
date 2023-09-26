@@ -38,6 +38,7 @@ const SelectPatronalRegistration = ({
               : ''
             }
         style={props.style && props.style}
+        rules={props.rules ? props.rules : []}
       >
         <Select
           key="SelectPatronalRegistration"

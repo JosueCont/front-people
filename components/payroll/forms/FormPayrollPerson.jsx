@@ -101,7 +101,7 @@ const FormPayrollPerson = ({
 
       setHiringRegimeType(regime);
     }
-  }, [props.catTaxRegime]);
+  }, [props.catHiringRegime]);
 
   useEffect(() => {
     if (refreshtab) {
@@ -846,6 +846,7 @@ const FormPayrollPerson = ({
                       <Form.Item
                         name="payment_calendar"
                         label="Calendario de pago"
+                        rules={[ruleRequired]}
                       >
                         <Select
                           options={_.orderBy(
@@ -917,7 +918,7 @@ const FormPayrollPerson = ({
         ) : (
           <Alert
             message="Información necesaria"
-            description="Para continuar con la nómina de la persona es necesario capturar su fecha de inicio laboral."
+            description="Para continuar con la nómina de la persona es necesario capturar su fecha de inicio laboral, y registrar su registro patronal."
             type="info"
             showIcon
           />
@@ -948,6 +949,7 @@ const mapState = (state) => {
     catTypeTax: state.fiscalStore.type_tax,
     catBanks: state.fiscalStore.banks,
     user: state.userStore.user,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information
   };
 };
 
