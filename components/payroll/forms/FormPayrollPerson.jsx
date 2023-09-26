@@ -420,6 +420,19 @@ const FormPayrollPerson = ({
   };
 
   const confirmDataForm = () => {
+    
+    console.log(person)
+
+    if(!person.date_of_admission){
+      message.warning("Debes agregar agregar la fecha de ingreso laboral")
+      return
+    }
+
+    if(!person.patronal_registration && !person.imss && !assimilated_pay){
+      message.warning("Debes agregar el registro patronal y número del Imss")
+      return
+    }
+    
     let value = formPayrollPerson.getFieldsValue();
     debugger;
     if (idPayroll) {
