@@ -293,14 +293,14 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
                     margin: "auto",
                   }}
                 >
-                  <img
-                    className={"logoKhor"}
-                    src={
-                      "/images/iU_Khorplus.png"
-                    }
-                    width={200}
-                    alt=""
-                  />
+                  {/*<img*/}
+                  {/*  className={"logoKhor"}*/}
+                  {/*  src={*/}
+                  {/*    "/images/iU_Khorplus.png"*/}
+                  {/*  }*/}
+                  {/*  width={200}*/}
+                  {/*  alt=""*/}
+                  {/*/>*/}
                 </div>
 
                 {/* <p className={"textBottom"}>
