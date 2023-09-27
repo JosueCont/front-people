@@ -101,7 +101,7 @@ const FormPayrollPerson = ({
 
       setHiringRegimeType(regime);
     }
-  }, [props.catTaxRegime]);
+  }, [props.catHiringRegime]);
 
   useEffect(() => {
     if (refreshtab) {
@@ -420,6 +420,19 @@ const FormPayrollPerson = ({
   };
 
   const confirmDataForm = () => {
+    
+    console.log(person)
+
+    if(!person.date_of_admission){
+      message.warning("Debes agregar agregar la fecha de ingreso laboral")
+      return
+    }
+
+    if(!person.patronal_registration && !person.imss && !assimilated_pay){
+      message.warning("Debes agregar el registro patronal y número del Imss")
+      return
+    }
+    
     let value = formPayrollPerson.getFieldsValue();
     debugger;
     if (idPayroll) {
@@ -846,6 +859,7 @@ const FormPayrollPerson = ({
                       <Form.Item
                         name="payment_calendar"
                         label="Calendario de pago"
+                        rules={[ruleRequired]}
                       >
                         <Select
                           options={_.orderBy(
@@ -917,7 +931,7 @@ const FormPayrollPerson = ({
         ) : (
           <Alert
             message="Información necesaria"
-            description="Para continuar con la nómina de la persona es necesario capturar su fecha de inicio laboral."
+            description="Para continuar con la nómina de la persona es necesario capturar su fecha de inicio laboral, y registrar su registro patronal."
             type="info"
             showIcon
           />
@@ -948,6 +962,7 @@ const mapState = (state) => {
     catTypeTax: state.fiscalStore.type_tax,
     catBanks: state.fiscalStore.banks,
     user: state.userStore.user,
+    companyFiscalInformation: state.fiscalStore.company_fiscal_information
   };
 };
 

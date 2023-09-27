@@ -47,11 +47,13 @@ import WithHoldingNotice from "../../pages/business/WithHoldingNotice";
 import AfilliateMovements from "../../pages/business/AfilliateMovements";
 import GenericModal from "../modal/genericModal";
 const { Option } = Select;
+import { getPatronalRegistration as getPatronalRegistrationRedux } from '../../redux/catalogCompany'
 
 const ImssInformationNode = ({
   node_id = null,
   fiscal,
   currentNode,
+  getPatronalRegistrationRedux,
   ...props
 }) => {
   const { Title } = Typography;
@@ -204,15 +206,13 @@ const ImssInformationNode = ({
       if (patronalData.fiscal_address && patronalData.fiscal_address.id)
         data.address.id = patronalData.fiscal_address.id;
     }
-
-    debugger;
-
     WebApiPeople.patronalRegistration(data)
       .then((response) => {
         resetForms();
         message.success(isEdit ? messageUpdateSuccess : messageSaveSuccess);
         setVisibleTable(true);
         getPatronalRegistration();
+        getPatronalRegistrationRedux()
         setDisabledSwitch(false);
       })
       .catch((error) => {
@@ -713,4 +713,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(withAuthSync(ImssInformationNode));
+export default connect(mapState, {getPatronalRegistrationRedux})(withAuthSync(ImssInformationNode));

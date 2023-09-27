@@ -48,6 +48,7 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
 import {
+  departureMotive,
   messageDeleteSuccess,
   messageError,
   messageSaveSuccess,
@@ -66,6 +67,7 @@ import { downLoadFileBlobAwait,
   verifyMenuNewForTenant, } from "../../../utils/functions";
   import { API_URL_TENANT } from "../../../config/config";
 import ModalConceptsExtraordinaryPayroll from "../../../components/payroll/modals/ModalConceptsExtraordinaryPayroll";
+import NumericInput from "../../../components/inputNumeric";
 
 
 const ExtraordinaryPayroll = ({ ...props }) => {
@@ -100,6 +102,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [consolidatedObj, setConsolidatedObj] = useState(null);
   const [downloading, setDownloading] = useState(false)
   const [typeSelected, settypeSelected] = useState(null)
+  const [editable, setEditable] = useState(false);
 
   const date = new Date();
 
@@ -127,17 +130,22 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }
   };
 
+  const getDepartureMotive = (motive) =>{
+    motive = departureMotive.find((item) => item.value == motive);
+    // console.log("MOTIVE", motive);
+    if (motive) return motive.label    
+  }
+
   
 
   const persons = [
     {
-      title: "Nombre",
+      title: "Estatus",
       className: "column_name cursor_pointer",
-      key: "name",
+      key: "status",
       render: (item) => (
         <div>
-          <Space>
-            {item.payroll_cfdi_person && (
+           {item.payroll_cfdi_person && (
               <Tag
                 color={item.payroll_cfdi_person.status === 1 ? "gold" : (item.payroll_cfdi_person.status === 0 || item.payroll_cfdi_person.status === 6) ? "blue" : "green"}
               >
@@ -157,6 +165,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 )}
               </Tag>
             )}
+        </div>
+      )
+    },
+    {
+      title: "Nombre",
+      className: "column_name cursor_pointer",
+      key: "name",
+      render: (item) => (
+        <div>
+          <Space>           
             <Avatar
               icon={<UserOutlined />}
               src={
@@ -176,6 +194,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             }`}
             <LinkToPerson  personId={item.person.id}/>
           </Space>
+          {item.departure_date && item.departure_motive &&
+           <div style={{color: 'blue', marginLeft:40}}>
+              Baja: {moment(item?.departure_date).format("DD-MM-YYYY") } - {getDepartureMotive(item.departure_motive)} 
+            </div>}
         </div>
       ),
     },
