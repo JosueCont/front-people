@@ -357,7 +357,7 @@ const ModalConceptsPayroll = ({
                     formatter={(value) => value.replace("-", "")}
                     controls={false}
                     onChange={(e) => changeHandler(type, item.id)(e, item)}
-                    onKeyUp={(e) => debouncedErrors(item.id)}
+                    /* onKeyUp={(e) => debouncedErrors(item.id)} */
                   />
                   {item.data_type === 2 && (
                     <span style={{ marginLeft: "7px", marginTop: "3px" }}>
