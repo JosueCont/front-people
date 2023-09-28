@@ -1544,12 +1544,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     }else if(key === 'nomprov'){
       downloadNominaProv()
     }else if(key === 'raya'){
+      const url = `${getDomain(API_URL_TENANT)}/payroll/consolidated-payroll-report`
       downLoadFileBlobAwait(
-        `${getDomain(
-          API_URL_TENANT
-        )}/payroll/consolidated-payroll-report?period=${
+        `${url}?period=${
           periodSelected.id
-        }`,
+        }&movement_type=${movementType}`,
         "hoja_rayas.xlsx",
         "GET",
         "",
@@ -1622,11 +1621,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 Nómina + provisiones
               </a>
             </Menu.Item>
-            {/*<Menu.Item key={'accounting_policy_simple'}>*/}
-            {/*  <a>*/}
-            {/*    Resumen*/}
-            {/*  </a>*/}
-            {/*</Menu.Item>*/}
+            <Menu.Item key={'raya'}>
+              <a>
+                Hoja de raya
+              </a>
+            </Menu.Item>
+            <Menu.Item key={'accounting_policy_simple'}>
+              <a>
+                Resumen
+              </a>
+            </Menu.Item>
           </>
         )
       }
