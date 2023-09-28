@@ -132,7 +132,7 @@ const CalculatePayroll = ({ ...props }) => {
   const promiseResolveRef = useRef(null);
 
   useEffect(() => {
-    if(route.query && paymentCalendars.length > 0){
+    if(route.query?.calendar && paymentCalendars.length > 0){
       form.setFieldsValue({ calendar: route.query.calendar });
       changeCalendar(route.query.calendar);
     }
