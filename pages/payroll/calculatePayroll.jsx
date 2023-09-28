@@ -131,7 +131,13 @@ const CalculatePayroll = ({ ...props }) => {
   const componentRef = useRef();
   const promiseResolveRef = useRef(null);
 
-
+  useEffect(() => {
+    if(route.query && paymentCalendars.length > 0){
+      form.setFieldsValue({ calendar: route.query.calendar });
+      changeCalendar(route.query.calendar);
+    }
+  }, [route, paymentCalendars])
+  
 
 
   const defaulPhoto =
@@ -640,6 +646,7 @@ const CalculatePayroll = ({ ...props }) => {
     setTotalDeductions(null);
     setNetPay(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
+    
     let period = calendar.periods.find((p) => p.active == true);
     if (!period) period = calendar.periods[0];
     setPeriodSelcted(period);

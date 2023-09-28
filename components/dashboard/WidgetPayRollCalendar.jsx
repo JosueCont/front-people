@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Empty, Avatar } from 'antd';
+import { List, Empty, Avatar, Space, Typography } from 'antd';
 import {
     CardInfo,
     CardItem,
@@ -34,6 +34,8 @@ const WidgetPayRollCalendar = ({
         current_node
     } = useSelector(state => state.userStore);
 
+    const {Text} = Typography
+
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [calendars, setCalendars] = useState([]);
@@ -52,6 +54,7 @@ const WidgetPayRollCalendar = ({
         try {
             setLoading(true)
             let response = await WebApiPayroll.getPaymentCalendar(current_node?.id)
+            console.log(response.data.results)
             setLoading(false)
             setCalendars(response.data?.results)
             setTotalCalendars(response.data?.count)
@@ -94,6 +97,18 @@ const WidgetPayRollCalendar = ({
                                             ${item?.periodicity?.description}
                                         `}
                                     />
+                                    <Space direction='vertical' size={0} >
+                                        <Text strong >
+                                            Período activo
+                                        </Text>
+                                        {
+                                            item.periods.map(per => {
+                                                if(per.active){
+                                                    return <a onClick={() => router.push(`/payroll/calculatePayroll?calendar=${item.id}&period=${per.id}`) } >{per.start_date} - {per.end_date} </a>
+                                                }
+                                            })
+                                        }
+                                    </Space>
                                 </List.Item>
                             )}
                         />
