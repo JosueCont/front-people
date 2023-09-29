@@ -360,7 +360,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
           resetForm();
           message.success(messageUpdateSuccess);
           setLoading(false);
-          SetShowNumPeriods(false)
+          SetShowNumPeriods(true);
         })
         .catch((error) => {
           setLoading(false);
