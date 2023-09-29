@@ -852,6 +852,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
+    if(record?.payroll_cfdi_person?.status === 2){
+      return true
+    }
+
     if(typeSelected === 'open' && (record?.payroll_cfdi_person?.status > 0 && record?.payroll_cfdi_person?.status < 6 ) ){
       return true
     }
@@ -953,17 +957,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const getRecords = () => {
     let records = extraOrdinaryPayroll
-    console.log('======================')
-    console.log(extraOrdinaryPayroll)
-    console.log('======================')
     if(step === 0){
       records = extraOrdinaryPayroll
     }
     if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1)
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1 || item?.payroll_cfdi_person?.status === 2)
     }
     if(step == 2){
-      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1  )
+      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1 || item?.payroll_cfdi_person?.status == 2  )
     }
     console.log(records)
     return records
@@ -1557,16 +1558,17 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         2
       )
     }else if(key === 'accounting_policy_simple'){
+      const url = `${getDomain(API_URL_TENANT)}/payroll/accounting-policy-report`
+
       downLoadFileBlobAwait(
-        `${getDomain(
-          API_URL_TENANT
-        )}/payroll/accounting-policy-report`,
+        `${url}`,
         `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
         "POST",
         {
           "node__id": props?.currentNode?.id,
           "payment_periods": [periodSelected.id],
-          "type": "ACCOUNTING_POLICY_SIMPLE" 
+          "type": "ACCOUNTING_POLICY_SIMPLE" ,
+          "movement_type": movementType
         },
         "No se encontraron resultados",
         setDownloading,
@@ -1576,10 +1578,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }
 
   const validateNextBtn = () => {
+    console.log('consolidated=====================>', consolidated)
+
+    if(getStampCount() > 0 ){
+      return false
+    }
+
     if(getCloseCount() < 1 && step === 1){
       return true
     }
-    if((step== 2 && consolidated && consolidated.status <= 2) ){
+    if((step == 2 && consolidated && consolidated.status <= 2) ){
       return true
     }
 
@@ -1604,6 +1612,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       }
     })
     return opens
+  }
+
+  const getStampCount = () => {
+    let stamps = 0
+    extraOrdinaryPayroll?.map(item => {
+      if(item?.payroll_cfdi_person?.status == 2){
+        stamps++
+      }
+    })
+    return stamps
   }
 
   const downloads_options = (
@@ -1815,15 +1833,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       <Col>
                         {
                             extraOrdinaryPayroll?.length > 0 && !genericModal && consolidated && (
-                                <Dropdown overlay={downloads_options} placement="bottomLeft">
-                              <Button size="large"
-                                      block
-                                      htmlType="button"
-                                      icon={<FileExcelOutlined />}
-                                      loading={downloading === 2}
-                              >
-                                Descargar
-                              </Button>
+                              <Dropdown overlay={downloads_options} placement="bottomLeft">
+                                <Button size="large"
+                                  block
+                                  htmlType="button"
+                                  icon={<FileExcelOutlined />}
+                                  loading={downloading === 2}
+                                >
+                                  Descargar
+                                </Button>
                             </Dropdown>)
                         }
 
@@ -1871,7 +1889,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             style={{ minWidth: "200px" }}
                             block
                             icon={<UnlockOutlined />}
-                            disabled={typeSelected === 'open'}
+                            disabled={typeSelected === 'open' || getCloseCount() < 1  }
                             htmlType="button"
                             onClick={() =>
                               setMessageModal(5, {
@@ -1959,7 +1977,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       )}
                     </Row>
                   </div>
-                  {step > 0 && (
+                  {(step > 0 && movementType < 4) && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(false)}
@@ -1967,7 +1985,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       Previo
                     </Button>
                   )}
-                  {step < 3 && (
+                  {(step < 3 && movementType < 4) && (
                     <Button
                       style={{ margin: "8px" }}
                       onClick={() => changeStep(true)}
