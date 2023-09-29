@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../../people/utils/SelectPeople';
+import SelectCollaborator from '../../selects/SelectCollaborator'
 import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
 import WebApiFiscal from '../../../api/WebApiFiscal';
 
@@ -72,6 +73,8 @@ const PermissionForm = ({
         try {
             let res_ded = await WebApiFiscal.getInternalDeductions(node_id)
             let res_per = await WebApiFiscal.getInternalPerceptions(node_id)
+            console.log('res_ded====================>',res_ded)
+            console.log('res_per====================>',res_per)
             let per_list = []
             let ded_list = []
             if(res_ded.status === 200){
@@ -116,7 +119,8 @@ const PermissionForm = ({
                     options: ded_list
                 })
             }
-        
+            
+            console.log('group_list =>', group_list)
             setReasonOptions(group_list)
             
         } catch (error) {
@@ -232,7 +236,7 @@ const PermissionForm = ({
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} lg={12} xl={8}>
-                <SelectPeople
+                {/* <SelectPeople
                     name='person'
                     label='Colaborador'
                     size='large'
@@ -240,6 +244,16 @@ const PermissionForm = ({
                     onChangeSelect={onChangePerson}
                     disabled={action == 'edit'}
                     itemSelected={itemPerson}
+                /> */}
+                <SelectCollaborator 
+                    showSearch
+                    name='person'
+                    label='Colaborador'
+                    size='large'
+                    rules={[ruleRequired]}
+                    /* onChange={onChangePerson} */
+                    onChangeSelect={onChangePerson}
+                    disabled={action == 'edit'}
                 />
             </Col>
             <Col xs={24} md={12} lg={12} xl={8}>

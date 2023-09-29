@@ -49,7 +49,7 @@ const SelectCollaborator = ({
             .toLowerCase()
             .localeCompare(optionB.children.toLowerCase())
         }
-        onChange={props.onChange ? props.onChange : null}
+        onChange={props.onChange ? props.onChange : props.onChangeSelect ? (val) => props.onChangeSelect(val, personList) : null}
         defaultValue={props.value || undefined}
         disabled={isDisabled}
       >

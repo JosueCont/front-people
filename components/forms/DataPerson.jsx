@@ -223,7 +223,7 @@ const DataPerson = ({
     else delete value["register_date"];
     if (birthDate) value.birth_date = moment(birthDate).format('YYYY-MM-DD');
     else value.birth_date = null;
-    if (dateAdmission) value.date_of_admission = moment(dateAdmission).format('YYYY-MM-DD');
+    if (dateAdmission !== null) value.date_of_admission = moment(dateAdmission).format('YYYY-MM-DD');
     else delete value["date_of_admission"];
     value.id = person.id;
     value.is_active = isActive;

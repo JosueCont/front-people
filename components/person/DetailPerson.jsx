@@ -162,6 +162,7 @@ const DetailPerson = ({
           setPerson={(data)=> {
             setPerson(data)
             setRefreshTab10(true)
+            setRefreshTab12(true)
           }}
           config={config}
           person={person}
