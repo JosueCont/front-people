@@ -298,6 +298,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
           resetForm();
           message.success(messageSaveSuccess);
           setLoading(false);
+          SetShowNumPeriods(false)
         })
         .catch((error) => {
           setLoading(false);
@@ -359,6 +360,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
           resetForm();
           message.success(messageUpdateSuccess);
           setLoading(false);
+          SetShowNumPeriods(false)
         })
         .catch((error) => {
           setLoading(false);
