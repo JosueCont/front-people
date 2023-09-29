@@ -1000,7 +1000,7 @@ const DataPerson = ({
                       label={<span>IMSS {' '}
                         <CopyClipboard nameField={'imss'}/>
                   </span>}
-                      rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+                      rules={[onlyNumeric, minLengthNumber]}
                     >
                       <Input maxLength={11} />
                     </Form.Item>
@@ -1011,7 +1011,6 @@ const DataPerson = ({
                       value_form={"patronal_registration"}
                       textLabel={"Registro Patronal"}
                       currentNode={currentNode}
-                      rules={[ruleRequired]}
                     />
                   </Col>
                 </>}
