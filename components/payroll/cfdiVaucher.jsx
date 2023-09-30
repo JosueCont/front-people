@@ -73,10 +73,7 @@ const CfdiVaucher = ({
   const [currentPageSize, setCurrentPageSize] = useState(10)
 
   useEffect(() => {
-    console.log('local', props.localFilters)
-
     let newList = [...  cfdisOriginal];
-    console.log(newList)
     if (props.localFilters){
       if(props.localFilters.person_id && props.localFilters.person_id.length >= 1){
         newList = newList.filter(item => props.localFilters.person_id.includes(item.payroll_person.person.id))
@@ -91,16 +88,6 @@ const CfdiVaucher = ({
       }
 
     }
-    
-    /*
-
-    
-
-    if(values.department){
-      newList = newList.filter(item => values.department === item.person.department_id)
-    }
-    console.log('newList', newList)
-     */
     setCfdis(newList)
     
   }, [props?.localFilters])
@@ -168,7 +155,7 @@ const CfdiVaucher = ({
     }
     //setPage(page);
     if (calendar) {
-      getVoucher(`calendar=${calendar}&period=${period}&page_size=${pageSize}`, page);
+      getVoucher(`calendar=${calendar}&movementType=${movementType}&period=${period}&page_size=${pageSize}`, page);
     } else {
       onFinish(valuesFilter, page, pageSize);
     }
@@ -449,10 +436,9 @@ const CfdiVaucher = ({
   };
 
   const onFinish = (value, page, pageSize=10) => {
-    console.log('finis', page)
-    console.log('finish', pageSize)
     setValuesFilter(value);
     setLoading(true);
+
     let url = `&node=${props.currentNode.id}&page_size=${pageSize}`;
     if (value.calendar && value.calendar !== "")
       url = url + `&calendar=${value.calendar}`;
@@ -465,7 +451,6 @@ const CfdiVaucher = ({
       url = url + `&movement_type=${value.movement_type}`;
     if (value.uuid && value.uuid !== "")
       url = url + `&uuid=${value.uuid}`;
-
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
     if(!page) setCurrentPage(1)
     getVoucher(url, page?page:1);
@@ -569,7 +554,7 @@ const CfdiVaucher = ({
                           },
                           {
                             label:'Extraordinario',
-                            value:'4'
+                            value:'99'
                           },
                         ]}
                     />

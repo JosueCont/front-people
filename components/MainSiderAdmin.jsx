@@ -96,7 +96,7 @@ const MainSider = ({
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
-      myBussiness: `/business/companies/${props?.currentNode?.id}`,
+      myBussiness: `/business/companies/myCompany/${props?.currentNode?.id}`,
       integrationFactors: "/business/integrationFactors",
       importMassivePayroll: "/payroll/importMasivePayroll/?action=addxmls",
       imssMovements: "/payroll/imssMovements",

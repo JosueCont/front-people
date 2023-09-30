@@ -16,8 +16,10 @@ import UiStore from "../../../components/business/UiStore";
 
 const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
+  const { asPath } = useRouter();
   const [loading, setLoading] = useState(true);
   const [company, setCompany] = useState();
+  const [hash, setHash] = useState(null)
   const { Title } = Typography;
   const { TabPane } = Tabs;
   const [activeKey, setActiveKey] = useState(props.config && props.config.nomina_enabled ? "2" : "1");
@@ -25,7 +27,11 @@ const ConfigCompany = ({ ...props }) => {
   // Revisa que este habilitada la aplicación IUSS y este activa. si esta activa se mostrará el tab de UI Store
   let enableStore = applications.some((app) => app.app === 'IUSS' && app.is_active  )
 
+
+  
+
   useEffect(() => {
+    if(asPath)setHash(asPath.split('#')[1])
     if (router.query.tab) {
       let tab  = String(router.query.tab) === "2" && props.config && !props.config.nomina_enabled ? "1" :  String(router.query.tab)
       setActiveKey(tab);
@@ -45,7 +51,7 @@ const ConfigCompany = ({ ...props }) => {
   // console.log('Props config', applications)
 
   return (
-    <MainLayout currentKey={["business"]} defaultOpenKeys={["security"]}>
+    <MainLayout currentKey={[ props?.currentKey ? props.currentKey : "business" ]} defaultOpenKeys={ props?.defaultOpenKeys ? props.defaultOpenKeys : ["security"]}>
       {props.currentNode == null && (
         <Row align="end">
           <Button onClick={() => router.push("/select-company")}>
