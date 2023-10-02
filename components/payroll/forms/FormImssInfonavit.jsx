@@ -27,7 +27,7 @@ import {
   messageError,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { EditOutlined, SyncOutlined, HistoryOutlined } from "@ant-design/icons";
+import { EditOutlined, SyncOutlined, HistoryOutlined, WarningOutlined, DeleteOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
 import {
@@ -66,6 +66,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
   const [disabledDiscountType, setDisabledDiscountType] = useState(false);
   const [disabledDiscountValue, setDisabledDiscountValue] = useState(false);
   const [isSuspension, setIsSuspension] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false)
 
   // const daily_salary = Form.useWatch("sd", formImssInfonavit);
   let errorExceptionOne = "La persona cuenta con crédito infonavit";
@@ -545,11 +546,29 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     }
   ]
 
+  const cancelDelete = () => {
+    setShowModalDelete(false)
+  }
+
+  const deleteImss = async () => {
+    try {
+      setLodingIMSS(true)
+      const res = await WebApiPayroll.deleteIMSSInfonavit(
+        updateCredit.id,
+      );
+      setLodingIMSS(true)
+      localUserCredit()
+      cancelDelete()
+    } catch (error) {
+      console.log('=>>>>')
+    }
+    /* console.log('updateCredit', updateCredit) */
+  }
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loadingIMSS}>
-          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20}/> IMSS</Divider>
-        <br/>
+          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0 }} /> IMSS</Divider>
         {
           !person.patronal_registration || !person.imss  ? 
           <Alert
@@ -558,7 +577,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
             type="info"
             showIcon
           /> :
-            !updateCredit.id &&  !updateCredit.sdi ? 
+            !updateCredit?.id &&  !updateCredit?.sdi ? 
             <Alert
             message="Información necesaria"
             description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario agregar el <Text strong >salario diario integrado</Text> a la nomina de la persona.</Text>}
@@ -573,6 +592,26 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
               className="form-details-person"
             >
               <Row>
+              {
+                updateCredit?.id &&
+                <Col span={21} >
+                  <Row justify="end" gutter={20}>
+                    <Col style={{ paddingBottom:40}}>
+                      <Button
+                            type="primary"
+                            danger
+                            icon={<DeleteOutlined />}
+                            style={{ backgroundColor:'#9f0707 !important' }}
+                            onClick={() =>
+                                setShowModalDelete(true)
+                            }
+                        >
+                          Eliminar información
+                        </Button>
+                      </Col>
+                  </Row>
+                </Col>
+              }
                 <Col lg={6} xs={22} offset={1}>
                   <Form.Item
                     name="employee_type"
@@ -923,6 +962,17 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
           dataSource={logs}
           pagination={false}
         />
+      </Modal>
+      <Modal
+        title="Eliminar"
+        visible={showModalDelete}
+        onOk={deleteImss}
+        onCancel={cancelDelete}
+        okText="Sí, eliminar"
+        cancelText="Cancelar"
+      >
+        Al eliminar este registro, perderá todos los datos de infonavit relacionados a la persona de
+        manera permanente. ¿Está seguro de querer eliminarlo?
       </Modal>
     </>
   );
