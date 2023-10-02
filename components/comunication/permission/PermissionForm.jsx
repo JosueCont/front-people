@@ -321,6 +321,7 @@ const PermissionForm = ({
                     label={ladingConcepts ? 'cardando...' : 'tipo de motivo'}
                     rules={[ruleRequired]}
                 >
+                    
                     <Select loading={loadingOptions} placeholder={loadingOptions && "Cargando..."} onChange={changeReasonOption} options={reasonOptions} size='large' />
                 </Form.Item>
             </Col>
