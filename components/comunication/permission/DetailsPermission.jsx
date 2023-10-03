@@ -103,6 +103,7 @@ const DetailsPermission = ({
 
     const onFinish = (values) =>{ 
         let formData = new FormData()
+
         if(values.person){
             formData.append('person', values.person)
         }
@@ -112,7 +113,7 @@ const DetailsPermission = ({
         if(values.permit_reason && values.reason_key){
             if(values.reason_key === 'p'){
                 formData.append('permit_reason_perception', values.permit_reason)
-            }else if(values.reason_key === 'p'){
+            }else if(values.reason_key === 'd'){
                 formData.append('permit_reason_deduction', values.permit_reason)
             }   
         }
@@ -130,10 +131,12 @@ const DetailsPermission = ({
             formData.append('evidence', values.evidence ? values.evidence.file : null)
         }
         setLoading(true)
+        
         /* values.departure_date = values.departure_date
             ? values.departure_date?.format('YYYY-MM-DD') : null;
         values.return_date = values.return_date
             ? values.return_date?.format('YYYY-MM-DD') : null; */
+
         const actions = {
             edit: onFinishUpdate,
             add: onFinishCreate

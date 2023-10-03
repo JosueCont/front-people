@@ -1552,12 +1552,11 @@ const CalculatePayroll = ({ ...props }) => {
     }else if(key === 'nomprov'){
       downloadNominaProv()
     }else if(key === 'raya'){
+      const url = `${getDomain(API_URL_TENANT)}/payroll/consolidated-payroll-report`
       downLoadFileBlobAwait(
-        `${getDomain(
-          API_URL_TENANT
-        )}/payroll/consolidated-payroll-report?period=${
+        `${url}?period=${
           periodSelected.id
-        }`,
+        }&movement_type=0`,
         "hoja_rayas.xlsx",
         "GET",
         "",
@@ -1566,16 +1565,17 @@ const CalculatePayroll = ({ ...props }) => {
         2
       )
     }else if(key === 'accounting_policy_simple'){
+      const url = `${getDomain(API_URL_TENANT)}/payroll/accounting-policy-report`
+
       downLoadFileBlobAwait(
-        `${getDomain(
-          API_URL_TENANT
-        )}/payroll/accounting-policy-report`,
+        url,
         `resumen_${periodSelected.start_date}_${periodSelected.end_date}.xlsx`,
         "POST",
         {
           "node__id": props?.currentNode?.id,
           "payment_periods": [periodSelected.id],
-          "type": "ACCOUNTING_POLICY_SIMPLE" 
+          "type": "ACCOUNTING_POLICY_SIMPLE",
+          "movement_type": 0
         },
         "No se encontraron resultados",
         setDownloading,

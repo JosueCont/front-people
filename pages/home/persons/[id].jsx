@@ -42,6 +42,7 @@ const EmployeeDetailPage = ({
     try {
       let response = await WebApiPeople.getPerson(data);
       setPerson(response.data);
+      console.log(response.data)
     } catch (error) {
       console.log(error);
     }

@@ -53,7 +53,7 @@ const Dashboard = ({
                                     marginBottom: 0,
                                     cursor: 'pointer'
                                 }}
-                                onClick={() => router.push(`/business/companies/${currentNode.id}`)}
+                                onClick={() => router.push(`/business/companies/myCompany/${currentNode.id}`)}
                             >
                                 {currentNode && currentNode.name}
                             </Typography.Title>

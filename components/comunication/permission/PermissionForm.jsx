@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import WebApiPeople from '../../../api/WebApiPeople';
 import SelectPeople from '../../people/utils/SelectPeople';
+import SelectCollaborator from '../../selects/SelectCollaborator'
 import { EyeOutlined, UploadOutlined } from '@ant-design/icons';
 import WebApiFiscal from '../../../api/WebApiFiscal';
 
@@ -38,6 +39,7 @@ const PermissionForm = ({
     const [fileList, setFileList] = useState([]);
     const [reasonOptions, setReasonOptions] = useState([])
     const [ladingConcepts, setlLadingConcepts] = useState(false)
+    const [loadingOptions, setLoadingOptions] = useState(false)
     const departureDate = Form.useWatch('departure_date', formPermit);
 
     /* const reasonOptions = [
@@ -70,6 +72,7 @@ const PermissionForm = ({
 
     const getInternalConceptDeductions = async (node_id) => {
         try {
+            setLoadingOptions(true)
             let res_ded = await WebApiFiscal.getInternalDeductions(node_id)
             let res_per = await WebApiFiscal.getInternalPerceptions(node_id)
             let per_list = []
@@ -116,10 +119,12 @@ const PermissionForm = ({
                     options: ded_list
                 })
             }
-        
-            setReasonOptions(group_list)
             
+            
+            setReasonOptions(group_list)
+            setLoadingOptions(false)
         } catch (error) {
+            setLoadingOptions(false)
             console.log(error)
         }
     }
@@ -232,7 +237,7 @@ const PermissionForm = ({
     return (
         <Row gutter={[24, 0]}>
             <Col xs={24} md={12} lg={12} xl={8}>
-                <SelectPeople
+                {/* <SelectPeople
                     name='person'
                     label='Colaborador'
                     size='large'
@@ -240,6 +245,16 @@ const PermissionForm = ({
                     onChangeSelect={onChangePerson}
                     disabled={action == 'edit'}
                     itemSelected={itemPerson}
+                /> */}
+                <SelectCollaborator 
+                    showSearch
+                    name='person'
+                    label='Colaborador'
+                    size='large'
+                    rules={[ruleRequired]}
+                    /* onChange={onChangePerson} */
+                    onChangeSelect={onChangePerson}
+                    disabled={action == 'edit'}
                 />
             </Col>
             <Col xs={24} md={12} lg={12} xl={8}>
@@ -306,7 +321,8 @@ const PermissionForm = ({
                     label={ladingConcepts ? 'cardando...' : 'tipo de motivo'}
                     rules={[ruleRequired]}
                 >
-                    <Select onChange={changeReasonOption} options={reasonOptions} size='large' />
+                    
+                    <Select loading={loadingOptions} placeholder={loadingOptions && "Cargando..."} onChange={changeReasonOption} options={reasonOptions} size='large' />
                 </Form.Item>
             </Col>
             <Col span={8}>

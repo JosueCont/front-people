@@ -27,7 +27,7 @@ import {
   messageError,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { EditOutlined, SyncOutlined, HistoryOutlined } from "@ant-design/icons";
+import { EditOutlined, SyncOutlined, HistoryOutlined, WarningOutlined, DeleteOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
 import {
@@ -40,7 +40,7 @@ import Link from "next/link";
 import { connect } from "react-redux";
 
 const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab=false, node, ...props }) => {
-  const { Title } = Typography;
+  const { Title, Text} = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [formInfonavitManual] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
@@ -66,6 +66,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
   const [disabledDiscountType, setDisabledDiscountType] = useState(false);
   const [disabledDiscountValue, setDisabledDiscountValue] = useState(false);
   const [isSuspension, setIsSuspension] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false)
 
   // const daily_salary = Form.useWatch("sd", formImssInfonavit);
   let errorExceptionOne = "La persona cuenta con crédito infonavit";
@@ -545,177 +546,232 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     }
   ]
 
+  const cancelDelete = () => {
+    setShowModalDelete(false)
+  }
+
+  const deleteImss = async () => {
+    try {
+      setLodingIMSS(true)
+      const res = await WebApiPayroll.deleteIMSSInfonavit(
+        updateCredit.id,
+      );
+      setLodingIMSS(true)
+      localUserCredit()
+      cancelDelete()
+    } catch (error) {
+      console.log('=>>>>')
+    }
+    /* console.log('updateCredit', updateCredit) */
+  }
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loadingIMSS}>
-          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20}/> IMSS</Divider>
-        <br/>
+          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0 }} /> IMSS</Divider>
+        {
+          !person.patronal_registration || !person.imss  ? 
+          <Alert
+            message="Información necesaria"
+            description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario capturar su <Text strong >fecha de inicio laboral</Text> y registrar su <Text  strong >numero de seguiridad social</Text></Text>}
+            type="info"
+            showIcon
+          /> :
+            !updateCredit?.id &&  !updateCredit?.sdi ? 
+            <Alert
+            message="Información necesaria"
+            description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario agregar el <Text strong >salario diario integrado</Text> a la nomina de la persona.</Text>}
+            type="info"
+            showIcon
+          /> :
+          <>
+            <Form
+              layout="vertical"
+              form={formImssInfonavit}
+              onFinish={formImmssInfonavitAct}
+              className="form-details-person"
+            >
+              <Row>
+              {
+                updateCredit?.id &&
+                <Col span={21} >
+                  <Row justify="end" gutter={20}>
+                    <Col style={{ paddingBottom:40}}>
+                      <Button
+                            type="primary"
+                            danger
+                            icon={<DeleteOutlined />}
+                            style={{ backgroundColor:'#9f0707 !important' }}
+                            onClick={() =>
+                                setShowModalDelete(true)
+                            }
+                        >
+                          Eliminar información
+                        </Button>
+                      </Col>
+                  </Row>
+                </Col>
+              }
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="employee_type"
+                    label="Tipo de empleado"
+                    rules={[ruleRequired]}
+                    initialValue={1}
+                  >
+                    <Select
+                      options={typeEmployee}
+                      notFoundContent={"No se encontraron resultado."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="salary_type"
+                    label="Tipo de salario"
+                    rules={[ruleRequired]}
+                    initialValue={2}
+                  >
+                    <Select
+                      options={typeSalary}
+                      notFoundContent={"No se encontraron resultado."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="reduce_days"
+                    label="Semana o jornada reducida"
+                    rules={[ruleRequired]}
+                    initialValue={0}
+                  >
+                    <Select
+                      options={reduceDays}
+                      notFoundContent={"No se encontraron resultado."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="movement_date"
+                    label="Fecha de movimiento"
+                    rules={[ruleRequired]}
+                  >
+                    <DatePicker
+                      locale={locale}
+                      format="DD-MM-YYYY"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <SelectFamilyMedicalUnit />
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="nss"
+                    label="IMSS"
+                    rules={[onlyNumeric, minLengthNumber]}
+                  >
+                    <Input maxLength={11} disabled={true} />
+                  </Form.Item>
+                </Col>
 
-        <Form
-          layout="vertical"
-          form={formImssInfonavit}
-          onFinish={formImmssInfonavitAct}
-          className="form-details-person"
-        >
-          <Row>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="employee_type"
-                label="Tipo de empleado"
-                rules={[ruleRequired]}
-                initialValue={1}
-              >
-                <Select
-                  options={typeEmployee}
-                  notFoundContent={"No se encontraron resultado."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="salary_type"
-                label="Tipo de salario"
-                rules={[ruleRequired]}
-                initialValue={2}
-              >
-                <Select
-                  options={typeSalary}
-                  notFoundContent={"No se encontraron resultado."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="reduce_days"
-                label="Semana o jornada reducida"
-                rules={[ruleRequired]}
-                initialValue={0}
-              >
-                <Select
-                  options={reduceDays}
-                  notFoundContent={"No se encontraron resultado."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="movement_date"
-                label="Fecha de movimiento"
-                rules={[ruleRequired]}
-              >
-                <DatePicker
-                  locale={locale}
-                  format="DD-MM-YYYY"
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <SelectFamilyMedicalUnit />
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="nss"
-                label="IMSS"
-                rules={[onlyNumeric, minLengthNumber]}
-              >
-                <Input maxLength={11} disabled={true} />
-              </Form.Item>
-            </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="sdi"
+                    label="Salario diario integrado"
+                    maxLength={13}
+                    rules={[fourDecimal, ruleRequired]}
+                  >
+                    <Input
+                      // disabled={
+                      //   updateCredit && updateCredit.is_registered ? true : false
+                      // }
+                      disabled={true}
+                      maxLength={10}
+                    />
+                  </Form.Item>
 
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="sdi"
-                label="Salario diario integrado"
-                maxLength={13}
-                rules={[fourDecimal, ruleRequired]}
-              >
-                <Input
-                  // disabled={
-                  //   updateCredit && updateCredit.is_registered ? true : false
-                  // }
-                  disabled={true}
-                  maxLength={10}
-                />
-              </Form.Item>
-
-              <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
-                <a style={{color:'blue'}}>
-                  <div>Ver movimientos IMSS</div>
-                </a>
-              </Link>
-            </Col>
-            {/* <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="integrated_daily_salary"
-                label="Salario diario integrado"
-                maxLength={13}
-                rules={[fourDecimal]}
-              >
-                <Input disabled />
-              </Form.Item>
-            </Col> */}
-          </Row>
-          <Row justify={"end"}>
-            <Form.Item>
-              <Button
-                loading={loadingIMSS}
-                style={{ marginRight: 20 }}
-                type="primary"
-                htmlType="submit"
-              >
-                Guardar
-              </Button>
-            </Form.Item>
-          </Row>
-        </Form>
-
-        <Divider />
-
-        <Divider orientation="left"> <img src={"/images/logoinfonavit.png"} width={20} /> INFONAVIT</Divider>
-
-        <br/>
-        <Row justify="space-between">
-          <div>
-            <Space>
-              <Button
-                type="primary"
-                loading={loadingTable}
-                onClick={openModalInfonavit}
-              >
-                Nuevo
-              </Button>
-              {nss && (
-                <Tooltip title="Obtener datos infonavit">
-                  <Button onClick={() => userCredit()} loading={loadingTable}>
-                    <SyncOutlined style={{ fontSize: "20px" }} />
+                  <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
+                    <a style={{color:'blue'}}>
+                      <div>Ver movimientos IMSS</div>
+                    </a>
+                  </Link>
+                </Col>
+                {/* <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    name="integrated_daily_salary"
+                    label="Salario diario integrado"
+                    maxLength={13}
+                    rules={[fourDecimal]}
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                </Col> */}
+              </Row>
+              <Row justify={"end"}>
+                <Form.Item>
+                  <Button
+                    loading={loadingIMSS}
+                    style={{ marginRight: 20 }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Guardar
                   </Button>
-                </Tooltip>
-              )}
-              <Tooltip title="Ver registros de consultas">
-                <Button onClick={getInfonavitLogs}>
-                  <HistoryOutlined style={{ fontSize: "20px" }}/>
-                </Button>
-              </Tooltip>
-            </Space>
-          </div>
-        </Row>
+                </Form.Item>
+              </Row>
+            </Form>
 
-        <Spin tip="Cargando..." spinning={loadingTable}>
-          <Table
-            columns={colCredit}
-            scroll={{
-              x: true,
-            }}
-            rowKey="id"
-            dataSource={infonavitCredit}
-            locale={{
-              emptyText: loadingTable
-                ? "Cargando..."
-                : "No se encontraron resultados.",
-            }}
-          />
-        </Spin>
+            <Divider />
+
+            <Divider orientation="left"> <img src={"/images/logoinfonavit.png"} width={20} /> INFONAVIT</Divider>
+
+            <br/>
+            <Row justify="space-between">
+              <div>
+                <Space>
+                  <Button
+                    type="primary"
+                    loading={loadingTable}
+                    onClick={openModalInfonavit}
+                  >
+                    Nuevo
+                  </Button>
+                  {nss && (
+                    <Tooltip title="Obtener datos infonavit">
+                      <Button onClick={() => userCredit()} loading={loadingTable}>
+                        <SyncOutlined style={{ fontSize: "20px" }} />
+                      </Button>
+                    </Tooltip>
+                  )}
+                  <Tooltip title="Ver registros de consultas">
+                    <Button onClick={getInfonavitLogs}>
+                      <HistoryOutlined style={{ fontSize: "20px" }}/>
+                    </Button>
+                  </Tooltip>
+                </Space>
+              </div>
+            </Row>
+
+            <Spin tip="Cargando..." spinning={loadingTable}>
+              <Table
+                columns={colCredit}
+                scroll={{
+                  x: true,
+                }}
+                rowKey="id"
+                dataSource={infonavitCredit}
+                locale={{
+                  emptyText: loadingTable
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+              />
+            </Spin>
+          </>
+        }
       </Spin>
       <Modal
         title="INFONAVIT manual"
@@ -906,6 +962,17 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
           dataSource={logs}
           pagination={false}
         />
+      </Modal>
+      <Modal
+        title="Eliminar"
+        visible={showModalDelete}
+        onOk={deleteImss}
+        onCancel={cancelDelete}
+        okText="Sí, eliminar"
+        cancelText="Cancelar"
+      >
+        Al eliminar este registro, perderá todos los datos de infonavit relacionados a la persona de
+        manera permanente. ¿Está seguro de querer eliminarlo?
       </Modal>
     </>
   );
