@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs, Row, Col, Button, Form, Input, Select, Skeleton, message, Spin, Card, Space } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Tabs, Row, Col, Button, Form, Input, Select, Skeleton, message, Spin, Card, Space, Collapse } from 'antd';
 import DetailsCustom from '../../jobbank/DetailsCustom';
 import PermissionsFields from './PermissionsFields';
 import { ruleRequired } from '../../../utils/rules';
@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import WebApiPeople from '../../../api/WebApiPeople';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import CardGroup from './CardGroup';
 
 const DetailsRoles = ({
     action,
@@ -153,6 +154,21 @@ const DetailsRoles = ({
         />
     )
 
+    const getListType = (type = 1) => {
+        const find_ = item => item?.perm_type == type;
+        let result = list_modules_permissions?.find(find_);
+        if (!result) return [];
+        return result?.modules;
+    }
+
+    const catalogs = useMemo(() => {
+        return getListType(1);
+    }, [list_modules_permissions])
+
+    const actions = useMemo(() => {
+        return getListType(2);
+    }, [list_modules_permissions])
+
     return (
         <Row gutter={[0, 12]}>
             <Col span={24} className='header-card'>
@@ -225,9 +241,13 @@ const DetailsRoles = ({
                             </Card>
                         </Col>
                         <Col span={24}>
-                            <Tabs type='card' className='tabs-perms' tabBarExtraContent={ExtraAction}>
+                            <Tabs type='card' className='ant-tabs-perms' tabBarExtraContent={ExtraAction}>
                                 <Tabs.TabPane key='1' tab='Catálogos'>
-                                    <Skeleton active />
+                                    {!load_modules_permissions ? (
+                                        <CardGroup catalogs={catalogs} />
+                                    ) : Array(catalogs?.length || 4).fill(null).map((_, idx) => (
+                                        <Card key={idx} bodyStyle={{ padding: 12 }} loading />
+                                    ))}
                                 </Tabs.TabPane>
                                 <Tabs.TabPane key='2' tab='Acciones'>
                                     <Skeleton active />

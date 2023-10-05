@@ -1314,3 +1314,19 @@ div.picker-range-jb {
 .ant-tree-org .ant-tree-node-content-wrapper {
     cursor: default;
 }
+
+/* Tabs permisos del rol */
+
+.ant-tabs-perms .ant-tabs-content-holder{
+    margin-top: 18px;
+    /* border-radius: 10px; */
+    background-color: transparent;
+}
+
+.ant-tabs-perms  > .ant-tabs-nav::before{
+    border-width: 0px;
+}
+
+/* .ant-tabs-perms .ant-tabs-content{
+    padding: 12px;
+} */
