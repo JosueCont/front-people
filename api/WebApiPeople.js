@@ -622,8 +622,8 @@ class WebApiPeople {
 
   //Roles de administrador
 
-  static getModulesPermissions() {
-    return WebApi.ApisType("/security/khorplus-module-with-perm/", "get");
+  static getModulesPermissions(query) {
+    return WebApi.ApisType(`/security/khorplus-module-with-perm/${query}`, "get");
   }
 
   static getAdminRoles(node, query) {
