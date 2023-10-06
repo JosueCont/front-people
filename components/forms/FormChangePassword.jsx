@@ -30,6 +30,7 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
         message.success("Actualizado correctamente!!");
         formPassword.resetFields();
         setIsLoading(false)
+        setIsRegister(true)
       }else{
         message.error("Error al actualizar, intente de nuevo");
         formPassword.resetFields();
@@ -123,9 +124,9 @@ const FormChangePassword = ({ khonnectId, person_user }) => {
         {isRegister && <Form.Item
           name="email_person_userd"
           label="Dirección de e-mail"
+          initialValue={person_user?.email?person_user.email:null}
         >
           <Input
-          defaultValue={person_user?.email?person_user.email:null}
           autoComplete="off"
           //disabled={person_user?.email?true:false}
           />
