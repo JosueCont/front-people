@@ -65,7 +65,7 @@ const ButtonWizardLight=({data=null})=>{
               </Button>
               <Modal title=" Información requerida para el módulo de nómina" width={1000} visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                  <Row>
-                     <Badge.Ribbon text="V.15092023">
+                     <Badge.Ribbon text="V.06102023">
                      <Col span={24}>
 
 
