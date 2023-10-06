@@ -246,6 +246,7 @@ const DetailsRoles = ({
 
     const onSearch = ({ target: { value } }) => {
         if (![undefined, null, "", " "].includes(value)) {
+            const filter_ = item => valueToFilter(item?.perm_name).includes(valueToFilter(value));
             let results = list_modules_permissions?.reduce((list, item) => {
                 let modules = item?.modules?.reduce((module, record) => {
                     let groups = record?.groups?.reduce((group, row) => {
