@@ -533,78 +533,88 @@ export const getModulesPermissions = (query = '') => async (dispatch) => {
     const typeFunction = { type: GET_MODULES_PERMISSIONS, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        // let response = await WebApiPeople.getModulesPermissions(query);
-        // console.log("🚀 ~ file: catalogCompany.js:537 ~ getModulesPermissions ~ response:", response)
+        // if(!query.includes('perm_grouper')){
+        //     setTimeout(()=>{
+        //         dispatch({ ...typeFunction, payload: [] });
+        //     },1000)
+        //     return;
+        // }
+        let response = await WebApiPeople.getModulesPermissions(query);
+        dispatch({ ...typeFunction, payload: response.data })
 
-        const uid = function () {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2);
-        }
+        // const uid = function () {
+        //     return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        // }
 
-        let perms = Array(15).fill(null).map((_, idx) => ({
-            "id": uid(),
-            "perm_name": `Permiso ${idx + 1}`,
-            "perm_code": `perm_${idx + 1}`,
-            "description": ""
-        }))
+        // const getPerms = () => {
+        //     return Array(15).fill(null).map((_, idx) => ({
+        //         "id": uid(),
+        //         "perm_name": `Permiso ${idx + 1}`,
+        //         "perm_code": `perm_${idx + 1}`,
+        //         "description": ""
+        //     }))
+        // }
 
-        let groups = Array(5).fill(null).map((_, idx) => ({
-            "grouper": {
-                "id": uid(),
-                "name": `Grupo ${idx + 1}`,
-                "code": `group_${idx + 1}`
-            },
-            "perms": perms
-        }))
+        // const getGroups = () => {
+        //     return Array(5).fill(null).map((_, idx) => ({
+        //         "group": {
+        //             "id": uid(),
+        //             "name": `Grupo ${idx + 1}`,
+        //             "code": `group_${idx + 1}`
+        //         },
+        //         "perms": getPerms()
+        //     }))
+        // }
 
-        let modules = [
-            {
-                "khorplus_module": {
-                    "id": 3,
-                    "name": "Bolsa de trabajo",
-                    "code": "JOBBANK",
-                    "icon": null,
-                    "is_active": true
-                },
-                "groups": groups
-            },
-            {
-                "khorplus_module": {
-                    "id": 1,
-                    "name": "Nómina",
-                    "code": "PAYROLL",
-                    "icon": null,
-                    "is_active": true
-                },
-                "groups": groups
-            },
-            {
-                "khorplus_module": {
-                    "id": 2,
-                    "name": "Psicometría",
-                    "code": "KUIZ",
-                    "icon": null,
-                    "is_active": true
-                },
-                "groups": groups
-            }
-        ];
+        // const getModules = () => {
+        //     return [
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 3,
+        //                 "name": "Bolsa de trabajo",
+        //                 "code": "JOBBANK",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         },
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 1,
+        //                 "name": "Nómina",
+        //                 "code": "PAYROLL",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         },
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 2,
+        //                 "name": "Psicometría",
+        //                 "code": "KUIZ",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         }
+        //     ];
+        // }
 
-        let payload = [
-            {
-                "perm_type": 1,
-                "modules": modules
-            },
-            {
-                "perm_type": 2,
-                "modules": modules
-            }
+        // let payload = [
+        //     {
+        //         "perm_type": 1,
+        //         "modules": getModules()
+        //     },
+        //     {
+        //         "perm_type": 2,
+        //         "modules": getModules()
+        //     }
 
-        ]
-
-        // console.log('payload', payload)
-        setTimeout(() => {
-            dispatch({ ...typeFunction, payload });
-        }, 1000)
+        // ]
+        // setTimeout(() => {
+        //     dispatch({ ...typeFunction, payload });
+        // }, 1000)
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
