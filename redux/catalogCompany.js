@@ -428,11 +428,11 @@ export const getAccountantAccount = (idCompany) => async (dispatch, getState) =>
 };
 
 export const getBranches = (idCompany) => async (dispatch, getState) => {
-    const type = {type: BRANCHES, payload: [], fetching: false};
-    dispatch({...type, fetching: true})
+    const type = { type: BRANCHES, payload: [], fetching: false };
+    dispatch({ ...type, fetching: true })
     try {
         let response = await WebApiPeople.getBranches(`?node=${idCompany}`);
-        dispatch({...type, payload: response.data?.results})
+        dispatch({ ...type, payload: response.data?.results })
     } catch (e) {
         console.log(e)
         dispatch(type)
@@ -440,15 +440,15 @@ export const getBranches = (idCompany) => async (dispatch, getState) => {
 };
 
 export const getPatronalRegistration = (idCompany = null) => async (dispatch, getState) => {
-    const type = {type: PATRONAL_REGISTRATION, payload: [], fetching: false, error: null}
-    dispatch({...type, fetching: true})
+    const type = { type: PATRONAL_REGISTRATION, payload: [], fetching: false, error: null }
+    dispatch({ ...type, fetching: true })
     try {
         if (!idCompany) idCompany = userCompanyId();
         let response = await WebApiPeople.getPatronalRegistration(idCompany);
-        dispatch({...type, payload: response.data})
+        dispatch({ ...type, payload: response.data })
     } catch (e) {
         console.log(e)
-        dispatch({...type, error: e})
+        dispatch({ ...type, error: e })
     }
     // if (!idCompany) idCompany = userCompanyId();
     // await WebApiPeople.getPatronalRegistration(idCompany)
@@ -529,12 +529,92 @@ export const getAdminRolesOptions = (node, query = '') => async (dispatch) => {
     }
 }
 
-export const getModulesPermissions = () => async (dispatch) => {
+export const getModulesPermissions = (query = '') => async (dispatch) => {
     const typeFunction = { type: GET_MODULES_PERMISSIONS, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let response = await WebApiPeople.getModulesPermissions();
+        // if(!query.includes('perm_grouper')){
+        //     setTimeout(()=>{
+        //         dispatch({ ...typeFunction, payload: [] });
+        //     },1000)
+        //     return;
+        // }
+        let response = await WebApiPeople.getModulesPermissions(query);
         dispatch({ ...typeFunction, payload: response.data })
+
+        // const uid = function () {
+        //     return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        // }
+
+        // const getPerms = () => {
+        //     return Array(15).fill(null).map((_, idx) => ({
+        //         "id": uid(),
+        //         "perm_name": `Permiso ${idx + 1}`,
+        //         "perm_code": `perm_${idx + 1}`,
+        //         "description": ""
+        //     }))
+        // }
+
+        // const getGroups = () => {
+        //     return Array(5).fill(null).map((_, idx) => ({
+        //         "group": {
+        //             "id": uid(),
+        //             "name": `Grupo ${idx + 1}`,
+        //             "code": `group_${idx + 1}`
+        //         },
+        //         "perms": getPerms()
+        //     }))
+        // }
+
+        // const getModules = () => {
+        //     return [
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 3,
+        //                 "name": "Bolsa de trabajo",
+        //                 "code": "JOBBANK",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         },
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 1,
+        //                 "name": "Nómina",
+        //                 "code": "PAYROLL",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         },
+        //         {
+        //             "khorplus_module": {
+        //                 "id": 2,
+        //                 "name": "Psicometría",
+        //                 "code": "KUIZ",
+        //                 "icon": null,
+        //                 "is_active": true
+        //             },
+        //             "groups": getGroups()
+        //         }
+        //     ];
+        // }
+
+        // let payload = [
+        //     {
+        //         "perm_type": 1,
+        //         "modules": getModules()
+        //     },
+        //     {
+        //         "perm_type": 2,
+        //         "modules": getModules()
+        //     }
+
+        // ]
+        // setTimeout(() => {
+        //     dispatch({ ...typeFunction, payload });
+        // }, 1000)
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

@@ -41,9 +41,9 @@ const TableRoles = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const actionStatus = async (is_active, item) =>{
+    const actionStatus = async (is_active, item) => {
         try {
-            await WebApiPeople.updateAdminRole(item.id, {is_active});
+            await WebApiPeople.updateAdminRole(item.id, { is_active });
             getAdminRoles(currentNode.id, config_filters, config_page);
             let msg = is_active ? 'Rol activado' : 'Rol desactivado';
             message.success(msg);
@@ -54,7 +54,7 @@ const TableRoles = ({
         }
     }
 
-    const actionDelete = async () =>{
+    const actionDelete = async () => {
         try {
             let id = itemsToDelete.at(-1)?.id;
             await WebApiPeople.deleteAdminRole(id);
@@ -66,58 +66,58 @@ const TableRoles = ({
         }
     }
 
-    const openModalRemove = (item) =>{
+    const openModalRemove = (item) => {
         let with_action = item?.people_with_profile?.length <= 0;
         setWithAction(with_action)
         setItemsToDelete([item])
         setOpenModalDelete(true)
     }
 
-    const closeModalDelete = () =>{
+    const closeModalDelete = () => {
         setOpenModalDelete(false)
         setWithAction(true)
         setItemsToDelete([])
         setAsList(false)
     }
 
-    const showModalList = (item) =>{
+    const showModalList = (item) => {
         setAsList(true)
         setWithAction(false)
         setOpenModalDelete(true)
         setItemsToDelete(item.people_with_profile)
     }
 
-    const onChangePage = ({current}) =>{
-        let filters = {...router.query, page: current};
+    const onChangePage = ({ current }) => {
+        let filters = { ...router.query, page: current };
         router.replace({
             pathname: '/security/roles',
             query: filters
         })
     }
 
-    const titleDelete = useMemo(()=>{
-        if(withAction) return '¿Estás seguro de eliminar este rol?';
-        if(asList) return 'Personas asignadas';
+    const titleDelete = useMemo(() => {
+        if (withAction) return '¿Estás seguro de eliminar este rol?';
+        if (asList) return 'Personas asignadas';
         return 'Este rol no se puede eliminar, ya que se encuentra asignado';
-    },[withAction, asList])
+    }, [withAction, asList])
 
     const menuItem = (item) => {
         return (
             <Menu>
                 <Menu.Item
                     key='1'
-                    icon={<EditOutlined/>}
-                    onClick={()=> router.push({
+                    icon={<EditOutlined />}
+                    onClick={() => router.push({
                         pathname: '/security/roles/edit',
-                        query:{...router.query, id: item.id }
+                        query: { ...router.query, id: item.id }
                     })}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
                     key='2'
-                    icon={<DeleteOutlined/>}
-                    onClick={()=> openModalRemove(item)}
+                    icon={<DeleteOutlined />}
+                    onClick={() => openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
@@ -133,21 +133,21 @@ const TableRoles = ({
         },
         {
             title: 'No. permisos',
-            render: (item) =>{
+            render: (item) => {
                 return <>{item?.module_perm?.length ?? 0}</>
             }
         },
         {
             title: 'Personas asignadas',
-            render: (item) =>{
+            render: (item) => {
                 let size = item?.people_with_profile?.length;
                 return (
                     <Space>
                         <Tooltip title={size > 0 ? 'Ver personas' : ''}>
-                            {size > 0 ?  <EyeOutlined onClick={()=>showModalList(item)}/> : <EyeInvisibleOutlined />}
+                            {size > 0 ? <EyeOutlined onClick={() => showModalList(item)} /> : <EyeInvisibleOutlined />}
                         </Tooltip>
-                        <Tag icon={<UserOutlined style={{color: size > 0 ? '#52c41a' : ''}}/>}
-                            style={{fontSize: '14px'}}
+                        <Tag icon={<UserOutlined style={{ color: size > 0 ? '#52c41a' : '' }} />}
+                            style={{ fontSize: '14px' }}
                             color={size ? 'green' : ''}
                         >
                             {size ?? 0}
@@ -157,16 +157,25 @@ const TableRoles = ({
             }
         },
         {
+            title: 'Tipo',
+            dataIndex: 'node',
+            render: (item) => (
+                <Tag color={item ? 'blue' : 'orange'}>
+                    {item ? 'Empresa' : 'Global'}
+                </Tag>
+            )
+        },
+        {
             title: 'Estatus',
-            render: (item) =>{
-                return(
+            render: (item) => {
+                return (
                     <Switch
                         size='small'
                         defaultChecked={item.is_active}
                         checked={item.is_active}
                         checkedChildren="Activo"
                         unCheckedChildren="Inactivo"
-                        onChange={(e)=> actionStatus(e, item)}
+                        onChange={(e) => actionStatus(e, item)}
                     />
                 )
             }
@@ -174,9 +183,9 @@ const TableRoles = ({
         {
             title: 'Acciones',
             width: 80,
-            render: (item) =>{
-                return(
-                    <Dropdown overlay={()=> menuItem(item)}>
+            render: (item) => {
+                return (
+                    <Dropdown overlay={() => menuItem(item)}>
                         <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
@@ -210,7 +219,7 @@ const TableRoles = ({
             <ListItems
                 title={titleDelete}
                 visible={openModalDelete}
-                keyTitle={asList ? ['first_name','flast_name','mlast_name'] : 'name'}
+                keyTitle={asList ? ['first_name', 'flast_name', 'mlast_name'] : 'name'}
                 keyDescription={asList ? 'email' : ''}
                 close={closeModalDelete}
                 itemsToList={itemsToDelete}
@@ -222,7 +231,7 @@ const TableRoles = ({
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return {
         list_admin_roles: state.catalogStore.list_admin_roles,
         load_admin_roles: state.catalogStore.load_admin_roles,
