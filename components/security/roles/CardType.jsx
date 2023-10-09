@@ -20,7 +20,7 @@ const CardType = ({
         }
         let keys_ = typeList?.map((_, idx) => idx);
         setActiveKey(keys_)
-    }, [isSearch])
+    }, [isSearch, typeList])
 
 
     const Void = ({ type = 2 }) => (
@@ -70,7 +70,12 @@ const CardType = ({
     return (
         <>
             {typeList?.length > 0 ? (
-                <Collapse ghost activeKey={activeKey} bordered={false}>
+                <Collapse
+                    ghost
+                    activeKey={activeKey}
+                    bordered={false}
+                    onChange={e => setActiveKey(e)}
+                >
                     {typeList?.map((row, idx) => (
                         <CardModule
                             row={row}
