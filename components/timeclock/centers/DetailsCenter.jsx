@@ -153,7 +153,7 @@ const DetailsCenter = ({
                     </div>
                 </div>
             </Col>
-            <Col span={24} className='ant-spinning'>
+            <Col span={24} className='ant-table-colla'>
                 <Spin spinning={loading}>
                     <Row gutter={[0, 12]}>
                         <Col span={24}>
