@@ -852,6 +852,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const getChekDisable = (record) => {
+
     if(record?.payroll_cfdi_person?.status === 2){
       return true
     }
@@ -870,7 +871,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         return false
       }
     }
-    if(step == 1 && !record['payroll_cfdi_person'] && !record.departure_motive && !record.departure_date ){
+    if(step == 1 && !record['payroll_cfdi_person'] && !record.departure_motive && !record.departure_date && movementType !== 1 ){
       return true
     }else if(step == 1 && record?.payroll_cfdi_person?.status > 1){
       return true
@@ -957,12 +958,16 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const getRecords = () => {
     let records = extraOrdinaryPayroll
+
     if(step === 0){
       records = extraOrdinaryPayroll
     }
-    if(step == 1){
-      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1 || item?.payroll_cfdi_person?.status === 2)
+    if(step === 1 && movementType === 1){
+      return extraOrdinaryPayroll
+    }else if(step == 1){
+      records = extraOrdinaryPayroll.filter(item => (item.departure_date && item.departure_motive && (item?.deduction?.length > 0 && item?.perception?.length > 0) ) || item?.payroll_cfdi_person?.status === 0 || item?.payroll_cfdi_person?.status === 6 || item?.payroll_cfdi_person?.status === 1 || item?.payroll_cfdi_person?.status === 2)
     }
+    
     if(step == 2){
       records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1 || item?.payroll_cfdi_person?.status == 2  )
     }
