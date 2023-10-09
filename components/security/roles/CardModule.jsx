@@ -27,7 +27,7 @@ const CardModule = ({
         }
         let keys_ = row?.groups?.map((_, idx) => idx);
         setActiveKey(keys_)
-    }, [isSearch])
+    }, [isSearch, row])
 
 
     const isAll = useMemo(() => {
@@ -63,7 +63,11 @@ const CardModule = ({
             ) : <></>}
         >
             {row?.groups?.length > 0 ? (
-                <Collapse activeKey={activeKey} bordered={false}>
+                <Collapse
+                    activeKey={activeKey}
+                    bordered={false}
+                    onChange={e => setActiveKey(e)}
+                >
                     {row?.groups?.map((item, index) => (
                         <CardGroup
                             key={index}
