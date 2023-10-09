@@ -89,10 +89,11 @@ const DetailsRoles = ({
 
     useEffect(() => {
         if (Object.keys(infoAdminRol).length <= 0) return;
-        formRol.setFieldsValue({
-            name: infoAdminRol.name,
-            node: infoAdminRol?.node
-        })
+        
+        let values = {};
+        values.name = infoAdminRol?.name ? infoAdminRol?.name : null;
+        values.node = infoAdminRol?.node ? infoAdminRol?.node : "";
+        formRol.setFieldsValue(values)
         // const reduce_ = (acc, current) => ({ ...acc, [`${current.id}`]: true });
         let checks = infoAdminRol.module_perm?.length > 0
             ? infoAdminRol.module_perm : [];
@@ -319,15 +320,16 @@ const DetailsRoles = ({
                                                         placeholder='Ej. Administrador, Ejecutivo, Reclutador, etc.'
                                                     />
                                                 </Form.Item>
-
                                             </Col>
                                             <Col xs={24} lg={12}>
                                                 <Form.Item
                                                     label='Tipo'
                                                     name='node'
+                                                    tooltip={action == 'edit' ? 'Este campo no se puede actualizar' : ''}
                                                 >
                                                     <Select
                                                         placeholder='Seleccionar una opción'
+                                                        disabled={action == 'edit'}
                                                         options={[
                                                             { value: '', key: '1', label: 'Global' },
                                                             { value: currentNode?.id, key: '2', label: 'Empresa' }
