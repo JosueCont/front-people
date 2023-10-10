@@ -622,7 +622,7 @@ class WebApiPeople {
 
   //Roles de administrador
 
-  static getModuldes(){
+  static getModuldes() {
     return WebApi.ApisType('/setup/khorplus-module/', 'get')
   }
 
@@ -634,15 +634,12 @@ class WebApiPeople {
     return WebApi.ApisType(`/security/khorplus-module-with-perm/${query}`, "get");
   }
 
-  static getAdminRoles(node, query) {
-    return WebApi.ApisType(
-      `/security/administrator-profile/?node=${node}${query}`,
-      "get"
-    );
+  static getAdminRoles(query = '') {
+    return WebApi.ApisType(`/security/administrator-profile/${query}`, "get");
   }
 
-  static getInfoAdminRole(id) {
-    return WebApi.ApisType(`/security/administrator-profile/${id}/`, "get");
+  static getInfoAdminRole(id, query = '') {
+    return WebApi.ApisType(`/security/administrator-profile/${id}/${query}`, "get");
   }
 
   static createAdminRole(data) {
