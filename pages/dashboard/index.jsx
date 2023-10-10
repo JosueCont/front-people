@@ -65,17 +65,17 @@ const Dashboard = ({
                     <ContentCards>
                         <WidgetTotal />
                         <WidgetGender />
-                        {activePayroll && <WidgetImss />}
-                        <WidgetAnniversary />
                         <WidgetGeneration />
-                        <WidgetBirthday />
                         {activePayroll && (
                             <>
-                                <WidgetContracts />
+                                <WidgetImss />
                                 <WidgetPayRollCalendar />
                                 <WidgetPatronalRegistration />
                             </>
                         )}
+                        <WidgetAnniversary />
+                        <WidgetBirthday />
+                        {activePayroll && <WidgetContracts />}
                     </ContentCards>
                 </ContentVertical>
             </MainLayout>
