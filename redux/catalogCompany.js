@@ -508,7 +508,8 @@ export const getAdminRoles = (node, query = '', page = 1) => async (dispatch) =>
     const typeFunction = { type: GET_ADMIN_ROLES, payload: {}, fetching: false, query, page };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let response = await WebApiPeople.getAdminRoles(node, query);
+        let params = `?node=${node}&include-people-detail=true${query}`;
+        let response = await WebApiPeople.getAdminRoles(params);
         dispatch({ ...typeFunction, payload: response.data })
     } catch (e) {
         console.log(e)
@@ -520,8 +521,8 @@ export const getAdminRolesOptions = (node, query = '') => async (dispatch) => {
     const typeFunction = { type: GET_ADMIN_ROLES_OPTIONS, payload: [], fetching: false };
     dispatch({ ...typeFunction, fetching: true })
     try {
-        let params = `&paginate=0${query}`;
-        let response = await WebApiPeople.getAdminRoles(node, params);
+        let params = `?paginate=0${node ? `&node=${node}` : ''}${query}`;
+        let response = await WebApiPeople.getAdminRoles(params);
         dispatch({ ...typeFunction, payload: response.data })
     } catch (e) {
         console.log(e)

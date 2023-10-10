@@ -105,7 +105,8 @@ const DetailsRoles = ({
     const getInfoAdminRol = async (id) => {
         try {
             setFetching(true)
-            let response = await WebApiPeople.getInfoAdminRole(id);
+            let params = '?include-perms-detail=true';
+            let response = await WebApiPeople.getInfoAdminRole(id, params);
             setInfoAdminRol(response.data)
             setFetching(false)
         } catch (e) {

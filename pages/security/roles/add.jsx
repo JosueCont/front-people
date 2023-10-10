@@ -1,4 +1,5 @@
 import React from 'react';
+import { withAuthSync } from '../../../libs/auth';
 import AddOrEditRoles from '../../../components/security/roles/AddOrEditRoles';
 
 const add = () => {
@@ -7,4 +8,4 @@ const add = () => {
     )
 }
 
-export default add
+export default withAuthSync(add);
