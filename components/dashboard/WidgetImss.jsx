@@ -22,7 +22,7 @@ const WidgetImss = ({
 
     const [selectPR, setSelectPR] = useState(null)
     const [nPeding, setNPeding] = useState(0)
-    
+
     const getImssInfo = (val) => {
         setSelectPR(val)
     }
@@ -67,17 +67,17 @@ const WidgetImss = ({
     )
 
     return (
-        <CardInfo>
+        // <CardInfo>
         <CardItem
             title={<>
                 <img src={'/images/logo_imss.png'} width={20} />
                 <p><FormattedMessage id={'dashboard.imssPending'} /></p>
             </>}
-            extra={selectPR ? <a href={`/payroll/imssMovements?regPatronal=${selectPR}`}>{nPeding?.length}</a>  : null}
+            extra={selectPR ? <a href={`/payroll/imssMovements?regPatronal=${selectPR}`}>{nPeding?.length}</a> : null}
         >
             {SelectPatronal}
         </CardItem>
-        </CardInfo>
+        // </CardInfo>
     )
 }
 
