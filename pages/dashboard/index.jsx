@@ -75,7 +75,7 @@ const Dashboard = ({
                         )}
                         <WidgetAnniversary />
                         <WidgetBirthday />
-                        {!activePayroll && <WidgetContracts />}
+                        {activePayroll && <WidgetContracts />}
                     </ContentCards>
                 </ContentVertical>
             </MainLayout>
