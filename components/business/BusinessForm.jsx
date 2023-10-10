@@ -222,6 +222,7 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
 
     const getCopaniesList = async () => {
         setBusiness([]);
+        setLoading(true)
         await WebApiPeople.getCompanys(props?.user?.id, null)
             .then((response) => {
                 setBusiness(response.data.results);
@@ -475,21 +476,21 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
                         )}
                     </Col>
                 </Row>
-                <Row justify={"end"}>
-                    <Col style={{ margin: "1%" }}>
-                        {treeTable ? (
-                            <Button onClick={changeView}>
-                                <NodeExpandOutlined />
-                                Vista de árbol
-                            </Button>
-                        ) : (
-                            <Button onClick={changeView}>
-                                <TableOutlined />
-                                Tabla
-                            </Button>
-                        )}
-                    </Col>
-                </Row>
+                {/*<Row justify={"end"}>*/}
+                {/*    <Col style={{ margin: "1%" }}>*/}
+                {/*        {treeTable ? (*/}
+                {/*            <Button onClick={changeView}>*/}
+                {/*                <NodeExpandOutlined />*/}
+                {/*                Vista de árbol*/}
+                {/*            </Button>*/}
+                {/*        ) : (*/}
+                {/*            <Button onClick={changeView}>*/}
+                {/*                <TableOutlined />*/}
+                {/*                Tabla*/}
+                {/*            </Button>*/}
+                {/*        )}*/}
+                {/*    </Col>*/}
+                {/*</Row>*/}
                 <Row>
                     <Col span={24}>
                         {treeTable ? (
@@ -645,13 +646,14 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
                 visible={isModalDeleteVisible}
                 onCancel={() => handleCancel()}
                 footer={[
-                    <Button key="back" onClick={handleCancel}>
+                    <Button key="back" disabled={loading} onClick={handleCancel}>
                         Cancelar
                     </Button>,
                     <Button
                         form="deleteBusinessForm"
                         type="primary"
                         key="submit"
+                        loading={loading}
                         htmlType="submit"
                     >
                         Si, eliminar

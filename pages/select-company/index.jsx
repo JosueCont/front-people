@@ -331,9 +331,9 @@ const SelectCompany = ({ ...props }) => {
             hideSearch={true}
             hideLogo={true}
           >
-            <Breadcrumb className={"mainBreadcrumb"}>
-              <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
-            </Breadcrumb>
+            {/*<Breadcrumb className={"mainBreadcrumb"}>*/}
+            {/*  <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>*/}
+            {/*</Breadcrumb>*/}
             <div className="container" style={{ width: "100%", padding: 20 }}>
               <Spin tip="Cargando..." spinning={loading}>
                 <Row gutter={[36, 26]} justify="center">
@@ -366,8 +366,8 @@ const SelectCompany = ({ ...props }) => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={24}>
-                    <Input style={{ width:400 }} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
+                  <Col span={24} style={{textAlign:'center'}}>
+                    <Input style={{ width:400 }} size={'large'} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
                   </Col>
                   {!treeTable &&
                     dataList.map((item) => (
