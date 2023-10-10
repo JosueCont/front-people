@@ -6,11 +6,10 @@ import {
     InfoCircleOutlined
 } from "@ant-design/icons";
 const { Paragraph } = Typography;
-const ButtonWizardLight=({data=null})=>{
+const ButtonWizardLight=({data=null,node=null, ...props})=>{
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenSystem, setIsModalOpenSystem] = useState(false);
-    const description  = "hola"
 
     const imgKhorflix = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khorflix.png";
 
@@ -42,7 +41,7 @@ const ButtonWizardLight=({data=null})=>{
     const steps = [
         {
             title: '1. Información fiscal de empresa',
-            description: <a style={styles.links} href={'/business/companies'} target={'_blank'}> Ir a configurar <ArrowRightOutlined /></a>,
+            description: <a style={styles.links} href={node?`/business/companies/myCompany/${node.id}`:`/business/companies/`} target={'_blank'}> Ir a configurar <ArrowRightOutlined /></a>,
         },
         {
             title: '2. Información de Registro Patronal',
@@ -63,9 +62,11 @@ const ButtonWizardLight=({data=null})=>{
               <Button type="primary" onClick={showModal}>
                   <InfoCircleOutlined /> Información de nómina
               </Button>
-              <Modal title=" Información requerida para el módulo de nómina" width={1000} visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+              <Modal
+                  footer={null}
+                  title="Información requerida para el módulo de nómina" width={1000} visible={isModalOpen} onCancel={handleCancel}>
                  <Row>
-                     <Badge.Ribbon text="V.15092023">
+                     <Badge.Ribbon text="V.10102023">
                      <Col span={24}>
 
 

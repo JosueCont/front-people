@@ -1,54 +1,112 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs, Row, Col, Button, Form, Input, Select, Skeleton, message, Spin } from 'antd';
-import DetailsCustom from '../../jobbank/DetailsCustom';
-import PermissionsFields from './PermissionsFields';
+import React, {
+    useState,
+    useEffect,
+    useMemo,
+    useCallback
+} from 'react';
+import {
+    Tabs,
+    Row,
+    Col,
+    Button,
+    Form,
+    Input,
+    Select,
+    Skeleton,
+    message,
+    Spin,
+    Card,
+    Space,
+    Typography,
+    Tooltip
+} from 'antd';
+// import PermissionsFields from './PermissionsFields';
 import { ruleRequired } from '../../../utils/rules';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import WebApiPeople from '../../../api/WebApiPeople';
+import {
+    ArrowLeftOutlined,
+    InfoCircleOutlined
+} from '@ant-design/icons';
+import CardType from './CardType';
+import { connect } from 'react-redux';
+import { getModulesPermissions } from '../../../redux/catalogCompany';
+import ModalPerms from './ModalPerms';
+import { valueToFilter } from '../../../utils/functions';
+import { debounce } from 'lodash';
 
 const DetailsRoles = ({
     action,
-    newFilters = {}
+    newFilters = {},
+    currentNode,
+    getModulesPermissions,
+    list_modules_permissions,
+    load_modules_permissions
 }) => {
 
+    const noValid = [undefined, null, "", " "];
     const router = useRouter();
     const [formRol] = Form.useForm();
-    const [loading, setLoading] = useState({});
     const [fetching, setFetching] = useState(false);
-    const [actionType, setActionType] = useState('');
-    const [checkedPermissions, setCheckedPermissions] = useState({});
+    // const [checkedPermissions, setCheckedPermissions] = useState({});
+
     const [infoAdminRol, setInfoAdminRol] = useState({});
+    const [checkedPerms, setCheckedPerms] = useState([]);
 
-    const {
-        list_modules_permissions,
-        load_modules_permissions
-    } = useSelector(state => state.catalogStore);
-    const currentNode = useSelector(state => state.userStore.current_node);
+    const [loadModules, setLoadModules] = useState(false);
+    const [listModules, setListModules] = useState([]);
 
-    useEffect(()=>{
-        if(router.query?.id && action == 'edit'){
+    const [listPermissions, setListPermissions] = useState([]);
+    const [valueSearch, setValueSearch] = useState(null);
+    const [isSearch, setIsSearch] = useState(false);
+
+    const [openModal, setOpenModal] = useState(false);
+
+    // useEffect(() => {
+    //     console.log('checkedPerms', checkedPerms)
+    // }, [checkedPerms])
+
+    useEffect(() => {
+        getModules();
+    }, [])
+
+    useEffect(() => {
+        setListPermissions(list_modules_permissions)
+    }, [list_modules_permissions])
+
+    useEffect(() => {
+        if (currentNode && action == 'add') {
+            formRol.setFieldsValue({
+                node: currentNode?.id
+            })
+        }
+    }, [currentNode])
+
+    useEffect(() => {
+        if (router.query?.id && action == 'edit') {
             getInfoAdminRol(router.query?.id)
         }
-    },[router.query?.id])
+    }, [router.query?.id])
 
-    useEffect(()=>{
-        if(Object.keys(infoAdminRol).length <= 0) return;
-        formRol.resetFields();
-        formRol.setFieldsValue({
-            name: infoAdminRol.name,
-            is_active: infoAdminRol.is_active
-        })
-        const reduce_ = (acc, current) => ({...acc, [current.id]: true});
+    useEffect(() => {
+        if (Object.keys(infoAdminRol).length <= 0) return;
+
+        let values = {};
+        values.name = infoAdminRol?.name ? infoAdminRol?.name : null;
+        values.node = infoAdminRol?.node ? infoAdminRol?.node : "";
+        formRol.setFieldsValue(values)
+        // const reduce_ = (acc, current) => ({ ...acc, [`${current.id}`]: true });
         let checks = infoAdminRol.module_perm?.length > 0
-            ? infoAdminRol.module_perm.reduce(reduce_, {}): {};
-        setCheckedPermissions(checks)
-    },[infoAdminRol])
+            ? infoAdminRol.module_perm : [];
+        setCheckedPerms(checks)
+        // setCheckedPermissions(checks)
+    }, [infoAdminRol])
 
-    const getInfoAdminRol = async (id) =>{
+    const getInfoAdminRol = async (id) => {
         try {
             setFetching(true)
-            let response = await WebApiPeople.getInfoAdminRole(id);
+            let params = '?include-perms-detail=true';
+            let response = await WebApiPeople.getInfoAdminRole(id, params);
             setInfoAdminRol(response.data)
             setFetching(false)
         } catch (e) {
@@ -57,21 +115,21 @@ const DetailsRoles = ({
         }
     }
 
-    const onFinishCreate = async (values) =>{
+    const onFinishCreate = async (values) => {
         try {
-            let body = {...values, node: currentNode.id};
-            let response = await WebApiPeople.createAdminRole(body);
-            actionSaveAnd(response.data.id);
+            let body = { ...values, is_active: true };
+            await WebApiPeople.createAdminRole(body);
+            // actionSaveAnd(response.data.id);
             message.success('Rol registrado')
+            actionBack()
         } catch (e) {
             console.log(e)
             setFetching(false)
-            setLoading({})
             message.error('Rol no registrado')
         }
     }
 
-    const onFinisUpdate = async (values) =>{
+    const onFinisUpdate = async (values) => {
         try {
             // let body = {...values, node: currentNode.id};
             await WebApiPeople.updateAdminRole(router.query?.id, values);
@@ -84,19 +142,22 @@ const DetailsRoles = ({
         }
     }
 
-    const onFinish = (values) =>{
-        let checks = Object.entries({...checkedPermissions});
-        let module_perm = checks.reduce((acc, current) =>{
-            if(!current[1]) return acc;
-            return [...acc, parseInt(current[0])];
-        }, []);
-        if(module_perm.length <=0){
+    // const module_perm = useMemo(() => {
+    //     let checks = Object.entries(checkedPermissions);
+    //     return checks.reduce((acc, current) => {
+    //         if (!current[1]) return acc;
+    //         return [...acc, parseInt(current[0])];
+    //     }, []);
+    // }, [checkedPermissions])
+
+    const onFinish = (values) => {
+        if (checkedPerms?.length <= 0) {
             message.error('Permisos no seleccionados')
-            setLoading({})
             return;
         }
         setFetching(true);
-        let body = {...values, module_perm};
+        let module_perm = checkedPerms?.map(e => e?.id);
+        let body = { ...values, module_perm };
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -104,121 +165,283 @@ const DetailsRoles = ({
         actionFunction[action](body);
     }
 
-    const actionBack = () =>{
+    const getModules = async () => {
+        try {
+            setLoadModules(true)
+            let response = await WebApiPeople.getModuldes();
+            setListModules(response?.data?.results)
+            setLoadModules(false)
+        } catch (e) {
+            console.log(e)
+            setLoadModules(false)
+            setListModules([])
+        }
+    }
+
+    const actionBack = () => {
         router.push({
             pathname: '/security/roles',
             query: newFilters
         })
     }
 
-    const actionCreate = () =>{
-        formRol.resetFields();
-        setCheckedPermissions({})
-        setFetching(false)
-        setLoading({})
+    // const actionCreate = () => {
+    //     formRol.resetFields();
+    //     setCheckedPermissions({})
+    //     setFetching(false)
+    //     setLoading({})
+    // }
+
+    // const actionEdit = (id) => {
+    //     router.push({
+    //         pathname: '/security/roles/edit',
+    //         query: { ...router.query, id }
+    //     })
+    // }
+
+    // const actionSaveAnd = (id) => {
+    //     const actionFunction = {
+    //         back: actionBack,
+    //         create: actionCreate,
+    //         edit: actionEdit,
+    //     }
+    //     actionFunction[actionType](id);
+    // }
+
+    const onChangeModule = (value) => {
+        let query = '';
+        if (!noValid.includes(value)) query = `?module_id=${value}`;
+        // setCheckedPermissions({})
+        setCheckedPerms([])
+        setValueSearch(null)
+        setIsSearch(false)
+        getModulesPermissions(query)
     }
 
-    const actionEdit = (id) =>{
-        router.push({
-            pathname: '/security/roles/edit',
-            query: {...router.query, id}
-        })
+    const getListType = (type = 1) => {
+        const find_ = item => item?.perm_type == type;
+        let result = listPermissions?.find(find_);
+        if (!result) return [];
+        return result?.modules;
     }
 
-    const actionSaveAnd = (id) =>{
-        const actionFunction = {
-            back: actionBack,
-            create: actionCreate,
-            edit: actionEdit,
+    const catalogs = useMemo(() => {
+        return getListType(1);
+    }, [listPermissions])
+
+    const actions = useMemo(() => {
+        return getListType(2);
+    }, [listPermissions])
+
+    const Void = (
+        <div style={{ background: '#ffff', padding: 12 }}>
+            <Skeleton active loading />
+        </div>
+    )
+
+    const ExtraAction = (
+        <button
+            className='ant-btn-simple'
+            onClick={() => setOpenModal(true)}
+        >
+            Seleccionados: {checkedPerms?.length || 0}
+        </button>
+    )
+
+    const onSearch = ({ target: { value } }) => {
+        if (![undefined, null, "", " "].includes(value)) {
+            const filter_ = item => valueToFilter(item?.perm_name).includes(valueToFilter(value));
+            let results = list_modules_permissions?.reduce((list, item) => {
+                let modules = item?.modules?.reduce((module, record) => {
+                    let groups = record?.groups?.reduce((group, row) => {
+                        let perms = row?.perms?.filter(filter_);
+                        if (perms?.length <= 0) return group;
+                        return [...group, { ...row, perms }]
+                    }, [])
+                    if (groups?.length <= 0) return module;
+                    return [...module, { ...record, groups }]
+                }, [])
+                if (modules?.length <= 0) return list;
+                return [...list, { ...item, modules }];
+            }, [])
+            setListPermissions(results)
+            setIsSearch(true)
+            return;
         }
-        actionFunction[actionType](id);
+        setListPermissions(list_modules_permissions)
+        setIsSearch(false)
+    }
+
+    const debounceSearch = useCallback(debounce(onSearch, 500), [list_modules_permissions]);
+
+    const onChangeSearch = (e) => {
+        setValueSearch(e?.target?.value)
+        debounceSearch(e)
     }
 
     return (
-        <DetailsCustom
-            action={action}
-            idForm='form-roles'
-            loading={loading}
-            fetching={fetching}
-            actionBack={actionBack}
-            setLoading={setLoading}
-            setActionType={setActionType}
-            titleCard={action == 'add'
-                ? 'Registrar nuevo rol'
-                : 'Información del rol'
-            }
-        >
-            <Spin spinning={fetching}>
-                <Row>
-                    <Col span={24}>
-                        <Form
-                            layout='vertical'
-                            id='form-roles'
-                            form={formRol}
-                            onFinish={onFinish}
-                            onFinishFailed={e=> setLoading({})}
-                            initialValues={{
-                                is_active: true
-                            }}
-                        >
-                            <Form.Item
-                                name='name'
-                                label='Nombre del rol'
-                                rules={[ruleRequired]}
+        <>
+            <Row gutter={[0, 16]}>
+                <Col span={24} className='header-card'>
+                    <div className='title-action-content'>
+                        <p className='title-action-text'>
+                            {action == 'add'
+                                ? 'Registrar nuevo rol'
+                                : 'Información del rol'
+                            }
+                        </p>
+                        <div className='content-end' style={{ gap: 8 }}>
+                            <Button
+                                onClick={() => actionBack()}
+                                icon={<ArrowLeftOutlined />}
                             >
-                                <Input
-                                    allowClear
-                                    maxLength={150}
-                                    className='input-with-clear'
-                                    placeholder='Ej. Administrador, Ejecutivo, Reclutador, etc.'
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name='is_active'
-                                label='¿Activo?'
-                                style={{display: 'none'}}
-                            >
-                                <Select
-                                    placeholder='Seleccionar una opción'
-                                    options={[
-                                        {value: true, key: true, label: 'Sí'},
-                                        {value: false, key: false, label: 'No'}
-                                    ]}
-                                />
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                    <Col span={24}>
-                        <Skeleton active loading={load_modules_permissions}>
-                            {list_modules_permissions?.length > 0 ? (
-                                <div className='tabs-vacancies mode1'>
-                                    <Tabs type='card'>
-                                        {list_modules_permissions.map((item, idx) => (
-                                            <Tabs.TabPane
-                                                tab={item.khorplus_module?.name}
-                                                forceRender
-                                                key={idx+1}
-                                            >
-                                                <PermissionsFields
-                                                    module={item}
-                                                    checkedPermissions={checkedPermissions}
-                                                    setCheckedPermissions={setCheckedPermissions}
-                                                />
-                                            </Tabs.TabPane>
-                                        ))}
-                                    </Tabs>
-                                </div>
-                            ):(
-                                <div className='placeholder-list-items'>
-                                    <p>Ningún módulo encontrado</p>
-                                </div>
-                            )}
-                        </Skeleton>
-                    </Col>
-                </Row>
-            </Spin>
-        </DetailsCustom>
+                                Regresar
+                            </Button>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={24} className='ant-table-colla'>
+                    <Spin spinning={fetching}>
+                        <Row gutter={[0, 16]}>
+                            <Col span={24}>
+                                <Card bodyStyle={{ padding: 12 }}>
+                                    <Form
+                                        layout='vertical'
+                                        id='form-roles'
+                                        form={formRol}
+                                        onFinish={onFinish}
+                                    >
+                                        <Row gutter={[24, 0]}>
+                                            <Col xs={24} lg={12}>
+                                                <Form.Item
+                                                    name='name'
+                                                    label='Nombre'
+                                                    rules={[ruleRequired]}
+                                                >
+                                                    <Input
+                                                        allowClear
+                                                        maxLength={150}
+                                                        className='input-with-clear'
+                                                        placeholder='Ej. Administrador, Ejecutivo, Reclutador, etc.'
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col xs={24} lg={12}>
+                                                <Form.Item
+                                                    label='Tipo'
+                                                    name='node'
+                                                    tooltip={action == 'edit' ? 'Este campo no se puede actualizar' : ''}
+                                                >
+                                                    <Select
+                                                        placeholder='Seleccionar una opción'
+                                                        disabled={action == 'edit'}
+                                                        options={[
+                                                            { value: '', key: '1', label: 'Global' },
+                                                            { value: currentNode?.id, key: '2', label: 'Empresa' }
+                                                        ]}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={24} className='content-end'>
+                                                <Button htmlType='submit'>
+                                                    {action == 'add' ? 'Guardar' : 'Actualizar'}
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+                                </Card>
+                            </Col>
+                            <Col span={24}>
+                                <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                                    <Typography.Title level={3} style={{ marginBottom: 0 }}>
+                                        Listado de permisos
+                                    </Typography.Title>
+                                    <Space>
+                                        <Tooltip title={`Los permisos previamente seleccionados serán eliminados
+                                        después de filtrar por módulo.
+                                    `}>
+                                            <InfoCircleOutlined style={{
+                                                fontSize: 18, display: 'flex',
+                                                color: 'rgba(0,0,0,0.2)'
+                                            }} />
+                                        </Tooltip>
+                                        <Input
+                                            allowClear
+                                            className='input-jb-clear'
+                                            placeholder='Buscar'
+                                            value={valueSearch}
+                                            onChange={onChangeSearch}
+                                        />
+                                        <Select
+                                            showSearch
+                                            allowClear
+                                            loading={loadModules}
+                                            disabled={loadModules}
+                                            className='select-jb'
+                                            onChange={onChangeModule}
+                                            placeholder='Seleccionar un módulo'
+                                            optionFilterProp='children'
+                                            style={{ width: 200 }}
+                                        >
+                                            {listModules.length > 0 && listModules.map(item => (
+                                                <Select.Option value={item?.id} key={item?.id}>
+                                                    {item?.name}
+                                                </Select.Option>
+                                            ))}
+                                        </Select>
+                                    </Space>
+                                </Space>
+                            </Col>
+                            <Col span={24}>
+                                <Tabs type='card' className='ant-tabs-perms' tabBarExtraContent={ExtraAction}>
+                                    <Tabs.TabPane key='1' tab='Catálogos'>
+                                        {!load_modules_permissions ? (
+                                            <CardType
+                                                isSearch={isSearch}
+                                                typeList={catalogs}
+                                                // checkedPermissions={checkedPermissions}
+                                                // setCheckedPermissions={setCheckedPermissions}
+                                                setCheckedPerms={setCheckedPerms}
+                                                checkedPerms={checkedPerms}
+                                            />
+                                        ) : Void}
+                                    </Tabs.TabPane>
+                                    <Tabs.TabPane key='2' tab='Acciones'>
+                                        {!load_modules_permissions ? (
+                                            <CardType
+                                                isSearch={isSearch}
+                                                typeList={actions}
+                                                // checkedPermissions={checkedPermissions}
+                                                // setCheckedPermissions={setCheckedPermissions}
+                                                setCheckedPerms={setCheckedPerms}
+                                                checkedPerms={checkedPerms}
+                                            />
+                                        ) : Void}
+                                    </Tabs.TabPane>
+                                </Tabs>
+                            </Col>
+                        </Row>
+                    </Spin>
+                </Col>
+            </Row>
+            <ModalPerms
+                visible={openModal}
+                close={() => setOpenModal(false)}
+                checkedPerms={checkedPerms}
+                setCheckedPerms={setCheckedPerms}
+            />
+        </>
     )
 }
 
-export default DetailsRoles
+const mapState = (state) => {
+    return {
+        list_modules_permissions: state.catalogStore.list_modules_permissions,
+        load_modules_permissions: state.catalogStore.load_modules_permissions,
+        currentNode: state.userStore.current_node
+    }
+}
+
+export default connect(
+    mapState, { getModulesPermissions }
+)(DetailsRoles);

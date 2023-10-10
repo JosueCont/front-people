@@ -84,7 +84,7 @@ const DetailsLogs = ({
                     </div>
                 </div>
             </Col>
-            <Col span={24} className='ant-spinning'>
+            <Col span={24} className='ant-table-colla'>
                 <Spin spinning={loading}>
                     <Row gutter={[24, 24]}>
                         <Col span={24}>

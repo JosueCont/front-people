@@ -198,7 +198,13 @@ const FormPayrollPerson = ({
     await WebApiPayroll.getPayrollPerson(person.id)
       .then((response) => {
         if (response.data) {
-          let item = response.data;
+          let item = response.data;          
+          if (item.id) {            
+            setIdPayroll(item.id);
+            if (item.daily_salary) {
+              setDailySalaryDisabled(true);
+            }
+          }
           setPerceptionCode(item.payment_calendar?.perception_type?.code)
           setPayrollPerson(item);
           setContractTypeSelected(item.contract_type)
@@ -243,13 +249,7 @@ const FormPayrollPerson = ({
             })
           }
           
-          setLastDayPaid(item.last_day_paid);
-          if (item.id) {
-            setIdPayroll(item.id);
-            if (item.daily_salary) {
-              setDailySalaryDisabled(true);
-            }
-          }
+          setLastDayPaid(item.last_day_paid);         
         }
         setLoading(false);
       })

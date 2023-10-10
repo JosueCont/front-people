@@ -20,12 +20,12 @@ class WebApiPeople {
 
   // Se agregan apis existentes
 
-  static downloadTemplate(node, query){
-    return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, {responseType: 'blob'});
+  static downloadTemplate(node, query) {
+    return axiosApi.get(`/person/person/generate_template/?node_id=${node}${query}`, { responseType: 'blob' });
   }
 
-  static downloadCatalogs(node){
-    return axiosApi.get(`/business/all-catalogs/?node_id=${node}`, {responseType: 'blob'});
+  static downloadCatalogs(node) {
+    return axiosApi.get(`/business/all-catalogs/?node_id=${node}`, { responseType: 'blob' });
   }
 
   // Termina
@@ -56,12 +56,12 @@ class WebApiPeople {
 
   // Nuevas apis
 
-  static getCollaborators(node, query){
+  static getCollaborators(node, query) {
     return WebApi.ApisType(`/person/search?node=${node}${query}`, 'get')
   }
 
-  static downloadReportPeople(node, query){
-    return axiosApi.get(`/person/search?node=${node}${query}`, {responseType: 'blob'});
+  static downloadReportPeople(node, query) {
+    return axiosApi.get(`/person/search?node=${node}${query}`, { responseType: 'blob' });
   }
 
   // Termina
@@ -622,19 +622,24 @@ class WebApiPeople {
 
   //Roles de administrador
 
-  static getModulesPermissions() {
-    return WebApi.ApisType("/security/khorplus-module-with-perm/", "get");
+  static getModuldes() {
+    return WebApi.ApisType('/setup/khorplus-module/', 'get')
   }
 
-  static getAdminRoles(node, query) {
-    return WebApi.ApisType(
-      `/security/administrator-profile/?node=${node}${query}`,
-      "get"
-    );
+  static getGroupsPermissions(query = '') {
+    return WebApi.ApisType(`/security/perm-grouper/${query}`, 'get')
   }
 
-  static getInfoAdminRole(id) {
-    return WebApi.ApisType(`/security/administrator-profile/${id}/`, "get");
+  static getModulesPermissions(query) {
+    return WebApi.ApisType(`/security/khorplus-module-with-perm/${query}`, "get");
+  }
+
+  static getAdminRoles(query = '') {
+    return WebApi.ApisType(`/security/administrator-profile/${query}`, "get");
+  }
+
+  static getInfoAdminRole(id, query = '') {
+    return WebApi.ApisType(`/security/administrator-profile/${id}/${query}`, "get");
   }
 
   static createAdminRole(data) {
@@ -666,7 +671,7 @@ class WebApiPeople {
   }
 
   /*** WORKING/NON-WORKING DAYS ***/
-  static getNonWorkingDays({ node, offset = 0, limit = 10, year = "", type = null  }) {
+  static getNonWorkingDays({ node, offset = 0, limit = 10, year = "", type = null }) {
     let _URL = `/business/non-working-day/?node=${node}`;
 
     _URL += offset && offset > 0 ? `&offset=${offset}` : "";
@@ -774,14 +779,14 @@ class WebApiPeople {
     );
   }
 
-  static PersonUpDown(data){
+  static PersonUpDown(data) {
     return WebApi.ApisType(`/payroll/payroll-person/up_down/`, 'post', data);
   }
 
-  static rfcsFileDownload(data){
+  static rfcsFileDownload(data) {
     return WebApi.ApisType(`/person/person/rfcs_txt_download/`, 'post', data);
   }
-  
+
 }
 
 export default WebApiPeople;

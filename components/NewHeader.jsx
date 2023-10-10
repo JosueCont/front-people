@@ -226,7 +226,7 @@ const NewHeader = ({
                 (item) => item.app === "PAYROLL" && item.is_active
               ) && (
                 <>
-                  <ButtonWizardLight data={infoCodeApps} />
+                  <ButtonWizardLight node={props.currentNode} data={infoCodeApps} />
                 </>
 
 
