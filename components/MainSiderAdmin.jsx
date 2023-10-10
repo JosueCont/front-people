@@ -218,7 +218,7 @@ const MainSider = ({
         children01.push(getItem("Nómina", "payroll", <></>, children001))
       }
       let children0001 = [
-        getItem("Préstamos", "lending"),
+        //getItem("Préstamos", "lending"),
         getItem("Vacaciones", "holidays"),
         getItem("Permisos", "permission"),
         getItem("Incapacidad", "incapacity"),
@@ -774,7 +774,7 @@ const mapState = (state) => {
     user: state.userStore.user,
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
-    permissions: state.userStore.permissions,
+    //permissions: state.userStore.permissions,
     applications: state.userStore.applications,
     companyFiscalInformation: state.fiscalStore.company_fiscal_information,
   };
