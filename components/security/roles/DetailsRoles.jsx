@@ -58,6 +58,7 @@ const DetailsRoles = ({
 
     const [listPermissions, setListPermissions] = useState([]);
     const [valueSearch, setValueSearch] = useState(null);
+    const [isSearch, setIsSearch] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
 
@@ -89,7 +90,7 @@ const DetailsRoles = ({
 
     useEffect(() => {
         if (Object.keys(infoAdminRol).length <= 0) return;
-        
+
         let values = {};
         values.name = infoAdminRol?.name ? infoAdminRol?.name : null;
         values.node = infoAdminRol?.node ? infoAdminRol?.node : "";
@@ -104,7 +105,8 @@ const DetailsRoles = ({
     const getInfoAdminRol = async (id) => {
         try {
             setFetching(true)
-            let response = await WebApiPeople.getInfoAdminRole(id);
+            let params = '?include-perms-detail=true';
+            let response = await WebApiPeople.getInfoAdminRole(id, params);
             setInfoAdminRol(response.data)
             setFetching(false)
         } catch (e) {
@@ -212,6 +214,7 @@ const DetailsRoles = ({
         // setCheckedPermissions({})
         setCheckedPerms([])
         setValueSearch(null)
+        setIsSearch(false)
         getModulesPermissions(query)
     }
 
@@ -262,9 +265,11 @@ const DetailsRoles = ({
                 return [...list, { ...item, modules }];
             }, [])
             setListPermissions(results)
+            setIsSearch(true)
             return;
         }
         setListPermissions(list_modules_permissions)
+        setIsSearch(false)
     }
 
     const debounceSearch = useCallback(debounce(onSearch, 500), [list_modules_permissions]);
@@ -392,6 +397,7 @@ const DetailsRoles = ({
                                     <Tabs.TabPane key='1' tab='Catálogos'>
                                         {!load_modules_permissions ? (
                                             <CardType
+                                                isSearch={isSearch}
                                                 typeList={catalogs}
                                                 // checkedPermissions={checkedPermissions}
                                                 // setCheckedPermissions={setCheckedPermissions}
@@ -403,6 +409,7 @@ const DetailsRoles = ({
                                     <Tabs.TabPane key='2' tab='Acciones'>
                                         {!load_modules_permissions ? (
                                             <CardType
+                                                isSearch={isSearch}
                                                 typeList={actions}
                                                 // checkedPermissions={checkedPermissions}
                                                 // setCheckedPermissions={setCheckedPermissions}

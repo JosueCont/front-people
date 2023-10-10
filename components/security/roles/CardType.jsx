@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import CardModule from './CardModule';
 
 const CardType = ({
+    isSearch = false,
     typeList = [],
     checkedPermissions = {},
     setCheckedPermissions = () => { },
     setCheckedPerms = () => { },
     checkedPerms = []
 }) => {
+
+    const [activeKey, setActiveKey] = useState([]);
+
+    useEffect(() => {
+        if (!isSearch) {
+            setActiveKey([])
+            return;
+        }
+        let keys_ = typeList?.map((_, idx) => idx);
+        setActiveKey(keys_)
+    }, [isSearch, typeList])
+
 
     const Void = ({ type = 2 }) => (
         <div style={{ background: type == 1 ? '#ffff' : '#fafafa', padding: type == 1 ? 24 : 12 }}>
@@ -57,12 +70,18 @@ const CardType = ({
     return (
         <>
             {typeList?.length > 0 ? (
-                <Collapse ghost bordered={false}>
+                <Collapse
+                    ghost
+                    activeKey={activeKey}
+                    bordered={false}
+                    onChange={e => setActiveKey(e)}
+                >
                     {typeList?.map((row, idx) => (
                         <CardModule
                             row={row}
                             key={idx}
                             empty={<Void />}
+                            isSearch={isSearch}
                             checkedPerms={checkedPerms}
                             setCheckedPerms={setCheckedPerms}
                         />

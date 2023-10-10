@@ -1,4 +1,6 @@
 import React, {
+    useEffect,
+    useState,
     useMemo
 } from 'react';
 import {
@@ -10,10 +12,23 @@ import CardGroup from './CardGroup';
 const CardModule = ({
     empty,
     row = {},
+    isSearch,
     checkedPerms = [],
     setCheckedPerms = () => { },
     ...props
 }) => {
+
+    const [activeKey, setActiveKey] = useState([]);
+
+    useEffect(() => {
+        if (!isSearch) {
+            setActiveKey([])
+            return;
+        }
+        let keys_ = row?.groups?.map((_, idx) => idx);
+        setActiveKey(keys_)
+    }, [isSearch, row])
+
 
     const isAll = useMemo(() => {
         const reduce_ = (acc, item) => ([...acc, ...item?.perms]);
@@ -21,7 +36,7 @@ const CardModule = ({
         let ids = checkedPerms?.map(e => e?.id);
         return perms.every(row => ids.includes(row?.id))
     }, [checkedPerms])
-    
+
     const onCheckModule = ({ target: { checked } }) => {
         const reduce_ = (acc, item) => ([...acc, ...item?.perms]);
         let perms = row.groups?.reduce(reduce_, []);
@@ -48,7 +63,11 @@ const CardModule = ({
             ) : <></>}
         >
             {row?.groups?.length > 0 ? (
-                <Collapse bordered={false}>
+                <Collapse
+                    activeKey={activeKey}
+                    bordered={false}
+                    onChange={e => setActiveKey(e)}
+                >
                     {row?.groups?.map((item, index) => (
                         <CardGroup
                             key={index}
