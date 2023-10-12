@@ -66,6 +66,8 @@ const DataPerson = ({
   const [photo, setPhoto] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [isActiveAdmin, setIsActiveAdmin] = useState(false);
+  const [curpIsValid, setCurpIsValid] = useState(false)
+  const [loadingDataCurp, setLoadingDataCurp] = useState(false)
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
@@ -78,12 +80,33 @@ const DataPerson = ({
   const [loading, setLoading] = useState(true);
   const [personWT, setPersonWT] = useState(false);
   const [listPersons, setListPersons] = useState([]);
+  const curp = Form.useWatch(['curp'], formPerson);
+
   // const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
   // const [substituteSupervisorList, setSubstituteSupervisorList] = useState([]);
   //
   const isAdmin = Form.useWatch('is_admin', formPerson);
   const id_supervisor = Form.useWatch('immediate_supervisor', formPerson);
   const id_substitute = Form.useWatch('substitute_immediate_supervisor', formPerson);
+
+  
+  useEffect(() => {
+    formPerson.validateFields(['curp'], { validateOnly: true }).then(
+      () => {
+        /* setSubmittable(true); */
+        setCurpIsValid(true)
+      },
+      () => {
+        if(curpIsValid !== false){
+          console.log('false')
+          setCurpIsValid(false)
+        }
+        
+        /* setSubmittable(false); */
+      },
+    );
+  }, [curp])
+  
 
   useEffect(() => {
     setPersonWT(person.id);
@@ -149,6 +172,11 @@ const DataPerson = ({
       is_admin: person.is_admin,
       administrator_profile: person?.administrator_profile?.id ?? null
     });
+    console.log('person=>curp=>', person.curp)
+    if(person.curp){
+      setCurpIsValid(true)
+    }
+
     if (person.patronal_registration) {
       formPerson.setFieldsValue({
         patronal_registration: person.patronal_registration,
@@ -186,6 +214,7 @@ const DataPerson = ({
       formPerson.setFieldsValue({
         is_admin: person.is_admin,
       });
+      
 
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
@@ -397,35 +426,37 @@ const DataPerson = ({
   }
 
   const getIfoFromCurp = () => {
-    const curp = formPerson.getFieldValue('curp')
-    if(curp){
-      const birth_date = curp.slice(4,10)
-      let date = ""
-      const current_year = moment().format("YYYY")
-      const birth_year = birth_date.slice(0,2)
+    setLoadingDataCurp(true)
+    setTimeout(() => {
+      const curp = formPerson.getFieldValue('curp')
+      if(curp){
+        const birth_date = curp.slice(4,10)
+        let date = ""
+        const current_year = moment().format("YYYY")
+        const birth_year = birth_date.slice(0,2)
 
-      if (birth_year < 50 && birth_year < current_year){
-        date = "20" + birth_date.slice(0,2)
-      }else{
-        date = "19" + birth_date.slice(0,2)
+        if (birth_year < 50 && birth_year < current_year){
+          date = "20" + birth_date.slice(0,2)
+        }else{
+          date = "19" + birth_date.slice(0,2)
+        }
+        const birth_date_str = date + "-" + birth_date.slice(2,4) + "-" + birth_date.slice(4,6)
+        
+        const birth = moment(birth_date_str)
+        
+        const gender = curp[10]
+        const state = curp.slice(11,13)
+        const birth_place = getState(state)
+        
+        formPerson.setFieldsValue({
+          gender: gender === "H" ? 1 : gender === "M" ? 2 : 3,
+          birth_date: birth
+        })
+        message.success("Información obtenida con xito")
+        
       }
-      const birth_date_str = date + "-" + birth_date.slice(2,4) + "-" + birth_date.slice(4,6)
-      
-      const birth = moment(birth_date_str)
-      
-      const gender = curp[10]
-      const state = curp.slice(11,13)
-      const birth_place = getState(state)
-      
-      formPerson.setFieldsValue({
-        gender: gender === "H" ? 1 : gender === "M" ? 2 : 3,
-        birth_date: birth
-      })
-       
-      
-    }
-    
-
+      setLoadingDataCurp(false)
+    }, "1000");
   } 
 
   const getState = (state) => {
@@ -964,16 +995,31 @@ const DataPerson = ({
                 <Form.Item
                   name="curp"
                   label={<span>CURP {' '}
-                  <Space size={20} >
-                    <>
-                      <Typography.Link><a href="https://www.gob.mx/curp/" target={'_blank'}><small>[Consultar curp] <CopyClipboard nameField={'curp'}/></small></a></Typography.Link>
-                    </>
-                    <Typography.Link onClick={() => getIfoFromCurp() } >*Obtener datos del curp*</Typography.Link>
+                  <Space >
+                      <Typography.Link>
+                          <a href="https://www.gob.mx/curp/" target={'_blank'}>
+                            <small>[Consultar curp]</small>
+                          </a>
+                        </Typography.Link>
+                        <Typography.Link>
+                          <CopyClipboard nameField={'curp'}/>
+                        </Typography.Link>
+                    {
+                      curpIsValid && <Typography.Link onClick={() => getIfoFromCurp() } >
+                        {
+                          loadingDataCurp ?
+                          "Obteniendo datos..." :
+                          "*Obtener datos del curp*"
+                        }
+                        </Typography.Link>
+                    }
+                    
                   </Space>
                   </span> } 
-                  rules={[config.applications.find(
-                    (item) => item.app === "PAYROLL" && item.is_active
-                  ) ? ruleRequired : {}, curpFormat]}
+                  rules={[
+                    config.applications.find(
+                      (item) => item.app === "PAYROLL" && item.is_active
+                    ) ? ruleRequired : {}, curpFormat]}
                 >
                   <Input maxLength={18} />
                 </Form.Item>
