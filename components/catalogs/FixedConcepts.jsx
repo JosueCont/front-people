@@ -53,44 +53,30 @@ const FixedConcepts = ({ currentNode, ...props }) => {
   const [catalog, setCat] = useState([]);
   const [showNumPeriods, SetShowNumPeriods] = useState(false);  
   const [applicationDate, setApplicationDate] = useState(null)
+  const [showAppliesVacation, setShowAppliesVacation] = useState(false)
 
-  const data = [
-    // {
-    //   name: "applies_to_unjustified_absences",
-    //   label: "Aplica para faltas injustificadas.",
-    //   value: false,
-    // },
-    // {
-    //   name: "applies_to_excused_absences",
-    //   label: "Aplica para faltas justificadas.",
-    //   value: false,
-    // },
-    {
-      name: "not_applies_to_absences",
-      label: "No aplicar para faltas.",
-      value: false,
-    },
-    // {
-    //   name: "applies_to_paid_permit",
-    //   label: "Aplica para permiso con goce.",
-    //   value: false,
-    // },
-    // {
-    //   name: "applies_to_unpaid_permit",
-    //   label: "Aplica para permiso sin goce.",
-    //   value: false,
-    // },
-    {
-      name: "not_applies_to_disabilities",
-      label: "No aplicar aplicar para incapacidades.",
-      value: false,
-    },
-    {
-      name: "applies_to_vacations",
-      label: "No aplicar para vacaciones.",
-      value: false,
-    },
-  ];
+  // const data = [   
+  //   {
+  //     name: "not_applies_to_absences",
+  //     label: "No otorgar en caso de faltas.",
+  //     value: false,
+  //   },    
+  //   {
+  //     name: "not_applies_to_disabilities",
+  //     label: "No otorgar en caso de incapacidades.",
+  //     value: false,
+  //   },
+  //   {
+  //     name: "affect_vacations",
+  //     label: "Afectar con vacaciones.",
+  //     value: false,
+  //   },
+  //   {
+  //     name: "applies_to_vacations",
+  //     label: "No otorgar en caso de vacaciones.",
+  //     value: false,
+  //   },    
+  // ];
 
   const columns = [
     {
@@ -239,6 +225,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
   }, [props.fixed_concept, props.group_fixed_concept, key]);
 
   const onFinishForm = (value) => {
+    console.log("Values ", value)
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
@@ -272,6 +259,9 @@ const FixedConcepts = ({ currentNode, ...props }) => {
       value.deduction_type = null
     }
     value.application_date = moment (value.application_date).format("YYYY-MM-DD")
+    if (value.not_applies_to_vacations == undefined){
+      value.not_applies_to_vacations = false
+    }
     
     
     
@@ -285,6 +275,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
 
       }
       saveRegister(value);}
+    setShowAppliesVacation(false);
   };
 
   const saveRegister = async (data) => {
@@ -316,13 +307,13 @@ const FixedConcepts = ({ currentNode, ...props }) => {
     let checksValues = {};
 
     console.log(item);
-    data.map((a) => {
-      if (item[a.name]) {
-        checksValues[a.name] = true;
-      } else {
-        checksValues[a.name] = false;
-      }
-    });
+    // data.map((a) => {
+    //   if (item[a.name]) {
+    //     checksValues[a.name] = true;
+    //   } else {
+    //     checksValues[a.name] = false;
+    //   }
+    // });
     setEdit(true);
     setId(item.id);    
 
@@ -341,10 +332,16 @@ const FixedConcepts = ({ currentNode, ...props }) => {
       period_config: item.period_config,
       application_mode: item.application_mode,
       num_of_periods: item.num_of_periods,
-      application_date: item.application_date ? moment(item.application_date, 'YYYY-MM-DD'): null
+      application_date: item.application_date ? moment(item.application_date, 'YYYY-MM-DD'): null,
+      not_applies_to_absences: item.not_applies_to_absences,
+      not_applies_to_disabilities: item.not_applies_to_disabilities,
+      affect_vacations: item.affect_vacations,
+      not_applies_to_vacations: item.not_applies_to_vacations
+      
     });
     SetShowNumPeriods(item.application_mode == 1 ? false : true)
-    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);    
+    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
+    if (item.affect_vacations) setShowAppliesVacation(true);    
   };
 
   const updateRegister = async (value) => {
@@ -360,7 +357,7 @@ const FixedConcepts = ({ currentNode, ...props }) => {
           resetForm();
           message.success(messageUpdateSuccess);
           setLoading(false);
-          SetShowNumPeriods(true);
+          SetShowNumPeriods(false);
         })
         .catch((error) => {
           setLoading(false);
@@ -448,27 +445,39 @@ const FixedConcepts = ({ currentNode, ...props }) => {
     {value: 3, label: 'Frecuencia'}
   ]
 
-  const RenderConditions = ({ data }) => {
-    return data.map((item, i) => {
-      return (
-        <Col lg={6} xs={22} md={12}>
-          <Form.Item
-            initialValue={item.value}
-            valuePropName="checked"
-            name={item.name}
-          >
-            <Checkbox
-              id={item.name}
-              key={item.value + i}
-              className="CheckGroup"
-            >
-              <span style={{ color: "black" }}>{item.label}</span>
-            </Checkbox>
-          </Form.Item>
-        </Col>
-      );
-    });
-  };
+  // const RenderConditions = ({ data }) => {
+  //   return data.map((item, i) => {
+  //     return (
+  //       <Col lg={6} xs={22} md={12}>
+  //         <Form.Item
+  //           initialValue={item.value}
+  //           valuePropName="checked"
+  //           name={item.name}            
+  //         >
+  //           <Checkbox
+  //             id={item.name}
+  //             key={item.value + i}
+  //             className="CheckGroup"
+  //           >
+  //             <span style={{ color: "black" }}>{item.label}</span>
+  //           </Checkbox>
+  //         </Form.Item>
+  //       </Col>
+  //     );
+  //   });
+  // };
+
+  const changeAffectVacations = (e) => {
+    if (e.target.checked){
+      setShowAppliesVacation(true);
+    }
+    else{
+      setShowAppliesVacation(false);
+      let check = document.getElementById("not_applies_to_vacations")
+      if (check.checked) check.click()    
+    }
+    
+  }
 
   const editGroup = (item) => {
     formG.setFieldsValue({
@@ -628,8 +637,8 @@ const FixedConcepts = ({ currentNode, ...props }) => {
                     </Form.Item>
                   </Col>
                 )}               
-                </Row>
-                <Row gutter={20}>
+              </Row>
+              <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     name="data_type"
@@ -663,21 +672,21 @@ const FixedConcepts = ({ currentNode, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                    name='application_date'
-                    label='Fecha de inicio de aplicación'
-                    rules={[ruleRequired]}
-                  >
-                    <DatePicker                      
-                      style={{ width: "100%" }}
-                      placeholder='Seleccionar una fecha'                                                
-                      format='YYYY-MM-DD'
-                      onChange={changeApplicationDate}
-                    />
-                  </Form.Item>
+              <Form.Item
+                  name='application_date'
+                  label='Fecha de inicio de aplicación'
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker                      
+                    style={{ width: "100%" }}
+                    placeholder='Seleccionar una fecha'                                                
+                    format='YYYY-MM-DD'
+                    onChange={changeApplicationDate}
+                  />
+                </Form.Item>
                 </Col>
-                </Row>
-                <Row gutter={20}>
+              </Row>
+              <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     initialValue={1}
@@ -706,8 +715,8 @@ const FixedConcepts = ({ currentNode, ...props }) => {
                     <Input type={"number"} min={0} />
                   </Form.Item>
                 </Col>
-                </Row>
-                <Row gutter={20}>
+              </Row>
+              <Row gutter={20}>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item
                     initialValue={1}
@@ -750,10 +759,56 @@ const FixedConcepts = ({ currentNode, ...props }) => {
                 >
                   <Input type={"number"} />
                 </Form.Item>
-              </Col>}              
-                </Row>
-                <Row gutter={20}>               
-                <RenderConditions data={data} />
+                </Col>}              
+              </Row>
+              <Row gutter={20}>               
+              {/* <RenderConditions data={data} /> */}
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={false}
+                    valuePropName="checked"
+                    name="not_applies_to_absences"                    
+                  >
+                    <Checkbox className="CheckGroup">
+                      <span style={{ color: "black" }}>No otorgar en caso de faltas</span>
+                    </Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={false}
+                    valuePropName="checked"
+                    name="not_applies_to_disabilities"                    
+                  >
+                    <Checkbox className="CheckGroup">
+                      <span style={{ color: "black" }}>No otorgar en caso de incapacidades</span>
+                    </Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={false}
+                    valuePropName="checked"
+                    name="affect_vacations"                    
+                  >
+                    <Checkbox className="CheckGroup" onChange={changeAffectVacations}>
+                      <span style={{ color: "black" }}>Afectar con vacaciones</span>
+                    </Checkbox>
+                  </Form.Item>
+                </Col>
+                {showAppliesVacation && 
+                 <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={false}
+                    valuePropName="checked"
+                    name="not_applies_to_vacations"                    
+                    id="not_applies_to_vacations"                    
+                  >
+                    <Checkbox className="CheckGroup">
+                      <span style={{ color: "black" }}>No otorgar en caso de vacaciones</span>
+                    </Checkbox>
+                  </Form.Item>
+                 </Col>}               
               </Row>
               <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
                 <Col>
