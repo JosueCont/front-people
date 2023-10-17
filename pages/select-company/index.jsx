@@ -40,8 +40,6 @@ import { messageError } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import moment from "moment";
 import _, { debounce } from "lodash";
-import useOverflowWatch from "../../utils/useOverflowWatch";
-import CustomCard from "./CustomCard";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -283,22 +281,10 @@ const SelectCompany = ({ ...props }) => {
           .ant-breadcrumb-separator {
             color: white;
           }
-          .companyCardsWrapper{
-            display:grid; 
-            gap:1em;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))!important;
-          }
-          .addDots{
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
           .cardCompany {
             border-radius: 15px;
             border: none;
             position: relative;
-            height:100%
           }
           .ant-card-cover {
             display: flex;
@@ -334,11 +320,6 @@ const SelectCompany = ({ ...props }) => {
           }
           .ant-btn-icon-only {
             background-color: red !important;
-          }
-          @media (max-width:600px){
-            .companyCardsWrapper{
-              grid-template-columns: repeat(auto-fit, minmax(230px, 1fr))!important;
-            }
           }
         `}
       />
@@ -388,12 +369,59 @@ const SelectCompany = ({ ...props }) => {
                   <Col span={24} style={{textAlign:'center'}}>
                     <Input style={{ width:400 }} size={'large'} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
                   </Col>
-                  <div className="companyCardsWrapper">
                   {!treeTable &&
                     dataList.map((item) => (
-                      <CustomCard item={item} setCompanySelect={setCompanySelect}/>
+                      <Col
+                        key={item.permanent_code}
+                        xl={5}
+                        lg={5}
+                        md={5}
+                        sm={8}
+                        xs={24}
+                      >
+                        <Card
+                          className="cardCompany "
+                          hoverable
+                          cover={
+                            item.image ? (
+                              <img
+                                alt="example"
+                                src={item.image}
+                                style={{ width: "50%" }}
+                                onError={handleOnError}
+                              />
+                            ) : (
+                              <div className="center-content">
+                                <img
+                                  alt="example"
+                                  src="/images/LogoKhorconnect.svg"
+                                  style={{ width: "50%" }}
+                                  onError={handleOnError}
+                                />
+                              </div>
+                            )
+                          }
+                          style={{
+                            backgroundColor: `#262837`,
+                            padding:40
+                          }}
+                          onClick={() => setCompanySelect(item)}
+                        >
+                          {/* <span
+                          className="buttonEditCompany"
+                          style={{ position: "absolute" }}
+                        >
+                          <EditOutlined />
+                        </span> */}
+                          {/*<Meta*/}
+                          {/*  className="meta_company"*/}
+                          {/*  title={item.name}*/}
+                          {/*  // description="Ultima vez: Hace 2 Hrs"*/}
+                          {/*/>*/}
+                          <p style={{fontSize:15, color:'white'}}>{item.name}</p>
+                        </Card>
+                      </Col>
                     ))}
-                  </div>
                   {treeTable && dataList && (
                     <Col span={24}>
                       <Table
