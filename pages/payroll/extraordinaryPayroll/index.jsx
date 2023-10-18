@@ -21,6 +21,7 @@ import {
   Tag,
   Tooltip,
   Typography,
+  Upload,
 } from "antd";
 import {
   PlusOutlined,
@@ -38,6 +39,8 @@ import {
   FileExcelOutlined,
   ClearOutlined,
   FilePdfTwoTone,
+  DownloadOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -103,6 +106,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [downloading, setDownloading] = useState(false)
   const [typeSelected, settypeSelected] = useState(null)
   const [editable, setEditable] = useState(false);
+  const [openList, setOpenList] = useState(null)
 
   const date = new Date();
 
@@ -229,7 +233,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     },
     {
       title: "Total deducciones",
-      key: "total_deductions",
+      key: "total_deduction",
       className: "cursor_pointer",
       render: (item) => (
         <div>
@@ -688,9 +692,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           return { key: item.id, label: item.name, value: item.id };
         });
         setOptionsPaymentCalendars(calendars);
-      })
-      .catch((error) => {
-        console.log(error);
         message.error(messageError);
       });
   };
@@ -780,18 +781,32 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             );
             
             if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
-          }
+          }         
 
           setConsolidated(response.data.consolidated);
           // setExtraOrdinaryPayroll(response.data.payroll);
           setExtraOrdinaryPayroll(response.data.payroll);
         } else {
+          // console.log("Response -> ", response.data);
           setConsolidatedObj(response.data);
-          recalculate(response);
+          recalculate(response);       
         }
         validatedStatusPayroll(response.data.consolidated);
         setLoading(false);
         // setObjectSend(null);
+
+        let open_list = []
+        // Validamos si existen abiertos
+        response.data.payroll.map((elem =>{
+          if (elem.payroll_cfdi_person?.status == 0 || elem.payroll_cfdi_person == undefined){ 
+            
+            open_list.push(elem);
+          }
+        }))
+        if (open_list.length > 0){
+          setOpenList(open_list)
+        }
+        // console.log("list open -> ", open_list)
       })
       .catch((error) => {
         console.log(error?.response);
@@ -806,7 +821,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const recalculate = (response) => {
     
     if (extraOrdinaryPayroll == null) {
-      console.log("Else");
+      // console.log("Else");
       setExtraOrdinaryPayroll(
         response.data.sort((a, b) => a.person.id.localeCompare(b.person.id))
       );
@@ -833,6 +848,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     hideSelectAll: true,
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      // console.log("Selección...", selectedRows);
       if(selectedRows.length === 1){
         if(('payroll_cfdi_person' in selectedRows[0] && selectedRows[0]['payroll_cfdi_person']['status'] > 0)){
           settypeSelected('closed')
@@ -971,7 +987,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     if(step == 2){
       records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status == 1 || item?.payroll_cfdi_person?.status == 2  )
     }
-    console.log(records)
+    // console.log(records)
     return records
   }
   
@@ -1032,15 +1048,15 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const setPayrollCalculate = (data) => {
-    console.log('setPayrollCalculate===========>', data)
+    // console.log('setPayrollCalculate===========>', data)
     updPayroll(data.payroll[0])
     /* setExtraOrdinaryPayroll(data.payroll); */
     /* setObjectSend(data); */
   };
 
   const updPayroll = (newItem) => {
-    console.log('extraOrdinaryPayroll',extraOrdinaryPayroll)
-    console.log('newItem',newItem)
+    // console.log('extraOrdinaryPayroll',extraOrdinaryPayroll)
+    // console.log('newItem',newItem)
     let idx = extraOrdinaryPayroll.findIndex(item => item.key == newItem.key)
     let extraCopy = [...extraOrdinaryPayroll]
 
@@ -1083,10 +1099,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   };
 
   const changeStep = (next_prev) => {
-    console.log('movementType',movementType)
-    console.log('isOpen', isOpen)
+    // console.log('movementType',movementType)
+    // console.log('isOpen', isOpen)
     console.log(step)
-    console.log('next_prev',next_prev)
+    // console.log('next_prev',next_prev)
     if (next_prev) {
       //next
       if (step == 0) {
@@ -1583,7 +1599,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   }
 
   const validateNextBtn = () => {
-    console.log('consolidated=====================>', consolidated)
+    // console.log('consolidated=====================>', consolidated)
 
     if(getStampCount() > 0 ){
       return false
@@ -1659,6 +1675,44 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       }
     </Menu>
   );
+
+  const importBonusLayout = async (data) => {
+    // console.log("Sending data..", data)
+    setLoading(true);
+    // setExtraOrdinaryPayroll(null);
+    await WebApiPayroll.importBonusLayout(data)
+      .then((response) => {        
+        if (response.data.consolidated) {
+          if (movementType >= 1) {
+            let calculateExist = [];
+            calculateExist = response.data.payroll.filter(
+              (a) => a.payroll_cfdi_person && a.payroll_cfdi_person.status === 1
+            );
+            
+            if (calculateExist.length > 0) setConsolidatedObj(calculateExist);
+          }
+
+          setConsolidated(response.data.consolidated);
+          // setExtraOrdinaryPayroll(response.data.payroll);
+          setExtraOrdinaryPayroll(response.data.payroll);
+        } else {
+          // console.log("Response -> ", response.data);
+          setConsolidatedObj(response.data);
+          recalculate(response);
+        }
+        validatedStatusPayroll(response.data.consolidated);
+        setLoading(false);
+        // setObjectSend(null);
+      })
+      .catch((error) => {
+        console.log(error?.response);
+        if(error?.response?.data?.errors){
+          let errors = error?.response?.data?.errors;
+          setMessageModal(6,null,errors)
+        }
+        setLoading(false);
+      });
+  }
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -1784,7 +1838,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                                   : []
                               }
                             />
-                          </Form.Item>
+                          </Form.Item>                         
+                         
                         </Col>
                         {(job || department) && (
                           <Col xxs={1} xl={1}>
@@ -1794,10 +1849,80 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                               icon={<SearchOutlined />}
                             />
                           </Col>
-                        )}
+                        )}                      
                       </>
                     )}
-                  </Row>
+                  </Row>     
+                  {step == 0 && periodSelected && openList &&
+                    <Row>
+                      <Col xxs={24} sm={10} md={18} lg={6} xl={4} xxl={3} style={{marginRight:5}}>
+                        <Button
+                            loading={downloading === 1}
+                            style={{ marginTop: "30px", marginRight: 5 }}
+                            size="sm"
+                            icon={<DownloadOutlined />}
+                            onClick={() => {
+                              let data = {
+                              employee_list: listPersons && listPersons.length > 0 ? listPersons : openList?.length > 0 ? openList : consolidatedObj
+                              }                                  
+                              downLoadFileBlobAwait(
+                                  `${getDomain(
+                                      API_URL_TENANT
+                                  )}/payroll/export-bonus-layout`,
+                                  "Calculo_de_aguinaldos.xlsx",
+                                  "POST",
+                                  data,
+                                  "",
+                                  setDownloading,
+                                  1
+                              );
+                            }}
+                        >
+                          Descargar plantilla
+                        </Button>
+                      </Col>
+                      <Col xxs={24} sm={10} md={18} lg={6} xl={4} xxl={3} style={{ paddingTop: "30px" }}>
+                        <Upload
+                          {...{
+                            showUploadList: false,
+                            beforeUpload: (file) => {
+                              const isXlsx = file.name.includes(".xlsx");
+                              if (!isXlsx) {
+                                message.error(
+                                  `${file.name} no es un xlsx.`
+                                );
+                              }
+                              return isXlsx || Upload.LIST_IGNORE;
+                            },
+                            onChange(info) {
+                              const { status } = info.file;
+                              if (status !== "uploading") {
+                                if (info.fileList.length > 0) {
+                                  let data = new FormData();
+                                  data.append(
+                                    "File",
+                                    info.file
+                                      ? info.file.originFileObj
+                                      : info.fileList[
+                                          info.fileList.length - 1
+                                        ].originFileObj                                      
+                                  );                                 
+                                  data.append(
+                                    "payment_period",
+                                    periodSelected.id
+                                  );                                  
+                                  importBonusLayout(data);
+                                }
+                              }
+                            },
+                          }}
+                        >
+                          <Button size="sm" icon={<UploadOutlined />}>
+                            Cargar plantilla
+                          </Button>
+                        </Upload>
+                      </Col>
+                    </Row>}           
                 </Form>
               </Card>
             </Col>

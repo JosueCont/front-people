@@ -546,6 +546,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/share/`, "post", data)
   }
 
+  static importBonusLayout(data) {    
+    return WebApi.ApisType(`payroll/import-bonus-layout`, "post",data)
+  }
+
 }
 
 export default WebApiPayroll;
