@@ -112,6 +112,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
             active: item.is_active,
             back: item.url_backend,
             front: item.url_frontend,
+            showFilterSite: item.metadata
           };
         });
         dispatch({ type: APPLICATIONS, payload: apps });
