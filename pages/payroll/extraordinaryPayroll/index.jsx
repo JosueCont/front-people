@@ -797,12 +797,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
         let open_list = []
         // Validamos si existen abiertos
-        response.data.payroll.map((elem =>{
-          if (elem.payroll_cfdi_person?.status == 0 || elem.payroll_cfdi_person == undefined){ 
-            
-            open_list.push(elem);
-          }
-        }))
+        console.log("Response -> ", response.data);
+        if (response.data.payroll){
+          response.data.payroll.map((elem =>{
+            if (elem.payroll_cfdi_person?.status == 0 || elem.payroll_cfdi_person == undefined){ 
+              
+              open_list.push(elem);
+            }
+          }))
+        }
+        else {
+          response.data.map((elem =>{
+            if (elem.payroll_cfdi_person?.status == 0 || elem.payroll_cfdi_person == undefined){ 
+              
+              open_list.push(elem);
+            }
+          }))
+        }
+        
         if (open_list.length > 0){
           setOpenList(open_list)
         }
