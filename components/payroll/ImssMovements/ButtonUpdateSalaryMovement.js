@@ -124,11 +124,11 @@ const ButtonUpdateSalaryMovement = ({
         type="link"
         onClick={openModal}
       >
-        Programar actualización de salario diario
+        Cambio de salario
       </Button>
 
       <Modal
-        title="Programar actualización de salario diario"
+        title="Cambio de salario"
         visible={showModal}
         onOk={() => form.submit()}
         onCancel={() => setShowModal(false)}
