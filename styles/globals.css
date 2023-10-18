@@ -451,7 +451,7 @@ header.ant-layout-header
 
 .ant-btn.v2{
   background-color: #051758 !important;
-  border-color: none !important;
+  border: none !important;
   border-radius: 4px;
 }
 .ant-btn.v2.orange{

@@ -23,17 +23,17 @@ const Filters = ({setTreeTable, switchModal, debouncedSearch})=>{
 
     return(
         
-            <Row justify="space-between" style={{alignItems:'center'}} gutter={8}>
-                <Col span={7} style={{textAlign:'center'}}>
+            <Row justify="space-between" style={{alignItems:'center'}} gutter={[8,12]}>
+                <Col sm={12} lg={7} style={{textAlign:'center'}}>
                     <StrongText style={{fontSize:'22px'}}>
                         ¿En qué empresa trabajaremos hoy?
                     </StrongText>
                 </Col>
-                 <Col span={8} style={{textAlign:'center'}}>
+                 <Col sm={12} lg={8} style={{textAlign:'center'}}>
                     <Input style={{ width:'100%', maxWidth:'400px' }} size={'large'} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
                   </Col>
-                  <Col lg={9}>
-                    <div style={{display:'flex', justifyContent:'flex-end', width:'100%', gap:'12px'}}>
+                  <Col sm={24} lg={9}>
+                    <div style={{display:'flex', justifyContent:'flex-end', width:'100%', gap:'12px', flexWrap:'wrap'}}>
                         <CustomBtn onClick={changeViewTable} className="v2">
                                 <UnorderedListOutlined style={{fontSize:'20px'}} />
                                 &nbsp;&nbsp;Lista
