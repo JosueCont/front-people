@@ -584,6 +584,15 @@ class WebApiPeople {
     );
   }
 
+
+  static importDataMovements(data) {
+    return WebApi.ApisType(
+        "/payroll/import-affiliate-movements",
+        "post",
+        data
+    );
+  }
+
   static sendFilesToAddPerson(data) {
     return WebApi.ApisType("/business/add-massive-person-from-cif/", "post", data);
   }
