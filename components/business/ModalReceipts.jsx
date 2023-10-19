@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import MyModal from '../../common/MyModal';
 import { Button, Col, Input, Row, Space, Table, Tag } from 'antd';
 import { DownloadOutlined, FileTextOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
@@ -38,6 +38,12 @@ const ModalReceipts = ({
         }
     }
 
+    const totalReceipts = useMemo(() => {
+        if (receipts.length <= 0) return 0;
+        const reduce_ = (acc, item) => acc + item?.total_cfdi;
+        return receipts?.reduce(reduce_, 0);
+    }, [receipts])
+
     const columns = [
         {
             title: 'Mes',
@@ -48,7 +54,7 @@ const ModalReceipts = ({
             title: 'Colaboradores',
             dataIndex: 'num_collaborators',
             render: (item) => (
-                <Tag icon={<UserOutlined/>}>
+                <Tag icon={<UserOutlined />}>
                     {item}
                 </Tag>
             )
@@ -57,7 +63,7 @@ const ModalReceipts = ({
             title: 'Recibos',
             dataIndex: 'total_cfdi',
             render: (item) => (
-                <Tag icon={<FileTextOutlined/>}>
+                <Tag icon={<FileTextOutlined />}>
                     {item}
                 </Tag>
             )
@@ -88,7 +94,7 @@ const ModalReceipts = ({
                 {receipts.length > 0 ? (
                     <Col span={24}>
                         <p style={{ marginBottom: 0, fontWeight: 500 }}>
-                            Recibos timbrados: {itemNode?.total_cfdi}
+                            Recibos timbrados: {totalReceipts}
                         </p>
                         <Table
                             rowKey='month'

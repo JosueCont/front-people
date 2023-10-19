@@ -255,9 +255,9 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
             setTimeout(() => {
                 message.success({ content: 'Información obtenida', key, duration: 1 })
             }, 1000)
-            setTimeout(()=>{
+            setTimeout(() => {
                 setOpenReceipts(true)
-            },2000)
+            }, 2000)
         } catch (e) {
             console.log(e)
             setTimeout(() => {
@@ -294,10 +294,11 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
         },
         {
             title: "Recibos timbrados",
-            render: (item) => item?.total_cfdi > 0
-                ? <Tag className="pointer" icon={<FileTextOutlined />} onClick={() => showReceipts(item)} >
+            render: (item) => (
+                <Tag className="pointer" icon={<FileTextOutlined />} onClick={() => showReceipts(item)} >
                     {item?.total_cfdi}
-                </Tag> : <></>
+                </Tag>
+            )
         },
         {
             title: "Estatus",
