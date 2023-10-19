@@ -11,7 +11,7 @@ class WebApi {
         return axiosApi.put(url, params);
         break;
       case "get":
-        return axiosApi.get(url);
+        return axiosApi.get(url, params);
         break;
       case "delete":
         return axiosApi.delete(url);
