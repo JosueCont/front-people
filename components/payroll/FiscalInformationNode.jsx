@@ -56,7 +56,6 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     if (node_id) {
       WebApiPeople.getfiscalInformationNode(node_id)
         .then((response) => {
-          console.log("🚀 ~ file: FiscalInformationNode.jsx:57 ~ .then ~ response:", response)
           setFiscalData(response.data);
         })
         .catch((error) => {
@@ -107,7 +106,6 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       setLoadingCert(true)
       setExistsCSD(false)
       let response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id);
-      console.log("🚀 ~ file: FiscalInformationNode.jsx:108 ~ validatCSDExists ~ response:", response)
       if (response?.data?.message) {
         setExistsCSD(true)
         setLoadingCert(false)
@@ -130,7 +128,6 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     try {
       setLoadingCert(true)
       let response = await WebApiFiscal.uploadCsdsMultiEmmiter(data, node_id);
-      console.log("🚀 ~ file: FiscalInformationNode.jsx:131 ~ actionCert ~ response:", response)
       if (response?.data?.message?.status) {
         setMessageCert(null)
         formCert.resetFields();
