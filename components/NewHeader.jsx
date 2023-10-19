@@ -329,6 +329,9 @@ const NewHeader = ({
                 {hideProfile && logoAlign == 'right' && <LogoImg />}
                 {!hideProfile && person && (
                   <>
+                    <Typography.Text style={{color: '#ffff'}}>
+                      V.18102023
+                    </Typography.Text>
                     {screens.sm && screens.md &&
                       <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
                         <span style={{ color: 'white', maxWidth: 500, cursor: 'pointer', textOverflow: 'ellipsis', overflow: 'hidden', display: 'block', whiteSpace: 'nowrap' }} onClick={() => router.push(`/business/companies/myCompany/${props.currentNode.id}`)}>
