@@ -89,6 +89,16 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             label: "¿Acumula vacaciones?",
             value: true,
           },
+          {
+            name: "bonus_absenteeism",
+            label: "¿Afectar faltas en Aguinaldo?",
+            value: true,
+          },
+          {
+            name: "bonus_disabilities",
+            label: "¿Afectar incapacidades en Aguinaldo?",
+            value: true,
+          },
         ]
       : [
           {
@@ -121,6 +131,16 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           {
             name: "accumulate_vacation",
             label: "¿Acumula vacaciones?",
+            value: true,
+          },
+          {
+            name: "bonus_absenteeism",
+            label: "¿Afectar faltas en Aguinaldo?",
+            value: true,
+          },
+          {
+            name: "bonus_disabilities",
+            label: "¿Afectar incapacidades en Aguinaldo?",
             value: true,
           },
         ];
@@ -231,7 +251,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           seventh_day_discount: item.seventh_day_discount,
           sua_absenteeism: item.sua_absenteeism,
           import_issues: item.import_issues,
-          accumulate_vacation: item.accumulate_vacation
+          accumulate_vacation: item.accumulate_vacation,
+          bonus_absenteeism: item.bonus_absenteeism,
+          bonus_disabilities: item.bonus_disabilities,
         })
 
         setAnnualAdjustment(item.annual_adjustment);
