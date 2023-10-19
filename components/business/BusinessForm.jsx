@@ -250,7 +250,6 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
         try {
             message.loading({ content: 'Obteniendo información...', key })
             let response = await WebApiPeople.getCfdiReport(item?.id);
-            console.log("🚀 ~ file: BusinessForm.jsx:254 ~ showReceipts ~ response:", response)
             setItemNode(item)
             setReceipts(response.data)
             setTimeout(() => {
