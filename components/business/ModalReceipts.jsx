@@ -8,10 +8,11 @@ import WebApiPeople from '../../api/WebApiPeople';
 import { downloadBLOB } from '../../utils/functions';
 
 const ModalReceipts = ({
+    iconNomi,
     visible = false,
     close = () => { },
     receipts = [],
-    itemNode = {}
+    itemNode = {},
 }) => {
 
     const [loading, setLoading] = useState({});
@@ -38,10 +39,13 @@ const ModalReceipts = ({
         }
     }
 
-    const totalReceipts = useMemo(() => {
-        if (receipts.length <= 0) return 0;
-        const reduce_ = (acc, item) => acc + item?.total_cfdi;
-        return receipts?.reduce(reduce_, 0);
+    const total = useMemo(() => {
+        if (receipts.length <= 0) return {};
+        return receipts?.reduce((acc, item) => {
+            let receipts = (acc['receipts'] || 0) + item?.total_cfdi;
+            let nomikhor = (acc['nomikhor'] || 0) + item?.total_cfdi_nomikhor;
+            return { ...acc, receipts, nomikhor };
+        }, {});
     }, [receipts])
 
     const columns = [
@@ -61,17 +65,21 @@ const ModalReceipts = ({
         },
         {
             title: 'Recibos',
-            dataIndex: 'total_cfdi',
             render: (item) => (
-                <Tag icon={<FileTextOutlined />}>
-                    {item}
-                </Tag>
+                <Space>
+                    <Tag icon={iconNomi}>
+                        {item?.total_cfdi_nomikhor}
+                    </Tag>
+                    <Tag icon={<FileTextOutlined />}>
+                        {item?.total_cfdi}
+                    </Tag>
+                </Space>
             )
         },
         {
             title: 'Acciones',
             width: 40,
-            render: (item) => item?.total_cfdi > 0 ? (
+            render: (item) => (item?.total_cfdi > 0 || item?.total_cfdi_nomikhor > 0) ? (
                 <Space>
                     {loading[item.month] ? (
                         <LoadingOutlined />
@@ -93,9 +101,15 @@ const ModalReceipts = ({
             <Row gutter={[0, 8]}>
                 {receipts.length > 0 ? (
                     <Col span={24}>
-                        <p style={{ marginBottom: 0, fontWeight: 500 }}>
-                            Recibos timbrados: {totalReceipts}
-                        </p>
+                        <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                            <p style={{marginBottom: 0}}>
+                                Recibos
+                            </p>
+                            <p style={{marginBottom: 0}}>
+                                nomikor: {total?.nomikhor || 0},
+                                timbrados: {total?.receipts || 0}
+                            </p>
+                        </Space>
                         <Table
                             rowKey='month'
                             size='small'
