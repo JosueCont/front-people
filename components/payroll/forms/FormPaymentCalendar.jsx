@@ -99,6 +99,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
             label: "¿Afectar incapacidades en Aguinaldo?",
             value: true,
           },
+          {
+            name: "home_credit_adjust",
+            label: "Aplicar ajuste de INFONAVIT?",
+            value: true,
+          },
         ]
       : [
           {
@@ -141,6 +146,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           {
             name: "bonus_disabilities",
             label: "¿Afectar incapacidades en Aguinaldo?",
+            value: true,
+          },
+          {
+            name: "home_credit_adjust",
+            label: "Aplicar ajuste de INFONAVIT?",
             value: true,
           },
         ];
@@ -254,6 +264,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, getCompanyFiscalInforma
           accumulate_vacation: item.accumulate_vacation,
           bonus_absenteeism: item.bonus_absenteeism,
           bonus_disabilities: item.bonus_disabilities,
+          home_credit_adjust: item.home_credit_adjust,
         })
 
         setAnnualAdjustment(item.annual_adjustment);

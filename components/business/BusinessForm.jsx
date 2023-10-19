@@ -18,7 +18,7 @@ import {
     Upload
 } from "antd";
 import { useEffect, useState } from "react";
-import {
+import Icon, {
     DeleteOutlined,
     EditOutlined,
     LoadingOutlined,
@@ -34,6 +34,7 @@ import {
     LinkOutlined,
     EyeInvisibleOutlined,
     FileTextOutlined,
+    createFromIconfontCN
 } from "@ant-design/icons";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -54,7 +55,7 @@ import ModalReceipts from "./ModalReceipts";
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ currentNode, setNullCompany, ...props }) => {
+const businessForm = ({ currentNode, config, setNullCompany, ...props }) => {
     let router = useRouter();
     const [business, setBusiness] = useState([]);
     const [allBusiness, setAllBusiness] = useState([]);
@@ -80,6 +81,13 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
     const [receipts, setReceipts] = useState([]);
     const [itemNode, setItemNode] = useState({});
     const [openReceipts, setOpenReceipts] = useState(false);
+
+    const IconNomi = () => <Icon component={() => (
+        <img
+            style={{ width: 14, maxWidth: 14, transform: 'translateY(-3px)' }}
+            src={config?.concierge_icon || '/images/logo_gape.svg'}
+        />
+    )} />;
 
     const onFinish = (values) => {
         if (isDeleted) {
@@ -295,9 +303,16 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
         {
             title: "Recibos timbrados",
             render: (item) => (
-                <Tag className="pointer" icon={<FileTextOutlined />} onClick={() => showReceipts(item)} >
-                    {item?.total_cfdi}
-                </Tag>
+                <Space>
+                    <Tooltip title='Timbrados desde nomikhor'>
+                        <Tag className="pointer" icon={<IconNomi />} onClick={() => showReceipts(item)} >
+                            {item?.total_cfdi_nomikhor}
+                        </Tag>
+                    </Tooltip>
+                    <Tag className="pointer" icon={<FileTextOutlined />} onClick={() => showReceipts(item)} >
+                        {item?.total_cfdi}
+                    </Tag>
+                </Space>
             )
         },
         {
@@ -736,6 +751,7 @@ const businessForm = ({ currentNode, setNullCompany, ...props }) => {
                 visible={openReceipts}
                 receipts={receipts}
                 itemNode={itemNode}
+                iconNomi={<IconNomi />}
                 close={() => {
                     setOpenReceipts(false)
                     setReceipts([])
