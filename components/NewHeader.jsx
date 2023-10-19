@@ -330,7 +330,7 @@ const NewHeader = ({
                 {!hideProfile && person && (
                   <>
                     <Typography.Text style={{color: '#ffff'}}>
-                      V.181023023
+                      V.18102023
                     </Typography.Text>
                     {screens.sm && screens.md &&
                       <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
