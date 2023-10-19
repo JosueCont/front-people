@@ -1,6 +1,8 @@
-import Card from "antd/lib/card/Card"
+import { Typography, Card } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
+
+const {Text} = Typography; 
 
 const StyledCard = styled(Card)({
     backgroundColor: '#fff',
@@ -8,32 +10,43 @@ const StyledCard = styled(Card)({
     margin:'auto',
     width:'257px',
     display:'flex', 
-    border:'1px solid #D3D3D3',
+    border:'1px solid #D3D3D3!important',
     borderRadius:'8px',
     flexDirection:'column', 
     justifyContent:'space-between',
     '& .ant-card-body':{
-        padding:'24px 0px 0px 0px!important',
-        borderBottomRightRadius:'8px',
-        borderBottomLeftRadius:'8px', 
+        padding:'0px!important',
+        borderBottomRightRadius:'6px',
+        borderBottomLeftRadius:'6px', 
         background:'#D3D3D3'
     }
+}); 
+const TitleText = styled('p')({
+    fontSize:'16px', 
+    marginBottom:'0px', 
+    textTransform:'capitalize',
+    color:'#666', 
+    overflow:"hidden",
+    textOverflow:'ellipsis',
+    whiteSpace:'nowrap'
 }); 
 
 const CustomCard = ({item, setCompanySelect})=>{
     // const {overflowingText, hasVerticalOverflow} = useOverflowWatch(); 
     const [imgSrc , setImgSrc] = useState(''); 
+    const [name, setName] = useState(''); 
 
     if (!item) {
         // Handle the case where item is undefined
         return null;
     }
 
-    useMemo(()=>{
+    useEffect(()=>{
+        //debugger;
         if(!!!item) return;
-        if(!!!item.image) return; 
-        setImgSrc(item.image); 
-    },[item])
+        setImgSrc(item.image ?? ''); 
+        setName(item.name ?? ''); 
+    },[item, item.image, item.name])
     
     const handleOnError = (e) => {
         e.target.src = "/images/empresas.svg";
@@ -72,15 +85,7 @@ const CustomCard = ({item, setCompanySelect})=>{
         onClick={() => setCompanySelect(item)}
       >
         <div style={{padding:'16px'}}>   
-            <p style={{
-                fontSize:'16px', 
-                fontFamily:'Raleway', 
-                color:'#666', 
-                overflow:"hidden",
-                textOverflow:'ellipsis',
-                whiteSpace:'nowrap'
-                }}>{item.name}</p>
-            
+            <TitleText>{name.toLowerCase()}</TitleText>
         </div>
         
       </StyledCard>

@@ -7,7 +7,6 @@ const {Text} = Typography;
 
 const LigthText = styled(Text)({
     color: "#666",
-    fontFamily: "Raleway",
     fontSize: "16px",
     fontStyle: "normal",
     fontWeight: 400,
@@ -16,7 +15,6 @@ const LigthText = styled(Text)({
 
 export const StrongText = styled(Text)({
     color: "#666",
-    fontFamily: "Raleway",
     fontSize: "32px",
     fontStyle: "normal",
     fontWeight: 700,
@@ -59,7 +57,7 @@ const TopSection = ({}) => {
                 </div>
                 
             </div>
-            <div >
+            {/* <div >
                 <div style={{display:'flex', alignItems:'self-end', gap:'22px'}}>
                     <img  width={'32px'} height={'32px'} style={{objectFit:'contain'}} src="/images/keys.png"/>
                     <LigthText>
@@ -73,7 +71,7 @@ const TopSection = ({}) => {
                 </div>
                 </div>
                 
-            </div>
+            </div> */}
         </div>
     );
 }
