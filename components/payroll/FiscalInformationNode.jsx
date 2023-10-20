@@ -79,18 +79,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       validateCSDExists()
     }
   }, [node_id]);
-
-  useEffect(() => {
-    if (fiscalData) {
-      let values = {};
-      values.cer_name_read = values.certificate
-        ? values.certificate?.split('/').at(-1) : null;
-      values.key_name_read = values.key ? values.key?.split('/').at(-1) : null;
-      values.password = values.password ? values.password : null;
-      formCert.setFieldsValue(values)
-    }
-  }, [fiscalData])
-
+  
   const saveForms = async () => {
     if (!(await validateForms())) return;
     const data = {
