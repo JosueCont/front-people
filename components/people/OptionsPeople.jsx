@@ -42,7 +42,8 @@ const OptionsPeople = () => {
         permissions,
         user_filters,
         current_node,
-        general_config
+        general_config,
+        load_collaborators
     } = useSelector(state => state.userStore);
 
     const {
@@ -224,7 +225,7 @@ const OptionsPeople = () => {
     return (
         <>
             <Tooltip title='Opciones adicionales'>
-                <Dropdown placement='bottomRight' overlay={<MenuOptions />}>
+                <Dropdown disabled={load_collaborators} placement='bottomRight' overlay={<MenuOptions />}>
                     <Button>
                         <EllipsisOutlined />
                     </Button>
