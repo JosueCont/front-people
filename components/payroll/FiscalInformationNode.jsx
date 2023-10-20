@@ -13,7 +13,7 @@ import {
   Input,
   Space,
 } from "antd";
-import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
+import { CheckCircleOutline, CheckOutlined, CloseOutlined } from "@material-ui/icons";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageError,
@@ -30,6 +30,21 @@ import FileUpload from '../jobbank/FileUpload';
 import moment from 'moment'
 import { ruleRequired } from "../../utils/rules";
 import { downloadCustomFile } from "../../utils/functions";
+import styled from '@emotion/styled';
+import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+
+const AlertCert = styled.div`
+  background-color: ${({ type }) => type == 'success' ? '#f6ffed' : '#fffbe6'} ;
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${({ type }) => type == 'success' ? '#b7eb8f' : '#ffe58f'};
+  padding: 8px;
+  margin-bottom: 24px;
+  .anticon{
+    font-size: 24px;
+    color: ${({ type }) => type == 'success' ? '#52c41a' : '#faad14'};
+  }
+`;
 
 const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const { Title } = Typography;
@@ -338,23 +353,26 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
                   />
                 )}
                 {existsCSD && (
-                  <Alert
-                    message="Archivos detectados"
-                    description={`Se detectaron los CSD para esta empresa, ${validateExpirationCertificate ? '' : 'sin embargo se encuentran vencidos, recuerda que '}la opción de subir nuevos Certificados
-                   y Sellos Digitales estará siempre disponible.`}
-                    type={validateExpirationCertificate ? 'success' : 'warning'}
-                    showIcon
-                    style={{ marginBottom: 24 }}
-                  />
-                )}
-                {dateExpirationCertificate && (
-                  <Alert
-                    message={validateExpirationCertificate ? 'Certificado vigente' : 'Certificado vencido'}
-                    description={`La vigencia de tu certificado es ${dateExpirationCertificate}`}
-                    type={validateExpirationCertificate ? 'success' : 'error'}
-                    showIcon
-                    style={{ marginBottom: 24 }}
-                  />
+                  <AlertCert type={validateExpirationCertificate ? 'success' : 'warning'}>
+                    <Space align='start'>
+                      {validateExpirationCertificate ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}
+                      <div>
+                        <h3 style={{ marginBottom: 0 }}>
+                          Archivos detectados
+                        </h3>
+                        <p style={{ marginBottom: 0 }}>
+                          Se detectaron los CSD para esta empresa, {validateExpirationCertificate ? '' : 'sin embargo se encuentran vencidos, recuerda que '}la opción de subir nuevos Certificados
+                          y Sellos Digitales estará siempre disponible.
+                        </p>
+                        <h3 style={{ marginBottom: 0 }}>
+                          {validateExpirationCertificate ? 'Certificado vigente' : 'Certificado vencido'}
+                        </h3>
+                        <p>
+                          La vigencia de tu certificado es {dateExpirationCertificate}
+                        </p>
+                      </div>
+                    </Space>
+                  </AlertCert>
                 )}
               </Col>
               <Col span={24} style={{ display: 'flex' }}>
