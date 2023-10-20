@@ -47,6 +47,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [templateType, setTemplateType] = useState(null);
   const [errorImportar, setErrorImportar] = useState(null);
   const [showImportDetail, setShowImportDetail] = useState(false);
+  const [typeModules, setTypeModules] = useState([])
 
 
 
@@ -110,6 +111,19 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   useEffect(() => {
     if (props.formData) {
+      const datas = {};
+      props.formData.forEach((value, key) => (datas[key] = value));      
+      if (datas.types){
+        let types_list = datas.types.split(',')
+        let typeSave = []
+        if (types_list.length > 0){
+          types_list.map((item) => {
+            typeSave.push(parseInt(item))
+          })
+        } 
+        setTypeModules(typeSave)        
+      }
+
       setLoading(true)
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
@@ -228,7 +242,8 @@ const PreviewBulkUpload = ({ ...props }) => {
           const data = {
             persons: dataUpload,
             type: templateType,
-            node_id: props?.currentNode?.id
+            node_id: props?.currentNode?.id,
+            types: typeModules  
           };
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
