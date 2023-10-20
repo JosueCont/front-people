@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   Row,
   Col,
@@ -32,6 +32,7 @@ import { ruleRequired } from "../../utils/rules";
 import { downloadCustomFile } from "../../utils/functions";
 import styled from '@emotion/styled';
 import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const AlertCert = styled.div`
   background-color: ${({ type }) => type == 'success' ? '#f6ffed' : '#fffbe6'} ;
@@ -68,6 +69,13 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
 
   const [fileCert, setFileCert] = useState([]);
   const [fileKey, setFileKey] = useState([]);
+
+  const { current_node } = useSelector(state => state.userStore);
+  
+  const showDownload = useMemo(() => {
+    if (current_node?.id != node_id) return false;
+    return current_node?.cer_file_name && current_node?.key_file_name;
+  }, [current_node, node_id])
 
   useEffect(() => {
     if (node_id) {
@@ -166,6 +174,10 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       let response = await WebApiPeople.downloadCsdsMultiEmmiter(node_id);
       let cer = response?.data?.cer_file_url;
       let key = response?.data?.key_file_url;
+      if (!cer || !key) {
+        message.error('Archivos no encontrados')
+        return;
+      }
       downloadCustomFile({ url: cer, name: cer?.split('?')[0].split('/').at(-1) })
       downloadCustomFile({ url: key, name: key?.split('?')[0].split('/').at(-1) })
     } catch (e) {
@@ -333,7 +345,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
                     </Col>
                     <Col span={24} style={{ display: 'flex' }}>
                       <Space style={{ marginLeft: 'auto' }}>
-                        {existsCSD && (
+                        {(existsCSD || showDownload) && (
                           <Button htmlType="button" onClick={() => actionCertDownload()}>
                             Descargar archivos
                           </Button>
