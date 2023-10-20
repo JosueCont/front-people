@@ -3,15 +3,16 @@ import SelectPatronalRegistration from '../../selects/SelectPatronalRegistration
 import WithHoldingNotice from '../../../pages/business/WithHoldingNotice'
 import GenericModal from '../../modal/genericModal'
 import { useRouter } from 'next/router'
-import { Alert, Button, Col, DatePicker, Row, Select, Spin, message } from 'antd'
+import { Alert, Button, Col, DatePicker, Row, Select, Spin, message, Tabs, Table, Modal } from 'antd'
 import WebApiPeople from '../../../api/WebApiPeople'
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from 'moment'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const WithholdingNoticesContent = ({ currentNodeId }) => {
 
   const router = useRouter();
-
+  const { confirm } = Modal;
   const [loading,setLoading] = useState(false);
   const [patronalSelected, setPatronalSelected] = useState(null)
   const [scraperActive, setScraperActive] = useState(false)
@@ -64,6 +65,22 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
     return options;
   };
 
+  const confirmSyncUpData = () => {
+    confirm({
+      title: '¿Estás seguro de sincronizar o solicitar?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Some descriptions',
+      okText: 'Si',
+      cancelText: 'Cancelar',
+      onOk() {
+        syncUpData()
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
   const syncUpData = async () => {
     try {
       setLoading(true);
@@ -111,6 +128,63 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
     }
 };
 
+  const dataLogs = [
+    {
+      key: '1',
+      date_start: 'Mike',
+      date_end: 'Mike',
+      autor: '10 Downing Street',
+      status: '10 Downing Street',
+      message: '10 Downing Street',
+    },
+    {
+      key: '2',
+      date_start: 'Mike',
+      date_end: 'Mike',
+      autor: '10 Downing Street',
+      status: '10 Downing Street',
+      message: '10 Downing Street',
+    },
+    {
+      key: '3',
+      date_start: 'Mike',
+      date_end: 'Mike',
+      autor: '10 Downing Street',
+      status: '10 Downing Street',
+      message: '10 Downing Street',
+    },
+  ];
+
+  const columnsLogs = [
+    {
+      title: "Fecha de ejecución",
+      dataIndex: "date_start",
+      key:"date_start",
+        width: 300
+    },
+    {
+      title: "Fecha de finalización",
+      dataIndex: "date_end",
+      key:"date_end",
+        width: 300
+    },
+    {
+      title: "Autor",
+      dataIndex: "autor",
+      key:"autor",
+    },
+    {
+      title: "Estatus",
+      dataIndex: "status",
+      key:"status",
+    },
+    {
+      title: "Mensaje",
+      dataIndex: "message",
+      key:"message",
+    },
+  ];
+
   return (
     <>
       <Row justify="space-between" style={{ paddingTop:20 }}>
@@ -123,8 +197,17 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
             <Col>
               {
                 patronalSelected &&
+                  <Alert
+                  description={<><b>Se esta procesando una solicitud generada el 18-10-2023 15:23 pm</b></>}
+                  type="success"
+                />
+              }
+            </Col>
+            <Col>
+              {
+                patronalSelected &&
                   <Button
-                      onClick={syncUpData}
+                      onClick={confirmSyncUpData}
                       form="formGeneric"
                       htmlType="submit"
                       style={{marginBottom:'20px'}}>
@@ -152,11 +235,27 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
                             />
                         :
                         <>
-                            <Spin spinning={loading}>
-                              <WithHoldingNotice
-                                patronalData={{id: patronalSelected , node: currentNodeId}}
+                          <Tabs defaultActiveKey="1">
+                            <Tabs.TabPane tab="Eventos finalizados" key="1" style={{padding:10}}>
+                              <Spin spinning={loading}>
+                                <WithHoldingNotice
+                                  patronalData={{id: patronalSelected , node: currentNodeId}}
+                                />
+                              </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Logs" key="2" style={{padding:10}}>
+                              <Table
+                                columns={columnsLogs}
+                                dataSource={dataLogs}
+                                pagination={{showSizeChanger:true}}
+                                locale={{
+                                    emptyText: loading
+                                        ? "Cargando..."
+                                        : message,
+                                }}
                               />
-                            </Spin>
+                            </Tabs.TabPane>
+                          </Tabs> 
                         </>
                     }
                     </>
