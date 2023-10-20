@@ -108,6 +108,7 @@ const SearchPeople = ({
                                         className='input-jb-clear'
                                         placeholder='Búsqueda general'
                                         value={valueSearch}
+                                        disabled={load_collaborators}
                                         onChange={onChangeSearch}
                                         onPressEnter={onGeneralSearch}
                                         style={{
@@ -118,6 +119,7 @@ const SearchPeople = ({
                                     />
                                     <button
                                         className='ant-btn-simple'
+                                        disabled={load_collaborators}
                                         onClick={() => onGeneralSearch()}
                                         style={{
                                             borderTopRightRadius: '10px',
