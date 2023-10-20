@@ -146,6 +146,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       console.log(e)
       setLoadingCert(false)
       setMessageCert(null)
+      message.error('Archivos no cargados')
     }
   }
 
