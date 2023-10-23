@@ -36,6 +36,8 @@ import { getCurrentURL, redirectTo } from "../utils/constant";
 import ButtonWizardLight from "./payroll/ButtonWizardLight";
 import { userId } from "../libs/auth";
 import { urlSocial } from "../config/config";
+import packageInfo from '../package.json';
+const currentVersion = packageInfo.version;
 
 const { useBreakpoint } = Grid;
 
@@ -330,7 +332,7 @@ const NewHeader = ({
                 {!hideProfile && person && (
                   <>
                     <Typography.Text style={{color: '#ffff'}}>
-                      V.18102023
+                      V.{currentVersion}
                     </Typography.Text>
                     {screens.sm && screens.md &&
                       <Tooltip title={props.currentNode ? props.currentNode.name : ""}>
