@@ -53,6 +53,7 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
     const [isSuspension, setIsSuspension] = useState(false);
     const [loadingModal, setLoadingModal] = useState(false);
     const [updateInfonavit, setUpdateInfonavit] = useState(null);
+    const [deleteInfonavit, setDeleteInfonavit] = useState(null); 
     const [loadingIMSS, setLodingIMSS] = useState(false);
     const [nss, setNSS] = useState(null);
     const [showModalDelete, setShowModalDelete] = useState(false); 
@@ -155,26 +156,29 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
     };
   
     const cancelDelete = () => {
-      setShowModalDelete(false)
+      setShowModalDelete(false); 
+      setDeleteInfonavit(null); 
     }
 
-    const deleteImss = async () => {
+    const deleteInfonavitByID = async () => {
+      if(!!!deleteInfonavit) return; 
+      const {id} = deleteInfonavit; 
       try {
         setLodingIMSS(true)
-        const res = await WebApiPayroll.deleteIMSSInfonavit(
-          updateCredit.id,
-        );
+        const res = await WebApiPayroll.deleteInfonavit(id);
         setLodingIMSS(true)
         localUserCredit()
         cancelDelete()
       } catch (error) {
         console.log('=>>>>')
       }
+      finally{
+        getInfo();
+      }
       /* console.log('updateCredit', updateCredit) */
     }
 
     const getInfo = async () => {
-      debugger; 
       setLoadingTable(true);
       try {
         let response = await WebApiPayroll.getUserCredits(person_id);
@@ -277,7 +281,6 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
   
 
     const userCredit = async () => {
-      debugger; 
         setLoadingTable(true);
         let data = new FormData();
         let patronal_registration = person?.patronal_registration;
@@ -395,12 +398,21 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
                     style={{ padding: "0px 20px" }}
                   >
                     {record.is_active && (
+                      <div style={{display:'flex', gap:'1em', justifyContent:'center'}}>
                       <Tooltip title="Editar">
                         <EditOutlined
                           style={{ fontSize: "20px" }}
                           onClick={() => setUpdateInfonavit(item)}
                         />
                       </Tooltip>
+                      <Tooltip title="Eliminar">
+                        <DeleteOutlined
+                        style={{ fontSize: "20px" }}
+                        onClick={()=> setDeleteInfonavit(item)}
+                        /> 
+                      </Tooltip>
+                      </div>
+                      
                     )}
                   </Col>
                 </Row>
@@ -490,7 +502,6 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
 
     return(
         <>
-         <Divider />
 
         <Divider orientation="left"> <img src={"/images/logoinfonavit.png"} width={20} /> INFONAVIT</Divider>
 
@@ -728,8 +739,8 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
       </Modal>
       <Modal
         title="Eliminar"
-        visible={showModalDelete}
-        onOk={deleteImss}
+        visible={!!deleteInfonavit}
+        onOk={deleteInfonavitByID}
         onCancel={cancelDelete}
         okText="Sí, eliminar"
         cancelText="Cancelar"

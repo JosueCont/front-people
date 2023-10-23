@@ -307,7 +307,8 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     `}
     />
       <Spin tip="Cargando..." spinning={loadingIMSS}>
-          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0, backgroundColor:'transparent', borderTopColor:'transparent' }} /> IMSS</Divider>
+          <Divider orientation="left" style={{ backgroundColor:'transparent', borderTopColor:'transparent'}}> 
+          <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0  }} /> IMSS</Divider>
         {renderComponent}
       </Spin>
     

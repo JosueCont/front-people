@@ -70,7 +70,8 @@ const FormPayrollPerson = ({
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
   const [deletingPayroll, setDeletingPayroll] = useState(false);
-  const [contractTypeSelected, setContractTypeSelected] = useState(null)
+  const [contractTypeSelected, setContractTypeSelected] = useState(null); 
+  const [refreshImssTable, setRefreshImssTable] = useState(false); 
   
 
   useEffect(() => {
@@ -84,6 +85,10 @@ const FormPayrollPerson = ({
       setPerceptionTypes(data);
     }
   }, [props.catPerception]);
+
+  useEffect(()=> {
+    setRefreshImssTable(refreshTab12); 
+  },[refreshTab12])
 
   useEffect(() => {
     if (props.catHiringRegime) {      
@@ -346,6 +351,7 @@ const FormPayrollPerson = ({
             integrated_daily_salary: response.data.integrated_daily_salary,
           });
         }
+        setRefreshImssTable(true); 
         PayrollList();
         getPayrollPerson();
       } else {
@@ -373,6 +379,7 @@ const FormPayrollPerson = ({
           integrated_daily_salary: response.data.integrated_daily_salary,
         });
       }
+      setRefreshImssTable(true); 
       getPayrollPerson();
       PayrollList();
       setLoading(false);
@@ -438,7 +445,6 @@ const FormPayrollPerson = ({
     }
     
     let value = formPayrollPerson.getFieldsValue();
-    debugger;
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
@@ -931,8 +937,8 @@ const FormPayrollPerson = ({
             <Divider/>
             <FormImssInfonavit
               person={person}
-              refreshtab12={refreshTab12}
-              onFinishRefreshTab12={()=>setRefreshTab12(false)}
+              refreshtab={refreshImssTable}
+              onFinishRefresh={onFinishRefreshTab12}
               person_id={person.id}
               node={person.node}
             />
