@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Spin,
   Button,
@@ -12,7 +12,6 @@ import {
   message,
   Divider,
   Alert,
-  Space,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import {
@@ -22,7 +21,6 @@ import {
   messageError,
 } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
-import { DeleteOutlined } from "@ant-design/icons";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
 import {
@@ -33,6 +31,7 @@ import {
 } from "../../../utils/rules";
 import Link from "next/link";
 import { connect } from "react-redux";
+import { Global, css } from "@emotion/core";
 
 const InfonavitMovementype = [
   { value: 1, label: "Inicio Descuento" },
@@ -43,24 +42,24 @@ const InfonavitMovementype = [
 ];
 
 const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab=false, node, ...props }) => {
+  const {patronal_registration, imss} = person; 
   const { Title, Text} = Typography;
   const [formImssInfonavit] = Form.useForm();
-  const [formInfonavitManual] = Form.useForm();
   const [loadingIMSS, setLodingIMSS] = useState(false);
   const [updateCredit, setUpdateCredit] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [isNewRegister, setIsNewRegister] = useState(false);
-  const [showModalDelete, setShowModalDelete] = useState(false)
 
   // const daily_salary = Form.useWatch("sd", formImssInfonavit);
-
-
-
 
 
   useEffect(() => {
     person_id && localUserCredit() && getInfo();
   }, [person_id]);
+
+  useEffect(()=>{
+    localUserCredit(); 
+  },[])
 
   useEffect(() => {
     if (updateCredit) {
@@ -89,59 +88,6 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     }
   }, [updateCredit]);
 
-  // useEffect(() => {
-  //   if (updateInfonavit) {
-  //     formInfonavitManual.setFieldsValue({
-  //       folio: updateInfonavit.folio,
-  //       start_date: updateInfonavit.start_date
-  //         ? moment(updateInfonavit.start_date)
-  //         : null,
-  //       start_date_movement: updateInfonavit.start_date_movement
-  //         ? moment(updateInfonavit.start_date_movement)
-  //         : null,
-  //       number: updateInfonavit.number,
-  //       type: updateInfonavit.type,
-  //       status: updateInfonavit.status,
-  //       discount_type: updateInfonavit.discount_type
-  //         ? updateInfonavit.discount_type
-  //         : null,
-  //       discount_value:
-  //         updateInfonavit.discount_value > 0
-  //           ? updateInfonavit.discount_value
-  //           : null,
-  //       discount_suspension_date: updateInfonavit.discount_suspension_date
-  //         ? moment(updateInfonavit.discount_suspension_date)
-  //         : null,
-  //       movement: updateInfonavit.movement != 1 ? updateInfonavit.movement : "",
-  //     });
-  //     if (updateInfonavit.movement == 1) {
-  //       setIsNewRegister(true);
-  //       setMovementTypes(InfonavitMovementype);
-
-  //       // Campos bloqueados
-  //       setDisabledStartDate(false);
-  //       setDisabledNumber(false);
-  //       // setDisabledCreditType(false);
-  //       setDisabledStatus(false);
-  //       setDisabledMovementType(true);
-  //       setDisabledDiscountType(false);
-  //       setDisabledDiscountValue(false);
-  //     } else {
-  //       let choises_type = InfonavitMovementype.filter(
-  //         (item) => item.value > 1
-  //       );
-  //       setMovementTypes(choises_type);
-  //       setDisabledStartDate(true);
-  //       setDisabledNumber(true);
-  //       // setDisabledCreditType(true);
-  //       setDisabledStatus(false);
-  //       setDisabledMovementType(true);
-  //       setDisabledDiscountType(true);
-  //       setDisabledDiscountValue(true);
-  //     }
-  //     setModalVisible(true);
-  //   }
-  // }, [updateInfonavit]);
 
   useEffect(()=>{
     if(refreshtab){
@@ -150,14 +96,6 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     }
   },[refreshtab])
 
-  useEffect(() => {
-    if (isNewRegister) {
-      formInfonavitManual.setFieldsValue({
-        movement: 1,
-        type: 1,
-      });
-    }
-  }, [isNewRegister]);
 
   const formImmssInfonavitAct = async (values) => {
 
@@ -218,56 +156,33 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
     }
   };
 
-
-
-  return (
-    <>
-      <Spin tip="Cargando..." spinning={loadingIMSS}>
-          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0 }} /> IMSS</Divider>
-        {
-          !person.patronal_registration || !person.imss  ? 
-          <Alert
-            message="Información necesaria"
-            description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario capturar su <Text strong >fecha de inicio laboral</Text> y registrar su <Text  strong >numero de seguiridad social</Text></Text>}
-            type="info"
-            showIcon
-          /> :
-            !updateCredit?.id &&  !updateCredit?.sdi ? 
-            <Alert
-            message="Información necesaria"
-            description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario agregar el <Text strong >salario diario integrado</Text> a la nomina de la persona.</Text>}
-            type="info"
-            showIcon
-          /> :
-          <>
+  const renderComponent = useMemo(()=>{
+    if(!patronal_registration || !imss) return(
+      <Alert
+        message="Información necesaria"
+        description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario capturar su <Text strong >fecha de inicio laboral</Text> y registrar su <Text  strong >numero de seguiridad social</Text></Text>}
+        type="info"
+        showIcon
+      />)
+    if( !updateCredit?.id &&  !updateCredit?.sdi) return (
+      <Alert
+        message="Información necesaria"
+        description={<Text>Para continuar con el IMSS/Infonavit de la persona es necesario agregar el <Text strong >salario diario integrado</Text> a la nomina de la persona.</Text>}
+        type="info"
+        showIcon
+      />
+    )
+    else{
+      return(
+        <>
             <Form
               layout="vertical"
               form={formImssInfonavit}
               onFinish={formImmssInfonavitAct}
               className="form-details-person"
             >
-              <Row>
-              {
-                updateCredit?.id &&
-                <Col span={21} >
-                  <Row justify="end" gutter={20}>
-                    <Col style={{ paddingBottom:40}}>
-                      <Button
-                            type="primary"
-                            danger
-                            icon={<DeleteOutlined />}
-                            style={{ backgroundColor:'#9f0707 !important' }}
-                            onClick={() =>
-                                setShowModalDelete(true)
-                            }
-                        >
-                          Eliminar información
-                        </Button>
-                      </Col>
-                  </Row>
-                </Col>
-              }
-                <Col lg={6} xs={22} offset={1}>
+              <Row gutter={20}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <Form.Item
                     name="employee_type"
                     label="Tipo de empleado"
@@ -280,7 +195,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={22} offset={1}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <Form.Item
                     name="salary_type"
                     label="Tipo de salario"
@@ -293,7 +208,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={22} offset={1}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <Form.Item
                     name="reduce_days"
                     label="Semana o jornada reducida"
@@ -306,7 +221,7 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={22} offset={1}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <Form.Item
                     name="movement_date"
                     label="Fecha de movimiento"
@@ -319,10 +234,10 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={22} offset={1}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <SelectFamilyMedicalUnit />
                 </Col>
-                <Col lg={6} xs={22} offset={1}>
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
                   <Form.Item
                     name="nss"
                     label="IMSS"
@@ -332,10 +247,21 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                   </Form.Item>
                 </Col>
 
-                <Col lg={6} xs={22} offset={1}>
-                  <Form.Item
+                 
+
+
+                <Col className="alignFieldVertically" lg={8} xs={22} md={12} >
+
+                  <Link href={`/payroll/imssMovements/?regPatronal=${patronal_registration}`}>
+                    <a style={{color:'blue'}}>
+                      <div>Ver movimientos IMSS</div>
+                    </a>
+                  </Link>
+                </Col>
+              </Row>
+              <Row justify={"end"}>
+               <Form.Item
                     name="sdi"
-                    label="Salario diario integrado"
                     maxLength={13}
                     rules={[fourDecimal, ruleRequired]}
                   >
@@ -343,29 +269,11 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
                       // disabled={
                       //   updateCredit && updateCredit.is_registered ? true : false
                       // }
+                      hidden
                       disabled={true}
                       maxLength={10}
                     />
                   </Form.Item>
-
-                  <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
-                    <a style={{color:'blue'}}>
-                      <div>Ver movimientos IMSS</div>
-                    </a>
-                  </Link>
-                </Col>
-                {/* <Col lg={6} xs={22} offset={1}>
-                  <Form.Item
-                    name="integrated_daily_salary"
-                    label="Salario diario integrado"
-                    maxLength={13}
-                    rules={[fourDecimal]}
-                  >
-                    <Input disabled />
-                  </Form.Item>
-                </Col> */}
-              </Row>
-              <Row justify={"end"}>
                 <Form.Item>
                   <Button
                     loading={loadingIMSS}
@@ -379,8 +287,28 @@ const FormImssInfonavit = ({ person, person_id = null, userInfo=null, refreshtab
               </Row>
             </Form>
 
-          </>
-        }
+        </>
+          )
+    }
+    
+
+  },[patronal_registration , imss, updateCredit, updateCredit?.id, updateCredit?.sdi, loadingIMSS])
+
+
+
+  return (
+    <>
+    <Global
+    styles={css`
+    .alignFieldVertically:{
+      display:flex; 
+      align-items:flex-end; 
+    }
+    `}
+    />
+      <Spin tip="Cargando..." spinning={loadingIMSS}>
+          <Divider orientation="left"> <img src={'/images/logo_imss.png'} width={20} style={{ marginBottom:0, backgroundColor:'transparent', borderTopColor:'transparent' }} /> IMSS</Divider>
+        {renderComponent}
       </Spin>
     
     </>

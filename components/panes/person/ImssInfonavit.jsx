@@ -1,4 +1,4 @@
-import { Divider, Space, Row, Button, Tooltip, Spin, Table, Modal, Form, Col, Input, DatePicker, Select } from "antd"; 
+import { Divider, Space, Row, Button, Tooltip, Spin, Table, Modal, Form, Col, Input, DatePicker, Select, message } from "antd"; 
 import { EditOutlined, SyncOutlined, HistoryOutlined, WarningOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import locale from "antd/lib/date-picker/locale/es_ES";
@@ -59,7 +59,12 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
     const [updateCredit, setUpdateCredit] = useState(null);
 
 
-
+    useEffect(()=>{
+      if(refreshtab){
+        localUserCredit()
+        props.onFinishRefresh()
+      }
+    },[refreshtab])
 
     useEffect(() => {
       setMovementTypes(InfonavitMovementype);
@@ -126,7 +131,16 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
       }
       setNSS(person.imss); 
 
-    },[updateCredit])
+    },[updateCredit]); 
+
+    useEffect(() => {
+      if (isNewRegister) {
+        formInfonavitManual.setFieldsValue({
+          movement: 1,
+          type: 1,
+        });
+      }
+    }, [isNewRegister]);
 
     const localUserCredit = async () => {
       setLodingIMSS(true);
@@ -159,8 +173,8 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
       /* console.log('updateCredit', updateCredit) */
     }
 
-
     const getInfo = async () => {
+      debugger; 
       setLoadingTable(true);
       try {
         let response = await WebApiPayroll.getUserCredits(person_id);

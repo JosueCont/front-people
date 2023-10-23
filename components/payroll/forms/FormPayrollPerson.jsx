@@ -13,6 +13,7 @@ import {
   Table,
   Popconfirm,
   Alert,
+  Divider,
 } from "antd";
 import { CloseOutlined, CheckOutlined, CheckCircleOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -35,10 +36,13 @@ import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import FormImssInfonavit from "./FormImssInfonavit";
 
 const FormPayrollPerson = ({
   person = null,
   refreshtab = false,
+  refreshTab12 = false,
+  onFinishRefreshTab12,
   node = null,
   assimilated_pay = null,
   ...props
@@ -924,6 +928,14 @@ const FormPayrollPerson = ({
                 </Form.Item>
               </Row>
             </Form>
+            <Divider/>
+            <FormImssInfonavit
+              person={person}
+              refreshtab12={refreshTab12}
+              onFinishRefreshTab12={()=>setRefreshTab12(false)}
+              person_id={person.id}
+              node={person.node}
+            />
             <Row>
               <Table dataSource={payrollPersonList} scroll={{ x: 1500 }} columns={columns} size={'small'} />
             </Row>
