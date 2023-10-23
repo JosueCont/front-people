@@ -988,7 +988,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     let records = extraOrdinaryPayroll
 
     if(step === 0){
-      records = extraOrdinaryPayroll
+      records = extraOrdinaryPayroll.filter(item => item?.payroll_cfdi_person?.status !== 2 )
     }
     if(step === 1 && movementType === 1){
       return extraOrdinaryPayroll
