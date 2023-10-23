@@ -186,9 +186,16 @@ const ImssInfonavit = ({person, person_id = null, userInfo=null, refreshtab=fals
         setExistCredit(credit_config);
         setIsNewRegister(false);
         setInfonavitCredit(response.data);
-      } catch (error) {
+      } 
+      catch (e) {
         setIsNewRegister(true);
-        console.log(error);
+        const error = e.response; 
+        console.log(e);
+        if(error.data.message === "No se encontraron créditos"){
+          setExistCredit(false);
+          setIsNewRegister(false);
+          setInfonavitCredit([]);
+        }
       } finally {
         setLoadingTable(false);
       }
