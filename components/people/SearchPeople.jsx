@@ -108,6 +108,7 @@ const SearchPeople = ({
                                         className='input-jb-clear'
                                         placeholder='Búsqueda general'
                                         value={valueSearch}
+                                        disabled={load_collaborators}
                                         onChange={onChangeSearch}
                                         onPressEnter={onGeneralSearch}
                                         style={{
@@ -118,6 +119,7 @@ const SearchPeople = ({
                                     />
                                     <button
                                         className='ant-btn-simple'
+                                        disabled={load_collaborators}
                                         onClick={() => onGeneralSearch()}
                                         style={{
                                             borderTopRightRadius: '10px',
@@ -131,17 +133,17 @@ const SearchPeople = ({
                             <div className='content-end' style={{ gap: 8 }}>
                                 <OptionsPeople />
                                 <Tooltip title='Configurar filtros'>
-                                    <Button onClick={() => showModal()}>
+                                    <Button disabled={load_collaborators} onClick={() => showModal()}>
                                         <SettingOutlined />
                                     </Button>
                                 </Tooltip>
                                 <Tooltip title='Limpiar filtros'>
-                                    <Button onClick={() => deleteFilter()}>
+                                    <Button disabled={load_collaborators} onClick={() => deleteFilter()}>
                                         <SyncOutlined />
                                     </Button>
                                 </Tooltip>
                                 {permissions.person?.create && (
-                                    <Button onClick={() => setOpenCreate(true)}>
+                                    <Button disabled={load_collaborators} onClick={() => setOpenCreate(true)}>
                                         Agregar
                                     </Button>
                                 )}
