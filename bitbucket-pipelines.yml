@@ -49,7 +49,6 @@ pipelines:
           name: Integración en middleware_version
           script:
             - git pull origin staging  # Actualiza la rama local "staging"
-            - npm install  # Instala las dependencias
             - commit_message=$(git log --pretty=format:"- %s" develop..HEAD)  # Captura el último mensaje de commit
             - echo "$commit_message" > commit_message.txt  # Guarda el mensaje en un archivo
             - npm version patch  # Aumenta la versión en middleware_git
