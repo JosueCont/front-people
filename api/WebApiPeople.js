@@ -318,6 +318,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/node/${id}/`, "put", data);
   }
 
+  static downloadCsdsMultiEmmiter(id) {
+    return WebApi.ApisType(`/business/download-cert-key/${id}/`, 'get')
+  }
+
   static getDocumentPerson(data) {
     return WebApi.ApisType(`/person/person/${data}/document_person/`, "get");
   }

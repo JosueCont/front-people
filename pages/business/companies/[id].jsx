@@ -91,7 +91,7 @@ const ConfigCompany = ({ ...props }) => {
             activeKey={activeKey}
           >
             { props.config && props.config.nomina_enabled &&
-              <TabPane tab="Información fiscal" key={"2"}>
+              <TabPane tab="Información fiscal" key={"2"} forceRender>
                 <FiscalInformationNode node_id={company && company.id} />
               </TabPane>
             }
