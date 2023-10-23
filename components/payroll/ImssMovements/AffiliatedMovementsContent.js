@@ -1,4 +1,4 @@
-import { Alert, Button, Col, DatePicker, Row, Select, Spin, message, Input,Upload } from 'antd'
+import { Alert, Button, Col, DatePicker, Row, Select, Spin, message, Input,Upload, Checkbox } from 'antd'
 import React, { useEffect, useState } from 'react'
 import SelectPatronalRegistration from '../../selects/SelectPatronalRegistration'
 import AfilliateMovements from '../../../pages/business/AfilliateMovements'
@@ -26,6 +26,7 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
     const [year, setYear] = useState("");
     const [refreshTable,setRefreshTable] = useState(false)
     const [fileList, setFileList] = useState([]);
+    const [masiveDownload, setMasiveDownload] = useState(false);
 
     const validateScraper = async () => {
         try{
@@ -244,6 +245,7 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
 
               <span>Bimestre</span>
               <Select
+                mode='multiple'
                 size="middle"
                 key={"period"}
                 disabled={disabledBimester}
@@ -257,6 +259,8 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
               >
                 {getOptions()}
               </Select>
+              <span></span>
+              <Checkbox style={{ width: "100%", marginTop: "10px" }} onChange={()=>{setMasiveDownload(!masiveDownload)}}>Checkbox</Checkbox>
             </div>
           </Col>
         </Row>
