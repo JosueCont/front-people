@@ -36,6 +36,8 @@ import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import Link from "next/link";
+
 
 const FormPayrollPerson = ({
   person = null,
@@ -597,9 +599,11 @@ const FormPayrollPerson = ({
               {hasMovementRegistered
                   ? 
                   
-                    <Tooltip title="Se han registrado movimientos en el IMSS">
-                      <CheckCircleOutlined style={{color:'green',fontSize:20, margin:'auto'}} />
-                    </Tooltip>
+                  <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
+                    <a style={{color:'blue'}}>
+                      <div>Ver movimientos IMSS</div>
+                    </a>
+                  </Link>
                   :
                     <Tooltip title="No se ha registrado movimientos en el IMSS">
                       <StopOutlined style={{color:'orange',fontSize:20, margin:'auto'}} />
