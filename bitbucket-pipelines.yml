@@ -1,44 +1,57 @@
+image: node:16
+
 pipelines:
   branches:
-    develop:
+    # develop:
+    #   - step:
+    #       name: "Update"
+    #       script:
+    #         - pipe: atlassian/ssh-run:0.3.1
+    #           variables:
+    #             SSH_USER: $DEV_SERVER_USER
+    #             SERVER: $DEV_SERVER_IP
+    #             SSH_KEY: $DEV_SSH_KEY
+    #             MODE: 'command'
+    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && sudo git pull'
+    #   - step:
+    #       name: "Build"
+    #       script:
+    #         - pipe: atlassian/ssh-run:0.3.1
+    #           variables:
+    #             SSH_USER: $DEV_SERVER_USER
+    #             SERVER: $DEV_SERVER_IP
+    #             SSH_KEY: $DEV_SSH_KEY
+    #             MODE: 'command'
+    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker build -t front-people .'
+    #   - step:
+    #       name: "Deploy"
+    #       deployment: Kiuberto Cloud
+    #       script:
+    #         - pipe: atlassian/ssh-run:0.3.1
+    #           variables:
+    #             SSH_USER: $DEV_SERVER_USER
+    #             SERVER: $DEV_SERVER_IP
+    #             SSH_KEY: $DEV_SSH_KEY
+    #             MODE: 'command'
+    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker stop front-people || true && docker rm front-people || true && docker run -d -p 3006:3006 --restart always --name front-people front-people'
+    #   - step:
+    #       name: "Garbage collector"
+    #       script:
+    #         - pipe: atlassian/ssh-run:0.3.1
+    #           variables:
+    #             SSH_USER: $DEV_SERVER_USER
+    #             SERVER: $DEV_SERVER_IP
+    #             SSH_KEY: $DEV_SSH_KEY
+    #             MODE: 'command'
+    #             COMMAND: 'yes | docker image prune -a'
+    middleware_version:
       - step:
-          name: "Update"
+          name: Integración en middleware_version
           script:
-            - pipe: atlassian/ssh-run:0.3.1
-              variables:
-                SSH_USER: $DEV_SERVER_USER
-                SERVER: $DEV_SERVER_IP
-                SSH_KEY: $DEV_SSH_KEY
-                MODE: 'command'
-                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && sudo git pull'
-      - step:
-          name: "Build"
-          script:
-            - pipe: atlassian/ssh-run:0.3.1
-              variables:
-                SSH_USER: $DEV_SERVER_USER
-                SERVER: $DEV_SERVER_IP
-                SSH_KEY: $DEV_SSH_KEY
-                MODE: 'command'
-                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker build -t front-people .'
-      - step:
-          name: "Deploy"
-          deployment: Kiuberto Cloud
-          script:
-            - pipe: atlassian/ssh-run:0.3.1
-              variables:
-                SSH_USER: $DEV_SERVER_USER
-                SERVER: $DEV_SERVER_IP
-                SSH_KEY: $DEV_SSH_KEY
-                MODE: 'command'
-                COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker stop front-people || true && docker rm front-people || true && docker run -d -p 3006:3006 --restart always --name front-people front-people'
-      - step:
-          name: "Garbage collector"
-          script:
-            - pipe: atlassian/ssh-run:0.3.1
-              variables:
-                SSH_USER: $DEV_SERVER_USER
-                SERVER: $DEV_SERVER_IP
-                SSH_KEY: $DEV_SSH_KEY
-                MODE: 'command'
-                COMMAND: 'yes | docker image prune -a'
+            - git pull origin staging  # Actualiza la rama local "staging"
+            - npm install  # Instala las dependencias
+            - commit_message=$(git log --pretty=format:"- %s" develop..HEAD)  # Captura el último mensaje de commit
+            - echo "$commit_message" > commit_message.txt  # Guarda el mensaje en un archivo
+            - npm version patch  # Aumenta la versión en middleware_git
+            - git commit -am "Bump version to $(npm --no-git-tag-version version)"  # Realiza un commit con el cambio de versión
+            - git push origin staging  # Sube los cambios a la rama "staging"
