@@ -815,21 +815,43 @@ export const optionsClasifIMSS = [
     { value: 1, key: 1, label: "Accidente de trabajo" },
     { value: 2, key: 2, label: "Accidente en trayecto" },
     { value: 3, key: 3, label: "Enfermedad de trabajo" },
-    { value: 4, key: 4, label: "Pre" },
-    { value: 5, key: 5, label: "Enlace" },
-    { value: 6, key: 6, label: "Post" },
-    { value: 7, key: 7, label: "Unica" },
+    // { value: 4, key: 4, label: "Pre" },
+    // { value: 5, key: 5, label: "Enlace" },
+    // { value: 6, key: 6, label: "Post" },
+    // { value: 7, key: 7, label: "Unica" },
 ];
 
 export const optionsCategoryIMSS = [
     { value: 0, key: 0, label: "No aplica" },
-    { value: 1, key: 1, label: "Inicial" },
-    { value: 2, key: 2, label: "Unica" },
+    { value: 1, key: 1, label: "Incapacidad temporal" },
+    { value: 2, key: 2, label: "Valuación inicial provisional" },
+    { value: 3, key: 3, label: "Valuación inicial definitiva" },
+    { value: 4, key: 4, label: "Defunción" },
+    { value: 5, key: 5, label: "Recaída" },
+    { value: 6, key: 6, label: "Valuación post. a la fecha de alta" },
+    { value: 7, key: 7, label: "Revaluación provisional" },
+    { value: 8, key: 8, label: "Recaída sin alta médica" },
+    { value: 9, key: 9, label: "Revaluación definitiva" }
+    // { value: 1, key: 1, label: "Inicial" },
+    // { value: 2, key: 2, label: "Unica" },
 ];
 
+export const optionsSubcategoryIMSS = [
+    { value: 0, key: 0, label: "No aplica" },
+    { value: 1, key: 1, label: "Única" },
+    { value: 2, key: 2, label: "Inicial" },
+    { value: 3, key: 3, label: "Subsecuente" },
+    { value: 4, key: 4, label: "Alta médica o ST2" },
+    { value: 5, key: 5, label: "Valuación o ST3" },
+    { value: 6, key: 6, label: "Defunción o ST3" },
+    { value: 7, key: 7, label: "Prenatal" },
+    { value: 8, key: 8, label: "Enlace" },
+    { value: 9, key: 9, label: "Post natal" },
+]
+
 export const optionsTypeEvents = [
-    {value: '1', key: '1', label:'Entrada'},
-    {value: '2', key: '2', label: 'Salida'}
+    { value: '1', key: '1', label: 'Entrada' },
+    { value: '2', key: '2', label: 'Salida' }
 ];
 
 export const catalogsCompany = [
@@ -837,7 +859,7 @@ export const catalogsCompany = [
     { name: 'Puestos de trabajo', catalog: 'jobs', key: 'job' },
     { name: 'Tipos de personas', catalog: 'persons', key: 'person_type' },
     { name: 'Parentescos', catalog: 'relatives', key: 'relationship' },
-    { name: 'Tipos de documentos', catalog: 'documents', key: 'document_type'},
+    { name: 'Tipos de documentos', catalog: 'documents', key: 'document_type' },
     // { name: 'Plazas', catalog: 'places' },
     { name: 'Conceptos internos', catalog: 'internal' },
     { name: 'Conceptos fijos', catalog: 'fixed' },
@@ -848,11 +870,11 @@ export const catalogsCompany = [
 ]
 
 export const catalogsOrgStructure = [
-    {name: 'Niveles organizacionales', catalog: 'levels'},
-    {name: 'Nodos organizacionales', catalog: 'nodes'},
-    {name: 'Niveles jerárquicos', catalog: 'ranks'},
-    {name: 'Puestos de trabajo', catalog: 'jobs'},
-    {name: 'Plazas', catalog: 'places'},
-    {name: 'Tipos de personas', catalog: 'persons'},
-    {name: 'Historial de plazas', catalog: 'history'}
+    { name: 'Niveles organizacionales', catalog: 'levels' },
+    { name: 'Nodos organizacionales', catalog: 'nodes' },
+    { name: 'Niveles jerárquicos', catalog: 'ranks' },
+    { name: 'Puestos de trabajo', catalog: 'jobs' },
+    { name: 'Plazas', catalog: 'places' },
+    { name: 'Tipos de personas', catalog: 'persons' },
+    { name: 'Historial de plazas', catalog: 'history' }
 ]
