@@ -20,11 +20,7 @@ export const genders = [
     {
         label: "Femenino",
         value: 2,
-    },
-    {
-        label: "Otro",
-        value: 3,
-    },
+    }
 ];
 
 export const civilStatus = [
