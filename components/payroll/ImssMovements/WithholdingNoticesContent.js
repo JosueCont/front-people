@@ -26,6 +26,7 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
   const [dataTable, setDataTable] = useState([])
   const [messageTable, setMessageTable] = useState("")
   const [lastRequest, setLastRequest] = useState(null)
+  const [activeKey, setActiveKey] = useState('1');
 
   const validateScraper = async () => {
     let valid = await WebApiPeople.getCredentials('infonavit', patronalSelected)
@@ -40,6 +41,10 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
       validateScraper()
     }
   }, [patronalSelected])
+
+  const handleTabClick = (key) => {
+    setActiveKey(key);
+  };
 
   const getnotices = async() => {
     setLoadingTable(true);
@@ -100,9 +105,9 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
 
   const confirmSyncUpData = () => {
     confirm({
-      title: '¿Estás seguro de sincronizar o solicitar?',
+      title: '¿Estás seguro de sincronizar/solicitar?',
       icon: <ExclamationCircleOutlined />,
-      content: 'Some descriptions',
+      // content: 'Some descriptions',
       okText: 'Si',
       cancelText: 'Cancelar',
       onOk() {
@@ -117,6 +122,7 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
   const syncUpData = async () => {
     try {
       setLoading(true);
+      setLoadingTable(true);
       const user = JSON.parse(Cookie.get("token"));
       let dataSend = {
         patronal_registration_id: patronalSelected,
@@ -133,7 +139,10 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
       message.error(msg);
 
     } finally {
+      await getnotices()
+      setActiveKey("2")
       setLoading(false);
+      setLoadingTable(false);
     }
   };
 
@@ -248,7 +257,7 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
                         >
                             <SyncOutlined spin={loadingTable} />
                         </Button>
-                          <Tabs defaultActiveKey="1">
+                          <Tabs activeKey={activeKey} defaultActiveKey="1" onTabClick={handleTabClick}>
                             <Tabs.TabPane tab="Eventos finalizados" key="1" style={{padding:10}}>
                               <WithHoldingNotice
                                 getnotices={getnotices}
