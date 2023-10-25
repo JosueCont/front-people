@@ -10,7 +10,8 @@ import { message, Spin } from 'antd';
 import {
     optionsStatusPermits,
     optionsClasifIMSS,
-    optionsCategoryIMSS
+    optionsCategoryIMSS,
+    optionsSubcategoryIMSS
 } from '../../../utils/constant';
 import {
     Card,
@@ -71,7 +72,7 @@ const InfoIncapacity = () => {
     const onFinishReject = async (values) => {
         try {
             setLoading(true)
-            let body = { ...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { ...values, id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             await WebApiPeople.rejectDisabilitiesRequest(body);
             message.success('Solicitud rechazada')
             getInfoInability(router.query?.id)
@@ -85,7 +86,7 @@ const InfoIncapacity = () => {
     const onFinishApprove = async () => {
         try {
             setLoading(true)
-            let body = {id: router.query?.id, khonnect_id: current_user?.khonnect_id};
+            let body = { id: router.query?.id, khonnect_id: current_user?.khonnect_id };
             await WebApiPeople.approveDisabilitiesRequest(body);
             message.success('Solicitud aprobada')
             getInfoInability(router.query?.id)
@@ -98,21 +99,20 @@ const InfoIncapacity = () => {
 
     const setValuesForm = () => {
         let values = {};
-        values.person = infoInability?.person ? getFullName(infoInability?.person): null;
+        values.person = infoInability?.person ? getFullName(infoInability?.person) : null;
         values.status = !noValid.includes(infoInability?.status) ? getStatus(infoInability?.status) : null;
         values.incapacity_type = infoInability?.incapacity_type
             ? infoInability?.incapacity_type?.description : null;
-        
+
         values.imss_classification = !noValid.includes(infoInability?.imss_classification)
-            ? ['01','03'].includes(infoInability.incapacity_type?.code)
             ? getClasif(infoInability?.imss_classification)
-            : getCategory(infoInability?.imss_classification) : null;
+            : null;
 
         values.category = !noValid.includes(infoInability?.category)
             ? getCategory(infoInability?.category) : null;
         values.subcategory = !noValid.includes(infoInability?.subcategory)
-            ? getCategory(infoInability?.subcategory) : null;
-        
+            ? getSubcategory(infoInability?.subcategory) : null;
+
         values.departure_date = infoInability?.departure_date
             ? moment(infoInability.departure_date, formatStart).format(formatEnd) : null;
         values.return_date = infoInability?.return_date
@@ -124,7 +124,7 @@ const InfoIncapacity = () => {
         values.invoice = infoInability?.invoice;
         values.document_name_read = infoInability?.document
             ? infoInability.document?.split('/')?.at(-1) : null;
-            
+
         formInability.setFieldsValue(values)
     }
 
@@ -138,6 +138,13 @@ const InfoIncapacity = () => {
     const getCategory = (value) => getValueFilter({
         value,
         list: optionsCategoryIMSS,
+        keyEquals: 'value',
+        keyShow: 'label'
+    })
+
+    const getSubcategory = (value) => getValueFilter({
+        value,
+        list: optionsSubcategoryIMSS,
         keyEquals: 'value',
         keyShow: 'label'
     })
