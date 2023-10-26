@@ -17,7 +17,8 @@ import WebApiFiscal from '../../../api/WebApiFiscal';
 import FileUpload from '../../jobbank/FileUpload';
 import {
     optionsCategoryIMSS,
-    optionsClasifIMSS
+    optionsClasifIMSS,
+    optionsSubcategoryIMSS
 } from '../../../utils/constant';
 import SelectPeople from '../../people/utils/SelectPeople';
 
@@ -176,6 +177,8 @@ const IncapacityForm = ({
     }
 
     const onChangeDisabiliy = (value) => {
+        // let type = value ? getDisability(value) : null;
+        // let option = type?.code == '02' ? 0 : null;
         formIncapacity.setFieldsValue({
             category: null,
             subcategory: null,
@@ -201,58 +204,61 @@ const IncapacityForm = ({
         let valid_start = current < departureDate?.startOf("day");
         return current && (valid_start || exist);
     }
+    
+    const filterClasif = (start, end) => {
+        const filter_ = e => e.value == start;
+        const beetwen = e => e.value >= start && e.value <= end;
+        return start && end
+            ? optionsClasifIMSS.filter(beetwen)
+            : optionsClasifIMSS.filter(filter_);
+    }
 
     const getOptionsClasif = () => {
         let code = typeDisability?.code;
         if (!code) return [];
-        const gets = {
-            '01': e => e.value >= 1 && e.value <= 3,
-            '03': e => e.value >= 4 && e.value <= 7
-        }
-        return gets[code]
-            ? optionsClasifIMSS.filter(gets[code])
-            : [optionsCategoryIMSS.find(item => item.value == 0)];
+
+        if (code == '01') return filterClasif(1, 3);
+        // 02, 03, 04
+        return filterClasif(0);
     }
 
-    const find0 = item => item.value == 0;
-    const find1 = item => item.value == 1;
-    const find2 = item => item.value == 2;
-    const diff0 = item => item.value !== 0;
-    const diff2 = item => item.value !== 2;
+    const filterCat = (start, end) => {
+        const filter_ = e => e.value == start;
+        const beetwen = e => e.value >= start && e.value <= end;
+        return start && end
+            ? optionsCategoryIMSS.filter(beetwen)
+            : optionsCategoryIMSS.filter(filter_);
+    }
 
     const getOptionsCategory = () => {
         let code = typeDisability?.code;
-        if (code == '01') {
-            if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
-            return [optionsCategoryIMSS.find(find1)];
-        }
-        if (code == '02' &&
-            idClasif == 0
-        ) return optionsCategoryIMSS.filter(diff2);
-        if (code == '03' &&
-            [4, 5, 6, 7].includes(idClasif)
-        ) return [optionsCategoryIMSS.find(find0)];
-        // 04
-        return [optionsCategoryIMSS.find(find0)];
+        if (code == '01') return optionsCategoryIMSS;
+        // 02, 03, 04
+        return filterCat(0);
+    }
+
+    const filterSub = (start, end) => {
+        const filter_ = e => e.value == start;
+        const beetwen = e => e.value >= start && e.value <= end;
+        return start && end
+            ? optionsSubcategoryIMSS.filter(beetwen)
+            : optionsSubcategoryIMSS.filter(filter_);
     }
 
     const getOptionsSubcategory = () => {
         let code = typeDisability?.code;
+
         if (code == '01') {
-            if (idClasif == 1) return [optionsCategoryIMSS.find(find0)];
-            return optionsCategoryIMSS.filter(diff0);
+            if (idCategory == 0) return filterSub(0);
+            if ([1, 5, 8].includes(idCategory)) return filterSub(1, 4);
+            if ([2, 3, 6, 7, 5, 9].includes(idCategory)) return filterSub(5);
+            // 4
+            return filterSub(6);
         }
-        if (code == '02' &&
-            idCategory == 0
-        ) return [optionsCategoryIMSS.find(find2)];
-        if (code == '02' &&
-            idCategory == 1
-        ) return optionsCategoryIMSS.filter(diff0);
-        if (code == '03' &&
-            [4, 5, 6, 7].includes(idClasif)
-        ) return [optionsCategoryIMSS.find(find2)];
-        // 04
-        return [optionsCategoryIMSS.find(find2)];
+        if (code == '02') return filterSub(1, 4);
+        if (code == '03') return filterSub(7, 9);
+        //04
+        return filterSub(0);
     }
 
     const optionsClasifications = useMemo(() => {
