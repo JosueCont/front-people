@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   Row,
   Col,
@@ -11,29 +11,52 @@ import {
   Switch,
   Spin,
   Input,
+  Space,
 } from "antd";
-import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
+import { CheckCircleOutline, CheckOutlined, CloseOutlined } from "@material-ui/icons";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
+  redirectTo,
 } from "../../utils/constant";
 import UploadFile from "../UploadFile";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import FormFiscalInformation from "./forms/FormFiscalInformation";
 import LegalRepresentative from "./forms/LegalRepresentative";
 import FormFiscalAddress from "./forms/FormFiscalAddress";
+import FileUpload from '../jobbank/FileUpload';
 import moment from 'moment'
+import { ruleRequired } from "../../utils/rules";
+import { downloadCustomFile } from "../../utils/functions";
+import styled from '@emotion/styled';
+import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+
+const AlertCert = styled.div`
+  background-color: ${({ type }) => type == 'success' ? '#f6ffed' : '#fffbe6'} ;
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${({ type }) => type == 'success' ? '#b7eb8f' : '#ffe58f'};
+  padding: 8px;
+  margin-bottom: 24px;
+  .anticon{
+    font-size: 24px;
+    color: ${({ type }) => type == 'success' ? '#52c41a' : '#faad14'};
+  }
+`;
 
 const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const { Title } = Typography;
-  const [form] = Form.useForm();
+  const [formCert] = Form.useForm();
   const [formFiscal] = Form.useForm();
   const [formAddress] = Form.useForm();
   const [formLegalRep] = Form.useForm();
+
+  const [loading, setLoading] = useState(true);
   const [fiscalData, setFiscalData] = useState(null);
-  const [acceptAgreement, setAcceptAgreement] = useState(false);
+  // const [acceptAgreement, setAcceptAgreement] = useState(false);
   const [messageCert, setMessageCert] = useState(null);
   const [loadingCert, setLoadingCert] = useState(false);
   const [existsCSD, setExistsCSD] = useState(false);
@@ -44,18 +67,35 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const [dateExpirationCertificate, setDateExpirationCertificate] = useState(null)
   const [validateExpirationCertificate, setValidateExpirationCertificate] = useState(false)
 
-  useLayoutEffect(() => {
+  const [fileCert, setFileCert] = useState([]);
+  const [fileKey, setFileKey] = useState([]);
+
+  const { current_node } = useSelector(state => state.userStore);
+  
+  const showDownload = useMemo(() => {
+    if (current_node?.id != node_id) return false;
+    return current_node?.cer_file_name && current_node?.key_file_name;
+  }, [current_node, node_id])
+
+  useEffect(() => {
     if (node_id) {
-      WebApiPeople.getfiscalInformationNode(node_id)
-        .then((response) => {
-          setFiscalData(response.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-        validateCSDExists()
+      getInfoFiscal();
     }
   }, [node_id]);
+
+  const getInfoFiscal = async () => {
+    try {
+      setLoading(true)
+      let response = await WebApiPeople.getfiscalInformationNode(node_id);
+      if (response?.data?.rfc) validateCSDExists();
+      setFiscalData(response.data)
+      setLoading(false)
+    } catch (e) {
+      setFiscalData([])
+      setLoading(false)
+      console.log(e)
+    }
+  }
 
   const saveForms = async () => {
     if (!(await validateForms())) return;
@@ -67,6 +107,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     };
     WebApiPeople.savefiscalInformation(data)
       .then((response) => {
+        setFiscalData({ ...fiscalData, ...response?.data?.fiscal })
         message.success(messageSaveSuccess);
       })
       .catch((error) => {
@@ -75,74 +116,77 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       });
   };
 
-  const validatedPass = (value) => {
-    if (value && value != "") {
-      setPassword(value.trim());
-      form.setFieldsValue({ passcer: value.trim() });
-    }
-  };
-
-  const validateCSDExists=async ()=>{
-    setLoadingCert(true)
-    setExistsCSD(false)
+  const validateCSDExists = async () => {
     try {
-      const response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id)
-      if(typeof response?.data?.message === 'boolean' && response?.data?.message===true){
-        setExistsCSD(true)
-        let dateExp = moment(response.data.data.CsdExpirationDate)
-        let diffDate = dateExp.diff(moment())
-        if (diffDate > 0){
-          setValidateExpirationCertificate(true)
-        }
-        setDateExpirationCertificate(moment(response.data.data.CsdExpirationDate).format('L'))
-      }
-    }catch (e){
-      console.log('error',e)
+      setLoadingCert(true)
       setExistsCSD(false)
-    }finally {
+      let response = await WebApiFiscal.validateExistsCsdsMultiEmmiter(node_id);
+      if (response?.data?.message) {
+        setExistsCSD(true)
+        setLoadingCert(false)
+        let expDate = response?.data?.data?.CsdExpirationDate;
+        let expired = moment().isAfter(moment(expDate));
+        setValidateExpirationCertificate(!expired);
+        setDateExpirationCertificate(moment(expDate).format('L'))
+        return;
+      }
+      setExistsCSD(false)
       setLoadingCert(false)
+    } catch (e) {
+      setLoadingCert(false)
+      setExistsCSD(false)
     }
   }
 
-
-  const uploadCsds = () => {
-    if (password && certificate && key) {
+  const actionCert = async (data) => {
+    try {
       setLoadingCert(true)
-      let data = new FormData();
-      data.append("node", node_id);
-      data.append("cer", certificate);
-      data.append("key", key);
-      data.append("password", password);
-      setMessageCert(null);
-      setExistsCSD(false)
-      WebApiFiscal.uploadCsdsMultiEmmiter(data, node_id)
-        .then((response) => {
-          if(response?.data?.message){
-            //gdzul
-            if(typeof response?.data?.message?.status === 'boolean' && response?.data?.message?.status===true){
-              message.success(messageUploadSuccess);
-              setAcceptAgreement(false)
-              form.resetFields()
-            }else{
-              setMessageCert(response?.data?.message);
-            }
-            validateCSDExists()
-
-           // openNotification('info',response?.data?.message)
-          }else{
-            setMessageCert(null)
-            message.success(messageUploadSuccess);
-          }
-          setLoadingCert(false)
-
-        })
-        .catch((error) => {
-          console.log(error)
-          message.error(messageError);
-          setLoadingCert(false)
-        });
+      let response = await WebApiFiscal.uploadCsdsMultiEmmiter(data, node_id);
+      if (response?.data?.message?.status) {
+        setMessageCert(null)
+        formCert.resetFields();
+        message.success('Archivos cargados')
+        validateCSDExists();
+        return;
+      }
+      let msg = response?.data?.message || null;
+      setLoadingCert(false)
+      setMessageCert(msg)
+    } catch (e) {
+      console.log(e)
+      setLoadingCert(false)
+      setMessageCert(null)
+      message.error('Archivos no cargados')
     }
-  };
+  }
+
+  const onFinishCert = (values) => {
+    let data = new FormData();
+    data.append('node', node_id);
+    data.append('password', values?.password);
+    if (fileCert.length > 0) data.append('cer', fileCert[0]);
+    if (fileKey.length > 0) data.append('key', fileKey[0]);
+    actionCert(data)
+  }
+
+  const actionCertDownload = async () => {
+    try {
+      let response = await WebApiPeople.downloadCsdsMultiEmmiter(node_id);
+      let cer = response?.data?.cer_file_url;
+      let key = response?.data?.key_file_url;
+      if (!cer || !key) {
+        message.error('Archivos no encontrados')
+        return;
+      }
+      downloadCustomFile({ url: cer, name: cer?.split('?')[0].split('/').at(-1) })
+      downloadCustomFile({ url: key, name: key?.split('?')[0].split('/').at(-1) })
+    } catch (e) {
+      console.log(e)
+      message.error('Archivos no descargados')
+    }
+  }
+
+  const normalizePass = (value = '') => value?.trim();
 
   const validateForms = async () => {
     let validformFiscal = await formFiscal
@@ -197,114 +241,134 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
         <Button onClick={saveForms}>Guardar</Button>
       </Row>
       <Row>
-        <Title style={{ fontSize: "15px" }}>
-          Certificados y sellos digitales
-        </Title>
+        <Space>
+          <Title level={5} style={{ marginBottom: 0 }}>
+            Certificados y sellos digitales
+          </Title>
+          <Typography.Link
+            style={{
+              backgroundColor: '#fafafa',
+              padding: '0px 5px',
+              borderRadius: 4
+            }}
+            target="_blank"
+            href="https://www.sat.gob.mx/aplicacion/16660/genera-y-descarga-tus-archivos-a-traves-de-la-aplicacion-certifica"
+          >
+            Liga para generar o renovar tu e.firma
+          </Typography.Link>
+        </Space>
+        <Divider style={{ marginTop: "2px" }} />
       </Row>
-      <Row>
-        <Col>
-          <Divider style={{ marginTop: "2px" }} />
-          <Spin spinning={loadingCert}>
-          <Row>
-            <Col lg={2} xs={22} offset={1}>
-              <Form form={form}>
-                <Form.Item name="consent" label="" valuePropName="checked">
-                  <Switch
-                    onChange={(value) => setAcceptAgreement(value)}
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
-                  />
-                </Form.Item>
+      {!loading && (
+        <>
+          {fiscalData?.rfc ? (
+            <Row>
+              <Form
+                form={formCert}
+                layout="vertical"
+                onFinish={onFinishCert}
+                style={{ width: '100%' }}
+              >
+                <Spin spinning={loadingCert}>
+                  <Row gutter={[24, 0]}>
+                    <Col xs={24} lg={8}>
+                      <Form.Item
+                        name="password"
+                        label="Contraseña"
+                        rules={[ruleRequired]}
+                        normalize={normalizePass}
+                      >
+                        <Input.Password
+                          placeholder="Contraseña"
+                          maxLength={12}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} lg={8}>
+                      <FileUpload
+                        upload={false}
+                        isRequired={true}
+                        label='Certificado (cer)'
+                        keyName='cer_name_red'
+                        typeFile={['cer']}
+                        setFile={setFileCert}
+                        tooltip={`Archivos permitidos: cer`}
+                        onError={e => formCert.setFields([{ name: 'cer_name_red', errors: [e] }])}
+                        setNameFile={e => formCert.setFieldsValue({ cer_name_red: e })}
+                      />
+                    </Col>
+                    <Col xs={24} lg={8}>
+                      <FileUpload
+                        upload={false}
+                        isRequired={true}
+                        label='Llave (key)'
+                        keyName='key_name_read'
+                        typeFile={['key']}
+                        setFile={setFileKey}
+                        tooltip={`Archivos permitidos: key`}
+                        onError={e => formCert.setFields([{ name: 'cer_name_red', errors: [e] }])}
+                        setNameFile={e => formCert.setFieldsValue({ key_name_read: e })}
+                      />
+                    </Col>
+                    <Col span={24}>
+                      {messageCert && (
+                        <Alert
+                          message="Información"
+                          description={messageCert}
+                          type="info"
+                          showIcon
+                          style={{ marginBottom: 24 }}
+                        />
+                      )}
+                      {existsCSD && (
+                        <AlertCert type={validateExpirationCertificate ? 'success' : 'warning'}>
+                          <Space align='start'>
+                            {validateExpirationCertificate ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}
+                            <div>
+                              <h3 style={{ marginBottom: 0 }}>
+                                Archivos detectados
+                              </h3>
+                              <p style={{ marginBottom: 0 }}>
+                                Se detectaron los CSD para esta empresa, {validateExpirationCertificate ? '' : 'sin embargo se encuentran vencidos, recuerda que '}la opción de subir nuevos Certificados
+                                y Sellos Digitales estará siempre disponible.
+                              </p>
+                              <h3 style={{ marginBottom: 0 }}>
+                                {validateExpirationCertificate ? 'Certificado vigente' : 'Certificado vencido'}
+                              </h3>
+                              <p>
+                                La vigencia de tu certificado es {dateExpirationCertificate}
+                              </p>
+                            </div>
+                          </Space>
+                        </AlertCert>
+                      )}
+                    </Col>
+                    <Col span={24} style={{ display: 'flex' }}>
+                      <Space style={{ marginLeft: 'auto' }}>
+                        {(existsCSD || showDownload) && (
+                          <Button htmlType="button" onClick={() => actionCertDownload()}>
+                            Descargar archivos
+                          </Button>
+                        )}
+                        <Button htmlType="submit">
+                          {existsCSD ? 'Actualizar' : 'Guardar'}
+                        </Button>
+                      </Space>
+                    </Col>
+                  </Row>
+                </Spin>
               </Form>
-            </Col>
-            <Col lg={14} xs={22} offset={1}>
-              <p>
-                Estoy de acuerdo y doy mi consentimiento para que EL SISTEMA
-                almacene y utilice estos archivos con fines exclusivos para
-                emisión de CFDI para el timbrado de nómina.
-              </p>
-            </Col>
-          </Row>
-
-          <div style={{ width: "100%" }}>
-            {acceptAgreement && (
-              <Form layout={"vertical"} form={form}>
-                <Col
-                  style={{
-                    marginBottom: "15px",
-                    marginLeft: "15px",
-                    width: "50%",
-                  }}
-                >
-                  <Form.Item name="passcer">
-                    <Input.Password
-                      type="password"
-                      placeholder="Contraseña"
-                      maxLength={12}
-                      onChange={(value) => validatedPass(value.target.value)}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={12} xs={22}>
-                  <UploadFile
-                    textButton={"Cargar certificado"}
-                    setFile={setCertificate}
-                    validateExtension={".cer"}
-                    showList={true}
-                  />
-                </Col>
-                <Col lg={12} xs={22}>
-                  <UploadFile
-                    textButton={"Cargar llave"}
-                    setFile={setKey}
-                    validateExtension={".key"}
-                    showList={true}
-                  />
-                </Col>
-                <Col span={24}>
-                  {
-                    messageCert && <Alert
-                    message="Información"
-                    description={messageCert}
-                    type="info"
-                    showIcon
-                    />
-                  }
-                </Col>
-                <Row justify="end">
-                  <Button
-                      loading={loadingCert}
-                    disabled={password && certificate && key ? false : true}
-                    onClick={() => uploadCsds()}
-                  >
-                    Guardar certificados
-                  </Button>
-                </Row>
-              </Form>
-            )}
-            {
-                existsCSD && <Alert
-                    message="Archivos detectados"
-                    description={`Se detectaron los CSD para esta empresa, ${validateExpirationCertificate?'':'sin embargo se encuentran vencidos, recuerda que '}la opción de subir nuevos Certificados
-                    y Sellos Digitales estará siempre disponible.`}
-                    type={validateExpirationCertificate?'success':'warning'}
-                    showIcon
-                />
-            }
-            {
-              dateExpirationCertificate && <div><br /><Alert
-              message={validateExpirationCertificate?'Certificado vigente':'Certificado vencido'}
-              description={`La vigencia de tu certificado es ${dateExpirationCertificate}`}
-              type={validateExpirationCertificate?'success':'error'}
+            </Row>
+          ) : (
+            <Alert
+              type="warning"
+              message="RFC no detectado"
+              description="Para visualizar este apartado es necesario registrar dicho valor."
               showIcon
-          /></div>
-            }
-          </div>
-          </Spin>
-
-
-        </Col>
-      </Row>
+            />
+          )}
+        </>
+      )}
     </>
   );
 };

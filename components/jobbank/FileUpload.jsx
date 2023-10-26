@@ -24,11 +24,13 @@ const FileUpload = ({
     label = '',
     keyName = 'name_file',
     disabled = false,
+    deleteFile = true,
     download = false,
     revertColor = false,
     hideOptions = false,
     sizeInput = 'default',
-    style = {}
+    style = {},
+    onError
 }) => {
 
     const inputFile = useRef(null);
@@ -41,18 +43,22 @@ const FileUpload = ({
     const onChangeFile = ({ target: { files } }) => {
         if (Object.keys(files).length <= 0) {
             let msg = 'No se pudo cargar el archivo, intente de nuevo';
-            message.error(msg)
+            if (onError) onError(msg);
+            else message.error(msg);
             return;
         }
         let extension = getFileExtension(files[0].name);
         if (typeFile?.length > 0 && !typeFile.includes(extension.toLowerCase())) {
             let msg = 'El archivo seleccionado no es válido';
-            message.error(msg);
+            if (onError) onError(msg);
+            else message.error(msg);
             return;
         }
         let size = files[0].size / 1024 / 1024;
         if (size > maxSizeFile) {
-            message.error(`Archivo pesado: ${size.toFixed(2)}mb`);
+            let msg = `Archivo pesado: ${size.toFixed(2)}mb`;
+            if (onError) onError(msg);
+            else message.error(msg);
             return;
         }
         setFile([files[0]]);
@@ -81,7 +87,7 @@ const FileUpload = ({
                                     })}
                                     /> : <EyeOutlined onClick={() => redirectTo(urlPreview, true)} />}
                             </Tooltip>
-                        ) : setFile && (
+                        ) : setFile && deleteFile && (
                             <Tooltip title={!disabled ? 'Eliminar' : ''}>
                                 <DeleteOutlined
                                     disabled={disabled}

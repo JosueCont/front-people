@@ -42,6 +42,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/department/?node=${data}`, "get");
   }
 
+  static getCfdiReport(id, query = '', config = {}) {
+    return axiosApi.get(`/business/node/${id}/cfdi-report/${query}`, config)
+  }
+
   static createPerson(data) {
     return WebApi.ApisType(`/person/person/`, "post", data);
   }
@@ -312,6 +316,10 @@ class WebApiPeople {
 
   static changeStatusNode(id, data) {
     return WebApi.ApisType(`/business/node/${id}/`, "put", data);
+  }
+
+  static downloadCsdsMultiEmmiter(id) {
+    return WebApi.ApisType(`/business/download-cert-key/${id}/`, 'get')
   }
 
   static getDocumentPerson(data) {
@@ -587,9 +595,9 @@ class WebApiPeople {
 
   static importDataMovements(data) {
     return WebApi.ApisType(
-        "/payroll/import-affiliate-movements",
-        "post",
-        data
+      "/payroll/import-affiliate-movements",
+      "post",
+      data
     );
   }
 

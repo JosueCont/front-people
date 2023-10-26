@@ -13,11 +13,12 @@ import {
     Space,
     Switch,
     Table,
+    Tag,
     Tooltip,
     Upload
 } from "antd";
 import { useEffect, useState } from "react";
-import {
+import Icon, {
     DeleteOutlined,
     EditOutlined,
     LoadingOutlined,
@@ -28,6 +29,12 @@ import {
     SettingOutlined,
     StopOutlined,
     TableOutlined,
+    EyeOutlined,
+    UserOutlined,
+    LinkOutlined,
+    EyeInvisibleOutlined,
+    FileTextOutlined,
+    createFromIconfontCN
 } from "@ant-design/icons";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -43,11 +50,12 @@ import _, { debounce } from "lodash";
 import { setNullCompany } from '../../redux/UserDuck'
 import router from "next/router";
 import moment from "moment";
+import ModalReceipts from "./ModalReceipts";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const businessForm = ({ currentNode,setNullCompany, ...props }) => {
+const businessForm = ({ currentNode, config, setNullCompany, ...props }) => {
     let router = useRouter();
     const [business, setBusiness] = useState([]);
     const [allBusiness, setAllBusiness] = useState([]);
@@ -70,6 +78,16 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
     const [admin, setAdmin] = useState(false);
     const [addB, setAddB] = useState(false);
 
+    const [receipts, setReceipts] = useState([]);
+    const [itemNode, setItemNode] = useState({});
+    const [openReceipts, setOpenReceipts] = useState(false);
+
+    const IconNomi = () => <Icon component={() => (
+        <img
+            style={{ width: 14, maxWidth: 14, transform: 'translateY(-3px)' }}
+            src={config?.concierge_icon || '/images/logo_gape.svg'}
+        />
+    )} />;
 
     const onFinish = (values) => {
         if (isDeleted) {
@@ -223,10 +241,10 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
     const getCopaniesList = async () => {
         setBusiness([]);
         setLoading(true)
-        await WebApiPeople.getCompanys(props?.user?.id, null)
+        await WebApiPeople.getCompanys(props?.user?.id, true)
             .then((response) => {
                 setBusiness(response.data.results);
-                setAllBusiness(response.data.results)
+                setAllBusiness(response.data.results);
                 setLoading(false);
             })
             .catch((error) => {
@@ -234,6 +252,27 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
                 console.log(error);
             });
     };
+
+    const showReceipts = async (item) => {
+        const key = 'updatable';
+        try {
+            message.loading({ content: 'Obteniendo información...', key })
+            let response = await WebApiPeople.getCfdiReport(item?.id);
+            setItemNode(item)
+            setReceipts(response.data)
+            setTimeout(() => {
+                message.success({ content: 'Información obtenida', key, duration: 1 })
+            }, 1000)
+            setTimeout(() => {
+                setOpenReceipts(true)
+            }, 2000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(() => {
+                message.error({ content: 'Información no obtenida', key })
+            }, 1000)
+        }
+    }
 
     const columns = [
         {
@@ -245,14 +284,36 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
             title: "Nombre",
             dataIndex: "name",
             key: "name",
+            ellipsis: true
         },
         {
             title: "Nodo padre",
-            dataIndex: "parent",
-            key: "parent",
-            render: (parent) => {
-                return parent ? parent.name : null;
-            },
+            dataIndex: ["parent", "name"],
+            key: ["parent", "name"]
+        },
+        {
+            title: "Colaboradores",
+            dataIndex: "num_collaborators",
+            render: (item) => (
+                <Tag icon={<UserOutlined />}>
+                    {item}
+                </Tag>
+            )
+        },
+        {
+            title: "Recibos timbrados",
+            render: (item) => (
+                <Space>
+                    <Tooltip title='Timbrados desde nomikhor'>
+                        <Tag className="pointer" icon={<IconNomi />} onClick={() => showReceipts(item)} >
+                            {item?.total_cfdi_nomikhor}
+                        </Tag>
+                    </Tooltip>
+                    <Tag className="pointer" icon={<FileTextOutlined />} onClick={() => showReceipts(item)} >
+                        {item?.total_cfdi}
+                    </Tag>
+                </Space>
+            )
         },
         {
             title: "Estatus",
@@ -261,6 +322,7 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
                 return (
                     <>
                         <Switch
+                            size="small"
                             key={item.id}
                             disabled={
                                 props.permissions && props.permissions.change_is_active
@@ -280,59 +342,49 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
             title: "Acciones",
             align: "center",
             key: "id",
-            render: (item) => {
-                return (
-                    <div>
-                        <Row gutter={24}>
-                            {props.permissions &&
-                                props.permissions.edit &&
-                                (
-                                    <Col className="gutter-row" span={6}>
-                                        <Link href={`/business/companies/${item.id}`}>
-                                            <Tooltip title="Configuración">
-                                                <SettingOutlined />
-                                            </Tooltip>
-                                        </Link>
-                                    </Col>
-                                )}
-                            {props.permissions && props.permissions.edit && (
-                                <Col className="gutter-row" span={6}>
-                                    <Tooltip title="Editar">
-                                        <EditOutlined onClick={() => showModal("edit", item)} />
-                                    </Tooltip>
-                                </Col>
+            render: (item) => (
+                <Space >
+                    {props.permissions &&
+                        props.permissions.edit &&
+                        (
+                            <Link href={`/business/companies/${item.id}`}>
+                                <Tooltip title="Configuración">
+                                    <SettingOutlined />
+                                </Tooltip>
+                            </Link>
+                        )}
+                    {props.permissions && props.permissions.edit && (
+                        <Tooltip title="Editar">
+                            <EditOutlined onClick={() => showModal("edit", item)} />
+                        </Tooltip>
+                    )}
+                    {props.permissions && props.permissions.delete && (
+                        <>
+                            {item.id == props.user.node ? (
+                                <Tooltip title="No puedes eliminar la empresa a la que estas registrada">
+                                    <StopOutlined />
+                                </Tooltip>
+                            ) : (
+                                <Tooltip title="Eliminar">
+                                    <DeleteOutlined
+                                        onClick={() => showModal("delete", item)}
+                                    />
+                                </Tooltip>
                             )}
-                            {props.permissions && props.permissions.delete && (
-                                <Col className="gutter-row" span={6}>
-                                    {item.id == props.user.node ? (
-                                        <Tooltip title="No puedes eliminar la empresa a la que estas registrada">
-                                            <StopOutlined />
-                                        </Tooltip>
-                                    ) : (
-                                        <Tooltip title="Eliminar">
-                                            <DeleteOutlined
-                                                onClick={() => showModal("delete", item)}
-                                            />
-                                        </Tooltip>
-                                    )}
-                                </Col>
-                            )}
-                            {/*<Col style={{ zIndex: 1 }} className="gutter-row" span={6}>*/}
-                            {/*  <Clipboard*/}
-                            {/*    text={*/}
-                            {/*      window.location.origin + "/ac/urn/" + item.permanent_code*/}
-                            {/*    }*/}
-                            {/*    tooltipView={false}*/}
-                            {/*    border={false}*/}
-                            {/*    type={"button"}*/}
-                            {/*    msg={"Copiado en portapapeles"}*/}
-                            {/*    tooltipTitle={"Copiar link de auto registro"}*/}
-                            {/*  />*/}
-                            {/*</Col>*/}
-                        </Row>
-                    </div>
-                );
-            },
+                        </>
+                    )}
+                    {/* <Clipboard
+                        text={
+                            window.location.origin + "/ac/urn/" + item.permanent_code
+                        }
+                        tooltipView={false}
+                        border={false}
+                        type={"button"}
+                        msg={"Copiado en portapapeles"}
+                        tooltipTitle={"Copiar link de auto registro"}
+                    /> */}
+                </Space>
+            ),
         },
     ];
 
@@ -436,264 +488,276 @@ const businessForm = ({ currentNode,setNullCompany, ...props }) => {
     };
 
     return (
-        <MainLayout
-            currentKey={["business"]} defaultOpenKeys={["security"]}
-            
-        >
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    className={"pointer"}
-                    onClick={() => router.push({ pathname: "/home/persons/" })}
-                >
-                    Inicio
-                </Breadcrumb.Item>
-                {verifyMenuNewForTenant() &&
-                    <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
-                }
-                <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-                <Breadcrumb.Item
-                // className={"pointer"}
-                // onClick={() => (treeTable ? "" : setTreeTable(true))}
-                >
-                    Empresas
-                </Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="container" style={{ width: "100%" }}>
-                <Row justify={"end"}>
-                    <Col>
-                        {props.permissions && props.permissions.create && (
-                            <Button
-                                style={{
-                                    background: "#fa8c16",
-                                    fontWeight: "bold",
-                                    color: "white",
-                                }}
-                                onClick={switchModal}
-                            >
-                                <PlusOutlined />
-                                Agregar empresa
-                            </Button>
-                        )}
-                    </Col>
-                </Row>
-                {/*<Row justify={"end"}>*/}
-                {/*    <Col style={{ margin: "1%" }}>*/}
-                {/*        {treeTable ? (*/}
-                {/*            <Button onClick={changeView}>*/}
-                {/*                <NodeExpandOutlined />*/}
-                {/*                Vista de árbol*/}
-                {/*            </Button>*/}
-                {/*        ) : (*/}
-                {/*            <Button onClick={changeView}>*/}
-                {/*                <TableOutlined />*/}
-                {/*                Tabla*/}
-                {/*            </Button>*/}
-                {/*        )}*/}
-                {/*    </Col>*/}
-                {/*</Row>*/}
-                <Row>
-                    <Col span={24}>
-                        {treeTable ? (
-                            <ConfigProvider locale={esES}>
-                                <Input placeholder="Buscar empresa" onChange={debouncedSearch} style={{ width: 300 }} allowClear />
-                                <Table
-                                    className={"mainTable"}
-                                    scroll={{ x: 300 }}
-                                    size="small"
-                                    columns={columns}
-                                    dataSource={business}
-                                    loading={loading}
-                                    pagination={{
-                                        showSizeChanger: true,
-                                    }}
-                                    locale={{
-                                        emptyText: loading
-                                            ? "Cargando..."
-                                            : "No se encontraron resultados.",
-                                    }}
-                                />
-                            </ConfigProvider>
-                        ) : (
-                            <NodeTreeView />
-                        )}
-                    </Col>
-                </Row>
-            </div>
+        <>
+            <MainLayout
+                currentKey={["business"]} defaultOpenKeys={["security"]}
 
-            <Modal
-                visible={modalSwitch}
-                onCancel={switchModal}
-                title={<b>Agregar empresa</b>}
-                footer={[
-                    <Button
-                        key="back"
-                        onClick={async () => {
-                            await setNullCompany()
-                            router.push("/payroll/importMasivePayroll")
-                        }}
-                    >
-                        Importar xml
-                    </Button>,
-                    <Button
-                        key="submit"
-                        onClick={() => {
-                            setModalSwitch(false), showModal("add");
-                        }}
-                    >
-                        Crear manualmente
-                    </Button>,
-                ]}
             >
-                <Alert
-                    message={
-                        <span>
-                    <b>Importar xml:</b> Se crea la empresa y el histórico de
-                    nómina a base de una carga masiva de xml (nóminas por
-                    persona). Por favor importa todo tu año {currentYear}
-                  </span>
-                    }
-                    type="warning"
-                />
-                <br />
-                <Alert
-                    message={
-                        <span>
-                    <b>Crear manualmente:</b> Se crea de manera manual una
-                    empresa con la información basica necesaria.
-                  </span>
-                    }
-                    type="warning"
-                />
-            </Modal>
-
-
-            <Modal
-                title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
-                visible={isModalVisible}
-                onCancel={() => handleOk()}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Regresar
-                    </Button>,
-                    <Button
-                        form="addBusinessForm"
-                        type="primary"
-                        key="submit"
-                        loading={loading}
-                        htmlType="submit"
-                        disabled={addB}
+                <Breadcrumb>
+                    <Breadcrumb.Item
+                        className={"pointer"}
+                        onClick={() => router.push({ pathname: "/home/persons/" })}
                     >
-                        {isEdit ? "Actualizar" : "Agregar"}
-                    </Button>,
-                ]}
-            >
-                <Form
-                    id="addBusinessForm"
-                    name="normal_login"
-                    onFinish={onFinish}
-                    layout={"vertical"}
-                    form={formBusiness}
-                >
-                    <Form.Item name="id" label="id" style={{ display: "none" }}>
-                        <Input type="text" />
-                    </Form.Item>
-                    <Form.Item label="Logo">
-                        <Upload {...configUpload}>
-                            {imageUrl ? (
-                                <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
-                            ) : (
-                                uploadButton
+                        Inicio
+                    </Breadcrumb.Item>
+                    {verifyMenuNewForTenant() &&
+                        <Breadcrumb.Item>Estrategia y planeación</Breadcrumb.Item>
+                    }
+                    <Breadcrumb.Item>Empresa</Breadcrumb.Item>
+                    <Breadcrumb.Item
+                    // className={"pointer"}
+                    // onClick={() => (treeTable ? "" : setTreeTable(true))}
+                    >
+                        Empresas
+                    </Breadcrumb.Item>
+                </Breadcrumb>
+                <div className="container" style={{ width: "100%" }}>
+                    <Row justify={"end"}>
+                        <Col>
+                            {props.permissions && props.permissions.create && (
+                                <Button
+                                    style={{
+                                        background: "#fa8c16",
+                                        fontWeight: "bold",
+                                        color: "white",
+                                    }}
+                                    onClick={switchModal}
+                                >
+                                    <PlusOutlined />
+                                    Agregar empresa
+                                </Button>
                             )}
-                        </Upload>
-                    </Form.Item>
-                    <Form.Item
-                        name="name"
-                        label="Nombre"
-                        rules={[{ required: true, message: "Ingresa un nombre" }]}
-                    >
-                        <Input placeholder="Nombre de la empresa" />
-                    </Form.Item>
-                    <Form.Item
-                        name="description"
-                        label="Descripción"
-                        rules={[{ required: true, message: "Ingresa una descripción" }]}
-                    >
-                        <TextArea rows={4} showCount maxLength={200} />
-                    </Form.Item>
-                    <Form.Item name="FNode" label="Nodo padre">
-                        <Select
-                            allowClear
-                            showSearch
-                            placeholder="Selecciona una empresa"
-                            optionFilterProp="children"
-                            name={"fNode"}
-                            notFoundContent={"No se encontraron resultados."}
-                            filterOption={(input, option) =>
-                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }
-                        >
-                            {business.map((bus) => (
-                                <Option value={bus.id} key={bus.key}>
-                                    {bus.name}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Form>
-            </Modal>
-            <Modal
-                title={"Eliminar empresa " + businessName}
-                visible={isModalDeleteVisible}
-                onCancel={() => handleCancel()}
-                footer={[
-                    <Button key="back" disabled={loading} onClick={handleCancel}>
-                        Cancelar
-                    </Button>,
-                    <Button
-                        form="deleteBusinessForm"
-                        type="primary"
-                        key="submit"
-                        loading={loading}
-                        htmlType="submit"
-                    >
-                        Si, eliminar
-                    </Button>,
-                ]}
-            >
-                <Form
-                    id="deleteBusinessForm"
-                    name="normal_login"
-                    onFinish={onFinish}
-                    layout={"vertical"}
-                    form={formBusiness}
-                >
-                    <Form.Item name="id" label="id" style={{ display: "none" }}>
-                        <Input type="text" />
-                    </Form.Item>
-                    <Alert
-                        type="warning"
-                        showIcon
-                        message="¿Está seguro de eliminar esta empresa?"
-                        description="Al eliminar esta empresa perderá todos los datos relacionados a la misma, incluyendo las sub empresas relacionadas a esta."
-                    />
-                </Form>
-            </Modal>
+                        </Col>
+                    </Row>
+                    {/*<Row justify={"end"}>*/}
+                    {/*    <Col style={{ margin: "1%" }}>*/}
+                    {/*        {treeTable ? (*/}
+                    {/*            <Button onClick={changeView}>*/}
+                    {/*                <NodeExpandOutlined />*/}
+                    {/*                Vista de árbol*/}
+                    {/*            </Button>*/}
+                    {/*        ) : (*/}
+                    {/*            <Button onClick={changeView}>*/}
+                    {/*                <TableOutlined />*/}
+                    {/*                Tabla*/}
+                    {/*            </Button>*/}
+                    {/*        )}*/}
+                    {/*    </Col>*/}
+                    {/*</Row>*/}
+                    <Row>
+                        <Col span={24}>
+                            {treeTable ? (
+                                <ConfigProvider locale={esES}>
+                                    <Input placeholder="Buscar empresa" onChange={debouncedSearch} style={{ width: 300 }} allowClear />
+                                    <Table
+                                        className={"mainTable"}
+                                        // scroll={{ x: 300 }}
+                                        size="small"
+                                        columns={columns}
+                                        dataSource={business}
+                                        loading={loading}
+                                        pagination={{
+                                            showSizeChanger: true,
+                                        }}
+                                        locale={{
+                                            emptyText: loading
+                                                ? "Cargando..."
+                                                : "No se encontraron resultados.",
+                                        }}
+                                    />
+                                </ConfigProvider>
+                            ) : (
+                                <NodeTreeView />
+                            )}
+                        </Col>
+                    </Row>
+                </div>
 
-            <Modal
-                title="Desactivar empresa"
-                visible={updateModal}
-                onOk={() => updateStatus(businessUpdate)}
-                onCancel={() => {
-                    setUpdateModal(false), setBusinessUpdate(null);
-                    getCopaniesList();
+                <Modal
+                    visible={modalSwitch}
+                    onCancel={switchModal}
+                    title={<b>Agregar empresa</b>}
+                    footer={[
+                        <Button
+                            key="back"
+                            onClick={async () => {
+                                await setNullCompany()
+                                router.push("/payroll/importMasivePayroll")
+                            }}
+                        >
+                            Importar xml
+                        </Button>,
+                        <Button
+                            key="submit"
+                            onClick={() => {
+                                setModalSwitch(false), showModal("add");
+                            }}
+                        >
+                            Crear manualmente
+                        </Button>,
+                    ]}
+                >
+                    <Alert
+                        message={
+                            <span>
+                                <b>Importar xml:</b> Se crea la empresa y el histórico de
+                                nómina a base de una carga masiva de xml (nóminas por
+                                persona). Por favor importa todo tu año {currentYear}
+                            </span>
+                        }
+                        type="warning"
+                    />
+                    <br />
+                    <Alert
+                        message={
+                            <span>
+                                <b>Crear manualmente:</b> Se crea de manera manual una
+                                empresa con la información basica necesaria.
+                            </span>
+                        }
+                        type="warning"
+                    />
+                </Modal>
+
+
+                <Modal
+                    title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
+                    visible={isModalVisible}
+                    onCancel={() => handleOk()}
+                    footer={[
+                        <Button key="back" onClick={handleCancel}>
+                            Regresar
+                        </Button>,
+                        <Button
+                            form="addBusinessForm"
+                            type="primary"
+                            key="submit"
+                            loading={loading}
+                            htmlType="submit"
+                            disabled={addB}
+                        >
+                            {isEdit ? "Actualizar" : "Agregar"}
+                        </Button>,
+                    ]}
+                >
+                    <Form
+                        id="addBusinessForm"
+                        name="normal_login"
+                        onFinish={onFinish}
+                        layout={"vertical"}
+                        form={formBusiness}
+                    >
+                        <Form.Item name="id" label="id" style={{ display: "none" }}>
+                            <Input type="text" />
+                        </Form.Item>
+                        <Form.Item label="Logo">
+                            <Upload {...configUpload}>
+                                {imageUrl ? (
+                                    <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
+                                ) : (
+                                    uploadButton
+                                )}
+                            </Upload>
+                        </Form.Item>
+                        <Form.Item
+                            name="name"
+                            label="Nombre"
+                            rules={[{ required: true, message: "Ingresa un nombre" }]}
+                        >
+                            <Input placeholder="Nombre de la empresa" />
+                        </Form.Item>
+                        <Form.Item
+                            name="description"
+                            label="Descripción"
+                            rules={[{ required: true, message: "Ingresa una descripción" }]}
+                        >
+                            <TextArea rows={4} showCount maxLength={200} />
+                        </Form.Item>
+                        <Form.Item name="FNode" label="Nodo padre">
+                            <Select
+                                allowClear
+                                showSearch
+                                placeholder="Selecciona una empresa"
+                                optionFilterProp="children"
+                                name={"fNode"}
+                                notFoundContent={"No se encontraron resultados."}
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                            >
+                                {business.map((bus) => (
+                                    <Option value={bus.id} key={bus.key}>
+                                        {bus.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+                <Modal
+                    title={"Eliminar empresa " + businessName}
+                    visible={isModalDeleteVisible}
+                    onCancel={() => handleCancel()}
+                    footer={[
+                        <Button key="back" disabled={loading} onClick={handleCancel}>
+                            Cancelar
+                        </Button>,
+                        <Button
+                            form="deleteBusinessForm"
+                            type="primary"
+                            key="submit"
+                            loading={loading}
+                            htmlType="submit"
+                        >
+                            Si, eliminar
+                        </Button>,
+                    ]}
+                >
+                    <Form
+                        id="deleteBusinessForm"
+                        name="normal_login"
+                        onFinish={onFinish}
+                        layout={"vertical"}
+                        form={formBusiness}
+                    >
+                        <Form.Item name="id" label="id" style={{ display: "none" }}>
+                            <Input type="text" />
+                        </Form.Item>
+                        <Alert
+                            type="warning"
+                            showIcon
+                            message="¿Está seguro de eliminar esta empresa?"
+                            description="Al eliminar esta empresa perderá todos los datos relacionados a la misma, incluyendo las sub empresas relacionadas a esta."
+                        />
+                    </Form>
+                </Modal>
+
+                <Modal
+                    title="Desactivar empresa"
+                    visible={updateModal}
+                    onOk={() => updateStatus(businessUpdate)}
+                    onCancel={() => {
+                        setUpdateModal(false), setBusinessUpdate(null);
+                        getCopaniesList();
+                    }}
+                    okText="Sí, Desactivar"
+                    cancelText="Cancelar"
+                >
+                    Al desactivar esta empresa los usuarios colaboradores que estén
+                    asociados a ésta no podrán acceder en la aplicación móvil
+                </Modal>
+            </MainLayout>
+            <ModalReceipts
+                visible={openReceipts}
+                receipts={receipts}
+                itemNode={itemNode}
+                iconNomi={<IconNomi />}
+                close={() => {
+                    setOpenReceipts(false)
+                    setReceipts([])
                 }}
-                okText="Sí, Desactivar"
-                cancelText="Cancelar"
-            >
-                Al desactivar esta empresa los usuarios colaboradores que estén
-                asociados a ésta no podrán acceder en la aplicación móvil
-            </Modal>
-        </MainLayout>
+            />
+        </>
     );
 };
 
@@ -706,4 +770,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState,{setNullCompany})(businessForm);
+export default connect(mapState, { setNullCompany })(businessForm);

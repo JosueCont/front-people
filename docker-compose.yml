@@ -1,0 +1,15 @@
+version: '3.7'
+    
+services:
+  
+  people_front:
+    # image: people_front_build
+    build: .
+    container_name: people_front
+    command: yarn dev
+    environment:
+      - ENVIRONMENT=development
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/code/app/
