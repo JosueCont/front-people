@@ -8,11 +8,13 @@ import {
   Row,
   Col,
   Typography,
+  Tooltip,
   Select,
   Switch,
   Table,
   Popconfirm,
   Alert,
+  Divider,
 } from "antd";
 import { CloseOutlined, CheckOutlined, CheckCircleOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -35,10 +37,15 @@ import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import Link from "next/link";
+
+import FormImssInfonavit from "./FormImssInfonavit";
 
 const FormPayrollPerson = ({
   person = null,
   refreshtab = false,
+  refreshTab12 = false,
+  onFinishRefreshTab12,
   node = null,
   assimilated_pay = null,
   ...props
@@ -66,7 +73,8 @@ const FormPayrollPerson = ({
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
   const [deletingPayroll, setDeletingPayroll] = useState(false);
-  const [contractTypeSelected, setContractTypeSelected] = useState(null)
+  const [contractTypeSelected, setContractTypeSelected] = useState(null); 
+  const [refreshImssTable, setRefreshImssTable] = useState(false); 
   
 
   useEffect(() => {
@@ -80,6 +88,10 @@ const FormPayrollPerson = ({
       setPerceptionTypes(data);
     }
   }, [props.catPerception]);
+
+  useEffect(()=> {
+    setRefreshImssTable(refreshTab12); 
+  },[refreshTab12])
 
   useEffect(() => {
     if (props.catHiringRegime) {      
@@ -342,6 +354,7 @@ const FormPayrollPerson = ({
             integrated_daily_salary: response.data.integrated_daily_salary,
           });
         }
+        setRefreshImssTable(true); 
         PayrollList();
         getPayrollPerson();
       } else {
@@ -369,6 +382,7 @@ const FormPayrollPerson = ({
           integrated_daily_salary: response.data.integrated_daily_salary,
         });
       }
+      setRefreshImssTable(true); 
       getPayrollPerson();
       PayrollList();
       setLoading(false);
@@ -434,7 +448,6 @@ const FormPayrollPerson = ({
     }
     
     let value = formPayrollPerson.getFieldsValue();
-    debugger;
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
@@ -570,6 +583,7 @@ const FormPayrollPerson = ({
     },
     {
       title: "Acciones",
+      width:100,
       render: (item) => {
         return item.movement !== 2 ? <Popconfirm
             title="¿Estás seguro de eliminar este registro? Esta acción también eliminará los registros
@@ -585,6 +599,52 @@ const FormPayrollPerson = ({
       },
       key: "actions",
     },
+    {
+      title: "¿Movimiento IMSS?",
+      width:120,
+      render: (item) => {
+        const hasMovementRegistered = !!item?.imss_movement_log; // if object is returned it means that a movement has been registered, if null is returned, it means that it doesn't have registered any movement
+        return (
+          <div style={{display:'flex', flexDirection:'center'}}>
+              {hasMovementRegistered
+                  ? 
+                  
+                  <Link href={`/payroll/imssMovements/?regPatronal=${person?.patronal_registration}`}>
+                    <a style={{color:'blue'}}>
+                      <div>Ver movimientos IMSS</div>
+                    </a>
+                  </Link>
+                  :
+                    <Tooltip title="No se ha registrado movimientos en el IMSS">
+                      <StopOutlined style={{color:'orange',fontSize:20, margin:'auto'}} />
+                    </Tooltip>
+                   }
+            </div>
+        );
+      },
+      key: "imss-modification",
+    },
+    {
+      title: "¿Modificación SDI?",
+      width:50,
+      render: (item) => {
+        const hasMovementRegistered = item?.sdi_change; //boolean value
+        return (
+          <div style={{display:'flex', flexDirection:'center'}}>
+              {hasMovementRegistered
+                  ? 
+                  <Tooltip title="Se han registrado movimientos en el SDI">
+                    <CheckCircleOutlined style={{color:'green',fontSize:20, margin:'auto'}} />
+                  </Tooltip>
+                  :
+                  <Tooltip title="No se ha registrado movimientos en el SDI">
+                    <StopOutlined style={{color:'orange',fontSize:20, margin:'auto'}} />
+                  </Tooltip> }
+            </div>
+        );
+      },
+      key: "sdi-modification",
+    }
   ].filter((item) => !item.hidden);
 
   const PayrollList = () => {
@@ -924,6 +984,14 @@ const FormPayrollPerson = ({
                 </Form.Item>
               </Row>
             </Form>
+            <Divider/>
+            <FormImssInfonavit
+              person={person}
+              refreshtab={refreshImssTable}
+              onFinishRefresh={onFinishRefreshTab12}
+              person_id={person.id}
+              node={person.node}
+            />
             <Row>
               <Table dataSource={payrollPersonList} scroll={{ x: 1500 }} columns={columns} size={'small'} />
             </Row>

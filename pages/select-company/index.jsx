@@ -13,6 +13,7 @@ import {
   Alert,
   Select,
   Input,
+  Divider
 } from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
@@ -40,6 +41,11 @@ import { messageError } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import moment from "moment";
 import _, { debounce } from "lodash";
+import TopSection from "./TopSection";
+import styled from "@emotion/styled";
+import CustomCard from "./CustomCard";
+import Filters from "./Filters";
+
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -205,9 +211,7 @@ const SelectCompany = ({ ...props }) => {
       });
   };
 
-  const changeView = () => {
-    treeTable ? setTreeTable(false) : setTreeTable(true);
-  };
+
 
   const columns = [
     {
@@ -238,9 +242,7 @@ const SelectCompany = ({ ...props }) => {
     },
   ];
 
-  const switchModal = () => {
-    modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
-  };
+
 
   useEffect(() => {
     if (props.config && props.config.applications)
@@ -256,20 +258,21 @@ const SelectCompany = ({ ...props }) => {
     if (props.versionCfdi) setVersionCfdiSelect(props.versionCfdi);
   }, [props.versionCfdi]);
 
-  const handleOnError = (e) => {
-    e.target.src = "/images/empresas.svg";
-  };
 
   const filterCompanies = (e) => {
     let name = e.target.value
-    console.log('name', name)
-    console.log('allCompanies',allCompanies)
-    console.log('new_liest',new_liest)
+    // console.log('name', name)
+    // console.log('allCompanies',allCompanies)
+    // console.log('new_liest',new_liest)
     let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
     setDataList(new_liest)
     
     
   }
+
+  const switchModal = () => {
+    modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
+};
 
   const debouncedSearch = debounce(filterCompanies, 500);
 
@@ -280,6 +283,11 @@ const SelectCompany = ({ ...props }) => {
           .ant-breadcrumb-link,
           .ant-breadcrumb-separator {
             color: white;
+          }
+          .companyCardsWrapper{
+            display:grid; 
+            gap:1em;
+            grid-template-columns: repeat(auto-fit, minmax(257px, 1fr))!important;
           }
           .cardCompany {
             border-radius: 15px;
@@ -296,7 +304,7 @@ const SelectCompany = ({ ...props }) => {
           }
 
           .cardCompany .ant-card-body {
-            background: #252837;
+            background: #fff;
             border-bottom-right-radius: 13px;
             border-bottom-left-radius: 13px;
           }
@@ -321,6 +329,11 @@ const SelectCompany = ({ ...props }) => {
           .ant-btn-icon-only {
             background-color: red !important;
           }
+          @media (max-width:600px){
+            .companyCardsWrapper{
+              grid-template-columns: repeat(auto-fit, minmax(230px, 1fr))!important;
+            }
+          }
         `}
       />
       {jwt && jwt.user_id ? (
@@ -331,97 +344,28 @@ const SelectCompany = ({ ...props }) => {
             hideSearch={true}
             hideLogo={true}
           >
-            {/*<Breadcrumb className={"mainBreadcrumb"}>*/}
-            {/*  <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>*/}
-            {/*</Breadcrumb>*/}
             <div className="container" style={{ width: "100%", padding: 20 }}>
               <Spin tip="Cargando..." spinning={loading}>
-                <Row gutter={[36, 26]} justify="center">
-                  <Col span={24} style={{ textAlign: "center" }}>
-                    <Title level={4} style={{ color: "black", marginTop: 50 }}>
-                      Elige la empresa donde colaboras
-                    </Title>
-                  </Col>
+                <Row justify="center">
                   <Col span={24}>
-                    <Row justify={"end"}>
-                      <Col style={{ margin: "1%" }}>
-                        <Button onClick={changeView}>
-                          {treeTable ? (
-                            <>
-                              <AppstoreOutlined />
-                              &nbsp;&nbsp;Tarjetas
-                            </>
-                          ) : (
-                            <>
-                              <TableOutlined />
-                              &nbsp;&nbsp;Tabla
-                            </>
-                          )}
-                        </Button>
-                      </Col>
-                      <Col style={{ margin: "1%" }}>
-                        <Button onClick={switchModal}>
-                          <PlusOutlined /> Agregar empresa
-                        </Button>
-                      </Col>
-                    </Row>
+                    <TopSection/>
                   </Col>
-                  <Col span={24} style={{textAlign:'center'}}>
-                    <Input style={{ width:400 }} size={'large'} placeholder="Buscar empresa" onChange={debouncedSearch} allowClear />
+                </Row>
+                <Divider />
+                <Row gutter={[36, 26]} justify="center">
+                  <Col span={24}>
+                    <Filters setTreeTable={setTreeTable} switchModal={switchModal} debouncedSearch={debouncedSearch}/>
                   </Col>
+                  <Col span={24} >
+                  <div className="companyCardsWrapper">
                   {!treeTable &&
                     dataList.map((item) => (
-                      <Col
-                        key={item.permanent_code}
-                        xl={5}
-                        lg={5}
-                        md={5}
-                        sm={8}
-                        xs={24}
-                      >
-                        <Card
-                          className="cardCompany "
-                          hoverable
-                          cover={
-                            item.image ? (
-                              <img
-                                alt="example"
-                                src={item.image}
-                                style={{ width: "50%" }}
-                                onError={handleOnError}
-                              />
-                            ) : (
-                              <div className="center-content">
-                                <img
-                                  alt="example"
-                                  src="/images/LogoKhorconnect.svg"
-                                  style={{ width: "50%" }}
-                                  onError={handleOnError}
-                                />
-                              </div>
-                            )
-                          }
-                          style={{
-                            backgroundColor: `#262837`,
-                            padding:40
-                          }}
-                          onClick={() => setCompanySelect(item)}
-                        >
-                          {/* <span
-                          className="buttonEditCompany"
-                          style={{ position: "absolute" }}
-                        >
-                          <EditOutlined />
-                        </span> */}
-                          {/*<Meta*/}
-                          {/*  className="meta_company"*/}
-                          {/*  title={item.name}*/}
-                          {/*  // description="Ultima vez: Hace 2 Hrs"*/}
-                          {/*/>*/}
-                          <p style={{fontSize:15, color:'white'}}>{item.name}</p>
-                        </Card>
-                      </Col>
+                     
+                        <CustomCard key={item.permanent_code} item={item} setCompanySelect={setCompanySelect}/>
+                     
                     ))}
+                  </div>
+                  </Col>
                   {treeTable && dataList && (
                     <Col span={24}>
                       <Table
