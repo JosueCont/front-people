@@ -449,6 +449,18 @@ header.ant-layout-header
   border-radius: 10px;
 }
 
+.ant-btn.v2{
+  background-color: #051758 !important;
+  border: none !important;
+  border-radius: 4px;
+}
+.ant-btn.v2.orange{
+  background-color: #F99543 !important;
+  border-color: none !important;
+  border-radius: 4px;
+  color:#121212
+}
+
 .ant-btn:hover {
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
@@ -763,7 +775,7 @@ textarea {
     background: rgba(0,0,0,0.5);
   }
   .ant-layout-content.main_container{
-    margin-left: 80px;
+    /* margin-left: 80px; */
     /* max-height: calc(100vh - 64px); */
     overflow: auto;
   }

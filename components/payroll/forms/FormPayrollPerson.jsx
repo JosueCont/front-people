@@ -14,6 +14,7 @@ import {
   Table,
   Popconfirm,
   Alert,
+  Divider,
 } from "antd";
 import { CloseOutlined, CheckOutlined, CheckCircleOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -36,10 +37,13 @@ import _ from "lodash";
 import GenericModal from "../../modal/genericModal";
 import WebApiPeople from "../../../api/WebApiPeople";
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import FormImssInfonavit from "./FormImssInfonavit";
 
 const FormPayrollPerson = ({
   person = null,
   refreshtab = false,
+  refreshTab12 = false,
+  onFinishRefreshTab12,
   node = null,
   assimilated_pay = null,
   ...props
@@ -67,7 +71,8 @@ const FormPayrollPerson = ({
   const [applyAssimilated, SetApplyAssimilated] = useState(null);
   const [perceptionCode, setPerceptionCode] = useState(null);
   const [deletingPayroll, setDeletingPayroll] = useState(false);
-  const [contractTypeSelected, setContractTypeSelected] = useState(null)
+  const [contractTypeSelected, setContractTypeSelected] = useState(null); 
+  const [refreshImssTable, setRefreshImssTable] = useState(false); 
   
 
   useEffect(() => {
@@ -81,6 +86,10 @@ const FormPayrollPerson = ({
       setPerceptionTypes(data);
     }
   }, [props.catPerception]);
+
+  useEffect(()=> {
+    setRefreshImssTable(refreshTab12); 
+  },[refreshTab12])
 
   useEffect(() => {
     if (props.catHiringRegime) {      
@@ -343,6 +352,7 @@ const FormPayrollPerson = ({
             integrated_daily_salary: response.data.integrated_daily_salary,
           });
         }
+        setRefreshImssTable(true); 
         PayrollList();
         getPayrollPerson();
       } else {
@@ -370,6 +380,7 @@ const FormPayrollPerson = ({
           integrated_daily_salary: response.data.integrated_daily_salary,
         });
       }
+      setRefreshImssTable(true); 
       getPayrollPerson();
       PayrollList();
       setLoading(false);
@@ -435,7 +446,6 @@ const FormPayrollPerson = ({
     }
     
     let value = formPayrollPerson.getFieldsValue();
-    debugger;
     if (idPayroll) {
       value.person = person.id;
       value.id = idPayroll;
@@ -970,6 +980,14 @@ const FormPayrollPerson = ({
                 </Form.Item>
               </Row>
             </Form>
+            <Divider/>
+            <FormImssInfonavit
+              person={person}
+              refreshtab={refreshImssTable}
+              onFinishRefresh={onFinishRefreshTab12}
+              person_id={person.id}
+              node={person.node}
+            />
             <Row>
               <Table dataSource={payrollPersonList} scroll={{ x: 1500 }} columns={columns} size={'small'} />
             </Row>

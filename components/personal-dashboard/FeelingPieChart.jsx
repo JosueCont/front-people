@@ -41,9 +41,10 @@ const FeelingPieChart = ({reportPerson,...props}) => {
       let colorsResults = [];
       globalData.map((item)=>{
         labelsResults.push(item.name);
-        dataResults.push(item.count);
+        dataResults.push(item.count || 0);
         colorsResults.push(`#${item.color}`);
       })
+      console.log('data results',dataResults)
       let total = dataResults.reduce((a, b) => a + b, 0);
       total != 0 ? setIsEmpty(false) : setIsEmpty(true);
       setTotalEmotions("Total de emociones registradas: " + total); 

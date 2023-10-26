@@ -36,8 +36,8 @@ class WebApiYnl {
     return WebApi.ApisType(`/ynl/report/emotions-chart/`, "post", data);
   }
 
-  static getPersons(){
-    return WebApi.ApisType(`/ynl/get-selects-persons/`, "get");
+  static getPersons(data){
+    return WebApi.ApisType(`/ynl/get-selects-persons/`, "post", data);
   }
 
   static getReportPerson(data){

@@ -49,6 +49,7 @@ import Router from "next/router";
 import WebApiPeople from "../../api/WebApiPeople";
 import { connect } from "react-redux";
 import { getCompanyFiscalInformation } from "../../redux/fiscalDuck";
+import ImssInfonavit from "../panes/person/ImssInfonavit";
 
 /** */
 
@@ -184,10 +185,15 @@ const DetailPerson = ({
             >
               <FormPayrollPerson
                 refreshtab={refreshTab10}
+                refreshTab12 = {refreshTab12}
                 onFinishRefresh={()=>setRefreshTab10(false)}
-                person={person} node={person.node}
+                onFinishRefreshTab12 = {()=> setRefreshTab12(false)}
+                person={person} 
+                node={person.node}
+                person_id={person.id}
                 assimilated_pay={companyFiscalInformation?.assimilated_pay}
               />
+             
             </TabPane>
           )}          
 
@@ -196,18 +202,17 @@ const DetailPerson = ({
             tab={
                 <div className="container-title-tab">
                   <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS / INFONAVIT</div>
+                  <div className="text-title-tab">INFONAVIT</div>
                 </div>
             }
             key="tab_12"
           >
-            <FormImssInfonavit
-              person={person}
-              refreshtab={refreshTab12}
-              onFinishRefresh={()=>setRefreshTab12(false)}
-              person_id={person.id}
-              node={person.node}
-            />
+            <ImssInfonavit
+            person={person}
+            refreshtab={refreshTab12}
+            onFinishRefresh={()=>setRefreshTab12(false)}
+            person_id={person.id}
+            node={person.node}/>
           </TabPane>}
           {config?.nomina_enabled && (
               <TabPane
