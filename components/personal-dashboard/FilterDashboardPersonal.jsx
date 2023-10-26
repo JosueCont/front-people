@@ -9,6 +9,7 @@ import locale from 'antd/lib/date-picker/locale/es_ES';
 import { getPersons } from '../../redux/ynlDuck';
 import { getReportPerson } from '../../redux/ynlDuck';
 import { useRouter } from "next/router";
+import { useSelector } from 'react-redux';
 
 
 const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props}) => {
@@ -16,6 +17,9 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     const { RangePicker } = DatePicker;
     const router = useRouter();
     const [dataPersons, setDataPersons] = useState([]);
+    const [ynlType, setYnlType] = useState(null)
+    const isShowFilters = useSelector((state) => state.userStore.applications.ynl)
+    const instance = useSelector(state => state.userStore.current_node)
 
 
     const  getFirstDayOfMonth=(year, month)=> {
@@ -46,9 +50,13 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     },[router])
 
     useEffect(() => {
-        getPersons();
+        //getPersons(filterModule.getFieldsValue().siteSelected);
         filterModule.setFieldsValue({filterDate: [moment().startOf('month'), moment().endOf('month')]})
+        if(isShowFilters) filterModule.setFieldsValue({siteSelected:'NULL'})
     }, []);
+    useEffect(() => {
+        getPersons(ynlType);
+    }, [ynlType]);
 
     useEffect(() => {
         if(persons.length>0){
@@ -77,7 +85,8 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
         //Armamos la data a enviar a la api de consultas
         let data = {
             start_date : dates.valueStart,
-            end_date: dates.valueEnd
+            end_date: dates.valueEnd,
+            publica_data: true
         }
 
         if(isKhorID(value.valuesSelected)){
@@ -93,6 +102,8 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                 ...data
             }
         }
+
+        if(value.siteSelected != '') data.ynl_type_response = value.siteSelected
 
 
         console.log("Filtro que se envia a consulta",data);
@@ -152,6 +163,31 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                             {/*<Button  onClick={resetFilter} style={{marginLeft:"8px"}}*/}
                             {/*><SyncOutlined /></Button>*/}
                         </Col>
+                    </Row>
+                    <Row>
+                    {isShowFilters?.showFilterSite?.allow_view_users_non_site ? (
+                            <Col xs={22} md={10}>
+                                <Form.Item name="siteSelected" label={<label style={{ color: "white" }}><b>Filtrar por usuarios</b></label>}>
+                                <Select
+                                    mode={"single" }
+                                    allowClear
+                                    style={{width: '80%',}}
+                                    placeholder="Selecciona"
+                                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                                    showSearch
+                                    onChange={(e) => {
+                                        setYnlType(e)
+                                        filterModule.setFieldsValue({valuesSelected:null})
+                                      }}
+                                    options={[
+                                        {label:`Todos`, value:'ALL'},
+                                        {label:`Con sitio ${instance?.name}`, value:''},
+                                        {label:`Sin sitio`,value:'NULL'}
+                                    ]}
+                                />
+                                </Form.Item>
+                            </Col>
+                        ): null}
                     </Row>
                 </Form>
                 </div>
