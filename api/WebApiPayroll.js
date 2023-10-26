@@ -266,6 +266,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/imss-person/${imssId}/`, "delete");
   }
 
+  static deleteInfonavit(infonavitID) {
+    return WebApi.ApisType(`/payroll/person-infonavit-credit/${infonavitID}/`, "delete");
+  }
+
   static addInfonavit(data) {
     return WebApi.ApisType("payroll/person-infonavit-credit/", "post", data);
   }

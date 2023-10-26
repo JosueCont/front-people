@@ -37,6 +37,7 @@ const ModalSalary = ({
     const typeFile = ['xlsx'];
 
     const generate = Form.useWatch('generate_movement', formSalary);
+    const changesdi = Form.useWatch('change_sdi', formSalary);
 
     const onFinish = async (values) => {
         try {
@@ -45,6 +46,7 @@ const ModalSalary = ({
             data.append("modified_by", user?.id);
             data.append("File", file[0]);
             data.append("generate_movement", values?.generate_movement);
+            data.append("change_sdi", values?.change_sdi);
             data.append("node_id", props.currentNode?.id)
             let response = await WebApiPayroll.importSalaryModification(data);
             const filter_ = item => !item.status;
@@ -88,6 +90,7 @@ const ModalSalary = ({
                 person_id_array: itemsKeys,
                 node: current_node?.id,
                 generate_movement: generate,
+                change_sdi: changesdi
             }
             let response = await WebApiPayroll.downloadTemplateSalary(body);
             downloadBLOB({ data: response.data, name: 'Actualizar salarios.xlsx' })
@@ -109,7 +112,8 @@ const ModalSalary = ({
                 onFinish={onFinish}
                 layout="vertical"
                 initialValues={{
-                    generate_movement: false
+                    generate_movement: false,
+                    change_sdi: false
                 }}
             >
                 <Row>
@@ -133,6 +137,15 @@ const ModalSalary = ({
                         <Typography.Link onClick={() => downloadTemplate()}>
                             <FileExcelOutlined /> Descargar plantilla
                         </Typography.Link>
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item
+                            name='change_sdi'
+                            valuePropName='checked'
+                            noStyle
+                        >
+                            <Checkbox>¿Modificar SDI?</Checkbox>
+                        </Form.Item>
                     </Col>
                     <Col span={24} style={{marginTop: 12}}>
                         <FileUpload

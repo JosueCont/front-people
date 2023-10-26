@@ -82,10 +82,15 @@ const DetailsIncapacity = ({
     }
 
     const setValuesForm = () => {
-        let values = {...infoIncapacity};
+        let values = {};
         values.person = infoIncapacity?.person ? infoIncapacity.person?.id : null;
+        values.invoice = infoIncapacity?.invoice ? infoIncapacity?.invoice : null;
         values.incapacity_type = infoIncapacity?.incapacity_type
-            ? values.incapacity_type?.id : null;
+            ? infoIncapacity?.incapacity_type?.id : null;
+        values.imss_classification = infoIncapacity?.imss_classification;
+        values.category = infoIncapacity?.category;
+        values.subcategory = infoIncapacity?.subcategory;
+        values.requested_days = infoIncapacity?.requested_days;
         values.departure_date = infoIncapacity?.departure_date
             ? moment(infoIncapacity.departure_date, 'YYYY-MM-DD') : null;
         values.return_date = infoIncapacity?.return_date

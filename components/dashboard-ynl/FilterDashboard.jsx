@@ -13,6 +13,7 @@ import { getReportUser } from '../../redux/ynlDuck';
 import { getEmotionChart } from '../../redux/ynlDuck';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { subtract } from 'lodash';
+import { useSelector } from 'react-redux';
 
 const FilterDashboard = ({currentNode,
     getDailyEmotions,
@@ -30,9 +31,14 @@ const FilterDashboard = ({currentNode,
     const [groups, setGroups] = useState([]);
     const [optionSelect, setOptionSelect] = useState([]);
     const [visibilitySelect, setVisibilitySelect] = useState(true);
+    const isShowFilters = useSelector((state) => state.userStore.applications.ynl)
+    const instance = useSelector(state => state.userStore.current_node)
+
+
     
     useEffect(() => {
         // Initial datepicker filter
+        console.log('isShwsFilters',isShowFilters)
         const startOfMonth = moment().clone().startOf('month');
         const endOfMonth = moment().clone().endOf('month');
       //Seteamos fecha actual al datepicker porque es el rango de la consulta al principio
@@ -140,6 +146,7 @@ const FilterDashboard = ({currentNode,
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
             companies: value === 4 ? [dataForm.valuesSelected] ?? [] : []
         }
+        if(dataForm.siteSelected != '') data.ynl_type_response = dataForm.siteSelected
         //Consultas
         getTopPersons(data);
         getDailyEmotions(data);
@@ -208,12 +215,32 @@ const FilterDashboard = ({currentNode,
                     disabled={visibilitySelect}
                      />
             </Form.Item>
+            {isShowFilters?.showFilterSite?.allow_view_users_non_site ? (
+                <>
+                <h3 className='subtitles'><b>Filtrar por usuarios:</b></h3>
+                <Form.Item name="siteSelected">
+                <Select
+                    mode={"single" }
+                    allowClear
+                    style={{width: '100%',}}
+                    placeholder="Selecciona"
+                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                    showSearch
+                    options={[
+                        {label:'Todos', value:'ALL'},
+                        {label:`Con sitio ${instance.name}`, value:''},
+                        {label:'Sin sitio',value:'NULL'}
+                    ]}
+                />
+            </Form.Item>
+                </>
+            ): null}
             
             <Row>
                 <Col span={12}>
                     <Space>
-                        <Button htmlType='submit' style={{marginRight:10}}> <FilterOutlined /> Filtrar</Button>
-                        <Button onClick={resetFilter}><ClearOutlined /> Limpiar</Button>
+                        <Button htmlType='submit' style={{marginRight:5, display:'flex', justifyContent:'center',alignItems:'center', padding:5}}><FilterOutlined /> Filtrar</Button>
+                        <Button onClick={resetFilter} style={{display:'flex', justifyContent:'center',alignItems:'center', padding:5}}><ClearOutlined /> Limpiar</Button>
                     </Space>
 
                 </Col>

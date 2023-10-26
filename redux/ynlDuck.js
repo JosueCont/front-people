@@ -173,9 +173,18 @@ export const getEmotionChart = (data) => async (dispatch, getState) => {
   await WebApiYnl.getEmotionChart(data)
     .then((response) => {
       //console.log("response desde el redux EMOTION CHART",response.data.data);
-      let resultsOrganized = response?.data?.data?.sort((a, b) => {
+      let addCount = response?.data?.data.map(elemento => ({
+        ...elemento,count: elemento.count || 0
+      }))
+
+      let resultsOrganized = addCount.sort((a, b) => {
         return Number.parseInt(b.count) - Number.parseInt(a.count);
       });
+      //let addCount = resultsOrganized.forEach((elemento) => {
+      //  if(!elemento.hasOwnProperty('count')){
+      //    elemento.count = 0
+      //  }
+      //})
       let obj = {
         start_date: data.start_date,
         end_date: data.end_date,
@@ -201,9 +210,12 @@ export const getEmotionChart = (data) => async (dispatch, getState) => {
     });
 };
 
-export const getPersons = () => async (dispatch, getState) => {
+export const getPersons = (data) => async (dispatch, getState) => {
   dispatch({ type: PERSONS, loadPersons: true, payload: [] });
-  await WebApiYnl.getPersons()
+  let dataSend = {}
+  if(data === null) dataSend.ynl_type_response = 'NULL'
+  else dataSend.ynl_type_response = data
+  await WebApiYnl.getPersons(dataSend)
     .then((response) => {
       //console.log("respuesta desde el redux get persons",response.data.data);
       dispatch({
