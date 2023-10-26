@@ -40,7 +40,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
       let colorsResults = []
       ynlStore.map((item) =>{
         labelsResults.push(item.name)
-        dataResults.push(item.count)
+        dataResults.push(item.count || 0)
         colorsResults.push(`#${item.color}`)
       })
       let total = dataResults.reduce((a, b) => a + b, 0);

@@ -4,10 +4,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import moment from 'moment';
 import {FilePdfOutlined, FileExcelOutlined, SyncOutlined} from '@ant-design/icons';
 
-const WithHoldingNotice = ({patronalData}) => {
-    const [loading,setLoading] = useState(false);
-    const [data,setData] = useState([]);
-    const [message, setMessage] = useState('');
+const WithHoldingNotice = ({getnotices, loading, data, message}) => {
 
     const columns = [
         {
@@ -36,31 +33,9 @@ const WithHoldingNotice = ({patronalData}) => {
         getnotices()
     },[]);
 
-    const getnotices = async() => {
-        setLoading(true);
-        try {
-            const {id,node,} = patronalData;
-            let url = `?node_id=${node}&patronal_registration_id=${id}`;
-            const notices = await WebApiPeople.getWithHoldingNotice(url);
-            setLoading(false);
-            if(notices?.data?.message) setMessage(notices?.data?.message)
-            else setData(notices?.data)
-        } catch (e) {
-            console.log(e)
-            setLoading(false);
-        }finally {
-            setLoading(false);
-        }
-    }
-
 
     return(
         <>
-            <Button
-                onClick={getnotices}
-            >
-                <SyncOutlined spin={loading} />
-            </Button>
 
             <Spin tip="Cargando..." spinning={loading}>
             <Table

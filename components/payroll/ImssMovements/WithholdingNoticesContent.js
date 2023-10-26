@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
+import Cookie from "js-cookie";
 import SelectPatronalRegistration from '../../selects/SelectPatronalRegistration'
 import WithHoldingNotice from '../../../pages/business/WithHoldingNotice'
 import GenericModal from '../../modal/genericModal'
 import { useRouter } from 'next/router'
-import { Alert, Button, Col, DatePicker, Row, Select, Spin, message } from 'antd'
+import { Alert, Button, Col, DatePicker, Row, Select, Spin, message, Tabs, Table, Modal } from 'antd'
 import WebApiPeople from '../../../api/WebApiPeople'
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from 'moment'
+import { ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const WithholdingNoticesContent = ({ currentNodeId }) => {
 
   const router = useRouter();
-
+  const { confirm } = Modal;
   const [loading,setLoading] = useState(false);
   const [patronalSelected, setPatronalSelected] = useState(null)
   const [scraperActive, setScraperActive] = useState(false)
@@ -19,6 +21,12 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
   const [disabledBimester, setDisabledBimester] = useState(true);
   const [bimester, setBimester] = useState(null);
   const [year, setYear] = useState("");
+  const [logData, setLogData] = useState([])
+  const [loadingTable, setLoadingTable] = useState(false)
+  const [dataTable, setDataTable] = useState([])
+  const [messageTable, setMessageTable] = useState("")
+  const [lastRequest, setLastRequest] = useState(null)
+  const [activeKey, setActiveKey] = useState('1');
 
   const validateScraper = async () => {
     let valid = await WebApiPeople.getCredentials('infonavit', patronalSelected)
@@ -33,6 +41,37 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
       validateScraper()
     }
   }, [patronalSelected])
+
+  const handleTabClick = (key) => {
+    setActiveKey(key);
+  };
+
+  const getnotices = async() => {
+    setLoadingTable(true);
+    try {
+        let url = `?node_id=${currentNodeId}&patronal_registration_id=${patronalSelected}`;
+        const notices = await WebApiPeople.getWithHoldingNotice(url);
+        setLoadingTable(false);
+        if(notices?.data?.message) {
+            setMessageTable(notices?.data?.message)
+        } else {
+            setDataTable(notices?.data?.documents)
+            setLogData(notices?.data?.logs)
+            if (notices?.data?.logs){
+              setLogData(notices.data.logs)
+              let inProcess = notices.data.logs.filter(value=> value.status == "En proceso")
+              if (inProcess.length > 0){
+                setLastRequest(inProcess[0].start_time)
+              }
+            }
+        }
+    } catch (e) {
+        console.log(e)
+        setLoadingTable(false);
+    }finally {
+        setLoadingTable(false);
+    }
+}
 
 
   const changeYear = (value) => {
@@ -64,12 +103,31 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
     return options;
   };
 
+  const confirmSyncUpData = () => {
+    confirm({
+      title: '¿Estás seguro de sincronizar/solicitar?',
+      icon: <ExclamationCircleOutlined />,
+      // content: 'Some descriptions',
+      okText: 'Si',
+      cancelText: 'Cancelar',
+      onOk() {
+        syncUpData()
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
   const syncUpData = async () => {
     try {
       setLoading(true);
+      setLoadingTable(true);
+      const user = JSON.parse(Cookie.get("token"));
       let dataSend = {
         patronal_registration_id: patronalSelected,
         node_id: currentNodeId,
+        user_id: user.user_id
       };
       const syncData = await WebApiPeople.withHoldingNotice(dataSend);
       if (syncData?.data?.message) message.success(syncData?.data?.message);
@@ -81,7 +139,10 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
       message.error(msg);
 
     } finally {
+      await getnotices()
+      setActiveKey("2")
       setLoading(false);
+      setLoadingTable(false);
     }
   };
 
@@ -111,6 +172,36 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
     }
 };
 
+  const columnsLogs = [
+    {
+      title: "Fecha de ejecución",
+      dataIndex: "start_time",
+      key:"start_time",
+        width: 200
+    },
+    {
+      title: "Fecha de finalización",
+      dataIndex: "end_time",
+      key:"end_time",
+        width: 200
+    },
+    {
+      title: "Autor",
+      dataIndex: "author",
+      key:"author",
+    },
+    {
+      title: "Estatus",
+      dataIndex: "status",
+      key:"status",
+    },
+    {
+      title: "Mensaje",
+      dataIndex: "message",
+      key:"message",
+    },
+  ];
+
   return (
     <>
       <Row justify="space-between" style={{ paddingTop:20 }}>
@@ -122,9 +213,18 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
             </Col>
             <Col>
               {
+                lastRequest &&
+                  <Alert
+                  description={<><b>Se esta procesando una solicitud generada el {lastRequest}</b></>}
+                  type="success"
+                />
+              }
+            </Col>
+            <Col>
+              {
                 patronalSelected &&
                   <Button
-                      onClick={syncUpData}
+                      onClick={confirmSyncUpData}
                       form="formGeneric"
                       htmlType="submit"
                       style={{marginBottom:'20px'}}>
@@ -152,11 +252,35 @@ const WithholdingNoticesContent = ({ currentNodeId }) => {
                             />
                         :
                         <>
-                            <Spin spinning={loading}>
+                        <Button
+                            onClick={getnotices}
+                        >
+                            <SyncOutlined spin={loadingTable} />
+                        </Button>
+                          <Tabs activeKey={activeKey} defaultActiveKey="1" onTabClick={handleTabClick}>
+                            <Tabs.TabPane tab="Eventos finalizados" key="1" style={{padding:10}}>
                               <WithHoldingNotice
-                                patronalData={{id: patronalSelected , node: currentNodeId}}
+                                getnotices={getnotices}
+                                loading={loadingTable}
+                                data={dataTable}
+                                message= {messageTable}
                               />
-                            </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Logs" key="2" style={{padding:10}}>
+                              <Spin tip="Cargando..." spinning={loadingTable}>
+                                <Table
+                                  columns={columnsLogs}
+                                  dataSource={logData}
+                                  pagination={{showSizeChanger:true}}
+                                  locale={{
+                                      emptyText: loadingTable
+                                          ? "Cargando..."
+                                          : message,
+                                  }}
+                                />
+                                </Spin>
+                            </Tabs.TabPane>
+                          </Tabs> 
                         </>
                     }
                     </>
