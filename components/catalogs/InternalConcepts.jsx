@@ -473,16 +473,11 @@ const InternalConcepts = ({
     try {
       const res = await WebApiFiscal.crudInternalConcept(`${url}${deleted.id}/`, "delete");
       if(res?.data?.message){
-        //console.log(res);
         props
         .doFiscalCatalogs(currentNode.id, props.version_cfdi)
         .then((response) => {
           resetForm();
-          if (res?.status === 200){
             message.success(res?.data?.message);
-          } else {
-            message.error(res?.data?.message);
-          }
         })
         .catch((error) => {
           setLoading(false);
@@ -491,7 +486,7 @@ const InternalConcepts = ({
         });
       }
     } catch (error) {
-      console.log(error);
+      message.error(error?.response?.data?.message);
     }
   };
 
