@@ -1,16 +1,30 @@
 import { Col,Row, Button, Input } from "antd";
 import { AppstoreOutlined, PlusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import isPropValid from '@emotion/is-prop-valid'
 import styled from "@emotion/styled";
 import { StrongText } from "./TopSection";
 
-const CustomBtn = styled(Button)({
+const CustomBtn = styled(Button,{
+    shouldForwardProp: prop => isPropValid(prop) && prop !== 'color' && prop !== 'backgroundColor'
+})(({color, backgroundColor})=>({
     borderRadius:'4px',
     display: 'inline-flex',
     height: '44px',
     padding: '12px 24px',
-    alignItems:'center'
-  
-  });
+    alignItems:'center',
+    border: 'none!important',
+    borderRadius: '4px',
+    backgroundColor: backgroundColor + '!important' ?? '#1C1B2B' , 
+    color: color + '!important'?? '#fff', 
+    '& span':{
+        color: color + '!important'?? '#fff', 
+    },
+    '&:hover': {
+        '& span':{
+            color: '#fff!important', 
+        },
+    }
+  }));
 
   const WrapperBtns = styled('div')({
     display:'flex', 
@@ -45,15 +59,15 @@ const Filters = ({setTreeTable, switchModal, debouncedSearch})=>{
                   </Col>
                   <Col xs={24} lg={9}>
                     <WrapperBtns>
-                        <CustomBtn onClick={changeViewTable} className="v2">
+                        <CustomBtn onClick={changeViewTable} backgroundColor="#466289">
                                 <UnorderedListOutlined style={{fontSize:'20px'}} />
                                 &nbsp;&nbsp;Lista
                         </CustomBtn>
-                        <CustomBtn onClick={changeViewCards} className="v2">
+                        <CustomBtn onClick={changeViewCards} backgroundColor="#466289">
                                 <AppstoreOutlined style={{fontSize:'20px'}} />
                                 &nbsp;&nbsp;Tarjetas
                         </CustomBtn>
-                        <CustomBtn onClick={switchModal} className="v2 orange">
+                        <CustomBtn onClick={switchModal} backgroundColor="#F99543" color="black">
                             <PlusCircleOutlined style={{fontSize:'20px', color:'#121212'}} /> Agregar empresa
                         </CustomBtn>
                     </WrapperBtns>
