@@ -14,21 +14,22 @@ export const Dashboard = ({stadistics, ...props}) => {
   const [colorFeeling, setColorFeeling] = useState("FF5E00");
   const [emotion, setEmotion] = useState("");
   const emotionsGif = [
-    {name:"En paz", img: "https://app-ynl.s3.us-west-1.amazonaws.com/EN_PAZ_37e8cbf4f5.gif"},
-    {name:"Confundido", img: "https://app-ynl.s3.us-west-1.amazonaws.com/CONFUNDIDO_afa63010f8.gif"},
-    {name:"Abierto", img: "https://app-ynl.s3.us-west-1.amazonaws.com/ABIERTO_b9ddd3fb91.gif"},
-    {name:"Inspirado", img: "https://app-ynl.s3.us-west-1.amazonaws.com/INSPIRADO_9a57df9be1.gif"},
-    {name:"Contento", img: "https://app-ynl.s3.us-west-1.amazonaws.com/CONTENTO_ec67fc5824.gif"},
-    {name:"Deprimido", img: "https://app-ynl.s3.us-west-1.amazonaws.com/DEPRIMIDO_7e1ed099bb.gif"},
-    {name:"Molesto", img: "https://app-ynl.s3.us-west-1.amazonaws.com/MOLESTO_sin_salto_min_9fef308c6f.gif"},
-  ]
-
+    {name:"Amor", img: "https://app-ynl.s3.us-west-1.amazonaws.com/loved_795741adb9.gif"},
+    {name:"Miedo", img: "https://app-ynl.s3.us-west-1.amazonaws.com/worry_86886646e9.gif"},
+    {name:"Sorpresa", img: "https://app-ynl.s3.us-west-1.amazonaws.com/surprised_d64380ac63.gif"},
+    {name:"Asco", img: "https://app-ynl.s3.us-west-1.amazonaws.com/disgusting_161da17b38.gif"},
+    {name:"Alegría", img: "https://app-ynl.s3.us-west-1.amazonaws.com/happy_92a28b2871.gif"},
+    {name:"Tristeza", img: "https://app-ynl.s3.us-west-1.amazonaws.com/sad_bbf8c1d118.gif"},
+    {name:"Ira", img: "https://app-ynl.s3.us-west-1.amazonaws.com/angry_1c3023842e.gif"},
+]
   useEffect(() => {
     setStartDate(stadistics.start_date);
+    console.log('estadisticas',stadistics)
     setEndDate(stadistics.end_date);
     if(stadistics?.feeling?.count > 0){
         setFeeling(stadistics?.feeling?.name);
         let resultados = emotionsGif.filter(item => item.name == stadistics?.feeling?.name);
+        console.log('resultados',resultados,stadistics)
         setEmotion(resultados.at(-1).img);
         setColorFeeling(stadistics?.feeling?.color)
     }else{
