@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Typography,
+  Tooltip,
   Select,
   Switch,
   Table,
@@ -580,6 +581,7 @@ const FormPayrollPerson = ({
     },
     {
       title: "Acciones",
+      width:100,
       render: (item) => {
         return item.movement !== 2 ? <Popconfirm
             title="¿Estás seguro de eliminar este registro? Esta acción también eliminará los registros
@@ -595,6 +597,50 @@ const FormPayrollPerson = ({
       },
       key: "actions",
     },
+    {
+      title: "¿Movimiento IMSS?",
+      width:120,
+      render: (item) => {
+        const hasMovementRegistered = !!item?.imss_movement_log; // if object is returned it means that a movement has been registered, if null is returned, it means that it doesn't have registered any movement
+        return (
+          <div style={{display:'flex', flexDirection:'center'}}>
+              {hasMovementRegistered
+                  ? 
+                  
+                    <Tooltip title="Se han registrado movimientos en el IMSS">
+                      <CheckCircleOutlined style={{color:'green',fontSize:20, margin:'auto'}} />
+                    </Tooltip>
+                  :
+                    <Tooltip title="No se ha registrado movimientos en el IMSS">
+                      <StopOutlined style={{color:'orange',fontSize:20, margin:'auto'}} />
+                    </Tooltip>
+                   }
+            </div>
+        );
+      },
+      key: "imss-modification",
+    },
+    {
+      title: "¿Modificación SDI?",
+      width:50,
+      render: (item) => {
+        const hasMovementRegistered = item?.sdi_change; //boolean value
+        return (
+          <div style={{display:'flex', flexDirection:'center'}}>
+              {hasMovementRegistered
+                  ? 
+                  <Tooltip title="Se han registrado movimientos en el SDI">
+                    <CheckCircleOutlined style={{color:'green',fontSize:20, margin:'auto'}} />
+                  </Tooltip>
+                  :
+                  <Tooltip title="No se ha registrado movimientos en el SDI">
+                    <StopOutlined style={{color:'orange',fontSize:20, margin:'auto'}} />
+                  </Tooltip> }
+            </div>
+        );
+      },
+      key: "sdi-modification",
+    }
   ].filter((item) => !item.hidden);
 
   const PayrollList = () => {
