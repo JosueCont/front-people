@@ -180,9 +180,9 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                                         filterModule.setFieldsValue({valuesSelected:null})
                                       }}
                                     options={[
-                                        {label:`Todos ${instance?.name}`, value:'ALL'},
+                                        {label:`Todos`, value:'ALL'},
                                         {label:`Con sitio ${instance?.name}`, value:''},
-                                        {label:`Sin sitio ${instance?.name}`,value:'NULL'}
+                                        {label:`Sin sitio`,value:'NULL'}
                                     ]}
                                 />
                                 </Form.Item>

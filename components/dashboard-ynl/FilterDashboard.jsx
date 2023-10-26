@@ -32,6 +32,8 @@ const FilterDashboard = ({currentNode,
     const [optionSelect, setOptionSelect] = useState([]);
     const [visibilitySelect, setVisibilitySelect] = useState(true);
     const isShowFilters = useSelector((state) => state.userStore.applications.ynl)
+    const instance = useSelector(state => state.userStore.current_node)
+
 
     
     useEffect(() => {
@@ -226,7 +228,7 @@ const FilterDashboard = ({currentNode,
                     showSearch
                     options={[
                         {label:'Todos', value:'ALL'},
-                        {label:'Con sitio', value:''},
+                        {label:`Con sitio ${instance.name}`, value:''},
                         {label:'Sin sitio',value:'NULL'}
                     ]}
                 />
