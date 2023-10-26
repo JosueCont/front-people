@@ -1,14 +1,18 @@
 import { Typography, Card , Button, Tooltip} from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import {UsersIcon} from "../../components/icons/";
+import { useRouter } from "next/router";
+import { useRef } from "react";
+
 
 const {Text} = Typography; 
 
-const StyledCard = styled(Card)({
+const StyledCard = styled('div')({
     backgroundColor: '#fff',
+    overflow:'hidden',
     height:'100%',
     position:'relative', 
     margin:'auto',
@@ -71,21 +75,38 @@ const SettingWrapper = styled('div')({
 }); 
 
 const CustomCard = ({item, setCompanySelect})=>{
-    // const {overflowingText, hasVerticalOverflow} = useOverflowWatch(); 
     const [imgSrc , setImgSrc] = useState(''); 
     const [name, setName] = useState(''); 
     const [companyID, setCompanyID] = useState(null);
     const [activeCollaborators, setActiveCollaborators] = useState(0);
+    const route = useRouter();
+    const refIconBtn = useRef(null); 
+    const refCard = useRef(null); 
 
     if (!item) {
         // Handle the case where item is undefined
         return null;
     }
 
+    useEffect(()=>{
+      const onCardClick = (event)=>{
+        if(refCard.current.contains(event.target)){
+          setCompanySelect(item); 
+        }
+      }
+
+      const element = refCard.current;
+
+      element.addEventListener("click", onCardClick, {capture:true}); 
+
+      return() => {
+        element.removeEventListener("click", onCardClick, {capture:true} )
+      }
+    },[])
+
     useMemo(()=>{
       const {id, num_collaborators} = item; 
       const num_employees = item.num_of_employees ?? num_collaborators; 
-      console.log('item', item); 
       setActiveCollaborators(num_employees); 
       setCompanyID(id); 
     },[item])
@@ -123,27 +144,25 @@ const CustomCard = ({item, setCompanySelect})=>{
         )
       },[item, imgSrc])
 
+      const handleRedirection = useCallback(()=>{
+        if(!!!companyID) return; 
+        route.push(`/business/companies/myCompany/${companyID}`); 
+
+      },[companyID]); 
+
 
 
     return(
-      
-      <StyledCard
+      <StyledCard style={{position:'relative'}}>
+      <Card
         className=""
+        // style={{ border:'1px solid #D3D3D3!important',
+        // borderRadius:'8px'}}
         bordered={false}
         hoverable
         cover={renderImage}
-        onClick={() => setCompanySelect(item)}
-      >
-        <Tooltip placement="top" title={'Ir a configuración de empresa'}>
-        <SettingWrapper>
-          
-          <Link href={'/business/companies/myCompany/'+companyID}>
-            <SettingIcon />
-          </Link>
-          
-        </SettingWrapper>
-        </Tooltip>
-        
+        ref={refCard}
+      > 
         <div style={{padding:'16px', display:'flex', gap:'1em', justifyContent:'space-between'}}>   
             <TitleText>{name.toLowerCase()}</TitleText>
             <div style={{width:'66px', minWidth:'66px', display:'flex', justifyContent:'space-between'}}>
@@ -153,7 +172,16 @@ const CustomCard = ({item, setCompanySelect})=>{
             
         </div>
         
-      </StyledCard>
+      </Card>
+      <a>
+       <SettingWrapper ref={refIconBtn}  onClick={handleRedirection}>
+       <Tooltip placement="top" title={'Ir a configuración de empresa'}>
+         <SettingIcon/>
+       </Tooltip>
+     </SettingWrapper>
+     </a>
+     </StyledCard>
+     
     
     )
 }
