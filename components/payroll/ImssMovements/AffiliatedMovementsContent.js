@@ -89,12 +89,14 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
           setShowModal(false);
           setLoading(true);
           let period = moment(year).format("YYYY").slice(2, 4).concat(bimester);
+
           let data = {
-            period,
+            bimester,
+            year: year?moment(year).format('YY'):'',
             node: currentNodeId,
             patronal_registration: patronalSelected,
           };
-
+          
           const syncMovements = await WebApiPeople.syncUpAfilliateMovements(data);
           if (syncMovements?.data?.message)
             message.success(syncMovements?.data?.message);
@@ -245,7 +247,7 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
 
               <span>Bimestre</span>
               <Select
-                mode='multiple'
+                // mode='multiple'
                 size="middle"
                 key={"period"}
                 disabled={disabledBimester}
@@ -260,7 +262,7 @@ const AffiliatedMovementsContent = ({currentNodeId, ...props}) => {
                 {getOptions()}
               </Select>
               <span></span>
-              <Checkbox style={{ width: "100%", marginTop: "10px" }} onChange={()=>{setMasiveDownload(!masiveDownload)}}>Checkbox</Checkbox>
+              {/* <Checkbox style={{ width: "100%", marginTop: "10px" }} onChange={()=>{setMasiveDownload(!masiveDownload)}}>Checkbox</Checkbox> */}
             </div>
           </Col>
         </Row>
