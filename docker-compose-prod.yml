@@ -1,0 +1,12 @@
+version: '3.7'
+    
+services:
+  
+  people_front:
+    image: people_front_build
+    restart: always
+    container_name: people_front
+    environment:
+      - ENVIRONMENT=production
+    ports:
+      - 3000:3006
