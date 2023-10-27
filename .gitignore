@@ -56,3 +56,4 @@ package-lock.json
 .vscode/
 PROD.env.local
 .env.local
+/logs_version/
