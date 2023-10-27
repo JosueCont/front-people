@@ -1,56 +1,113 @@
-image: node:16
-
+image: python:3.8.10
 pipelines:
   branches:
-    # develop:
-    #   - step:
-    #       name: "Update"
-    #       script:
-    #         - pipe: atlassian/ssh-run:0.3.1
-    #           variables:
-    #             SSH_USER: $DEV_SERVER_USER
-    #             SERVER: $DEV_SERVER_IP
-    #             SSH_KEY: $DEV_SSH_KEY
-    #             MODE: 'command'
-    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && git checkout develop && sudo git pull'
-    #   - step:
-    #       name: "Build"
-    #       script:
-    #         - pipe: atlassian/ssh-run:0.3.1
-    #           variables:
-    #             SSH_USER: $DEV_SERVER_USER
-    #             SERVER: $DEV_SERVER_IP
-    #             SSH_KEY: $DEV_SSH_KEY
-    #             MODE: 'command'
-    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker build -t front-people .'
-    #   - step:
-    #       name: "Deploy"
-    #       deployment: Kiuberto Cloud
-    #       script:
-    #         - pipe: atlassian/ssh-run:0.3.1
-    #           variables:
-    #             SSH_USER: $DEV_SERVER_USER
-    #             SERVER: $DEV_SERVER_IP
-    #             SSH_KEY: $DEV_SSH_KEY
-    #             MODE: 'command'
-    #             COMMAND: 'cd /home/ubuntu/frontend/people.hiumanlab.com && docker stop front-people || true && docker rm front-people || true && docker run -d -p 3006:3006 --restart always --name front-people front-people'
-    #   - step:
-    #       name: "Garbage collector"
-    #       script:
-    #         - pipe: atlassian/ssh-run:0.3.1
-    #           variables:
-    #             SSH_USER: $DEV_SERVER_USER
-    #             SERVER: $DEV_SERVER_IP
-    #             SSH_KEY: $DEV_SSH_KEY
-    #             MODE: 'command'
-    #             COMMAND: 'yes | docker image prune -a'
-    middleware_version:
-      - step:
-          name: Integración en middleware_version
-          script:
-            - git pull origin staging  # Actualiza la rama local "staging"
-            - commit_message=$(git log --pretty=format:"- %s" develop..HEAD)  # Captura el último mensaje de commit
-            - echo "$commit_message" > commit_message.txt  # Guarda el mensaje en un archivo
-            - npm version patch  # Aumenta la versión en middleware_git
-            - git commit -am "Bump version to $(npm --no-git-tag-version version)"  # Realiza un commit con el cambio de versión
-            - git push origin staging  # Sube los cambios a la rama "staging"
+    staging:
+        - step:
+            name: Capturar Títulos de Commits y subir a S3
+            script:
+            # se crea el directorio inicial...
+              - BRANCH_DIFF="develop"
+              - NAME_FILE_LOG="${PROJECT_NAME}-${BITBUCKET_BRANCH}-log.txt"
+              - mkdir $BITBUCKET_CLONE_DIR/logs_version
+              # install Amazon CLI...
+              - apt-get update && apt-get install -y python-dev
+              - curl -O https://bootstrap.pypa.io/get-pip.py
+              - python get-pip.py
+              - pip install awscli
+              # se crea el nuevo archivo de cambios...
+              - echo "-----------------------------------------------" > $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # Agrega la fecha actual al archivo
+              - current_date=$(TZ="America/Mexico_City" date +"%y.%m.%d")
+              - echo "V.$current_date" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # Se revisa la fecha del último merge a la rama, antes del actual
+              - LAST_COMMIT_DATE=$(git log -n 2 --merges --format="%at" HEAD | tail -1)
+              - git fetch origin $BRANCH_DIFF:$BRANCH_DIFF
+              - |
+                if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF | grep -q "(feature)"; then
+                  echo -e "" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  echo "Features:" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                fi
+              - |
+                if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(fix)" $BRANCH_DIFF | grep -q "(fix)"; then
+
+                  if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF | grep -q "(feature)"; then
+                    echo -e "\n" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  else
+                    echo -e "" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  fi
+                  
+                  echo "Bugfix:" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(fix)" $BRANCH_DIFF >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                fi
+              - echo -e "\n" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # se valida si ya existe un archivo de logs
+              - |
+                if aws s3api head-object --bucket $BUCKET_NAME --key $BUCKET_PATH/$NAME_FILE_LOG 2>/dev/null; then
+                  NOT_EXIST=false
+                  # se descarga el log de cambios actual...
+                  echo "Descargando lista de cambios previa..."
+                  aws s3 cp s3://$BUCKET_NAME/$BUCKET_PATH/$NAME_FILE_LOG $BITBUCKET_CLONE_DIR/logs_version
+                  echo "Integrando lista de cambios anterior..."
+                  cat $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  
+                  echo "Eliminando histórico..."
+                  rm $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG
+                fi
+              - mv $BITBUCKET_CLONE_DIR/logs_version/log.txt $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG
+              - aws s3 cp $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG s3://$BUCKET_NAME/$BUCKET_PATH/ --exclude "*" --include $NAME_FILE_LOG --storage-class STANDARD_IA
+    master:
+        - step:
+            name: Capturar Títulos de Commits y subir a S3
+            script:
+            # se crea el directorio inicial...
+              - BRANCH_DIFF="staging"
+              - NAME_FILE_LOG="${PROJECT_NAME}-${BITBUCKET_BRANCH}-log.txt"
+              - mkdir $BITBUCKET_CLONE_DIR/logs_version
+              # install Amazon CLI...
+              - apt-get update && apt-get install -y python-dev
+              - curl -O https://bootstrap.pypa.io/get-pip.py
+              - python get-pip.py
+              - pip install awscli
+              # se crea el nuevo archivo de cambios...
+              - echo "-----------------------------------------------" > $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # Agrega la fecha actual al archivo
+              - current_date=$(TZ="America/Mexico_City" date +"%y.%m.%d")
+              - echo "V.$current_date" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # Se revisa la fecha del último merge a la rama, antes del actual
+              - LAST_COMMIT_DATE=$(git log -n 2 --merges --format="%at" HEAD | tail -1)
+              - git fetch origin $BRANCH_DIFF:$BRANCH_DIFF
+              - |
+                if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF | grep -q "(feature)"; then
+                  echo -e "" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  echo "Features:" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                fi
+              - |
+                if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(fix)" $BRANCH_DIFF | grep -q "(fix)"; then
+
+                  if git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(feature)" $BRANCH_DIFF | grep -q "(feature)"; then
+                    echo -e "\n" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  else
+                    echo -e "" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  fi
+                  
+                  echo "Bugfix:" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  git log --pretty=format:"%s" --no-merges --since="${LAST_COMMIT_DATE}" --grep="(fix)" $BRANCH_DIFF >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                fi
+              - echo -e "\n" >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+              # se valida si ya existe un archivo de logs
+              - |
+                if aws s3api head-object --bucket $BUCKET_NAME --key $BUCKET_PATH/$NAME_FILE_LOG 2>/dev/null; then
+                  NOT_EXIST=false
+                  # se descarga el log de cambios actual...
+                  echo "Descargando lista de cambios previa..."
+                  aws s3 cp s3://$BUCKET_NAME/$BUCKET_PATH/$NAME_FILE_LOG $BITBUCKET_CLONE_DIR/logs_version
+                  echo "Integrando lista de cambios anterior..."
+                  cat $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG >> $BITBUCKET_CLONE_DIR/logs_version/log.txt
+                  
+                  echo "Eliminando histórico..."
+                  rm $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG
+                fi
+              - mv $BITBUCKET_CLONE_DIR/logs_version/log.txt $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG
+              - aws s3 cp $BITBUCKET_CLONE_DIR/logs_version/$NAME_FILE_LOG s3://$BUCKET_NAME/$BUCKET_PATH/ --exclude "*" --include $NAME_FILE_LOG --storage-class STANDARD_IA
