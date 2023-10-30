@@ -194,11 +194,11 @@ const InternalConcepts = ({
       (props.perceptions_int, props.deductions_int, props.other_payments_int)
     ) {
       if (key == 1)
-        setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active ));
+        setCat(props.perceptions_int.filter((item) => item.node != null && item.is_active  && item.is_deleted==false));
       if (key == 2)
-        setCat(props.deductions_int.filter((item) => item.node != null && item.is_active ));
+        setCat(props.deductions_int.filter((item) => item.node != null && item.is_active && item.is_deleted==false));
       if (key == 3)
-        setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active));
+        setCat(props.other_payments_int.filter((item) => item.node != null && item.is_active && item.is_deleted==false));
     }
   }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
 
@@ -471,20 +471,22 @@ const InternalConcepts = ({
 
   const deleteRegister = async () => {
     try {
-      await WebApiFiscal.crudInternalConcept(`${url}${deleted.id}/`, "delete");
-      props
+      const res = await WebApiFiscal.crudInternalConcept(`${url}${deleted.id}/`, "delete");
+      if(res?.data?.message){
+        props
         .doFiscalCatalogs(currentNode.id, props.version_cfdi)
         .then((response) => {
           resetForm();
-          message.success(messageDeleteSuccess);
+            message.success(res?.data?.message);
         })
         .catch((error) => {
           setLoading(false);
           console.log(error);
           message.error(messageError);
         });
+      }
     } catch (error) {
-      console.log(error);
+      message.error(error?.response?.data?.message);
     }
   };
 
@@ -720,10 +722,10 @@ const InternalConcepts = ({
     if(intConcept && viewActive){
       setCat(
           key == 1
-              ? props.perceptions_int.filter((item) => item.node == null && item.is_active===viewActive)
+              ? props.perceptions_int.filter((item) => item.node == null && item.is_active===viewActive && item.is_deleted==false)
               : key == 2
-                  ? props.deductions_int.filter((item) => item.node == null && item.is_active===viewActive)
-                  : props.other_payments_int.filter((item) => item.node == null && item.is_active===viewActive)
+                  ? props.deductions_int.filter((item) => item.node == null && item.is_active===viewActive && item.is_deleted==false)
+                  : props.other_payments_int.filter((item) => item.node == null && item.is_active===viewActive && item.is_deleted==false)
       );
     }else if(intConcept && !viewActive){
       setCat(
@@ -744,10 +746,10 @@ const InternalConcepts = ({
     }else if(!intConcept && viewActive){
       setCat(
           key == 1
-              ? props.perceptions_int.filter((item) => item.node != null && item.is_active===viewActive)
+              ? props.perceptions_int.filter((item) => item.node != null && item.is_active===viewActive && item.is_deleted==false)
               : key == 2
-                  ? props.deductions_int.filter((item) => item.node != null && item.is_active===viewActive)
-                  : props.other_payments_int.filter((item) => item.node != null && item.is_active===viewActive)
+                  ? props.deductions_int.filter((item) => item.node != null && item.is_active===viewActive && item.is_deleted==false)
+                  : props.other_payments_int.filter((item) => item.node != null && item.is_active===viewActive && item.is_deleted==false)
       );
     }
 

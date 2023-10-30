@@ -258,15 +258,12 @@ const SelectCompany = ({ ...props }) => {
     if (props.versionCfdi) setVersionCfdiSelect(props.versionCfdi);
   }, [props.versionCfdi]);
 
-  const handleOnError = (e) => {
-    e.target.src = "/images/empresas.svg";
-  };
 
   const filterCompanies = (e) => {
     let name = e.target.value
-    console.log('name', name)
-    console.log('allCompanies',allCompanies)
-    console.log('new_liest',new_liest)
+    // console.log('name', name)
+    // console.log('allCompanies',allCompanies)
+    // console.log('new_liest',new_liest)
     let new_liest = allCompanies.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
     setDataList(new_liest)
     

@@ -436,8 +436,9 @@ const FixedConcepts = ({ currentNode, ...props }) => {
   ];
   const period_config = [
     {value: 1, label: 'Todos'},
-    {value: 2, label: 'Primer periodo'},
-    {value: 3, label: 'Último periodo'}
+    {value: 2, label: 'Solo primer periodo del mes'},
+    {value: 3, label: 'Solo último periodo del mes'},
+    {value: 4, label: 'Último periodo del mes con calculo mensual'}
   ]
   const application_mode = [
     {value: 1, label: 'Fijo'},
