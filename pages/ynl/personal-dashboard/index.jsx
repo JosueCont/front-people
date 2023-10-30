@@ -218,6 +218,34 @@ const index = () => {
           .ant-form-item-label > label{
             color:#FFFFFF!important;
           }
+          .lbl{
+            font-size: 12px;
+          }
+          .container-widget{
+            height:300px;
+            overflow-y: auto;
+          }
+          .container-widget::-webkit-scrollbar-track {
+            border: 0.1px solid #000;
+            padding: 1px 0;
+            background-color: #404040;
+          }
+          
+          .container-widget::-webkit-scrollbar {
+            width: 0px;
+          }
+          
+          .container-widget::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #737272;
+            border: 0.1px solid #000;
+          }
+          @media screen and (max-width: 450px){
+            .lbl{
+              font-size: 9px;
+            }
+          }
         `}
 
               />

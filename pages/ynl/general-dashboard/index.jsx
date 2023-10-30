@@ -169,19 +169,47 @@ const index = ({}) => {
             background-color: var(--orange)!important;
             border-color: var(--orange) !important;
           }
-          .indicator-inspired{  border-radius: 50px; width: 15px; height: 15px; background-color: #ff457d; margin: 3px 3px;   }
-          .indicator-glad{  border-radius: 50px; width: 15px; height: 15px; background-color: #ffc700; margin: 3px 3px;  }
-          .indicator-open{  border-radius: 50px; width: 15px; height: 15px; background-color: #1a85ff; margin: 3px 3px; }
-          .indicator-depressed{  border-radius: 50px; width: 15px; height: 15px; background-color: #9c4fff; margin: 3px 3px;  }
-          .indicator-peace{  border-radius: 50px; width: 15px; height: 15px; background-color: #2fdaff; margin: 3px 3px;  }
-          .indicator-confused{  border-radius: 50px; width: 15px; height: 15px; background-color: #ff5e00; margin: 3px 3px;  }
-          .indicator-upset{ border-radius: 50px; width: 15px; height: 15px; background-color: #ff1111; margin: 3px 3px;  }
+          .indicator-inspired{  border-radius: 50px; width: 15px; height: 15px; background-color: #9fab51; margin: 3px 3px;   }
+          .indicator-glad{  border-radius: 50px; width: 15px; height: 15px; background-color: #e7b51c; margin: 3px 3px;  }
+          .indicator-open{  border-radius: 50px; width: 15px; height: 15px; background-color: #d38919; margin: 3px 3px; }
+          .indicator-depressed{  border-radius: 50px; width: 15px; height: 15px; background-color: #2995cc; margin: 3px 3px;  }
+          .indicator-peace{  border-radius: 50px; width: 15px; height: 15px; background-color: #e4057c; margin: 3px 3px;  }
+          .indicator-confused{  border-radius: 50px; width: 15px; height: 15px; background-color: #73368c; margin: 3px 3px;  }
+          .indicator-upset{ border-radius: 50px; width: 15px; height: 15px; background-color: #a92418; margin: 3px 3px;  }
           .ant-form-item{margin-bottom:8px;}
           .ant-btn{color: white;}
           .indicator-emotion{ border-radius: 50px; width: 15px; height: 15px; margin: 3px 3px;  }
           .ant-list-item-meta{
             justify-content: center;
             align-items: center;
+          }
+          .containerStreaks{
+            height:300px;
+            overflow-y: auto;
+          }
+          .containerStreaks::-webkit-scrollbar-track {
+            border: 0.1px solid #000;
+            padding: 1px 0;
+            background-color: #404040;
+          }
+          
+          .containerStreaks::-webkit-scrollbar {
+            width: 0px;
+          }
+          
+          .containerStreaks::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #737272;
+            border: 0.1px solid #000;
+          }
+          .lbl{
+            font-size: 12px;
+          }
+          @media screen and (max-width: 450px){
+            .lbl{
+              font-size: 9px;
+            }
           }
         `}
         
