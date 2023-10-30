@@ -51,6 +51,18 @@ class WebApiYnl {
   static synchronizePersonYNL(data){
     return WebApi.ApisType(`/ynl/register/multiple-people/`, "post", data)
   }
+
+  static getToptenStreaks(data){
+    return WebApi.ApisType('/ynl/report/top-streaks/', 'post', data)
+  }
+
+  static getDataGoalsGrap(data){
+    return WebApi.ApisType('/ynl/report/objectives-chart/', "post", data)
+  }
+
+  static getTopTenGoals(data){
+    return WebApi.ApisType('/ynl/report/plans-report/', 'post', data)
+  }
 }
 
 export default WebApiYnl;

@@ -14,13 +14,13 @@ import moment from 'moment/moment';
 
 const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
     let colors = [
-      "#1a85ff",
-      "#ff457d",
-      "#2fdaff",
-      "#ffc700",
-      "#ff5e00",
-      "#ff1111",
-      "#9c4fff"
+      "#d38919",
+      "#9fab51",
+      "#e4057c",
+      "#e7b51c",
+      "#73368c",
+      "#a92418",
+      "#2995cc"
     ]
     const getEmotionsNum = (item) =>{
       return (
@@ -94,31 +94,31 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
             <Row>
                 <Col className='aligned-to-start'>
                   <div className='indicator-depressed'></div>
-                  <div><span>Deprimido</span></div>
+                  <div><span>Tristeza</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-upset'></div>
-                  <div><span>Molesto</span></div>
+                  <div><span>Irá</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-confused'></div>
-                  <div><span>Confundido</span></div>
+                  <div><span>Miedo</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-glad'></div>
-                  <div><span>Contento</span></div>
+                  <div><span>Alegría</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-peace'></div>
-                  <div><span>En paz</span></div>
+                  <div><span>Amor</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-inspired'></div>
-                  <div><span>Inspirado</span></div>
+                  <div><span>Asco</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-open'></div>
-                  <div><span>Abierto</span></div>
+                  <div><span>Sorpresa</span></div>
                 </Col> 
             </Row>
             <Table columns={columns}

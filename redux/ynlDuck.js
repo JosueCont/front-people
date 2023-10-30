@@ -19,6 +19,12 @@ const initialData = {
   loadReportPerson: false,
   reportPerson: [],
   dates: {},
+  streaksList:[],
+  loadReportStreak:false,
+  goalsList:[],
+  loadReportGoals:false,
+  valuesChart:[],
+  loadChart:false
 };
 
 const TOPPERSONS = "TOPPERSONS";
@@ -29,6 +35,13 @@ const EMOTIONCHART = "EMOTIONCHART";
 const PERSONS = "PERSONS";
 const REPORTPERSON = "REPORTPERSON";
 const REPORTPERSON_FINISH = "REPORTPERSON_FINISH";
+const STREAK_TOP = 'streak_top';
+const REPORTSTREAK = 'REPORTSTREAK';
+const GOALS = 'goals';
+const REPORTGOALS='REPORTGOALS';
+const LOADING = 'LOADING';
+const CHART_GOALS_DATA = 'chart_goals_data';
+const CHARTREPORT = 'CHART_REPORT';
 
 const ynlReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -77,6 +90,20 @@ const ynlReducer = (state = initialData, action) => {
         loadReportPerson: false,
         reportPerson: action.payload,
       };
+    case STREAK_TOP:
+      return {...state, loadReportStreak: action.loadReportStreak, streaksList: action.payload };
+    case REPORTSTREAK:
+      return {...state, loadReportStreak:false, streaksList:[]}
+    case GOALS:
+      return {...state, loadReportGoals: action.loadReportGoals, goalsList: action.payload };
+    case REPORTGOALS:
+      return {...state, loadReportGoals: false, goalsList:[]}
+    case LOADING:
+      return {...state, loadReportStreak: true, loadReportGoals:true}
+    case CHART_GOALS_DATA:
+      return { ...state, loadChart:action.payload ,valuesChart: action.payload}
+    case CHARTREPORT:
+      return {...state, loadChart: false, valuesChart:[]}
     default:
       return state;
   }
@@ -246,5 +273,42 @@ export const getReportPerson = (data) => async (dispatch, getState) => {
       //console.log(error);
     });
 };
+
+export const getStreakTop = (data) => async(dispatch) => {
+  try {
+    dispatch({type:LOADING})
+    const streaks = await WebApiYnl.getToptenStreaks(data);
+    dispatch({type: STREAK_TOP ,loadReportStreak: false,payload: streaks.data.data.slice(0,10)})
+    console.log('datos de racha',streaks.data)
+  } catch (e) {
+    dispatch({type: REPORTSTREAK})
+    console.log('error al obtener las rachas',e)
+  }
+}
+
+export const getDataGraphGoal = (data) => async(dispatch) => {
+  try {
+    dispatch({type: LOADING})
+    const dataGrap = await WebApiYnl.getDataGoalsGrap(data);
+    dispatch({type: CHART_GOALS_DATA, loadChart:false, payload: dataGrap?.data?.data})
+    console.log('datagrafica',dataGrap)
+  } catch (e) {
+    dispatch({type: CHARTREPORT})
+    console.log('error al obtener datos de grafica',e)
+  }
+}
+
+export const getTopGoals = (data) => async(dispatch) => {
+  try {
+    dispatch({type:LOADING})
+    const goals = await WebApiYnl.getTopTenGoals(data);
+    console.log('goals redux', goals.data)
+    dispatch({type: GOALS, loadReportGoals: false, payload: goals.data.data.slice(0,10) })
+  } catch (e) {
+    dispatch({type: REPORTGOALS})
+    console.log('error al obtener top 10 goals',e)
+
+  }
+}
 
 export default ynlReducer;

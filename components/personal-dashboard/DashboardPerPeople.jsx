@@ -8,6 +8,9 @@ import Calendar from './Calendar'
 import ListGroups from './ListGroups'
 import { useSelector } from 'react-redux'
 import { SmileOutlined, FrownOutlined, PlusCircleOutlined, MinusCircleOutlined  } from "@ant-design/icons";
+import SteakPersonal from '../dashboard-ynl/SteakPersonal'
+import ProjectsPersonal from '../dashboard-ynl/ProjectsPersonal'
+import ChartGoalsPersonal from '../dashboard-ynl/ChartGoalsPersonal'
 
 
 export const DashboardPerPeople = () => {
@@ -91,6 +94,15 @@ export const DashboardPerPeople = () => {
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
                 <ListGroups/>
+            </Col>
+            <Col xs={24} sm={24} md={12} className='item-dashboard'>
+                <SteakPersonal />
+            </Col>
+            <Col xs={24} sm={24} md={12} className='item-dashboard'>
+                <ChartGoalsPersonal />
+            </Col>
+            <Col xs={24} sm={24} md={12} className='item-dashboard'>
+                <ProjectsPersonal />
             </Col>
         </Row>     
     </>    

@@ -8,11 +8,12 @@ import WebApiYnl from '../../api/WebApiYnl';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { getPersons } from '../../redux/ynlDuck';
 import { getReportPerson } from '../../redux/ynlDuck';
+import { getStreakTop, getDataGraphGoal, getTopGoals } from '../../redux/ynlDuck';
 import { useRouter } from "next/router";
 import { useSelector } from 'react-redux';
 
 
-const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props}) => {
+const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, getStreakTop, getDataGraphGoal, getTopGoals,...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
     const router = useRouter();
@@ -108,6 +109,9 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
 
         console.log("Filtro que se envia a consulta",data);
         getReportPerson(data);
+        //getStreakTop(data);
+        //getTopGoals(data);
+        //getDataGraphGoal(data)
     }
     const resetFilter = () =>{filterModule.resetFields();}
 
@@ -204,4 +208,4 @@ const mapState = (state) => {
     };
 };
   
-export default connect(mapState,{getPersons, getReportPerson})(FilterDashboardPersonal);
+export default connect(mapState,{getPersons, getReportPerson,getStreakTop, getDataGraphGoal, getTopGoals})(FilterDashboardPersonal);

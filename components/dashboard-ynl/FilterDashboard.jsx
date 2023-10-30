@@ -10,7 +10,7 @@ import { getDailyEmotions } from '../../redux/ynlDuck';
 import { getTopPersons } from '../../redux/ynlDuck';
 import { getEmotionalAspects } from '../../redux/ynlDuck';
 import { getReportUser } from '../../redux/ynlDuck';
-import { getEmotionChart } from '../../redux/ynlDuck';
+import { getEmotionChart, getStreakTop,getDataGraphGoal, getTopGoals } from '../../redux/ynlDuck';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { subtract } from 'lodash';
 import { useSelector } from 'react-redux';
@@ -21,6 +21,9 @@ const FilterDashboard = ({currentNode,
     getEmotionalAspects,
     getReportUser,
     getEmotionChart,
+    getStreakTop,
+    getDataGraphGoal,
+    getTopGoals,
     ...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
@@ -50,6 +53,9 @@ const FilterDashboard = ({currentNode,
       getEmotionalAspects(dataToInicialize);
       getReportUser(dataToInicialize);
       getEmotionChart(dataToInicialize);  
+      getStreakTop(dataToInicialize)
+      getDataGraphGoal(dataToInicialize)
+      getTopGoals(dataToInicialize)
     }, []);
     
     useEffect(() => {
@@ -153,6 +159,9 @@ const FilterDashboard = ({currentNode,
         getEmotionalAspects(data);
         getReportUser(data);
         getEmotionChart(data);
+        getStreakTop(data)
+        getDataGraphGoal(data)
+        getTopGoals(data)
     }
 
     const resetFilter = () =>{
@@ -228,7 +237,7 @@ const FilterDashboard = ({currentNode,
                     showSearch
                     options={[
                         {label:'Todos', value:'ALL'},
-                        {label:`Con sitio ${instance.name}`, value:''},
+                        {label:`Con sitio ${instance?.name}`, value:''},
                         {label:'Sin sitio',value:'NULL'}
                     ]}
                 />
@@ -257,4 +266,16 @@ const mapState = (state) => {
     };
 };
   
-export default connect(mapState,{getTopPersons, getDailyEmotions, getEmotionalAspects, getReportUser, getEmotionChart})(FilterDashboard);
+const mapDispatch = (dispatch) => {
+    return{
+        getTopPersons: (value) => dispatch(getTopPersons(value)),
+        getDailyEmotions: value => dispatch(getDailyEmotions(value)),
+        getEmotionalAspects: value => dispatch(getEmotionalAspects(value)),
+        getReportUser: value => dispatch(getReportUser(value)),
+        getEmotionChart: value => dispatch(getEmotionChart(value)),
+        getStreakTop: value => dispatch(getStreakTop(value)),
+        getDataGraphGoal: value => dispatch(getDataGraphGoal(value)),
+        getTopGoals: value => dispatch(getTopGoals(value))
+    }
+}
+export default connect(mapState,mapDispatch)(FilterDashboard);

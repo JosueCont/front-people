@@ -6,6 +6,9 @@ import  GroupEmotionsPerDayChart  from './GroupEmotionsPerDayChart';
 import UseOfYnl from './UseOfYnl';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import StreakGeneral from './SteakGeneral';
+import ChartGoals from './ChartGoals';
+import GoalsList from './GoalsList';
 
 export const Dashboard = ({stadistics, ...props}) => {
   const [startDate, setStartDate] = useState("");
@@ -24,12 +27,10 @@ export const Dashboard = ({stadistics, ...props}) => {
 ]
   useEffect(() => {
     setStartDate(stadistics.start_date);
-    console.log('estadisticas',stadistics)
     setEndDate(stadistics.end_date);
     if(stadistics?.feeling?.count > 0){
         setFeeling(stadistics?.feeling?.name);
         let resultados = emotionsGif.filter(item => item.name == stadistics?.feeling?.name);
-        console.log('resultados',resultados,stadistics)
         setEmotion(resultados.at(-1).img);
         setColorFeeling(stadistics?.feeling?.color)
     }else{
@@ -88,6 +89,15 @@ export const Dashboard = ({stadistics, ...props}) => {
             </Col>
             <Col xs={24} sm={24} md={14}  className='item-dashboard'>
                 <SurveyStatisticsChart />
+            </Col>
+            <Col xs={24} sm={24} md={10}  className='item-dashboard'>
+                <StreakGeneral />
+            </Col>
+            <Col xs={24} sm={24} md={14} className='item-dashboard'>
+                <ChartGoals />
+            </Col>
+            <Col xs={24} sm={24} md={10} className='item-dashboard'>
+                <GoalsList />
             </Col>
         </Row>     
     </>    
