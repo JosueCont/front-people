@@ -241,7 +241,7 @@ const businessForm = ({ currentNode, config, setNullCompany, ...props }) => {
     const getCopaniesList = async () => {
         setBusiness([]);
         setLoading(true)
-        await WebApiPeople.getCompanys(props?.user?.id, true)
+        await WebApiPeople.getCompanys(props?.user?.id)
             .then((response) => {
                 setBusiness(response.data.results);
                 setAllBusiness(response.data.results);
