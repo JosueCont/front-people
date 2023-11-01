@@ -120,7 +120,7 @@ const ChartBarGoals = ({dataChart, }) => {
         }
         @media (min-width: 1144px){
             .cont-icons-chart{
-                top:140px; 
+                top:135px; 
             }
             .lbl{
                 font-size:6px

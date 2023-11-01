@@ -52,7 +52,8 @@ const index = () => {
     const getDataPeople = async() => {
         let dataSend = {
             "page": 1,
-            "pageSize": 15
+            "pageSize": 15,
+            "filter": ''
         }
         dispatch(getListPeopleYNL(dataSend) )
     }
@@ -77,8 +78,8 @@ const index = () => {
               { validatePermition ? (
                 <div className="container" style={{ width: "100%" }}>
                   <Row>
-                      <Col lg={24} xs={24}>
-                          <LisPeopleYNL />
+                      <Col lg={24} xs={24} md={18}>
+                          <LisPeopleYNL setReload={() => getDataPeople()}/>
                       </Col>
                   </Row>
                 </div>

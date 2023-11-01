@@ -237,8 +237,8 @@ const FilterDashboard = ({currentNode,
                     showSearch
                     options={[
                         {label:'Todos', value:'ALL'},
-                        {label:`Con sitio ${instance?.name}`, value:''},
-                        {label:'Sin sitio',value:'NULL'}
+                        {label:`${instance?.name}`, value:''},
+                        {label:'Público',value:'NULL'}
                     ]}
                 />
             </Form.Item>
