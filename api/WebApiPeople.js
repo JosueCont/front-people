@@ -10,7 +10,7 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
 
-  static getCompanys(personId = null, active = true) {
+  static getCompanys(personId = null, active = null) {
     return WebApi.ApisType(
       `/business/node/?${active !== null ? `active=${active}` : ""}${personId ? `&person=${personId}` : ""
       }`,
