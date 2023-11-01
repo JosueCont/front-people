@@ -63,6 +63,10 @@ class WebApiYnl {
   static getTopTenGoals(data){
     return WebApi.ApisType('/ynl/report/plans-report/', 'post', data)
   }
+
+  static getPeopleYNL(data){
+    return WebApi.ApisType('/ynl/get-ynl-persons/', 'post', data)
+  }
 }
 
 export default WebApiYnl;

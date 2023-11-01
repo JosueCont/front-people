@@ -24,7 +24,9 @@ const initialData = {
   goalsList:[],
   loadReportGoals:false,
   valuesChart:[],
-  loadChart:false
+  loadChart:false,
+  people:[],
+  loadPeople:false
 };
 
 const TOPPERSONS = "TOPPERSONS";
@@ -42,6 +44,8 @@ const REPORTGOALS='REPORTGOALS';
 const LOADING = 'LOADING';
 const CHART_GOALS_DATA = 'chart_goals_data';
 const CHARTREPORT = 'CHART_REPORT';
+const PEOPLEYNL = 'PEOPLEYNL';
+const REPORTPEOPLEYNL = 'REPORTPEOPLEYNL';
 
 const ynlReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -99,11 +103,15 @@ const ynlReducer = (state = initialData, action) => {
     case REPORTGOALS:
       return {...state, loadReportGoals: false, goalsList:[]}
     case LOADING:
-      return {...state, loadReportStreak: true, loadReportGoals:true}
+      return {...state, loadReportStreak: true, loadReportGoals:true, loadPeople:true}
     case CHART_GOALS_DATA:
-      return { ...state, loadChart:action.payload ,valuesChart: action.payload}
+      return { ...state, loadChart:action.loadChart ,valuesChart: action.payload}
     case CHARTREPORT:
       return {...state, loadChart: false, valuesChart:[]}
+    case PEOPLEYNL:
+      return {...state, loadPeople:action.loadPeople, people:action.payload}
+    case REPORTPEOPLEYNL:
+      return {...state, loadPeople:false, people:[]}
     default:
       return state;
   }
@@ -308,6 +316,18 @@ export const getTopGoals = (data) => async(dispatch) => {
     dispatch({type: REPORTGOALS})
     console.log('error al obtener top 10 goals',e)
 
+  }
+}
+
+export const getListPeopleYNL = (data) => async(dispatch) => {
+  try {
+    dispatch({type:LOADING})
+    const people = await WebApiYnl.getPeopleYNL(data);
+    console.log('data people ybl',people.data)
+    dispatch({type: PEOPLEYNL, loadPeople: false, payload: people?.data})
+  } catch (e) {
+    dispatch({type: REPORTPEOPLEYNL})
+    console.log('error al obtener peopel',e)
   }
 }
 

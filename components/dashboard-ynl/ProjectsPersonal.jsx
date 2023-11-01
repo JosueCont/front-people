@@ -20,7 +20,7 @@ const ProjectsPersonal = () => {
                 <div className="container-widget">
                     {reportPerson?.data && reportPerson?.data[0]?.projects.length > 0 ? 
                        reportPerson?.data[0]?.projects.map((item,index) => (
-                        <Row style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                        <Row style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10}}>
                             <Col>
                                 <Text strong>{index + 1}</Text>
                                 <Image 

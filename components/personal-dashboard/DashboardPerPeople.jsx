@@ -96,13 +96,13 @@ export const DashboardPerPeople = () => {
                 <ListGroups/>
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
-                <SteakPersonal />
+                <ProjectsPersonal />
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
                 <ChartGoalsPersonal />
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
-                <ProjectsPersonal />
+                <SteakPersonal />
             </Col>
         </Row>     
     </>    

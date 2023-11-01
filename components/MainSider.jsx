@@ -96,6 +96,7 @@ const MainSider = ({
       assessment_reports: "/assessment/reports",
       ynl_general_dashboard: "/ynl/general-dashboard",
       ynl_personal_dashboard: "/ynl/personal-dashboard",
+      ynl_people_dashboard: '/ynl/people-dashboard',
       jb_clients: "/jobbank/clients",
       jb_vacancies: "/jobbank/vacancies",
       jb_strategies: "/jobbank/strategies",
@@ -298,6 +299,7 @@ const MainSider = ({
           children = [
             getItem("Dashboard general", "ynl_general_dashboard"),
             getItem("Dashboard personal", "ynl_personal_dashboard"),
+            props?.applications?.ynl?.showFilterSite?.allow_view_users_non_site  && getItem('Personas YNL', 'ynl_people_dashboard')
           ];
           items.push(getItem("YNL", "ynl", <UserOutlined />, children));
         }

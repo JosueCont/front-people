@@ -85,31 +85,31 @@ const FeelingCalendar = () => {
             <Row style={{marginBottom:40}} align={'center'}>
                 <Col className='aligned-to-start'>
                     <div className='indicator-inspired'></div>
-                    <div><span>Inspirado</span></div>
+                    <div><span>Asco</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-glad'></div>
-                    <div><span>Contento</span></div>
+                    <div><span>Alegría</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-open'></div>
-                    <div><span>Abierto</span></div>
+                    <div><span>Sorpresa</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-depressed'></div>
-                    <div><span>Deprimido</span></div>
+                    <div><span>Tristeza</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-peace'></div>
-                    <div><span>En paz</span></div>
+                    <div><span>Amor</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-confused'></div>
-                    <div><span>Confundido</span></div>
+                    <div><span>Miedo</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                     <div className='indicator-upset'></div>
-                    <div><span>Molesto</span></div>
+                    <div><span>Irá</span></div>
                 </Col>
             </Row>
             <Calendar  />    
